@@ -1,3 +1,4 @@
+import logging
 
 
 def make_registration_decorator():
@@ -12,3 +13,13 @@ def make_registration_decorator():
         return fn
 
     return _register, registered
+
+
+def make_logger(name):
+    logger = logging.getLogger('cultivars')
+    logger.setLevel(logging.DEBUG)
+    handler = logging.StreamHandler()
+    fmt = logging.Formatter("%(asctime)s [%(levelname)-5.5s]  %(message)s")
+    handler.setFormatter(fmt)
+    logger.addHandler(handler)
+    return logger

@@ -3,7 +3,8 @@ from setuptools import setup, find_packages
 install_requires = [
     'requests>=2.2',
     'ckanapi==3.5',
-    'unipath==1.1'
+    'unipath==1.1',
+    'xlrd==0.9.4'
 ]
 
 setup(

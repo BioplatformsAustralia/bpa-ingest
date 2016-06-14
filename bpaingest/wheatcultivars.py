@@ -1,9 +1,9 @@
 from .ops import update_or_create
 from unipath import Path
-import logging
+from .util import make_logger
 
 
-logger = logging.getLogger('cultivars')
+logger = make_logger('wheatcultivars')
 
 
 def make_group(ckan):
