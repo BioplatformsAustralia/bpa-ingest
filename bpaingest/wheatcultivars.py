@@ -1,7 +1,11 @@
 from .ops import update_or_create
 from unipath import Path
 from .util import make_logger
+from .libs import ingest_utils
+from .libs.fetch_data import Fetcher
 
+# all metadata and checksums should be linked out here
+METADATA_URL = 'https://downloads-qcif.bioplatforms.com/bpa/wheat_cultivars/tracking/'
 
 logger = make_logger('wheatcultivars')
 
@@ -28,6 +32,10 @@ def do_metadata(path):
 
 
 def ingest(ckan, metadata_path):
+    fetcher = Fetcher(metadata_path, METADATA_URL)
+    fetcher.clean()
+    fetcher.fetch_metadata_from_folder()
+
     path = Path(metadata_path)
     group = make_group(ckan)
     do_metadata(path)

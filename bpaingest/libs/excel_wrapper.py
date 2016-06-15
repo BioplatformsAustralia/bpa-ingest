@@ -131,7 +131,7 @@ class ExcelWrapper(object):
                 # In previous versions, not finding a particular column was a
                 # breaking offence. But trying to force vendors to be compliant
                 # with the naming spec as published by BPA has proven to be
-                # futile quest, they have won, I give up. If a column is not
+                # futile quest, the have won, I give up. If a column is not
                 # found, throw your arms in the air and continue, hope that
                 # something later on does not break.
                 logger.warning("Column {} not found in {} ".format(column_name, self.file_name))
@@ -208,8 +208,8 @@ class ExcelWrapper(object):
                 cell = row[i]
                 ctype = cell.ctype
                 val = cell.value
-                if ctype == xlrd.XL_CELL_DATE:
-                    val = self.get_date(i, cell)
+                # if ctype == xlrd.XL_CELL_DATE:
+                #    val = self.get_date(i, cell)
                 if ctype == xlrd.XL_CELL_TEXT:
                     val = val.strip()
 
