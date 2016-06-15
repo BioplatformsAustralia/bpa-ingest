@@ -6,7 +6,7 @@ import sys
 from .util import make_registration_decorator
 from .bpa import create_bpa
 from .wheatcultivars import ingest as ingest_wheatcultivars
-
+from .wheatcultivars import download as download_wheatcultivars
 
 register_command, command_fns = make_registration_decorator()
 
@@ -20,11 +20,15 @@ def bootstrap(ckan, args):
 @register_command
 def wheat_cultivars(ckan, args):
     "download and ingest wheat7a metadata"
+    print(args)
+    return
+    download_wheatcultivars(args.path, args.clean)
     ingest_wheatcultivars(ckan, args.path)
 
 
 def setup_metadata_path(subparser):
     subparser.add_argument('path', help='path to metadata')
+    subparser.add_argument('--clean', action='store_true', help='clean up path before run')
 wheat_cultivars.setup = setup_metadata_path
 
 

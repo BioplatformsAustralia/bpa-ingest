@@ -64,25 +64,26 @@ class Fetcher():
 
     def clean(self):
         """ Clean up existing contents """
-
         files = glob.glob(self.target_folder + "/*")
         for f in files:
             os.remove(f)
 
     def fetch(self, name):
         """ fetch file from server """
-
+        target = os.path.join(self.target_folder, name)
+        target_tmp = target + '.tmp_{}'.format(os.getpid())
+        if os.access(target, os.R_OK):
+            return
         logger.info("Fetching {0} from {1}".format(name, self.metadata_source_url))
         r = requests.get(self.metadata_source_url + "/" + name, stream=True, auth=self.auth, verify=False)
-        with open(self.target_folder + "/" + name, "wb") as f:
+        with open(target_tmp, 'wb') as f:
             for chunk in r.iter_content(chunk_size=1024):
                 if chunk:
                     f.write(chunk)
-                    f.flush()
+        os.rename(target_tmp, target)
 
     def fetch_metadata_from_folder(self):
         """ downloads metadata from archive """
-
         response = requests.get(self.metadata_source_url, stream=True, auth=self.auth, verify=False)
         for link in BeautifulSoup(response.content).find_all("a"):
             metadata_filename = link.get("href")

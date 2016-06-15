@@ -31,11 +31,15 @@ def do_metadata(path):
         # ingest_samples(sample_data)
 
 
-def ingest(ckan, metadata_path):
+def download(metadata_path, clean):
     fetcher = Fetcher(metadata_path, METADATA_URL)
-    fetcher.clean()
+    print(clean)
+    if clean:
+        fetcher.clean()
     fetcher.fetch_metadata_from_folder()
 
+
+def ingest(ckan, metadata_path):
     path = Path(metadata_path)
     group = make_group(ckan)
     do_metadata(path)
