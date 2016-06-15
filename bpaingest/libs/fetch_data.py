@@ -85,7 +85,7 @@ class Fetcher():
     def fetch_metadata_from_folder(self):
         """ downloads metadata from archive """
         response = requests.get(self.metadata_source_url, stream=True, auth=self.auth, verify=False)
-        for link in BeautifulSoup(response.content).find_all("a"):
+        for link in BeautifulSoup(response.content, "html.parser").find_all("a"):
             metadata_filename = link.get("href")
             if metadata_filename.endswith(".xlsx") or \
                     metadata_filename.endswith(".txt") or \

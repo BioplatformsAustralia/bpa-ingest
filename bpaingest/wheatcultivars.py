@@ -1,3 +1,5 @@
+from __future__ import print_function
+
 from .ops import update_or_create
 from unipath import Path
 from .util import make_logger
@@ -33,7 +35,6 @@ def do_metadata(path):
 
 def download(metadata_path, clean):
     fetcher = Fetcher(metadata_path, METADATA_URL)
-    print(clean)
     if clean:
         fetcher.clean()
     fetcher.fetch_metadata_from_folder()

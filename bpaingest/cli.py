@@ -20,8 +20,6 @@ def bootstrap(ckan, args):
 @register_command
 def wheat_cultivars(ckan, args):
     "download and ingest wheat7a metadata"
-    print(args)
-    return
     download_wheatcultivars(args.path, args.clean)
     ingest_wheatcultivars(ckan, args.path)
 
