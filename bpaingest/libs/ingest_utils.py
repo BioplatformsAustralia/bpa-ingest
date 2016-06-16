@@ -4,17 +4,14 @@ import os
 import json
 
 from ..util import make_logger
-
 from datetime import date
 from dateutil.parser import parse as date_parser
 
 logger = make_logger(__name__)
 
-# where to cache downloaded metadata
-INGEST_NOTE = "Ingested from Source Document on {0}\n".format(date.today())
-
 # list of chars to delete
-remove_letters_map = dict((ord(char), None) for char in string.punctuation + string.ascii_letters)
+remove_letters_map = dict(
+    (ord(char), None) for char in string.punctuation + string.ascii_letters)
 
 
 def get_clean_number(val, default=None, debug=False):
@@ -66,10 +63,14 @@ def get_clean_float(val, default=None, stringconvert=True):
         try:
             return float(var)
         except ValueError:
-            logger.warning("ValueError Value '{0}' not floatable, returning default '{1}'".format(var, default))
+            logger.warning(
+                "ValueError Value '{0}' not floatable, returning default '{1}'".format(
+                    var, default))
             return default
         except TypeError:
-            logger.warning("TypeError Value '{0}' not floatable, returning default '{1}'".format(var, default))
+            logger.warning(
+                "TypeError Value '{0}' not floatable, returning default '{1}'".format(
+                    var, default))
             return default
 
     # if its a float, its probably ok
@@ -92,6 +93,22 @@ def get_clean_float(val, default=None, stringconvert=True):
         return to_float(filter(lambda x: x.isdigit(), val))
     else:
         return default
+
+
+def strip_all(reader):
+    """
+    Scrub extra whitespace from values in the reader dicts as read from the csv files
+    """
+
+    from django.utils.encoding import smart_text
+    entries = []
+    for entry in reader:
+        new_e = {}
+        for k, v in entry.items():
+            new_e[k] = smart_text(v.strip())
+        entries.append(new_e)
+
+    return entries
 
 
 def get_date(dt):
