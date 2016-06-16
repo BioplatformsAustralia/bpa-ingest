@@ -17,10 +17,10 @@ import datetime
 from collections import namedtuple
 
 import xlrd
-import logger_utils
+from ..util import make_logger
 
 
-logger = logger_utils.get_logger(__name__)
+logger = make_logger(__name__)
 
 
 class ColumnNotFoundException(Exception):
