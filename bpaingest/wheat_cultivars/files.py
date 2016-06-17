@@ -1,9 +1,8 @@
 from collections import namedtuple
 
 from ..libs import bpa_id_utils
-from ..libs.excel_wrapper import ExcelWrapper
-from ..libs import ingest_utils
 from ..util import make_logger
+from .runs import BLANK_RUN
 
 logger = make_logger(__name__)
 
@@ -17,11 +16,6 @@ def parse_base_pair(val):
 
 def make_protocol(**kwargs):
     fields = ('library_type', 'base_pairs', 'library_construction_protocol', 'sequencer')
-    return dict((t, kwargs.get(t)) for t in fields)
-
-
-def make_run(**kwargs):
-    fields = ('number', 'casava_version', 'library_construction_protocol', 'library_range', 'sequencer')
     return dict((t, kwargs.get(t)) for t in fields)
 
 
@@ -42,7 +36,7 @@ def make_file_metadata(md5_lines, run_data):
             continue
 
         key = md5_line.bpa_id + md5_line.flowcell + md5_line.lib_type + md5_line.lib_size
-        run = run_data.get(key, make_run(number=-1, casava_version="-", library_construction_protocol="-", library_range="-", sequencer="-"))
+        run = run_data.get(key, BLANK_RUN)
         protocol = make_protocol(
             library_type=md5_line.lib_type,
             base_pairs=parse_base_pair(md5_line.lib_size),
@@ -170,79 +164,10 @@ def parse_md5_file(md5_file):
     return data
 
 
-def get_run_data(file_name):
-    """
-    The run metadata for this set
-    """
-
-    field_spec = [('bpa_id', 'Soil sample unique ID', lambda s: s.replace('/', '.')),
-                  ('variety', 'Variety', None),
-                  ('cultivar_code', 'Code', None),
-                  ('library', 'Library code', None),
-                  ('library_construction', 'Library Construction - average insert size', None),
-                  ('library_range', 'Range', None),
-                  ('library_construction_protocol', 'Library construction protocol', None),
-                  ('sequencer', 'Sequencer', None),
-                  ('run_number', 'Run number', ingest_utils.get_clean_number),
-                  ('flowcell', 'Flow Cell ID', None),
-                  ('index', 'Index', None),
-                  ('casava_version', 'CASAVA version', None),
-                  ]
-
-    wrapper = ExcelWrapper(
-        field_spec,
-        file_name,
-        sheet_name='Metadata',
-        header_length=1)
-    return wrapper.get_all()
-
-
-def get_run_lookup(path):
-    """
-    Run data is uniquely defined by
-    - bpa_id
-    - flowcell
-    - library type
-    - library size
-
-    Values recorded per key are:
-    - run_number
-    - CASAVA version
-    - library construction protocol
-    - sequencer
-    - range
-    """
-
-    def is_metadata(path):
-        if path.isfile() and path.ext == '.xlsx':
-            return True
-
-    logger.info('Ingesting Wheat Cultivars run metadata from {0}'.format(path))
-    run_data = {}
-
-    for metadata_file in path.walk(filter=is_metadata):
-        logger.info('Processing Wheat Cultivars {0}'.format(metadata_file))
-        run_data = list(get_run_data(metadata_file))
-
-    run_lookup = {}
-
-    for run in run_data:
-        key = run.bpa_id + run.flowcell + run.library + run.library_construction
-        run_lookup[key] = make_run(
-            number=run.run_number,
-            casava_version=run.casava_version,
-            library_construction_protocol=run.library_construction_protocol,
-            library_range=run.library_range,
-            sequencer=run.sequencer)
-    return run_lookup
-
-
-def parse_file_data(path):
+def parse_file_data(path, run_data):
     """
     Ingest the md5 files
     """
-
-    run_data = get_run_lookup(path)
 
     def is_md5file(path):
         if path.isfile() and path.ext == '.md5':

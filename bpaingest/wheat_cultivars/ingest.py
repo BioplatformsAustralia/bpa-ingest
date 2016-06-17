@@ -7,6 +7,7 @@ from ..ops import update_or_create
 from ..util import make_logger
 from .files import parse_file_data
 from .samples import parse_sample_data
+from .runs import parse_run_data
 
 logger = make_logger(__name__)
 
@@ -22,8 +23,8 @@ def make_group(ckan):
 def ingest(ckan, metadata_path):
     path = Path(metadata_path)
     make_group(ckan)
-
+    run_data = parse_run_data(path)
     samples = parse_sample_data(path)
-    files = parse_file_data(path)
+    files = parse_file_data(path, run_data)
     logger.info("{} samples, {} files".format(len(samples), len(files)))
     pprint(samples[0])

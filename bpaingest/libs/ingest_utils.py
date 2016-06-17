@@ -1,6 +1,5 @@
 import string
 import unittest
-import os
 import json
 
 from ..util import make_logger
@@ -20,7 +19,7 @@ def get_clean_number(val, default=None, debug=False):
     """
 
     if debug:
-        print val
+        logger.debug(val)
 
     if val in (None, ""):
         return default
