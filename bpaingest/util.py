@@ -1,6 +1,10 @@
 import logging
 
 
+def bpa_id_to_ckan_name(s):
+    return 'bpa-' + s.replace('/', '_').replace('.', '_')
+
+
 def make_registration_decorator():
     """
     returns a (decorator, list). any function decorated with
