@@ -1,27 +1,11 @@
-from __future__ import print_function
-
-from unipath import Path
 from collections import namedtuple
 
-from .ops import update_or_create
-from .util import make_logger
-from .libs import ingest_utils
-from .libs import bpa_id_utils
-from .libs.excel_wrapper import ExcelWrapper
-from .libs.fetch_data import Fetcher
+from ..libs import bpa_id_utils
+from ..libs.excel_wrapper import ExcelWrapper
+from ..libs import ingest_utils
+from ..util import make_logger
 
-# all metadata and checksums should be linked out here
-METADATA_URL = 'https://downloads-qcif.bioplatforms.com/bpa/wheat_cultivars/tracking/'
-
-logger = make_logger('wheatcultivars')
-
-
-def make_group(ckan):
-    return update_or_create(ckan, 'group', {
-        'name': 'wheat-cultivars',
-        'title': 'Wheat Cultivars',
-        'display_name': 'Wheat Cultivars'
-    })
+logger = make_logger(__name__)
 
 
 def parse_base_pair(val):
@@ -41,77 +25,44 @@ def make_run(**kwargs):
     return dict((t, kwargs.get(t)) for t in fields)
 
 
-def get_cultivar_sample_characteristics(file_name):
+def make_file_metadata(md5_lines, run_data):
     """
-    This is the data from the Characteristics Sheet
-    """
-
-    field_spec = [
-        ("source_name", "BPA ID", None),
-        ("code", "CODE", None),
-        ("bpa_id", "BPA ID", lambda s: s.replace("/", ".")),
-        ("characteristics", "Characteristics", None),
-        ("organism", "Organism", None),
-        ("variety", "Variety", None),
-        ("organism_part", "Organism part", None),
-        ("pedigree", "Pedigree", None),
-        ("dev_stage", "Developmental stage", None),
-        ("yield_properties", "Yield properties", None),
-        ("morphology", "Morphology", None),
-        ("maturity", "Maturity", None),
-        ("pathogen_tolerance", "Pathogen tolerance", None),
-        ("drought_tolerance", "Drought tolerance", None),
-        ("soil_tolerance", "Soil tolerance", None),
-        ("classification", "International classification", None),
-        ("url", "Link", None),
-    ]
-
-    wrapper = ExcelWrapper(
-        field_spec,
-        file_name,
-        sheet_name="Characteristics",
-        header_length=1)
-    return wrapper.get_all()
-
-
-def get_run_lookup(path):
-    """
-    Run data is uniquely defined by
-    - bpa_id
-    - flowcell
-    - library type
-    - library size
-
-    Values recorded per key are:
-    - run_number
-    - CASAVA version
-    - library construction protocol
-    - sequencer
-    - range
+    Add md5 data
     """
 
-    def is_metadata(path):
-        if path.isfile() and path.ext == '.xlsx':
-            return True
+    organism = {
+        'genus': 'Triticum',
+        'species': 'Aestivum'
+    }
 
-    logger.info('Ingesting Wheat Cultivars run metadata from {0}'.format(path))
-    run_data = {}
+    for md5_line in md5_lines:
+        bpa_idx = md5_line.bpa_id
+        bpa_id = bpa_id_utils.get_bpa_id(bpa_idx)
+        if bpa_id is None:
+            continue
 
-    for metadata_file in path.walk(filter=is_metadata):
-        logger.info('Processing Wheat Cultivars {0}'.format(metadata_file))
-        run_data = list(get_run_data(metadata_file))
-
-    run_lookup = {}
-
-    for run in run_data:
-        key = run.bpa_id + run.flowcell + run.library + run.library_construction
-        run_lookup[key] = make_run(
-            number=run.run_number,
-            casava_version=run.casava_version,
-            library_construction_protocol=run.library_construction_protocol,
-            library_range=run.library_range,
-            sequencer=run.sequencer)
-    return run_lookup
+        key = md5_line.bpa_id + md5_line.flowcell + md5_line.lib_type + md5_line.lib_size
+        run = run_data.get(key, make_run(number=-1, casava_version="-", library_construction_protocol="-", library_range="-", sequencer="-"))
+        protocol = make_protocol(
+            library_type=md5_line.lib_type,
+            base_pairs=parse_base_pair(md5_line.lib_size),
+            library_construction_protocol=run['library_construction_protocol'],
+            sequencer=run['sequencer'])
+        yield {
+            "sample": {
+                'bpa_id': bpa_id,
+                'organism': organism,
+            },
+            "protocol": protocol,
+            "flowcell": md5_line.flowcell,
+            "barcode": md5_line.barcode,
+            "read_number": md5_line.read,
+            "lane_number": md5_line.lane,
+            "run_number": run['number'],
+            "casava_version": run['casava_version'],
+            "md5": md5_line.md5,
+            "filename": md5_line.filename
+        }
 
 
 def parse_md5_file(md5_file):
@@ -219,48 +170,6 @@ def parse_md5_file(md5_file):
     return data
 
 
-def add_md5(md5_lines, run_data):
-    """
-    Add md5 data
-    """
-
-    organism = {
-        'genus': 'Triticum',
-        'species': 'Aestivum'
-    }
-
-    for md5_line in md5_lines:
-        bpa_idx = md5_line.bpa_id
-        bpa_id = bpa_id_utils.get_bpa_id(bpa_idx)
-        if bpa_id is None:
-            continue
-
-        key = md5_line.bpa_id + md5_line.flowcell + md5_line.lib_type + md5_line.lib_size
-        run = run_data.get(key, make_run(number=-1, casava_version="-", library_construction_protocol="-", library_range="-", sequencer="-"))
-        protocol = make_protocol(
-            library_type=md5_line.lib_type,
-            base_pairs=parse_base_pair(md5_line.lib_size),
-            library_construction_protocol=run['library_construction_protocol'],
-            sequencer=run['sequencer'])
-        file_info = {
-            "sample": {
-                'bpa_id': bpa_id,
-                'organism': organism,
-            },
-            "protocol": protocol,
-            "flowcell": md5_line.flowcell,
-            "barcode": md5_line.barcode,
-            "read_number": md5_line.read,
-            "lane_number": md5_line.lane,
-            "run_number": run['number'],
-            "casava_version": run['casava_version'],
-            "md5": md5_line.md5,
-            "filename": md5_line.filename
-        }
-        from pprint import pprint
-        pprint(file_info)
-
-
 def get_run_data(file_name):
     """
     The run metadata for this set
@@ -288,7 +197,47 @@ def get_run_data(file_name):
     return wrapper.get_all()
 
 
-def do_md5(path):
+def get_run_lookup(path):
+    """
+    Run data is uniquely defined by
+    - bpa_id
+    - flowcell
+    - library type
+    - library size
+
+    Values recorded per key are:
+    - run_number
+    - CASAVA version
+    - library construction protocol
+    - sequencer
+    - range
+    """
+
+    def is_metadata(path):
+        if path.isfile() and path.ext == '.xlsx':
+            return True
+
+    logger.info('Ingesting Wheat Cultivars run metadata from {0}'.format(path))
+    run_data = {}
+
+    for metadata_file in path.walk(filter=is_metadata):
+        logger.info('Processing Wheat Cultivars {0}'.format(metadata_file))
+        run_data = list(get_run_data(metadata_file))
+
+    run_lookup = {}
+
+    for run in run_data:
+        key = run.bpa_id + run.flowcell + run.library + run.library_construction
+        run_lookup[key] = make_run(
+            number=run.run_number,
+            casava_version=run.casava_version,
+            library_construction_protocol=run.library_construction_protocol,
+            library_range=run.library_range,
+            sequencer=run.sequencer)
+    return run_lookup
+
+
+def parse_file_data(path):
     """
     Ingest the md5 files
     """
@@ -300,35 +249,9 @@ def do_md5(path):
             return True
 
     logger.info('Ingesting Wheat Cultivar md5 file information from {0}'.format(path))
+    files = []
     for md5_file in path.walk(filter=is_md5file):
         logger.info('Processing Wheat Cultivar md5 file {0}'.format(md5_file))
         data = parse_md5_file(md5_file)
-        add_md5(data, run_data)
-
-
-def do_metadata(path):
-    def is_metadata(path):
-        if path.isfile() and path.ext == '.xlsx':
-            return True
-
-    logger.info('Ingesting Wheat Cultivars metadata from {0}'.format(path))
-    sample_info = []
-    for metadata_file in path.walk(filter=is_metadata):
-        logger.info('Processing Wheat Cultivars {0}'.format(metadata_file))
-        sample_info += list(get_cultivar_sample_characteristics(metadata_file))
-    sample_lookup = dict((t.bpa_id, t) for t in sample_info)
-    return sample_lookup
-
-
-def download(metadata_path, clean):
-    fetcher = Fetcher(metadata_path, METADATA_URL)
-    if clean:
-        fetcher.clean()
-    fetcher.fetch_metadata_from_folder()
-
-
-def ingest(ckan, metadata_path):
-    path = Path(metadata_path)
-    group = make_group(ckan)
-    sample_lookup = do_metadata(path)
-    do_md5(path)
+        files += list(make_file_metadata(data, run_data))
+    return files

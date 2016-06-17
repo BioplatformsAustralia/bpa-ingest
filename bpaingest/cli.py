@@ -5,8 +5,8 @@ import ckanapi
 import sys
 from .util import make_registration_decorator
 from .bpa import create_bpa
-from .wheatcultivars import ingest as ingest_wheatcultivars
-from .wheatcultivars import download as download_wheatcultivars
+from .wheat_cultivars.ingest import ingest as ingest_wheatcultivars
+from .wheat_cultivars.download import download as download_wheatcultivars
 
 register_command, command_fns = make_registration_decorator()
 
