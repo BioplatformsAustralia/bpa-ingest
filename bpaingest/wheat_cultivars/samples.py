@@ -43,8 +43,9 @@ def parse_sample_data(path):
             return True
 
     logger.info('Ingesting Wheat Cultivars metadata from {0}'.format(path))
-    samples = []
+    samples = {}
     for metadata_file in path.walk(filter=is_metadata):
         logger.info('Processing Wheat Cultivars {0}'.format(metadata_file))
-        samples += list(get_cultivar_sample_characteristics(metadata_file))
+        for sample in get_cultivar_sample_characteristics(metadata_file):
+            samples[sample.bpa_id] = sample
     return samples

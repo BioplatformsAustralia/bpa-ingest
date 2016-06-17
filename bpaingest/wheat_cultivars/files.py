@@ -19,43 +19,28 @@ def make_protocol(**kwargs):
     return dict((t, kwargs.get(t)) for t in fields)
 
 
-def make_file_metadata(md5_lines, run_data):
+def make_file_metadata(md5_lines):
     """
     Add md5 data
     """
-
-    organism = {
-        'genus': 'Triticum',
-        'species': 'Aestivum'
-    }
-
     for md5_line in md5_lines:
         bpa_idx = md5_line.bpa_id
         bpa_id = bpa_id_utils.get_bpa_id(bpa_idx)
         if bpa_id is None:
             continue
 
-        key = md5_line.bpa_id + md5_line.flowcell + md5_line.lib_type + md5_line.lib_size
-        run = run_data.get(key, BLANK_RUN)
-        protocol = make_protocol(
-            library_type=md5_line.lib_type,
-            base_pairs=parse_base_pair(md5_line.lib_size),
-            library_construction_protocol=run['library_construction_protocol'],
-            sequencer=run['sequencer'])
+        run_key = md5_line.bpa_id + md5_line.flowcell + md5_line.lib_type + md5_line.lib_size
         yield {
-            "sample": {
-                'bpa_id': bpa_id,
-                'organism': organism,
-            },
-            "protocol": protocol,
-            "flowcell": md5_line.flowcell,
-            "barcode": md5_line.barcode,
-            "read_number": md5_line.read,
-            "lane_number": md5_line.lane,
-            "run_number": run['number'],
-            "casava_version": run['casava_version'],
-            "md5": md5_line.md5,
-            "filename": md5_line.filename
+            'run': run_key,
+            'bpa_id': bpa_id,
+            'library_type': md5_line.lib_type,
+            'base_pairs': parse_base_pair(md5_line.lib_size),
+            'flowcell': md5_line.flowcell,
+            'barcode': md5_line.barcode,
+            'read_number': md5_line.read,
+            'lane_number': md5_line.lane,
+            'md5': md5_line.md5,
+            'filename': md5_line.filename
         }
 
 
@@ -164,7 +149,7 @@ def parse_md5_file(md5_file):
     return data
 
 
-def parse_file_data(path, run_data):
+def parse_file_data(path):
     """
     Ingest the md5 files
     """
@@ -178,5 +163,5 @@ def parse_file_data(path, run_data):
     for md5_file in path.walk(filter=is_md5file):
         logger.info('Processing Wheat Cultivar md5 file {0}'.format(md5_file))
         data = parse_md5_file(md5_file)
-        files += list(make_file_metadata(data, run_data))
+        files += list(make_file_metadata(data))
     return files
