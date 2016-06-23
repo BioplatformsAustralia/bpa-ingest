@@ -4,7 +4,7 @@ import ckanapi
 from unipath import Path
 
 from ..ops import make_group, ckan_method, patch_if_required
-from ..util import make_logger, bpa_id_to_ckan_name
+from ..util import make_logger, bpa_id_to_ckan_name, prune_dict
 from ..bpa import bpa_mirror_url, get_bpa
 from .files import parse_file_data
 from .samples import parse_sample_data
@@ -27,14 +27,23 @@ def sync_package(ckan, obj):
     return ckan_obj
 
 
-def sync_samples(ckan, samples):
+def sync_samples(ckan, group_obj, samples):
     bpa_org = get_bpa(ckan)
     packages = []
+    api_group_obj = prune_dict(
+        group_obj, (
+            'display_name',
+            'description',
+            'title',
+            'image_display_url',
+            'id',
+            'name'))
     for bpa_id, data in samples.items():
         name = bpa_id_to_ckan_name(bpa_id)
         obj = {
             'owner_org': bpa_org['id'],
             'name': name,
+            'groups': [api_group_obj],
             'id': bpa_id,
             'title': bpa_id,
             'type': 'wheat-cultivars',
@@ -114,10 +123,10 @@ def sync_files(ckan, packages, files, runs):
                 logger.info('patched resource: %s' % (obj_id))
 
 
-def ckan_sync_data(ckan, organism, samples, runs, files):
+def ckan_sync_data(ckan, organism, group_obj, samples, runs, files):
     logger.info("syncing {} samples, {} runs, {} files".format(len(samples), len(runs), len(files)))
     # create the samples, if necessary, and sync them
-    packages = sync_samples(ckan, samples)
+    packages = sync_samples(ckan, group_obj, samples)
     sync_files(ckan, packages, files, runs)
 
 
@@ -126,7 +135,8 @@ def ingest(ckan, metadata_path):
     group_obj = make_group(ckan, {
         'name': 'wheat-cultivars',
         'title': 'Wheat Cultivars',
-        'display_name': 'Wheat Cultivars'
+        'display_name': 'Wheat Cultivars',
+        'image_url': 'https://downloads.bioplatforms.com/static/wheat_cultivars/wheat.png',
     })
     organism = {
         'genus': 'Triticum',
@@ -135,4 +145,4 @@ def ingest(ckan, metadata_path):
     runs = parse_run_data(path)
     samples = parse_sample_data(path)
     files = parse_file_data(path)
-    ckan_sync_data(ckan, organism, samples, runs, files)
+    ckan_sync_data(ckan, organism, group_obj, samples, runs, files)

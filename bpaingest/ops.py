@@ -5,29 +5,12 @@ from .util import make_logger
 logger = make_logger(__name__)
 
 
-def ckan_method(ckan, object_type, method, retry_count=0):
+def ckan_method(ckan, object_type, method):
     """
     returns a CKAN method from the upstream API, with an
     intermediate function which retries on 500 errors
     """
-    fn = getattr(ckan.action, object_type + '_' + method)
-
-    def _ckan_method_apply_with_retry(*args, **kwargs):
-        tries = retry_count + 1
-        while tries > 0:
-            try:
-                tries -= 1
-                return fn(*args, **kwargs)
-            except ckanapi.errors.CKANAPIError as e:
-                if tries == 0:
-                    raise
-                print(type(e))
-                print(repr(e))
-                url, status, response = e
-                logger.error('CKAN API error %s: %s (status %s)" % (status, url, response)')
-                if status == 500:
-                    continue
-    return _ckan_method_apply_with_retry
+    return getattr(ckan.action, object_type + '_' + method)
 
 
 def patch_if_required(ckan, object_type, ckan_object, patch_object):

@@ -5,6 +5,10 @@ def bpa_id_to_ckan_name(s):
     return 'bpa-' + s.replace('/', '_').replace('.', '_')
 
 
+def prune_dict(d, keys):
+    return dict((k, v) for (k, v) in d.items() if k in keys)
+
+
 def make_registration_decorator():
     """
     returns a (decorator, list). any function decorated with
