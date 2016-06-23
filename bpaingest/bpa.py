@@ -1,6 +1,17 @@
-from .ops import update_or_create
+from urlparse import urljoin
+
+from .ops import make_organization, ckan_method
 
 BPA_ID = 'bioplatforms-australia'
+MIRROR_BASE = 'https://downloads-qcif.bioplatforms.com/'
+
+
+def bpa_mirror_url(path):
+    return urljoin(MIRROR_BASE, path)
+
+
+def get_bpa(ckan):
+    return ckan_method(ckan, 'organization', 'show')(id=BPA_ID)
 
 
 def create_bpa(ckan):
@@ -17,4 +28,4 @@ def create_bpa(ckan):
         u'type': u'organization',
         u'description': u'Bioplatforms Australia enables innovation and collaboration through investments in world class infrastructure and expertise.'
     }
-    update_or_create(ckan, "organization", bpa)
+    make_organization(ckan, bpa)

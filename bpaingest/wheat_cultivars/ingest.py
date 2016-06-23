@@ -2,42 +2,38 @@ from __future__ import print_function
 
 import ckanapi
 from unipath import Path
-from pprint import pprint
 
-from ..ops import update_or_create
+from ..ops import make_group, ckan_method, patch_if_required
 from ..util import make_logger, bpa_id_to_ckan_name
-from ..bpa import BPA_ID
+from ..bpa import bpa_mirror_url, get_bpa
 from .files import parse_file_data
 from .samples import parse_sample_data
-from .runs import parse_run_data
+from .runs import parse_run_data, BLANK_RUN
 
 logger = make_logger(__name__)
 
 
-def make_group(ckan):
-    return update_or_create(ckan, 'group', {
-        'name': 'wheat-cultivars',
-        'title': 'Wheat Cultivars',
-        'display_name': 'Wheat Cultivars'
-    })
-
-
 def sync_package(ckan, obj):
-    print(obj)
     try:
-        ckan_obj = ckan.action.package_show(id=obj['name'])
+        ckan_obj = ckan_method(ckan, 'package', 'show')(id=obj['name'])
     except ckanapi.errors.NotFound:
-        ckan_obj = ckan.action.package_create(type=obj['type'], id=obj['id'], name=obj['name'], owner_org=obj['owner_org'])
-    print(ckan_obj)
-    updated_obj = ckan.action.package_patch(**obj)
-    pprint(updated_obj)
+        ckan_obj = ckan_method(ckan, 'package', 'create')(type=obj['type'], id=obj['id'], name=obj['name'], owner_org=obj['owner_org'])
+        logger.info('created package object: %s' % (obj['id']))
+    patch_obj = obj.copy()
+    patch_obj['id'] = ckan_obj['id']
+    was_patched, ckan_obj = patch_if_required(ckan, 'package', ckan_obj, patch_obj)
+    if was_patched:
+        logger.info('patched package object: %s' % (obj['id']))
+    return ckan_obj
 
 
 def sync_samples(ckan, samples):
+    bpa_org = get_bpa(ckan)
+    packages = []
     for bpa_id, data in samples.items():
         name = bpa_id_to_ckan_name(bpa_id)
         obj = {
-            'owner_org': BPA_ID,
+            'owner_org': bpa_org['id'],
             'name': name,
             'id': bpa_id,
             'title': bpa_id,
@@ -45,24 +41,93 @@ def sync_samples(ckan, samples):
         }
         for field in ('source_name', 'code', 'characteristics', 'organism', 'variety', 'organism_part', 'pedigree', 'dev_stage', 'yield_properties', 'morphology', 'maturity', 'pathogen_tolerance', 'drought_tolerance', 'soil_tolerance', 'url'):
             obj[field] = getattr(data, field)
-        sync_package(ckan, obj)
+        packages.append(sync_package(ckan, obj))
+    return packages
+
+
+def ckan_resource_from_file(package_obj, file_obj, run_obj):
+    ckan_obj = {
+        'id': file_obj['md5'],
+        'package_id': package_obj['id'],
+        'url': bpa_mirror_url('wheat_cultivars/all/' + file_obj['filename']),
+        'casava_version': run_obj['casava_version'],
+        'library_construction_protocol': run_obj['library_construction_protocol'],
+        'library_range': run_obj['library_range'],
+        'run_number': run_obj['number'],
+        'sequencer': run_obj['sequencer'],
+        'barcode': file_obj['barcode'],
+        'base_pairs': file_obj['base_pairs'],
+        'name': file_obj['filename'],  # FIXME
+        'filename': file_obj['filename'],
+        'flowcell': file_obj['flowcell'],
+        'lane_number': file_obj['lane_number'],
+        'library_type': file_obj['library_type'],
+        'md5': file_obj['md5'],
+        'read_number': file_obj['read_number'],
+    }
+    return ckan_obj
+
+
+def sync_files(ckan, packages, files, runs):
+    # for each package, find the files which should attach to it, and
+    # then sync up
+    file_idx = {}
+    for obj in files:
+        bpa_id = obj['bpa_id']
+        if bpa_id not in file_idx:
+            file_idx[bpa_id] = []
+        file_idx[bpa_id].append(obj)
+
+    for package in packages:
+        files = file_idx[package['id']]
+        # grab a copy of the package with all current resources
+        package_obj = ckan_method(ckan, 'package', 'show')(id=package['id'])
+        current_resources = package_obj['resources']
+        existing_files = dict((t['id'], t) for t in current_resources)
+        needed_files = dict((t['md5'], t) for t in files)
+        to_create = set(needed_files) - set(existing_files)
+        to_delete = set(existing_files) - set(needed_files)
+
+        for obj_id in to_create:
+            file_obj = needed_files[obj_id]
+            run_obj = runs.get(file_obj['run'], BLANK_RUN)
+            ckan_obj = ckan_resource_from_file(package_obj, file_obj, run_obj)
+            ckan_method(ckan, 'resource', 'create')(**ckan_obj)
+            logger.info('created resource: %s' % (obj_id))
+
+        for obj_id in to_delete:
+            ckan_method(ckan, 'resource', 'delete')(id=obj_id)
+            logger.info('deleted resource: %s' % (obj_id))
+
+        # patch all the resources, to ensure everything is synced on
+        # existing resources
+        package_obj = ckan_method(ckan, 'package', 'show')(id=package['id'])
+        current_resources = package_obj['resources']
+        for current_ckan_obj in current_resources:
+            obj_id = current_ckan_obj['id']
+            file_obj = needed_files[obj_id]
+            run_obj = runs.get(file_obj['run'], BLANK_RUN)
+            ckan_obj = ckan_resource_from_file(package_obj, file_obj, run_obj)
+            ckan_update = ckan_resource_from_file(package_obj, file_obj, run_obj)
+            was_patched, ckan_obj = patch_if_required(ckan, 'resource', ckan_obj, ckan_update)
+            if was_patched:
+                logger.info('patched resource: %s' % (obj_id))
 
 
 def ckan_sync_data(ckan, organism, samples, runs, files):
     logger.info("syncing {} samples, {} runs, {} files".format(len(samples), len(runs), len(files)))
     # create the samples, if necessary, and sync them
-    sync_samples(ckan, samples)
-    print("example sample")
-    pprint(samples[samples.keys()[0]])
-    print("example run")
-    pprint(runs[runs.keys()[0]])
-    print("example file")
-    pprint(files[0])
+    packages = sync_samples(ckan, samples)
+    sync_files(ckan, packages, files, runs)
 
 
 def ingest(ckan, metadata_path):
     path = Path(metadata_path)
-    make_group(ckan)
+    group_obj = make_group(ckan, {
+        'name': 'wheat-cultivars',
+        'title': 'Wheat Cultivars',
+        'display_name': 'Wheat Cultivars'
+    })
     organism = {
         'genus': 'Triticum',
         'species': 'Aestivum'
