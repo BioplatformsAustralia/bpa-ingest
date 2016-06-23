@@ -45,10 +45,12 @@ def sync_samples(ckan, group_obj, samples):
             'name': name,
             'groups': [api_group_obj],
             'id': bpa_id,
+            'bpa_id': bpa_id,
             'title': bpa_id,
+            'notes': '%s (%s): %s' % (data.variety, data.code, data.classification),
             'type': 'wheat-cultivars',
         }
-        for field in ('source_name', 'code', 'characteristics', 'organism', 'variety', 'organism_part', 'pedigree', 'dev_stage', 'yield_properties', 'morphology', 'maturity', 'pathogen_tolerance', 'drought_tolerance', 'soil_tolerance', 'url'):
+        for field in ('source_name', 'code', 'characteristics', 'classification', 'organism', 'variety', 'organism_part', 'pedigree', 'dev_stage', 'yield_properties', 'morphology', 'maturity', 'pathogen_tolerance', 'drought_tolerance', 'soil_tolerance', 'url'):
             obj[field] = getattr(data, field)
         packages.append(sync_package(ckan, obj))
     return packages
