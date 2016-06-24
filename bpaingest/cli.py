@@ -37,7 +37,7 @@ def make_ckan_api(args):
 
 def version():
     import pkg_resources
-    version = pkg_resources.require("wrfy")[0].version
+    version = pkg_resources.require("bpaingest")[0].version
     print('''\
 bpa-ingest, version %s
 
