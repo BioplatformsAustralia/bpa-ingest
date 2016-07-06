@@ -3,10 +3,13 @@ from __future__ import print_function
 import argparse
 import ckanapi
 import sys
+
 from .util import make_registration_decorator
 from .bpa import create_bpa
 from .wheat_cultivars.ingest import ingest as ingest_wheatcultivars
 from .wheat_cultivars.download import download as download_wheatcultivars
+from .wheat_pathogens.ingest import ingest as ingest_wheat_pathogens
+from .wheat_pathogens.download import download as download_wheat_pathogens
 
 register_command, command_fns = make_registration_decorator()
 
@@ -22,6 +25,13 @@ def wheat_cultivars(ckan, args):
     "download and ingest wheat7a metadata"
     download_wheatcultivars(args.path, args.clean)
     ingest_wheatcultivars(ckan, args.path)
+
+
+@register_command
+def wheat_pathogens(ckan, args):
+    "download and ingest wheat pathogen genome metadata"
+    download_wheat_pathogens(args.path, args.clean)
+    ingest_wheat_pathogens(ckan, args.path)
 
 
 def setup_metadata_path(subparser):
