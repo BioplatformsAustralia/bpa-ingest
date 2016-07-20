@@ -119,8 +119,7 @@ def sync_files(ckan, packages, files, runs):
             file_obj = needed_files[obj_id]
             run_obj = runs.get(file_obj['run'], BLANK_RUN)
             ckan_obj = ckan_resource_from_file(package_obj, file_obj, run_obj)
-            ckan_update = ckan_resource_from_file(package_obj, file_obj, run_obj)
-            was_patched, ckan_obj = patch_if_required(ckan, 'resource', ckan_obj, ckan_update)
+            was_patched, ckan_obj = patch_if_required(ckan, 'resource', current_ckan_obj, ckan_obj)
             if was_patched:
                 logger.info('patched resource: %s' % (obj_id))
 

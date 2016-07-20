@@ -18,7 +18,8 @@ def patch_if_required(ckan, object_type, ckan_object, patch_object):
     differences = []
     for (k, v) in patch_object.items():
         v2 = ckan_object.get(k)
-        if v != v2:
+        # co-erce to string to cope with numeric types in the JSON data
+        if str(v) != str(v2):
             differences.append((k, v, v2))
     for k, v, v2 in differences:
         logger.debug("%s/%s: difference on k `%s', v `%s' v2 `%s'" % (

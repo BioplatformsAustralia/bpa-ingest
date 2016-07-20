@@ -7,6 +7,8 @@ from ..ops import make_group, ckan_method, patch_if_required
 from ..util import make_logger, bpa_id_to_ckan_name, prune_dict
 from ..bpa import bpa_mirror_url, get_bpa
 from .metadata import parse_metadata
+from .samples import samples_from_metadata
+from .files import files_from_metadata
 
 
 logger = make_logger(__name__)
@@ -39,46 +41,34 @@ def sync_samples(ckan, group_obj, samples):
             'name'))
     for bpa_id, data in samples.items():
         name = bpa_id_to_ckan_name(bpa_id)
-        obj = {
+        obj = data.copy()
+        obj.update({
             'owner_org': bpa_org['id'],
             'name': name,
             'groups': [api_group_obj],
             'id': bpa_id,
             'bpa_id': bpa_id,
             'title': bpa_id,
-            'notes': '%s (%s): %s' % (data.variety, data.code, data.classification),
+            'notes': '%s' % (data['official_variety_name']),
             'type': 'wheat-pathogens',
-        }
-        for field in ('source_name', 'code', 'characteristics', 'classification', 'organism', 'variety', 'organism_part', 'pedigree', 'dev_stage', 'yield_properties', 'morphology', 'maturity', 'pathogen_tolerance', 'drought_tolerance', 'soil_tolerance', 'url'):
-            obj[field] = getattr(data, field)
+        })
+        from pprint import pprint
+        pprint(obj)
         packages.append(sync_package(ckan, obj))
     return packages
 
 
-def ckan_resource_from_file(package_obj, file_obj, run_obj):
+def ckan_resource_from_file(package_obj, file_obj):
+    ckan_obj = file_obj.copy()
     ckan_obj = {
         'id': file_obj['md5'],
         'package_id': package_obj['id'],
         'url': bpa_mirror_url('wheat_pathogens/all/' + file_obj['filename']),
-        'casava_version': run_obj['casava_version'],
-        'library_construction_protocol': run_obj['library_construction_protocol'],
-        'library_range': run_obj['library_range'],
-        'run_number': run_obj['number'],
-        'sequencer': run_obj['sequencer'],
-        'barcode': file_obj['barcode'],
-        'base_pairs': file_obj['base_pairs'],
-        'name': file_obj['filename'],  # FIXME
-        'filename': file_obj['filename'],
-        'flowcell': file_obj['flowcell'],
-        'lane_number': file_obj['lane_number'],
-        'library_type': file_obj['library_type'],
-        'md5': file_obj['md5'],
-        'read_number': file_obj['read_number'],
     }
     return ckan_obj
 
 
-def sync_files(ckan, packages, files, runs):
+def sync_files(ckan, packages, files):
     # for each package, find the files which should attach to it, and
     # then sync up
     file_idx = {}
@@ -89,7 +79,7 @@ def sync_files(ckan, packages, files, runs):
         file_idx[bpa_id].append(obj)
 
     for package in packages:
-        files = file_idx[package['id']]
+        files = file_idx.get(package['id'], [])
         # grab a copy of the package with all current resources
         package_obj = ckan_method(ckan, 'package', 'show')(id=package['id'])
         current_resources = package_obj['resources']
@@ -100,8 +90,7 @@ def sync_files(ckan, packages, files, runs):
 
         for obj_id in to_create:
             file_obj = needed_files[obj_id]
-            run_obj = {}  # runs.get(file_obj['run'], BLANK_RUN) # FIXME
-            ckan_obj = ckan_resource_from_file(package_obj, file_obj, run_obj)
+            ckan_obj = ckan_resource_from_file(package_obj, file_obj)
             ckan_method(ckan, 'resource', 'create')(**ckan_obj)
             logger.info('created resource: %s' % (obj_id))
 
@@ -116,31 +105,18 @@ def sync_files(ckan, packages, files, runs):
         for current_ckan_obj in current_resources:
             obj_id = current_ckan_obj['id']
             file_obj = needed_files[obj_id]
-            run_obj = {}  # runs.get(file_obj['run'], BLANK_RUN) # FIXME
-            ckan_obj = ckan_resource_from_file(package_obj, file_obj, run_obj)
-            ckan_update = ckan_resource_from_file(package_obj, file_obj, run_obj)
+            ckan_obj = ckan_resource_from_file(package_obj, file_obj)
+            ckan_update = ckan_resource_from_file(package_obj, file_obj)
             was_patched, ckan_obj = patch_if_required(ckan, 'resource', ckan_obj, ckan_update)
             if was_patched:
                 logger.info('patched resource: %s' % (obj_id))
 
 
-def ckan_sync_data(ckan, organism, group_obj, samples, runs, files):
-    logger.info("syncing {} samples, {} runs, {} files".format(len(samples), len(runs), len(files)))
+def ckan_sync_data(ckan, organism, group_obj, samples, files):
+    logger.info("syncing {} samples, {} files".format(len(samples), len(files)))
     # create the samples, if necessary, and sync them
     packages = sync_samples(ckan, group_obj, samples)
-    sync_files(ckan, packages, files, runs)
-
-
-def runs_from_metadata(metadata):
-    return []
-
-
-def samples_from_metadata(metadata):
-    return {}
-
-
-def files_from_metadata(metadata):
-    return []
+    sync_files(ckan, packages, files)
 
 
 def ingest(ckan, metadata_path):
@@ -157,6 +133,5 @@ def ingest(ckan, metadata_path):
     }
     metadata = parse_metadata(path)
     samples = samples_from_metadata(metadata)
-    runs = runs_from_metadata(metadata)
     files = files_from_metadata(metadata)
-    ckan_sync_data(ckan, organism, group_obj, samples, runs, files)
+    ckan_sync_data(ckan, organism, group_obj, samples, files)
