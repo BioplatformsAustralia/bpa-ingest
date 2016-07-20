@@ -6,9 +6,8 @@ from unipath import Path
 from ..ops import make_group, ckan_method, patch_if_required
 from ..util import make_logger, bpa_id_to_ckan_name, prune_dict
 from ..bpa import bpa_mirror_url, get_bpa
-from .files import parse_file_data
-from .samples import parse_sample_data
-from .runs import parse_run_data, BLANK_RUN
+from .metadata import parse_metadata
+
 
 logger = make_logger(__name__)
 
@@ -48,7 +47,7 @@ def sync_samples(ckan, group_obj, samples):
             'bpa_id': bpa_id,
             'title': bpa_id,
             'notes': '%s (%s): %s' % (data.variety, data.code, data.classification),
-            'type': 'wheat-cultivars',
+            'type': 'wheat-pathogens',
         }
         for field in ('source_name', 'code', 'characteristics', 'classification', 'organism', 'variety', 'organism_part', 'pedigree', 'dev_stage', 'yield_properties', 'morphology', 'maturity', 'pathogen_tolerance', 'drought_tolerance', 'soil_tolerance', 'url'):
             obj[field] = getattr(data, field)
@@ -60,7 +59,7 @@ def ckan_resource_from_file(package_obj, file_obj, run_obj):
     ckan_obj = {
         'id': file_obj['md5'],
         'package_id': package_obj['id'],
-        'url': bpa_mirror_url('wheat_cultivars/all/' + file_obj['filename']),
+        'url': bpa_mirror_url('wheat_pathogens/all/' + file_obj['filename']),
         'casava_version': run_obj['casava_version'],
         'library_construction_protocol': run_obj['library_construction_protocol'],
         'library_range': run_obj['library_range'],
@@ -101,7 +100,7 @@ def sync_files(ckan, packages, files, runs):
 
         for obj_id in to_create:
             file_obj = needed_files[obj_id]
-            run_obj = runs.get(file_obj['run'], BLANK_RUN)
+            run_obj = {}  # runs.get(file_obj['run'], BLANK_RUN) # FIXME
             ckan_obj = ckan_resource_from_file(package_obj, file_obj, run_obj)
             ckan_method(ckan, 'resource', 'create')(**ckan_obj)
             logger.info('created resource: %s' % (obj_id))
@@ -117,7 +116,7 @@ def sync_files(ckan, packages, files, runs):
         for current_ckan_obj in current_resources:
             obj_id = current_ckan_obj['id']
             file_obj = needed_files[obj_id]
-            run_obj = runs.get(file_obj['run'], BLANK_RUN)
+            run_obj = {}  # runs.get(file_obj['run'], BLANK_RUN) # FIXME
             ckan_obj = ckan_resource_from_file(package_obj, file_obj, run_obj)
             ckan_update = ckan_resource_from_file(package_obj, file_obj, run_obj)
             was_patched, ckan_obj = patch_if_required(ckan, 'resource', ckan_obj, ckan_update)
@@ -132,19 +131,32 @@ def ckan_sync_data(ckan, organism, group_obj, samples, runs, files):
     sync_files(ckan, packages, files, runs)
 
 
+def runs_from_metadata(metadata):
+    return []
+
+
+def samples_from_metadata(metadata):
+    return {}
+
+
+def files_from_metadata(metadata):
+    return []
+
+
 def ingest(ckan, metadata_path):
     path = Path(metadata_path)
     group_obj = make_group(ckan, {
-        'name': 'wheat-cultivars',
-        'title': 'Wheat Cultivars',
-        'display_name': 'Wheat Cultivars',
-        'image_url': 'https://downloads.bioplatforms.com/static/wheat_cultivars/wheat.png',
+        'name': 'wheat-pathogens',
+        'title': 'Wheat Pathogens',
+        'display_name': 'Wheat Pathogens',
+        'image_url': 'https://downloads.bioplatforms.com/static/wheat_pathogens_transcript/fusarium_head_blight_infected_ear.png',
     })
     organism = {
         'genus': 'Triticum',
         'species': 'Aestivum'
     }
-    runs = parse_run_data(path)
-    samples = parse_sample_data(path)
-    files = parse_file_data(path)
+    metadata = parse_metadata(path)
+    samples = samples_from_metadata(metadata)
+    runs = runs_from_metadata(metadata)
+    files = files_from_metadata(metadata)
     ckan_sync_data(ckan, organism, group_obj, samples, runs, files)

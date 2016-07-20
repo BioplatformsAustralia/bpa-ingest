@@ -30,7 +30,7 @@ class ColumnNotFoundException(Exception):
         self.column_name = column_name
 
     def __str__(self):
-        return 'Column [{0}] not found'.format(self.column_name)
+        return 'column `{0}\' not found'.format(self.column_name)
 
 
 def _stringify(s):
@@ -106,10 +106,11 @@ class ExcelWrapper(object):
         def find_column(column_name, complain=True):
             col_index = -1
             try:
-                col_index = self.sheet.row_values(self.column_name_row_index).index(column_name)
+                header = self.sheet.row_values(self.column_name_row_index)
+                col_index = header.index(column_name)
             except ValueError:
                 if complain:
-                    logger.error('column name {0} not found'.format(column_name))
+                    logger.error('column `{0}\' not found'.format(column_name))
             return col_index
 
         cmap = {}
@@ -134,7 +135,7 @@ class ExcelWrapper(object):
                 # futile quest, the have won, I give up. If a column is not
                 # found, throw your arms in the air and continue, hope that
                 # something later on does not break.
-                logger.warning("Column {} not found in {} ".format(column_name, self.file_name))
+                logger.warning("column `{}' not found in `{}' ".format(column_name, self.file_name))
                 cmap[attribute] = None
 
         return cmap
