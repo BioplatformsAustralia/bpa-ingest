@@ -8,7 +8,6 @@ logger = make_logger(__name__)
 
 def run_from_row(e):
     obj = {
-        'bpa_id': ingest_utils.get_clean_number(e.bpa_id),
         'flowcell': e.flow_cell_id,
         'run_number': ingest_utils.get_clean_number(e.run_number),
         'sequencer': e.sequencer or "Unknown",
@@ -18,7 +17,7 @@ def run_from_row(e):
         'run_protocol_base_pairs': ingest_utils.get_clean_number(e.library_construction),
         'run_protocol_library_type': e.library,
     }
-    return obj
+    return e.bpa_id, obj
 
 
 def file_from_row(e):
@@ -27,7 +26,6 @@ def file_from_row(e):
         head, tail = os.path.split(_fname.strip())
         return tail
     obj = {
-        'bpa_id': e.bpa_id,
         'index_number': ingest_utils.get_clean_number(e.index_number),
         'lane_number': ingest_utils.get_clean_number(e.lane_number),
         'filename': get_file_name(e.sequence_filename),
@@ -41,5 +39,7 @@ def file_from_row(e):
 def files_from_metadata(metadata):
     files = []
     for row in metadata:
-        files.append(file_from_row(row))
+        bpa_id, obj = run_from_row(row)
+        obj.update(file_from_row(row))
+        files.append((bpa_id, obj))
     return files

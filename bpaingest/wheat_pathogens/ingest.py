@@ -52,8 +52,6 @@ def sync_samples(ckan, group_obj, samples):
             'notes': '%s' % (data['official_variety_name']),
             'type': 'wheat-pathogens',
         })
-        from pprint import pprint
-        pprint(obj)
         packages.append(sync_package(ckan, obj))
     return packages
 
@@ -72,8 +70,7 @@ def sync_files(ckan, packages, files):
     # for each package, find the files which should attach to it, and
     # then sync up
     file_idx = {}
-    for obj in files:
-        bpa_id = obj['bpa_id']
+    for bpa_id, obj in files:
         if bpa_id not in file_idx:
             file_idx[bpa_id] = []
         file_idx[bpa_id].append(obj)
@@ -134,4 +131,5 @@ def ingest(ckan, metadata_path):
     metadata = parse_metadata(path)
     samples = samples_from_metadata(metadata)
     files = files_from_metadata(metadata)
+    print(len(files))
     ckan_sync_data(ckan, organism, group_obj, samples, files)
