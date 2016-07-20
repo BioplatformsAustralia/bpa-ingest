@@ -58,11 +58,11 @@ def sync_samples(ckan, group_obj, samples):
 
 def ckan_resource_from_file(package_obj, file_obj):
     ckan_obj = file_obj.copy()
-    ckan_obj = {
+    ckan_obj.update({
         'id': file_obj['md5'],
         'package_id': package_obj['id'],
         'url': bpa_mirror_url('wheat_pathogens/all/' + file_obj['filename']),
-    }
+    })
     return ckan_obj
 
 
@@ -103,8 +103,7 @@ def sync_files(ckan, packages, files):
             obj_id = current_ckan_obj['id']
             file_obj = needed_files[obj_id]
             ckan_obj = ckan_resource_from_file(package_obj, file_obj)
-            ckan_update = ckan_resource_from_file(package_obj, file_obj)
-            was_patched, ckan_obj = patch_if_required(ckan, 'resource', ckan_obj, ckan_update)
+            was_patched, ckan_obj = patch_if_required(ckan, 'resource', current_ckan_obj, ckan_obj)
             if was_patched:
                 logger.info('patched resource: %s' % (obj_id))
 

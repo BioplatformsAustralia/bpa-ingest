@@ -29,6 +29,7 @@ def file_from_row(e):
         'index_number': ingest_utils.get_clean_number(e.index_number),
         'lane_number': ingest_utils.get_clean_number(e.lane_number),
         'filename': get_file_name(e.sequence_filename),
+        'name': get_file_name(e.sequence_filename),
         'md5': e.md5_checksum,
         'file_size': e.file_size,
         'note': ingest_utils.pretty_print_namedtuple(e),
