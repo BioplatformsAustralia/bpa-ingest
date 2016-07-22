@@ -3,7 +3,7 @@ from __future__ import print_function
 import ckanapi
 from unipath import Path
 
-from ..ops import make_group, ckan_method, patch_if_required
+from ..ops import make_group, ckan_method, patch_if_required, create_resource
 from ..util import make_logger, bpa_id_to_ckan_name, prune_dict
 from ..bpa import bpa_mirror_url, get_bpa
 from .metadata import parse_metadata
@@ -66,7 +66,7 @@ def ckan_resource_from_file(package_obj, file_obj):
     return ckan_obj
 
 
-def sync_files(ckan, packages, files):
+def sync_files(ckan, packages, files, do_upload):
     # for each package, find the files which should attach to it, and
     # then sync up
     file_idx = {}
@@ -88,7 +88,7 @@ def sync_files(ckan, packages, files):
         for obj_id in to_create:
             file_obj = needed_files[obj_id]
             ckan_obj = ckan_resource_from_file(package_obj, file_obj)
-            ckan_method(ckan, 'resource', 'create')(**ckan_obj)
+            create_resource(ckan, ckan_obj, do_upload)
             logger.info('created resource: %s' % (obj_id))
 
         for obj_id in to_delete:
@@ -108,14 +108,14 @@ def sync_files(ckan, packages, files):
                 logger.info('patched resource: %s' % (obj_id))
 
 
-def ckan_sync_data(ckan, organism, group_obj, samples, files):
+def ckan_sync_data(ckan, organism, group_obj, samples, files, do_upload):
     logger.info("syncing {} samples, {} files".format(len(samples), len(files)))
     # create the samples, if necessary, and sync them
     packages = sync_samples(ckan, group_obj, samples)
-    sync_files(ckan, packages, files)
+    sync_files(ckan, packages, files, do_upload)
 
 
-def ingest(ckan, metadata_path):
+def ingest(ckan, metadata_path, do_upload):
     path = Path(metadata_path)
     group_obj = make_group(ckan, {
         'name': 'wheat-pathogens',
@@ -130,5 +130,4 @@ def ingest(ckan, metadata_path):
     metadata = parse_metadata(path)
     samples = samples_from_metadata(metadata)
     files = files_from_metadata(metadata)
-    print(len(files))
-    ckan_sync_data(ckan, organism, group_obj, samples, files)
+    ckan_sync_data(ckan, organism, group_obj, samples, files, do_upload)
