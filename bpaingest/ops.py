@@ -64,8 +64,11 @@ def make_organization(ckan, org_obj):
     return ckan_obj
 
 
-def create_resource(ckan, ckan_obj):
+def create_resource(ckan, ckan_obj, do_upload):
     url = ckan_obj['url']  # URL in the legacy archive
-    r = requests.get(url, stream=True)
-    with closing(r):
-        ckan.action.resource_create(upload=r.raw, **ckan_obj)
+    if do_upload:
+        r = requests.get(url, stream=True)
+        with closing(r):
+            ckan.action.resource_create(upload=r.raw, **ckan_obj)
+    else:
+        ckan.action.resource_create(**ckan_obj)
