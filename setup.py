@@ -6,8 +6,9 @@ install_requires = [
     'unipath==1.1',
     'xlrd==0.9.4',
     'xlwt==1.0.0',
-    'beautifulsoup4',
+    'beautifulsoup4==4.4.1',
     'python-dateutil==2.5.3',
+    'requests==2.10.0',
 ]
 
 setup(
