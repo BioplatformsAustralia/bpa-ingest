@@ -1,4 +1,6 @@
+import requests
 import ckanapi
+from contextlib import closing
 from .util import make_logger
 
 
@@ -60,3 +62,10 @@ def make_organization(ckan, org_obj):
     if was_patched:
         logger.info("patched organization `%s'" % (org_obj['name']))
     return ckan_obj
+
+
+def create_resource(ckan, ckan_obj):
+    url = ckan_obj['url']  # URL in the legacy archive
+    r = requests.get(url, stream=True)
+    with closing(r):
+        ckan.action.resource_create(upload=r.raw, **ckan_obj)
