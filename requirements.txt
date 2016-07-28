@@ -1,4 +1,3 @@
-ckanapi
 unipath==1.1
 xlrd==0.9.4
 xlwt==1.0.0
