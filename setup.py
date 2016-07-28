@@ -2,7 +2,8 @@ from setuptools import setup, find_packages
 
 install_requires = [
     'requests>=2.2',
-    'ckanapi==3.5',
+    'ckanapi',
+    'git+https://github.com/muccg/ckanapi.git@streaming-uploads',
     'unipath==1.1',
     'xlrd==0.9.4',
     'xlwt==1.0.0',
