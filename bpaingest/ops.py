@@ -17,10 +17,12 @@ def ckan_method(ckan, object_type, method):
     return getattr(ckan.action, object_type + '_' + method)
 
 
-def patch_if_required(ckan, object_type, ckan_object, patch_object):
+def patch_if_required(ckan, object_type, ckan_object, patch_object, skip_differences=None):
     "patch ckan_object if applying patch_object would change it"
     differences = []
     for (k, v) in patch_object.items():
+        if skip_differences and k in skip_differences:
+            continue
         v2 = ckan_object.get(k)
         # co-erce to string to cope with numeric types in the JSON data
         if v != v2 and str(v) != str(v2):
@@ -72,7 +74,8 @@ def create_resource(ckan, ckan_obj, do_upload):
         response = requests.get(url, stream=True)
         with closing(response):
             if not response.ok:
-                raise Exception("unable to download `%s': status %d" % (url, response.status))
+                print("error: unable to download `%s': status %d" % (url, response.status_code))
+                return
             with tempfile.NamedTemporaryFile() as tempf:
                 print("downloading `%s' to temporary file" % (url))
                 for block in response.iter_content(1048576):

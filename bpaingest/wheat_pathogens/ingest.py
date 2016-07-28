@@ -99,11 +99,14 @@ def sync_files(ckan, packages, files, do_upload):
         # existing resources
         package_obj = ckan_method(ckan, 'package', 'show')(id=package['id'])
         current_resources = package_obj['resources']
+        skip_diffs = None
+        if do_upload:
+            skip_diffs = ['url']
         for current_ckan_obj in current_resources:
             obj_id = current_ckan_obj['id']
             file_obj = needed_files[obj_id]
             ckan_obj = ckan_resource_from_file(package_obj, file_obj)
-            was_patched, ckan_obj = patch_if_required(ckan, 'resource', current_ckan_obj, ckan_obj)
+            was_patched, ckan_obj = patch_if_required(ckan, 'resource', current_ckan_obj, ckan_obj, skip_differences=skip_diffs)
             if was_patched:
                 logger.info('patched resource: %s' % (obj_id))
 
