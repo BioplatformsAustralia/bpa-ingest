@@ -1,5 +1,7 @@
+import tempfile
 import requests
 import ckanapi
+import sys
 from contextlib import closing
 from .util import make_logger
 
@@ -67,8 +69,19 @@ def make_organization(ckan, org_obj):
 def create_resource(ckan, ckan_obj, do_upload):
     url = ckan_obj['url']  # URL in the legacy archive
     if do_upload:
-        r = requests.get(url, stream=True)
-        with closing(r):
-            ckan.action.resource_create(upload=r.raw, **ckan_obj)
+        response = requests.get(url, stream=True)
+        with closing(response):
+            if not response.ok:
+                raise Exception("unable to download `%s': status %d" % (url, response.status))
+            with tempfile.NamedTemporaryFile() as tempf:
+                print("downloading `%s' to temporary file" % (url))
+                for block in response.iter_content(1048576):
+                    tempf.write(block)
+                    sys.stderr.write('.')
+                    sys.stderr.flush()
+                tempf.flush()
+                print("uploading from tempfile: %s" % (tempf.name))
+                with open(tempf.name, "rb") as read_back:
+                    ckan.action.resource_create(upload=read_back, **ckan_obj)
     else:
         ckan.action.resource_create(**ckan_obj)
