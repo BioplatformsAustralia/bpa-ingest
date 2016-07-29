@@ -87,7 +87,6 @@ def create_resource(ckan, ckan_obj, legacy_url):
                 sys.stderr.flush()
         return size
 
-    legacy_url = 'https://www.google.com.au/images/branding/googlelogo/2x/googlelogo_color_272x92dp.png'
     basename = legacy_url.rsplit('/', 1)[-1]
     tempdir = tempfile.mkdtemp()
     path = os.path.join(tempdir, basename)
