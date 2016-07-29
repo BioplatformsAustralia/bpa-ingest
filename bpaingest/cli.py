@@ -23,14 +23,13 @@ def bootstrap(ckan, args):
 def setup_metadata_path(subparser):
     subparser.add_argument('path', help='path to metadata')
     subparser.add_argument('--clean', action='store_true', help='clean up path before run')
-    subparser.add_argument('--upload', action='store_true', help='upload files to CKAN')
 
 
 @register_command
 def wheat_cultivars(ckan, args):
     "download and ingest wheat7a metadata"
     download_wheatcultivars(args.path, args.clean)
-    ingest_wheatcultivars(ckan, args.path, args.upload)
+    ingest_wheatcultivars(ckan, args.path)
 wheat_cultivars.setup = setup_metadata_path
 
 
@@ -38,7 +37,7 @@ wheat_cultivars.setup = setup_metadata_path
 def wheat_pathogens(ckan, args):
     "download and ingest wheat pathogen genome metadata"
     download_wheat_pathogens(args.path, args.clean)
-    ingest_wheat_pathogens(ckan, args.path, args.upload)
+    ingest_wheat_pathogens(ckan, args.path)
 wheat_pathogens.setup = setup_metadata_path
 
 

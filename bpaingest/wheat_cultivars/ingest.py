@@ -60,7 +60,6 @@ def ckan_resource_from_file(package_obj, file_obj, run_obj):
     ckan_obj = {
         'id': file_obj['md5'],
         'package_id': package_obj['id'],
-        'url': bpa_mirror_url('wheat_cultivars/all/' + file_obj['filename']),
         'casava_version': run_obj['casava_version'],
         'library_construction_protocol': run_obj['library_construction_protocol'],
         'library_range': run_obj['library_range'],
@@ -76,10 +75,11 @@ def ckan_resource_from_file(package_obj, file_obj, run_obj):
         'md5': file_obj['md5'],
         'read_number': file_obj['read_number'],
     }
-    return ckan_obj
+    url = bpa_mirror_url('wheat_cultivars/all/' + file_obj['filename'])
+    return url, ckan_obj
 
 
-def sync_files(ckan, packages, files, runs, do_upload):
+def sync_files(ckan, packages, files, runs):
     # for each package, find the files which should attach to it, and
     # then sync up
     file_idx = {}
@@ -102,8 +102,8 @@ def sync_files(ckan, packages, files, runs, do_upload):
         for obj_id in to_create:
             file_obj = needed_files[obj_id]
             run_obj = runs.get(file_obj['run'], BLANK_RUN)
-            ckan_obj = ckan_resource_from_file(package_obj, file_obj, run_obj)
-            create_resource(ckan, ckan_obj, do_upload)
+            legacy_url, ckan_obj = ckan_resource_from_file(package_obj, file_obj)
+            create_resource(ckan, ckan_obj, legacy_url)
             logger.info('created resource: %s' % (obj_id))
 
         for obj_id in to_delete:
@@ -114,27 +114,23 @@ def sync_files(ckan, packages, files, runs, do_upload):
         # existing resources
         package_obj = ckan_method(ckan, 'package', 'show')(id=package['id'])
         current_resources = package_obj['resources']
-        skip_diffs = None
-        if do_upload:
-            skip_diffs = ['url']
         for current_ckan_obj in current_resources:
             obj_id = current_ckan_obj['id']
             file_obj = needed_files[obj_id]
-            run_obj = runs.get(file_obj['run'], BLANK_RUN)
-            ckan_obj = ckan_resource_from_file(package_obj, file_obj, run_obj)
-            was_patched, ckan_obj = patch_if_required(ckan, 'resource', current_ckan_obj, ckan_obj, skip_differences=skip_diffs)
+            legacy_url, ckan_obj = ckan_resource_from_file(package_obj, file_obj)
+            was_patched, ckan_obj = patch_if_required(ckan, 'resource', current_ckan_obj, ckan_obj)
             if was_patched:
                 logger.info('patched resource: %s' % (obj_id))
 
 
-def ckan_sync_data(ckan, organism, group_obj, samples, runs, files, do_upload):
+def ckan_sync_data(ckan, organism, group_obj, samples, runs, files):
     logger.info("syncing {} samples, {} runs, {} files".format(len(samples), len(runs), len(files)))
     # create the samples, if necessary, and sync them
     packages = sync_samples(ckan, group_obj, samples)
-    sync_files(ckan, packages, files, runs, do_upload)
+    sync_files(ckan, packages, files, runs)
 
 
-def ingest(ckan, metadata_path, do_upload):
+def ingest(ckan, metadata_path):
     path = Path(metadata_path)
     group_obj = make_group(ckan, {
         'name': 'wheat-cultivars',
@@ -149,4 +145,4 @@ def ingest(ckan, metadata_path, do_upload):
     runs = parse_run_data(path)
     samples = parse_sample_data(path)
     files = parse_file_data(path)
-    ckan_sync_data(ckan, organism, group_obj, samples, runs, files, do_upload)
+    ckan_sync_data(ckan, organism, group_obj, samples, runs, files)

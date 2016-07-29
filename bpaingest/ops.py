@@ -2,6 +2,7 @@ import tempfile
 import requests
 import ckanapi
 import sys
+import os
 from contextlib import closing
 from .util import make_logger
 
@@ -68,23 +69,38 @@ def make_organization(ckan, org_obj):
     return ckan_obj
 
 
-def create_resource(ckan, ckan_obj, do_upload):
-    url = ckan_obj['url']  # URL in the legacy archive
-    if do_upload:
+def create_resource(ckan, ckan_obj, legacy_url):
+    "create resource, uploading data from legacy_url"
+
+    def download_to_fileobj(url, fd):
+        logger.debug("downloading `%s'" % (url))
         response = requests.get(url, stream=True)
+        size = 0
         with closing(response):
             if not response.ok:
-                print("error: unable to download `%s': status %d" % (url, response.status_code))
+                logger.error("unable to download `%s': status %d" % (url, response.status_code))
+                return None
+            for block in response.iter_content(1048576):
+                size += len(block)
+                fd.write(block)
+                sys.stderr.write('.')
+                sys.stderr.flush()
+        return size
+
+    legacy_url = 'https://www.google.com.au/images/branding/googlelogo/2x/googlelogo_color_272x92dp.png'
+    basename = legacy_url.rsplit('/', 1)[-1]
+    tempdir = tempfile.mkdtemp()
+    path = os.path.join(tempdir, basename)
+    try:
+        with open(path, 'w') as fd:
+            size = download_to_fileobj(legacy_url, fd)
+            if not size:
                 return
-            with tempfile.NamedTemporaryFile() as tempf:
-                print("downloading `%s' to temporary file" % (url))
-                for block in response.iter_content(1048576):
-                    tempf.write(block)
-                    sys.stderr.write('.')
-                    sys.stderr.flush()
-                tempf.flush()
-                print("uploading from tempfile: %s" % (tempf.name))
-                with open(tempf.name, "rb") as read_back:
-                    ckan.action.resource_create(upload=read_back, **ckan_obj)
-    else:
-        ckan.action.resource_create(**ckan_obj)
+            logger.debug("uploading from tempfile: %s" % (path))
+            upload_obj = ckan_obj.copy()
+            upload_obj['url'] = 'dummy-value'  # required by CKAN < 2.5
+        with open(path, "rb") as fd:
+            ckan.action.resource_create(upload=fd, **upload_obj)
+    finally:
+        os.unlink(path)
+        os.rmdir(tempdir)
