@@ -54,7 +54,7 @@ def gbr_amplicon(ckan, args):
     download_gbr_amplicon(args.path, args.clean)
     ingest_gbr_amplicon(ckan, args.path)
 
-gbr_ampliocn.setup = setup_metadata_path
+gbr_amplicon.setup = setup_metadata_path
 
 
 def make_ckan_api(args):
