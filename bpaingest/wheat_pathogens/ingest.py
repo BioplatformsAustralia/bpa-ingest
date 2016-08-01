@@ -10,7 +10,6 @@ from .metadata import parse_metadata
 from .samples import samples_from_metadata
 from .files import files_from_metadata
 
-
 logger = make_logger(__name__)
 
 
@@ -18,7 +17,9 @@ def sync_package(ckan, obj):
     try:
         ckan_obj = ckan_method(ckan, 'package', 'show')(id=obj['name'])
     except ckanapi.errors.NotFound:
-        ckan_obj = ckan_method(ckan, 'package', 'create')(type=obj['type'], id=obj['id'], name=obj['name'], owner_org=obj['owner_org'])
+        ckan_obj = ckan_method(ckan, 'package', 'create')(
+            type=obj['type'], id=obj['id'], name=obj['name'],
+            owner_org=obj['owner_org'])
         logger.info('created package object: %s' % (obj['id']))
     patch_obj = obj.copy()
     patch_obj['id'] = ckan_obj['id']
@@ -31,14 +32,7 @@ def sync_package(ckan, obj):
 def sync_samples(ckan, group_obj, samples):
     bpa_org = get_bpa(ckan)
     packages = []
-    api_group_obj = prune_dict(
-        group_obj, (
-            'display_name',
-            'description',
-            'title',
-            'image_display_url',
-            'id',
-            'name'))
+    api_group_obj = prune_dict(group_obj, ('display_name', 'description', 'title', 'image_display_url', 'id', 'name'))
     for bpa_id, data in samples.items():
         name = bpa_id_to_ckan_name(bpa_id)
         obj = data.copy()
@@ -121,12 +115,10 @@ def ingest(ckan, metadata_path):
         'name': 'wheat-pathogens',
         'title': 'Wheat Pathogens',
         'display_name': 'Wheat Pathogens',
-        'image_url': 'https://downloads.bioplatforms.com/static/wheat_pathogens_transcript/fusarium_head_blight_infected_ear.png',
+        'image_url':
+        'https://downloads.bioplatforms.com/static/wheat_pathogens_transcript/fusarium_head_blight_infected_ear.png',
     })
-    organism = {
-        'genus': 'Triticum',
-        'species': 'Aestivum'
-    }
+    organism = {'genus': 'Triticum', 'species': 'Aestivum'}
     metadata = parse_metadata(path)
     samples = samples_from_metadata(metadata)
     files = files_from_metadata(metadata)

@@ -5,7 +5,6 @@ from ..util import make_logger
 # all metadata and checksums should be linked out here
 METADATA_URL = 'https://downloads-qcif.bioplatforms.com/bpa/wheat_pathogens/metadata/'
 
-
 logger = make_logger(__name__)
 
 

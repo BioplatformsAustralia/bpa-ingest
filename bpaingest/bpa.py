@@ -26,6 +26,7 @@ def create_bpa(ckan):
         u'is_organization': True,
         u'state': u'active',
         u'type': u'organization',
-        u'description': u'Bioplatforms Australia enables innovation and collaboration through investments in world class infrastructure and expertise.'
+        u'description':
+        u'Bioplatforms Australia enables innovation and collaboration through investments in world class infrastructure and expertise.'
     }
     make_organization(ckan, bpa)

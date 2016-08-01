@@ -1,5 +1,4 @@
 # -*- coding: utf-8 -*-
-
 """
 Utility functions to fetch data from web server
 """
@@ -28,7 +27,8 @@ def get_password(project_name=None):
     """Get downloads password for project from environment """
 
     def complain_and_quit():
-        logger.error("Please set shell variable {} to current BPA {} project password".format(password_env, project_name))
+        logger.error("Please set shell variable {} to current BPA {} project password".format(password_env,
+                                                                                              project_name))
         sys.exit()
 
     password_env = project_name_passwd_map.get(project_name, None)

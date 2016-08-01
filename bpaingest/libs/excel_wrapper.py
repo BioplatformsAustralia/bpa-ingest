@@ -1,5 +1,4 @@
 # _*_ coding: utf-8 _*_
-
 """
 Tool to manage the import of rows from Excel workbooks.
 
@@ -18,7 +17,6 @@ from collections import namedtuple
 
 import xlrd
 from ..util import make_logger
-
 
 logger = make_logger(__name__)
 
@@ -197,7 +195,8 @@ class ExcelWrapper(object):
 
         for idx, row in enumerate(self._get_rows()):
             row_count = idx + self.header_length + 1
-            tpl = [row_count, os.path.basename(self.file_name)]  # The original row pos in sheet, + 1 as excell row indexing start at 1
+            tpl = [row_count, os.path.basename(self.file_name)
+                   ]  # The original row pos in sheet, + 1 as excell row indexing start at 1
             for name in self.field_names:
                 i = self.name_to_column_map[name]
                 # i is None if the column specified was not found, in that case,

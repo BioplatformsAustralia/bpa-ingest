@@ -8,6 +8,8 @@ logger = make_logger(__name__)
 def make_run(**kwargs):
     fields = ('number', 'casava_version', 'library_construction_protocol', 'library_range', 'sequencer')
     return dict((t, kwargs.get(t)) for t in fields)
+
+
 BLANK_RUN = make_run(number=-1, casava_version="-", library_construction_protocol="-", library_range="-", sequencer="-")
 
 
@@ -27,14 +29,9 @@ def get_run_data(file_name):
                   ('run_number', 'Run number', ingest_utils.get_clean_number),
                   ('flowcell', 'Flow Cell ID', None),
                   ('index', 'Index', None),
-                  ('casava_version', 'CASAVA version', None),
-                  ]
+                  ('casava_version', 'CASAVA version', None), ]
 
-    wrapper = ExcelWrapper(
-        field_spec,
-        file_name,
-        sheet_name='Metadata',
-        header_length=1)
+    wrapper = ExcelWrapper(field_spec, file_name, sheet_name='Metadata', header_length=1)
     return wrapper.get_all()
 
 
@@ -69,10 +66,9 @@ def parse_run_data(path):
 
     for run in run_data:
         key = run.bpa_id + run.flowcell + run.library + run.library_construction
-        run_lookup[key] = make_run(
-            number=run.run_number,
-            casava_version=run.casava_version,
-            library_construction_protocol=run.library_construction_protocol,
-            library_range=run.library_range,
-            sequencer=run.sequencer)
+        run_lookup[key] = make_run(number=run.run_number,
+                                   casava_version=run.casava_version,
+                                   library_construction_protocol=run.library_construction_protocol,
+                                   library_range=run.library_range,
+                                   sequencer=run.sequencer)
     return run_lookup

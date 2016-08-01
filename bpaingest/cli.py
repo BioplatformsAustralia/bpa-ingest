@@ -30,6 +30,8 @@ def wheat_cultivars(ckan, args):
     "download and ingest wheat7a metadata"
     download_wheatcultivars(args.path, args.clean)
     ingest_wheatcultivars(ckan, args.path)
+
+
 wheat_cultivars.setup = setup_metadata_path
 
 
@@ -38,6 +40,8 @@ def wheat_pathogens(ckan, args):
     "download and ingest wheat pathogen genome metadata"
     download_wheat_pathogens(args.path, args.clean)
     ingest_wheat_pathogens(ckan, args.path)
+
+
 wheat_pathogens.setup = setup_metadata_path
 
 
@@ -72,15 +76,9 @@ def commands():
 
 def main():
     parser = argparse.ArgumentParser()
-    parser.add_argument(
-        '--version', action='store_true',
-        help='print version and exit')
-    parser.add_argument(
-        '-k', '--api-key', required=True,
-        help='CKAN API Key')
-    parser.add_argument(
-        '-u', '--ckan-url', required=True,
-        help='CKAN base url')
+    parser.add_argument('--version', action='store_true', help='print version and exit')
+    parser.add_argument('-k', '--api-key', required=True, help='CKAN API Key')
+    parser.add_argument('-u', '--ckan-url', required=True, help='CKAN base url')
 
     subparsers = parser.add_subparsers(dest='name')
     for name, fn, setup_fn, help_text in sorted(commands()):

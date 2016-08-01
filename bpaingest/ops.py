@@ -6,7 +6,6 @@ import os
 from contextlib import closing
 from .util import make_logger
 
-
 logger = make_logger(__name__)
 
 
@@ -29,12 +28,8 @@ def patch_if_required(ckan, object_type, ckan_object, patch_object, skip_differe
         if v != v2 and str(v) != str(v2):
             differences.append((k, v, v2))
     for k, v, v2 in differences:
-        logger.debug("%s/%s: difference on k `%s', v `%s' v2 `%s'" % (
-            object_type,
-            ckan_object.get('id', '<no id?>'),
-            k,
-            v,
-            v2))
+        logger.debug("%s/%s: difference on k `%s', v `%s' v2 `%s'" % (object_type, ckan_object.get('id', '<no id?>'), k,
+                                                                      v, v2))
     patch_needed = len(differences) > 0
     if patch_needed:
         ckan_object = ckan_method(ckan, object_type, "patch")(**patch_object)
