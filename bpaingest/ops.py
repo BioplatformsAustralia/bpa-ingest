@@ -1,12 +1,21 @@
+import progressbar
 import tempfile
 import requests
 import ckanapi
-import sys
 import os
 from contextlib import closing
 from .util import make_logger
 
 logger = make_logger(__name__)
+
+
+# https://stackoverflow.com/questions/1094841/reusable-library-to-get-human-readable-version-of-file-size
+def sizeof_fmt(num, suffix='B'):
+    for unit in ['', 'Ki', 'Mi', 'Gi', 'Ti', 'Pi', 'Ei', 'Zi']:
+        if abs(num) < 1024.0:
+            return "%3.1f%s%s" % (num, unit, suffix)
+        num /= 1024.0
+    return "%.1f%s%s" % (num, 'Yi', suffix)
 
 
 def ckan_method(ckan, object_type, method):
@@ -67,27 +76,45 @@ def make_organization(ckan, org_obj):
 def create_resource(ckan, ckan_obj, legacy_url):
     "create resource, uploading data from legacy_url"
 
+    def resolve_url(url):
+        new_url = url
+        for i in range(4):
+            response = requests.head(new_url)
+            if response.status_code == 301 or response.status_code == 302:
+                new_url = response.headers.get('location')
+            elif response.status_code == 200:
+                return new_url
+            else:
+                return None
+
     def download_to_fileobj(url, fd):
         logger.debug("downloading `%s'" % (url))
         response = requests.get(url, stream=True)
-        size = 0
+        total_size = int(response.headers['content-length'])
+        logger.info('Downloading %s' % (sizeof_fmt(total_size)))
+        bar = progressbar.ProgressBar(max_value=total_size)
+        retrieved = 0
         with closing(response):
             if not response.ok:
                 logger.error("unable to download `%s': status %d" % (url, response.status_code))
                 return None
-            for block in response.iter_content(1048576):
-                size += len(block)
+            for block in response.iter_content(65532):
+                retrieved += len(block)
+                bar.update(retrieved)
                 fd.write(block)
-                sys.stderr.write('.')
-                sys.stderr.flush()
-        return size
+        return retrieved
 
     basename = legacy_url.rsplit('/', 1)[-1]
     tempdir = tempfile.mkdtemp()
     path = os.path.join(tempdir, basename)
+    resolved_url = resolve_url(legacy_url)
+    if not resolved_url:
+        logger.error("unable to resolve `%s' - file missing?" % (legacy_url))
+        return
+    logger.info("Resolved `%s' to `%s'" % (legacy_url, resolved_url))
     try:
         with open(path, 'w') as fd:
-            size = download_to_fileobj(legacy_url, fd)
+            size = download_to_fileobj(resolved_url, fd)
             if not size:
                 return
             logger.debug("uploading from tempfile: %s" % (path))
@@ -95,6 +122,7 @@ def create_resource(ckan, ckan_obj, legacy_url):
             upload_obj['url'] = 'dummy-value'  # required by CKAN < 2.5
         with open(path, "rb") as fd:
             ckan.action.resource_create(upload=fd, **upload_obj)
+        return True
     finally:
         os.unlink(path)
         os.rmdir(tempdir)

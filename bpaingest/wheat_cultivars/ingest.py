@@ -98,10 +98,9 @@ def sync_files(ckan, packages, files, runs):
 
         for obj_id in to_create:
             file_obj = needed_files[obj_id]
-            run_obj = runs.get(file_obj['run'], BLANK_RUN)
             legacy_url, ckan_obj = ckan_resource_from_file(package_obj, file_obj)
-            create_resource(ckan, ckan_obj, legacy_url)
-            logger.info('created resource: %s' % (obj_id))
+            if create_resource(ckan, ckan_obj, legacy_url):
+                logger.info('created resource: %s' % (obj_id))
 
         for obj_id in to_delete:
             ckan_method(ckan, 'resource', 'delete')(id=obj_id)
