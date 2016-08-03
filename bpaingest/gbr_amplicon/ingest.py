@@ -43,8 +43,8 @@ def sync_samples(ckan, group_obj, samples):
             'id': bpa_id,
             'bpa_id': bpa_id,
             'title': bpa_id,
-            'notes': '%s' % (data['official_variety_name']),
-            'type': 'wheat-pathogens',
+            'notes': '',
+            'type': 'great-barrier-reef',
         })
         packages.append(sync_package(ckan, obj))
     return packages
@@ -102,7 +102,7 @@ def sync_files(ckan, packages, files):
                 logger.info('patched resource: %s' % (obj_id))
 
 
-def ckan_sync_data(ckan, organism, group_obj, samples, files):
+def ckan_sync_data(ckan, group_obj, samples, files):
     logger.info("syncing {} samples, {} files".format(len(samples), len(files)))
     # create the samples, if necessary, and sync them
     packages = sync_samples(ckan, group_obj, samples)
@@ -115,10 +115,10 @@ def ingest(ckan, metadata_path):
         'name': 'gbr',
         'title': 'Great Barrier Reef',
         'display_name': 'Great Barrier Reef',
-        'image_url':
-        'https://downloads.bioplatforms.com/static/gbr/coral.png',
+        'image_url': 'https://downloads.bioplatforms.com/static/gbr/coral.png',
     })
     metadata = parse_metadata(path)
     samples = samples_from_metadata(metadata)
-    files = files_from_metadata(metadata)
+    # files = files_from_metadata(metadata)
+    files = []
     ckan_sync_data(ckan, group_obj, samples, files)
