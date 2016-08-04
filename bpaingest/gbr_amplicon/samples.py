@@ -7,6 +7,12 @@ def sample_from_row(e):
     obj = {
         'bpa_id': e.bpa_id,
         'sample_extraction_id': e.sample_extraction_id,
+        'sequence_facility': e.sequencing_facility,
+        'amplicon': e.amplicon,
+        'pcr_1_to_10': e.pcr_1_to_10,
+        'pcr_1_to_100': e.pcr_1_to_100,
+        'pcr_neat': e.pcr_neat,
+        'dilution': e.dilution,
         'name': e.name,
     }
     return obj

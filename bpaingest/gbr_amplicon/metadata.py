@@ -34,7 +34,7 @@ def get_amplicon_data(file_name):
         ("bpa_id", "Sample unique ID", lambda s: s.replace("/", ".")),
         ("sample_extraction_id", "Sample extraction ID", ingest_utils.get_int),
         ("sequencing_facility", "Sequencing facility", None),
-        ("target", "Target", lambda s: s.upper().strip()),
+        ("amplicon", "Target", lambda s: s.upper().strip()),
         ("i7_index", "I7_Index_ID", None),
         ("index1", "index", None),
         ("index2", "index2", None),
