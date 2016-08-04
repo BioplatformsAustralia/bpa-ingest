@@ -7,52 +7,57 @@ from ..libs import ingest_utils
 logger = make_logger(__name__)
 
 def fix_dilution(val):
-    """
+    '''
     Some source xcell files ship with the dilution column type as time.
     xlrd advertises support for format strings but not implemented.
-    """
+    '''
     if isinstance(val, float):
-        return u"1:10"  # yea, that's how we roll...
+        return u'1:10' # default
     return val
 
 
 def fix_pcr(pcr):
-    """
+    '''
     Check pcr value
-    """
+    '''
     val = pcr.strip()
-    if val not in ("P", "F", ""):
-        logger.error("PCR value [{0}] is neither F, P or " ", setting to X".format(pcr.encode("utf8")))
-        val = "X"
+    if val not in ('P', 'F', ''):
+        logger.error('PCR value [{0}] is neither F, P or ' ', setting to X'.format(pcr.encode('utf8')))
+        val = 'X'
     return val
 
+def strip_bpa_prefix(val):
+    ''' Strips BPA prefix '''
+    return val.split('/')[1]
 
 def get_amplicon_data(file_name):
-    """ Get amplion data from metadata spreadsheets """
+    ''' Get amplion data from metadata spreadsheets '''
 
     field_spec = [
-        ("bpa_id", "Sample unique ID", lambda s: s.replace("/", ".")),
-        ("sample_extraction_id", "Sample extraction ID", ingest_utils.get_int),
-        ("sequencing_facility", "Sequencing facility", None),
-        ("amplicon", "Target", lambda s: s.upper().strip()),
-        ("i7_index", "I7_Index_ID", None),
-        ("index1", "index", None),
-        ("index2", "index2", None),
-        ("pcr_1_to_10", "1:10 PCR, P=pass, F=fail", fix_pcr),
-        ("pcr_1_to_100", "1:100 PCR, P=pass, F=fail", fix_pcr),
-        ("pcr_neat", "neat PCR, P=pass, F=fail", fix_pcr),
-        ("dilution", "Dilution used", fix_dilution),
-        ("sequencing_run_number", "Sequencing run number", None),
-        ("flow_cell_id", "Flowcell", None),
-        ("reads", "# of reads", ingest_utils.get_int),
-        ("name", "Sample name on sample sheet", None),
-        ("analysis_software_version", "AnalysisSoftwareVersion", None),
-        ("comments", "Comments", None),
+        ('bpa_id', 'Sample unique ID', strip_bpa_prefix),
+        ('sample_extraction_id', 'Sample extraction ID', ingest_utils.get_int),
+        ('sequencing_facility', 'Sequencing facility', None),
+        ('target_range', 'Target Range', None),
+        ('amplicon', 'Target', lambda s: s.upper().strip().lower()),
+        ('i7_index', 'I7_Index_ID', None),
+        ('i5_index', 'I5_Index_ID', None),
+        ('index1', 'index', None),
+        ('index2', 'index2', None),
+        ('pcr_1_to_10', '1:10 PCR, P=pass, F=fail', fix_pcr),
+        ('pcr_1_to_100', '1:100 PCR, P=pass, F=fail', fix_pcr),
+        ('pcr_neat', 'neat PCR, P=pass, F=fail', fix_pcr),
+        ('dilution', 'Dilution used', fix_dilution),
+        ('sequencing_run_number', 'Sequencing run number', None),
+        ('flow_cell_id', 'Flowcell', None),
+        ('reads', '# of reads', ingest_utils.get_int),
+        ('name', 'Sample name on sample sheet', None),
+        ('analysis_software_version', 'AnalysisSoftwareVersion', None),
+        ('comments', 'Comments', None),
     ]
 
     wrapper = ExcelWrapper(field_spec,
                            file_name,
-                           sheet_name="Sheet1",
+                           sheet_name='Sheet1',
                            header_length=4,
                            column_name_row_index=1,
                            formatting_info=True,

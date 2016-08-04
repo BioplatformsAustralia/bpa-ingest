@@ -8,7 +8,7 @@ from ..util import make_logger, bpa_id_to_ckan_name, prune_dict
 from ..bpa import bpa_mirror_url, get_bpa
 from .metadata import parse_metadata
 from .samples import samples_from_metadata
-from .files import files_from_metadata
+from .files import files_from_md5
 
 logger = make_logger(__name__)
 
@@ -42,8 +42,9 @@ def sync_samples(ckan, group_obj, samples):
             'groups': [api_group_obj],
             'id': bpa_id,
             'bpa_id': bpa_id,
-            'title': bpa_id,
-            'notes': '',
+            'title': 'Amplicon {}'.format(bpa_id),
+            'notes': 'Amplicon Data for Great Barrier Reef Sample {}'.format(bpa_id),
+            # 'tags': [{'Amplicon': data['amplicon']}],
             'type': 'great-barrier-reef',
         })
         packages.append(sync_package(ckan, obj))
@@ -112,13 +113,13 @@ def ckan_sync_data(ckan, group_obj, samples, files):
 def ingest(ckan, metadata_path):
     path = Path(metadata_path)
     group_obj = make_group(ckan, {
-        'name': 'gbr',
+        'name': 'great_barrier_reef',
         'title': 'Great Barrier Reef',
         'display_name': 'Great Barrier Reef',
         'image_url': 'https://downloads.bioplatforms.com/static/gbr/coral.png',
     })
     metadata = parse_metadata(path)
     samples = samples_from_metadata(metadata)
-    # files = files_from_metadata(metadata)
-    files = []
+
+    files = files_from_md5(path)
     ckan_sync_data(ckan, group_obj, samples, files)
