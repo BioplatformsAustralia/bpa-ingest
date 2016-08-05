@@ -6,49 +6,38 @@ from ..libs import md5parser
 from ..util import make_logger
 
 logger = make_logger(__name__)
-AMPLICON_FILENAME_PATTERN = """
+
+AMPLICON_FILE_PATTERN = """
     (?P<id>\d{4,6})_
-    (?P<extraction>\d)_
-    (?P<library>PE|MP)_
-    (?P<size>\d*bp)_
-    SEP_
+    GBR_
     (?P<vendor>AGRF|UNSW)_
-    (?P<flow_cell_id>\w{5})_
-    (?P<index>[G|A|T|C|-]*)_
-    (?P<runsamplenum>\S\d*)_
-    (?P<lane>L\d{3})_
-    (?P<read>[R|I][1|2])\.fastq\.gz
+    (?P<amplicon>16S|18S|A16S|ITS)_
+    (?P<reach>R\d{3,4}-\d{3,4})_
+    (?P<flowcell>\w{5})_
+    (?P<index>[GATC]{8}_[GATC]{8})_
+    (?P<post>.*)
 """
-AMPLICON_FILENAME = re.compile(AMPLICON_FILENAME_PATTERN, re.VERBOSE)
+AMPLICON_FILE_PATTERN = re.compile(AMPLICON_FILE_PATTERN, re.VERBOSE)
 
-
-def _file_from_row(e):
-    def get_file_name(_fname):
-        """ The filenames in the spreadsheet has paths prepended, strip them out """
-        head, tail = os.path.split(_fname.strip())
-        return tail
+def _file_from_line(line):
 
     obj = {
-        'lane_number': ingest_utils.get_clean_number(e.lane_number),
-        'filename': get_file_name(e.sequence_filename),
-        'name': get_file_name(e.sequence_filename),
-        'md5': e.md5_checksum,
-        'file_size': e.file_size,
-        'note': ingest_utils.pretty_print_namedtuple(e),
+        'filename': line.filename,
+        'md5': line.md5,
     }
-    return e.bpa_id, obj
+    return line.md5data['id'], obj
 
-
-
-def files_from_md5(path):
+def _get_parsed_lines(path):
     def is_md5(path):
         if path.isfile() and path.ext == '.md5':
             return True
 
     logger.info('Ingesting GBR Amplicon File data from md5 files found in {0}'.format(path))
-    files = []
+    md5parsedlines = []
     for md5_file in path.walk(filter=is_md5):
         logger.info('Processing GBR md5 checksum file {0}'.format(md5_file))
-        for sample in get_amplicon_data(metadata_file):
-            rows.append(sample)
-    return rows
+        md5parsedlines.append(md5parser.parse_md5_file(AMPLICON_FILE_PATTERN, md5_file))
+
+def files_from_md5(path):
+    lines = _get_parsed_lines(path)
+    files = [_file_from_line(line) for line in lines]

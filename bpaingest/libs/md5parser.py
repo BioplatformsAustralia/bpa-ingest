@@ -3,6 +3,9 @@
 import re
 
 class MD5ParsedLine(object):
+    """
+    A single line parsed from the md5 file
+    """
     def __init__(self, pattern, line):
         self.pattern = pattern
         self._line = line
@@ -16,7 +19,10 @@ class MD5ParsedLine(object):
         return self._ok
 
     def __parse_line(self):
-        """ unpack the md5 line """
+        """
+        Unpack the md5 line into:
+        md5, filename, and md5data dict based on the regular expression pattern
+        """
         self.md5, self.filename = self._line.split()
         matched = self.pattern.match(self.filename)
         if matched:
@@ -24,16 +30,20 @@ class MD5ParsedLine(object):
             self._ok = True
 
     def __str__(self):
-        return "{} {}".format(self.filename, self.md5)
+        return '{} {}'.format(self.filename, self.md5)
 
 
 def parse_md5_file(pattern, md5_file):
-    """ Parse md5 file """
+    """
+    Parse md5 file
+    Returns:
+       list of MD5ParsedLine objects
+    """
     data = []
     with open(md5_file) as f:
         for line in f.read().splitlines():
             line = line.strip()
-            if line == "":
+            if line == '':
                 continue
 
             parsed_line = MD5ParsedLine(pattern, line)
