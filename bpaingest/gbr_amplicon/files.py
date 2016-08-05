@@ -20,10 +20,9 @@ AMPLICON_FILE_PATTERN = """
 AMPLICON_FILE_PATTERN = re.compile(AMPLICON_FILE_PATTERN, re.VERBOSE)
 
 def _file_from_line(line):
-    print(line)
-
     obj = {
         'filename': line.filename,
+        'name': line.filename,
         'md5': line.md5,
         'amplicon': line.md5data['amplicon'],
         'reach': line.md5data['reach'],
