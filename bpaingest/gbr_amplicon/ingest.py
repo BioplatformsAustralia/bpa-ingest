@@ -3,28 +3,28 @@ from __future__ import print_function
 import ckanapi
 from unipath import Path
 
-from ..ops import make_group, ckan_method, patch_if_required
 import bpaingest.ops as ops
 from ..util import make_logger, bpa_id_to_ckan_name, prune_dict
 from ..bpa import bpa_mirror_url, get_bpa
 from .metadata import parse_metadata
 from .samples import samples_from_metadata
 from .files import files_from_md5
+from ..libs.fetch_data import get_password
 
 logger = make_logger(__name__)
 
 
 def sync_package(ckan, obj):
     try:
-        ckan_obj = ckan_method(ckan, 'package', 'show')(id=obj['name'])
+        ckan_obj = ops.ckan_method(ckan, 'package', 'show')(id=obj['name'])
     except ckanapi.errors.NotFound:
-        ckan_obj = ckan_method(ckan, 'package', 'create')(
+        ckan_obj = ops.ckan_method(ckan, 'package', 'create')(
             type=obj['type'], id=obj['id'], name=obj['name'],
             owner_org=obj['owner_org'])
         logger.info('created package object: %s' % (obj['id']))
     patch_obj = obj.copy()
     patch_obj['id'] = ckan_obj['id']
-    was_patched, ckan_obj = patch_if_required(ckan, 'package', ckan_obj, patch_obj)
+    was_patched, ckan_obj = ops.patch_if_required(ckan, 'package', ckan_obj, patch_obj)
     if was_patched:
         logger.info('patched package object: %s' % (obj['id']))
     return ckan_obj
@@ -74,7 +74,7 @@ def sync_files(ckan, packages, files):
     for package in packages:
         files = file_idx.get(package['id'], [])
         # grab a copy of the package with all current resources
-        package_obj = ckan_method(ckan, 'package', 'show')(id=package['id'])
+        package_obj = ops.ckan_method(ckan, 'package', 'show')(id=package['id'])
         current_resources = package_obj['resources']
         existing_files = dict((t['id'], t) for t in current_resources)
         needed_files = dict((t['md5'], t) for t in files)
@@ -84,22 +84,22 @@ def sync_files(ckan, packages, files):
         for obj_id in to_create:
             file_obj = needed_files[obj_id]
             legacy_url, ckan_obj = ckan_resource_from_file(package_obj, file_obj)
-            ops.create_resource(ckan, ckan_obj, legacy_url)
+            ops.create_resource(ckan, ckan_obj, legacy_url, auth=("bpa", get_password('gbr')))
             logger.info('created resource: %s' % (obj_id))
 
         for obj_id in to_delete:
-            ckan_method(ckan, 'resource', 'delete')(id=obj_id)
+            ops.ckan_method(ckan, 'resource', 'delete')(id=obj_id)
             logger.info('deleted resource: %s' % (obj_id))
 
         # patch all the resources, to ensure everything is synced on
         # existing resources
-        package_obj = ckan_method(ckan, 'package', 'show')(id=package['id'])
+        package_obj = ops.ckan_method(ckan, 'package', 'show')(id=package['id'])
         current_resources = package_obj['resources']
         for current_ckan_obj in current_resources:
             obj_id = current_ckan_obj['id']
             file_obj = needed_files[obj_id]
             legacy_url, ckan_obj = ckan_resource_from_file(package_obj, file_obj)
-            was_patched, ckan_obj = patch_if_required(ckan, 'resource', current_ckan_obj, ckan_obj)
+            was_patched, ckan_obj = ops.patch_if_required(ckan, 'resource', current_ckan_obj, ckan_obj)
             if was_patched:
                 logger.info('patched resource: %s' % (obj_id))
 
@@ -113,7 +113,7 @@ def ckan_sync_data(ckan, group_obj, samples, files):
 
 def ingest(ckan, metadata_path):
     path = Path(metadata_path)
-    group_obj = make_group(ckan, {
+    group_obj = ops.make_group(ckan, {
         'name': 'great_barrier_reef',
         'title': 'Great Barrier Reef',
         'display_name': 'Great Barrier Reef',

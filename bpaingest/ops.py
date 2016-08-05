@@ -73,13 +73,13 @@ def make_organization(ckan, org_obj):
     return ckan_obj
 
 
-def create_resource(ckan, ckan_obj, legacy_url):
+def create_resource(ckan, ckan_obj, legacy_url, auth):
     "create resource, uploading data from legacy_url"
 
     def resolve_url(url):
         new_url = url
         for i in range(4):
-            response = requests.head(new_url)
+            response = requests.head(new_url, auth=auth)
             if response.status_code == 301 or response.status_code == 302:
                 new_url = response.headers.get('location')
             elif response.status_code == 200:
@@ -89,7 +89,7 @@ def create_resource(ckan, ckan_obj, legacy_url):
 
     def download_to_fileobj(url, fd):
         logger.debug("downloading `%s'" % (url))
-        response = requests.get(url, stream=True)
+        response = requests.get(url, stream=True, auth=auth)
         total_size = int(response.headers['content-length'])
         logger.info('Downloading %s' % (sizeof_fmt(total_size)))
         bar = progressbar.ProgressBar(max_value=total_size)
