@@ -3,7 +3,8 @@ from __future__ import print_function
 import ckanapi
 from unipath import Path
 
-from ..ops import make_group, ckan_method, patch_if_required, create_resource
+from ..ops import make_group, ckan_method, patch_if_required
+import bpaingest.ops as ops
 from ..util import make_logger, bpa_id_to_ckan_name, prune_dict
 from ..bpa import bpa_mirror_url, get_bpa
 from .metadata import parse_metadata
@@ -53,7 +54,7 @@ def sync_samples(ckan, group_obj, samples):
 
 def ckan_resource_from_file(package_obj, file_obj):
     ckan_obj = file_obj.copy()
-    url = bpa_mirror_url('gbr/amplicon/all/' + file_obj['filename'])
+    url = bpa_mirror_url('gbr/amplicons/{}/{}'.format(file_obj['amplicon'].lower(), file_obj['filename']))
     ckan_obj.update({
         'id': file_obj['md5'],
         'package_id': package_obj['id'],
@@ -83,7 +84,7 @@ def sync_files(ckan, packages, files):
         for obj_id in to_create:
             file_obj = needed_files[obj_id]
             legacy_url, ckan_obj = ckan_resource_from_file(package_obj, file_obj)
-            create_resource(ckan, ckan_obj, legacy_url)
+            ops.create_resource(ckan, ckan_obj, legacy_url)
             logger.info('created resource: %s' % (obj_id))
 
         for obj_id in to_delete:

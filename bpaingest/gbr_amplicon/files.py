@@ -20,14 +20,22 @@ AMPLICON_FILE_PATTERN = """
 AMPLICON_FILE_PATTERN = re.compile(AMPLICON_FILE_PATTERN, re.VERBOSE)
 
 def _file_from_line(line):
+    print(line)
 
     obj = {
         'filename': line.filename,
         'md5': line.md5,
+        'amplicon': line.md5data['amplicon'],
+        'reach': line.md5data['reach'],
+        'flowcell': line.md5data['flowcell'],
+        'index': line.md5data['index']
     }
     return line.md5data['id'], obj
 
 def _get_parsed_lines(path):
+    """
+    Return list of parsed md5parsedline objects
+    """
     def is_md5(path):
         if path.isfile() and path.ext == '.md5':
             return True
@@ -36,8 +44,13 @@ def _get_parsed_lines(path):
     md5parsedlines = []
     for md5_file in path.walk(filter=is_md5):
         logger.info('Processing GBR md5 checksum file {0}'.format(md5_file))
-        md5parsedlines.append(md5parser.parse_md5_file(AMPLICON_FILE_PATTERN, md5_file))
+        md5parsedlines.extend(md5parser.parse_md5_file(AMPLICON_FILE_PATTERN, md5_file))
+
+    return md5parsedlines
 
 def files_from_md5(path):
+    files = []
     lines = _get_parsed_lines(path)
-    files = [_file_from_line(line) for line in lines]
+    for line in lines:
+        files.append(_file_from_line(line))
+    return files
