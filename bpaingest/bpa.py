@@ -3,7 +3,7 @@ from urlparse import urljoin
 from .ops import make_organization, ckan_method
 
 BPA_ORGANIZATION_ID = 'bioplatforms-australia'
-MIRROR_BASE = 'https://downloads-mu.bioplatforms.com/'
+MIRROR_BASE = 'https://downloads-qcif.bioplatforms.com/'
 
 
 def bpa_mirror_url(path):
