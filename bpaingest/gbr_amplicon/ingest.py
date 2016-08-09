@@ -71,7 +71,7 @@ def sync_files(ckan, packages, files):
             file_idx[bpa_id] = []
         file_idx[bpa_id].append(obj)
 
-    auth=('bpa', get_password('gbr'))
+    auth = ('bpa', get_password('gbr'))
 
     for package in packages:
         files = file_idx.get(package['id'], [])
