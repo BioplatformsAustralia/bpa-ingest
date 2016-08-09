@@ -71,6 +71,8 @@ def sync_files(ckan, packages, files):
             file_idx[bpa_id] = []
         file_idx[bpa_id].append(obj)
 
+    auth=('bpa', get_password('gbr'))
+
     for package in packages:
         files = file_idx.get(package['id'], [])
         # grab a copy of the package with all current resources
@@ -89,7 +91,7 @@ def sync_files(ckan, packages, files):
             file_obj = needed_files[obj_id]
             legacy_url, _ = ckan_resource_from_file(package_obj, file_obj)
             current_url = current_ckan_obj.get('url')
-            if not current_url or not ops.check_resource(ckan, current_url, legacy_url):
+            if not current_url or not ops.check_resource(ckan, current_url, legacy_url, auth):
                 logger.error('resource check failed, queued for re-upload: %s' % (obj_id))
                 to_reupload.append(current_ckan_obj)
             else:
@@ -98,7 +100,7 @@ def sync_files(ckan, packages, files):
         for obj_id in to_create:
             file_obj = needed_files[obj_id]
             legacy_url, ckan_obj = ckan_resource_from_file(package_obj, file_obj)
-            ops.create_resource(ckan, ckan_obj, legacy_url, auth=("bpa", get_password('gbr')))
+            ops.create_resource(ckan, ckan_obj, legacy_url, auth=auth)
             logger.info('created resource: %s' % (obj_id))
 
         for obj_id in to_delete:
@@ -109,7 +111,7 @@ def sync_files(ckan, packages, files):
             obj_id = reupload_obj['id']
             file_obj = needed_files[obj_id]
             legacy_url, ckan_obj = ckan_resource_from_file(package_obj, file_obj)
-            ops.reupload_resource(ckan, reupload_obj, legacy_url)
+            ops.reupload_resource(ckan, reupload_obj, legacy_url, auth=auth)
 
         # patch all the resources, to ensure everything is synced on
         # existing resources

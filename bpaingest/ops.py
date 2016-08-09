@@ -90,7 +90,10 @@ def check_resource(ckan, current_url, legacy_url, auth=None):
 
     # determine the size of the original file in the legacy archive
     resolved_url = resolve_url(legacy_url, auth)
-    response = requests.head(resolved_url)
+    if resolved_url is None:
+        logger.error("error resolving resource: %s" % (legacy_url))
+        return False
+    response = requests.head(resolved_url, auth=auth)
     if response.status_code != 200:
         logger.error("error accessing resource: HTTP status code %d" % (response.status_code))
         return False
@@ -140,12 +143,12 @@ def download_legacy_file(legacy_url, auth):
     if not resolved_url:
         logger.error("unable to resolve `%s' - file missing?" % (legacy_url))
         os.rmdir(tempdir)
-        return
+        return None, None
     with open(path, 'w') as fd:
         size = download_to_fileobj(resolved_url, fd)
         if size is None:
             os.rmdir(tempdir)
-            return
+            return None, None
     return tempdir, path
 
 
