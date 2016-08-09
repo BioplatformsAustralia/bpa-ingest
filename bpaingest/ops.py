@@ -73,10 +73,10 @@ def make_organization(ckan, org_obj):
     return ckan_obj
 
 
-def resolve_url(url):
+def resolve_url(url, auth):
     new_url = url
     for i in range(4):
-        response = requests.head(new_url)
+        response = requests.head(new_url, auth=auth)
         if response.status_code == 301 or response.status_code == 302:
             new_url = response.headers.get('location')
         elif response.status_code == 200:
@@ -85,11 +85,11 @@ def resolve_url(url):
             return None
 
 
-def check_resource(ckan, current_url, legacy_url):
+def check_resource(ckan, current_url, legacy_url, auth):
     """returns True if the ckan_obj looks like it's good (size matches legacy url size)"""
 
     # determine the size of the original file in the legacy archive
-    resolved_url = resolve_url(legacy_url)
+    resolved_url = resolve_url(legacy_url, auth)
     response = requests.head(resolved_url)
     if response.status_code != 200:
         logger.error("error accessing resource: HTTP status code %d" % (response.status_code))
@@ -113,7 +113,7 @@ def check_resource(ckan, current_url, legacy_url):
     return True
 
 
-def download_legacy_file(legacy_url):
+def download_legacy_file(legacy_url, auth=auth):
 
     def download_to_fileobj(url, fd):
         logger.debug("downloading `%s'" % (url))
@@ -149,10 +149,10 @@ def download_legacy_file(legacy_url):
     return tempdir, path
 
 
-def reupload_resource(ckan, ckan_obj, legacy_url):
+def reupload_resource(ckan, ckan_obj, legacy_url, auth):
     "reupload data from legacy_url to ckan_obj"
 
-    tempdir, path = download_legacy_file(legacy_url)
+    tempdir, path = download_legacy_file(legacy_url, auth)
     if path is None:
         return
     try:
@@ -167,11 +167,11 @@ def reupload_resource(ckan, ckan_obj, legacy_url):
         os.rmdir(tempdir)
 
 
-def create_resource(ckan, ckan_obj, legacy_url):
+def create_resource(ckan, ckan_obj, legacy_url, auth):
     "create resource, uploading data from legacy_url"
 
     logger.info("Resolved `%s' to `%s'" % (legacy_url, resolved_url))
-    tempdir, path = download_legacy_file(legacy_url)
+    tempdir, path = download_legacy_file(legacy_url, auth)
     if path is None:
         return
     try:
