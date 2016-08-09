@@ -78,20 +78,48 @@ def make_organization(ckan, org_obj):
     return ckan_obj
 
 
+def resolve_url(url):
+    new_url = url
+    for i in range(4):
+        response = requests.head(new_url)
+        if response.status_code == 301 or response.status_code == 302:
+            new_url = response.headers.get('location')
+        elif response.status_code == 200:
+            return new_url
+        else:
+            return None
+
+
+def check_resource(ckan, current_url, legacy_url):
+    """returns True if the ckan_obj looks like it's good (size matches legacy url size)"""
+
+    # determine the size of the original file in the legacy archive
+    resolved_url = resolve_url(legacy_url)
+    response = requests.head(resolved_url)
+    if response.status_code != 200:
+        logger.error("error accessing resource: HTTP status code %d" % (response.status_code))
+        return False
+        
+    legacy_size = int(response.headers['content-length'])
+
+    # determine the URL of the proxied s3 resource, and then its size
+    ckan_url = resolve_url(current_url)
+    if ckan_url is None:
+        logger.error("unable to resolve CKAN URL: %s" % (current_url))
+        return False
+    response = requests.head(ckan_url)
+    if response.status_code != 200:
+        logger.error("unable to access CKAN URL: %s (status_code=%d)" % (ckan_url, response.status_code))
+        return False
+    current_size = int(response.headers['content-range'].rsplit('/', 1)[-1])
+    if current_size != legacy_size:
+        logger.error("CKAN resource has incorrect size: %d (should be %d)" % (current_size, legacy_size))
+        return False
+    return True
+
+
 def create_resource(ckan, ckan_obj, legacy_url):
     "create resource, uploading data from legacy_url"
-
-    def resolve_url(url):
-        new_url = url
-        for i in range(4):
-            response = requests.head(new_url)
-            if response.status_code == 301 or response.status_code == 302:
-                new_url = response.headers.get('location')
-            elif response.status_code == 200:
-                return new_url
-            else:
-                return None
-
     def download_to_fileobj(url, fd):
         logger.debug("downloading `%s'" % (url))
         response = requests.get(url, stream=True)

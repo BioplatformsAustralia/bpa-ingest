@@ -3,7 +3,7 @@ from __future__ import print_function
 import ckanapi
 from unipath import Path
 
-from ..ops import make_group, ckan_method, patch_if_required, create_resource
+from ..ops import make_group, ckan_method, patch_if_required, create_resource, check_resource
 from ..util import make_logger, bpa_id_to_ckan_name, prune_dict
 from ..bpa import bpa_mirror_url, get_bpa
 from .metadata import parse_metadata
@@ -85,11 +85,26 @@ def sync_files(ckan, packages, files):
         to_create = set(needed_files) - set(existing_files)
         to_delete = set(existing_files) - set(needed_files)
 
+        # check the existing resources exist, and have a size which matches the
+        # legacy mirror
+        to_reupload = []
+        for current_ckan_obj in current_resources:
+            obj_id = current_ckan_obj['id']
+            file_obj = needed_files[obj_id]
+            legacy_url, _ = ckan_resource_from_file(package_obj, file_obj)
+            current_url = current_ckan_obj.get('url')
+            if not current_url or not check_resource(ckan, current_url, legacy_url):
+                logger.error('resource check failed, queued for re-upload: %s' % (obj_id))
+                to_reupload.append(current_ckan_obj)
+            else:
+                logger.info('resource check OK')
+
         for obj_id in to_create:
             file_obj = needed_files[obj_id]
             legacy_url, ckan_obj = ckan_resource_from_file(package_obj, file_obj)
             if create_resource(ckan, ckan_obj, legacy_url):
                 logger.info('created resource: %s' % (obj_id))
+
 
         for obj_id in to_delete:
             ckan_method(ckan, 'resource', 'delete')(id=obj_id)
