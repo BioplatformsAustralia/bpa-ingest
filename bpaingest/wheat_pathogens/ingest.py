@@ -3,7 +3,7 @@ from __future__ import print_function
 import ckanapi
 from unipath import Path
 
-from ..ops import make_group, ckan_method, patch_if_required, create_resource, check_resource
+from ..ops import make_group, ckan_method, patch_if_required, create_resource, check_resource, reupload_resource
 from ..util import make_logger, bpa_id_to_ckan_name, prune_dict
 from ..bpa import bpa_mirror_url, get_bpa
 from .metadata import parse_metadata
@@ -105,10 +105,15 @@ def sync_files(ckan, packages, files):
             if create_resource(ckan, ckan_obj, legacy_url):
                 logger.info('created resource: %s' % (obj_id))
 
-
         for obj_id in to_delete:
             ckan_method(ckan, 'resource', 'delete')(id=obj_id)
             logger.info('deleted resource: %s' % (obj_id))
+
+        for reupload_obj in to_reupload:
+            obj_id = reupload_obj['id']
+            file_obj = needed_files[obj_id]
+            legacy_url, ckan_obj = ckan_resource_from_file(package_obj, file_obj)
+            reupload_resource(ckan, reupload_obj, legacy_url)
 
         # patch all the resources, to ensure everything is synced on
         # existing resources

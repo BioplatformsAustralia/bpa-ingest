@@ -118,8 +118,8 @@ def check_resource(ckan, current_url, legacy_url):
     return True
 
 
-def create_resource(ckan, ckan_obj, legacy_url):
-    "create resource, uploading data from legacy_url"
+def download_legacy_file(legacy_url):
+
     def download_to_fileobj(url, fd):
         logger.debug("downloading `%s'" % (url))
         response = requests.get(url, stream=True)
@@ -141,18 +141,48 @@ def create_resource(ckan, ckan_obj, legacy_url):
     tempdir = tempfile.mkdtemp()
     path = os.path.join(tempdir, basename)
     resolved_url = resolve_url(legacy_url)
+    logger.info("Resolved `%s' to `%s'" % (legacy_url, resolved_url))
     if not resolved_url:
         logger.error("unable to resolve `%s' - file missing?" % (legacy_url))
+        os.rmdir(tempdir)
         return
-    logger.info("Resolved `%s' to `%s'" % (legacy_url, resolved_url))
+    with open(path, 'w') as fd:
+        size = download_to_fileobj(resolved_url, fd)
+        if size is None:
+            os.rmdir(tempdir)
+            return
+    return tempdir, path
+
+
+def reupload_resource(ckan, ckan_obj, legacy_url):
+    "reupload data from legacy_url to ckan_obj"
+
+    tempdir, path = download_legacy_file(legacy_url)
+    if path is None:
+        return
     try:
-        with open(path, 'w') as fd:
-            size = download_to_fileobj(resolved_url, fd)
-            if not size:
-                return
-            logger.debug("uploading from tempfile: %s" % (path))
-            upload_obj = ckan_obj.copy()
-            upload_obj['url'] = 'dummy-value'  # required by CKAN < 2.5
+        logger.debug("re-uploading from tempfile: %s" % (path))
+        upload_obj = ckan_obj.copy()
+        upload_obj['url'] = 'dummy-value'  # required by CKAN < 2.5
+        with open(path, "rb") as fd:
+            ckan.action.resource_update(upload=fd, id=upload_obj['id'])
+        return True
+    finally:
+        os.unlink(path)
+        os.rmdir(tempdir)
+
+
+def create_resource(ckan, ckan_obj, legacy_url):
+    "create resource, uploading data from legacy_url"
+
+    logger.info("Resolved `%s' to `%s'" % (legacy_url, resolved_url))
+    tempdir, path = download_legacy_file(legacy_url)
+    if path is None:
+        return
+    try:
+        logger.debug("uploading from tempfile: %s" % (path))
+        upload_obj = ckan_obj.copy()
+        upload_obj['url'] = 'dummy-value'  # required by CKAN < 2.5
         with open(path, "rb") as fd:
             ckan.action.resource_create(upload=fd, **upload_obj)
         return True
