@@ -85,7 +85,7 @@ def resolve_url(url, auth):
             return None
 
 
-def check_resource(ckan, current_url, legacy_url, auth):
+def check_resource(ckan, current_url, legacy_url, auth=None):
     """returns True if the ckan_obj looks like it's good (size matches legacy url size)"""
 
     # determine the size of the original file in the legacy archive
@@ -98,7 +98,7 @@ def check_resource(ckan, current_url, legacy_url, auth):
     legacy_size = int(response.headers['content-length'])
 
     # determine the URL of the proxied s3 resource, and then its size
-    ckan_url = resolve_url(current_url)
+    ckan_url = resolve_url(current_url, None)
     if ckan_url is None:
         logger.error("unable to resolve CKAN URL: %s" % (current_url))
         return False
@@ -113,7 +113,7 @@ def check_resource(ckan, current_url, legacy_url, auth):
     return True
 
 
-def download_legacy_file(legacy_url, auth=auth):
+def download_legacy_file(legacy_url, auth):
 
     def download_to_fileobj(url, fd):
         logger.debug("downloading `%s'" % (url))
@@ -135,7 +135,7 @@ def download_legacy_file(legacy_url, auth=auth):
     basename = legacy_url.rsplit('/', 1)[-1]
     tempdir = tempfile.mkdtemp()
     path = os.path.join(tempdir, basename)
-    resolved_url = resolve_url(legacy_url)
+    resolved_url = resolve_url(legacy_url, auth)
     logger.info("Resolved `%s' to `%s'" % (legacy_url, resolved_url))
     if not resolved_url:
         logger.error("unable to resolve `%s' - file missing?" % (legacy_url))
@@ -149,7 +149,7 @@ def download_legacy_file(legacy_url, auth=auth):
     return tempdir, path
 
 
-def reupload_resource(ckan, ckan_obj, legacy_url, auth):
+def reupload_resource(ckan, ckan_obj, legacy_url, auth=None):
     "reupload data from legacy_url to ckan_obj"
 
     tempdir, path = download_legacy_file(legacy_url, auth)
@@ -167,7 +167,7 @@ def reupload_resource(ckan, ckan_obj, legacy_url, auth):
         os.rmdir(tempdir)
 
 
-def create_resource(ckan, ckan_obj, legacy_url, auth):
+def create_resource(ckan, ckan_obj, legacy_url, auth=None):
     "create resource, uploading data from legacy_url"
 
     logger.info("Resolved `%s' to `%s'" % (legacy_url, resolved_url))
