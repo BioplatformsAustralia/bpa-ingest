@@ -17,7 +17,9 @@ def sync_package(ckan, obj):
     try:
         ckan_obj = ckan_method(ckan, 'package', 'show')(id=obj['name'])
     except ckanapi.errors.NotFound:
-        ckan_obj = ckan_method(ckan, 'package', 'create')(type=obj['type'], id=obj['id'], name=obj['name'], owner_org=obj['owner_org'])
+        ckan_obj = ckan_method(ckan, 'package', 'create')(
+            type=obj['type'], id=obj['id'], name=obj['name'],
+            owner_org=obj['owner_org'])
         logger.info('created package object: %s' % (obj['id']))
     patch_obj = obj.copy()
     patch_obj['id'] = ckan_obj['id']
@@ -30,14 +32,7 @@ def sync_package(ckan, obj):
 def sync_samples(ckan, group_obj, samples):
     bpa_org = get_bpa(ckan)
     packages = []
-    api_group_obj = prune_dict(
-        group_obj, (
-            'display_name',
-            'description',
-            'title',
-            'image_display_url',
-            'id',
-            'name'))
+    api_group_obj = prune_dict(group_obj, ('display_name', 'description', 'title', 'image_display_url', 'id', 'name'))
     for bpa_id, data in samples.items():
         name = bpa_id_to_ckan_name(bpa_id)
         obj = {
@@ -50,7 +45,9 @@ def sync_samples(ckan, group_obj, samples):
             'notes': '%s (%s): %s' % (data.variety, data.code, data.classification),
             'type': 'wheat-cultivars',
         }
-        for field in ('source_name', 'code', 'characteristics', 'classification', 'organism', 'variety', 'organism_part', 'pedigree', 'dev_stage', 'yield_properties', 'morphology', 'maturity', 'pathogen_tolerance', 'drought_tolerance', 'soil_tolerance', 'url'):
+        for field in ('source_name', 'code', 'characteristics', 'classification', 'organism', 'variety',
+                      'organism_part', 'pedigree', 'dev_stage', 'yield_properties', 'morphology', 'maturity',
+                      'pathogen_tolerance', 'drought_tolerance', 'soil_tolerance', 'url'):
             obj[field] = getattr(data, field)
         packages.append(sync_package(ckan, obj))
     return packages
@@ -137,10 +134,7 @@ def ingest(ckan, metadata_path):
         'display_name': 'Wheat Cultivars',
         'image_url': 'https://downloads.bioplatforms.com/static/wheat_cultivars/wheat.png',
     })
-    organism = {
-        'genus': 'Triticum',
-        'species': 'Aestivum'
-    }
+    organism = {'genus': 'Triticum', 'species': 'Aestivum'}
     runs = parse_run_data(path)
     samples = parse_sample_data(path)
     files = parse_file_data(path)

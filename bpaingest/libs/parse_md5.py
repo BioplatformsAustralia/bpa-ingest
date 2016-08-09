@@ -1,5 +1,4 @@
 # -*- coding: utf-8 -*-
-
 """
 Parses md5 file
 """

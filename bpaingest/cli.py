@@ -6,10 +6,15 @@ import sys
 
 from .util import make_registration_decorator
 from .bpa import create_bpa
+
 from .wheat_cultivars.ingest import ingest as ingest_wheatcultivars
 from .wheat_cultivars.download import download as download_wheatcultivars
+
 from .wheat_pathogens.ingest import ingest as ingest_wheat_pathogens
 from .wheat_pathogens.download import download as download_wheat_pathogens
+
+from .gbr_amplicon.ingest import ingest as ingest_gbr_amplicon
+from .gbr_amplicon.download import download as download_gbr_amplicon
 
 register_command, command_fns = make_registration_decorator()
 
@@ -27,9 +32,10 @@ def setup_metadata_path(subparser):
 
 @register_command
 def wheat_cultivars(ckan, args):
-    "download and ingest wheat7a metadata"
+    "download and ingest wheat cultivars metadata"
     download_wheatcultivars(args.path, args.clean)
     ingest_wheatcultivars(ckan, args.path)
+
 wheat_cultivars.setup = setup_metadata_path
 
 
@@ -38,7 +44,17 @@ def wheat_pathogens(ckan, args):
     "download and ingest wheat pathogen genome metadata"
     download_wheat_pathogens(args.path, args.clean)
     ingest_wheat_pathogens(ckan, args.path)
+
 wheat_pathogens.setup = setup_metadata_path
+
+
+@register_command
+def gbr_amplicon(ckan, args):
+    "download and ingest great barrier reef amplicon genome metadata"
+    download_gbr_amplicon(args.path, args.clean)
+    ingest_gbr_amplicon(ckan, args.path)
+
+gbr_amplicon.setup = setup_metadata_path
 
 
 def make_ckan_api(args):
@@ -72,15 +88,9 @@ def commands():
 
 def main():
     parser = argparse.ArgumentParser()
-    parser.add_argument(
-        '--version', action='store_true',
-        help='print version and exit')
-    parser.add_argument(
-        '-k', '--api-key', required=True,
-        help='CKAN API Key')
-    parser.add_argument(
-        '-u', '--ckan-url', required=True,
-        help='CKAN base url')
+    parser.add_argument('--version', action='store_true', help='print version and exit')
+    parser.add_argument('-k', '--api-key', required=True, help='CKAN API Key')
+    parser.add_argument('-u', '--ckan-url', required=True, help='CKAN base url')
 
     subparsers = parser.add_subparsers(dest='name')
     for name, fn, setup_fn, help_text in sorted(commands()):

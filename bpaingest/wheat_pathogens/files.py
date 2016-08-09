@@ -25,6 +25,7 @@ def file_from_row(e):
         """ The filenames in the spreadsheet has paths prepended, strip them out """
         head, tail = os.path.split(_fname.strip())
         return tail
+
     obj = {
         'index_number': ingest_utils.get_clean_number(e.index_number),
         'lane_number': ingest_utils.get_clean_number(e.lane_number),

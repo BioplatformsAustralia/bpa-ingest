@@ -29,11 +29,7 @@ def get_cultivar_sample_characteristics(file_name):
         ("url", "Link", None),
     ]
 
-    wrapper = ExcelWrapper(
-        field_spec,
-        file_name,
-        sheet_name="Characteristics",
-        header_length=1)
+    wrapper = ExcelWrapper(field_spec, file_name, sheet_name="Characteristics", header_length=1)
     return wrapper.get_all()
 
 

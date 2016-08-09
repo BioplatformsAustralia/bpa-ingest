@@ -9,8 +9,7 @@ from dateutil.parser import parse as date_parser
 logger = make_logger(__name__)
 
 # list of chars to delete
-remove_letters_map = dict(
-    (ord(char), None) for char in string.punctuation + string.ascii_letters)
+remove_letters_map = dict((ord(char), None) for char in string.punctuation + string.ascii_letters)
 
 
 def get_clean_number(val, default=None, debug=False):
@@ -62,14 +61,10 @@ def get_clean_float(val, default=None, stringconvert=True):
         try:
             return float(var)
         except ValueError:
-            logger.warning(
-                "ValueError Value '{0}' not floatable, returning default '{1}'".format(
-                    var, default))
+            logger.warning("ValueError Value '{0}' not floatable, returning default '{1}'".format(var, default))
             return default
         except TypeError:
-            logger.warning(
-                "TypeError Value '{0}' not floatable, returning default '{1}'".format(
-                    var, default))
+            logger.warning("TypeError Value '{0}' not floatable, returning default '{1}'".format(var, default))
             return default
 
     # if its a float, its probably ok

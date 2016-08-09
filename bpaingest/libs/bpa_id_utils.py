@@ -4,7 +4,6 @@ import re
 
 from ..util import make_logger
 
-
 BPA_ID = "102.100.100"
 
 logger = make_logger(__name__)
