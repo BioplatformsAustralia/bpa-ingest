@@ -2,7 +2,6 @@ from collections import namedtuple
 
 from ..libs import bpa_id_utils
 from ..util import make_logger
-from .runs import BLANK_RUN
 
 logger = make_logger(__name__)
 

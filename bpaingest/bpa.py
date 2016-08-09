@@ -9,6 +9,7 @@ MIRROR_BASE = 'https://downloads-qcif.bioplatforms.com/'
 def bpa_mirror_url(path):
     return urljoin(MIRROR_BASE, path)
 
+
 def create_bpa(ckan):
     # create or update the BPA organisation
     bpa = {

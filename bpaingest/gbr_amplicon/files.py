@@ -1,7 +1,5 @@
-import os
 import re
 
-from ..libs import ingest_utils
 from ..libs import md5parser
 from ..util import make_logger
 
@@ -19,6 +17,7 @@ AMPLICON_FILE_PATTERN = """
 """
 AMPLICON_FILE_PATTERN = re.compile(AMPLICON_FILE_PATTERN, re.VERBOSE)
 
+
 def _file_from_line(line):
     obj = {
         'filename': line.filename,
@@ -30,6 +29,7 @@ def _file_from_line(line):
         'index': line.md5data['index']
     }
     return line.md5data['id'], obj
+
 
 def _get_parsed_lines(path):
     """
@@ -46,6 +46,7 @@ def _get_parsed_lines(path):
         md5parsedlines.extend(md5parser.parse_md5_file(AMPLICON_FILE_PATTERN, md5_file))
 
     return md5parsedlines
+
 
 def files_from_md5(path):
     files = []

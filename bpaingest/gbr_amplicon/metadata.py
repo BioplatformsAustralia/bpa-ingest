@@ -6,13 +6,14 @@ from ..libs import ingest_utils
 
 logger = make_logger(__name__)
 
+
 def fix_dilution(val):
     '''
     Some source xcell files ship with the dilution column type as time.
     xlrd advertises support for format strings but not implemented.
     '''
     if isinstance(val, float):
-        return u'1:10' # default
+        return u'1:10'  # default
     return val
 
 
@@ -26,9 +27,11 @@ def fix_pcr(pcr):
         val = 'X'
     return val
 
+
 def strip_bpa_prefix(val):
     ''' Strips BPA prefix '''
     return val.split('/')[1]
+
 
 def get_amplicon_data(file_name):
     ''' Get amplion data from metadata spreadsheets '''

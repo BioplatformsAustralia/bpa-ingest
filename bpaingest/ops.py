@@ -94,7 +94,7 @@ def check_resource(ckan, current_url, legacy_url, auth=None):
     if response.status_code != 200:
         logger.error("error accessing resource: HTTP status code %d" % (response.status_code))
         return False
-        
+
     legacy_size = int(response.headers['content-length'])
 
     # determine the URL of the proxied s3 resource, and then its size
@@ -170,7 +170,6 @@ def reupload_resource(ckan, ckan_obj, legacy_url, auth=None):
 def create_resource(ckan, ckan_obj, legacy_url, auth=None):
     "create resource, uploading data from legacy_url"
 
-    logger.info("Resolved `%s' to `%s'" % (legacy_url, resolved_url))
     tempdir, path = download_legacy_file(legacy_url, auth)
     if path is None:
         return

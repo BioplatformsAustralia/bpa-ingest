@@ -81,6 +81,20 @@ def sync_files(ckan, packages, files):
         to_create = set(needed_files) - set(existing_files)
         to_delete = set(existing_files) - set(needed_files)
 
+        # check the existing resources exist, and have a size which matches the
+        # legacy mirror
+        to_reupload = []
+        for current_ckan_obj in current_resources:
+            obj_id = current_ckan_obj['id']
+            file_obj = needed_files[obj_id]
+            legacy_url, _ = ckan_resource_from_file(package_obj, file_obj)
+            current_url = current_ckan_obj.get('url')
+            if not current_url or not ops.check_resource(ckan, current_url, legacy_url):
+                logger.error('resource check failed, queued for re-upload: %s' % (obj_id))
+                to_reupload.append(current_ckan_obj)
+            else:
+                logger.info('resource check OK')
+
         for obj_id in to_create:
             file_obj = needed_files[obj_id]
             legacy_url, ckan_obj = ckan_resource_from_file(package_obj, file_obj)
@@ -90,6 +104,12 @@ def sync_files(ckan, packages, files):
         for obj_id in to_delete:
             ops.ckan_method(ckan, 'resource', 'delete')(id=obj_id)
             logger.info('deleted resource: %s' % (obj_id))
+
+        for reupload_obj in to_reupload:
+            obj_id = reupload_obj['id']
+            file_obj = needed_files[obj_id]
+            legacy_url, ckan_obj = ckan_resource_from_file(package_obj, file_obj)
+            ops.reupload_resource(ckan, reupload_obj, legacy_url)
 
         # patch all the resources, to ensure everything is synced on
         # existing resources
