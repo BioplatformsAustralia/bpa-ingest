@@ -29,5 +29,4 @@ def create_bpa(ckan):
 
 
 def get_bpa(ckan):
-    create_bpa(ckan)
     return ckan_method(ckan, 'organization', 'show')(id=BPA_ORGANIZATION_ID)
