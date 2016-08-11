@@ -46,7 +46,7 @@ def sync_samples(ckan, group_obj, samples):
             'title': 'Amplicon {}'.format(bpa_id),
             'notes': 'Amplicon Data for Great Barrier Reef Sample {}'.format(bpa_id),
             # 'tags': [{'Amplicon': data['amplicon']}],
-            'type': 'great-barrier-reef',
+            'type': 'great-barrier-reef-amplicon',
         })
         packages.append(sync_package(ckan, obj))
     return packages
