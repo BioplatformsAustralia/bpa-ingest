@@ -102,7 +102,8 @@ def sync_files(ckan, packages, files, runs):
         for current_ckan_obj in current_resources:
             obj_id = current_ckan_obj['id']
             file_obj = needed_files[obj_id]
-            legacy_url, _ = ckan_resource_from_file(package_obj, file_obj)
+            run_obj = runs.get(file_obj['run'], BLANK_RUN)
+            legacy_url, _ = ckan_resource_from_file(package_obj, file_obj, run_obj)
             current_url = current_ckan_obj.get('url')
             if not current_url or not check_resource(ckan, current_url, legacy_url):
                 logger.error('resource check failed, queued for re-upload: %s' % (obj_id))
@@ -112,7 +113,8 @@ def sync_files(ckan, packages, files, runs):
 
         for obj_id in to_create:
             file_obj = needed_files[obj_id]
-            legacy_url, ckan_obj = ckan_resource_from_file(package_obj, file_obj)
+            run_obj = runs.get(file_obj['run'], BLANK_RUN)
+            legacy_url, ckan_obj = ckan_resource_from_file(package_obj, file_obj, run_obj)
             if create_resource(ckan, ckan_obj, legacy_url):
                 logger.info('created resource: %s' % (obj_id))
 
@@ -123,7 +125,8 @@ def sync_files(ckan, packages, files, runs):
         for reupload_obj in to_reupload:
             obj_id = reupload_obj['id']
             file_obj = needed_files[obj_id]
-            legacy_url, ckan_obj = ckan_resource_from_file(package_obj, file_obj)
+            run_obj = runs.get(file_obj['run'], BLANK_RUN)
+            legacy_url, ckan_obj = ckan_resource_from_file(package_obj, file_obj, run_obj)
             reupload_resource(ckan, reupload_obj, legacy_url)
 
         # patch all the resources, to ensure everything is synced on
