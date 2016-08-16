@@ -108,7 +108,7 @@ def check_resource(ckan, current_url, legacy_url, auth=None):
     if response.status_code != 200:
         logger.error("unable to access CKAN URL: %s (status_code=%d)" % (ckan_url, response.status_code))
         return False
-    current_size = int(response.headers['content-range'].rsplit('/', 1)[-1])
+    current_size = int(response.headers.get('content-range', '0').rsplit('/', 1)[-1])
     if current_size != legacy_size:
         logger.error("CKAN resource has incorrect size: %d (should be %d)" % (current_size, legacy_size))
         return False
