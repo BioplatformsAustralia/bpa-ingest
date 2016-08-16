@@ -8,7 +8,7 @@ from ..util import make_logger, bpa_id_to_ckan_name, prune_dict
 from ..bpa import bpa_mirror_url, get_bpa
 from .files import parse_file_data
 from .samples import parse_sample_data
-from .runs import parse_run_data
+from .runs import parse_run_data, BLANK_RUN
 
 logger = make_logger(__name__)
 
