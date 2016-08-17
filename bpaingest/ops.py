@@ -110,7 +110,7 @@ def check_resource(ckan, current_url, legacy_url, auth=None):
         return False
     current_size = int(response.headers.get('content-range', '0').rsplit('/', 1)[-1])
     if current_size != legacy_size:
-        logger.error("CKAN resource has incorrect size: %d (should be %d)" % (current_size, legacy_size))
+        logger.error("CKAN resource %s has incorrect size: %d (should be %d)" % (current_url, current_size, legacy_size))
         return False
     return True
 

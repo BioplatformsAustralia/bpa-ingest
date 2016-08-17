@@ -56,6 +56,7 @@ def ckan_resource_from_file(package_obj, file_obj):
     ckan_obj.update({
         'id': file_obj['md5'],
         'package_id': package_obj['id'],
+        'resource_type': 'wheat-pathogens'
     })
     return url, ckan_obj
 
