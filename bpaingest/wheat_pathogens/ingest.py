@@ -71,7 +71,7 @@ def sync_files(ckan, packages, files):
         file_idx[bpa_id].append(obj)
 
     for package in packages:
-        files = file_idx.get(package['id'], [])
+        files = file_idx.get(package['id'])
         # grab a copy of the package with all current resources
         package_obj = ckan_method(ckan, 'package', 'show')(id=package['id'])
         current_resources = package_obj['resources']

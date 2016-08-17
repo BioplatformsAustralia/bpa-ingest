@@ -32,16 +32,21 @@ def file_from_row(e):
         'filename': get_file_name(e.sequence_filename),
         'name': get_file_name(e.sequence_filename),
         'md5': e.md5_checksum,
-        'file_size': e.file_size,
-        'note': ingest_utils.pretty_print_namedtuple(e),
+        'file_size': e.file_size
     }
     return obj
 
 
 def files_from_metadata(metadata):
     files = []
+    uniq = set()
     for row in metadata:
         bpa_id, obj = run_from_row(row)
         obj.update(file_from_row(row))
+        uniq_key = (bpa_id, obj['md5'])
+        if uniq_key in uniq:
+            logger.warning("skipping duplicate file info, %s" % (uniq_key,))
+            continue
+        uniq.add(uniq_key)
         files.append((bpa_id, obj))
     return files
