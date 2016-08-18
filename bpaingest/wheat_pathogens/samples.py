@@ -20,6 +20,7 @@ def sample_from_row(e):
         'collection_date': e.collection_date,
         'collection_location': e.collection_location,
         'dna_extraction_protocol': e.dna_extraction_protocol,
+        'contact_scientist': e.contact_scientist,
         'sequencing_facility': "AGRF"
     }
     return obj
