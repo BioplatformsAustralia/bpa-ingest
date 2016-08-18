@@ -10,6 +10,7 @@ def sample_from_row(e):
         'phylum': e.phylum,
         'species': e.species,
         'name': e.sample_id,
+        'sample_id': e.sample_id,
         'sample_label': e.other_id,
         'dna_source': e.sample_dna_source,
         'official_variety_name': e.official_variety,
