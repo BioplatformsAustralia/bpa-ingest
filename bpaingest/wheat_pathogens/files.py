@@ -12,7 +12,7 @@ def run_from_row(e):
         'run_number': ingest_utils.get_clean_number(e.run_number),
         'sequencer': e.sequencer or "Unknown",
         'run_index_number': e.index_number,
-        'run_lane_number': ingest_utils.get_clean_number(e.lane_number),
+        'run_lane_number': ingest_utils.get_clean_number(e.lane_number) or 'none',
         'run_protocol': e.library_construction_protocol,
         'run_protocol_base_pairs': ingest_utils.get_clean_number(e.library_construction),
         'run_protocol_library_type': e.library,
