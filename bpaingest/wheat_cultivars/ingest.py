@@ -136,7 +136,7 @@ def sync_files(ckan, packages, files, runs):
         for current_ckan_obj in current_resources:
             obj_id = current_ckan_obj['id']
             file_obj = needed_files[obj_id]
-            legacy_url, ckan_obj = ckan_resource_from_file(package_obj, file_obj)
+            legacy_url, ckan_obj = ckan_resource_from_file(package_obj, file_obj, run_obj)
             was_patched, ckan_obj = patch_if_required(ckan, 'resource', current_ckan_obj, ckan_obj)
             if was_patched:
                 logger.info('patched resource: %s' % (obj_id))
