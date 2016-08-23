@@ -108,7 +108,13 @@ def get_size(url, auth):
 
 
 def check_resource(ckan, current_url, legacy_url, auth=None):
-    """returns True if the ckan_obj looks like it's good (size matches legacy url size)"""
+    """returns True if the ckan_obj looks good (is on the CKAN server, size matches legacy url size)"""
+
+    if current_url is None:
+        return False
+
+    if not current_url.startswith(ckan.address):
+        return False
 
     # determine the size of the original file in the legacy archive
     legacy_size = get_size(legacy_url, auth)
