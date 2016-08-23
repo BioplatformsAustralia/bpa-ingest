@@ -3,7 +3,7 @@ from __future__ import print_function
 import ckanapi
 from unipath import Path
 
-from ..ops import make_group, ckan_method, patch_if_required, create_resource, check_resource, reupload_resource
+from ..ops import make_group, ckan_method, patch_if_required, create_resource, check_resource, reupload_resource, get_size
 from ..util import make_logger, bpa_id_to_ckan_name, prune_dict
 from ..bpa import bpa_mirror_url, get_bpa
 from .files import parse_file_data
@@ -86,6 +86,7 @@ def sync_files(ckan, packages, files, runs):
             file_idx[bpa_id] = []
         file_idx[bpa_id].append(obj)
 
+    to_reupload = []
     for package in packages:
         files = file_idx[package['id']]
         # grab a copy of the package with all current resources
@@ -98,16 +99,15 @@ def sync_files(ckan, packages, files, runs):
 
         # check the existing resources exist, and have a size which matches the
         # legacy mirror
-        to_reupload = []
         for current_ckan_obj in current_resources:
             obj_id = current_ckan_obj['id']
             file_obj = needed_files[obj_id]
             run_obj = runs.get(file_obj['run'], BLANK_RUN)
             legacy_url, _ = ckan_resource_from_file(package_obj, file_obj, run_obj)
             current_url = current_ckan_obj.get('url')
-            if not current_url or not check_resource(ckan, current_url, legacy_url):
+            if check_resource(ckan, current_url, legacy_url):
                 logger.error('resource check failed, queued for re-upload: %s' % (obj_id))
-                to_reupload.append(current_ckan_obj)
+                to_reupload.append((current_ckan_obj, legacy_url))
             else:
                 logger.info('resource check OK')
 
@@ -122,13 +122,6 @@ def sync_files(ckan, packages, files, runs):
             ckan_method(ckan, 'resource', 'delete')(id=obj_id)
             logger.info('deleted resource: %s' % (obj_id))
 
-        for reupload_obj in to_reupload:
-            obj_id = reupload_obj['id']
-            file_obj = needed_files[obj_id]
-            run_obj = runs.get(file_obj['run'], BLANK_RUN)
-            legacy_url, ckan_obj = ckan_resource_from_file(package_obj, file_obj, run_obj)
-            reupload_resource(ckan, reupload_obj, legacy_url)
-
         # patch all the resources, to ensure everything is synced on
         # existing resources
         package_obj = ckan_method(ckan, 'package', 'show')(id=package['id'])
@@ -140,6 +133,9 @@ def sync_files(ckan, packages, files, runs):
             was_patched, ckan_obj = patch_if_required(ckan, 'resource', current_ckan_obj, ckan_obj)
             if was_patched:
                 logger.info('patched resource: %s' % (obj_id))
+
+    for reupload_obj, legacy_url in sorted(to_reupload, key=lambda x: get_size(x[1])):
+        reupload_resource(ckan, reupload_obj, legacy_url)
 
 
 def ckan_sync_data(ckan, organism, group_obj, samples, runs, files):

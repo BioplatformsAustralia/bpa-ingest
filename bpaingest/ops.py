@@ -8,6 +8,7 @@ from .util import make_logger
 
 logger = make_logger(__name__)
 
+
 # https://stackoverflow.com/questions/1094841/reusable-library-to-get-human-readable-version-of-file-size
 def sizeof_fmt(num, suffix='B'):
     for unit in ['', 'Ki', 'Mi', 'Gi', 'Ti', 'Pi', 'Ei', 'Zi']:
@@ -84,35 +85,47 @@ def resolve_url(url, auth):
         else:
             return None
 
+_size_cache = {}
+
+
+def get_size(url, auth):
+    def _size(response):
+        if response.status_code != 200:
+            return None
+        if 'content-length' in response.headers:
+            return int(response.headers['content-length'])
+        if 'content-range' in response.headers:
+            return int(response.headers.get('content-range').rsplit('/', 1)[-1])
+
+    if not url:
+        return None
+    if url not in _size_cache:
+        resolved = resolve_url(url, auth)
+        if resolved is None:
+            return None
+        _size_cache[url] = _size_cache[resolved] = _size(requests.head(resolved))
+    return _size_cache[url]
+
 
 def check_resource(ckan, current_url, legacy_url, auth=None):
     """returns True if the ckan_obj looks like it's good (size matches legacy url size)"""
 
     # determine the size of the original file in the legacy archive
-    resolved_url = resolve_url(legacy_url, auth)
-    if resolved_url is None:
-        logger.error("error resolving resource: %s" % (legacy_url))
+    legacy_size = get_size(legacy_url, auth)
+    if legacy_size is None:
+        logger.error("error getting size of: %s" % (legacy_url))
         return False
-    response = requests.head(resolved_url, auth=auth)
-    if response.status_code != 200:
-        logger.error("error accessing resource: HTTP status code %d" % (response.status_code))
-        return False
-
-    legacy_size = int(response.headers['content-length'])
 
     # determine the URL of the proxied s3 resource, and then its size
-    ckan_url = resolve_url(current_url, None)
-    if ckan_url is None:
-        logger.error("unable to resolve CKAN URL: %s" % (current_url))
+    current_size = get_size(current_url, None)
+    if current_size is None:
+        logger.error("error getting size of: %s" % (legacy_url))
         return False
-    response = requests.head(ckan_url)
-    if response.status_code != 200:
-        logger.error("unable to access CKAN URL: %s (status_code=%d)" % (ckan_url, response.status_code))
-        return False
-    current_size = int(response.headers.get('content-range', '0').rsplit('/', 1)[-1])
+
     if current_size != legacy_size:
         logger.error("CKAN resource %s has incorrect size: %d (should be %d)" % (current_url, current_size, legacy_size))
         return False
+
     return True
 
 
