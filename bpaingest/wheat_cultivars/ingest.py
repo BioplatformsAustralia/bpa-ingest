@@ -134,7 +134,7 @@ def sync_files(ckan, packages, files, runs):
             if was_patched:
                 logger.info('patched resource: %s' % (obj_id))
 
-    for reupload_obj, legacy_url in sorted(to_reupload, key=lambda x: get_size(x[1])):
+    for reupload_obj, legacy_url in sorted(to_reupload, key=lambda x: get_size(x[1], None)):
         reupload_resource(ckan, reupload_obj, legacy_url)
 
 
