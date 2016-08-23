@@ -105,7 +105,7 @@ def sync_files(ckan, packages, files, runs):
             run_obj = runs.get(file_obj['run'], BLANK_RUN)
             legacy_url, _ = ckan_resource_from_file(package_obj, file_obj, run_obj)
             current_url = current_ckan_obj.get('url')
-            if check_resource(ckan, current_url, legacy_url):
+            if not check_resource(ckan, current_url, legacy_url):
                 logger.error('resource check failed, queued for re-upload: %s' % (obj_id))
                 to_reupload.append((current_ckan_obj, legacy_url))
             else:
