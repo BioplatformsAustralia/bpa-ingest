@@ -5,16 +5,19 @@ import ckanapi
 import sys
 
 from .util import make_registration_decorator
+from .sync import sync_metadata
 from .bpa import create_bpa
 
-from .wheat_cultivars.ingest import ingest as ingest_wheatcultivars
+from .wheat_cultivars.ingest import WheatCultivarsMetadata
 from .wheat_cultivars.download import download as download_wheatcultivars
 
-from .wheat_pathogens.ingest import ingest as ingest_wheat_pathogens
+from .wheat_pathogens.ingest import WheatPathogensMetadata
 from .wheat_pathogens.download import download as download_wheat_pathogens
 
-from .gbr_amplicon.ingest import ingest as ingest_gbr_amplicon
+from .gbr_amplicon.ingest import GbrAmpliconMetadata
 from .gbr_amplicon.download import download as download_gbr_amplicon
+
+from .libs.fetch_data import get_password
 
 register_command, command_fns = make_registration_decorator()
 
@@ -34,7 +37,8 @@ def setup_metadata_path(subparser):
 def wheat_cultivars(ckan, args):
     "download and ingest wheat cultivars metadata"
     download_wheatcultivars(args.path, args.clean)
-    ingest_wheatcultivars(ckan, args.path)
+    meta = WheatCultivarsMetadata(args.path)
+    sync_metadata(ckan, meta, None)
 
 wheat_cultivars.setup = setup_metadata_path
 
@@ -43,7 +47,8 @@ wheat_cultivars.setup = setup_metadata_path
 def wheat_pathogens(ckan, args):
     "download and ingest wheat pathogen genome metadata"
     download_wheat_pathogens(args.path, args.clean)
-    ingest_wheat_pathogens(ckan, args.path)
+    meta = WheatPathogensMetadata(args.path)
+    sync_metadata(ckan, meta, None)
 
 wheat_pathogens.setup = setup_metadata_path
 
@@ -51,8 +56,10 @@ wheat_pathogens.setup = setup_metadata_path
 @register_command
 def gbr_amplicon(ckan, args):
     "download and ingest great barrier reef amplicon genome metadata"
+    auth = ('bpa', get_password('gbr'))
     download_gbr_amplicon(args.path, args.clean)
-    ingest_gbr_amplicon(ckan, args.path)
+    meta = GbrAmpliconMetadata(args.path)
+    sync_metadata(ckan, meta, auth)
 
 gbr_amplicon.setup = setup_metadata_path
 

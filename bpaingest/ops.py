@@ -38,8 +38,7 @@ def patch_if_required(ckan, object_type, ckan_object, patch_object, skip_differe
         if v1 != v2 and str(v1) != str(v2):
             differences.append((k, v1, v2))
     for k, v, v2 in differences:
-        logger.debug("%s/%s: difference on k `%s', v `%s' v2 `%s'" % (object_type, ckan_object.get('id', '<no id?>'), k,
-                                                                      v, v2))
+        logger.debug("%s/%s: difference on k `%s', we have `%s' vs ckan `%s'" % (object_type, ckan_object.get('id', '<no id?>'), k, v, v2))
     patch_needed = len(differences) > 0
     if patch_needed:
         ckan_object = ckan_method(ckan, object_type, "patch")(**patch_object)
@@ -103,7 +102,7 @@ def get_size(url, auth):
         resolved = resolve_url(url, auth)
         if resolved is None:
             return None
-        _size_cache[url] = _size_cache[resolved] = _size(requests.head(resolved))
+        _size_cache[url] = _size_cache[resolved] = _size(requests.head(resolved, auth=auth))
     return _size_cache[url]
 
 
