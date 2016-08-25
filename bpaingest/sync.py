@@ -2,6 +2,7 @@ from .ops import ckan_method, patch_if_required, make_group, check_resource, cre
 import ckanapi
 from .util import make_logger
 from .bpa import get_bpa
+from .util import prune_dict
 
 logger = make_logger(__name__)
 
@@ -10,9 +11,14 @@ def sync_package(ckan, obj):
     try:
         ckan_obj = ckan_method(ckan, 'package', 'show')(id=obj['name'])
     except ckanapi.errors.NotFound:
-        ckan_obj = ckan_method(ckan, 'package', 'create')(
-            type=obj['type'], id=obj['id'], name=obj['name'],
-            owner_org=obj['owner_org'])
+        create_obj = {
+            'type': obj['type'],
+            'id': obj['id'],
+            'name': obj['name'],
+            'owner_org': obj['owner_org']
+        }
+        print(create_obj)
+        ckan_obj = ckan_method(ckan, 'package', 'create')(**create_obj)
         logger.info('created package object: %s' % (obj['id']))
     patch_obj = obj.copy()
     patch_obj['id'] = ckan_obj['id']
@@ -24,11 +30,13 @@ def sync_package(ckan, obj):
 
 def sync_packages(ckan, packages, org, group):
     logger.info('syncing %d packages' % (len(packages)))
+    # we have to post the group back in package objects, send a minimal version of it
+    api_group_obj = prune_dict(group, ('display_name', 'description', 'title', 'image_display_url', 'id', 'name'))
     ckan_packages = []
     for package in packages:
         obj = package.copy()
-        obj['owner_org'] = org['id'],
-        obj['groups'] = [group['id']]
+        obj['owner_org'] = org['id']
+        obj['groups'] = [api_group_obj]
         ckan_packages.append(sync_package(ckan, obj))
     return ckan_packages
 
