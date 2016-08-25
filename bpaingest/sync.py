@@ -29,7 +29,7 @@ def sync_packages(ckan, packages, org, group):
         obj = package.copy()
         obj['owner_org'] = org['id'],
         obj['groups'] = [group['id']]
-        ckan_packages.append(sync_package(ckan, package))
+        ckan_packages.append(sync_package(ckan, obj))
     return ckan_packages
 
 
