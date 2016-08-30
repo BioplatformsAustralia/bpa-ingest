@@ -29,6 +29,7 @@ def sync_package(ckan, obj):
 
 
 def sync_packages(ckan, packages, org, group):
+    # FIXME: we don't check if there are any packages we should remove (unpublish)
     logger.info('syncing %d packages' % (len(packages)))
     # we have to post the group back in package objects, send a minimal version of it
     api_group_obj = prune_dict(group, ('display_name', 'description', 'title', 'image_display_url', 'id', 'name'))
