@@ -1,5 +1,6 @@
 import progressbar
 import urlparse
+import ckanapi
 import os
 
 from hashlib import md5, sha256
@@ -51,7 +52,11 @@ def localpath(mirror_path, legacy_url):
 
 def genhash(ckan, meta, mirror_path):
     for bpa_id, legacy_url, resource in meta.get_resources():
-        ckan_resource = ckan_method(ckan, 'resource', 'show')(id=resource['id'])
+        try:
+            ckan_resource = ckan_method(ckan, 'resource', 'show')(id=resource['id'])
+        except ckanapi.errors.NotFound:
+            logger.error("resource `%s': not in CKAN, skipping" % (ckan_resource['id']))
+            continue
         if len(ckan_resource.get('sha256', '')) == 64:
             logger.info("resource `%s': already hashed, continuing" % (ckan_resource['id']))
             continue
