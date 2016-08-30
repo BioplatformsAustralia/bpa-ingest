@@ -27,7 +27,10 @@ def ckan_method(ckan, object_type, method):
 
 
 def patch_if_required(ckan, object_type, ckan_object, patch_object, skip_differences=None):
-    "patch ckan_object if applying patch_object would change it"
+    """
+    patch ckan_object if applying patch_object would change it. ckan_object is unchanged
+    for any keys which are not mentioned in patch_object
+    """
     differences = []
     for k in patch_object.keys():
         if skip_differences and k in skip_differences:

@@ -4,6 +4,7 @@ import os
 
 from hashlib import md5, sha256
 from binascii import hexlify
+from .ops import ckan_method
 from .util import make_logger
 
 logger = make_logger(__name__)
@@ -50,9 +51,16 @@ def localpath(mirror_path, legacy_url):
 
 def genhash(ckan, meta, mirror_path):
     for bpa_id, legacy_url, resource in meta.get_resources():
+        ckan_resource = ckan_method(ckan, 'resource', 'show')(id=resource['id'])
+        if len(ckan_resource.get('sha256', '')) == 64:
+            logger.info("resource `%s': already hashed, continuing" % (ckan_resource['id']))
+            continue
         fpath = localpath(mirror_path, legacy_url)
         hashes = generate_hashes(fpath)
-        print(hashes)
         if hashes['md5'] != resource['md5']:
             logger.error("md5 mismatch, have `%s' and expected `%s': %s" % (hashes['md5'], resource['md5'], fpath))
             continue
+        patch_obj = hashes.copy()
+        patch_obj['id'] = ckan_resource['id']
+        ckan_method(ckan, 'resource', 'patch')(**patch_obj)
+        logger.info("resource `%s': hashes calculated and pushed" % (ckan_resource['id']))
