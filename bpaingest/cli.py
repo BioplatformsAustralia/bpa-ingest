@@ -28,40 +28,31 @@ def bootstrap(ckan, args):
     create_bpa(ckan)
 
 
-def setup_metadata_path(subparser):
+sync_handlers = {
+    'wheat-cultivars': (download_wheatcultivars, WheatCultivarsMetadata, None),
+    'wheat-pathogens': (download_wheat_pathogens, WheatPathogensMetadata, None),
+    'gbr-amplicon': (download_gbr_amplicon, GbrAmpliconMetadata, lambda: ('bpa', get_password('gbr'))),
+}
+
+
+def setup_sync(subparser):
+    subparser.add_argument('project_name', choices=sync_handlers.keys(), help='path to metadata')
     subparser.add_argument('path', help='path to metadata')
     subparser.add_argument('--clean', action='store_true', help='clean up path before run')
 
 
 @register_command
-def wheat_cultivars(ckan, args):
-    "download and ingest wheat cultivars metadata"
-    download_wheatcultivars(args.path, args.clean)
-    meta = WheatCultivarsMetadata(args.path)
-    sync_metadata(ckan, meta, None)
-
-wheat_cultivars.setup = setup_metadata_path
-
-
-@register_command
-def wheat_pathogens(ckan, args):
-    "download and ingest wheat pathogen genome metadata"
-    download_wheat_pathogens(args.path, args.clean)
-    meta = WheatPathogensMetadata(args.path)
-    sync_metadata(ckan, meta, None)
-
-wheat_pathogens.setup = setup_metadata_path
-
-
-@register_command
-def gbr_amplicon(ckan, args):
-    "download and ingest great barrier reef amplicon genome metadata"
-    auth = ('bpa', get_password('gbr'))
-    download_gbr_amplicon(args.path, args.clean)
-    meta = GbrAmpliconMetadata(args.path)
+def sync(ckan, args):
+    """sync a project"""
+    dl_fn, meta_cls, auth_fn = sync_handlers[args.project_name]
+    dl_fn(args.path, args.clean)
+    meta = meta_cls(args.path)
+    auth = None
+    if auth_fn:
+        auth = auth_fn()
     sync_metadata(ckan, meta, auth)
 
-gbr_amplicon.setup = setup_metadata_path
+sync.setup = setup_sync
 
 
 def make_ckan_api(args):
