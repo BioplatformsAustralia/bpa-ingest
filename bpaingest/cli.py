@@ -7,6 +7,7 @@ import sys
 from .util import make_registration_decorator
 from .sync import sync_metadata
 from .bpa import create_bpa
+from .genhash import genhash as genhash_fn
 
 from .wheat_cultivars.ingest import WheatCultivarsMetadata
 from .wheat_cultivars.download import download as download_wheatcultivars
@@ -41,6 +42,13 @@ def setup_sync(subparser):
     subparser.add_argument('--clean', action='store_true', help='clean up path before run')
 
 
+def setup_hash(subparser):
+    subparser.add_argument('project_name', choices=sync_handlers.keys(), help='path to metadata')
+    subparser.add_argument('path', help='path to metadata')
+    subparser.add_argument('mirror_path', help='path to locally mounted mirror')
+    subparser.add_argument('--clean', action='store_true', help='clean up path before run')
+
+
 @register_command
 def sync(ckan, args):
     """sync a project"""
@@ -53,6 +61,20 @@ def sync(ckan, args):
     sync_metadata(ckan, meta, auth)
 
 sync.setup = setup_sync
+
+
+@register_command
+def genhash(ckan, args):
+    """
+    verify MD5 sums for a local (filesystem mounted) mirror of the BPA
+    data, and generate expected E-Tag and SHA256 values.
+    """
+    dl_fn, meta_cls, auth_fn = sync_handlers[args.project_name]
+    dl_fn(args.path, args.clean)
+    meta = meta_cls(args.path)
+    genhash_fn(ckan, meta, args.mirror_path)
+
+genhash.setup = setup_hash
 
 
 def make_ckan_api(args):
