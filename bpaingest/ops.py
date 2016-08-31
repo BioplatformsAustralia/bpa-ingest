@@ -3,6 +3,7 @@ import tempfile
 import requests
 import ckanapi
 import os
+from urlparse import urlparse
 from contextlib import closing
 from .util import make_logger
 
@@ -109,13 +110,34 @@ def get_size(url, auth):
     return _size_cache[url]
 
 
-def check_resource(ckan, current_url, legacy_url, auth=None):
+def get_etag(url, auth):
+    def _etag(response):
+        if response.status_code != 200:
+            return None
+        return response.headers.get('etag')
+    if not url:
+        return None
+    resolved = resolve_url(url, auth)
+    if resolved is None:
+        return None
+    return _etag(requests.head(resolved, auth=auth))
+
+
+def same_netloc(u1, u2):
+    n1 = urlparse(u1).netloc
+    n2 = urlparse(u2).netloc
+    return n1 == n2
+
+
+def check_resource(ckan, current_url, legacy_url, metadata_etag, auth=None):
     """returns True if the ckan_obj looks good (is on the CKAN server, size matches legacy url size)"""
 
     if current_url is None:
+        logger.error('resource missing (no current URL)')
         return False
 
-    if not current_url.startswith(ckan.address):
+    if not same_netloc(current_url, ckan.address):
+        logger.error('resource is not on CKAN server: %s' % (current_url, ckan.address))
         return False
 
     # determine the size of the original file in the legacy archive
@@ -132,6 +154,12 @@ def check_resource(ckan, current_url, legacy_url, auth=None):
 
     if current_size != legacy_size:
         logger.error("CKAN resource %s has incorrect size: %d (should be %d)" % (current_url, current_size, legacy_size))
+        return False
+
+    # if we have a pre-calculated s3etag in metadata, check it matches
+    current_etag = get_etag(current_url, None)
+    if metadata_etag is not None and current_etag.strip('"') != metadata_etag:
+        logger.error("CKAN resource %s has incorrect etag: %s (should be %s)" % (current_url, current_etag, metadata_etag))
         return False
 
     return True

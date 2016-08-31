@@ -11,6 +11,7 @@ from .util import make_logger
 logger = make_logger(__name__)
 
 S3_CHUNK_SIZE = 8 * (1 << 20)
+S3_HASH_FIELD = 's3etag_%d' % (S3_CHUNK_SIZE)
 
 
 def generate_hashes(fname):
@@ -39,7 +40,7 @@ def generate_hashes(fname):
         s3_etag = '%s-%d' % (md5(''.join(md5_s3part)).hexdigest(), len(md5_s3part))
     return {
         'md5': md5_whole.hexdigest(),
-        's3etag_%d' % (S3_CHUNK_SIZE): s3_etag,
+        S3_HASH_FIELD: s3_etag,
         'sha256': sha256_whole.hexdigest(),
     }
 
