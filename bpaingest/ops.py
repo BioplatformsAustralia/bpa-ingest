@@ -184,7 +184,8 @@ def reupload_resource(ckan, ckan_obj, legacy_url, auth=None):
         upload_obj = ckan_obj.copy()
         upload_obj['url'] = 'dummy-value'  # required by CKAN < 2.5
         with open(path, "rb") as fd:
-            ckan.action.resource_update(upload=fd, id=upload_obj['id'])
+            updated_obj = ckan.action.resource_update(upload=fd, id=upload_obj['id'])
+            logger.debug("upload successful: %s" % (updated_obj['url']))
         return True
     finally:
         os.unlink(path)
@@ -202,7 +203,8 @@ def create_resource(ckan, ckan_obj, legacy_url, auth=None):
         upload_obj = ckan_obj.copy()
         upload_obj['url'] = 'dummy-value'  # required by CKAN < 2.5
         with open(path, "rb") as fd:
-            ckan.action.resource_create(upload=fd, **upload_obj)
+            updated_obj = ckan.action.resource_create(upload=fd, **upload_obj)
+            logger.debug("upload successful: %s" % (updated_obj['url']))
         return True
     finally:
         os.unlink(path)
