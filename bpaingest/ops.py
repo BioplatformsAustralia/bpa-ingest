@@ -137,7 +137,7 @@ def check_resource(ckan, current_url, legacy_url, metadata_etag, auth=None):
         return False
 
     if not same_netloc(current_url, ckan.address):
-        logger.error('resource is not on CKAN server: %s' % (current_url, ckan.address))
+        logger.error('resource is not hosted on CKAN server: %s' % (current_url))
         return False
 
     # determine the size of the original file in the legacy archive
