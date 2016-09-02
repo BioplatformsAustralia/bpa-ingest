@@ -83,6 +83,11 @@ def resolve_url(url, auth):
         response = requests.head(new_url, auth=auth)
         if response.status_code == 301 or response.status_code == 302:
             new_url = response.headers.get('location')
+        elif response.status_code in (403, 401):
+            # if we're getting 403s and we re-upload a bunch of data because of it, that is unhelpful
+            logger.error("authentication error accessing archive: aborting to avoid destructive side-effects")
+            logger.error((url, auth))
+            raise Exception()
         elif response.status_code == 200:
             return new_url
         else:
@@ -93,6 +98,11 @@ _size_cache = {}
 
 def get_size(url, auth):
     def _size(response):
+        if response.status_code in (403, 401):
+            # if we're getting 403s and we re-upload a bunch of data because of it, that is unhelpful
+            logger.error("authentication error accessing archive: aborting to avoid destructive side-effects.")
+            logger.error((url, auth))
+            raise Exception()
         if response.status_code != 200:
             return None
         if 'content-length' in response.headers:

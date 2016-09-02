@@ -55,7 +55,7 @@ def sync_package_resources(ckan, package_obj, md5_legacy_url, resources, auth):
         obj_id = current_ckan_obj['id']
         legacy_url = md5_legacy_url[obj_id]
         current_url = current_ckan_obj.get('url')
-        if not check_resource(ckan, current_url, legacy_url, current_ckan_obj.get(S3_HASH_FIELD)):
+        if not check_resource(ckan, current_url, legacy_url, current_ckan_obj.get(S3_HASH_FIELD), auth):
             logger.error('resource check failed, queued for re-upload: %s' % (obj_id))
             to_reupload.append((current_ckan_obj, legacy_url))
         else:
