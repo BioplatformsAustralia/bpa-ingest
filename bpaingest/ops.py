@@ -8,6 +8,7 @@ from contextlib import closing
 from .util import make_logger
 
 logger = make_logger(__name__)
+UPLOAD_RETRY = 3
 
 
 # https://stackoverflow.com/questions/1094841/reusable-library-to-get-human-readable-version-of-file-size
@@ -221,9 +222,14 @@ def reupload_resource(ckan, ckan_obj, legacy_url, auth=None):
         logger.debug("re-uploading from tempfile: %s" % (path))
         upload_obj = ckan_obj.copy()
         upload_obj['url'] = 'dummy-value'  # required by CKAN < 2.5
-        with open(path, "rb") as fd:
-            updated_obj = ckan.action.resource_update(upload=fd, id=upload_obj['id'])
-            logger.debug("upload successful: %s" % (updated_obj['url']))
+        for i in range(UPLOAD_RETRY):
+            try:
+                with open(path, "rb") as fd:
+                    updated_obj = ckan.action.resource_update(upload=fd, id=upload_obj['id'])
+                logger.debug("upload successful: %s" % (updated_obj['url']))
+                break
+            except Exception, e:
+                logger.error("attempt %d/%d - upload failed: %s" % (i+1, UPLOAD_RETRY, str(e)))
         return True
     finally:
         os.unlink(path)
@@ -240,9 +246,14 @@ def create_resource(ckan, ckan_obj, legacy_url, auth=None):
         logger.debug("uploading from tempfile: %s" % (path))
         upload_obj = ckan_obj.copy()
         upload_obj['url'] = 'dummy-value'  # required by CKAN < 2.5
-        with open(path, "rb") as fd:
-            updated_obj = ckan.action.resource_create(upload=fd, **upload_obj)
-            logger.debug("upload successful: %s" % (updated_obj['url']))
+        for i in range(UPLOAD_RETRY):
+            try:
+                with open(path, "rb") as fd:
+                    updated_obj = ckan.action.resource_create(upload=fd, **upload_obj)
+                logger.debug("upload successful: %s" % (updated_obj['url']))
+                break
+            except Exception, e:
+                logger.error("attempt %d/%d - upload failed: %s" % (i+1, UPLOAD_RETRY, str(e)))
         return True
     finally:
         os.unlink(path)
