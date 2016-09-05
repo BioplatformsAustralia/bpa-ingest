@@ -229,7 +229,7 @@ def reupload_resource(ckan, ckan_obj, legacy_url, auth=None):
                 logger.debug("upload successful: %s" % (updated_obj['url']))
                 break
             except Exception, e:
-                logger.error("attempt %d/%d - upload failed: %s" % (i+1, UPLOAD_RETRY, str(e)))
+                logger.error("attempt %d/%d - upload failed: %s" % (i + 1, UPLOAD_RETRY, str(e)))
         return True
     finally:
         os.unlink(path)
@@ -253,7 +253,7 @@ def create_resource(ckan, ckan_obj, legacy_url, auth=None):
                 logger.debug("upload successful: %s" % (updated_obj['url']))
                 break
             except Exception, e:
-                logger.error("attempt %d/%d - upload failed: %s" % (i+1, UPLOAD_RETRY, str(e)))
+                logger.error("attempt %d/%d - upload failed: %s" % (i + 1, UPLOAD_RETRY, str(e)))
         return True
     finally:
         os.unlink(path)

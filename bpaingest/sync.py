@@ -87,7 +87,9 @@ def sync_package_resources(ckan, package_obj, md5_legacy_url, resources, auth):
 
 
 def reupload_resources(ckan, to_reupload, md5_legacy_url, auth):
-    for reupload_obj, legacy_url in sorted(to_reupload, key=lambda x: get_size(x[1], None)):
+    logger.info("%d objects to be re-uploaded" % (len(to_reupload)))
+    for i, (reupload_obj, legacy_url) in enumerate(sorted(to_reupload, key=lambda x: get_size(x[1], None))):
+        logger.info("re-upload: %d/%d" % (i + 1, len(to_reupload)))
         reupload_resource(ckan, reupload_obj, legacy_url)
         obj_id = reupload_obj['id']
         legacy_url = md5_legacy_url[obj_id]
