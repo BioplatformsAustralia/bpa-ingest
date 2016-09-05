@@ -206,9 +206,17 @@ def download_legacy_file(legacy_url, auth):
         return None, None
     with open(path, 'w') as fd:
         size = download_to_fileobj(resolved_url, fd)
-        if size is None:
-            os.rmdir(tempdir)
-            return None, None
+    expected_size = get_size(legacy_url, auth)
+    if size is None or size != expected_size:
+        try:
+            os.unlink(path)
+        except OSError:
+            pass
+        try:
+            os.rmdir(tmpdir)
+        except OSError:
+            pass
+        return None, None
     return tempdir, path
 
 
