@@ -1,4 +1,3 @@
-import progressbar
 import tempfile
 import requests
 import ckanapi
@@ -183,7 +182,6 @@ def download_legacy_file(legacy_url, auth):
         response = requests.get(url, stream=True, auth=auth)
         total_size = int(response.headers['content-length'])
         logger.info('Downloading %s' % (sizeof_fmt(total_size)))
-        bar = progressbar.ProgressBar(max_value=total_size)
         retrieved = 0
         with closing(response):
             if not response.ok:
@@ -191,7 +189,6 @@ def download_legacy_file(legacy_url, auth):
                 return None
             for block in response.iter_content(65532):
                 retrieved += len(block)
-                bar.update(retrieved)
                 fd.write(block)
         return retrieved
 

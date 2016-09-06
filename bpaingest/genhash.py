@@ -1,4 +1,3 @@
-import progressbar
 import urlparse
 import ckanapi
 import os
@@ -21,14 +20,12 @@ def generate_hashes(fname):
     logger.info("generating hashes: %s" % (fname))
     total_size = os.stat(fname).st_size
     hashed = 0
-    bar = progressbar.ProgressBar(max_value=total_size)
     # note: S3_CHUNK_SIZE needs to be an integer multiple of
     # the block size of each hash (any large power of 2 is fine)
     with open(fname, 'rb') as fd:
         while True:
             data = fd.read(S3_CHUNK_SIZE)
             hashed += len(data)
-            bar.update(hashed)
             if len(data) == 0:
                 break
             md5_s3part.append(md5(data).digest())
