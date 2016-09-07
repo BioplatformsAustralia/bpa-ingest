@@ -210,7 +210,7 @@ def download_legacy_file(legacy_url, auth):
         except OSError:
             pass
         try:
-            os.rmdir(tmpdir)
+            os.rmdir(tempdir)
         except OSError:
             pass
         return None, None
@@ -241,25 +241,6 @@ def reupload_resource(ckan, ckan_obj, legacy_url, auth=None):
         os.rmdir(tempdir)
 
 
-def create_resource(ckan, ckan_obj, legacy_url, auth=None):
+def create_resource(ckan, ckan_obj):
     "create resource, uploading data from legacy_url"
-
-    tempdir, path = download_legacy_file(legacy_url, auth)
-    if path is None:
-        return
-    try:
-        logger.debug("uploading from tempfile: %s" % (path))
-        upload_obj = ckan_obj.copy()
-        upload_obj['url'] = 'dummy-value'  # required by CKAN < 2.5
-        for i in range(UPLOAD_RETRY):
-            try:
-                with open(path, "rb") as fd:
-                    updated_obj = ckan.action.resource_create(upload=fd, **upload_obj)
-                logger.debug("upload successful: %s" % (updated_obj['url']))
-                break
-            except Exception, e:
-                logger.error("attempt %d/%d - upload failed: %s" % (i + 1, UPLOAD_RETRY, str(e)))
-        return True
-    finally:
-        os.unlink(path)
-        os.rmdir(tempdir)
+    return ckan.action.resource_create(**ckan_obj)

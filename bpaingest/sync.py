@@ -64,7 +64,12 @@ def sync_package_resources(ckan, package_obj, md5_legacy_url, resources, auth):
     for obj_id in to_create:
         resource_obj = needed_resources[obj_id]
         legacy_url = md5_legacy_url[obj_id]
-        if create_resource(ckan, resource_obj, legacy_url, auth):
+        # we don't upload at the time we create the resource: it's more useful to immediately
+        # get all the metadata into the CKAN instance, with links to legacy mirrors. we can
+        # them come back and upload into CKAN using the reupload functionality of this script
+        create_obj = resource_obj.copy()
+        create_obj['url'] = legacy_url
+        if create_resource(ckan, create_obj):
             logger.info('created resource: %s' % (obj_id))
 
     for obj_id in to_delete:
@@ -100,6 +105,7 @@ def sync_resources(ckan, resources, ckan_packages, auth):
     for package_obj in ckan_packages:
         bpa_id_package_id[package_obj['bpa_id']] = package_obj['id']
 
+    # wire the resources to their CKAN package
     resource_idx = {}
     md5_legacy_url = {}
     for bpa_id, legacy_url, resource_obj in resources:
