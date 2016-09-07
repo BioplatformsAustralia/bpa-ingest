@@ -204,6 +204,7 @@ def download_legacy_file(legacy_url, auth):
     with open(path, 'w') as fd:
         size = download_to_fileobj(resolved_url, fd)
     expected_size = get_size(legacy_url, auth)
+    logger.debug("size = %s, expected_size = %s" % (size, expected_size))
     if size is None or size != expected_size:
         try:
             os.unlink(path)
@@ -222,6 +223,7 @@ def reupload_resource(ckan, ckan_obj, legacy_url, auth=None):
 
     tempdir, path = download_legacy_file(legacy_url, auth)
     if path is None:
+        logger.debug("download from legacy archive failed")
         return
     try:
         logger.debug("re-uploading from tempfile: %s" % (path))
