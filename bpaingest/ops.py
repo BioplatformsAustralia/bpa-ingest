@@ -176,22 +176,6 @@ def check_resource(ckan, current_url, legacy_url, metadata_etag, auth=None):
 
 
 def download_legacy_file(legacy_url, auth):
-
-    def download_to_fileobj(url, fd):
-        logger.debug("downloading `%s'" % (url))
-        response = requests.get(url, stream=True, auth=auth)
-        total_size = int(response.headers['content-length'])
-        logger.info('Downloading %s' % (sizeof_fmt(total_size)))
-        retrieved = 0
-        with closing(response):
-            if not response.ok:
-                logger.error("unable to download `%s': status %d" % (url, response.status_code))
-                return None
-            for block in response.iter_content(65532):
-                retrieved += len(block)
-                fd.write(block)
-        return retrieved
-
     basename = legacy_url.rsplit('/', 1)[-1]
     tempdir = tempfile.mkdtemp()
     path = os.path.join(tempdir, basename)
@@ -201,11 +185,14 @@ def download_legacy_file(legacy_url, auth):
         logger.error("unable to resolve `%s' - file missing?" % (legacy_url))
         os.rmdir(tempdir)
         return None, None
-    with open(path, 'w') as fd:
-        size = download_to_fileobj(resolved_url, fd)
-    expected_size = get_size(legacy_url, auth)
-    logger.debug("size = %s, expected_size = %s" % (size, expected_size))
-    if size is None or size != expected_size:
+    # wget will resume downloads, which is a huge win when dealing with
+    # mirrors that sometimes close connections. ugly, but pragmatic.
+    wget_args = ['wget', '-q', '-c', '-t', '0', '-O', path]
+    if auth:
+        wget_args += ['--user', auth[0]]
+        wget_args += ['--password', auth[1]]
+    status = subprocess.call(wget_args)
+    if status != 0:
         try:
             os.unlink(path)
         except OSError:
