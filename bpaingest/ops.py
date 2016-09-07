@@ -1,3 +1,4 @@
+import subprocess
 import tempfile
 import requests
 import ckanapi
