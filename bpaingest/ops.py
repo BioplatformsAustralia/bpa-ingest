@@ -192,6 +192,7 @@ def download_legacy_file(legacy_url, auth):
     if auth:
         wget_args += ['--user', auth[0]]
         wget_args += ['--password', auth[1]]
+    wget_args.append(resolved_url)
     status = subprocess.call(wget_args)
     if status != 0:
         try:
