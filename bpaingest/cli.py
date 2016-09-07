@@ -40,7 +40,7 @@ def setup_sync(subparser):
     subparser.add_argument('project_name', choices=sync_handlers.keys(), help='path to metadata')
     subparser.add_argument('path', help='path to metadata')
     subparser.add_argument('--clean', action='store_true', help='clean up path before run')
-    subparser.add_argument('-n', type=int, default=4, help='number of parallel uploads')
+    subparser.add_argument('--uploads', type=int, default=4, help='number of parallel uploads')
 
 
 def setup_hash(subparser):
@@ -59,7 +59,7 @@ def sync(ckan, args):
     auth = None
     if auth_fn:
         auth = auth_fn()
-    sync_metadata(ckan, meta, auth)
+    sync_metadata(ckan, meta, auth, args.uploads)
 
 sync.setup = setup_sync
 
