@@ -1,5 +1,7 @@
 from .ops import ckan_method, patch_if_required, make_group, check_resource, create_resource, reupload_resource, get_size
 import ckanapi
+from Queue import Queue
+from threading import Thread
 from .util import make_logger
 from .bpa import get_bpa
 from .util import prune_dict
@@ -91,14 +93,28 @@ def sync_package_resources(ckan, package_obj, md5_legacy_url, resources, auth):
     return to_reupload
 
 
-def reupload_resources(ckan, to_reupload, md5_legacy_url, auth):
+def reupload_resources(ckan, to_reupload, md5_legacy_url, auth, num_threads):
+    # this is not a lot of code, but it's about 99% of the time we spend in
+    # this script. hence, the uploads run in parallel.
+    def upload_worker():
+        while True:
+            reupload_obj, legacy_url = q.get()
+            reupload_resource(ckan, reupload_obj, legacy_url, auth)
+            q.task_done()
+
+    q = Queue()
+    for i in range(num_threads):
+        t = Thread(target=upload_worker)
+        t.daemon = True
+        t.start()
+
     logger.info("%d objects to be re-uploaded" % (len(to_reupload)))
-    for i, (reupload_obj, legacy_url) in enumerate(sorted(to_reupload, key=lambda x: get_size(x[1], None))):
-        logger.info("re-upload: %d/%d" % (i + 1, len(to_reupload)))
-        reupload_resource(ckan, reupload_obj, legacy_url, auth)
+    for item in sorted(to_reupload, key=lambda x: get_size(x[1], None)):
+        q.put(item)
+    q.join()
 
 
-def sync_resources(ckan, resources, ckan_packages, auth):
+def sync_resources(ckan, resources, ckan_packages, auth, num_threads):
     logger.info('syncing %d resources' % (len(resources)))
 
     bpa_id_package_id = {}
@@ -119,11 +135,11 @@ def sync_resources(ckan, resources, ckan_packages, auth):
     to_reupload = []
     for package_obj in ckan_packages:
         to_reupload += sync_package_resources(ckan, package_obj, md5_legacy_url, resource_idx.get(package_obj['bpa_id']), auth)
-    reupload_resources(ckan, to_reupload, md5_legacy_url, auth)
+    reupload_resources(ckan, to_reupload, md5_legacy_url, auth, num_threads)
 
 
-def sync_metadata(ckan, meta, auth):
+def sync_metadata(ckan, meta, auth, num_threads):
     ckan_org = get_bpa(ckan)
     ckan_group = make_group(ckan, meta.get_group())
     ckan_packages = sync_packages(ckan, meta.get_packages(), ckan_org, ckan_group)
-    sync_resources(ckan, meta.get_resources(), ckan_packages, auth)
+    sync_resources(ckan, meta.get_resources(), ckan_packages, auth, num_threads)
