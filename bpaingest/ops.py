@@ -5,6 +5,7 @@ import ckanapi
 import os
 from urlparse import urlparse
 from contextlib import closing
+from collections import defaultdict
 from .util import make_logger
 
 logger = make_logger(__name__)
@@ -20,12 +21,26 @@ def sizeof_fmt(num, suffix='B'):
     return "%.1f%s%s" % (num, 'Yi', suffix)
 
 
+method_stats = defaultdict(int)
+
+
 def ckan_method(ckan, object_type, method):
     """
     returns a CKAN method from the upstream API, with an
-    intermediate function which retries on 500 errors
+    intermediate function which does some global accounting
     """
-    return getattr(ckan.action, object_type + '_' + method)
+    fn = getattr(ckan.action, object_type + '_' + method)
+
+    def _proxy_fn(*args, **kwargs):
+        method_stats[method] += 1
+        return fn(*args, **kwargs)
+    return _proxy_fn
+
+
+def print_accounts():
+    print("API call accounting:")
+    for method in sorted(method_stats):
+        print("  %10s: %d" % (method, method_stats[method]))
 
 
 def patch_if_required(ckan, object_type, ckan_object, patch_object, skip_differences=None):
@@ -221,7 +236,7 @@ def reupload_resource(ckan, ckan_obj, legacy_url, auth=None):
         for i in range(UPLOAD_RETRY):
             try:
                 with open(path, "rb") as fd:
-                    updated_obj = ckan.action.resource_update(upload=fd, id=upload_obj['id'])
+                    updated_obj = ckan_method(ckan, 'resource', 'update')(upload=fd, id=upload_obj['id'])
                 logger.debug("upload successful: %s" % (updated_obj['url']))
                 break
             except Exception, e:
@@ -234,4 +249,4 @@ def reupload_resource(ckan, ckan_obj, legacy_url, auth=None):
 
 def create_resource(ckan, ckan_obj):
     "create resource, uploading data from legacy_url"
-    return ckan.action.resource_create(**ckan_obj)
+    return ckan_method(ckan, 'resource', 'create')(**ckan_obj)

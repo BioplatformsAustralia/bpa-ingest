@@ -71,8 +71,10 @@ def sync_package_resources(ckan, package_obj, md5_legacy_url, resources, auth):
         # them come back and upload into CKAN using the reupload functionality of this script
         create_obj = resource_obj.copy()
         create_obj['url'] = legacy_url
-        if create_resource(ckan, create_obj):
+        current_ckan_obj = create_resource(ckan, create_obj)
+        if current_ckan_obj:
             logger.info('created resource: %s' % (obj_id))
+            to_reupload.append((current_ckan_obj, legacy_url))
 
     for obj_id in to_delete:
         ckan_method(ckan, 'resource', 'delete')(id=obj_id)

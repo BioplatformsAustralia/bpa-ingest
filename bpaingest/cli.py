@@ -7,6 +7,7 @@ import sys
 from .util import make_registration_decorator
 from .sync import sync_metadata
 from .bpa import create_bpa
+from .ops import print_accounts
 from .genhash import genhash as genhash_fn
 
 from .wheat_cultivars.ingest import WheatCultivarsMetadata
@@ -60,6 +61,7 @@ def sync(ckan, args):
     if auth_fn:
         auth = auth_fn()
     sync_metadata(ckan, meta, auth, args.uploads)
+    print_accounts()
 
 sync.setup = setup_sync
 
@@ -74,6 +76,7 @@ def genhash(ckan, args):
     dl_fn(args.path, args.clean)
     meta = meta_cls(args.path)
     genhash_fn(ckan, meta, args.mirror_path)
+    print_accounts()
 
 genhash.setup = setup_hash
 
