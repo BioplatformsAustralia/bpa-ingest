@@ -13,7 +13,7 @@ from .files import files_from_metadata
 logger = make_logger(__name__)
 
 
-class WheatPathogensMetadata(BaseMetadata):
+class WheatPathogensGenomesMetadata(BaseMetadata):
     metadata_url = 'https://downloads-qcif.bioplatforms.com/bpa/wheat_pathogens/metadata/'
 
     def __init__(self, metadata_path):
@@ -21,10 +21,25 @@ class WheatPathogensMetadata(BaseMetadata):
         self.metadata = parse_metadata(path)
 
     def get_group(self):
+        desc = """
+This dataset contains the genomic sequence from 10 fungal and 2 bacterial pathogen species. Among the pathogens sequenced are the causal agents of stripe rust, stem rust, tan spot, glume blotch, septoria leaf blotch, bare patch and crown rot/head blight. A total of 27 genomes will be made available.
+
+The genomes were selected for analysis by a consortium of Australian wheat pathogen researchers from the following organisations:
+
+ - Australian National University
+ - CSIRO
+ - Curtin University
+ - Charles Sturt University
+ - NSW Department of Primary industry
+ - Grains Research and Development Corporation
+
+For more information please visit: http://www.bioplatforms.com/wheat-defense/
+"""
         return {
             'name': 'wheat-pathogens',
-            'title': 'Wheat Pathogens',
-            'display_name': 'Wheat Pathogens', 'image_url': 'https://downloads.bioplatforms.com/static/wheat_pathogens_transcript/fusarium_head_blight_infected_ear.png',
+            'title': 'Wheat Pathogens Genomes',
+            'display_name': 'Wheat Pathogens',
+            'image_url': 'https://data.bioplatforms.com/stagonospora_nodorum.png',
         }
 
     def get_packages(self):

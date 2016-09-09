@@ -9,7 +9,7 @@ from ...abstract import BaseMetadata
 logger = make_logger(__name__)
 
 
-class MarineMicrobeMetadata(BaseMetadata):
+class MarineMicrobesMetadata(BaseMetadata):
     metadata_url = 'https://downloads-qcif.bioplatforms.com/bpa/marine_microbes/tracking/'
     auth = ('marine', 'mm')
 
@@ -19,6 +19,9 @@ class MarineMicrobeMetadata(BaseMetadata):
     def get_group(self):
         # Markdown
         desc = """
+The Marine Microbes project will establish how Australia's marine microbial communities change over time in various locations and environments. The consortium of researchers will investigate the microbial communities of seawater, sediment, sponges and sea grass utilising the extensive capability of Australia's Integrated Marine Observing System (IMOS).
+
+For more information please visit: http://www.bioplatforms.com/marine-microbes/
         """
         return {
             'name': 'marine_microbes',

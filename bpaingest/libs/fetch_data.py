@@ -16,6 +16,7 @@ requests.packages.urllib3.disable_warnings()
 logger = make_logger(__name__)
 
 project_name_passwd_map = {
+    "mm": "BPA_MM_DOWNLOADS_PASSWORD",
     "melanoma": "BPA_MELANOMA_DOWNLOADS_PASSWORD",
     "base": "BPA_BASE_DOWNLOADS_PASSWORD",
     "users": "BPA_USERS_DOWNLOADS_PASSWORD",
@@ -23,7 +24,7 @@ project_name_passwd_map = {
 }
 
 
-def get_password(project_name=None):
+def get_password(project_name):
     """Get downloads password for project from environment """
 
     def complain_and_quit():
@@ -33,7 +34,7 @@ def get_password(project_name=None):
 
     password_env = project_name_passwd_map.get(project_name, None)
     if password_env is None:
-        logger.error("set project_name")
+        logger.error("project_name `%s' not defined in project_name_passwd_map" % (project_name))
         sys.exit()
 
     if password_env not in os.environ:

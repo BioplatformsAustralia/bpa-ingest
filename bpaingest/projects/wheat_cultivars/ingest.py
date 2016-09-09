@@ -22,11 +22,28 @@ class WheatCultivarsMetadata(BaseMetadata):
         self.files = parse_file_data(path)
 
     def get_group(self):
+        desc = """
+This dataset contains genomic sequence information from 16 wheat varieties of importance to Australia selected and prioritised by the major stakeholders of the Australian grains research community based on availability of mapping populations and genetic diversity.
+
+Wheat leaf and/or root tissue samples where sequenced to generate approximately 10x coverage of each variety's genome.
+
+Partner organisations include:
+
+ - Australian Centre for Plant Functional Genomics
+ - CSIRO
+ - Victorian Department of Environment and Primary Industries
+ - Murdoch University
+ - University of Queensland
+ - Grains Research and Development Corporation
+ 
+For more information please visit: http://www.bioplatforms.com/wheat-sequencing/
+        """
         return {
             'name': 'wheat-cultivars',
             'title': 'Wheat Cultivars',
             'display_name': 'Wheat Cultivars',
             'image_url': 'https://downloads.bioplatforms.com/static/wheat_cultivars/wheat.png',
+            'description': desc,
         }
 
     def get_packages(self):

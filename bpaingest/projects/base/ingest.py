@@ -19,9 +19,15 @@ class SoilMetadata(BaseMetadata):
     def get_group(self):
         # Markdown
         desc = """
-        The Biome of Australia Soil Environments (BASE) is a collaborative project to create a
-        public resource containing microbial genome information from a range of Australian
-        soil environments.
+The Biome of Australia Soil Environments (BASE) is a collaborative project to create a public resource containing microbial genome information from a range of Australian soil environments.
+
+Soil along with historical, physical and chemical contextual information (including photos) has been collected from 600+ diverse sites around Australia including Christmas Island and the Australian Antarctic Territory.
+
+DNA is extracted from all samples using a standardised protocol (PowerSoil, MO BIO) and amplicon analysis undertaken using the Illumina MiSeq platform for bacterial 16S, fungal ITS and eukaryotic 18S targets.
+
+OTU data has been generated through standardised pipelines for each target and is available through this repository.
+
+For more information please visit: http://www.bioplatforms.com/soil-biodiversity
         """
         return {
             'name': 'base',
