@@ -12,6 +12,9 @@ logger = make_logger(__name__)
 
 
 class GbrAmpliconMetadata(object):
+    metadata_url = 'https://downloads-qcif.bioplatforms.com/bpa/gbr/metadata/amplicons/'
+    auth = ("bpa", "gbr")
+
     def __init__(self, metadata_path):
         path = Path(metadata_path)
         self.metadata = parse_metadata(path)

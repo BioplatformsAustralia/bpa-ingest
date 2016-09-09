@@ -4,6 +4,8 @@ from unipath import Path
 
 from ...util import make_logger, bpa_id_to_ckan_name
 from ...bpa import bpa_mirror_url
+from ...abstract import BaseMetadata
+
 from .metadata import parse_metadata
 from .samples import samples_from_metadata
 from .files import files_from_metadata
@@ -11,7 +13,9 @@ from .files import files_from_metadata
 logger = make_logger(__name__)
 
 
-class WheatPathogensMetadata(object):
+class WheatPathogensMetadata(BaseMetadata):
+    metadata_url = 'https://downloads-qcif.bioplatforms.com/bpa/wheat_pathogens/metadata/'
+
     def __init__(self, metadata_path):
         path = Path(metadata_path)
         self.metadata = parse_metadata(path)

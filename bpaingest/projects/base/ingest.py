@@ -2,13 +2,17 @@ from __future__ import print_function
 
 from unipath import Path
 
+from ...abstract import BaseMetadata
+
 from ...util import make_logger, bpa_id_to_ckan_name
 from ...bpa import bpa_mirror_url
 
 logger = make_logger(__name__)
 
 
-class BaseMetadata(object):
+class SoilMetadata(BaseMetadata):
+    metadata_url = 'https://downloads-qcif.bioplatforms.com/bpa/base/tracking/'
+
     def __init__(self, metadata_path):
         self.path = Path(metadata_path)
 

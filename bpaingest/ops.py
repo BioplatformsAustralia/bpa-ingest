@@ -74,7 +74,7 @@ def make_group(ckan, group_obj):
     group_obj['id'] = ckan_obj['id']
     was_patched, ckan_obj = patch_if_required(ckan, 'group', ckan_obj, group_obj)
     if was_patched:
-        logger.info("created group `%s'" % (group_obj['name']))
+        logger.info("updated group `%s'" % (group_obj['name']))
     return ckan_obj
 
 

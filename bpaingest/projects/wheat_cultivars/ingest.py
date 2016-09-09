@@ -4,6 +4,7 @@ from unipath import Path
 
 from ...util import make_logger, bpa_id_to_ckan_name
 from ...bpa import bpa_mirror_url
+from ...abstract import BaseMetadata
 from .files import parse_file_data
 from .samples import parse_sample_data
 from .runs import parse_run_data, BLANK_RUN
@@ -11,7 +12,9 @@ from .runs import parse_run_data, BLANK_RUN
 logger = make_logger(__name__)
 
 
-class WheatCultivarsMetadata(object):
+class WheatCultivarsMetadata(BaseMetadata):
+    metadata_url = 'https://downloads-qcif.bioplatforms.com/bpa/wheat_cultivars/tracking/'
+
     def __init__(self, metadata_path):
         path = Path(metadata_path)
         self.runs = parse_run_data(path)

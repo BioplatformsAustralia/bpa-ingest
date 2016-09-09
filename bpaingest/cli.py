@@ -12,7 +12,8 @@ from .bpa import create_bpa
 from .ops import print_accounts, make_group
 from .util import make_logger
 from .genhash import genhash as genhash_fn
-from .projects import sync_handlers
+from .projects import PROJECTS
+from .libs.fetch_data import Fetcher, get_password
 
 
 logger = make_logger(__name__)
@@ -20,10 +21,15 @@ register_command, command_fns = make_registration_decorator()
 
 
 class DownloadMetadata(object):
-    def __init__(self, dl_fn, meta_cls):
+    def __init__(self, project_class):
         self.path = tempfile.mkdtemp()
-        dl_fn(self.path, clean=False)
-        self.meta = meta_cls(self.path)
+        fetcher = Fetcher(self.path, project_class.metadata_url)
+        fetcher.fetch_metadata_from_folder()
+        self.meta = project_class(self.path)
+        self.auth = None
+        if hasattr(self.meta, 'auth'):
+            auth_user, auth_env_name = self.meta.auth
+            self.auth = (auth_user, get_password(auth_env_name))
 
     def __enter__(self):
         return self
@@ -36,31 +42,28 @@ class DownloadMetadata(object):
 def bootstrap(ckan, args):
     "bootstrap basic organisation data"
     create_bpa(ckan)
-    for (project_name, (dl_fn, meta_cls, auth_fn)) in sync_handlers.items():
-        with DownloadMetadata(dl_fn, meta_cls) as dlmeta:
+    for project_name, project_class in PROJECTS.items():
+        logger.debug(project_name)
+        with DownloadMetadata(project_class) as dlmeta:
             logger.info("%s : %s" % (project_name, dlmeta.path))
             make_group(ckan, dlmeta.meta.get_group())
 
 
 def setup_sync(subparser):
-    subparser.add_argument('project_name', choices=sync_handlers.keys(), help='path to metadata')
+    subparser.add_argument('project_name', choices=PROJECTS.keys(), help='path to metadata')
     subparser.add_argument('--uploads', type=int, default=4, help='number of parallel uploads')
 
 
 def setup_hash(subparser):
-    subparser.add_argument('project_name', choices=sync_handlers.keys(), help='path to metadata')
+    subparser.add_argument('project_name', choices=PROJECTS.keys(), help='path to metadata')
     subparser.add_argument('mirror_path', help='path to locally mounted mirror')
 
 
 @register_command
 def sync(ckan, args):
     """sync a project"""
-    dl_fn, meta_cls, auth_fn = sync_handlers[args.project_name]
-    with DownloadMetadata(dl_fn, meta_cls) as dlmeta:
-        auth = None
-        if auth_fn:
-            auth = auth_fn()
-        sync_metadata(ckan, dlmeta.meta, auth, args.uploads)
+    with DownloadMetadata(PROJECTS[args.project_name]) as dlmeta:
+        sync_metadata(ckan, dlmeta.meta, dlmeta.auth, args.uploads)
         print_accounts()
 
 sync.setup = setup_sync
@@ -72,8 +75,7 @@ def genhash(ckan, args):
     verify MD5 sums for a local (filesystem mounted) mirror of the BPA
     data, and generate expected E-Tag and SHA256 values.
     """
-    dl_fn, meta_cls, auth_fn = sync_handlers[args.project_name]
-    with DownloadMetadata(dl_fn, meta_cls) as dlmeta:
+    with DownloadMetadata(PROJECTS[args.project_name]) as dlmeta:
         genhash_fn(ckan, dlmeta.meta, args.mirror_path)
         print_accounts()
 
