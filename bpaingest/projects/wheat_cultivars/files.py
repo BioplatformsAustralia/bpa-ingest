@@ -1,7 +1,7 @@
 from collections import namedtuple
 
-from ..libs import bpa_id_utils
-from ..util import make_logger
+from ...libs import bpa_id_utils
+from ...util import make_logger
 
 logger = make_logger(__name__)
 

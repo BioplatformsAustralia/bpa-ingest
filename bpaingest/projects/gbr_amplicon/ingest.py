@@ -2,8 +2,8 @@ from __future__ import print_function
 
 from unipath import Path
 
-from ..util import make_logger, bpa_id_to_ckan_name
-from ..bpa import bpa_mirror_url
+from ...util import make_logger, bpa_id_to_ckan_name
+from ...bpa import bpa_mirror_url
 from .metadata import parse_metadata
 from .samples import samples_from_metadata
 from .files import files_from_md5

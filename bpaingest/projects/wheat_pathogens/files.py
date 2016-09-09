@@ -1,7 +1,7 @@
 import os
 
-from ..libs import ingest_utils
-from ..util import make_logger
+from ...libs import ingest_utils
+from ...util import make_logger
 
 logger = make_logger(__name__)
 

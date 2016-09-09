@@ -1,6 +1,6 @@
-from ..libs.excel_wrapper import ExcelWrapper
-from ..libs import ingest_utils
-from ..util import make_logger
+from ...libs.excel_wrapper import ExcelWrapper
+from ...libs import ingest_utils
+from ...util import make_logger
 
 logger = make_logger(__name__)
 

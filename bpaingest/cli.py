@@ -9,17 +9,8 @@ from .sync import sync_metadata
 from .bpa import create_bpa
 from .ops import print_accounts
 from .genhash import genhash as genhash_fn
-
-from .wheat_cultivars.ingest import WheatCultivarsMetadata
-from .wheat_cultivars.download import download as download_wheatcultivars
-
-from .wheat_pathogens.ingest import WheatPathogensMetadata
-from .wheat_pathogens.download import download as download_wheat_pathogens
-
-from .gbr_amplicon.ingest import GbrAmpliconMetadata
-from .gbr_amplicon.download import download as download_gbr_amplicon
-
 from .libs.fetch_data import get_password
+from .projects import sync_handlers
 
 register_command, command_fns = make_registration_decorator()
 
@@ -28,13 +19,6 @@ register_command, command_fns = make_registration_decorator()
 def bootstrap(ckan, args):
     "bootstrap basic organisation data"
     create_bpa(ckan)
-
-
-sync_handlers = {
-    'wheat-cultivars': (download_wheatcultivars, WheatCultivarsMetadata, None),
-    'wheat-pathogens': (download_wheat_pathogens, WheatPathogensMetadata, None),
-    'gbr-amplicon': (download_gbr_amplicon, GbrAmpliconMetadata, lambda: ('bpa', get_password('gbr'))),
-}
 
 
 def setup_sync(subparser):

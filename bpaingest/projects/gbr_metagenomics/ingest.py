@@ -4,12 +4,12 @@ import ckanapi
 from unipath import Path
 
 import bpaingest.ops as ops
-from ..util import make_logger, bpa_id_to_ckan_name, prune_dict
-from ..bpa import bpa_mirror_url, get_bpa
+from ...util import make_logger, bpa_id_to_ckan_name, prune_dict
+from ...bpa import bpa_mirror_url, get_bpa
 from .metadata import parse_metadata
 from .samples import samples_from_metadata
 from .files import files_from_md5
-from ..libs.fetch_data import get_password
+from ...libs.fetch_data import get_password
 
 logger = make_logger(__name__)
 
