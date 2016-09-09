@@ -1,50 +1,67 @@
 from __future__ import print_function
 
+import tempfile
 import argparse
 import ckanapi
+import shutil
 import sys
 
 from .util import make_registration_decorator
 from .sync import sync_metadata
 from .bpa import create_bpa
-from .ops import print_accounts
+from .ops import print_accounts, make_group
+from .util import make_logger
 from .genhash import genhash as genhash_fn
 from .projects import sync_handlers
 
+
+logger = make_logger(__name__)
 register_command, command_fns = make_registration_decorator()
+
+
+class DownloadMetadata(object):
+    def __init__(self, dl_fn, meta_cls):
+        self.path = tempfile.mkdtemp()
+        dl_fn(self.path, clean=False)
+        self.meta = meta_cls(self.path)
+
+    def __enter__(self):
+        return self
+
+    def __exit__(self, exc_type, exc_val, exc_tb):
+        shutil.rmtree(self.path)
 
 
 @register_command
 def bootstrap(ckan, args):
     "bootstrap basic organisation data"
     create_bpa(ckan)
+    for (project_name, (dl_fn, meta_cls, auth_fn)) in sync_handlers.items():
+        with DownloadMetadata(dl_fn, meta_cls) as dlmeta:
+            logger.info("%s : %s" % (project_name, dlmeta.path))
+            make_group(ckan, dlmeta.meta.get_group())
 
 
 def setup_sync(subparser):
     subparser.add_argument('project_name', choices=sync_handlers.keys(), help='path to metadata')
-    subparser.add_argument('path', help='path to metadata')
-    subparser.add_argument('--clean', action='store_true', help='clean up path before run')
     subparser.add_argument('--uploads', type=int, default=4, help='number of parallel uploads')
 
 
 def setup_hash(subparser):
     subparser.add_argument('project_name', choices=sync_handlers.keys(), help='path to metadata')
-    subparser.add_argument('path', help='path to metadata')
     subparser.add_argument('mirror_path', help='path to locally mounted mirror')
-    subparser.add_argument('--clean', action='store_true', help='clean up path before run')
 
 
 @register_command
 def sync(ckan, args):
     """sync a project"""
     dl_fn, meta_cls, auth_fn = sync_handlers[args.project_name]
-    dl_fn(args.path, args.clean)
-    meta = meta_cls(args.path)
-    auth = None
-    if auth_fn:
-        auth = auth_fn()
-    sync_metadata(ckan, meta, auth, args.uploads)
-    print_accounts()
+    with DownloadMetadata(dl_fn, meta_cls) as dlmeta:
+        auth = None
+        if auth_fn:
+            auth = auth_fn()
+        sync_metadata(ckan, dlmeta.meta, auth, args.uploads)
+        print_accounts()
 
 sync.setup = setup_sync
 
@@ -56,10 +73,9 @@ def genhash(ckan, args):
     data, and generate expected E-Tag and SHA256 values.
     """
     dl_fn, meta_cls, auth_fn = sync_handlers[args.project_name]
-    dl_fn(args.path, args.clean)
-    meta = meta_cls(args.path)
-    genhash_fn(ckan, meta, args.mirror_path)
-    print_accounts()
+    with DownloadMetadata(dl_fn, meta_cls) as dlmeta:
+        genhash_fn(ckan, dlmeta.meta, args.mirror_path)
+        print_accounts()
 
 genhash.setup = setup_hash
 
