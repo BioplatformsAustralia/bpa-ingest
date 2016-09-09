@@ -9,7 +9,6 @@ from .sync import sync_metadata
 from .bpa import create_bpa
 from .ops import print_accounts
 from .genhash import genhash as genhash_fn
-from .libs.fetch_data import get_password
 from .projects import sync_handlers
 
 register_command, command_fns = make_registration_decorator()

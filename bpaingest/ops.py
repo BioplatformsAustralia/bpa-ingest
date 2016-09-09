@@ -4,7 +4,6 @@ import requests
 import ckanapi
 import os
 from urlparse import urlparse
-from contextlib import closing
 from collections import defaultdict
 from .util import make_logger
 

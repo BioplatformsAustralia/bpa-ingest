@@ -18,7 +18,6 @@ def generate_hashes(fname):
     md5_whole = md5()
     sha256_whole = sha256()
     logger.info("generating hashes: %s" % (fname))
-    total_size = os.stat(fname).st_size
     hashed = 0
     # note: S3_CHUNK_SIZE needs to be an integer multiple of
     # the block size of each hash (any large power of 2 is fine)
