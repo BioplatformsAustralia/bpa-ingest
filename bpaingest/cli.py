@@ -35,8 +35,7 @@ class DownloadMetadata(object):
         return self
 
     def __exit__(self, exc_type, exc_val, exc_tb):
-        print("Should have removed: %s" % (self.path))
-        # shutil.rmtree(self.path)
+        shutil.rmtree(self.path)
 
 
 @register_command
