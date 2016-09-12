@@ -35,7 +35,7 @@ Partner organisations include:
  - Murdoch University
  - University of Queensland
  - Grains Research and Development Corporation
- 
+
 For more information please visit: http://www.bioplatforms.com/wheat-sequencing/
         """
         return {

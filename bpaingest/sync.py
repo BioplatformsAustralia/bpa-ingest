@@ -61,7 +61,7 @@ def sync_package_resources(ckan, package_obj, md5_legacy_url, resources, auth):
             logger.error('resource check failed, queued for re-upload: %s' % (obj_id))
             to_reupload.append((current_ckan_obj, legacy_url))
         else:
-            logger.info('resource check OK')
+            logger.info('resource check OK: %s' % (obj_id))
 
     for obj_id in to_create:
         resource_obj = needed_resources[obj_id]

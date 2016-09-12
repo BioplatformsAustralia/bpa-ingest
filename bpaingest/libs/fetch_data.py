@@ -50,7 +50,7 @@ def get_password(project_name):
 class Fetcher():
     """ facilitates fetching data from webserver """
 
-    def __init__(self, target_folder, metadata_source_url, auth=None):
+    def __init__(self, target_folder, metadata_source_url, auth):
         self.target_folder = target_folder
         self.metadata_source_url = metadata_source_url
         self.auth = auth

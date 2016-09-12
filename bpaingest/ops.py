@@ -31,15 +31,15 @@ def ckan_method(ckan, object_type, method):
     fn = getattr(ckan.action, object_type + '_' + method)
 
     def _proxy_fn(*args, **kwargs):
-        method_stats[method] += 1
+        method_stats[(object_type, method)] += 1
         return fn(*args, **kwargs)
     return _proxy_fn
 
 
 def print_accounts():
     print("API call accounting:")
-    for method in sorted(method_stats):
-        print("  %10s: %d" % (method, method_stats[method]))
+    for object_type, method in sorted(method_stats, key=lambda x: method_stats[x]):
+        print("  %14s  %6s  %d" % (object_type, method, method_stats[(object_type, method)]))
 
 
 def patch_if_required(ckan, object_type, ckan_object, patch_object, skip_differences=None):
@@ -60,6 +60,7 @@ def patch_if_required(ckan, object_type, ckan_object, patch_object, skip_differe
         logger.debug("%s/%s: difference on k `%s', we have `%s' vs ckan `%s'" % (object_type, ckan_object.get('id', '<no id?>'), k, v, v2))
     patch_needed = len(differences) > 0
     if patch_needed:
+        logger.debug("%s" % (patch_object))
         ckan_object = ckan_method(ckan, object_type, "patch")(**patch_object)
     return patch_needed, ckan_object
 
@@ -67,9 +68,9 @@ def patch_if_required(ckan, object_type, ckan_object, patch_object, skip_differe
 def make_group(ckan, group_obj):
     try:
         ckan_obj = ckan_method(ckan, 'group', 'show')(id=group_obj['name'])
-        logger.info("created group `%s'" % (group_obj['name']))
     except ckanapi.errors.NotFound:
         ckan_obj = ckan_method(ckan, 'group', 'create')(name=group_obj['name'])
+        logger.info("created group `%s'" % (group_obj['name']))
     # copy over auto-allocated ID
     group_obj['id'] = ckan_obj['id']
     was_patched, ckan_obj = patch_if_required(ckan, 'group', ckan_obj, group_obj)
@@ -180,6 +181,9 @@ def check_resource(ckan, current_url, legacy_url, metadata_etag, auth=None):
     if current_size != legacy_size:
         logger.error("CKAN resource %s has incorrect size: %d (should be %d)" % (current_url, current_size, legacy_size))
         return False
+
+    if metadata_etag is None:
+        logger.warning("CKAN resource %s has no metadata etag: run genhash for this project." % (obj_id))
 
     # if we have a pre-calculated s3etag in metadata, check it matches
     current_etag = get_etag(current_url, None)

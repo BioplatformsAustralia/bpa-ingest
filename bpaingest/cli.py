@@ -23,19 +23,20 @@ register_command, command_fns = make_registration_decorator()
 class DownloadMetadata(object):
     def __init__(self, project_class):
         self.path = tempfile.mkdtemp()
-        fetcher = Fetcher(self.path, project_class.metadata_url)
+        self.auth = None
+        if hasattr(project_class, 'auth'):
+            auth_user, auth_env_name = project_class.auth
+            self.auth = (auth_user, get_password(auth_env_name))
+        fetcher = Fetcher(self.path, project_class.metadata_url, self.auth)
         fetcher.fetch_metadata_from_folder()
         self.meta = project_class(self.path)
-        self.auth = None
-        if hasattr(self.meta, 'auth'):
-            auth_user, auth_env_name = self.meta.auth
-            self.auth = (auth_user, get_password(auth_env_name))
 
     def __enter__(self):
         return self
 
     def __exit__(self, exc_type, exc_val, exc_tb):
-        shutil.rmtree(self.path)
+        print("Should have removed: %s" % (self.path))
+        # shutil.rmtree(self.path)
 
 
 @register_command
@@ -43,7 +44,6 @@ def bootstrap(ckan, args):
     "bootstrap basic organisation data"
     create_bpa(ckan)
     for project_name, project_class in PROJECTS.items():
-        logger.debug(project_name)
         with DownloadMetadata(project_class) as dlmeta:
             logger.info("%s : %s" % (project_name, dlmeta.path))
             make_group(ckan, dlmeta.meta.get_group())

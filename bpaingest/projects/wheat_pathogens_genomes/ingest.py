@@ -38,8 +38,9 @@ For more information please visit: http://www.bioplatforms.com/wheat-defense/
         return {
             'name': 'wheat-pathogens',
             'title': 'Wheat Pathogens Genomes',
-            'display_name': 'Wheat Pathogens',
+            'display_name': 'Wheat Pathogens Genomes',
             'image_url': 'https://data.bioplatforms.com/stagonospora_nodorum.png',
+            'description': desc,
         }
 
     def get_packages(self):
