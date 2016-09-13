@@ -57,6 +57,7 @@ For more information please visit: http://www.bioplatforms.com/great-barrier-ree
                 'notes': 'Amplicon Data for Great Barrier Reef Sample {}'.format(bpa_id),
                 # 'tags': [{'Amplicon': data['amplicon']}],
                 'type': 'great-barrier-reef-amplicon',
+                'private': True,
             })
             packages.append(obj)
         return packages

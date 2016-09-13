@@ -15,7 +15,7 @@ def create_bpa(ckan):
     bpa = {
         u'display_name': u'BioPlatforms Australia',
         u'name': BPA_ORGANIZATION_ID,
-        u'image_display_url': u'http://www.bioplatforms.com/wp-content/uploads/BioplatformsAustralia.png',
+        u'image_display_url': u'https://data.bioplatforms.com/bpalogo.png',
         u'image_url': u'http://www.bioplatforms.com/wp-content/uploads/BioplatformsAustralia.png',
         u'title': u'BioPlatforms Australia',
         u'approval_status': u'approved',
