@@ -1,4 +1,5 @@
 import logging
+import string
 
 
 def bpa_id_to_ckan_name(s):
@@ -9,6 +10,11 @@ def prune_dict(d, keys):
     if d is None:
         return None
     return dict((k, v) for (k, v) in d.items() if k in keys)
+
+
+def clean_tag_name(s):
+    "reduce s to strings acceptable in a tag name"
+    return ''.join(t for t in s if t in string.digits or t in string.ascii_letters or t in '-_.')
 
 
 def make_registration_decorator():

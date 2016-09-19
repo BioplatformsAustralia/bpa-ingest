@@ -5,6 +5,7 @@ from unipath import Path
 from ...util import make_logger, bpa_id_to_ckan_name
 from ...bpa import bpa_mirror_url
 from ...abstract import BaseMetadata
+from ...util import clean_tag_name
 from .files import parse_file_data
 from .samples import parse_sample_data
 from .runs import parse_run_data, BLANK_RUN
@@ -64,6 +65,10 @@ For more information please visit: http://www.bioplatforms.com/wheat-sequencing/
                           'organism_part', 'pedigree', 'dev_stage', 'yield_properties', 'morphology', 'maturity',
                           'pathogen_tolerance', 'drought_tolerance', 'soil_tolerance', 'url'):
                 obj[field] = getattr(data, field)
+            tag_names = []
+            if obj['organism']:
+                tag_names.append(clean_tag_name(obj['organism']))
+            obj['tags'] = [{'name': t} for t in tag_names]
             packages.append(obj)
         return packages
 
