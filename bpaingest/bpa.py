@@ -1,6 +1,6 @@
 from urlparse import urljoin
 
-from .ops import make_organization, get_organization
+from .ops import make_organization
 
 BPA_ORGANIZATION_ID = 'bioplatforms-australia'
 MIRROR_BASE = 'https://downloads-qcif.bioplatforms.com/'
@@ -26,7 +26,3 @@ def create_bpa(ckan):
         u'Bioplatforms Australia enables innovation and collaboration through investments in world class infrastructure and expertise.'
     }
     make_organization(ckan, bpa)
-
-
-def get_bpa(ckan):
-    return get_organization(ckan, BPA_ORGANIZATION_ID)

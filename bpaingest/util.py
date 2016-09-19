@@ -6,6 +6,8 @@ def bpa_id_to_ckan_name(s):
 
 
 def prune_dict(d, keys):
+    if d is None:
+        return None
     return dict((k, v) for (k, v) in d.items() if k in keys)
 
 

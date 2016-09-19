@@ -1,9 +1,8 @@
-from .ops import ckan_method, patch_if_required, check_resource, create_resource, reupload_resource, get_size
+from .ops import ckan_method, patch_if_required, check_resource, create_resource, reupload_resource, get_size, get_organization
 import ckanapi
 from Queue import Queue
 from threading import Thread
 from .util import make_logger
-from .bpa import get_bpa
 from .util import prune_dict
 from genhash import S3_HASH_FIELD
 
@@ -40,7 +39,8 @@ def sync_packages(ckan, packages, org, group):
     for package in packages:
         obj = package.copy()
         obj['owner_org'] = org['id']
-        obj['groups'] = [api_group_obj]
+        if api_group_obj is not None:
+            obj['groups'] = [api_group_obj]
         ckan_packages.append(sync_package(ckan, obj))
     return ckan_packages
 
@@ -141,6 +141,6 @@ def sync_resources(ckan, resources, ckan_packages, auth, num_threads):
 
 
 def sync_metadata(ckan, meta, auth, num_threads):
-    ckan_org = get_bpa(ckan)
-    ckan_packages = sync_packages(ckan, meta.get_packages(), ckan_org, None)
+    organization = get_organization(ckan, meta.get_organization()['name'])
+    ckan_packages = sync_packages(ckan, meta.get_packages(), organization, None)
     sync_resources(ckan, meta.get_resources(), ckan_packages, auth, num_threads)

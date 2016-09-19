@@ -50,12 +50,12 @@ def bootstrap(ckan, args):
 
 
 def setup_sync(subparser):
-    subparser.add_argument('project_name', choices=PROJECTS.keys(), help='path to metadata')
+    subparser.add_argument('project_name', choices=sorted(PROJECTS.keys()), help='path to metadata')
     subparser.add_argument('--uploads', type=int, default=4, help='number of parallel uploads')
 
 
 def setup_hash(subparser):
-    subparser.add_argument('project_name', choices=PROJECTS.keys(), help='path to metadata')
+    subparser.add_argument('project_name', choices=sorted(PROJECTS.keys()), help='path to metadata')
     subparser.add_argument('mirror_path', help='path to locally mounted mirror')
 
 
