@@ -19,12 +19,14 @@ def sync_package(ckan, obj):
             'name': obj['name'],
             'owner_org': obj['owner_org']
         }
-        print(create_obj)
         ckan_obj = ckan_method(ckan, 'package', 'create')(**create_obj)
         logger.info('created package object: %s' % (obj['id']))
     patch_obj = obj.copy()
     patch_obj['id'] = ckan_obj['id']
-    was_patched, ckan_obj = patch_if_required(ckan, 'package', ckan_obj, patch_obj)
+    # tags are handed back with a bunch of info that's irrelevant
+    compare_ckan_obj = ckan_obj.copy()
+    compare_ckan_obj['tags'] = [{'name': t['name']} for t in ckan_obj['tags']]
+    was_patched, ckan_obj = patch_if_required(ckan, 'package', compare_ckan_obj, patch_obj)
     if was_patched:
         logger.info('patched package object: %s' % (obj['id']))
     return ckan_obj
@@ -57,8 +59,9 @@ def sync_package_resources(ckan, package_obj, md5_legacy_url, resources, auth):
         obj_id = current_ckan_obj['id']
         legacy_url = md5_legacy_url[obj_id]
         current_url = current_ckan_obj.get('url')
-        if not check_resource(ckan, current_url, legacy_url, current_ckan_obj.get(S3_HASH_FIELD), auth):
-            logger.error('resource check failed, queued for re-upload: %s' % (obj_id))
+        resource_issue = check_resource(ckan, current_url, legacy_url, current_ckan_obj.get(S3_HASH_FIELD), auth)
+        if resource_issue:
+            logger.error('resource check failed (%s) queued for re-upload: %s' % (resource_issue, obj_id))
             to_reupload.append((current_ckan_obj, legacy_url))
         else:
             logger.info('resource check OK: %s' % (obj_id))

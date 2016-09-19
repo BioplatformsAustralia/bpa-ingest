@@ -58,7 +58,7 @@ For more information please visit: http://www.bioplatforms.com/great-barrier-ree
                 'bpa_id': bpa_id,
                 'title': 'Amplicon {}'.format(bpa_id),
                 'notes': 'Amplicon Data for Great Barrier Reef Sample {}'.format(bpa_id),
-                # 'tags': [{'Amplicon': data['amplicon']}],
+                'tags': [{'name': 'Amplicon'}],
                 'type': 'great-barrier-reef-amplicon',
                 'private': True,
             })

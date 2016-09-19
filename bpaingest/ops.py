@@ -152,31 +152,34 @@ def same_netloc(u1, u2):
 
 
 def check_resource(ckan, current_url, legacy_url, metadata_etag, auth=None):
-    """returns True if the ckan_obj looks good (is on the CKAN server, size matches legacy url size)"""
+    """
+    returns None if the ckan_obj looks good (is on the CKAN server, size matches legacy url size)
+    otherwise returns a short string describing the problem
+    """
 
     if current_url is None:
         logger.error('resource missing (no current URL)')
-        return False
+        return 'missing'
 
     if not same_netloc(current_url, ckan.address):
         logger.error('resource is not hosted on CKAN server: %s' % (current_url))
-        return False
+        return 'not-on-ckan'
 
     # determine the size of the original file in the legacy archive
     legacy_size = get_size(legacy_url, auth)
     if legacy_size is None:
         logger.error("error getting size of: %s" % (legacy_url))
-        return False
+        return 'error-getting-size'
 
     # determine the URL of the proxied s3 resource, and then its size
     current_size = get_size(current_url, None)
     if current_size is None:
-        logger.error("error getting size of: %s" % (legacy_url))
-        return False
+        logger.error("error getting size of: %s" % (current_url))
+        return 'error-getting-size'
 
     if current_size != legacy_size:
         logger.error("CKAN resource %s has incorrect size: %d (should be %d)" % (current_url, current_size, legacy_size))
-        return False
+        return 'wrong-size'
 
     if metadata_etag is None:
         logger.warning("CKAN resource %s has no metadata etag: run genhash for this project." % (legacy_url))
@@ -185,9 +188,9 @@ def check_resource(ckan, current_url, legacy_url, metadata_etag, auth=None):
     current_etag = get_etag(current_url, None)
     if metadata_etag is not None and current_etag.strip('"') != metadata_etag:
         logger.error("CKAN resource %s has incorrect etag: %s (should be %s)" % (current_url, current_etag, metadata_etag))
-        return False
+        return 'wrong-etag'
 
-    return True
+    return None
 
 
 def download_legacy_file(legacy_url, auth):
