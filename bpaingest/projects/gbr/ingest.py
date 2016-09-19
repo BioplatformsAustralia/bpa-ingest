@@ -7,12 +7,15 @@ from ...bpa import bpa_mirror_url
 from .metadata import parse_metadata
 from .samples import samples_from_metadata
 from .files import files_from_md5
+from ...abstract import BaseMetadata
+from ...bpa import BPA_ORGANIZATION_ID
 
 logger = make_logger(__name__)
 
 
-class GbrMetadata(object):
+class GbrMetadata(BaseMetadata):
     metadata_url = 'https://downloads-qcif.bioplatforms.com/bpa/gbr/metadata/amplicons/'
+    parent_organization = BPA_ORGANIZATION_ID
     auth = ("bpa", "gbr")
 
     def __init__(self, metadata_path):
@@ -20,7 +23,7 @@ class GbrMetadata(object):
         self.metadata = parse_metadata(path)
         self.files = files_from_md5(path)
 
-    def get_group(self):
+    def get_organization(self):
         # Markdown
         desc = """
 The Sea-quence Project is generating core genetic data for corals from the Great Barrier Reef and Red Sea to ultimately help guide reef management practices. The project aims to sequence the genomes of 10 coral species across 6 different coral types, 3-4 algal symbionts and generate a new suite of microbial symbiont sequence data. This project is an initiative of the ReFuGe 2020 Consortium. Membership of the consortium includes:
@@ -37,7 +40,7 @@ The Sea-quence Project is generating core genetic data for corals from the Great
 For more information please visit: http://www.bioplatforms.com/great-barrier-reef/
         """
         return {
-            'name': 'great_barrier_reef',
+            'name': 'bpa-great-barrier-reef',
             'title': 'Great Barrier Reef',
             'display_name': 'Great Barrier Reef',
             'image_url': 'https://data.bioplatforms.com/coral.png',

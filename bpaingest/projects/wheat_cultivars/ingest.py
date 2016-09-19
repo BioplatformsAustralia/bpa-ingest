@@ -8,12 +8,14 @@ from ...abstract import BaseMetadata
 from .files import parse_file_data
 from .samples import parse_sample_data
 from .runs import parse_run_data, BLANK_RUN
+from ...bpa import BPA_ORGANIZATION_ID
 
 logger = make_logger(__name__)
 
 
 class WheatCultivarsMetadata(BaseMetadata):
     metadata_url = 'https://downloads-qcif.bioplatforms.com/bpa/wheat_cultivars/tracking/'
+    parent_organization = BPA_ORGANIZATION_ID
 
     def __init__(self, metadata_path):
         path = Path(metadata_path)
@@ -21,7 +23,7 @@ class WheatCultivarsMetadata(BaseMetadata):
         self.samples = parse_sample_data(path)
         self.files = parse_file_data(path)
 
-    def get_group(self):
+    def get_organization(self):
         desc = """
 This dataset contains genomic sequence information from 16 wheat varieties of importance to Australia selected and prioritised by the major stakeholders of the Australian grains research community based on availability of mapping populations and genetic diversity.
 
@@ -39,7 +41,7 @@ Partner organisations include:
 For more information please visit: http://www.bioplatforms.com/wheat-sequencing/
         """
         return {
-            'name': 'wheat-cultivars',
+            'name': 'bpa-wheat-cultivars',
             'title': 'Wheat Cultivars',
             'display_name': 'Wheat Cultivars',
             'image_url': 'https://downloads.bioplatforms.com/static/wheat_cultivars/wheat.png',

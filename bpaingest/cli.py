@@ -9,7 +9,7 @@ import sys
 from .util import make_registration_decorator
 from .sync import sync_metadata
 from .bpa import create_bpa
-from .ops import print_accounts, make_group
+from .ops import print_accounts, make_organization, get_organization
 from .util import make_logger
 from .genhash import genhash as genhash_fn
 from .projects import PROJECTS
@@ -43,9 +43,10 @@ def bootstrap(ckan, args):
     "bootstrap basic organisation data"
     create_bpa(ckan)
     for project_name, project_class in PROJECTS.items():
+        parent_organization = get_organization(ckan, project_class.parent_organization)
         with DownloadMetadata(project_class) as dlmeta:
             logger.info("%s : %s" % (project_name, dlmeta.path))
-            make_group(ckan, dlmeta.meta.get_group())
+            make_organization(ckan, dlmeta.meta.get_organization(), parent_organization)
 
 
 def setup_sync(subparser):

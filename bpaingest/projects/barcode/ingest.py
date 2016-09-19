@@ -3,7 +3,7 @@ from __future__ import print_function
 from unipath import Path
 
 from ...util import make_logger, bpa_id_to_ckan_name
-from ...bpa import bpa_mirror_url
+from ...bpa import bpa_mirror_url, BPA_ORGANIZATION_ID
 from ...abstract import BaseMetadata
 
 logger = make_logger(__name__)
@@ -11,11 +11,12 @@ logger = make_logger(__name__)
 
 class BarcodeMetadata(BaseMetadata):
     metadata_url = 'https://downloads-qcif.bioplatforms.com/bpa/barcode/tracking/'
+    parent_organization = BPA_ORGANIZATION_ID
 
     def __init__(self, metadata_path):
         self.path = Path(metadata_path)
 
-    def get_group(self):
+    def get_organization(self):
         # Markdown
         desc = """
 Of the estimated 10 million species that exist on our planet, only just over a million have so far been identified and described.
@@ -34,7 +35,7 @@ For more information please visit:
 http://www.bioplatforms.com/dna-barcoding/
         """
         return {
-            'name': 'barcode',
+            'name': 'bpa-barcode',
             'title': 'Barcode',
             'display_name': 'Barcode',
             'image_url': 'https://data.bioplatforms.com/barcode.png',

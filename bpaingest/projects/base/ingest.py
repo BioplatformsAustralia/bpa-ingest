@@ -6,17 +6,19 @@ from ...abstract import BaseMetadata
 
 from ...util import make_logger, bpa_id_to_ckan_name
 from ...bpa import bpa_mirror_url
+from ...bpa import BPA_ORGANIZATION_ID
 
 logger = make_logger(__name__)
 
 
 class SoilMetadata(BaseMetadata):
     metadata_url = 'https://downloads-qcif.bioplatforms.com/bpa/base/tracking/'
+    parent_organization = BPA_ORGANIZATION_ID
 
     def __init__(self, metadata_path):
         self.path = Path(metadata_path)
 
-    def get_group(self):
+    def get_organization(self):
         # Markdown
         desc = """
 The Biome of Australia Soil Environments (BASE) is a collaborative project to create a public resource containing microbial genome information from a range of Australian soil environments.
@@ -30,7 +32,7 @@ OTU data has been generated through standardised pipelines for each target and i
 For more information please visit: http://www.bioplatforms.com/soil-biodiversity
         """
         return {
-            'name': 'base',
+            'name': 'bpa-base',
             'title': 'BASE',
             'display_name': 'Biome of Australian Soil Environments',
             'image_url': 'https://data.bioplatforms.com/base.png',

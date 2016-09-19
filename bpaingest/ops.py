@@ -60,37 +60,33 @@ def patch_if_required(ckan, object_type, ckan_object, patch_object, skip_differe
         logger.debug("%s/%s: difference on k `%s', we have `%s' vs ckan `%s'" % (object_type, ckan_object.get('id', '<no id?>'), k, v, v2))
     patch_needed = len(differences) > 0
     if patch_needed:
-        logger.debug("%s" % (patch_object))
         ckan_object = ckan_method(ckan, object_type, "patch")(**patch_object)
     return patch_needed, ckan_object
 
 
+def make_obj(ckan, obj_type, obj):
+    try:
+        ckan_obj = ckan_method(ckan, obj_type, 'show')(id=obj['name'])
+    except ckanapi.errors.NotFound:
+        ckan_obj = ckan_method(ckan, obj_type, 'create')(name=obj['name'])
+        logger.info("created %s `%s'" % (obj_type, obj['name']))
+    # copy over auto-allocated ID
+    obj['id'] = ckan_obj['id']
+    was_patched, ckan_obj = patch_if_required(ckan, obj_type, ckan_obj, obj)
+    if was_patched:
+        logger.info("updated %s `%s'" % (obj_type, obj['name']))
+    return ckan_obj
+
+
 def make_group(ckan, group_obj):
-    try:
-        ckan_obj = ckan_method(ckan, 'group', 'show')(id=group_obj['name'])
-    except ckanapi.errors.NotFound:
-        ckan_obj = ckan_method(ckan, 'group', 'create')(name=group_obj['name'])
-        logger.info("created group `%s'" % (group_obj['name']))
-    # copy over auto-allocated ID
-    group_obj['id'] = ckan_obj['id']
-    was_patched, ckan_obj = patch_if_required(ckan, 'group', ckan_obj, group_obj)
-    if was_patched:
-        logger.info("updated group `%s'" % (group_obj['name']))
-    return ckan_obj
+    return make_obj(ckan, 'group', group_obj)
 
 
-def make_organization(ckan, org_obj):
-    try:
-        ckan_obj = ckan_method(ckan, 'organization', 'show')(id=org_obj['name'])
-        logger.info("created organization `%s'" % (org_obj['name']))
-    except ckanapi.errors.NotFound:
-        ckan_obj = ckan_method(ckan, 'organization', 'create')(name=org_obj['name'])
-    # copy over auto-allocated ID
-    org_obj['id'] = ckan_obj['id']
-    was_patched, ckan_obj = patch_if_required(ckan, 'organization', ckan_obj, org_obj)
-    if was_patched:
-        logger.info("patched organization `%s'" % (org_obj['name']))
-    return ckan_obj
+def make_organization(ckan, organization_obj, parent_organization=None):
+    obj = organization_obj.copy()
+    if parent_organization is not None:
+        obj['groups'] = [parent_organization]
+    return make_obj(ckan, 'organization', obj)
 
 
 def resolve_url(url, auth):
@@ -183,7 +179,7 @@ def check_resource(ckan, current_url, legacy_url, metadata_etag, auth=None):
         return False
 
     if metadata_etag is None:
-        logger.warning("CKAN resource %s has no metadata etag: run genhash for this project." % (obj_id))
+        logger.warning("CKAN resource %s has no metadata etag: run genhash for this project." % (legacy_url))
 
     # if we have a pre-calculated s3etag in metadata, check it matches
     current_etag = get_etag(current_url, None)
@@ -253,3 +249,7 @@ def reupload_resource(ckan, ckan_obj, legacy_url, auth=None):
 def create_resource(ckan, ckan_obj):
     "create resource, uploading data from legacy_url"
     return ckan_method(ckan, 'resource', 'create')(**ckan_obj)
+
+
+def get_organization(ckan, id):
+    return ckan_method(ckan, 'organization', 'show')(id=id)

@@ -9,7 +9,7 @@ class BaseMetadata(object):
         pass
 
     @abc.abstractmethod
-    def get_group(self):
+    def get_organization(self):
         pass
 
     @abc.abstractmethod

@@ -1,4 +1,4 @@
-from .ops import ckan_method, patch_if_required, make_group, check_resource, create_resource, reupload_resource, get_size
+from .ops import ckan_method, patch_if_required, check_resource, create_resource, reupload_resource, get_size
 import ckanapi
 from Queue import Queue
 from threading import Thread
@@ -142,6 +142,5 @@ def sync_resources(ckan, resources, ckan_packages, auth, num_threads):
 
 def sync_metadata(ckan, meta, auth, num_threads):
     ckan_org = get_bpa(ckan)
-    ckan_group = make_group(ckan, meta.get_group())
-    ckan_packages = sync_packages(ckan, meta.get_packages(), ckan_org, ckan_group)
+    ckan_packages = sync_packages(ckan, meta.get_packages(), ckan_org, None)
     sync_resources(ckan, meta.get_resources(), ckan_packages, auth, num_threads)

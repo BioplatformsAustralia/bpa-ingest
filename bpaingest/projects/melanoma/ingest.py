@@ -5,6 +5,7 @@ from unipath import Path
 from ...util import make_logger, bpa_id_to_ckan_name
 from ...bpa import bpa_mirror_url
 from ...abstract import BaseMetadata
+from ...bpa import BPA_ORGANIZATION_ID
 
 logger = make_logger(__name__)
 
@@ -12,11 +13,12 @@ logger = make_logger(__name__)
 class MelanomaMetadata(BaseMetadata):
     metadata_url = 'https://downloads-qcif.bioplatforms.com/bpa/melanoma/tracking/'
     auth = ('melanoma', 'melanoma')
+    parent_organization = BPA_ORGANIZATION_ID
 
     def __init__(self, metadata_path):
         self.path = Path(metadata_path)
 
-    def get_group(self):
+    def get_organization(self):
         # Markdown
         desc = """
 The Melanoma Genomics Project aims to whole genome sequence approximately 500 melanoma patients.
@@ -47,7 +49,7 @@ For more information please visit:
 http://www.bioplatforms.com/melanoma/
         """
         return {
-            'name': 'melanoma',
+            'name': 'bpa-melanoma',
             'title': 'Melanoma',
             'display_name': 'Melanoma',
             'image_url': 'https://data.bioplatforms.com/melanoma.png',
