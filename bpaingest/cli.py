@@ -6,7 +6,7 @@ import ckanapi
 import shutil
 import sys
 
-from .util import make_registration_decorator
+from .util import make_registration_decorator, make_ckan_api
 from .sync import sync_metadata
 from .bpa import create_bpa
 from .ops import print_accounts, make_organization, get_organization
@@ -80,11 +80,6 @@ def genhash(ckan, args):
         print_accounts()
 
 genhash.setup = setup_hash
-
-
-def make_ckan_api(args):
-    ckan = ckanapi.RemoteCKAN(args.ckan_url, apikey=args.api_key)
-    return ckan
 
 
 def version():

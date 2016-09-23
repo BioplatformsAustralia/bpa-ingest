@@ -1,4 +1,4 @@
-from .ops import ckan_method, patch_if_required, check_resource, create_resource, reupload_resource, get_size, get_organization
+from .ops import ckan_method, patch_if_required, check_resource, create_resource, reupload_resource, get_organization, ArchiveInfo
 import ckanapi
 from Queue import Queue
 from threading import Thread
@@ -47,7 +47,7 @@ def sync_packages(ckan, packages, org, group):
     return ckan_packages
 
 
-def sync_package_resources(ckan, package_obj, md5_legacy_url, resources, auth):
+def sync_package_resources(ckan, archive_info, package_obj, md5_legacy_url, resources, auth):
     to_reupload = []
     current_resources = package_obj['resources']
     existing_resources = dict((t['id'], t) for t in current_resources)
@@ -59,7 +59,7 @@ def sync_package_resources(ckan, package_obj, md5_legacy_url, resources, auth):
         obj_id = current_ckan_obj['id']
         legacy_url = md5_legacy_url[obj_id]
         current_url = current_ckan_obj.get('url')
-        resource_issue = check_resource(ckan, current_url, legacy_url, current_ckan_obj.get(S3_HASH_FIELD), auth)
+        resource_issue = check_resource(ckan, archive_info, current_url, legacy_url, current_ckan_obj.get(S3_HASH_FIELD), auth)
         if resource_issue:
             logger.error('resource check failed (%s) queued for re-upload: %s' % (resource_issue, obj_id))
             to_reupload.append((current_ckan_obj, legacy_url))
@@ -98,7 +98,7 @@ def sync_package_resources(ckan, package_obj, md5_legacy_url, resources, auth):
     return to_reupload
 
 
-def reupload_resources(ckan, to_reupload, md5_legacy_url, auth, num_threads):
+def reupload_resources(ckan, archive_info, to_reupload, md5_legacy_url, auth, num_threads):
     # this is not a lot of code, but it's about 99% of the time we spend in
     # this script. hence, the uploads run in parallel.
     def upload_worker():
@@ -114,13 +114,15 @@ def reupload_resources(ckan, to_reupload, md5_legacy_url, auth, num_threads):
         t.start()
 
     logger.info("%d objects to be re-uploaded" % (len(to_reupload)))
-    for item in sorted(to_reupload, key=lambda x: get_size(x[1], None)):
+    for item in to_reupload:
         q.put(item)
     q.join()
 
 
 def sync_resources(ckan, resources, ckan_packages, auth, num_threads):
     logger.info('syncing %d resources' % (len(resources)))
+
+    archive_info = ArchiveInfo(ckan)
 
     bpa_id_package_id = {}
     for package_obj in ckan_packages:
@@ -139,8 +141,8 @@ def sync_resources(ckan, resources, ckan_packages, auth, num_threads):
 
     to_reupload = []
     for package_obj in ckan_packages:
-        to_reupload += sync_package_resources(ckan, package_obj, md5_legacy_url, resource_idx.get(package_obj['bpa_id']), auth)
-    reupload_resources(ckan, to_reupload, md5_legacy_url, auth, num_threads)
+        to_reupload += sync_package_resources(ckan, archive_info, package_obj, md5_legacy_url, resource_idx.get(package_obj['bpa_id']), auth)
+    reupload_resources(ckan, archive_info, to_reupload, md5_legacy_url, auth, num_threads)
 
 
 def sync_metadata(ckan, meta, auth, num_threads):
