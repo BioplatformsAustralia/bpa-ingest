@@ -147,6 +147,7 @@ class ArchiveInfo(object):
 
     def get_etag(self, url, auth):
         session = self.pick_session(url)
+
         def _etag(response):
             if response.status_code != 200:
                 return None
