@@ -1,7 +1,7 @@
 import re
 
-from ...libs import md5parser
-from ...util import make_logger
+from ....libs import md5parser
+from ....util import make_logger
 
 logger = make_logger(__name__)
 

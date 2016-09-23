@@ -1,8 +1,8 @@
 from __future__ import print_function
 
-from ...libs.excel_wrapper import ExcelWrapper
-from ...util import make_logger
-from ...libs import ingest_utils
+from ....libs.excel_wrapper import ExcelWrapper
+from ....util import make_logger
+from ....libs import ingest_utils
 
 logger = make_logger(__name__)
 

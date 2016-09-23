@@ -4,7 +4,7 @@ from unipath import Path
 
 from ...util import make_logger, bpa_id_to_ckan_name
 from ...bpa import bpa_mirror_url
-from .metadata import parse_metadata
+from .amplicons.metadata import parse_metadata as amplicons_parse_metadata
 from .samples import samples_from_metadata
 from .files import files_from_md5
 from ...abstract import BaseMetadata
@@ -19,9 +19,8 @@ class GbrMetadata(BaseMetadata):
     auth = ("bpa", "gbr")
 
     def __init__(self, metadata_path):
-        path = Path(metadata_path)
-        self.metadata = parse_metadata(path)
-        self.files = files_from_md5(path)
+        self.path = Path(metadata_path)
+        self.files = files_from_md5(self.path)
 
     def get_organization(self):
         # Markdown
@@ -36,7 +35,7 @@ The Sea-quence Project is generating core genetic data for corals from the Great
  - King Abdullah University of Science and Technology (Saudi Arabia)
  - Australian National University
  - Bioplatforms Australia
- 
+
 For more information please visit: http://www.bioplatforms.com/great-barrier-reef/
         """
         return {
@@ -49,7 +48,19 @@ For more information please visit: http://www.bioplatforms.com/great-barrier-ree
 
     def get_packages(self):
         packages = []
-        for bpa_id, data in samples_from_metadata(self.metadata).items():
+        packages += list(self.amplicon_packages())
+        return packages
+
+    def get_resources(self):
+        resources = []
+        for bpa_id, file_obj in self.files:
+            legacy_url, resource = ckan_resource_from_file(file_obj)
+            resources.append((bpa_id, legacy_url, resource))
+        return resources
+
+    def amplicon_packages(self):
+        metadata = amplicons_parse_metadata(self.path)
+        for bpa_id, data in samples_from_metadata(metadata).items():
             name = bpa_id_to_ckan_name(bpa_id)
             obj = data.copy()
             obj.update({
@@ -62,15 +73,7 @@ For more information please visit: http://www.bioplatforms.com/great-barrier-ree
                 'type': 'great-barrier-reef-amplicon',
                 'private': True,
             })
-            packages.append(obj)
-        return packages
-
-    def get_resources(self):
-        resources = []
-        for bpa_id, file_obj in self.files:
-            legacy_url, resource = ckan_resource_from_file(file_obj)
-            resources.append((bpa_id, legacy_url, resource))
-        return resources
+            yield obj
 
 
 def ckan_resource_from_file(file_obj):
