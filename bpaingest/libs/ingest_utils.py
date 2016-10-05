@@ -119,7 +119,7 @@ def get_date(dt):
         if dt.strip() == '':
             return None
         try:
-            return date_parser(dt)
+            return date_parser(dt, dayfirst=True)
 
         except TypeError, e:
             logger.error("Date parsing error " + str(e))
