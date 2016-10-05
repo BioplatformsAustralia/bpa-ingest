@@ -2,8 +2,8 @@ from __future__ import print_function
 
 from unipath import Path
 
-from ...util import make_logger, bpa_id_to_ckan_name
-from ...bpa import bpa_mirror_url, BPA_ORGANIZATION_ID
+from ...util import make_logger
+from ...bpa import BPA_ORGANIZATION_ID
 from ...abstract import BaseMetadata
 
 logger = make_logger(__name__)

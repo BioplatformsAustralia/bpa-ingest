@@ -2,7 +2,6 @@ from __future__ import print_function
 
 import tempfile
 import argparse
-import ckanapi
 import shutil
 import sys
 
