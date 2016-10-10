@@ -210,7 +210,7 @@ def check_resource(ckan, archive_info, current_url, legacy_url, metadata_etag, a
 
 def download_legacy_file(legacy_url, auth):
     basename = legacy_url.rsplit('/', 1)[-1]
-    tempdir = tempfile.mkdtemp()
+    tempdir = tempfile.mkdtemp(prefix='bpaingest-')
     path = os.path.join(tempdir, basename)
     archive_info = ArchiveInfo(None)
     resolved_url = archive_info.resolve_url(legacy_url, auth)
