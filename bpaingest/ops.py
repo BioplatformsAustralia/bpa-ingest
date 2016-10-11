@@ -82,11 +82,8 @@ def make_group(ckan, group_obj):
     return make_obj(ckan, 'group', group_obj)
 
 
-def make_organization(ckan, organization_obj, parent_organization=None):
-    obj = organization_obj.copy()
-    if parent_organization is not None:
-        obj['groups'] = [parent_organization]
-    return make_obj(ckan, 'organization', obj)
+def make_organization(ckan, organization_obj):
+    return make_obj(ckan, 'organization', organization_obj)
 
 
 class ArchiveInfo(object):

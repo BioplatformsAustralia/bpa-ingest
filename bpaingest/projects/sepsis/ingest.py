@@ -5,32 +5,16 @@ from unipath import Path
 from ...util import make_logger, bpa_id_to_ckan_name
 from ...bpa import bpa_mirror_url
 from ...abstract import BaseMetadata
-from ...bpa import BPA_ORGANIZATION_ID
 
 logger = make_logger(__name__)
 
 
 class SepsisMetadata(BaseMetadata):
     metadata_url = 'https://downloads-qcif.bioplatforms.com/bpa/sepsis/tracking/'
-    parent_organization = BPA_ORGANIZATION_ID
+    organization = 'bpa-sepsis'
 
     def __init__(self, metadata_path):
         self.path = Path(metadata_path)
-
-    def get_organization(self):
-        # Markdown
-        desc = """
-The Antibiotic Resistant Pathogens Framework Initiative aims to develop a framework dataset that will enable identification of core targets common to antibiotic-resistant sepsis pathogens. The project aims to use an integrated multi-omics approach and brings together genomics, transcriptomics, bioinformatics, proteomics and metabolomics expertise across the Bioplatforms Australia network. Five clinical strains of Escherichia coli, Klebsiella bn pneumoniae, Streptococcus pneumoniae, Staphylococcus aureus and Streptococcus pyogenes selected by members of the consortium will form the core of the project.
-
-For more information please visit: http://www.bioplatforms.com/antibiotic-resistant-pathogens/
-        """
-        return {
-            'name': 'bpa-sepsis',
-            'title': 'Antibiotic Resistant Pathogens',
-            'display_name': 'Antibiotic Resistant Pathogens',
-            'image_url': 'https://data.bioplatforms.com/sepsis.png',
-            'description': desc
-        }
 
     def get_packages(self):
         return []

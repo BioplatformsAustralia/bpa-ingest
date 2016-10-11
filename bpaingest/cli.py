@@ -7,11 +7,11 @@ import sys
 
 from .util import make_registration_decorator, make_ckan_api
 from .sync import sync_metadata
-from .bpa import create_bpa
-from .ops import print_accounts, make_organization, get_organization
+from .ops import print_accounts, make_organization
 from .util import make_logger
 from .genhash import genhash as genhash_fn
 from .projects import PROJECTS
+from .organizations import ORGANIZATIONS
 from .libs.fetch_data import Fetcher, get_password
 
 
@@ -40,12 +40,9 @@ class DownloadMetadata(object):
 @register_command
 def bootstrap(ckan, args):
     "bootstrap basic organisation data"
-    create_bpa(ckan)
-    for project_name, project_class in PROJECTS.items():
-        parent_organization = get_organization(ckan, project_class.parent_organization)
-        with DownloadMetadata(project_class) as dlmeta:
-            logger.info("%s : %s" % (project_name, dlmeta.path))
-            make_organization(ckan, dlmeta.meta.get_organization(), parent_organization)
+    for organization in ORGANIZATIONS:
+        logger.info("%s" % (organization['name']))
+        make_organization(ckan, organization)
 
 
 def setup_sync(subparser):

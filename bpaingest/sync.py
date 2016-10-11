@@ -146,6 +146,6 @@ def sync_resources(ckan, resources, ckan_packages, auth, num_threads):
 
 
 def sync_metadata(ckan, meta, auth, num_threads):
-    organization = get_organization(ckan, meta.get_organization()['name'])
+    organization = get_organization(ckan, meta.organization)
     ckan_packages = sync_packages(ckan, meta.get_packages(), organization, None)
     sync_resources(ckan, meta.get_resources(), ckan_packages, auth, num_threads)

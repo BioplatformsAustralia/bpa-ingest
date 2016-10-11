@@ -9,10 +9,6 @@ class BaseMetadata(object):
         pass
 
     @abc.abstractmethod
-    def get_organization(self):
-        pass
-
-    @abc.abstractmethod
     def get_packages(self):
         pass
 
