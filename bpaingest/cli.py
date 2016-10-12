@@ -21,12 +21,13 @@ register_command, command_fns = make_registration_decorator()
 
 class DownloadMetadata(object):
     def __init__(self, project_class):
-        self.path = tempfile.mkdtemp()
+        self.path = tempfile.mkdtemp(prefix='bpaingest-metadata-')
         self.auth = None
         if hasattr(project_class, 'auth'):
             auth_user, auth_env_name = project_class.auth
             self.auth = (auth_user, get_password(auth_env_name))
         fetcher = Fetcher(self.path, project_class.metadata_url, self.auth)
+        logger.info("metadata url is: %s" % (project_class.metadata_url))
         fetcher.fetch_metadata_from_folder()
         self.meta = project_class(self.path)
 
@@ -34,7 +35,8 @@ class DownloadMetadata(object):
         return self
 
     def __exit__(self, exc_type, exc_val, exc_tb):
-        shutil.rmtree(self.path)
+        # shutil.rmtree(self.path)
+        pass
 
 
 @register_command
