@@ -78,6 +78,7 @@ class MD5ParsedLine(object):
         self._ok = False
         self.__parse_line()
         self.md5 = None
+        self.md5data = None
         self.filename = None
         self.__parse_line()
 
@@ -91,9 +92,12 @@ class MD5ParsedLine(object):
         if matched:
             self.md5data = matched.groupdict()
             self._ok = True
+    
+    def get(self, k):
+        return self.md5data[k]
 
     def __str__(self):
-        return "{} {}".format(self.filename, self.md5)
+        return "<parsed_md5> {} {} {}".format(self.filename, self.md5, self.md5data)
 
 
 def parse_md5_file(pattern, md5_file):

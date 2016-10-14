@@ -67,7 +67,6 @@ class SepsisGenomicsMiseqMetadata(BaseMetadata):
                 tag_names = ['miseq', 'genomics']
                 obj['tags'] = [{'name': t} for t in tag_names]
                 packages.append(obj)
-                print(obj)
         return packages
 
     def get_resources(self):
@@ -75,9 +74,13 @@ class SepsisGenomicsMiseqMetadata(BaseMetadata):
             if path.isfile() and path.ext == ".md5":
                 return True
 
-        logger.info("Ingesting Sepsis md5 file information from {0}".format(DATA_DIR))
-        for md5_file in DATA_DIR.walk(filter=is_md5file):
-            logger.info("Processing Sepsis Genomic md5 file {0}".format(md5_file))
-            data = files.parse_md5_file(files.miseq_filename_re, md5_file)
-            add_md5(data)
-        return []
+        logger.info("Ingesting Sepsis md5 file information from {0}".format(self.path))
+        resources = []
+        for md5_file in self.path.walk(filter=is_md5file):
+            logger.info("Processing md5 file {0}".format(md5_file))
+            for file_info in files.parse_md5_file(files.miseq_filename_re, md5_file):
+                resource = dict((t, file_info.get(t)) for t in ('index', 'lane', 'vendor', 'read', 'flow_cell_id', 'library', 'extraction', 'runsamplenum', 'size'))
+                bpa_id = file_info.get('id')
+                legacy_url = bpa_mirror_url('wheat_cultivars/all/' + file_obj['filename'])
+                resources.append((bpa_id, legacy_url, resource))
+        return resources
