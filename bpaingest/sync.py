@@ -127,21 +127,23 @@ def sync_resources(ckan, resources, ckan_packages, auth, num_threads):
     bpa_id_package_id = {}
     for package_obj in ckan_packages:
         bpa_id_package_id[package_obj['bpa_id']] = package_obj['id']
-
+    
     # wire the resources to their CKAN package
     resource_idx = {}
     md5_legacy_url = {}
     for bpa_id, legacy_url, resource_obj in resources:
-        if bpa_id not in resource_idx:
-            resource_idx[bpa_id] = []
+        package_id = bpa_id_package_id[bpa_id]
         obj = resource_obj.copy()
-        obj['package_id'] = bpa_id_package_id[bpa_id]
-        resource_idx[bpa_id].append(obj)
+        obj['package_id'] = package_id
+        if package_id not in resource_idx:
+            resource_idx[package_id] = []
+        resource_idx[package_id].append(obj)
         md5_legacy_url[obj['md5']] = legacy_url
 
     to_reupload = []
     for package_obj in ckan_packages:
-        to_reupload += sync_package_resources(ckan, archive_info, package_obj, md5_legacy_url, resource_idx[package_obj['bpa_id']], auth)
+        package_id = package_obj['id']
+        to_reupload += sync_package_resources(ckan, archive_info, package_obj, md5_legacy_url, resource_idx[package_obj['id']], auth)
     reupload_resources(ckan, archive_info, to_reupload, md5_legacy_url, auth, num_threads)
 
 
