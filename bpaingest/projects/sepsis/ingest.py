@@ -45,12 +45,30 @@ class SepsisGenomicsMiseqMetadata(BaseMetadata):
                 return True
 
         logger.info("Ingesting Sepsis Genomics Miseq metadata from {0}".format(self.path))
+        packages = []
+        # note: the metadata in the package xlsx is quite minimal
         for fname in self.path.walk(filter=is_metadata):
             logger.info("Processing Sepsis Genomics metadata file {0}".format(fname))
             rows = list(SepsisGenomicsMiseqMetadata.parse_spreadsheet(fname))
             for row in rows:
-                print(row)
-        return []
+                bpa_id = row.bpa_id
+                name = bpa_id_to_ckan_name(bpa_id)
+                obj = {
+                    'name': name,
+                    'id': bpa_id,
+                    'bpa_id': bpa_id,
+                    'title': 'Sepsis Genomics Miseq %s' % (bpa_id),
+                    'insert_size_range': row.insert_size_range,
+                    'library_construction_protocol': row.library_construction_protocol,
+                    'sequencer': row.sequencer,
+                    'analysis_software_version': row.analysis_software_version,
+                    'type': 'arq-genomics-miseq',
+                }
+                tag_names = ['miseq', 'genomics']
+                obj['tags'] = [{'name': t} for t in tag_names]
+                packages.append(obj)
+                print(obj)
+        return packages
 
     def get_resources(self):
         def is_md5file(path):
