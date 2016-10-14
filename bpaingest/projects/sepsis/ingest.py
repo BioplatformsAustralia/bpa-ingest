@@ -79,7 +79,9 @@ class SepsisGenomicsMiseqMetadata(BaseMetadata):
         for md5_file in self.path.walk(filter=is_md5file):
             logger.info("Processing md5 file {0}".format(md5_file))
             for file_info in files.parse_md5_file(files.miseq_filename_re, md5_file):
-                resource = dict((t, file_info.get(t)) for t in ('index', 'lane', 'vendor', 'read', 'flow_cell_id', 'library', 'extraction', 'runsamplenum', 'size'))
+                resource = dict((t, file_info.get(t)) for t in ('index', 'lane', 'vendor', 'read', 'flow_cell_id', 'library', 'extraction', 'runsamplenum'))
+                resource['seq_size'] = file_info.get('size')
+                resource['md5'] = file_info.md5
                 bpa_id = file_info.get('id')
                 legacy_url = bpa_mirror_url('sepsis/genomics/miseq/' + file_info.filename)
                 resources.append((bpa_id, legacy_url, resource))
