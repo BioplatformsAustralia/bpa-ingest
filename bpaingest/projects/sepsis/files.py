@@ -92,7 +92,7 @@ class MD5ParsedLine(object):
         if matched:
             self.md5data = matched.groupdict()
             self._ok = True
-    
+
     def get(self, k):
         return self.md5data[k]
 

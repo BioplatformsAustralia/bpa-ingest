@@ -62,7 +62,7 @@ class SepsisGenomicsMiseqMetadata(BaseMetadata):
                     'library_construction_protocol': row.library_construction_protocol,
                     'sequencer': row.sequencer,
                     'analysis_software_version': row.analysis_software_version,
-                    'type': 'arq-genomics-miseq',
+                    'type': 'arp-genomics-miseq',
                 }
                 tag_names = ['miseq', 'genomics']
                 obj['tags'] = [{'name': t} for t in tag_names]
@@ -81,6 +81,6 @@ class SepsisGenomicsMiseqMetadata(BaseMetadata):
             for file_info in files.parse_md5_file(files.miseq_filename_re, md5_file):
                 resource = dict((t, file_info.get(t)) for t in ('index', 'lane', 'vendor', 'read', 'flow_cell_id', 'library', 'extraction', 'runsamplenum', 'size'))
                 bpa_id = file_info.get('id')
-                legacy_url = bpa_mirror_url('wheat_cultivars/all/' + file_obj['filename'])
+                legacy_url = bpa_mirror_url('sepsis/genomics/miseq/' + file_info.filename)
                 resources.append((bpa_id, legacy_url, resource))
         return resources
