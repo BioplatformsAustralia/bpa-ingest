@@ -21,16 +21,6 @@ from ..util import make_logger
 logger = make_logger(__name__)
 
 
-class ColumnNotFoundException(Exception):
-    column_name = 'Not Set'
-
-    def __init__(self, column_name):
-        self.column_name = column_name
-
-    def __str__(self):
-        return 'column `{0}\' not found'.format(self.column_name)
-
-
 def _stringify(s):
     if isinstance(s, str):
         return str(s.decode('utf8'))
@@ -104,8 +94,8 @@ class ExcelWrapper(object):
         def find_column(column_name, complain=True):
             col_index = -1
             try:
-                header = self.sheet.row_values(self.column_name_row_index)
-                col_index = header.index(column_name)
+                header = [t.strip().lower() for t in self.sheet.row_values(self.column_name_row_index)]
+                col_index = header.index(column_name.strip().lower())
             except ValueError:
                 if complain:
                     logger.error('column `{0}\' not found'.format(column_name))

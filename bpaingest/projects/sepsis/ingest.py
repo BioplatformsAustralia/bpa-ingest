@@ -156,6 +156,8 @@ class SepsisGenomicsPacbioMetadata(BaseMetadata):
                 tag_names = ['pacbio', 'genomics']
                 obj['tags'] = [{'name': t} for t in tag_names]
                 packages.append(obj)
+        from pprint import pprint
+        pprint(packages)
         return packages
 
     def get_resources(self):
