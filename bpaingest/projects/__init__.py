@@ -3,7 +3,7 @@ from .base.ingest import SoilMetadata
 from .gbr_amplicons.ingest import GbrAmpliconsMetadata
 from .melanoma.ingest import MelanomaMetadata
 from .mm.ingest import MarineMicrobesMetadata
-from .sepsis.ingest import SepsisGenomicsMiseqMetadata
+from .sepsis.ingest import SepsisGenomicsMiseqMetadata, SepsisTranscriptomicsHiseqMetadata, SepsisGenomicsPacbioMetadata
 from .stemcells.ingest import StemcellsMetadata
 from .wheat_cultivars.ingest import WheatCultivarsMetadata
 from .wheat_pathogens_genomes.ingest import WheatPathogensGenomesMetadata
@@ -15,7 +15,9 @@ PROJECTS = {
     'gbr': GbrAmpliconsMetadata,
     'melanoma': MelanomaMetadata,
     'mm': MarineMicrobesMetadata,
-    'sepsis': SepsisGenomicsMiseqMetadata,
+    'sepsis-genomics-miseq': SepsisGenomicsMiseqMetadata,
+    'sepsis-genomics-pacbio': SepsisGenomicsPacbioMetadata,
+    'sepsis-transcriptomics-hiseq': SepsisTranscriptomicsHiseqMetadata,
     'stemcells': StemcellsMetadata,
     'wheat-cultivars': WheatCultivarsMetadata,
     'wheat-pathogens-genomes': WheatPathogensGenomesMetadata,

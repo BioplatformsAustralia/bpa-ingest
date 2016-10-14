@@ -141,7 +141,7 @@ def sync_resources(ckan, resources, ckan_packages, auth, num_threads):
 
     to_reupload = []
     for package_obj in ckan_packages:
-        to_reupload += sync_package_resources(ckan, archive_info, package_obj, md5_legacy_url, resource_idx.get(package_obj['bpa_id']), auth)
+        to_reupload += sync_package_resources(ckan, archive_info, package_obj, md5_legacy_url, resource_idx[package_obj['bpa_id']], auth)
     reupload_resources(ckan, archive_info, to_reupload, md5_legacy_url, auth, num_threads)
 
 

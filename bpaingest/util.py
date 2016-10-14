@@ -6,8 +6,12 @@ import ckanapi
 import requests
 
 
-def bpa_id_to_ckan_name(s):
-    return 'bpa-' + s.replace('/', '_').replace('.', '_')
+def bpa_id_to_ckan_name(s, suborg=None):
+    r = 'bpa-'
+    if suborg is not None:
+        r += suborg + '-'
+    r += s.replace('/', '_').replace('.', '_')
+    return r
 
 
 def prune_dict(d, keys):
