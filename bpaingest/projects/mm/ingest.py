@@ -14,7 +14,7 @@ class MarineMicrobesMetadata(BaseMetadata):
     auth = ('marine', 'marine')
     organization = 'bpa-marine-microbes'
 
-    def __init__(self, metadata_path):
+    def __init__(self, metadata_path, track_csv_path=None):
         self.path = Path(metadata_path)
 
     def get_packages(self):

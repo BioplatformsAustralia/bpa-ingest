@@ -17,7 +17,7 @@ class WheatPathogensGenomesMetadata(BaseMetadata):
     metadata_url = 'https://downloads-qcif.bioplatforms.com/bpa/wheat_pathogens/metadata/'
     organization = 'bpa-wheat-pathogens-genomes'
 
-    def __init__(self, metadata_path):
+    def __init__(self, metadata_path, track_csv_path=None):
         path = Path(metadata_path)
         self.metadata = parse_metadata(path)
 

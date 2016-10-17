@@ -20,7 +20,7 @@ register_command, command_fns = make_registration_decorator()
 
 
 class DownloadMetadata(object):
-    def __init__(self, project_class):
+    def __init__(self, project_class, track_csv_path):
         self.path = tempfile.mkdtemp(prefix='bpaingest-metadata-')
         self.auth = None
         if hasattr(project_class, 'auth'):
@@ -29,13 +29,13 @@ class DownloadMetadata(object):
         fetcher = Fetcher(self.path, project_class.metadata_url, self.auth)
         logger.info("metadata url is: %s" % (project_class.metadata_url))
         fetcher.fetch_metadata_from_folder()
-        self.meta = project_class(self.path)
+        self.meta = project_class(self.path, track_csv_path=track_csv_path)
 
     def __enter__(self):
         return self
 
     def __exit__(self, exc_type, exc_val, exc_tb):
-        # shutil.rmtree(self.path)
+        shutil.rmtree(self.path)
         pass
 
 
@@ -50,6 +50,7 @@ def bootstrap(ckan, args):
 def setup_sync(subparser):
     subparser.add_argument('project_name', choices=sorted(PROJECTS.keys()), help='path to metadata')
     subparser.add_argument('--uploads', type=int, default=4, help='number of parallel uploads')
+    subparser.add_argument('--track-metadata', type=str, default=None, help='metadata tracking spreadsheet (CSV)')
 
 
 def setup_hash(subparser):
@@ -60,7 +61,7 @@ def setup_hash(subparser):
 @register_command
 def sync(ckan, args):
     """sync a project"""
-    with DownloadMetadata(PROJECTS[args.project_name]) as dlmeta:
+    with DownloadMetadata(PROJECTS[args.project_name], args.track_metadata) as dlmeta:
         sync_metadata(ckan, dlmeta.meta, dlmeta.auth, args.uploads)
         print_accounts()
 

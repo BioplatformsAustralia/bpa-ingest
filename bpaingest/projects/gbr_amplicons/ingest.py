@@ -17,7 +17,7 @@ class GbrAmpliconsMetadata(BaseMetadata):
     organization = 'bpa-great-barrier-reef'
     auth = ("bpa", "gbr")
 
-    def __init__(self, metadata_path):
+    def __init__(self, metadata_path, track_csv_path=None):
         self.path = Path(metadata_path)
         self.files = files_from_md5(self.path)
 

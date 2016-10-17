@@ -47,12 +47,16 @@ def patch_if_required(ckan, object_type, ckan_object, patch_object, skip_differe
     patch ckan_object if applying patch_object would change it. ckan_object is unchanged
     for any keys which are not mentioned in patch_object
     """
+    def sort_if_list(v):
+        if type(v) is list:
+            return list(sorted(v))
+        return v
     differences = []
     for k in patch_object.keys():
         if skip_differences and k in skip_differences:
             continue
-        v1 = patch_object.get(k)
-        v2 = ckan_object.get(k)
+        v1 = sort_if_list(patch_object.get(k))
+        v2 = sort_if_list(ckan_object.get(k))
         # co-erce to string to cope with numeric types in the JSON data
         if v1 != v2 and str(v1) != str(v2):
             differences.append((k, v1, v2))

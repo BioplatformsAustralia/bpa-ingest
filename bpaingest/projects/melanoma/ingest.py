@@ -14,7 +14,7 @@ class MelanomaMetadata(BaseMetadata):
     auth = ('melanoma', 'melanoma')
     organization = 'bpa-melanoma'
 
-    def __init__(self, metadata_path):
+    def __init__(self, metadata_path, track_csv_path=None):
         self.path = Path(metadata_path)
 
     def get_packages(self):
