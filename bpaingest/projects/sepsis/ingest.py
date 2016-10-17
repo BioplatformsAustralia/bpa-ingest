@@ -19,6 +19,12 @@ class SepsisGenomicsMiseqMetadata(BaseMetadata):
 
     def __init__(self, metadata_path, track_csv_path=None):
         self.path = Path(metadata_path)
+        self.track_meta = self.read_track_csv(track_csv_path)
+
+    def read_track_csv(self, fname):
+        header, rows = csv_to_named_tuple('SepsisGenomicsMiseqTrack', fname)
+        logger.info("track csv header: %s" % (repr(header)))
+        return dict((t.five_digit_bpa_id.split('.')[-1], t) for t in rows)
 
     @classmethod
     def parse_spreadsheet(self, fname):
@@ -52,6 +58,7 @@ class SepsisGenomicsMiseqMetadata(BaseMetadata):
             rows = list(SepsisGenomicsMiseqMetadata.parse_spreadsheet(fname))
             for row in rows:
                 bpa_id = row.bpa_id
+                track_meta = self.track_meta[bpa_id]
                 name = bpa_id_to_ckan_name(bpa_id, 'arp-genomics-miseq')
                 obj = {
                     'name': name,
@@ -62,6 +69,19 @@ class SepsisGenomicsMiseqMetadata(BaseMetadata):
                     'library_construction_protocol': row.library_construction_protocol,
                     'sequencer': row.sequencer,
                     'analysis_software_version': row.analysis_software_version,
+                    'taxon_or_organism': track_meta.taxon_or_organism,
+                    'strain_or_isolate': track_meta.strain_or_isolate,
+                    'serovar': track_meta.serovar,
+                    'growth_media': track_meta.growth_media,
+                    'replicate': track_meta.replicate,
+                    'omics': track_meta.omics,
+                    'analytical_platform': track_meta.analytical_platform,
+                    'facility': track_meta.facility,
+                    'work_order': track_meta.work_order,
+                    'contextual_data_submission_date': track_meta.contextual_data_submission_date,
+                    'sample_submission_date': track_meta.sample_submission_date,
+                    'data_generated': track_meta.data_generated,
+                    'archive_ingestion_date': track_meta.archive_ingestion_date,
                     'type': 'arp-genomics-miseq',
                     'private': True,
                 }
@@ -143,8 +163,8 @@ class SepsisGenomicsPacbioMetadata(BaseMetadata):
             rows = list(SepsisGenomicsPacbioMetadata.parse_spreadsheet(fname))
             for row in rows:
                 bpa_id = row.bpa_id
-                name = bpa_id_to_ckan_name(bpa_id, 'arp-genomics-pacbio')
                 track_meta = self.track_meta[bpa_id]
+                name = bpa_id_to_ckan_name(bpa_id, 'arp-genomics-pacbio')
                 obj = {
                     'name': name,
                     'id': name,
@@ -197,6 +217,7 @@ class SepsisGenomicsPacbioMetadata(BaseMetadata):
         return resources
 
 
+# NB: as yet there is no HiSeq data, so the below class is untested
 class SepsisTranscriptomicsHiseqMetadata(BaseMetadata):
     metadata_url = 'https://downloads-qcif.bioplatforms.com/bpa/sepsis/transcriptomics/hiseq/'
     organization = 'bpa-sepsis'
@@ -204,6 +225,12 @@ class SepsisTranscriptomicsHiseqMetadata(BaseMetadata):
 
     def __init__(self, metadata_path, track_csv_path=None):
         self.path = Path(metadata_path)
+        self.track_meta = self.read_track_csv(track_csv_path)
+
+    def read_track_csv(self, fname):
+        header, rows = csv_to_named_tuple('SepsisGenomicsHiseqTrack', fname)
+        logger.info("track csv header: %s" % (repr(header)))
+        return dict((t.five_digit_bpa_id.split('.')[-1], t) for t in rows)
 
     @classmethod
     def parse_spreadsheet(self, fname):
@@ -238,6 +265,7 @@ class SepsisTranscriptomicsHiseqMetadata(BaseMetadata):
             rows = list(SepsisTranscriptomicsHiseqMetadata.parse_spreadsheet(fname))
             for row in rows:
                 bpa_id = row.bpa_id
+                track_meta = self.track_meta[bpa_id]
                 name = bpa_id_to_ckan_name(bpa_id, 'arp-transcriptomics-hiseq')
                 obj = {
                     'name': name,
