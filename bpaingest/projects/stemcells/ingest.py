@@ -13,7 +13,7 @@ class StemcellsMetadata(BaseMetadata):
     metadata_url = 'https://downloads-qcif.bioplatforms.com/bpa/stemcells/tracking/'
     organization = 'bpa-stemcells'
 
-    def __init__(self, metadata_path):
+    def __init__(self, metadata_path, track_csv_path=None):
         self.path = Path(metadata_path)
 
     def get_packages(self):

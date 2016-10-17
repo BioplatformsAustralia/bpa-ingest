@@ -3,7 +3,10 @@ import string
 import os
 
 import ckanapi
+import csv
 import requests
+
+from collections import namedtuple
 
 
 def bpa_id_to_ckan_name(s, suborg=None):
@@ -71,3 +74,33 @@ def authenticated_ckan_session(ckan):
     if 'field-login' in r.text:
         raise RuntimeError('Login failed.')
     return s
+
+
+digit_words = {
+    '0': 'zero',
+    '1': 'one',
+    '2': 'two',
+    '3': 'three',
+    '4': 'four',
+    '5': 'five',
+    '6': 'six',
+    '7': 'seven',
+    '8': 'eight',
+    '9': 'nine',
+}
+def csv_to_named_tuple(typname, fname):
+    def clean_name(s):
+        s = s.lower().strip().replace('-', '_').replace(' ', '_')
+        s = ''.join([t for t in s if t in string.ascii_letters or t in string.digits or t == '_'])
+        if s[0] in string.digits:
+            s = digit_words[s[0]] + s[1:]
+        s = s.strip('_')
+        return s
+    with open(fname) as fd:
+        r = csv.reader(fd)
+        header = [clean_name(t) for t in next(r)]
+        typ = namedtuple(typname, header)
+        rows = []
+        for row in r:
+            rows.append(typ(*row))
+        return header, rows

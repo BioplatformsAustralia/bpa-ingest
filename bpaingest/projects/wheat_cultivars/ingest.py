@@ -17,7 +17,7 @@ class WheatCultivarsMetadata(BaseMetadata):
     metadata_url = 'https://downloads-qcif.bioplatforms.com/bpa/wheat_cultivars/tracking/'
     organization = 'bpa-wheat-cultivars'
 
-    def __init__(self, metadata_path):
+    def __init__(self, metadata_path, track_csv_path=None):
         path = Path(metadata_path)
         self.runs = parse_run_data(path)
         self.samples = parse_sample_data(path)
