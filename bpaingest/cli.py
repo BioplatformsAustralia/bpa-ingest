@@ -74,7 +74,7 @@ def genhash(ckan, args):
     verify MD5 sums for a local (filesystem mounted) mirror of the BPA
     data, and generate expected E-Tag and SHA256 values.
     """
-    with DownloadMetadata(PROJECTS[args.project_name]) as dlmeta:
+    with DownloadMetadata(PROJECTS[args.project_name], None) as dlmeta:
         genhash_fn(ckan, dlmeta.meta, args.mirror_path)
         print_accounts()
 

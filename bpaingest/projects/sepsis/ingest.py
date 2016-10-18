@@ -231,6 +231,8 @@ class SepsisTranscriptomicsHiseqMetadata(BaseMetadata):
         self.track_meta = self.read_track_csv(track_csv_path)
 
     def read_track_csv(self, fname):
+        if fname is None:
+            return {}
         header, rows = csv_to_named_tuple('SepsisGenomicsHiseqTrack', fname)
         logger.info("track csv header: %s" % (repr(header)))
         return dict((t.five_digit_bpa_id.split('.')[-1], t) for t in rows)
