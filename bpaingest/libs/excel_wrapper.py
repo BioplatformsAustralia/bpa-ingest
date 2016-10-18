@@ -117,12 +117,6 @@ class ExcelWrapper(object):
             if col_index != -1:
                 cmap[attribute] = col_index
             else:
-                # In previous versions, not finding a particular column was a
-                # breaking offence. But trying to force vendors to be compliant
-                # with the naming spec as published by BPA has proven to be
-                # futile quest, the have won, I give up. If a column is not
-                # found, throw your arms in the air and continue, hope that
-                # something later on does not break.
                 logger.warning("column `{}' not found in `{}' ".format(column_name, self.file_name))
                 cmap[attribute] = None
 
@@ -185,8 +179,8 @@ class ExcelWrapper(object):
 
         for idx, row in enumerate(self._get_rows()):
             row_count = idx + self.header_length + 1
-            tpl = [row_count, os.path.basename(self.file_name)
-                   ]  # The original row pos in sheet, + 1 as excell row indexing start at 1
+            # The original row pos in sheet, + 1 as excell row indexing start at 1
+            tpl = [row_count, os.path.basename(self.file_name)]
             for name in self.field_names:
                 i = self.name_to_column_map[name]
                 # i is None if the column specified was not found, in that case,

@@ -8,6 +8,7 @@ from ...abstract import BaseMetadata
 from ...libs.excel_wrapper import ExcelWrapper
 
 import files
+import re
 
 logger = make_logger(__name__)
 
@@ -236,8 +237,18 @@ class SepsisTranscriptomicsHiseqMetadata(BaseMetadata):
 
     @classmethod
     def parse_spreadsheet(self, fname):
+        bpa_id_re = re.compile(r'^102\.100\.100/(\d+)$')
+
+        # code added to ignore junk example lines, if been left in by the facility
+        def extract_bpa_id(s):
+            m = bpa_id_re.match(s)
+            if m:
+                return m.groups()[0]
+            logger.warning("unable to parse BPA ID: %s" % s)
+            return None
+
         field_spec = [
-            ("bpa_id", "Antibiotic Resistant Pathogen sample unique ID", lambda s: str(int(s.split('/')[-1]))),
+            ("bpa_id", "Antibiotic Resistant Pathogen sample unique ID", extract_bpa_id),
             ("sample", "Sample (MGR code)", None),
             ("library_construction_protocol", "Library construction protocol", None),
             ("barcode_tag", "Barcode tag", None),
@@ -267,6 +278,8 @@ class SepsisTranscriptomicsHiseqMetadata(BaseMetadata):
             rows = list(SepsisTranscriptomicsHiseqMetadata.parse_spreadsheet(fname))
             for row in rows:
                 bpa_id = row.bpa_id
+                if bpa_id is None:
+                    continue
                 track_meta = self.track_meta[bpa_id]
                 name = bpa_id_to_ckan_name(bpa_id, 'arp-transcriptomics-hiseq')
                 obj = {
@@ -280,7 +293,20 @@ class SepsisTranscriptomicsHiseqMetadata(BaseMetadata):
                     'barcode_tag': row.barcode_tag,
                     'sequencer': row.sequencer,
                     'casava_version': row.casava_version,
-                    'type': 'arp-genomics-hiseq',
+                    'taxon_or_organism': track_meta.taxon_or_organism,
+                    'strain_or_isolate': track_meta.strain_or_isolate,
+                    'serovar': track_meta.serovar,
+                    'growth_media': track_meta.growth_media,
+                    'replicate': track_meta.replicate,
+                    'omics': track_meta.omics,
+                    'analytical_platform': track_meta.analytical_platform,
+                    'facility': track_meta.facility,
+                    'work_order': track_meta.work_order,
+                    'contextual_data_submission_date': track_meta.contextual_data_submission_date,
+                    'sample_submission_date': track_meta.sample_submission_date,
+                    'data_generated': track_meta.data_generated,
+                    'archive_ingestion_date': track_meta.archive_ingestion_date,
+                    'type': 'arp-transcriptomics-hiseq',
                     'private': True,
                 }
                 tag_names = ['hiseq', 'transcriptomics']
@@ -298,7 +324,7 @@ class SepsisTranscriptomicsHiseqMetadata(BaseMetadata):
         for md5_file in self.path.walk(filter=is_md5file):
             logger.info("Processing md5 file {0}".format(md5_file))
             for file_info in files.parse_md5_file(files.hiseq_filename_re, md5_file):
-                resource = dict((t, file_info.get(t)) for t in ('index', 'lane', 'vendor', 'read', 'flow_cell_id', 'library', 'extraction', 'runsamplenum'))
+                resource = dict((t, file_info.get(t)) for t in ('library', 'vendor', 'flow_cell_id', 'index', 'lane', 'read'))
                 resource['seq_size'] = file_info.get('size')
                 resource['md5'] = resource['id'] = file_info.md5
                 resource['name'] = file_info.filename
