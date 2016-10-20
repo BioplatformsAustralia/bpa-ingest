@@ -146,7 +146,7 @@ ORGANIZATIONS = [
         'display_name': 'BioPlatforms Australia',
         'name': BPA_ORGANIZATION_ID,
         'image_display_url': 'https://data.bioplatforms.com/bpalogo.png',
-        'image_url': 'http://www.bioplatforms.com/wp-content/uploads/BioplatformsAustralia.png',
+        'image_url': 'https://data.bioplatforms.com/bpalogo.png',
         'title': 'BioPlatforms Australia',
         'approval_status': 'approved',
         'is_organization': True,
