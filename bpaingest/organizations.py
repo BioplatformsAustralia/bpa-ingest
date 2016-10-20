@@ -164,7 +164,7 @@ ORGANIZATIONS = [
     },
     {
         'name': 'bpa-base',
-        'title': 'Biome of Australian Soil Environments',
+        'title': 'Biome of Australia Soil Environments',
         'display_name': 'Biome of Australia Soil Environments',
         'image_url': 'https://data.bioplatforms.com/base.png',
         'description': base_desc,
