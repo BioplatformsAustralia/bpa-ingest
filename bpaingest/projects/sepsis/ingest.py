@@ -220,7 +220,6 @@ class SepsisGenomicsPacbioMetadata(BaseMetadata):
         return resources
 
 
-# NB: as yet there is no HiSeq data, so the below class is untested
 class SepsisTranscriptomicsHiseqMetadata(BaseMetadata):
     metadata_url = 'https://downloads-qcif.bioplatforms.com/bpa/sepsis/transcriptomics/hiseq/'
     organization = 'bpa-sepsis'
