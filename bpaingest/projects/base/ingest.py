@@ -11,7 +11,7 @@ logger = make_logger(__name__)
 
 
 class SoilMetadata(BaseMetadata):
-    metadata_url = 'https://downloads-qcif.bioplatforms.com/bpa/base/tracking/'
+    metadata_urls = ['https://downloads-qcif.bioplatforms.com/bpa/base/tracking/']
     organization = 'bpa-base'
 
     def __init__(self, metadata_path, track_csv_path=None):

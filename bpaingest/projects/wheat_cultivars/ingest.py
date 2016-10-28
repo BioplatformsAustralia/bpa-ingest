@@ -14,7 +14,7 @@ logger = make_logger(__name__)
 
 
 class WheatCultivarsMetadata(BaseMetadata):
-    metadata_url = 'https://downloads-qcif.bioplatforms.com/bpa/wheat_cultivars/tracking/'
+    metadata_urls = ['https://downloads-qcif.bioplatforms.com/bpa/wheat_cultivars/tracking/']
     organization = 'bpa-wheat-cultivars'
 
     def __init__(self, metadata_path, track_csv_path=None):

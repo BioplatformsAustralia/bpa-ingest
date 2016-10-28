@@ -14,7 +14,7 @@ logger = make_logger(__name__)
 
 
 class WheatPathogensGenomesMetadata(BaseMetadata):
-    metadata_url = 'https://downloads-qcif.bioplatforms.com/bpa/wheat_pathogens/metadata/'
+    metadata_urls = ['https://downloads-qcif.bioplatforms.com/bpa/wheat_pathogens/metadata/']
     organization = 'bpa-wheat-pathogens-genomes'
 
     def __init__(self, metadata_path, track_csv_path=None):

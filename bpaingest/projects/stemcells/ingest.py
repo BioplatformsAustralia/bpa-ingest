@@ -10,7 +10,7 @@ logger = make_logger(__name__)
 
 
 class StemcellsMetadata(BaseMetadata):
-    metadata_url = 'https://downloads-qcif.bioplatforms.com/bpa/stemcells/tracking/'
+    metadata_urls = ['https://downloads-qcif.bioplatforms.com/bpa/stemcells/tracking/']
     organization = 'bpa-stemcells'
 
     def __init__(self, metadata_path, track_csv_path=None):

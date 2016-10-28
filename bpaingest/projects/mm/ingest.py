@@ -9,8 +9,10 @@ from ...abstract import BaseMetadata
 logger = make_logger(__name__)
 
 
-class MarineMicrobesMetadata(BaseMetadata):
-    metadata_url = 'https://downloads-qcif.bioplatforms.com/bpa/marine_microbes/tracking/'
+class MarineMicrobesAmpliconsMetadata(BaseMetadata):
+    metadata_urls = [
+        'https://downloads-qcif.bioplatforms.com/bpa/marine_microbes/tracking/'
+    ]
     auth = ('marine', 'marine')
     organization = 'bpa-marine-microbes'
 

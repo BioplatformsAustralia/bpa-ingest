@@ -26,9 +26,10 @@ class DownloadMetadata(object):
         if hasattr(project_class, 'auth'):
             auth_user, auth_env_name = project_class.auth
             self.auth = (auth_user, get_password(auth_env_name))
-        fetcher = Fetcher(self.path, project_class.metadata_url, self.auth)
-        logger.info("metadata url is: %s" % (project_class.metadata_url))
-        fetcher.fetch_metadata_from_folder()
+        for metadata_url in project_class.metadata_urls:
+            logger.info("fetching metadata: %s" % (project_class.metadata_urls))
+            fetcher = Fetcher(self.path, metadata_url, self.auth)
+            fetcher.fetch_metadata_from_folder()
         self.meta = project_class(self.path, track_csv_path=track_csv_path)
 
     def __enter__(self):

@@ -13,7 +13,7 @@ logger = make_logger(__name__)
 
 
 class GbrAmpliconsMetadata(BaseMetadata):
-    metadata_url = 'https://downloads-qcif.bioplatforms.com/bpa/gbr/metadata/amplicons/'
+    metadata_urls = ['https://downloads-qcif.bioplatforms.com/bpa/gbr/metadata/amplicons/']
     organization = 'bpa-great-barrier-reef'
     auth = ("bpa", "gbr")
 
