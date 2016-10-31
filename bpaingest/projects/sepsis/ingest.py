@@ -333,3 +333,118 @@ class SepsisTranscriptomicsHiseqMetadata(BaseMetadata):
                 legacy_url = bpa_mirror_url('bpa/sepsis/transcriptomics/hiseq/' + file_info.filename)
                 resources.append((bpa_id, legacy_url, resource))
         return resources
+
+
+class SepsisMetabolomicsDeepLCMSMetadata(BaseMetadata):
+    metadata_urls = ['https://downloads-qcif.bioplatforms.com/bpa/sepsis/metabolomics/deeplcms/']
+    organization = 'bpa-sepsis'
+    auth = ('sepsis', 'sepsis')
+
+    def __init__(self, metadata_path, track_csv_path=None):
+        self.path = Path(metadata_path)
+        self.track_meta = self.read_track_csv(track_csv_path)
+
+    def read_track_csv(self, fname):
+        if fname is None:
+            return {}
+        header, rows = csv_to_named_tuple('SepsisMetabolomicsDeepLCMSTrack', fname)
+        logger.info("track csv header: %s" % (repr(header)))
+        return dict((t.five_digit_bpa_id.split('.')[-1], t) for t in rows)
+
+    @classmethod
+    def parse_spreadsheet(self, fname):
+        bpa_id_re = re.compile(r'^102\.100\.100/(\d+)$')
+
+        # code added to ignore junk example lines, if been left in by the facility
+        def extract_bpa_id(s):
+            m = bpa_id_re.match(s)
+            if m:
+                return m.groups()[0]
+            logger.warning("unable to parse BPA ID: %s" % s)
+            return None
+
+        field_spec = [
+            ("bpa_id", "Bacterial sample unique ID", extract_bpa_id),
+            ("sample_fractionation_extract_solvent", "Sample fractionation / Extraction Solvent", None),
+            ("lc_column_type", "LC/column type", None),
+            ("gradient_time_min_flow", "Gradient time (min) / flow", None),
+            ("mass_spectrometer", "Mass Spectrometer", None),
+            ("acquisition_mode", "Acquisition Mode", None),
+            ("raw_file_name", "Raw file name", None),
+        ]
+        wrapper = ExcelWrapper(
+            field_spec,
+            fname,
+            sheet_name="Sheet1",
+            header_length=1,
+            column_name_row_index=1,
+            formatting_info=True,
+            pick_first_sheet=True)
+        return wrapper.get_all()
+
+    def get_packages(self):
+        def is_metadata(path):
+            if path.isfile() and path.ext == ".xlsx":
+                return True
+
+        packages = []
+        # note: the metadata in the package xlsx is quite minimal
+        for fname in self.path.walk(filter=is_metadata):
+            logger.info("Processing Sepsis Metabolomics DeepLCMS metadata file {0}".format(fname))
+            rows = list(SepsisMetabolomicsDeepLCMSMetadata.parse_spreadsheet(fname))
+            for row in rows:
+                bpa_id = row.bpa_id
+                if bpa_id is None:
+                    continue
+                track_meta = self.track_meta[bpa_id]
+                name = bpa_id_to_ckan_name(bpa_id, 'arp-metabolomics-deeplcms')
+                obj = {
+                    'name': name,
+                    'id': bpa_id,
+                    'bpa_id': bpa_id,
+                    'title': 'ARP Transcriptomics Hiseq %s' % (bpa_id),
+                    'notes': 'ARP Transcriptomics Hiseq Data: %s %s' % (track_meta.taxon_or_organism, track_meta.strain_or_isolate),
+                    'sample': row.sample,
+                    'library_construction_protocol': row.library_construction_protocol,
+                    'barcode_tag': row.barcode_tag,
+                    'sequencer': row.sequencer,
+                    'casava_version': row.casava_version,
+                    'taxon_or_organism': track_meta.taxon_or_organism,
+                    'strain_or_isolate': track_meta.strain_or_isolate,
+                    'serovar': track_meta.serovar,
+                    'growth_media': track_meta.growth_media,
+                    'replicate': track_meta.replicate,
+                    'omics': track_meta.omics,
+                    'analytical_platform': track_meta.analytical_platform,
+                    'facility': track_meta.facility,
+                    'work_order': track_meta.work_order,
+                    'contextual_data_submission_date': track_meta.contextual_data_submission_date,
+                    'sample_submission_date': track_meta.sample_submission_date,
+                    'data_generated': track_meta.data_generated,
+                    'archive_ingestion_date': track_meta.archive_ingestion_date,
+                    'type': 'arp-transcriptomics-hiseq',
+                    'private': True,
+                }
+                tag_names = ['hiseq', 'transcriptomics']
+                obj['tags'] = [{'name': t} for t in tag_names]
+                packages.append(obj)
+        return packages
+
+    def get_resources(self):
+        def is_md5file(path):
+            if path.isfile() and path.ext == ".md5":
+                return True
+
+        logger.info("Ingesting Sepsis md5 file information from {0}".format(self.path))
+        resources = []
+        for md5_file in self.path.walk(filter=is_md5file):
+            logger.info("Processing md5 file {0}".format(md5_file))
+            for file_info in files.parse_md5_file(files.hiseq_filename_re, md5_file):
+                resource = dict((t, file_info.get(t)) for t in ('library', 'vendor', 'flow_cell_id', 'index', 'lane', 'read'))
+                resource['seq_size'] = file_info.get('size')
+                resource['md5'] = resource['id'] = file_info.md5
+                resource['name'] = file_info.filename
+                bpa_id = file_info.get('id')
+                legacy_url = bpa_mirror_url('bpa/sepsis/transcriptomics/hiseq/' + file_info.filename)
+                resources.append((bpa_id, legacy_url, resource))
+        return resources

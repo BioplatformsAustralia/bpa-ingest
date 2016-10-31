@@ -4,6 +4,7 @@ import tempfile
 import argparse
 import shutil
 import sys
+import os
 
 from .util import make_registration_decorator, make_ckan_api
 from .sync import sync_metadata
@@ -20,24 +21,33 @@ register_command, command_fns = make_registration_decorator()
 
 
 class DownloadMetadata(object):
-    def __init__(self, project_class, track_csv_path):
+    def __init__(self, project_class, track_csv_path, path=None):
+        self.cleanup = True
         self.path = tempfile.mkdtemp(prefix='bpaingest-metadata-')
+        fetch = True
+        if path is not None:
+            self.path = path
+            self.cleanup = False
+            if os.access(path, os.R_OK):
+                logger.info("skipping metadata download, specified directory `%s' exists" % path)
+                fetch = False
         self.auth = None
         if hasattr(project_class, 'auth'):
             auth_user, auth_env_name = project_class.auth
             self.auth = (auth_user, get_password(auth_env_name))
-        for metadata_url in project_class.metadata_urls:
-            logger.info("fetching metadata: %s" % (project_class.metadata_urls))
-            fetcher = Fetcher(self.path, metadata_url, self.auth)
-            fetcher.fetch_metadata_from_folder()
+        if fetch:
+            for metadata_url in project_class.metadata_urls:
+                logger.info("fetching metadata: %s" % (project_class.metadata_urls))
+                fetcher = Fetcher(self.path, metadata_url, self.auth)
+                fetcher.fetch_metadata_from_folder()
         self.meta = project_class(self.path, track_csv_path=track_csv_path)
 
     def __enter__(self):
         return self
 
     def __exit__(self, exc_type, exc_val, exc_tb):
-        shutil.rmtree(self.path)
-        pass
+        if self.cleanup:
+            shutil.rmtree(self.path)
 
 
 @register_command
@@ -62,7 +72,7 @@ def setup_hash(subparser):
 @register_command
 def sync(ckan, args):
     """sync a project"""
-    with DownloadMetadata(PROJECTS[args.project_name], args.track_metadata) as dlmeta:
+    with DownloadMetadata(PROJECTS[args.project_name], args.track_metadata, path=args.download_path) as dlmeta:
         sync_metadata(ckan, dlmeta.meta, dlmeta.auth, args.uploads)
         print_accounts()
 
@@ -75,7 +85,7 @@ def genhash(ckan, args):
     verify MD5 sums for a local (filesystem mounted) mirror of the BPA
     data, and generate expected E-Tag and SHA256 values.
     """
-    with DownloadMetadata(PROJECTS[args.project_name], None) as dlmeta:
+    with DownloadMetadata(PROJECTS[args.project_name], None, path=args.download_path) as dlmeta:
         genhash_fn(ckan, dlmeta.meta, args.mirror_path)
         print_accounts()
 
@@ -111,6 +121,7 @@ def main():
     parser.add_argument('--version', action='store_true', help='print version and exit')
     parser.add_argument('-k', '--api-key', required=True, help='CKAN API Key')
     parser.add_argument('-u', '--ckan-url', required=True, help='CKAN base url')
+    parser.add_argument('-p', '--download-path', required=False, default=None, help='CKAN base url')
 
     subparsers = parser.add_subparsers(dest='name')
     for name, fn, setup_fn, help_text in sorted(commands()):
@@ -119,6 +130,7 @@ def main():
         if setup_fn is not None:
             setup_fn(subparser)
     args = parser.parse_args()
+    print(args)
     if args.version:
         version()
     if 'func' not in args:

@@ -88,13 +88,17 @@ class Fetcher():
 
         logger.info('Fetching folder from {}'.format(self.metadata_source_url))
         response = requests.get(self.metadata_source_url, stream=True, auth=self.auth, verify=False)
+        fetched = set()
         for link in BeautifulSoup(response.content, 'html.parser').find_all('a'):
             metadata_filename = link.get('href')
+            if metadata_filename in fetched:
+                continue
             if metadata_filename.endswith('.xlsx') or \
                     metadata_filename.endswith('.txt') or \
                     metadata_filename.endswith('.csv') or \
                     metadata_filename.endswith('.md5'):
                 self.fetch(metadata_filename)
+                fetched.add(metadata_filename)
 
             if fetch_gz is True and metadata_filename.endswith('.gz'):
                 self.fetch(metadata_filename)
