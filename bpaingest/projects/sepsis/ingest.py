@@ -452,6 +452,6 @@ class SepsisMetabolomicsDeepLCMSMetadata(BaseMetadata):
                 resource['md5'] = resource['id'] = file_info.md5
                 resource['name'] = file_info.filename
                 bpa_id = file_info.get('id')
-                legacy_url = bpa_mirror_url('bpa/sepsis/transcriptomics/hiseq/' + file_info.filename)
+                legacy_url = bpa_mirror_url('bpa/sepsis/metabolomics/deeplcms/' + file_info.filename)
                 resources.append((bpa_id, legacy_url, resource))
         return resources

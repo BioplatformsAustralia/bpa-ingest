@@ -2,6 +2,10 @@
 
 import re
 from ...libs.md5lines import md5lines
+from ...util import make_logger
+
+
+logger = make_logger(__name__)
 
 PACBIO_FILENAME_PATTERN = """
     (?P<id>\d{4,6})_
@@ -81,12 +85,9 @@ class MD5ParsedLine(object):
         self.md5data = None
         self.filename = path
         matched = self.pattern.match(self.filename)
-        if matched:
-            self.md5data = matched.groupdict()
-            self._ok = True
-
-    def is_ok(self):
-        return self._ok
+        if not matched:
+            raise Exception("unable to match MD5 filename: `%s'" % (self.filename))
+        self.md5data = matched.groupdict()
 
     def get(self, k):
         return self.md5data[k]
@@ -100,6 +101,5 @@ def parse_md5_file(pattern, md5_file):
     with open(md5_file) as f:
         for md5, path in md5lines(f):
             parsed_line = MD5ParsedLine(pattern, md5, path)
-            if parsed_line.is_ok():
-                data.append(parsed_line)
+            data.append(parsed_line)
     return data
