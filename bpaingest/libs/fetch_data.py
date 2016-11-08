@@ -94,8 +94,6 @@ class Fetcher():
             if metadata_filename in fetched:
                 continue
             if metadata_filename.endswith('.xlsx') or \
-                    metadata_filename.endswith('.txt') or \
-                    metadata_filename.endswith('.csv') or \
                     metadata_filename.endswith('.md5'):
                 self.fetch(metadata_filename)
                 fetched.add(metadata_filename)
