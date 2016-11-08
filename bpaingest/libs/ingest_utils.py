@@ -3,8 +3,7 @@ import unittest
 import json
 
 from ..util import make_logger
-from datetime import date
-from dateutil.parser import parse as date_parser
+import datetime
 
 logger = make_logger(__name__)
 
@@ -106,27 +105,35 @@ def strip_all(reader):
 
 
 def get_date(dt):
-    """
-    When reading in the data, and it was set as a date type in the excel sheet it should have been converted.
-    if it wasn't, it may still be a valid date string.
-    """
+    '''
+    convert `dt` into a datetime.date, returning `dt` if it is already an
+    instance of datetime.date. only two string date formats are supported:
+    YYYY-mm-dd and dd/mm/YYYY. if conversion fails, returns None.
+    '''
+
     if dt is None:
         return None
 
-    if isinstance(dt, date):
+    if isinstance(dt, datetime.date):
         return dt
-    if isinstance(dt, basestring):
-        if dt.strip() == '':
-            return None
-        try:
-            return date_parser(dt, dayfirst=True)
 
-        except TypeError, e:
-            logger.error("Date parsing error " + str(e))
-            return None
-        except ValueError, e:
-            logger.error("Date parsing error " + str(e))
-            return None
+    if not isinstance(dt, basestring):
+        return None
+
+    if dt.strip() == '':
+        return None
+
+    try:
+        return datetime.datetime.strptime(dt, '%Y-%m-%d').date()
+    except ValueError:
+        pass
+
+    try:
+        return datetime.datetime.strptime(dt, '%d/%m/%Y').date()
+    except ValueError:
+        pass
+
+    logger.error('Date `{}` is not in a supported format'.format(dt))
     return None
 
 
@@ -140,7 +147,7 @@ def pretty_print_namedtuple(named_tuple):
         JSON serializer for objects not serializable by default json code
         """
 
-        if isinstance(obj, date):
+        if isinstance(obj, datetime.date):
             serial = obj.isoformat()
             return serial
 
