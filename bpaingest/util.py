@@ -88,6 +88,8 @@ digit_words = {
     '8': 'eight',
     '9': 'nine',
 }
+
+
 def csv_to_named_tuple(typname, fname):
     def clean_name(s):
         s = s.lower().strip().replace('-', '_').replace(' ', '_')

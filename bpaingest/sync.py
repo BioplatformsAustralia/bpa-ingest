@@ -127,7 +127,7 @@ def sync_resources(ckan, resources, ckan_packages, auth, num_threads):
     bpa_id_package_id = {}
     for package_obj in ckan_packages:
         bpa_id_package_id[package_obj['bpa_id']] = package_obj['id']
-    
+
     # wire the resources to their CKAN package
     resource_idx = {}
     md5_legacy_url = {}

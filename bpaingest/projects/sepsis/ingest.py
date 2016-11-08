@@ -13,6 +13,26 @@ import re
 logger = make_logger(__name__)
 
 
+bpa_id_re = re.compile(r'^102\.100\.100/(\d+)$')
+bpa_id_abbrev_re = re.compile(r'^(\d+)$')
+
+
+# ignore junk example lines, if been left in by the facility
+def extract_bpa_id(s):
+    if isinstance(s, float):
+        s = int(s)
+    if isinstance(s, int):
+        s = str(s)
+    m = bpa_id_re.match(s)
+    if m:
+        return m.groups()[0]
+    m = bpa_id_abbrev_re.match(s)
+    if m:
+        return m.groups()[0]
+    logger.warning("unable to parse BPA ID: %s" % s)
+    return None
+
+
 class SepsisGenomicsMiseqMetadata(BaseMetadata):
     metadata_urls = ['https://downloads-qcif.bioplatforms.com/bpa/sepsis/genomics/miseq/']
     organization = 'bpa-sepsis'
@@ -71,6 +91,7 @@ class SepsisGenomicsMiseqMetadata(BaseMetadata):
                     'library_construction_protocol': row.library_construction_protocol,
                     'sequencer': row.sequencer,
                     'analysis_software_version': row.analysis_software_version,
+                    'data_type': track_meta.data_type,
                     'taxon_or_organism': track_meta.taxon_or_organism,
                     'strain_or_isolate': track_meta.strain_or_isolate,
                     'serovar': track_meta.serovar,
@@ -180,6 +201,7 @@ class SepsisGenomicsPacbioMetadata(BaseMetadata):
                     'smrt_cell_id': row.smrt_cell_id,
                     'cell_position': row.cell_position,
                     'rs_version': row.rs_version,
+                    'data_type': track_meta.data_type,
                     'taxon_or_organism': track_meta.taxon_or_organism,
                     'strain_or_isolate': track_meta.strain_or_isolate,
                     'serovar': track_meta.serovar,
@@ -238,16 +260,6 @@ class SepsisTranscriptomicsHiseqMetadata(BaseMetadata):
 
     @classmethod
     def parse_spreadsheet(self, fname):
-        bpa_id_re = re.compile(r'^102\.100\.100/(\d+)$')
-
-        # code added to ignore junk example lines, if been left in by the facility
-        def extract_bpa_id(s):
-            m = bpa_id_re.match(s)
-            if m:
-                return m.groups()[0]
-            logger.warning("unable to parse BPA ID: %s" % s)
-            return None
-
         field_spec = [
             ("bpa_id", "Antibiotic Resistant Pathogen sample unique ID", extract_bpa_id),
             ("sample", "Sample (MGR code)", None),
@@ -294,6 +306,7 @@ class SepsisTranscriptomicsHiseqMetadata(BaseMetadata):
                     'barcode_tag': row.barcode_tag,
                     'sequencer': row.sequencer,
                     'casava_version': row.casava_version,
+                    'data_type': track_meta.data_type,
                     'taxon_or_organism': track_meta.taxon_or_organism,
                     'strain_or_isolate': track_meta.strain_or_isolate,
                     'serovar': track_meta.serovar,
@@ -353,16 +366,6 @@ class SepsisMetabolomicsDeepLCMSMetadata(BaseMetadata):
 
     @classmethod
     def parse_spreadsheet(self, fname):
-        bpa_id_re = re.compile(r'^102\.100\.100/(\d+)$')
-
-        # code added to ignore junk example lines, if been left in by the facility
-        def extract_bpa_id(s):
-            m = bpa_id_re.match(s)
-            if m:
-                return m.groups()[0]
-            logger.warning("unable to parse BPA ID: %s" % s)
-            return None
-
         field_spec = [
             ("bpa_id", "Bacterial sample unique ID", extract_bpa_id),
             ("sample_fractionation_extract_solvent", "Sample fractionation / Extraction Solvent", None),
@@ -398,17 +401,20 @@ class SepsisMetabolomicsDeepLCMSMetadata(BaseMetadata):
                     continue
                 track_meta = self.track_meta[bpa_id]
                 name = bpa_id_to_ckan_name(bpa_id, 'arp-metabolomics-deeplcms')
+                print(row)
                 obj = {
                     'name': name,
                     'id': bpa_id,
                     'bpa_id': bpa_id,
                     'title': 'ARP Transcriptomics Hiseq %s' % (bpa_id),
                     'notes': 'ARP Transcriptomics Hiseq Data: %s %s' % (track_meta.taxon_or_organism, track_meta.strain_or_isolate),
-                    'sample': row.sample,
-                    'library_construction_protocol': row.library_construction_protocol,
-                    'barcode_tag': row.barcode_tag,
-                    'sequencer': row.sequencer,
-                    'casava_version': row.casava_version,
+                    'sample_fractionation_extract_solvent': row.sample_fractionation_extract_solvent,
+                    'lc_column_type': row.lc_column_type,
+                    'gradient_time_min_flow': row.gradient_time_min_flow,
+                    'mass_spectrometer': row.mass_spectrometer,
+                    'acquisition_mode': row.acquisition_mode,
+                    'raw_file_name': row.raw_file_name,
+                    'data_type': track_meta.data_type,
                     'taxon_or_organism': track_meta.taxon_or_organism,
                     'strain_or_isolate': track_meta.strain_or_isolate,
                     'serovar': track_meta.serovar,
@@ -422,6 +428,7 @@ class SepsisMetabolomicsDeepLCMSMetadata(BaseMetadata):
                     'sample_submission_date': track_meta.sample_submission_date,
                     'data_generated': track_meta.data_generated,
                     'archive_ingestion_date': track_meta.archive_ingestion_date,
+                    'archive_id': track_meta.archive_id,
                     'type': 'arp-transcriptomics-hiseq',
                     'private': True,
                 }

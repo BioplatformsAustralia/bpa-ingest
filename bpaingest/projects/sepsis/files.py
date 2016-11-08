@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 
 import re
+from ...libs.md5lines import md5lines
 
 PACBIO_FILENAME_PATTERN = """
     (?P<id>\d{4,6})_
@@ -72,26 +73,19 @@ def test_hiseq():
 
 
 class MD5ParsedLine(object):
-    def __init__(self, pattern, line):
+    def __init__(self, pattern, md5, path):
         self.pattern = pattern
-        self._line = line
         self._ok = False
-        self.__parse_line()
-        self.md5 = None
+        self.md5 = md5
         self.md5data = None
-        self.filename = None
-        self.__parse_line()
-
-    def is_ok(self):
-        return self._ok
-
-    def __parse_line(self):
-        """ unpack the md5 line """
-        self.md5, self.filename = self._line.split()
+        self.filename = path
         matched = self.pattern.match(self.filename)
         if matched:
             self.md5data = matched.groupdict()
             self._ok = True
+
+    def is_ok(self):
+        return self._ok
 
     def get(self, k):
         return self.md5data[k]
@@ -104,12 +98,8 @@ def parse_md5_file(pattern, md5_file):
     """ Parse md5 file """
     data = []
     with open(md5_file) as f:
-        for line in f.read().splitlines():
-            line = line.strip()
-            if line == "":
-                continue
-
-            parsed_line = MD5ParsedLine(pattern, line)
+        for md5, path in md5lines(f):
+            parsed_line = MD5ParsedLine(pattern, md5, path)
             if parsed_line.is_ok():
                 data.append(parsed_line)
     return data
