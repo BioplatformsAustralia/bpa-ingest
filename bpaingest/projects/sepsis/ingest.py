@@ -429,10 +429,10 @@ class SepsisMetabolomicsDeepLCMSMetadata(BaseMetadata):
                     'data_generated': track_meta.data_generated,
                     'archive_ingestion_date': track_meta.archive_ingestion_date,
                     'archive_id': track_meta.archive_id,
-                    'type': 'arp-transcriptomics-hiseq',
+                    'type': 'arp-metabolomics-deeplcms',
                     'private': True,
                 }
-                tag_names = ['hiseq', 'transcriptomics']
+                tag_names = ['deeplcms', 'metabolomics']
                 obj['tags'] = [{'name': t} for t in tag_names]
                 packages.append(obj)
         return packages

@@ -95,7 +95,6 @@ class MD5ParsedLine(object):
 
 
 def parse_md5_file(pattern, md5_file):
-    """ Parse md5 file """
     data = []
     with open(md5_file) as f:
         for md5, path in md5lines(f):
