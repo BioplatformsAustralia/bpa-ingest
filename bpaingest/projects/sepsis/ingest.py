@@ -1,3 +1,5 @@
+# -*- coding: utf-8 -*-
+
 from __future__ import print_function
 
 from unipath import Path
@@ -451,5 +453,116 @@ class SepsisMetabolomicsDeepLCMSMetadata(BaseMetadata):
                 resource['name'] = file_info.filename
                 bpa_id = file_info.get('id')
                 legacy_url = bpa_mirror_url('bpa/sepsis/metabolomics/deeplcms/' + file_info.filename)
+                resources.append((bpa_id, legacy_url, resource))
+        return resources
+
+
+class SepsisProteomicsDeepLCMSMetadata(BaseMetadata):
+    metadata_urls = ['https://downloads-qcif.bioplatforms.com/bpa/sepsis/proteomics/deeplcms/']
+    organization = 'bpa-sepsis'
+    auth = ('sepsis', 'sepsis')
+
+    def __init__(self, metadata_path, track_csv_path=None):
+        self.path = Path(metadata_path)
+        self.track_meta = self.read_track_csv(track_csv_path)
+
+    def read_track_csv(self, fname):
+        if fname is None:
+            return {}
+        header, rows = csv_to_named_tuple('SepsisProteomicsDeepLCMSTrack', fname)
+        logger.info("track csv header: %s" % (repr(header)))
+        return dict((t.five_digit_bpa_id.split('.')[-1], t) for t in rows)
+
+    @classmethod
+    def parse_spreadsheet(self, fname):
+
+        field_spec = [
+            ("bpa_id", "Bacterial sample unique ID", extract_bpa_id),
+            ("facility", "Facility", None),
+            ("sample_fractionation_none_number", "Sample fractionation (none/number)", None),
+            ("lc_column_type", "LC/column type", None),
+            ("gradient_time_per_acn", "Gradient time (min)  /  % ACN (start-finish main gradient) / flow", None),
+            ("sample_on_column", "sample on column (g)", None),  # Note: unicode micro stripped out
+            ("mass_spectrometer", "Mass Spectrometer", None),
+            ("acquisition_mode_fragmentation", "Acquisition Mode / fragmentation", None),
+            ("raw_file_name", "Raw file name", None),
+        ]
+        wrapper = ExcelWrapper(
+            field_spec,
+            fname,
+            sheet_name="Sheet1",
+            header_length=1,
+            column_name_row_index=1,
+            formatting_info=True,
+            pick_first_sheet=True)
+        return wrapper.get_all()
+
+    def get_packages(self):
+        def is_metadata(path):
+            if path.isfile() and path.ext == ".xlsx":
+                return True
+
+        packages = []
+        # note: the metadata in the package xlsx is quite minimal
+        for fname in self.path.walk(filter=is_metadata):
+            logger.info("Processing Sepsis Proteomics DeepLCMS metadata file {0}".format(fname))
+            rows = list(SepsisProteomicsDeepLCMSMetadata.parse_spreadsheet(fname))
+            for row in rows:
+                bpa_id = row.bpa_id
+                if bpa_id is None:
+                    continue
+                track_meta = self.track_meta[bpa_id]
+                name = bpa_id_to_ckan_name(bpa_id, 'arp-proteomics-deeplcms')
+                obj = {
+                    'name': name,
+                    'id': bpa_id,
+                    'bpa_id': bpa_id,
+                    'title': 'ARP Proteomics LCMS %s' % (bpa_id),
+                    'notes': 'ARP Proteomics LCMS Data: %s %s' % (track_meta.taxon_or_organism, track_meta.strain_or_isolate),
+                    'sample_fractionation_none_number': row.sample_fractionation_none_number,
+                    'lc_column_type': row.lc_column_type,
+                    'gradient_time_per_acn': row.gradient_time_per_acn,
+                    'sample_on_column': row.sample_on_column,
+                    'mass_spectrometer': row.mass_spectrometer,
+                    'acquisition_mode_fragmentation': row.acquisition_mode_fragmentation,
+                    'raw_file_name': row.raw_file_name,
+                    'data_type': track_meta.data_type,
+                    'taxon_or_organism': track_meta.taxon_or_organism,
+                    'strain_or_isolate': track_meta.strain_or_isolate,
+                    'serovar': track_meta.serovar,
+                    'growth_media': track_meta.growth_media,
+                    'replicate': track_meta.replicate,
+                    'omics': track_meta.omics,
+                    'analytical_platform': track_meta.analytical_platform,
+                    'facility': track_meta.facility,
+                    'work_order': track_meta.work_order,
+                    'contextual_data_submission_date': track_meta.contextual_data_submission_date,
+                    'sample_submission_date': track_meta.sample_submission_date,
+                    'data_generated': track_meta.data_generated,
+                    'archive_ingestion_date': track_meta.archive_ingestion_date,
+                    'archive_id': track_meta.archive_id,
+                    'type': 'arp-proteomics-deeplcms',
+                    'private': True,
+                }
+                tag_names = ['deeplcms', 'proteomics']
+                obj['tags'] = [{'name': t} for t in tag_names]
+                packages.append(obj)
+        return packages
+
+    def get_resources(self):
+        def is_md5file(path):
+            if path.isfile() and path.ext == ".md5":
+                return True
+
+        logger.info("Ingesting Sepsis md5 file information from {0}".format(self.path))
+        resources = []
+        for md5_file in self.path.walk(filter=is_md5file):
+            logger.info("Processing md5 file {0}".format(md5_file))
+            for file_info in files.parse_md5_file(files.proteomics_deepclms_filename_re, md5_file):
+                resource = dict((t, file_info.get(t)) for t in ('vendor', 'machine_data'))
+                resource['md5'] = resource['id'] = file_info.md5
+                resource['name'] = file_info.filename
+                bpa_id = file_info.get('id')
+                legacy_url = bpa_mirror_url('bpa/sepsis/proteomics/deeplcms/' + file_info.filename)
                 resources.append((bpa_id, legacy_url, resource))
         return resources

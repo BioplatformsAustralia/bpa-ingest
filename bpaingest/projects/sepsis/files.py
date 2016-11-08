@@ -97,6 +97,27 @@ def test_metabolomics_deeplcms():
     for filename in filenames:
         assert(metabolomics_deepclms_filename_re.match(filename) is not None)
 
+
+PROTEOMICS_DEEPLCMS_FILENAME_PATTERN = """
+    (?P<id>\d{4,6})_
+    SEP_
+    (?P<vendor>MBPF)_
+    MS_
+    (?P<machine_data>[^\.]+).
+    raw
+"""
+proteomics_deepclms_filename_re = re.compile(PROTEOMICS_DEEPLCMS_FILENAME_PATTERN, re.VERBOSE)
+
+
+def test_proteomics_deeplcms():
+    filenames = [
+        '26089_SEP_MBPF_MS_QEPlus1.raw'
+    ]
+
+    for filename in filenames:
+        assert(proteomics_deepclms_filename_re.match(filename) is not None)
+
+
 class MD5ParsedLine(object):
     def __init__(self, pattern, md5, path):
         self.pattern = pattern
@@ -120,6 +141,8 @@ def parse_md5_file(pattern, md5_file):
     data = []
     with open(md5_file) as f:
         for md5, path in md5lines(f):
+            if path.endswith('.xlsx'):
+                continue
             parsed_line = MD5ParsedLine(pattern, md5, path)
             data.append(parsed_line)
     return data
