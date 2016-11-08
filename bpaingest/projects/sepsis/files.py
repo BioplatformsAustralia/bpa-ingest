@@ -77,6 +77,26 @@ def test_hiseq():
         assert(hiseq_filename_re.match(filename) is not None)
 
 
+METABOLOMICS_DEEPLCMS_FILENAME_PATTERN = """
+    (?P<id>\d{4,6})_
+    SEP_
+    (?P<vendor>MA)_
+    (?P<platform>LC-MS|GC-MS)_
+    (?P<mastr_ms_id>[A-Z0-9-]+)_
+    (?P<machine_data>[^\.]+).
+    tar.gz
+"""
+metabolomics_deepclms_filename_re = re.compile(METABOLOMICS_DEEPLCMS_FILENAME_PATTERN, re.VERBOSE)
+
+
+def test_metabolomics_deeplcms():
+    filenames = [
+        '25835_SEP_MA_LC-MS_SA2760-1-813-28029_Bio21-LC-QTOF-001.tar.gz'
+    ]
+
+    for filename in filenames:
+        assert(metabolomics_deepclms_filename_re.match(filename) is not None)
+
 class MD5ParsedLine(object):
     def __init__(self, pattern, md5, path):
         self.pattern = pattern

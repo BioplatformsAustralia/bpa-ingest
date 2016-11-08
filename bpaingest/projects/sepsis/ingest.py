@@ -401,13 +401,12 @@ class SepsisMetabolomicsDeepLCMSMetadata(BaseMetadata):
                     continue
                 track_meta = self.track_meta[bpa_id]
                 name = bpa_id_to_ckan_name(bpa_id, 'arp-metabolomics-deeplcms')
-                print(row)
                 obj = {
                     'name': name,
                     'id': bpa_id,
                     'bpa_id': bpa_id,
-                    'title': 'ARP Transcriptomics Hiseq %s' % (bpa_id),
-                    'notes': 'ARP Transcriptomics Hiseq Data: %s %s' % (track_meta.taxon_or_organism, track_meta.strain_or_isolate),
+                    'title': 'ARP Metabolomics LCMS %s' % (bpa_id),
+                    'notes': 'ARP Metabolomics LCMS Data: %s %s' % (track_meta.taxon_or_organism, track_meta.strain_or_isolate),
                     'sample_fractionation_extract_solvent': row.sample_fractionation_extract_solvent,
                     'lc_column_type': row.lc_column_type,
                     'gradient_time_min_flow': row.gradient_time_min_flow,
@@ -446,9 +445,8 @@ class SepsisMetabolomicsDeepLCMSMetadata(BaseMetadata):
         resources = []
         for md5_file in self.path.walk(filter=is_md5file):
             logger.info("Processing md5 file {0}".format(md5_file))
-            for file_info in files.parse_md5_file(files.hiseq_filename_re, md5_file):
-                resource = dict((t, file_info.get(t)) for t in ('library', 'vendor', 'flow_cell_id', 'index', 'lane', 'read'))
-                resource['seq_size'] = file_info.get('size')
+            for file_info in files.parse_md5_file(files.metabolomics_deepclms_filename_re, md5_file):
+                resource = dict((t, file_info.get(t)) for t in ('vendor', 'platform', 'mastr_ms_id', 'machine_data'))
                 resource['md5'] = resource['id'] = file_info.md5
                 resource['name'] = file_info.filename
                 bpa_id = file_info.get('id')

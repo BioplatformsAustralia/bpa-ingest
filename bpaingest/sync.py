@@ -1,3 +1,5 @@
+from __future__ import print_function
+
 from .ops import ckan_method, patch_if_required, check_resource, create_resource, reupload_resource, get_organization, ArchiveInfo
 import ckanapi
 from Queue import Queue
