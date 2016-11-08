@@ -143,7 +143,11 @@ def sync_resources(ckan, resources, ckan_packages, auth, num_threads):
     to_reupload = []
     for package_obj in ckan_packages:
         package_id = package_obj['id']
-        to_reupload += sync_package_resources(ckan, archive_info, package_obj, md5_legacy_url, resource_idx[package_obj['id']], auth)
+        package_resources = resource_idx.get(package_id)
+        if package_resources is None:
+            logger.warning("No resources for package `%s`" % (package_id))
+            continue
+        to_reupload += sync_package_resources(ckan, archive_info, package_obj, md5_legacy_url, package_resources, auth)
     reupload_resources(ckan, archive_info, to_reupload, md5_legacy_url, auth, num_threads)
 
 
