@@ -65,9 +65,10 @@ hiseq_filename_re = re.compile(HISEQ_FILENAME_PATTERN, re.VERBOSE)
 
 def test_hiseq():
     filenames = [
-        '25867_PE_350bp_ARP_AGRF_CA3FUANXX_CTGAAGCT-TAATCTTA_L001_R1.fastq.gz',
-        '25867_PE_350bp_ARP_AGRF_CA3FUANXX_CTGAAGCT-TAATCTTA_L001_R2.fastq.gz',
+        '25874_PE_230bp_SEP_AGRF_CA3FUANXX_TAATGCGC-TAATCTTA_L001_R1.fastq.gz',
+        '25884_PE_230bp_SEP_AGRF_CA3FUANXX_GAATTCGT-TAATCTTA_L001_R1.fastq.gz'
     ]
+
     for filename in filenames:
         assert(hiseq_filename_re.match(filename) is not None)
 
