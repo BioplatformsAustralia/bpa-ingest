@@ -68,6 +68,11 @@ def get_strain_or_isolate(val):
     return None
 
 
+def prune_blanks(d):
+    "remove any empty strings or None values in dictionary keys"
+    return dict((k, v) for (k, v) in d if v)
+
+
 class SepsisBacterialContextual(object):
     """
     Bacterial sample metadata: used by each of the -omics classes below.
@@ -81,7 +86,9 @@ class SepsisBacterialContextual(object):
         self.sample_metadata = self._package_metadata(self._read_metadata(xlsx_path))
 
     def get(self, bpa_id):
-        return self.sample_metadata[bpa_id]
+        if bpa_id in self.sample_metadata:
+            return self.sample_metadata[bpa_id]
+        return {}
 
     def _package_metadata(self, rows):
         sample_metadata = {}
@@ -123,7 +130,8 @@ class SepsisBacterialContextual(object):
                 'host_associated': row.host_associated,
                 'host_health_state': row.host_health_state,
             }
-        return sample_metadata
+        # we have many metadata sources, avoid them overwriting blank values on each other
+        return prune_blanks(sample_metadata)
 
     def _read_metadata(self, metadata_path):
         field_spec = [
@@ -175,9 +183,6 @@ class SepsisBacterialContextual(object):
             formatting_info=True,
             pick_first_sheet=True)
         return wrapper.get_all()
-
-    def get_contextual_metadata():
-        pass
 
 
 class SepsisGenomicsMiseqMetadata(BaseMetadata):
