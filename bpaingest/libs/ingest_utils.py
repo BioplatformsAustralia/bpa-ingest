@@ -104,6 +104,14 @@ def strip_all(reader):
     return entries
 
 
+def get_date_isoformat(s):
+    "try to parse the date, if we can, return the date as an ISO format string"
+    dt = get_date(s)
+    if dt is None:
+        return None
+    return dt.strftime("%Y-%m-%d")
+
+
 def get_date(dt):
     '''
     convert `dt` into a datetime.date, returning `dt` if it is already an

@@ -80,6 +80,9 @@ class SepsisBacterialContextual(object):
         xlsx_path = os.path.join(path, 'sepsis_contextual_2016_08_16.xlsx')
         self.sample_metadata = self._package_metadata(self._read_metadata(xlsx_path))
 
+    def get(self, bpa_id):
+        return self.sample_metadata[bpa_id]
+
     def _package_metadata(self, rows):
         sample_metadata = {}
         for row in rows:
@@ -120,6 +123,7 @@ class SepsisBacterialContextual(object):
                 'host_associated': row.host_associated,
                 'host_health_state': row.host_health_state,
             }
+        return sample_metadata
 
     def _read_metadata(self, metadata_path):
         field_spec = [
@@ -140,10 +144,10 @@ class SepsisBacterialContextual(object):
             ('analytical_platform', 'Analytical_platform', None),
             ('experimental_sample_preparation_method', 'Experimental_sample_preparation_method', None),
             ('culture_collection_id', 'Culture_collection_ID (alternative name[s])', None),
-            ('culture_collection_date', 'Culture_collection_date (YYYY-MM-DD)', ingest_utils.get_date),
+            ('culture_collection_date', 'Culture_collection_date (YYYY-MM-DD)', ingest_utils.get_date_isoformat),
             ('host_location', 'Host_location (state, country)', None),
             ('host_age', 'Host_age', ingest_utils.get_int),
-            ('host_dob', 'Host_DOB (DD/MM/YY)', ingest_utils.get_date),
+            ('host_dob', 'Host_DOB (DD/MM/YY)', ingest_utils.get_date_isoformat),
             ('host_sex', 'Host_sex (F/M)', get_sex),
             ('host_disease_outcome', 'Host_disease_outcome', None),
             ('isolation_source', 'Isolation_source', None),
@@ -249,6 +253,8 @@ class SepsisGenomicsMiseqMetadata(BaseMetadata):
                     'type': 'arp-genomics-miseq',
                     'private': True,
                 }
+                for contextual_source in self.contextual_metadata:
+                    obj.update(contextual_source.get(bpa_id))
                 tag_names = ['miseq', 'genomics']
                 obj['tags'] = [{'name': t} for t in tag_names]
                 packages.append(obj)
@@ -353,6 +359,8 @@ class SepsisGenomicsPacbioMetadata(BaseMetadata):
                     'type': 'arp-genomics-pacbio',
                     'private': True,
                 }
+                for contextual_source in self.contextual_metadata:
+                    obj.update(contextual_source.get(bpa_id))
                 tag_names = ['pacbio', 'genomics']
                 obj['tags'] = [{'name': t} for t in tag_names]
                 packages.append(obj)
@@ -452,6 +460,8 @@ class SepsisTranscriptomicsHiseqMetadata(BaseMetadata):
                     'type': 'arp-transcriptomics-hiseq',
                     'private': True,
                 }
+                for contextual_source in self.contextual_metadata:
+                    obj.update(contextual_source.get(bpa_id))
                 tag_names = ['hiseq', 'transcriptomics']
                 obj['tags'] = [{'name': t} for t in tag_names]
                 packages.append(obj)
@@ -554,6 +564,8 @@ class SepsisMetabolomicsDeepLCMSMetadata(BaseMetadata):
                     'type': 'arp-metabolomics-deeplcms',
                     'private': True,
                 }
+                for contextual_source in self.contextual_metadata:
+                    obj.update(contextual_source.get(bpa_id))
                 tag_names = ['deeplcms', 'metabolomics']
                 obj['tags'] = [{'name': t} for t in tag_names]
                 packages.append(obj)
@@ -659,6 +671,8 @@ class SepsisProteomicsDeepLCMSMetadata(BaseMetadata):
                     'type': 'arp-proteomics-deeplcms',
                     'private': True,
                 }
+                for contextual_source in self.contextual_metadata:
+                    obj.update(contextual_source.get(bpa_id))
                 tag_names = ['deeplcms', 'proteomics']
                 obj['tags'] = [{'name': t} for t in tag_names]
                 packages.append(obj)
@@ -764,6 +778,8 @@ class SepsisProteomicsSwathMSMetadata(BaseMetadata):
                     'type': 'arp-proteomics-swathms',
                     'private': True,
                 }
+                for contextual_source in self.contextual_metadata:
+                    obj.update(contextual_source.get(bpa_id))
                 tag_names = ['swathms', 'proteomics']
                 obj['tags'] = [{'name': t} for t in tag_names]
                 packages.append(obj)
