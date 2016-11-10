@@ -70,7 +70,7 @@ def get_strain_or_isolate(val):
 
 def prune_blanks(d):
     "remove any empty strings or None values in dictionary keys"
-    return dict((k, v) for (k, v) in d if v)
+    return dict((k, v) for (k, v) in d.items() if v)
 
 
 class SepsisBacterialContextual(object):
