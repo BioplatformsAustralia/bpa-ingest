@@ -8,8 +8,10 @@ from ...util import make_logger, bpa_id_to_ckan_name, csv_to_named_tuple
 from ...bpa import bpa_mirror_url
 from ...abstract import BaseMetadata
 from ...libs.excel_wrapper import ExcelWrapper
+from glob import glob
 
 import files
+import os
 import re
 
 logger = make_logger(__name__)
@@ -35,13 +37,30 @@ def extract_bpa_id(s):
     return None
 
 
+class SepsisBacterialContextual(object):
+    """
+    Bacterial sample metadata: used by each of the -omics classes below.
+    """
+
+    metadata_urls = ['https://downloads-qcif.bioplatforms.com/bpa/sepsis/projectdata/']
+    name = 'sepsis-bacterial'
+
+    def __init__(self, path):
+        xlsx_path = os.path.join(path, 'sepsis_contextual_2016_08_16.xlsx')
+
+    def get_contextual_metadata():
+        pass
+
+
 class SepsisGenomicsMiseqMetadata(BaseMetadata):
+    contextual_classes = [SepsisBacterialContextual]
     metadata_urls = ['https://downloads-qcif.bioplatforms.com/bpa/sepsis/genomics/miseq/']
     organization = 'bpa-sepsis'
     auth = ('sepsis', 'sepsis')
 
-    def __init__(self, metadata_path, track_csv_path=None):
+    def __init__(self, metadata_path, contextual_metadata=None, track_csv_path=None):
         self.path = Path(metadata_path)
+        self.contextual_metadata = contextual_metadata
         self.track_meta = self.read_track_csv(track_csv_path)
 
     def read_track_csv(self, fname):
@@ -69,14 +88,10 @@ class SepsisGenomicsMiseqMetadata(BaseMetadata):
         return wrapper.get_all()
 
     def get_packages(self):
-        def is_metadata(path):
-            if path.isfile() and path.ext == ".xlsx":
-                return True
-
         logger.info("Ingesting Sepsis Genomics Miseq metadata from {0}".format(self.path))
         packages = []
         # note: the metadata in the package xlsx is quite minimal
-        for fname in self.path.walk(filter=is_metadata):
+        for fname in glob(self.path + '/*.xlsx'):
             logger.info("Processing Sepsis Genomics metadata file {0}".format(fname))
             rows = list(SepsisGenomicsMiseqMetadata.parse_spreadsheet(fname))
             for row in rows:
@@ -116,13 +131,9 @@ class SepsisGenomicsMiseqMetadata(BaseMetadata):
         return packages
 
     def get_resources(self):
-        def is_md5file(path):
-            if path.isfile() and path.ext == ".md5":
-                return True
-
         logger.info("Ingesting Sepsis md5 file information from {0}".format(self.path))
         resources = []
-        for md5_file in self.path.walk(filter=is_md5file):
+        for md5_file in glob(self.path + '/*.md5'):
             logger.info("Processing md5 file {0}".format(md5_file))
             for file_info in files.parse_md5_file(files.miseq_filename_re, md5_file):
                 resource = dict((t, file_info.get(t)) for t in ('index', 'lane', 'vendor', 'read', 'flow_cell_id', 'library', 'extraction', 'runsamplenum'))
@@ -136,6 +147,7 @@ class SepsisGenomicsMiseqMetadata(BaseMetadata):
 
 
 class SepsisGenomicsPacbioMetadata(BaseMetadata):
+    contextual_classes = [SepsisBacterialContextual]
     metadata_urls = ['https://downloads-qcif.bioplatforms.com/bpa/sepsis/genomics/pacbio/']
     organization = 'bpa-sepsis'
     auth = ('sepsis', 'sepsis')
@@ -176,18 +188,15 @@ class SepsisGenomicsPacbioMetadata(BaseMetadata):
         return wrapper.get_all()
 
     def get_packages(self):
-        def is_metadata(path):
-            if path.isfile() and path.ext == ".xlsx":
-                return True
-
         logger.info("Ingesting Sepsis Genomics Pacbio metadata from {0}".format(self.path))
         packages = []
         # note: the metadata in the package xlsx is quite minimal
-        for fname in self.path.walk(filter=is_metadata):
+        for fname in glob(self.path + '/*.xlsx'):
             logger.info("Processing Sepsis Genomics metadata file {0}".format(fname))
             rows = list(SepsisGenomicsPacbioMetadata.parse_spreadsheet(fname))
             for row in rows:
                 bpa_id = row.bpa_id
+                print(bpa_id, self.track_meta)
                 track_meta = self.track_meta[bpa_id]
                 name = bpa_id_to_ckan_name(bpa_id, 'arp-genomics-pacbio')
                 obj = {
@@ -226,13 +235,9 @@ class SepsisGenomicsPacbioMetadata(BaseMetadata):
         return packages
 
     def get_resources(self):
-        def is_md5file(path):
-            if path.isfile() and path.ext == ".md5":
-                return True
-
         logger.info("Ingesting Sepsis md5 file information from {0}".format(self.path))
         resources = []
-        for md5_file in self.path.walk(filter=is_md5file):
+        for md5_file in glob(self.path + '/*.md5'):
             logger.info("Processing md5 file {0}".format(md5_file))
             for file_info in files.parse_md5_file(files.pacbio_filename_re, md5_file):
                 resource = dict((t, file_info.get(t)) for t in ('run_id', 'vendor', 'data_type', 'machine_data'))
@@ -245,6 +250,7 @@ class SepsisGenomicsPacbioMetadata(BaseMetadata):
 
 
 class SepsisTranscriptomicsHiseqMetadata(BaseMetadata):
+    contextual_classes = [SepsisBacterialContextual]
     metadata_urls = ['https://downloads-qcif.bioplatforms.com/bpa/sepsis/transcriptomics/hiseq/']
     organization = 'bpa-sepsis'
     auth = ('sepsis', 'sepsis')
@@ -281,14 +287,10 @@ class SepsisTranscriptomicsHiseqMetadata(BaseMetadata):
         return wrapper.get_all()
 
     def get_packages(self):
-        def is_metadata(path):
-            if path.isfile() and path.ext == ".xlsx":
-                return True
-
         logger.info("Ingesting Sepsis Transcriptomics Hiseq metadata from {0}".format(self.path))
         packages = []
         # note: the metadata in the package xlsx is quite minimal
-        for fname in self.path.walk(filter=is_metadata):
+        for fname in glob(self.path + '/*.xlsx'):
             logger.info("Processing Sepsis Transcriptomics metadata file {0}".format(fname))
             rows = list(SepsisTranscriptomicsHiseqMetadata.parse_spreadsheet(fname))
             for row in rows:
@@ -331,13 +333,9 @@ class SepsisTranscriptomicsHiseqMetadata(BaseMetadata):
         return packages
 
     def get_resources(self):
-        def is_md5file(path):
-            if path.isfile() and path.ext == ".md5":
-                return True
-
         logger.info("Ingesting Sepsis md5 file information from {0}".format(self.path))
         resources = []
-        for md5_file in self.path.walk(filter=is_md5file):
+        for md5_file in glob(self.path + '/*.md5'):
             logger.info("Processing md5 file {0}".format(md5_file))
             for file_info in files.parse_md5_file(files.hiseq_filename_re, md5_file):
                 resource = dict((t, file_info.get(t)) for t in ('library', 'vendor', 'flow_cell_id', 'index', 'lane', 'read'))
@@ -351,6 +349,7 @@ class SepsisTranscriptomicsHiseqMetadata(BaseMetadata):
 
 
 class SepsisMetabolomicsDeepLCMSMetadata(BaseMetadata):
+    contextual_classes = [SepsisBacterialContextual]
     metadata_urls = ['https://downloads-qcif.bioplatforms.com/bpa/sepsis/metabolomics/deeplcms/']
     organization = 'bpa-sepsis'
     auth = ('sepsis', 'sepsis')
@@ -388,13 +387,9 @@ class SepsisMetabolomicsDeepLCMSMetadata(BaseMetadata):
         return wrapper.get_all()
 
     def get_packages(self):
-        def is_metadata(path):
-            if path.isfile() and path.ext == ".xlsx":
-                return True
-
         packages = []
         # note: the metadata in the package xlsx is quite minimal
-        for fname in self.path.walk(filter=is_metadata):
+        for fname in glob(self.path + '/*.xlsx'):
             logger.info("Processing Sepsis Metabolomics DeepLCMS metadata file {0}".format(fname))
             rows = list(SepsisMetabolomicsDeepLCMSMetadata.parse_spreadsheet(fname))
             for row in rows:
@@ -439,13 +434,9 @@ class SepsisMetabolomicsDeepLCMSMetadata(BaseMetadata):
         return packages
 
     def get_resources(self):
-        def is_md5file(path):
-            if path.isfile() and path.ext == ".md5":
-                return True
-
         logger.info("Ingesting Sepsis md5 file information from {0}".format(self.path))
         resources = []
-        for md5_file in self.path.walk(filter=is_md5file):
+        for md5_file in glob(self.path + '/*.md5'):
             logger.info("Processing md5 file {0}".format(md5_file))
             for file_info in files.parse_md5_file(files.metabolomics_deepclms_filename_re, md5_file):
                 resource = dict((t, file_info.get(t)) for t in ('vendor', 'platform', 'mastr_ms_id', 'machine_data'))
@@ -458,6 +449,7 @@ class SepsisMetabolomicsDeepLCMSMetadata(BaseMetadata):
 
 
 class SepsisProteomicsDeepLCMSMetadata(BaseMetadata):
+    contextual_classes = [SepsisBacterialContextual]
     metadata_urls = ['https://downloads-qcif.bioplatforms.com/bpa/sepsis/proteomics/deeplcms/']
     organization = 'bpa-sepsis'
     auth = ('sepsis', 'sepsis')
@@ -498,13 +490,9 @@ class SepsisProteomicsDeepLCMSMetadata(BaseMetadata):
         return wrapper.get_all()
 
     def get_packages(self):
-        def is_metadata(path):
-            if path.isfile() and path.ext == ".xlsx":
-                return True
-
         packages = []
         # note: the metadata in the package xlsx is quite minimal
-        for fname in self.path.walk(filter=is_metadata):
+        for fname in glob(self.path + '/*.xlsx'):
             logger.info("Processing Sepsis Proteomics DeepLCMS metadata file {0}".format(fname))
             rows = list(SepsisProteomicsDeepLCMSMetadata.parse_spreadsheet(fname))
             for row in rows:
@@ -550,13 +538,9 @@ class SepsisProteomicsDeepLCMSMetadata(BaseMetadata):
         return packages
 
     def get_resources(self):
-        def is_md5file(path):
-            if path.isfile() and path.ext == ".md5":
-                return True
-
         logger.info("Ingesting Sepsis md5 file information from {0}".format(self.path))
         resources = []
-        for md5_file in self.path.walk(filter=is_md5file):
+        for md5_file in glob(self.path + '/*.md5'):
             logger.info("Processing md5 file {0}".format(md5_file))
             for file_info in files.parse_md5_file(files.proteomics_deepclms_filename_re, md5_file):
                 resource = dict((t, file_info.get(t)) for t in ('vendor', 'machine_data'))
@@ -569,6 +553,7 @@ class SepsisProteomicsDeepLCMSMetadata(BaseMetadata):
 
 
 class SepsisProteomicsSwathMSMetadata(BaseMetadata):
+    contextual_classes = [SepsisBacterialContextual]
     metadata_urls = ['https://downloads-qcif.bioplatforms.com/bpa/sepsis/proteomics/swathms/']
     organization = 'bpa-sepsis'
     auth = ('sepsis', 'sepsis')
@@ -609,13 +594,9 @@ class SepsisProteomicsSwathMSMetadata(BaseMetadata):
         return wrapper.get_all()
 
     def get_packages(self):
-        def is_metadata(path):
-            if path.isfile() and str(path).endswith('_metadata.xlsx'):
-                return True
-
         packages = []
         # note: the metadata in the package xlsx is quite minimal
-        for fname in self.path.walk(filter=is_metadata):
+        for fname in glob(self.path + '/*_metadata.xlsx'):
             logger.info("Processing Sepsis Proteomics SwathMS metadata file {0}".format(fname))
             rows = list(SepsisProteomicsSwathMSMetadata.parse_spreadsheet(fname))
             for row in rows:
@@ -661,13 +642,9 @@ class SepsisProteomicsSwathMSMetadata(BaseMetadata):
         return packages
 
     def get_resources(self):
-        def is_md5file(path):
-            if path.isfile() and path.ext == ".md5":
-                return True
-
         logger.info("Ingesting Sepsis md5 file information from {0}".format(self.path))
         resources = []
-        for md5_file in self.path.walk(filter=is_md5file):
+        for md5_file in glob(self.path + '/*.md5'):
             logger.info("Processing md5 file {0}".format(md5_file))
             for file_info in files.parse_md5_file(files.proteomics_swathms_filename_re, md5_file):
                 resource = dict((t, file_info.get(t)) for t in ('vendor', 'machine_data'))
