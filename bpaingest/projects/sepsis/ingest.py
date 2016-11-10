@@ -103,7 +103,7 @@ class SepsisBacterialContextual(object):
                 'study_title': row.study_title,
                 'investigation_type': row.investigation_type,
                 'project_name': row.project_name,
-                'title': row.sample_title,
+                'sample_title': row.sample_title or '',
                 'ploidy': row.ploidy,
                 'num_replicons': row.num_replicons,
                 'estimated_size': row.estimated_size,
