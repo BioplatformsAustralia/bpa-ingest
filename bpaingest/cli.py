@@ -39,22 +39,22 @@ class DownloadMetadata(object):
         meta_kwargs = {
             'track_csv_path': track_csv_path
         }
+        contextual_classes = getattr(project_class, 'contextual_classes', [])
+        self.contextual = [(os.path.join(self.path, c.name), c) for c in contextual_classes]
         if fetch:
             for metadata_url in project_class.metadata_urls:
                 logger.info("fetching submission metadata: %s" % (project_class.metadata_urls))
                 fetcher = Fetcher(self.path, metadata_url, self.auth)
                 fetcher.fetch_metadata_from_folder()
-            contextual_classes = getattr(project_class, 'contextual_classes', [])
-            for contextual_cls in contextual_classes:
-                contextual_path = os.path.join(self.path, contextual_cls.name)
+            for contextual_path, contextual_cls in self.contextual:
                 os.mkdir(contextual_path)
                 logger.info("fetching contextal metadata: %s" % (contextual_cls.metadata_urls))
                 for metadata_url in contextual_cls.metadata_urls:
                     fetcher = Fetcher(contextual_path, metadata_url, self.auth)
                     fetcher.fetch_metadata_from_folder()
-                self.contextual.append(contextual_cls(contextual_path))
         if self.contextual:
-            meta_kwargs['contextual_metadata'] = self.contextual
+            meta_kwargs['contextual_metadata'] = [c(p) for (p, c) in self.contextual]
+        print("meta_kwargs", meta_kwargs)
         self.meta = project_class(self.path, **meta_kwargs)
 
     def __enter__(self):
@@ -145,7 +145,6 @@ def main():
         if setup_fn is not None:
             setup_fn(subparser)
     args = parser.parse_args()
-    print(args)
     if args.version:
         version()
     if 'func' not in args:

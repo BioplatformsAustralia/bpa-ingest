@@ -4,6 +4,7 @@ from __future__ import print_function
 
 from unipath import Path
 
+from ...libs import ingest_utils
 from ...util import make_logger, bpa_id_to_ckan_name, csv_to_named_tuple
 from ...bpa import bpa_mirror_url
 from ...abstract import BaseMetadata
@@ -37,6 +38,36 @@ def extract_bpa_id(s):
     return None
 
 
+def get_gram_stain(val):
+    if val and val is not '':
+        val = val.lower()
+        if 'positive' in val:
+            return 'POS'
+        elif 'negative' in val:
+            return 'NEG'
+    return None
+
+
+def get_sex(val):
+    if val and val is not '':
+        val = val.lower()
+        # order of these statements is significant
+        if 'female' in val:
+            return 'F'
+        if 'male' in val:
+            return 'M'
+    return None
+
+
+def get_strain_or_isolate(val):
+    if val and val is not '':
+        # convert floats to str
+        if isinstance(val, float):
+            val = int(val)
+        return str(val)
+    return None
+
+
 class SepsisBacterialContextual(object):
     """
     Bacterial sample metadata: used by each of the -omics classes below.
@@ -47,6 +78,99 @@ class SepsisBacterialContextual(object):
 
     def __init__(self, path):
         xlsx_path = os.path.join(path, 'sepsis_contextual_2016_08_16.xlsx')
+        self.sample_metadata = self._package_metadata(self._read_metadata(xlsx_path))
+
+    def _package_metadata(self, rows):
+        sample_metadata = {}
+        for row in rows:
+            if row.bpa_id is None or row.strain_or_isolate is None:
+                continue
+            assert(row.bpa_id not in sample_metadata)
+            sample_metadata[row.bpa_id] = {
+                'taxon_or_organism': row.taxon_or_organism,
+                'strain_or_isolate': row.strain_or_isolate,
+                'strain_description': row.strain_description,
+                'serovar': row.serovar,
+                'key_virulence_genes': row.key_virulence_genes,
+                'gram_stain': row.gram_stain,
+                'isolation_source': row.isolation_source,
+                'publication_reference': row.publication_reference,
+                'contact_researcher': row.contact_researcher,
+                'culture_collection_date': row.culture_collection_date,
+                'study_title': row.study_title,
+                'investigation_type': row.investigation_type,
+                'project_name': row.project_name,
+                'title': row.sample_title,
+                'ploidy': row.ploidy,
+                'num_replicons': row.num_replicons,
+                'estimated_size': row.estimated_size,
+                'propagation': row.propagation,
+                'isolate_growth_condition': row.isolate_growth_condition,
+                'collected_by': row.collected_by,
+                'growth_condition_time': row.growth_condition_time,
+                'growth_condition_temperature': row.growth_condition_temperature,
+                'growth_condition_media': row.growth_condition_media,
+                'host_description': row.host_description,
+                'host_location': row.host_location,
+                'host_sex': row.host_sex,
+                'host_age': row.host_age,
+                'host_dob': row.host_dob,
+                'host_disease_outcome': row.host_disease_outcome,
+                'host_disease_status': row.host_disease_status,
+                'host_associated': row.host_associated,
+                'host_health_state': row.host_health_state,
+            }
+
+    def _read_metadata(self, metadata_path):
+        field_spec = [
+            ('bpa_id', 'BPA_sample_ID', extract_bpa_id),
+            ('gram_stain', 'Gram_staining_(positive_or_negative)', get_gram_stain),
+            ('taxon_or_organism', 'Taxon_OR_organism', None),
+            ('strain_or_isolate', 'Strain_OR_isolate', get_strain_or_isolate),
+            ('serovar', 'Serovar', None),
+            ('key_virulence_genes', 'Key_virulence_genes', None),
+            ('strain_description', 'Strain_description', None),
+            ('publication_reference', 'Publication_reference', None),
+            ('contact_researcher', 'Contact_researcher', None),
+            ('growth_condition_time', 'Growth_condition_time', None),
+            ('growth_condition_temperature', 'Growth_condition_temperature', ingest_utils.get_clean_number),
+            ('growth_condition_media', 'Growth_condition_media', None),
+            ('experimental_replicate', 'Experimental_replicate', None),
+            ('analytical_facility', 'Analytical_facility', None),
+            ('analytical_platform', 'Analytical_platform', None),
+            ('experimental_sample_preparation_method', 'Experimental_sample_preparation_method', None),
+            ('culture_collection_id', 'Culture_collection_ID (alternative name[s])', None),
+            ('culture_collection_date', 'Culture_collection_date (YYYY-MM-DD)', ingest_utils.get_date),
+            ('host_location', 'Host_location (state, country)', None),
+            ('host_age', 'Host_age', ingest_utils.get_int),
+            ('host_dob', 'Host_DOB (DD/MM/YY)', ingest_utils.get_date),
+            ('host_sex', 'Host_sex (F/M)', get_sex),
+            ('host_disease_outcome', 'Host_disease_outcome', None),
+            ('isolation_source', 'Isolation_source', None),
+            ('host_description', 'Host_description', None),
+            ('study_title', 'Study title', None),
+            ('investigation_type', 'Investigation_type', None),
+            ('project_name', 'Project_name', None),
+            ('sample_title', 'Sample title', None),
+            ('ploidy', 'ploidy', None),
+            ('num_replicons', 'num_replicons', None),
+            ('estimated_size', 'estimated_size', None),
+            ('propagation', 'propagation', None),
+            ('isolate_growth_condition', 'isol_growth_condt', None),
+            ('collected_by', 'Collected by', None),
+            ('host_associated', 'Host_associated', None),
+            ('host_health_state', 'Host_health_state', None),
+            ('host_disease_status', 'Host_disease_status', None),
+        ]
+        wrapper = ExcelWrapper(
+            field_spec,
+            metadata_path,
+            sheet_name='Sheet1',
+            header_length=5,
+            column_name_row_index=4,
+            formatting_info=True,
+            pick_first_sheet=True)
+        return wrapper.get_all()
 
     def get_contextual_metadata():
         pass
@@ -152,8 +276,9 @@ class SepsisGenomicsPacbioMetadata(BaseMetadata):
     organization = 'bpa-sepsis'
     auth = ('sepsis', 'sepsis')
 
-    def __init__(self, metadata_path, track_csv_path=None):
+    def __init__(self, metadata_path, contextual_metadata=None, track_csv_path=None):
         self.path = Path(metadata_path)
+        self.contextual_metadata = contextual_metadata
         self.track_meta = self.read_track_csv(track_csv_path)
 
     def read_track_csv(self, fname):
@@ -196,7 +321,6 @@ class SepsisGenomicsPacbioMetadata(BaseMetadata):
             rows = list(SepsisGenomicsPacbioMetadata.parse_spreadsheet(fname))
             for row in rows:
                 bpa_id = row.bpa_id
-                print(bpa_id, self.track_meta)
                 track_meta = self.track_meta[bpa_id]
                 name = bpa_id_to_ckan_name(bpa_id, 'arp-genomics-pacbio')
                 obj = {
@@ -255,8 +379,9 @@ class SepsisTranscriptomicsHiseqMetadata(BaseMetadata):
     organization = 'bpa-sepsis'
     auth = ('sepsis', 'sepsis')
 
-    def __init__(self, metadata_path, track_csv_path=None):
+    def __init__(self, metadata_path, contextual_metadata=None, track_csv_path=None):
         self.path = Path(metadata_path)
+        self.contextual_metadata = contextual_metadata
         self.track_meta = self.read_track_csv(track_csv_path)
 
     def read_track_csv(self, fname):
@@ -354,8 +479,9 @@ class SepsisMetabolomicsDeepLCMSMetadata(BaseMetadata):
     organization = 'bpa-sepsis'
     auth = ('sepsis', 'sepsis')
 
-    def __init__(self, metadata_path, track_csv_path=None):
+    def __init__(self, metadata_path, contextual_metadata=None, track_csv_path=None):
         self.path = Path(metadata_path)
+        self.contextual_metadata = contextual_metadata
         self.track_meta = self.read_track_csv(track_csv_path)
 
     def read_track_csv(self, fname):
@@ -454,8 +580,9 @@ class SepsisProteomicsDeepLCMSMetadata(BaseMetadata):
     organization = 'bpa-sepsis'
     auth = ('sepsis', 'sepsis')
 
-    def __init__(self, metadata_path, track_csv_path=None):
+    def __init__(self, metadata_path, contextual_metadata=None, track_csv_path=None):
         self.path = Path(metadata_path)
+        self.contextual_metadata = contextual_metadata
         self.track_meta = self.read_track_csv(track_csv_path)
 
     def read_track_csv(self, fname):
@@ -558,8 +685,9 @@ class SepsisProteomicsSwathMSMetadata(BaseMetadata):
     organization = 'bpa-sepsis'
     auth = ('sepsis', 'sepsis')
 
-    def __init__(self, metadata_path, track_csv_path=None):
+    def __init__(self, metadata_path, contextual_metadata=None, track_csv_path=None):
         self.path = Path(metadata_path)
+        self.contextual_metadata = contextual_metadata
         self.track_meta = self.read_track_csv(track_csv_path)
 
     def read_track_csv(self, fname):
