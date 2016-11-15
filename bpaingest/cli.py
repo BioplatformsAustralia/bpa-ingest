@@ -54,7 +54,6 @@ class DownloadMetadata(object):
                     fetcher.fetch_metadata_from_folder()
         if self.contextual:
             meta_kwargs['contextual_metadata'] = [c(p) for (p, c) in self.contextual]
-        print("meta_kwargs", meta_kwargs)
         self.meta = project_class(self.path, **meta_kwargs)
 
     def __enter__(self):
