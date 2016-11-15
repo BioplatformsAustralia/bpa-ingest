@@ -78,7 +78,7 @@ For more information please visit: http://www.bioplatforms.com/marine-microbes/
 """
 
 sepsis_desc = """
-The Antibiotic Resistant Pathogens Framework Initiative aims to develop a framework dataset that will enable identification of core targets common to antibiotic-resistant sepsis pathogens. The project aims to use an integrated multi-omics approach and brings together genomics, transcriptomics, bioinformatics, proteomics and metabolomics expertise across the Bioplatforms Australia network. Five clinical strains of Escherichia coli, Klebsiella bn pneumoniae, Streptococcus pneumoniae, Staphylococcus aureus and Streptococcus pyogenes selected by members of the consortium will form the core of the project.
+The Antibiotic Resistant Sepsis Pathogens Framework Initiative aims to develop a framework dataset that will enable identification of core targets common to antibiotic-resistant sepsis pathogens. The project aims to use an integrated multi-omics approach and brings together genomics, transcriptomics, bioinformatics, proteomics and metabolomics expertise across the Bioplatforms Australia network. Five clinical strains of Escherichia coli, Klebsiella bn pneumoniae, Streptococcus pneumoniae, Staphylococcus aureus and Streptococcus pyogenes selected by members of the consortium will form the core of the project.
 
 For more information please visit: http://www.bioplatforms.com/antibiotic-resistant-pathogens/
 """
@@ -197,8 +197,8 @@ ORGANIZATIONS = [
     },
     {
         'name': 'bpa-sepsis',
-        'title': 'Antibiotic Resistant Pathogens',
-        'display_name': 'Antibiotic Resistant Pathogens',
+        'title': 'Antibiotic Resistant Sepsis Pathogens',
+        'display_name': 'Antibiotic Resistant Sepsis Pathogens',
         'image_url': 'https://data.bioplatforms.com/sepsis.png',
         'description': sepsis_desc,
         'groups': [{'capacity': 'public', 'name': BPA_ORGANIZATION_ID}],
