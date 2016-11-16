@@ -9,11 +9,11 @@ import requests
 from collections import namedtuple
 
 
-def bpa_id_to_ckan_name(s, suborg=None):
+def bpa_id_to_ckan_name(bpa_id, suborg=None):
     r = 'bpa-'
     if suborg is not None:
         r += suborg + '-'
-    r += s.replace('/', '_').replace('.', '_')
+    r += bpa_id.replace('/', '_').replace('.', '_')
     return r
 
 

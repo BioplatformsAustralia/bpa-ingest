@@ -13,29 +13,8 @@ from glob import glob
 
 import files
 import os
-import re
 
 logger = make_logger(__name__)
-
-
-bpa_id_re = re.compile(r'^102\.100\.100/(\d+)$')
-bpa_id_abbrev_re = re.compile(r'^(\d+)$')
-
-
-# ignore junk example lines, if been left in by the facility
-def extract_bpa_id(s):
-    if isinstance(s, float):
-        s = int(s)
-    if isinstance(s, int):
-        s = str(s)
-    m = bpa_id_re.match(s)
-    if m:
-        return m.groups()[0]
-    m = bpa_id_abbrev_re.match(s)
-    if m:
-        return m.groups()[0]
-    logger.warning("unable to parse BPA ID: %s" % s)
-    return None
 
 
 def get_gram_stain(val):
@@ -135,7 +114,7 @@ class SepsisBacterialContextual(object):
 
     def _read_metadata(self, metadata_path):
         field_spec = [
-            ('bpa_id', 'BPA_sample_ID', extract_bpa_id),
+            ('bpa_id', 'BPA_sample_ID', ingest_utils.extract_bpa_id),
             ('gram_stain', 'Gram_staining_(positive_or_negative)', get_gram_stain),
             ('taxon_or_organism', 'Taxon_OR_organism', None),
             ('strain_or_isolate', 'Strain_OR_isolate', get_strain_or_isolate),
@@ -199,12 +178,12 @@ class SepsisGenomicsMiseqMetadata(BaseMetadata):
     def read_track_csv(self, fname):
         header, rows = csv_to_named_tuple('SepsisGenomicsMiseqTrack', fname)
         logger.info("track csv header: %s" % (repr(header)))
-        return dict((t.five_digit_bpa_id.split('.')[-1], t) for t in rows)
+        return dict((ingest_utils.extract_bpa_id(t.five_digit_bpa_id), t) for t in rows)
 
     @classmethod
     def parse_spreadsheet(self, fname):
         field_spec = [
-            ("bpa_id", "Bacterial sample unique ID", lambda s: str(int(s))),
+            ("bpa_id", "Bacterial sample unique ID", ingest_utils.extract_bpa_id),
             ("insert_size_range", "Insert size range", None),
             ("library_construction_protocol", "Library construction protocol", None),
             ("sequencer", "Sequencer", None),
@@ -230,7 +209,7 @@ class SepsisGenomicsMiseqMetadata(BaseMetadata):
             for row in rows:
                 bpa_id = row.bpa_id
                 track_meta = self.track_meta[bpa_id]
-                name = bpa_id_to_ckan_name(bpa_id, 'arp-genomics-miseq')
+                name = bpa_id_to_ckan_name(bpa_id.split('.')[-1], 'arp-genomics-miseq')
                 obj = {
                     'name': name,
                     'id': name,
@@ -275,7 +254,7 @@ class SepsisGenomicsMiseqMetadata(BaseMetadata):
                 resource['seq_size'] = file_info.get('size')
                 resource['md5'] = resource['id'] = file_info.md5
                 resource['name'] = file_info.filename
-                bpa_id = file_info.get('id')
+                bpa_id = ingest_utils.extract_bpa_id(file_info.get('id'))
                 legacy_url = bpa_mirror_url('bpa/sepsis/genomics/miseq/' + file_info.filename)
                 resources.append((bpa_id, legacy_url, resource))
         return resources
@@ -295,16 +274,12 @@ class SepsisGenomicsPacbioMetadata(BaseMetadata):
     def read_track_csv(self, fname):
         header, rows = csv_to_named_tuple('SepsisGenomicsPacbioTrack', fname)
         logger.info("track csv header: %s" % (repr(header)))
-        return dict((t.five_digit_bpa_id.split('.')[-1], t) for t in rows)
+        return dict((ingest_utils.extract_bpa_id(t.five_digit_bpa_id), t) for t in rows)
 
     @classmethod
     def parse_spreadsheet(self, fname):
-        def get_bpa_id(val):
-            if not val or val is "":
-                return None
-            return val.replace("102.100.100/", "")
         field_spec = [
-            ("bpa_id", "Bacterial sample unique ID", get_bpa_id),
+            ("bpa_id", "Bacterial sample unique ID", ingest_utils.extract_bpa_id),
             ("insert_size_range", "Insert size range", None),
             ("library_construction_protocol", "Library construction protocol", None),
             ("sequencer", "Sequencer", None),
@@ -333,7 +308,7 @@ class SepsisGenomicsPacbioMetadata(BaseMetadata):
             for row in rows:
                 bpa_id = row.bpa_id
                 track_meta = self.track_meta[bpa_id]
-                name = bpa_id_to_ckan_name(bpa_id, 'arp-genomics-pacbio')
+                name = bpa_id_to_ckan_name(bpa_id.split('.')[-1], 'arp-genomics-pacbio')
                 obj = {
                     'name': name,
                     'id': name,
@@ -380,7 +355,7 @@ class SepsisGenomicsPacbioMetadata(BaseMetadata):
                 resource = dict((t, file_info.get(t)) for t in ('run_id', 'vendor', 'data_type', 'machine_data'))
                 resource['md5'] = resource['id'] = file_info.md5
                 resource['name'] = file_info.filename
-                bpa_id = file_info.get('id')
+                bpa_id = ingest_utils.extract_bpa_id(file_info.get('id'))
                 legacy_url = bpa_mirror_url('bpa/sepsis/genomics/pacbio/' + file_info.filename)
                 resources.append((bpa_id, legacy_url, resource))
         return resources
@@ -402,12 +377,12 @@ class SepsisTranscriptomicsHiseqMetadata(BaseMetadata):
             return {}
         header, rows = csv_to_named_tuple('SepsisGenomicsHiseqTrack', fname)
         logger.info("track csv header: %s" % (repr(header)))
-        return dict((t.five_digit_bpa_id.split('.')[-1], t) for t in rows)
+        return dict((ingest_utils.extract_bpa_id(t.five_digit_bpa_id), t) for t in rows)
 
     @classmethod
     def parse_spreadsheet(self, fname):
         field_spec = [
-            ("bpa_id", "Antibiotic Resistant Pathogen sample unique ID", extract_bpa_id),
+            ("bpa_id", "Antibiotic Resistant Pathogen sample unique ID", ingest_utils.extract_bpa_id),
             ("sample", "Sample (MGR code)", None),
             ("library_construction_protocol", "Library construction protocol", None),
             ("barcode_tag", "Barcode tag", None),
@@ -436,7 +411,7 @@ class SepsisTranscriptomicsHiseqMetadata(BaseMetadata):
                 if bpa_id is None:
                     continue
                 track_meta = self.track_meta[bpa_id]
-                name = bpa_id_to_ckan_name(bpa_id, 'arp-transcriptomics-hiseq')
+                name = bpa_id_to_ckan_name(bpa_id.split('.')[-1], 'arp-transcriptomics-hiseq')
                 obj = {
                     'name': name,
                     'id': bpa_id,
@@ -482,7 +457,7 @@ class SepsisTranscriptomicsHiseqMetadata(BaseMetadata):
                 resource['seq_size'] = file_info.get('size')
                 resource['md5'] = resource['id'] = file_info.md5
                 resource['name'] = file_info.filename
-                bpa_id = file_info.get('id')
+                bpa_id = ingest_utils.extract_bpa_id(file_info.get('id'))
                 legacy_url = bpa_mirror_url('bpa/sepsis/transcriptomics/hiseq/' + file_info.filename)
                 resources.append((bpa_id, legacy_url, resource))
         return resources
@@ -504,12 +479,12 @@ class SepsisMetabolomicsDeepLCMSMetadata(BaseMetadata):
             return {}
         header, rows = csv_to_named_tuple('SepsisMetabolomicsDeepLCMSTrack', fname)
         logger.info("track csv header: %s" % (repr(header)))
-        return dict((t.five_digit_bpa_id.split('.')[-1], t) for t in rows)
+        return dict((ingest_utils.extract_bpa_id(t.five_digit_bpa_id), t) for t in rows)
 
     @classmethod
     def parse_spreadsheet(self, fname):
         field_spec = [
-            ("bpa_id", "Bacterial sample unique ID", extract_bpa_id),
+            ("bpa_id", "Bacterial sample unique ID", ingest_utils.extract_bpa_id),
             ("sample_fractionation_extract_solvent", "Sample fractionation / Extraction Solvent", None),
             ("lc_column_type", "LC/column type", None),
             ("gradient_time_min_flow", "Gradient time (min) / flow", None),
@@ -538,7 +513,7 @@ class SepsisMetabolomicsDeepLCMSMetadata(BaseMetadata):
                 if bpa_id is None:
                     continue
                 track_meta = self.track_meta[bpa_id]
-                name = bpa_id_to_ckan_name(bpa_id, 'arp-metabolomics-deeplcms')
+                name = bpa_id_to_ckan_name(bpa_id.split('.')[-1], 'arp-metabolomics-deeplcms')
                 obj = {
                     'name': name,
                     'id': bpa_id,
@@ -585,7 +560,7 @@ class SepsisMetabolomicsDeepLCMSMetadata(BaseMetadata):
                 resource = dict((t, file_info.get(t)) for t in ('vendor', 'platform', 'mastr_ms_id', 'machine_data'))
                 resource['md5'] = resource['id'] = file_info.md5
                 resource['name'] = file_info.filename
-                bpa_id = file_info.get('id')
+                bpa_id = ingest_utils.extract_bpa_id(file_info.get('id'))
                 legacy_url = bpa_mirror_url('bpa/sepsis/metabolomics/deeplcms/' + file_info.filename)
                 resources.append((bpa_id, legacy_url, resource))
         return resources
@@ -607,13 +582,13 @@ class SepsisProteomicsDeepLCMSMetadata(BaseMetadata):
             return {}
         header, rows = csv_to_named_tuple('SepsisProteomicsDeepLCMSTrack', fname)
         logger.info("track csv header: %s" % (repr(header)))
-        return dict((t.five_digit_bpa_id.split('.')[-1], t) for t in rows)
+        return dict((ingest_utils.extract_bpa_id(t.five_digit_bpa_id), t) for t in rows)
 
     @classmethod
     def parse_spreadsheet(self, fname):
 
         field_spec = [
-            ("bpa_id", "Bacterial sample unique ID", extract_bpa_id),
+            ("bpa_id", "Bacterial sample unique ID", ingest_utils.extract_bpa_id),
             ("facility", "Facility", None),
             ("sample_fractionation_none_number", "Sample fractionation (none/number)", None),
             ("lc_column_type", "LC/column type", None),
@@ -644,7 +619,7 @@ class SepsisProteomicsDeepLCMSMetadata(BaseMetadata):
                 if bpa_id is None:
                     continue
                 track_meta = self.track_meta[bpa_id]
-                name = bpa_id_to_ckan_name(bpa_id, 'arp-proteomics-deeplcms')
+                name = bpa_id_to_ckan_name(bpa_id.split('.')[-1], 'arp-proteomics-deeplcms')
                 obj = {
                     'name': name,
                     'id': bpa_id,
@@ -692,7 +667,7 @@ class SepsisProteomicsDeepLCMSMetadata(BaseMetadata):
                 resource = dict((t, file_info.get(t)) for t in ('vendor', 'machine_data'))
                 resource['md5'] = resource['id'] = file_info.md5
                 resource['name'] = file_info.filename
-                bpa_id = file_info.get('id')
+                bpa_id = ingest_utils.extract_bpa_id(file_info.get('id'))
                 legacy_url = bpa_mirror_url('bpa/sepsis/proteomics/deeplcms/' + file_info.filename)
                 resources.append((bpa_id, legacy_url, resource))
         return resources
@@ -714,13 +689,13 @@ class SepsisProteomicsSwathMSMetadata(BaseMetadata):
             return {}
         header, rows = csv_to_named_tuple('SepsisProteomicsSwathMSTrack', fname)
         logger.info("track csv header: %s" % (repr(header)))
-        return dict((t.five_digit_bpa_id.split('.')[-1], t) for t in rows)
+        return dict((ingest_utils.extract_bpa_id(t.five_digit_bpa_id), t) for t in rows)
 
     @classmethod
     def parse_spreadsheet(self, fname):
 
         field_spec = [
-            ("bpa_id", "Bacterial sample unique ID", extract_bpa_id),
+            ("bpa_id", "Bacterial sample unique ID", ingest_utils.extract_bpa_id),
             ("facility", "Facility", None),
             ("sample_fractionation_none_number", "Sample fractionation (none/number)", None),
             ("lc_column_type", "LC/column type", None),
@@ -751,7 +726,7 @@ class SepsisProteomicsSwathMSMetadata(BaseMetadata):
                 if bpa_id is None:
                     continue
                 track_meta = self.track_meta[bpa_id]
-                name = bpa_id_to_ckan_name(bpa_id, 'arp-proteomics-swathms')
+                name = bpa_id_to_ckan_name(bpa_id.split('.')[-1], 'arp-proteomics-swathms')
                 obj = {
                     'name': name,
                     'id': bpa_id,
@@ -799,7 +774,7 @@ class SepsisProteomicsSwathMSMetadata(BaseMetadata):
                 resource = dict((t, file_info.get(t)) for t in ('vendor', 'machine_data'))
                 resource['md5'] = resource['id'] = file_info.md5
                 resource['name'] = file_info.filename
-                bpa_id = file_info.get('id')
+                bpa_id = ingest_utils.extract_bpa_id(file_info.get('id'))
                 legacy_url = bpa_mirror_url('bpa/sepsis/proteomics/swathms/' + file_info.filename)
                 resources.append((bpa_id, legacy_url, resource))
         return resources
