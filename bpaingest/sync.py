@@ -121,7 +121,7 @@ def reupload_resources(ckan, archive_info, to_reupload, md5_legacy_url, auth, nu
     q.join()
 
 
-def sync_resources(ckan, resources, ckan_packages, auth, num_threads):
+def sync_resources(ckan, resources, ckan_packages, auth, num_threads, do_uploads):
     logger.info('syncing %d resources' % (len(resources)))
 
     archive_info = ArchiveInfo(ckan)
@@ -150,10 +150,11 @@ def sync_resources(ckan, resources, ckan_packages, auth, num_threads):
             logger.warning("No resources for package `%s`" % (package_id))
             continue
         to_reupload += sync_package_resources(ckan, archive_info, package_obj, md5_legacy_url, package_resources, auth)
-    reupload_resources(ckan, archive_info, to_reupload, md5_legacy_url, auth, num_threads)
+    if do_uploads:
+        reupload_resources(ckan, archive_info, to_reupload, md5_legacy_url, auth, num_threads)
 
 
-def sync_metadata(ckan, meta, auth, num_threads):
+def sync_metadata(ckan, meta, auth, num_threads, do_uploads):
     organization = get_organization(ckan, meta.organization)
     ckan_packages = sync_packages(ckan, meta.get_packages(), organization, None)
-    sync_resources(ckan, meta.get_resources(), ckan_packages, auth, num_threads)
+    sync_resources(ckan, meta.get_resources(), ckan_packages, auth, num_threads, do_uploads)

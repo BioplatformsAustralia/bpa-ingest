@@ -128,7 +128,6 @@ class SepsisBacterialContextual(object):
             ('growth_condition_media', 'Growth_condition_media', None),
             ('experimental_replicate', 'Experimental_replicate', None),
             ('analytical_facility', 'Analytical_facility', None),
-            ('analytical_platform', 'Analytical_platform', None),
             ('experimental_sample_preparation_method', 'Experimental_sample_preparation_method', None),
             ('culture_collection_id', 'Culture_collection_ID (alternative name[s])', None),
             ('culture_collection_date', 'Culture_collection_date (YYYY-MM-DD)', ingest_utils.get_date_isoformat),
