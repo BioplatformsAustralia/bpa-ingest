@@ -163,6 +163,98 @@ def test_proteomics_swathms_2d_ida():
         assert(proteomics_swathms_2d_ida_filename_re.match(filename) is not None)
 
 
+PROTEOMICS_SWATHMS_SWATH_RAW_FILENAME_PATTERN = """
+    (?P<id>\d{4,6})_
+    SEP_
+    (?P<vendor>APAF)_
+    MS_SWATH_
+    (?P<machine_data>[^\.]+).
+    (?P<type>.*)
+"""
+proteomics_swathms_swath_raw_filename_re = re.compile(PROTEOMICS_SWATHMS_SWATH_RAW_FILENAME_PATTERN, re.VERBOSE)
+
+
+def test_proteomics_swathms_swath_raw():
+    filenames = [
+        '25805_SEP_APAF_MS_SWATH_P19471_161007.wiff',
+        '25805_SEP_APAF_MS_SWATH_P19471_161007.wiff.scan',
+    ]
+
+    for filename in filenames:
+        assert(proteomics_swathms_swath_raw_filename_re.match(filename) is not None)
+
+
+PROTEOMICS_SWATHMS_MSLIB_FILENAME_PATTERN = """
+    (?P<id>P\d{4,6})_
+    (?P<taxon>[A-Za-z]+)_
+    SEP_
+    (?P<vendor>APAF)_
+    MS_Lib_
+    (?P<machine_data>[^\.]+).
+    (?P<type>.*)
+"""
+proteomics_swathms_mslib_filename_re = re.compile(PROTEOMICS_SWATHMS_MSLIB_FILENAME_PATTERN, re.VERBOSE)
+
+
+def test_proteomics_swathms_mslib():
+    filenames = [
+        'P19471_Kleb_SEP_APAF_MS_Lib_V1.txt',
+        'P19471_Staph_SEP_APAF_MS_Lib_V1.txt',
+    ]
+
+    for filename in filenames:
+        assert(proteomics_swathms_mslib_filename_re.match(filename) is not None)
+
+
+PROTEOMICS_SWATHMS_MSPEAK_FILENAME_PATTERN = """
+    (?P<id>P\d{4,6})_
+    (?P<taxon>[A-Za-z]+)_
+    SEP_
+    (?P<vendor>APAF)_
+    MS_SWATH_Peaks_
+    (?P<machine_data>[^\.]+).
+    (?P<type>.*)
+"""
+proteomics_swathms_mspeak_filename_re = re.compile(PROTEOMICS_SWATHMS_MSPEAK_FILENAME_PATTERN, re.VERBOSE)
+
+
+def test_proteomics_swathms_mspeak():
+    filenames = [
+        'P19471_Kleb_SEP_APAF_MS_SWATH_Peaks_ExtendedLib_V1.xlsx',
+        'P19471_Kleb_SEP_APAF_MS_SWATH_Peaks_LocalLib_V1.xlsx',
+        'P19471_Staph_SEP_APAF_MS_SWATH_Peaks_extendedLib_V1.xlsx',
+        'P19471_Staph_SEP_APAF_MS_SWATH_Peaks_LocalLib_V1.xlsx',
+    ]
+
+    for filename in filenames:
+        assert(proteomics_swathms_mspeak_filename_re.match(filename) is not None)
+
+
+PROTEOMICS_SWATHMS_MSRESULT_FILENAME_PATTERN = """
+    (?P<id>P\d{4,6})_
+    (?P<taxon>[A-Za-z]+)_
+    SEP_
+    (?P<vendor>APAF)_
+    MS_SWATH_Result_
+    (?P<machine_data>[^\.]+).
+    (?P<type>.*)
+"""
+proteomics_swathms_msresult_filename_re = re.compile(PROTEOMICS_SWATHMS_MSRESULT_FILENAME_PATTERN, re.VERBOSE)
+
+
+def test_proteomics_swathms_msresult():
+    # FIXME -- no real data received yet, so can't double-check yet
+    filenames = [
+        'P19471_Kleb_SEP_APAF_MS_SWATH_Result_ExtendedLib_V1.xlsx',
+        'P19471_Kleb_SEP_APAF_MS_SWATH_Result_LocalLib_V1.xlsx',
+        'P19471_Staph_SEP_APAF_MS_SWATH_Result_extendedLib_V1.xlsx',
+        'P19471_Staph_SEP_APAF_MS_SWATH_Result_LocalLib_V1.xlsx',
+    ]
+
+    for filename in filenames:
+        assert(proteomics_swathms_msresult_filename_re.match(filename) is not None)
+
+
 class MD5ParsedLine(object):
     def __init__(self, pattern, md5, path):
         self.pattern = pattern
