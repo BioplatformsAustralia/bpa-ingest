@@ -127,7 +127,7 @@ class ExcelWrapper(object):
                 cmap[attribute] = col_index
             else:
                 self.missing_headers.append(column_name)
-                logger.warning('Column `{}` not found in `{}` '.format(column_name, self.file_name))
+                logger.warning('Column `{}` not found in `{}` (columns are: {})'.format(column_name, self.file_name, header))
                 cmap[attribute] = None
 
         return header, cmap
@@ -182,15 +182,13 @@ class ExcelWrapper(object):
         return val
 
     def get_all(self, typname='DataRow'):
-        ''' Returns all rows for the sheet as named tuples. '''
+        '''Returns all rows for the sheet as namedtuple instances'''
 
         # row is added so we know where in the spreadsheet this came from
-        typ = namedtuple(typname, ['row', 'file_name'] + [n for n in self.field_names])
+        typ = namedtuple(typname, [n for n in self.field_names])
 
         for idx, row in enumerate(self._get_rows()):
-            row_count = idx + self.header_length + 1
-            tpl = [row_count, os.path.basename(self.file_name)
-                   ]  # The original row pos in sheet, + 1 as excel row indexing start at 1
+            tpl = []
             for name in self.field_names:
                 i = self.name_to_column_map[name]
                 # i is None if the column specified was not found, in that case,

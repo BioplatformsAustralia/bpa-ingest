@@ -12,7 +12,6 @@ from ...libs.excel_wrapper import ExcelWrapper
 from glob import glob
 
 import files
-import os
 
 logger = make_logger(__name__)
 
@@ -47,21 +46,16 @@ def get_strain_or_isolate(val):
     return None
 
 
-def prune_blanks(d):
-    "remove any empty strings or None values in dictionary keys"
-    return dict((k, v) for (k, v) in d.items() if v)
-
-
 class SepsisBacterialContextual(object):
     """
     Bacterial sample metadata: used by each of the -omics classes below.
     """
 
-    metadata_urls = ['https://downloads-qcif.bioplatforms.com/bpa/sepsis/projectdata/']
+    metadata_urls = ['https://downloads-qcif.bioplatforms.com/bpa/sepsis/projectdata/current/bacterial/']
     name = 'sepsis-bacterial'
 
     def __init__(self, path):
-        xlsx_path = os.path.join(path, 'sepsis_contextual_2016_08_16.xlsx')
+        xlsx_path = glob(path + '/*.xlsx')[0]
         self.sample_metadata = self._package_metadata(self._read_metadata(xlsx_path))
 
     def get(self, tpl):
@@ -77,80 +71,31 @@ class SepsisBacterialContextual(object):
                 continue
             strain_tuple = (row.taxon_or_organism, row.strain_or_isolate)
             assert(strain_tuple not in sample_metadata)
-            sample_metadata[strain_tuple] = {
-                'strain_description': row.strain_description,
-                'serovar': row.serovar,
-                'key_virulence_genes': row.key_virulence_genes,
-                'gram_stain': row.gram_stain,
-                'isolation_source': row.isolation_source,
-                'publication_reference': row.publication_reference,
-                'contact_researcher': row.contact_researcher,
-                'culture_collection_date': row.culture_collection_date,
-                'study_title': row.study_title,
-                'investigation_type': row.investigation_type,
-                'project_name': row.project_name,
-                'sample_title': row.sample_title or '',
-                'ploidy': row.ploidy,
-                'num_replicons': row.num_replicons,
-                'estimated_size': row.estimated_size,
-                'propagation': row.propagation,
-                'isolate_growth_condition': row.isolate_growth_condition,
-                'collected_by': row.collected_by,
-                'growth_condition_time': row.growth_condition_time,
-                'growth_condition_temperature': row.growth_condition_temperature,
-                'growth_condition_media': row.growth_condition_media,
-                'host_description': row.host_description,
-                'host_location': row.host_location,
-                'host_sex': row.host_sex,
-                'host_age': row.host_age,
-                'host_dob': row.host_dob,
-                'host_disease_outcome': row.host_disease_outcome,
-                'host_disease_status': row.host_disease_status,
-                'host_associated': row.host_associated,
-                'host_health_state': row.host_health_state,
-            }
-        # we have many metadata sources, avoid them overwriting blank values on each other
-        return prune_blanks(sample_metadata)
+            sample_metadata[strain_tuple] = row_meta = {}
+            for field in row._fields:
+                if field != 'taxon_or_organism' and field != 'strain_or_isolate':
+                    row_meta[field] = getattr(row, field)
+        return sample_metadata
 
     def _read_metadata(self, metadata_path):
         field_spec = [
-            ('bpa_id', 'BPA_sample_ID', ingest_utils.extract_bpa_id),
             ('gram_stain', 'Gram_staining_(positive_or_negative)', get_gram_stain),
             ('taxon_or_organism', 'Taxon_OR_organism', None),
             ('strain_or_isolate', 'Strain_OR_isolate', get_strain_or_isolate),
             ('serovar', 'Serovar', None),
             ('key_virulence_genes', 'Key_virulence_genes', None),
+            ('isolation_source', 'Isolation_source', None),
             ('strain_description', 'Strain_description', None),
             ('publication_reference', 'Publication_reference', None),
             ('contact_researcher', 'Contact_researcher', None),
-            ('growth_condition_time', 'Growth_condition_time', None),
-            ('growth_condition_temperature', 'Growth_condition_temperature', ingest_utils.get_clean_number),
-            ('growth_condition_media', 'Growth_condition_media', None),
-            ('experimental_replicate', 'Experimental_replicate', None),
-            ('analytical_facility', 'Analytical_facility', None),
-            ('experimental_sample_preparation_method', 'Experimental_sample_preparation_method', None),
             ('culture_collection_id', 'Culture_collection_ID (alternative name[s])', None),
             ('culture_collection_date', 'Culture_collection_date (YYYY-MM-DD)', ingest_utils.get_date_isoformat),
             ('host_location', 'Host_location (state, country)', None),
             ('host_age', 'Host_age', ingest_utils.get_int),
-            ('host_dob', 'Host_DOB (DD/MM/YY)', ingest_utils.get_date_isoformat),
+            ('host_dob', 'Host_DOB (YYYY-MM-DD)', ingest_utils.get_date_isoformat),
             ('host_sex', 'Host_sex (F/M)', get_sex),
             ('host_disease_outcome', 'Host_disease_outcome', None),
-            ('isolation_source', 'Isolation_source', None),
             ('host_description', 'Host_description', None),
-            ('study_title', 'Study title', None),
-            ('investigation_type', 'Investigation_type', None),
-            ('project_name', 'Project_name', None),
-            ('sample_title', 'Sample title', None),
-            ('ploidy', 'ploidy', None),
-            ('num_replicons', 'num_replicons', None),
-            ('estimated_size', 'estimated_size', None),
-            ('propagation', 'propagation', None),
-            ('isolate_growth_condition', 'isol_growth_condt', None),
-            ('collected_by', 'Collected by', None),
-            ('host_associated', 'Host_associated', None),
-            ('host_health_state', 'Host_health_state', None),
-            ('host_disease_status', 'Host_disease_status', None),
         ]
         wrapper = ExcelWrapper(
             field_spec,
