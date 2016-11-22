@@ -16,6 +16,11 @@ import files
 logger = make_logger(__name__)
 
 
+def one(l):
+    assert(len(l) == 1)
+    return l[0]
+
+
 def get_gram_stain(val):
     if val and val is not '':
         val = val.lower()
@@ -55,10 +60,11 @@ class SepsisBacterialContextual(object):
     name = 'sepsis-bacterial'
 
     def __init__(self, path):
-        xlsx_path = glob(path + '/*.xlsx')[0]
+        xlsx_path = one(glob(path + '/*.xlsx'))
         self.sample_metadata = self._package_metadata(self._read_metadata(xlsx_path))
 
-    def get(self, tpl):
+    def get(self, track_meta):
+        tpl = (track_meta.taxon_or_organism, track_meta.strain_or_isolate)
         if tpl in self.sample_metadata:
             return self.sample_metadata[tpl]
         logger.warning("no contextual metadata available for: %s" % (repr(tpl)))
@@ -108,8 +114,67 @@ class SepsisBacterialContextual(object):
         return wrapper.get_all()
 
 
+class SepsisGenomicsContextual(object):
+    """
+    Genomics sample metadata: used by the genomics classes.
+    """
+
+    metadata_urls = ['https://downloads-qcif.bioplatforms.com/bpa/sepsis/projectdata/current/genomics/']
+    name = 'sepsis-genomics'
+
+    def __init__(self, path):
+        xlsx_path = one(glob(path + '/*.xlsx'))
+        self.sample_metadata = self._package_metadata(self._read_metadata(xlsx_path))
+
+    def get(self, track_meta):
+        bpa_id = track_meta.five_digit_bpa_id
+        if bpa_id in self.sample_metadata:
+            return self.sample_metadata[bpa_id]
+        logger.warning("no contextual metadata available for: %s" % (repr(bpa_id)))
+        return {}
+
+    def _package_metadata(self, rows):
+        sample_metadata = {}
+        for row in rows:
+            if not row.bpa_id:
+                continue
+            if row.bpa_id not in sample_metadata:
+                logger.warning("duplicate sample metadata row for {}".format(row.bpa_id))
+            sample_metadata[row.bpa_id] = row_meta = {}
+            for field in row._fields:
+                if field != 'taxon_or_organism' and field != 'strain_or_isolate':
+                    row_meta[field] = getattr(row, field)
+        return sample_metadata
+
+    def _read_metadata(self, metadata_path):
+        field_spec = [
+            ('bpa_id', "BPA_sample_ID", ingest_utils.extract_bpa_id),
+            ('taxon_or_organism', "Taxon_OR_organism", None),
+            ('strain_or_isolate', "Strain_OR_isolate", None),
+            ('serovar', "Serovar", None),
+            ('growth_condition_time', "Growth_condition_time", None),
+            ('growth_condition_temperature', "Growth_condition_temperature", ingest_utils.get_clean_number),
+            ('growth_condition_media', "Growth_condition_media", None),
+            ('growth_condition_notes', "Growth_condition_notes", None),
+            ('experimental_replicate', "Experimental_replicate", None),
+            ('analytical_facility', "Analytical_facility", None),
+            ('analytical_platform', "Analytical_platform", None),
+            ('experimental_sample_preparation_method', "Experimental_sample_preparation_method", None),
+            ('data_type', "Data type", None),
+        ]
+        wrapper = ExcelWrapper(
+            field_spec,
+            metadata_path,
+            sheet_name='Sheet1',
+            header_length=5,
+            column_name_row_index=4,
+            formatting_info=True,
+            pick_first_sheet=True)
+        return wrapper.get_all()
+
+
 class SepsisGenomicsMiseqMetadata(BaseMetadata):
-    contextual_classes = [SepsisBacterialContextual]
+    contextual_classes = [SepsisBacterialContextual, SepsisGenomicsContextual]
     metadata_urls = ['https://downloads-qcif.bioplatforms.com/bpa/sepsis/genomics/miseq/']
     organization = 'bpa-sepsis'
     auth = ('sepsis', 'sepsis')
@@ -182,7 +247,7 @@ class SepsisGenomicsMiseqMetadata(BaseMetadata):
                     'private': True,
                 }
                 for contextual_source in self.contextual_metadata:
-                    obj.update(contextual_source.get((track_meta.taxon_or_organism, track_meta.strain_or_isolate)))
+                    obj.update(contextual_source.get(track_meta))
                 tag_names = ['miseq', 'genomics']
                 obj['tags'] = [{'name': t} for t in tag_names]
                 packages.append(obj)
@@ -205,7 +270,7 @@ class SepsisGenomicsMiseqMetadata(BaseMetadata):
 
 
 class SepsisGenomicsPacbioMetadata(BaseMetadata):
-    contextual_classes = [SepsisBacterialContextual]
+    contextual_classes = [SepsisBacterialContextual, SepsisGenomicsContextual]
     metadata_urls = ['https://downloads-qcif.bioplatforms.com/bpa/sepsis/genomics/pacbio/']
     organization = 'bpa-sepsis'
     auth = ('sepsis', 'sepsis')
@@ -284,7 +349,7 @@ class SepsisGenomicsPacbioMetadata(BaseMetadata):
                     'private': True,
                 }
                 for contextual_source in self.contextual_metadata:
-                    obj.update(contextual_source.get((track_meta.taxon_or_organism, track_meta.strain_or_isolate)))
+                    obj.update(contextual_source.get(track_meta))
                 tag_names = ['pacbio', 'genomics']
                 obj['tags'] = [{'name': t} for t in tag_names]
                 packages.append(obj)
@@ -385,7 +450,7 @@ class SepsisTranscriptomicsHiseqMetadata(BaseMetadata):
                     'private': True,
                 }
                 for contextual_source in self.contextual_metadata:
-                    obj.update(contextual_source.get((track_meta.taxon_or_organism, track_meta.strain_or_isolate)))
+                    obj.update(contextual_source.get(track_meta))
                 tag_names = ['hiseq', 'transcriptomics']
                 obj['tags'] = [{'name': t} for t in tag_names]
                 packages.append(obj)
@@ -489,7 +554,7 @@ class SepsisMetabolomicsLCMSMetadata(BaseMetadata):
                     'private': True,
                 }
                 for contextual_source in self.contextual_metadata:
-                    obj.update(contextual_source.get((track_meta.taxon_or_organism, track_meta.strain_or_isolate)))
+                    obj.update(contextual_source.get(track_meta))
                 tag_names = ['lcms', 'metabolomics']
                 obj['tags'] = [{'name': t} for t in tag_names]
                 packages.append(obj)
@@ -596,7 +661,7 @@ class SepsisProteomicsMS1QuantificationMetadata(BaseMetadata):
                     'private': True,
                 }
                 for contextual_source in self.contextual_metadata:
-                    obj.update(contextual_source.get((track_meta.taxon_or_organism, track_meta.strain_or_isolate)))
+                    obj.update(contextual_source.get(track_meta))
                 tag_names = ['ms1quantification', 'proteomics']
                 obj['tags'] = [{'name': t} for t in tag_names]
                 packages.append(obj)
@@ -703,7 +768,7 @@ class SepsisProteomicsSwathMSMetadata(BaseMetadata):
                     'private': True,
                 }
                 for contextual_source in self.contextual_metadata:
-                    obj.update(contextual_source.get((track_meta.taxon_or_organism, track_meta.strain_or_isolate)))
+                    obj.update(contextual_source.get(track_meta))
                 tag_names = ['swathms', 'proteomics']
                 obj['tags'] = [{'name': t} for t in tag_names]
                 packages.append(obj)
