@@ -50,6 +50,7 @@ def get_clean_number(val, default=None, debug=False):
     if isinstance(val, float):
         return val
 
+    # remove_letters_map = dict((ord(char), None) for char in string.letters)
     try:
         return int(val.translate(remove_letters_map))
     except ValueError:

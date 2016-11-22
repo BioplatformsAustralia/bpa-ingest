@@ -472,8 +472,69 @@ class SepsisTranscriptomicsHiseqMetadata(BaseMetadata):
         return resources
 
 
+class SepsisMetabolomicsLCMSContextual(object):
+    """
+    Genomics sample metadata: used by the genomics classes.
+    """
+
+    metadata_urls = ['https://downloads-qcif.bioplatforms.com/bpa/sepsis/projectdata/current/metabolomics-lcms/']
+    name = 'sepsis-metabolomics-lcms'
+
+    def __init__(self, path):
+        self.sample_metadata = {}
+        for xlsx_path in glob(path + '/*.xlsx'):
+            self.sample_metadata.update(self._package_metadata(self._read_metadata(xlsx_path)))
+
+    def get(self, track_meta):
+        bpa_id = track_meta.five_digit_bpa_id
+        if bpa_id in self.sample_metadata:
+            return self.sample_metadata[bpa_id]
+        logger.warning("no contextual metadata available for: %s" % (repr(bpa_id)))
+        return {}
+
+    def _package_metadata(self, rows):
+        sample_metadata = {}
+        for row in rows:
+            if not row.bpa_id:
+                continue
+            if row.bpa_id not in sample_metadata:
+                logger.warning("duplicate sample metadata row for {}".format(row.bpa_id))
+            sample_metadata[row.bpa_id] = row_meta = {}
+            for field in row._fields:
+                if field != 'taxon_or_organism' and field != 'strain_or_isolate':
+                    row_meta[field] = getattr(row, field)
+        return sample_metadata
+
+    def _read_metadata(self, metadata_path):
+
+        field_spec = [
+            ('sample_submission_date', 'Sample submission date (YYYY-MM-DD)', None),
+            ('bpa_id', 'Sample name i.e. 5 digit BPA ID', ingest_utils.extract_bpa_id),
+            ('taxon_or_organism', 'Taxon_OR_organism', None),
+            ('strain_or_isolate', 'Strain_OR_isolate', None),
+            ('serovar', 'Serovar', None),
+            ('growth_media', 'Growth Media', None),
+            ('replicate', 'Replicate', None),
+            ('growth_condition_time', 'Growth_condition_time', None),
+            ('growth_condition_temperature', "Growth_condition_temperature", ingest_utils.get_clean_number),
+            ('growth_condition_media', 'Growth_condition_media', None),
+            ('omics', 'Omics', None),
+            ('analytical_platform', 'Analytical platform', None),
+            ('facility', 'Facility', None),
+        ]
+        wrapper = ExcelWrapper(
+            field_spec,
+            metadata_path,
+            sheet_name='Sheet1',
+            header_length=8,
+            column_name_row_index=7,
+            formatting_info=True,
+            pick_first_sheet=True)
+        return wrapper.get_all()
+
+
 class SepsisMetabolomicsLCMSMetadata(BaseMetadata):
-    contextual_classes = [SepsisBacterialContextual]
+    contextual_classes = [SepsisBacterialContextual, SepsisMetabolomicsLCMSContextual]
     metadata_urls = ['https://downloads-qcif.bioplatforms.com/bpa/sepsis/metabolomics/lcms/']
     organization = 'bpa-sepsis'
     auth = ('sepsis', 'sepsis')
