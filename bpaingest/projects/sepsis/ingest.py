@@ -67,7 +67,7 @@ class SepsisBacterialContextual(object):
         tpl = (track_meta.taxon_or_organism, track_meta.strain_or_isolate)
         if tpl in self.sample_metadata:
             return self.sample_metadata[tpl]
-        logger.warning("no contextual metadata available for: %s" % (repr(tpl)))
+        logger.warning("no %s metadata available for: %s" % (type(self), repr(tpl)))
         return {}
 
     def _package_metadata(self, rows):
@@ -130,7 +130,7 @@ class SepsisGenomicsContextual(object):
         bpa_id = track_meta.five_digit_bpa_id
         if bpa_id in self.sample_metadata:
             return self.sample_metadata[bpa_id]
-        logger.warning("no contextual metadata available for: %s" % (repr(bpa_id)))
+        logger.warning("no %s metadata available for: %s" % (type(self), repr(bpa_id)))
         return {}
 
     def _package_metadata(self, rows):
@@ -387,7 +387,7 @@ class SepsisTranscriptomicsHiseqContextual(object):
         bpa_id = track_meta.five_digit_bpa_id
         if bpa_id in self.sample_metadata:
             return self.sample_metadata[bpa_id]
-        logger.warning("no contextual metadata available for: %s" % (repr(bpa_id)))
+        logger.warning("no %s metadata available for: %s" % (type(self), repr(bpa_id)))
         return {}
 
     def _package_metadata(self, rows):
@@ -554,7 +554,7 @@ class SepsisMetabolomicsLCMSContextual(object):
         bpa_id = track_meta.five_digit_bpa_id
         if bpa_id in self.sample_metadata:
             return self.sample_metadata[bpa_id]
-        logger.warning("no contextual metadata available for: %s" % (repr(bpa_id)))
+        logger.warning("no %s metadata available for: %s" % (type(self), repr(bpa_id)))
         return {}
 
     def _package_metadata(self, rows):
@@ -701,8 +701,74 @@ class SepsisMetabolomicsLCMSMetadata(BaseMetadata):
         return resources
 
 
+class SepsisProteomicsContextual(object):
+    """
+    Proteomics sample metadata: used by both proteomics classes.
+    """
+
+    metadata_urls = ['https://downloads-qcif.bioplatforms.com/bpa/sepsis/projectdata/current/proteomics/']
+    name = 'sepsis-proteomics'
+
+    def __init__(self, path):
+        xlsx_path = one(glob(path + '/*.xlsx'))
+        self.sample_metadata = self._package_metadata(self._read_metadata(xlsx_path))
+
+    def get(self, track_meta):
+        bpa_id = track_meta.five_digit_bpa_id
+        if bpa_id in self.sample_metadata:
+            return self.sample_metadata[bpa_id]
+        logger.warning("no %s metadata available for: %s" % (type(self), repr(bpa_id)))
+        return {}
+
+    def _package_metadata(self, rows):
+        sample_metadata = {}
+        for row in rows:
+            if not row.bpa_id:
+                continue
+            if row.bpa_id not in sample_metadata:
+                logger.warning("duplicate sample metadata row for {}".format(row.bpa_id))
+            sample_metadata[row.bpa_id] = row_meta = {}
+            for field in row._fields:
+                if field != 'taxon_or_organism' and field != 'strain_or_isolate':
+                    row_meta[field] = getattr(row, field)
+        return sample_metadata
+
+    def _read_metadata(self, metadata_path):
+        field_spec = [
+            ('sample_submission_date', 'Sample submission date (YYYY-MM-DD)', None),
+            ('bpa_id', 'Sample name i.e. 5 digit BPA ID', ingest_utils.extract_bpa_id),
+            ('sample_type', 'Sample type', None),
+            ('protein_yield_ug', 'Protein Yield (g)', None),  # it really is ug, just unicode stripping drops the 'u'
+            ('treatment', 'Treatment', None),
+            ('peptide_resuspension_protocol', 'Peptide resuspension protocol', None),
+            ('taxon_or_organism', 'Taxon_OR_organism', None),
+            ('strain_or_isolate', 'Strain_OR_isolate', None),
+            ('serovar', 'Serovar', None),
+            ('growth_media', 'Growth Media', None),
+            ('replicate', 'Replicate', None),
+            ('growth_condition_time', 'Growth_condition_time', None),
+            ('growth_condition_growth_phase', 'Growth_condition_growth phase', None),
+            ('growth_condition_od600_reading', 'Growth_condition_OD600 reading', None),
+            ('growth_condition_temperature', 'Growth_condition_temperature', ingest_utils.get_clean_number),
+            ('growth_condition_media', 'Growth_condition_media', None),
+            ('omics', 'Omics', None),
+            ('analytical_platform', 'Analytical platform', None),
+            ('facility', 'Facility', None),
+            ('data_type', 'Data type', None),
+        ]
+        wrapper = ExcelWrapper(
+            field_spec,
+            metadata_path,
+            sheet_name='Sheet1',
+            header_length=9,
+            column_name_row_index=8,
+            formatting_info=True,
+            pick_first_sheet=True)
+        return wrapper.get_all()
+
+
 class SepsisProteomicsMS1QuantificationMetadata(BaseMetadata):
-    contextual_classes = [SepsisBacterialContextual]
+    contextual_classes = [SepsisBacterialContextual, SepsisProteomicsContextual]
     metadata_urls = ['https://downloads-qcif.bioplatforms.com/bpa/sepsis/proteomics/ms1quantification/']
     organization = 'bpa-sepsis'
     auth = ('sepsis', 'sepsis')
