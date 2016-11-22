@@ -95,6 +95,22 @@ sync.setup = setup_sync
 
 
 @register_command
+def makeschema(ckan, args):
+    with DownloadMetadata(PROJECTS[args.project_name], args.track_metadata, path=args.download_path) as dlmeta:
+        meta = dlmeta.meta
+        p = {}
+        for package in meta.get_packages():
+            p.update(package)
+        print(sorted(p.keys()))
+        r = {}
+        for _, _, resource in meta.get_resources():
+            r.update(resource)
+        print(sorted(r.keys()))
+
+makeschema.setup = setup_sync
+
+
+@register_command
 def genhash(ckan, args):
     """
     verify MD5 sums for a local (filesystem mounted) mirror of the BPA

@@ -971,7 +971,7 @@ class SepsisProteomicsSwathMSMetadata(BaseMetadata):
         resources = []
         for md5_file in glob(self.path + '/*.md5'):
             logger.info("Processing md5 file {0}".format(md5_file))
-            for file_info in files.parse_md5_file(files.proteomics_swathms_filename_re, md5_file):
+            for file_info in files.parse_md5_file(files.proteomics_swathms_1d_ida_filename_re, md5_file):
                 resource = dict((t, file_info.get(t)) for t in ('vendor', 'machine_data'))
                 resource['md5'] = resource['id'] = file_info.md5
                 resource['name'] = file_info.filename
