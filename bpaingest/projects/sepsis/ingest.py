@@ -462,9 +462,9 @@ class SepsisTranscriptomicsHiseqMetadata(BaseMetadata):
         return resources
 
 
-class SepsisMetabolomicsDeepLCMSMetadata(BaseMetadata):
+class SepsisMetabolomicsLCMSMetadata(BaseMetadata):
     contextual_classes = [SepsisBacterialContextual]
-    metadata_urls = ['https://downloads-qcif.bioplatforms.com/bpa/sepsis/metabolomics/deeplcms/']
+    metadata_urls = ['https://downloads-qcif.bioplatforms.com/bpa/sepsis/metabolomics/lcms/']
     organization = 'bpa-sepsis'
     auth = ('sepsis', 'sepsis')
 
@@ -476,7 +476,7 @@ class SepsisMetabolomicsDeepLCMSMetadata(BaseMetadata):
     def read_track_csv(self, fname):
         if fname is None:
             return {}
-        header, rows = csv_to_named_tuple('SepsisMetabolomicsDeepLCMSTrack', fname)
+        header, rows = csv_to_named_tuple('SepsisMetabolomicsLCMSTrack', fname)
         logger.info("track csv header: %s" % (repr(header)))
         return dict((ingest_utils.extract_bpa_id(t.five_digit_bpa_id), t) for t in rows)
 
@@ -505,14 +505,14 @@ class SepsisMetabolomicsDeepLCMSMetadata(BaseMetadata):
         packages = []
         # note: the metadata in the package xlsx is quite minimal
         for fname in glob(self.path + '/*.xlsx'):
-            logger.info("Processing Sepsis Metabolomics DeepLCMS metadata file {0}".format(fname))
-            rows = list(SepsisMetabolomicsDeepLCMSMetadata.parse_spreadsheet(fname))
+            logger.info("Processing Sepsis Metabolomics LCMS metadata file {0}".format(fname))
+            rows = list(SepsisMetabolomicsLCMSMetadata.parse_spreadsheet(fname))
             for row in rows:
                 bpa_id = row.bpa_id
                 if bpa_id is None:
                     continue
                 track_meta = self.track_meta[bpa_id]
-                name = bpa_id_to_ckan_name(bpa_id.split('.')[-1], 'arp-metabolomics-deeplcms')
+                name = bpa_id_to_ckan_name(bpa_id.split('.')[-1], 'arp-metabolomics-lcms')
                 obj = {
                     'name': name,
                     'id': bpa_id,
@@ -540,12 +540,12 @@ class SepsisMetabolomicsDeepLCMSMetadata(BaseMetadata):
                     'data_generated': track_meta.data_generated,
                     'archive_ingestion_date': track_meta.archive_ingestion_date,
                     'archive_id': track_meta.archive_id,
-                    'type': 'arp-metabolomics-deeplcms',
+                    'type': 'arp-metabolomics-lcms',
                     'private': True,
                 }
                 for contextual_source in self.contextual_metadata:
                     obj.update(contextual_source.get((track_meta.taxon_or_organism, track_meta.strain_or_isolate)))
-                tag_names = ['deeplcms', 'metabolomics']
+                tag_names = ['lcms', 'metabolomics']
                 obj['tags'] = [{'name': t} for t in tag_names]
                 packages.append(obj)
         return packages
@@ -560,14 +560,14 @@ class SepsisMetabolomicsDeepLCMSMetadata(BaseMetadata):
                 resource['md5'] = resource['id'] = file_info.md5
                 resource['name'] = file_info.filename
                 bpa_id = ingest_utils.extract_bpa_id(file_info.get('id'))
-                legacy_url = bpa_mirror_url('bpa/sepsis/metabolomics/deeplcms/' + file_info.filename)
+                legacy_url = bpa_mirror_url('bpa/sepsis/metabolomics/lcms/' + file_info.filename)
                 resources.append((bpa_id, legacy_url, resource))
         return resources
 
 
-class SepsisProteomicsDeepLCMSMetadata(BaseMetadata):
+class SepsisProteomicsMS1QuantificationMetadata(BaseMetadata):
     contextual_classes = [SepsisBacterialContextual]
-    metadata_urls = ['https://downloads-qcif.bioplatforms.com/bpa/sepsis/proteomics/deeplcms/']
+    metadata_urls = ['https://downloads-qcif.bioplatforms.com/bpa/sepsis/proteomics/ms1quantification/']
     organization = 'bpa-sepsis'
     auth = ('sepsis', 'sepsis')
 
@@ -579,7 +579,7 @@ class SepsisProteomicsDeepLCMSMetadata(BaseMetadata):
     def read_track_csv(self, fname):
         if fname is None:
             return {}
-        header, rows = csv_to_named_tuple('SepsisProteomicsDeepLCMSTrack', fname)
+        header, rows = csv_to_named_tuple('SepsisProteomicsMS1QuantificationTrack', fname)
         logger.info("track csv header: %s" % (repr(header)))
         return dict((ingest_utils.extract_bpa_id(t.five_digit_bpa_id), t) for t in rows)
 
@@ -611,14 +611,14 @@ class SepsisProteomicsDeepLCMSMetadata(BaseMetadata):
         packages = []
         # note: the metadata in the package xlsx is quite minimal
         for fname in glob(self.path + '/*.xlsx'):
-            logger.info("Processing Sepsis Proteomics DeepLCMS metadata file {0}".format(fname))
-            rows = list(SepsisProteomicsDeepLCMSMetadata.parse_spreadsheet(fname))
+            logger.info("Processing Sepsis Proteomics MS1Quantification metadata file {0}".format(fname))
+            rows = list(SepsisProteomicsMS1QuantificationMetadata.parse_spreadsheet(fname))
             for row in rows:
                 bpa_id = row.bpa_id
                 if bpa_id is None:
                     continue
                 track_meta = self.track_meta[bpa_id]
-                name = bpa_id_to_ckan_name(bpa_id.split('.')[-1], 'arp-proteomics-deeplcms')
+                name = bpa_id_to_ckan_name(bpa_id.split('.')[-1], 'arp-proteomics-ms1quantification')
                 obj = {
                     'name': name,
                     'id': bpa_id,
@@ -647,12 +647,12 @@ class SepsisProteomicsDeepLCMSMetadata(BaseMetadata):
                     'data_generated': track_meta.data_generated,
                     'archive_ingestion_date': track_meta.archive_ingestion_date,
                     'archive_id': track_meta.archive_id,
-                    'type': 'arp-proteomics-deeplcms',
+                    'type': 'arp-proteomics-ms1quantification',
                     'private': True,
                 }
                 for contextual_source in self.contextual_metadata:
                     obj.update(contextual_source.get((track_meta.taxon_or_organism, track_meta.strain_or_isolate)))
-                tag_names = ['deeplcms', 'proteomics']
+                tag_names = ['ms1quantification', 'proteomics']
                 obj['tags'] = [{'name': t} for t in tag_names]
                 packages.append(obj)
         return packages
@@ -667,7 +667,7 @@ class SepsisProteomicsDeepLCMSMetadata(BaseMetadata):
                 resource['md5'] = resource['id'] = file_info.md5
                 resource['name'] = file_info.filename
                 bpa_id = ingest_utils.extract_bpa_id(file_info.get('id'))
-                legacy_url = bpa_mirror_url('bpa/sepsis/proteomics/deeplcms/' + file_info.filename)
+                legacy_url = bpa_mirror_url('bpa/sepsis/proteomics/ms1quantification/' + file_info.filename)
                 resources.append((bpa_id, legacy_url, resource))
         return resources
 
