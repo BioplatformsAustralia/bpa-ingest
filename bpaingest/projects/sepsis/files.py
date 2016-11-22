@@ -118,6 +118,51 @@ def test_proteomics_deeplcms():
         assert(proteomics_deepclms_filename_re.match(filename) is not None)
 
 
+PROTEOMICS_SWATHMS_1D_IDA_FILENAME_PATTERN = """
+    (?P<id>\d{4,6})_
+    SEP_
+    (?P<vendor>APAF)_
+    MS_1D_IDA_
+    (?P<machine_data>[^\.]+).
+    (?P<type>.*)
+"""
+proteomics_swathms_1d_ida_filename_re = re.compile(PROTEOMICS_SWATHMS_1D_IDA_FILENAME_PATTERN, re.VERBOSE)
+
+
+def test_proteomics_swathms_1d_ida():
+    filenames = [
+        '25805_SEP_APAF_MS_1D_IDA_P19471_161006.wiff',
+        '25805_SEP_APAF_MS_1D_IDA_P19471_161006.wiff.scan'
+    ]
+
+    for filename in filenames:
+        assert(proteomics_swathms_1d_ida_filename_re.match(filename) is not None)
+
+
+PROTEOMICS_SWATHMS_2D_IDA_FILENAME_PATTERN = """
+    (?P<id>P\d{4,6})_
+    (?P<taxon>[A-Za-z]+)_
+    SEP_
+    (?P<vendor>APAF)_
+    MS_2D_IDA_
+    (?P<machine_data>[^\.]+).
+    (?P<type>.*)
+"""
+proteomics_swathms_2d_ida_filename_re = re.compile(PROTEOMICS_SWATHMS_2D_IDA_FILENAME_PATTERN, re.VERBOSE)
+
+
+def test_proteomics_swathms_2d_ida():
+    filenames = [
+        'P19471_Kleb_SEP_APAF_MS_2D_IDA_161018_F01.wiff',
+        'P19471_Kleb_SEP_APAF_MS_2D_IDA_161018_F01.wiff.scan'
+        'P19471_Staph_SEP_APAF_MS_2D_IDA_161019_F07.wiff',
+        'P19471_Staph_SEP_APAF_MS_2D_IDA_161019_F07.wiff.scan',
+    ]
+
+    for filename in filenames:
+        assert(proteomics_swathms_2d_ida_filename_re.match(filename) is not None)
+
+
 class MD5ParsedLine(object):
     def __init__(self, pattern, md5, path):
         self.pattern = pattern
