@@ -491,7 +491,7 @@ class SepsisTranscriptomicsHiseqMetadata(BaseMetadata):
                 name = bpa_id_to_ckan_name(bpa_id.split('.')[-1], 'arp-transcriptomics-hiseq')
                 obj = {
                     'name': name,
-                    'id': bpa_id,
+                    'id': name,
                     'bpa_id': bpa_id,
                     'title': 'ARP Transcriptomics Hiseq %s' % (bpa_id),
                     'notes': 'ARP Transcriptomics Hiseq Data: %s %s' % (track_meta.taxon_or_organism, track_meta.strain_or_isolate),
@@ -654,7 +654,7 @@ class SepsisMetabolomicsLCMSMetadata(BaseMetadata):
                 name = bpa_id_to_ckan_name(bpa_id.split('.')[-1], 'arp-metabolomics-lcms')
                 obj = {
                     'name': name,
-                    'id': bpa_id,
+                    'id': name,
                     'bpa_id': bpa_id,
                     'title': 'ARP Metabolomics LCMS %s' % (bpa_id),
                     'notes': 'ARP Metabolomics LCMS Data: %s %s' % (track_meta.taxon_or_organism, track_meta.strain_or_isolate),
@@ -826,7 +826,7 @@ class SepsisProteomicsMS1QuantificationMetadata(BaseMetadata):
                 name = bpa_id_to_ckan_name(bpa_id.split('.')[-1], 'arp-proteomics-ms1quantification')
                 obj = {
                     'name': name,
-                    'id': bpa_id,
+                    'id': name,
                     'bpa_id': bpa_id,
                     'title': 'ARP Proteomics LCMS %s' % (bpa_id),
                     'notes': 'ARP Proteomics LCMS Data: %s %s' % (track_meta.taxon_or_organism, track_meta.strain_or_isolate),
@@ -933,7 +933,7 @@ class SepsisProteomicsSwathMSMetadata(BaseMetadata):
                 name = bpa_id_to_ckan_name(bpa_id.split('.')[-1], 'arp-proteomics-swathms')
                 obj = {
                     'name': name,
-                    'id': bpa_id,
+                    'id': name,
                     'bpa_id': bpa_id,
                     'title': 'ARP Proteomics LCMS %s' % (bpa_id),
                     'notes': 'ARP Proteomics LCMS Data: %s %s' % (track_meta.taxon_or_organism, track_meta.strain_or_isolate),
