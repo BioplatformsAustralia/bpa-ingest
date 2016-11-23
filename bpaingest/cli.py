@@ -3,6 +3,7 @@ from __future__ import print_function
 import tempfile
 import argparse
 import shutil
+import json
 import sys
 import os
 
@@ -96,16 +97,110 @@ sync.setup = setup_sync
 
 @register_command
 def makeschema(ckan, args):
+    schema_template = {
+        "scheming_version": 1,
+        "dataset_type": "arp-genomics-miseq",
+        "about_url": "https://downloads.bioplatforms.com/sepsis/",
+        "dataset_fields": [
+            {
+                "field_name": "owner_org",
+                "label": "Organization",
+                "display_property": "dct:publisher",
+                "validators": "owner_org_validator unicode",
+                "form_snippet": "organization.html"
+            },
+            {
+                "field_name": "title",
+                "label": "Title",
+                "preset": "title",
+                "form_placeholder": ""
+            },
+            {
+                "field_name": "notes",
+                "label": "Description",
+                "display_property": "dcat:Dataset/dct:description",
+                "form_snippet": "markdown.html",
+                "form_placeholder": "eg. Some useful notes about the data"
+            },
+            {
+                "field_name": "name",
+                "label": "URL",
+                "preset": "dataset_slug",
+                "form_placeholder": ""
+            },
+            {
+                "field_name": "tag_string",
+                "label": "Tags",
+                "display_property": "dcat:Dataset/dct:keyword",
+                "validators": "ignore_missing tag_string_convert",
+                "form_placeholder": "type to auto-complete",
+                "form_attrs": {
+                    "data-module": "autocomplete",
+                    "data-module-tags": "",
+                    "data-module-source": "/api/2/util/tag/autocomplete?incomplete=?"
+                }
+            }
+        ],
+        "resource_fields": [
+            {
+                "field_name": "name",
+                "label": "Name"
+            },
+            {
+                "field_name": "description",
+                "label": "Description"
+            },
+            {
+                "field_name": "url",
+                "label": "Data File",
+                "preset": "resource_url_upload",
+                "form_placeholder": "http://downloads-qcif.bioplatforms.com/my-dataset.fastq.gz",
+                "upload_label": "Sequence File"
+            },
+            {
+                "field_name": "md5",
+                "label": "MD5"
+            },
+            {
+                "field_name": "sha256",
+                "label": "SHA256"
+            },
+            {
+                "field_name": "s3etag_8388608",
+                "label": "S3 E-Tag (8MB multipart)"
+            }
+        ]}
     with DownloadMetadata(PROJECTS[args.project_name], args.track_metadata, path=args.download_path) as dlmeta:
         meta = dlmeta.meta
+        schema = schema_template.copy()
+        print(type(meta).__name__)
         p = {}
         for package in meta.get_packages():
             p.update(package)
-        print(sorted(p.keys()))
+        skip = ('id', 'tags', 'private', 'type')
+        for k in sorted(p.keys()):
+            if k in skip:
+                continue
+            schema['dataset_fields'].append({
+                "field_name": k,
+                "label": k,
+                "form_placeholder": ""
+            })
         r = {}
         for _, _, resource in meta.get_resources():
             r.update(resource)
-        print(sorted(r.keys()))
+        for k in sorted(r.keys()):
+            if k in skip:
+                continue
+            schema['resource_fields'].append({
+                "field_name": k,
+                "label": k,
+            })
+        outf = '/tmp/{}.json'.format(type(meta).__name__)
+        with open(outf, 'w') as fd:
+            json.dump(schema, fd, sort_keys=True, indent=4, separators=(',', ': '))
+            fd.write('\n')
+        print("generated schema written to: {}".format(outf))
 
 makeschema.setup = setup_sync
 

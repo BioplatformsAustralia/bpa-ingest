@@ -17,7 +17,8 @@ logger = make_logger(__name__)
 
 
 def one(l):
-    assert(len(l) == 1)
+    if len(l) != 1:
+        raise Exception("Expected one element, got {}: {}".format(len(l), l))
     return l[0]
 
 
@@ -234,6 +235,7 @@ class SepsisGenomicsMiseqMetadata(BaseMetadata):
                     'strain_or_isolate': track_meta.strain_or_isolate,
                     'serovar': track_meta.serovar,
                     'growth_media': track_meta.growth_media,
+                    'growth_condition_notes': track_meta.growth_condition_notes,
                     'replicate': track_meta.replicate,
                     'omics': track_meta.omics,
                     'analytical_platform': track_meta.analytical_platform.strip(),
@@ -336,6 +338,7 @@ class SepsisGenomicsPacbioMetadata(BaseMetadata):
                     'strain_or_isolate': track_meta.strain_or_isolate,
                     'serovar': track_meta.serovar,
                     'growth_media': track_meta.growth_media,
+                    'growth_condition_notes': track_meta.growth_condition_notes,
                     'replicate': track_meta.replicate,
                     'omics': track_meta.omics,
                     'analytical_platform': track_meta.analytical_platform.strip(),
