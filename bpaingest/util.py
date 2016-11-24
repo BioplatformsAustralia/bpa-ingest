@@ -9,6 +9,12 @@ import requests
 from collections import namedtuple
 
 
+def one(l):
+    if len(l) != 1:
+        raise Exception("Expected one element, got {}: {}".format(len(l), l))
+    return l[0]
+
+
 def bpa_id_to_ckan_name(bpa_id, suborg=None):
     r = 'bpa-'
     if suborg is not None:
@@ -93,6 +99,7 @@ digit_words = {
 def csv_to_named_tuple(typname, fname):
     if fname is None:
         return [], []
+
     def clean_name(s):
         s = s.lower().strip().replace('-', '_').replace(' ', '_')
         s = ''.join([t for t in s if t in string.ascii_letters or t in string.digits or t == '_'])
@@ -100,6 +107,7 @@ def csv_to_named_tuple(typname, fname):
             s = digit_words[s[0]] + s[1:]
         s = s.strip('_')
         return s
+
     with open(fname) as fd:
         r = csv.reader(fd)
         header = [clean_name(t) for t in next(r)]
