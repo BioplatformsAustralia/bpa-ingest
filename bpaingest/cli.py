@@ -99,7 +99,6 @@ sync.setup = setup_sync
 def makeschema(ckan, args):
     schema_template = {
         "scheming_version": 1,
-        "dataset_type": "arp-genomics-miseq",
         "about_url": "https://downloads.bioplatforms.com/sepsis/",
         "dataset_fields": [
             {
@@ -196,7 +195,8 @@ def makeschema(ckan, args):
                 "field_name": k,
                 "label": k,
             })
-        outf = '/tmp/{}.json'.format(type(meta).__name__)
+        schema['dataset_type'] = meta.ckan_data_type
+        outf = '/tmp/{}.json'.format(meta.ckan_data_type.replace('-', '_'))
         with open(outf, 'w') as fd:
             json.dump(schema, fd, sort_keys=True, indent=4, separators=(',', ': '))
             fd.write('\n')

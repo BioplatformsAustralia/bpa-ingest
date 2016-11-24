@@ -52,6 +52,44 @@ def get_strain_or_isolate(val):
     return None
 
 
+class SepsisTrackMetadata(object):
+    def __init__(self, track_csv_path):
+        self.track_meta = self.read_track_csv(track_csv_path)
+
+    def read_track_csv(self, fname):
+        header, rows = csv_to_named_tuple('SepsisGenomicsMiseqTrack', fname)
+        logger.info("track csv header: %s" % (repr(header)))
+        return dict((ingest_utils.extract_bpa_id(t.five_digit_bpa_id), t) for t in rows)
+
+    def get(self, bpa_id):
+        track_meta = self.track_meta[bpa_id]
+        return {
+            'data_type': track_meta.data_type,
+            'taxon_or_organism': track_meta.taxon_or_organism,
+            'strain_or_isolate': track_meta.strain_or_isolate,
+            'serovar': track_meta.serovar,
+            'growth_media': track_meta.growth_media,
+            'replicate': track_meta.replicate,
+            'omics': track_meta.omics,
+            'analytical_platform': track_meta.analytical_platform.strip(),
+            'facility': track_meta.facility,
+            'work_order': track_meta.work_order,
+            'contextual_data_submission_date': track_meta.contextual_data_submission_date,
+            'sample_submission_date': track_meta.sample_submission_date,
+            'data_generated': track_meta.data_generated,
+            'archive_ingestion_date': track_meta.archive_ingestion_date,
+            'archive_id': track_meta.archive_id,
+        }
+
+
+class SepsisGenomicsTrackMetadata(SepsisTrackMetadata):
+    def get(self, bpa_id):
+        obj = super(SepsisGenomicsTrackMetadata, self).get(bpa_id)
+        track_meta = self.track_meta[bpa_id]
+        obj['growth_condition_notes'] = track_meta.growth_condition_notes
+        return obj
+
+
 class SepsisBacterialContextual(object):
     """
     Bacterial sample metadata: used by each of the -omics classes below.
@@ -64,8 +102,8 @@ class SepsisBacterialContextual(object):
         xlsx_path = one(glob(path + '/*.xlsx'))
         self.sample_metadata = self._package_metadata(self._read_metadata(xlsx_path))
 
-    def get(self, track_meta):
-        tpl = (track_meta.taxon_or_organism, track_meta.strain_or_isolate)
+    def get(self, bpa_id, submission_obj):
+        tpl = (submission_obj['taxon_or_organism'], submission_obj['strain_or_isolate'])
         if tpl in self.sample_metadata:
             return self.sample_metadata[tpl]
         logger.warning("no %s metadata available for: %s" % (type(self), repr(tpl)))
@@ -127,8 +165,7 @@ class SepsisGenomicsContextual(object):
         xlsx_path = one(glob(path + '/*.xlsx'))
         self.sample_metadata = self._package_metadata(self._read_metadata(xlsx_path))
 
-    def get(self, track_meta):
-        bpa_id = track_meta.five_digit_bpa_id
+    def get(self, bpa_id, submission_obj):
         if bpa_id in self.sample_metadata:
             return self.sample_metadata[bpa_id]
         logger.warning("no %s metadata available for: %s" % (type(self), repr(bpa_id)))
@@ -179,16 +216,12 @@ class SepsisGenomicsMiseqMetadata(BaseMetadata):
     metadata_urls = ['https://downloads-qcif.bioplatforms.com/bpa/sepsis/genomics/miseq/']
     organization = 'bpa-sepsis'
     auth = ('sepsis', 'sepsis')
+    ckan_data_type = 'arp-genomics-miseq'
 
     def __init__(self, metadata_path, contextual_metadata=None, track_csv_path=None):
         self.path = Path(metadata_path)
         self.contextual_metadata = contextual_metadata
-        self.track_meta = self.read_track_csv(track_csv_path)
-
-    def read_track_csv(self, fname):
-        header, rows = csv_to_named_tuple('SepsisGenomicsMiseqTrack', fname)
-        logger.info("track csv header: %s" % (repr(header)))
-        return dict((ingest_utils.extract_bpa_id(t.five_digit_bpa_id), t) for t in rows)
+        self.track_meta = SepsisGenomicsTrackMetadata(track_csv_path)
 
     @classmethod
     def parse_spreadsheet(self, fname):
@@ -218,38 +251,24 @@ class SepsisGenomicsMiseqMetadata(BaseMetadata):
             rows = list(SepsisGenomicsMiseqMetadata.parse_spreadsheet(fname))
             for row in rows:
                 bpa_id = row.bpa_id
-                track_meta = self.track_meta[bpa_id]
-                name = bpa_id_to_ckan_name(bpa_id.split('.')[-1], 'arp-genomics-miseq')
-                obj = {
+                track_meta = self.track_meta.get(bpa_id)
+                obj = track_meta.copy()
+                name = bpa_id_to_ckan_name(bpa_id.split('.')[-1], self.ckan_data_type)
+                obj.update({
                     'name': name,
                     'id': name,
                     'bpa_id': bpa_id,
-                    'notes': 'ARP Genomics Miseq Data: %s %s' % (track_meta.taxon_or_organism, track_meta.strain_or_isolate),
+                    'notes': 'ARP Genomics Miseq Data: %s %s' % (track_meta['taxon_or_organism'], track_meta['strain_or_isolate']),
                     'title': 'Sepsis Genomics Miseq %s' % (bpa_id),
                     'insert_size_range': row.insert_size_range,
                     'library_construction_protocol': row.library_construction_protocol,
                     'sequencer': row.sequencer,
                     'analysis_software_version': row.analysis_software_version,
-                    'data_type': track_meta.data_type,
-                    'taxon_or_organism': track_meta.taxon_or_organism,
-                    'strain_or_isolate': track_meta.strain_or_isolate,
-                    'serovar': track_meta.serovar,
-                    'growth_media': track_meta.growth_media,
-                    'growth_condition_notes': track_meta.growth_condition_notes,
-                    'replicate': track_meta.replicate,
-                    'omics': track_meta.omics,
-                    'analytical_platform': track_meta.analytical_platform.strip(),
-                    'facility': track_meta.facility,
-                    'work_order': track_meta.work_order,
-                    'contextual_data_submission_date': track_meta.contextual_data_submission_date,
-                    'sample_submission_date': track_meta.sample_submission_date,
-                    'data_generated': track_meta.data_generated,
-                    'archive_ingestion_date': track_meta.archive_ingestion_date,
-                    'type': 'arp-genomics-miseq',
+                    'type': self.ckan_data_type,
                     'private': True,
-                }
+                })
                 for contextual_source in self.contextual_metadata:
-                    obj.update(contextual_source.get(track_meta))
+                    obj.update(contextual_source.get(bpa_id, track_meta))
                 tag_names = ['miseq', 'genomics']
                 obj['tags'] = [{'name': t} for t in tag_names]
                 packages.append(obj)
@@ -276,11 +295,12 @@ class SepsisGenomicsPacbioMetadata(BaseMetadata):
     metadata_urls = ['https://downloads-qcif.bioplatforms.com/bpa/sepsis/genomics/pacbio/']
     organization = 'bpa-sepsis'
     auth = ('sepsis', 'sepsis')
+    ckan_data_type = 'arp-genomics-pacbio'
 
     def __init__(self, metadata_path, contextual_metadata=None, track_csv_path=None):
         self.path = Path(metadata_path)
         self.contextual_metadata = contextual_metadata
-        self.track_meta = self.read_track_csv(track_csv_path)
+        self.track_meta = SepsisGenomicsTrackMetadata(track_csv_path)
 
     def read_track_csv(self, fname):
         header, rows = csv_to_named_tuple('SepsisGenomicsPacbioTrack', fname)
@@ -318,14 +338,15 @@ class SepsisGenomicsPacbioMetadata(BaseMetadata):
             rows = list(SepsisGenomicsPacbioMetadata.parse_spreadsheet(fname))
             for row in rows:
                 bpa_id = row.bpa_id
-                track_meta = self.track_meta[bpa_id]
-                name = bpa_id_to_ckan_name(bpa_id.split('.')[-1], 'arp-genomics-pacbio')
-                obj = {
+                track_meta = self.track_meta.get(bpa_id)
+                obj = track_meta.copy()
+                name = bpa_id_to_ckan_name(bpa_id.split('.')[-1], self.ckan_data_type)
+                obj.update({
                     'name': name,
                     'id': name,
                     'bpa_id': bpa_id,
                     'title': 'Sepsis Genomics Pacbio %s' % (bpa_id),
-                    'notes': 'ARP Genomics Pacbio Data: %s %s' % (track_meta.taxon_or_organism, track_meta.strain_or_isolate),
+                    'notes': 'ARP Genomics Pacbio Data: %s %s' % (track_meta['taxon_or_organism'], track_meta['strain_or_isolate']),
                     'insert_size_range': row.insert_size_range,
                     'library_construction_protocol': row.library_construction_protocol,
                     'sequencer': row.sequencer,
@@ -333,26 +354,11 @@ class SepsisGenomicsPacbioMetadata(BaseMetadata):
                     'smrt_cell_id': row.smrt_cell_id,
                     'cell_position': row.cell_position,
                     'rs_version': row.rs_version,
-                    'data_type': track_meta.data_type,
-                    'taxon_or_organism': track_meta.taxon_or_organism,
-                    'strain_or_isolate': track_meta.strain_or_isolate,
-                    'serovar': track_meta.serovar,
-                    'growth_media': track_meta.growth_media,
-                    'growth_condition_notes': track_meta.growth_condition_notes,
-                    'replicate': track_meta.replicate,
-                    'omics': track_meta.omics,
-                    'analytical_platform': track_meta.analytical_platform.strip(),
-                    'facility': track_meta.facility,
-                    'work_order': track_meta.work_order,
-                    'contextual_data_submission_date': track_meta.contextual_data_submission_date,
-                    'sample_submission_date': track_meta.sample_submission_date,
-                    'data_generated': track_meta.data_generated,
-                    'archive_ingestion_date': track_meta.archive_ingestion_date,
-                    'type': 'arp-genomics-pacbio',
+                    'type': self.ckan_data_type,
                     'private': True,
-                }
+                })
                 for contextual_source in self.contextual_metadata:
-                    obj.update(contextual_source.get(track_meta))
+                    obj.update(contextual_source.get(bpa_id, track_meta))
                 tag_names = ['pacbio', 'genomics']
                 obj['tags'] = [{'name': t} for t in tag_names]
                 packages.append(obj)
@@ -386,8 +392,7 @@ class SepsisTranscriptomicsHiseqContextual(object):
         for xlsx_path in glob(path + '/*.xlsx'):
             self.sample_metadata.update(self._package_metadata(self._read_metadata(xlsx_path)))
 
-    def get(self, track_meta):
-        bpa_id = track_meta.five_digit_bpa_id
+    def get(self, bpa_id, submission_obj):
         if bpa_id in self.sample_metadata:
             return self.sample_metadata[bpa_id]
         logger.warning("no %s metadata available for: %s" % (type(self), repr(bpa_id)))
@@ -443,11 +448,12 @@ class SepsisTranscriptomicsHiseqMetadata(BaseMetadata):
     metadata_urls = ['https://downloads-qcif.bioplatforms.com/bpa/sepsis/transcriptomics/hiseq/']
     organization = 'bpa-sepsis'
     auth = ('sepsis', 'sepsis')
+    ckan_data_type = 'arp-transcriptomics-hiseq'
 
     def __init__(self, metadata_path, contextual_metadata=None, track_csv_path=None):
         self.path = Path(metadata_path)
         self.contextual_metadata = contextual_metadata
-        self.track_meta = self.read_track_csv(track_csv_path)
+        self.track_meta = SepsisTrackMetadata(track_csv_path)
 
     def read_track_csv(self, fname):
         if fname is None:
@@ -487,38 +493,25 @@ class SepsisTranscriptomicsHiseqMetadata(BaseMetadata):
                 bpa_id = row.bpa_id
                 if bpa_id is None:
                     continue
-                track_meta = self.track_meta[bpa_id]
-                name = bpa_id_to_ckan_name(bpa_id.split('.')[-1], 'arp-transcriptomics-hiseq')
-                obj = {
+                track_meta = self.track_meta.get(bpa_id)
+                name = bpa_id_to_ckan_name(bpa_id.split('.')[-1], self.ckan_data_type)
+                obj = track_meta.copy()
+                obj.update({
                     'name': name,
                     'id': name,
                     'bpa_id': bpa_id,
                     'title': 'ARP Transcriptomics Hiseq %s' % (bpa_id),
-                    'notes': 'ARP Transcriptomics Hiseq Data: %s %s' % (track_meta.taxon_or_organism, track_meta.strain_or_isolate),
+                    'notes': 'ARP Transcriptomics Hiseq Data: %s %s' % (track_meta['taxon_or_organism'], track_meta['strain_or_isolate']),
                     'sample': row.sample,
                     'library_construction_protocol': row.library_construction_protocol,
                     'barcode_tag': row.barcode_tag,
                     'sequencer': row.sequencer,
                     'casava_version': row.casava_version,
-                    'data_type': track_meta.data_type,
-                    'taxon_or_organism': track_meta.taxon_or_organism,
-                    'strain_or_isolate': track_meta.strain_or_isolate,
-                    'serovar': track_meta.serovar,
-                    'growth_media': track_meta.growth_media,
-                    'replicate': track_meta.replicate,
-                    'omics': track_meta.omics,
-                    'analytical_platform': track_meta.analytical_platform.strip(),
-                    'facility': track_meta.facility,
-                    'work_order': track_meta.work_order,
-                    'contextual_data_submission_date': track_meta.contextual_data_submission_date,
-                    'sample_submission_date': track_meta.sample_submission_date,
-                    'data_generated': track_meta.data_generated,
-                    'archive_ingestion_date': track_meta.archive_ingestion_date,
-                    'type': 'arp-transcriptomics-hiseq',
+                    'type': self.ckan_data_type,
                     'private': True,
-                }
+                })
                 for contextual_source in self.contextual_metadata:
-                    obj.update(contextual_source.get(track_meta))
+                    obj.update(contextual_source.get(bpa_id, track_meta))
                 tag_names = ['hiseq', 'transcriptomics']
                 obj['tags'] = [{'name': t} for t in tag_names]
                 packages.append(obj)
@@ -553,8 +546,7 @@ class SepsisMetabolomicsLCMSContextual(object):
         for xlsx_path in glob(path + '/*.xlsx'):
             self.sample_metadata.update(self._package_metadata(self._read_metadata(xlsx_path)))
 
-    def get(self, track_meta):
-        bpa_id = track_meta.five_digit_bpa_id
+    def get(self, bpa_id, submission_obj):
         if bpa_id in self.sample_metadata:
             return self.sample_metadata[bpa_id]
         logger.warning("no %s metadata available for: %s" % (type(self), repr(bpa_id)))
@@ -606,11 +598,12 @@ class SepsisMetabolomicsLCMSMetadata(BaseMetadata):
     metadata_urls = ['https://downloads-qcif.bioplatforms.com/bpa/sepsis/metabolomics/lcms/']
     organization = 'bpa-sepsis'
     auth = ('sepsis', 'sepsis')
+    ckan_data_type = 'arp-metabolomics-lcms'
 
     def __init__(self, metadata_path, contextual_metadata=None, track_csv_path=None):
         self.path = Path(metadata_path)
         self.contextual_metadata = contextual_metadata
-        self.track_meta = self.read_track_csv(track_csv_path)
+        self.track_meta = SepsisTrackMetadata(track_csv_path)
 
     def read_track_csv(self, fname):
         if fname is None:
@@ -650,40 +643,26 @@ class SepsisMetabolomicsLCMSMetadata(BaseMetadata):
                 bpa_id = row.bpa_id
                 if bpa_id is None:
                     continue
-                track_meta = self.track_meta[bpa_id]
-                name = bpa_id_to_ckan_name(bpa_id.split('.')[-1], 'arp-metabolomics-lcms')
-                obj = {
+                track_meta = self.track_meta.get(bpa_id)
+                obj = track_meta.copy()
+                name = bpa_id_to_ckan_name(bpa_id.split('.')[-1], self.ckan_data_type)
+                obj.update({
                     'name': name,
                     'id': name,
                     'bpa_id': bpa_id,
                     'title': 'ARP Metabolomics LCMS %s' % (bpa_id),
-                    'notes': 'ARP Metabolomics LCMS Data: %s %s' % (track_meta.taxon_or_organism, track_meta.strain_or_isolate),
+                    'notes': 'ARP Metabolomics LCMS Data: %s %s' % (track_meta['taxon_or_organism'], track_meta['strain_or_isolate']),
                     'sample_fractionation_extract_solvent': row.sample_fractionation_extract_solvent,
                     'lc_column_type': row.lc_column_type,
                     'gradient_time_min_flow': row.gradient_time_min_flow,
                     'mass_spectrometer': row.mass_spectrometer,
                     'acquisition_mode': row.acquisition_mode,
                     'raw_file_name': row.raw_file_name,
-                    'data_type': track_meta.data_type,
-                    'taxon_or_organism': track_meta.taxon_or_organism,
-                    'strain_or_isolate': track_meta.strain_or_isolate,
-                    'serovar': track_meta.serovar,
-                    'growth_media': track_meta.growth_media,
-                    'replicate': track_meta.replicate,
-                    'omics': track_meta.omics,
-                    'analytical_platform': track_meta.analytical_platform.strip(),
-                    'facility': track_meta.facility,
-                    'work_order': track_meta.work_order,
-                    'contextual_data_submission_date': track_meta.contextual_data_submission_date,
-                    'sample_submission_date': track_meta.sample_submission_date,
-                    'data_generated': track_meta.data_generated,
-                    'archive_ingestion_date': track_meta.archive_ingestion_date,
-                    'archive_id': track_meta.archive_id,
-                    'type': 'arp-metabolomics-lcms',
+                    'type': self.ckan_data_type,
                     'private': True,
-                }
+                })
                 for contextual_source in self.contextual_metadata:
-                    obj.update(contextual_source.get(track_meta))
+                    obj.update(contextual_source.get(bpa_id, track_meta))
                 tag_names = ['lcms', 'metabolomics']
                 obj['tags'] = [{'name': t} for t in tag_names]
                 packages.append(obj)
@@ -716,8 +695,7 @@ class SepsisProteomicsContextual(object):
         xlsx_path = one(glob(path + '/*.xlsx'))
         self.sample_metadata = self._package_metadata(self._read_metadata(xlsx_path))
 
-    def get(self, track_meta):
-        bpa_id = track_meta.five_digit_bpa_id
+    def get(self, bpa_id, submission_obj):
         if bpa_id in self.sample_metadata:
             return self.sample_metadata[bpa_id]
         logger.warning("no %s metadata available for: %s" % (type(self), repr(bpa_id)))
@@ -775,11 +753,12 @@ class SepsisProteomicsMS1QuantificationMetadata(BaseMetadata):
     metadata_urls = ['https://downloads-qcif.bioplatforms.com/bpa/sepsis/proteomics/ms1quantification/']
     organization = 'bpa-sepsis'
     auth = ('sepsis', 'sepsis')
+    ckan_data_type = 'arp-proteomics-ms1quantification'
 
     def __init__(self, metadata_path, contextual_metadata=None, track_csv_path=None):
         self.path = Path(metadata_path)
         self.contextual_metadata = contextual_metadata
-        self.track_meta = self.read_track_csv(track_csv_path)
+        self.track_meta = SepsisTrackMetadata(track_csv_path)
 
     def read_track_csv(self, fname):
         if fname is None:
@@ -822,14 +801,15 @@ class SepsisProteomicsMS1QuantificationMetadata(BaseMetadata):
                 bpa_id = row.bpa_id
                 if bpa_id is None:
                     continue
-                track_meta = self.track_meta[bpa_id]
-                name = bpa_id_to_ckan_name(bpa_id.split('.')[-1], 'arp-proteomics-ms1quantification')
-                obj = {
+                track_meta = self.track_meta.get(bpa_id)
+                obj = track_meta.copy()
+                name = bpa_id_to_ckan_name(bpa_id.split('.')[-1], self.ckan_data_type)
+                obj.update({
                     'name': name,
                     'id': name,
                     'bpa_id': bpa_id,
                     'title': 'ARP Proteomics LCMS %s' % (bpa_id),
-                    'notes': 'ARP Proteomics LCMS Data: %s %s' % (track_meta.taxon_or_organism, track_meta.strain_or_isolate),
+                    'notes': 'ARP Proteomics LCMS Data: %s %s' % (track_meta['taxon_or_organism'], track_meta['strain_or_isolate']),
                     'sample_fractionation_none_number': row.sample_fractionation_none_number,
                     'lc_column_type': row.lc_column_type,
                     'gradient_time_per_acn': row.gradient_time_per_acn,
@@ -837,26 +817,11 @@ class SepsisProteomicsMS1QuantificationMetadata(BaseMetadata):
                     'mass_spectrometer': row.mass_spectrometer,
                     'acquisition_mode_fragmentation': row.acquisition_mode_fragmentation,
                     'raw_file_name': row.raw_file_name,
-                    'data_type': track_meta.data_type,
-                    'taxon_or_organism': track_meta.taxon_or_organism,
-                    'strain_or_isolate': track_meta.strain_or_isolate,
-                    'serovar': track_meta.serovar,
-                    'growth_media': track_meta.growth_media,
-                    'replicate': track_meta.replicate,
-                    'omics': track_meta.omics,
-                    'analytical_platform': track_meta.analytical_platform.strip(),
-                    'facility': track_meta.facility,
-                    'work_order': track_meta.work_order,
-                    'contextual_data_submission_date': track_meta.contextual_data_submission_date,
-                    'sample_submission_date': track_meta.sample_submission_date,
-                    'data_generated': track_meta.data_generated,
-                    'archive_ingestion_date': track_meta.archive_ingestion_date,
-                    'archive_id': track_meta.archive_id,
-                    'type': 'arp-proteomics-ms1quantification',
+                    'type': self.ckan_data_type,
                     'private': True,
-                }
+                })
                 for contextual_source in self.contextual_metadata:
-                    obj.update(contextual_source.get(track_meta))
+                    obj.update(contextual_source.get(bpa_id, track_meta))
                 tag_names = ['ms1quantification', 'proteomics']
                 obj['tags'] = [{'name': t} for t in tag_names]
                 packages.append(obj)
@@ -882,11 +847,12 @@ class SepsisProteomicsSwathMSMetadata(BaseMetadata):
     metadata_urls = ['https://downloads-qcif.bioplatforms.com/bpa/sepsis/proteomics/swathms/']
     organization = 'bpa-sepsis'
     auth = ('sepsis', 'sepsis')
+    ckan_data_type = 'arp-proteomics-swathms'
 
     def __init__(self, metadata_path, contextual_metadata=None, track_csv_path=None):
         self.path = Path(metadata_path)
         self.contextual_metadata = contextual_metadata
-        self.track_meta = self.read_track_csv(track_csv_path)
+        self.track_meta = SepsisTrackMetadata(track_csv_path)
 
     def read_track_csv(self, fname):
         if fname is None:
@@ -929,14 +895,15 @@ class SepsisProteomicsSwathMSMetadata(BaseMetadata):
                 bpa_id = row.bpa_id
                 if bpa_id is None:
                     continue
-                track_meta = self.track_meta[bpa_id]
-                name = bpa_id_to_ckan_name(bpa_id.split('.')[-1], 'arp-proteomics-swathms')
-                obj = {
+                track_meta = self.track_meta.get(bpa_id)
+                obj = track_meta.copy()
+                name = bpa_id_to_ckan_name(bpa_id.split('.')[-1], self.ckan_data_type)
+                obj.update({
                     'name': name,
                     'id': name,
                     'bpa_id': bpa_id,
                     'title': 'ARP Proteomics LCMS %s' % (bpa_id),
-                    'notes': 'ARP Proteomics LCMS Data: %s %s' % (track_meta.taxon_or_organism, track_meta.strain_or_isolate),
+                    'notes': 'ARP Proteomics LCMS Data: %s %s' % (track_meta['taxon_or_organism'], track_meta['strain_or_isolate']),
                     'sample_fractionation_none_number': row.sample_fractionation_none_number,
                     'lc_column_type': row.lc_column_type,
                     'gradient_time_per_acn': row.gradient_time_per_acn,
@@ -944,26 +911,11 @@ class SepsisProteomicsSwathMSMetadata(BaseMetadata):
                     'mass_spectrometer': row.mass_spectrometer,
                     'acquisition_mode_fragmentation': row.acquisition_mode_fragmentation,
                     'raw_file_name': row.raw_file_name,
-                    'data_type': track_meta.data_type,
-                    'taxon_or_organism': track_meta.taxon_or_organism,
-                    'strain_or_isolate': track_meta.strain_or_isolate,
-                    'serovar': track_meta.serovar,
-                    'growth_media': track_meta.growth_media,
-                    'replicate': track_meta.replicate,
-                    'omics': track_meta.omics,
-                    'analytical_platform': track_meta.analytical_platform.strip(),
-                    'facility': track_meta.facility,
-                    'work_order': track_meta.work_order,
-                    'contextual_data_submission_date': track_meta.contextual_data_submission_date,
-                    'sample_submission_date': track_meta.sample_submission_date,
-                    'data_generated': track_meta.data_generated,
-                    'archive_ingestion_date': track_meta.archive_ingestion_date,
-                    'archive_id': track_meta.archive_id,
-                    'type': 'arp-proteomics-swathms',
+                    'type': self.ckan_data_type,
                     'private': True,
-                }
+                })
                 for contextual_source in self.contextual_metadata:
-                    obj.update(contextual_source.get(track_meta))
+                    obj.update(contextual_source.get(bpa_id, track_meta))
                 tag_names = ['swathms', 'proteomics']
                 obj['tags'] = [{'name': t} for t in tag_names]
                 packages.append(obj)
