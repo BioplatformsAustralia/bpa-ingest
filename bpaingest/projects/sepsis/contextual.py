@@ -92,11 +92,10 @@ class SepsisBacterialContextual(object):
         wrapper = ExcelWrapper(
             field_spec,
             metadata_path,
-            sheet_name='Sheet1',
+            sheet_name=None,
             header_length=5,
             column_name_row_index=4,
-            formatting_info=True,
-            pick_first_sheet=True)
+            formatting_info=True)
         return wrapper.get_all()
 
 
@@ -150,11 +149,10 @@ class SepsisGenomicsContextual(object):
         wrapper = ExcelWrapper(
             field_spec,
             metadata_path,
-            sheet_name='Sheet1',
+            sheet_name=None,
             header_length=5,
             column_name_row_index=4,
-            formatting_info=True,
-            pick_first_sheet=True)
+            formatting_info=True)
         return wrapper.get_all()
 
 
@@ -214,11 +212,10 @@ class SepsisTranscriptomicsHiseqContextual(object):
         wrapper = ExcelWrapper(
             field_spec,
             metadata_path,
-            sheet_name='Sheet1',
+            sheet_name=None,
             header_length=8,
             column_name_row_index=7,
-            formatting_info=True,
-            pick_first_sheet=True)
+            formatting_info=True)
         return wrapper.get_all()
 
 
@@ -227,13 +224,13 @@ class SepsisMetabolomicsLCMSContextual(object):
     Genomics sample metadata: used by the genomics classes.
     """
 
-    metadata_urls = ['https://downloads-qcif.bioplatforms.com/bpa/sepsis/projectdata/current/metabolomics-lcms/']
+    metadata_urls = ['https://downloads-qcif.bioplatforms.com/bpa/sepsis/projectdata/current/other-omics/']
     name = 'sepsis-metabolomics-lcms'
 
     def __init__(self, path):
         self.sample_metadata = {}
-        for xlsx_path in glob(path + '/*.xlsx'):
-            self.sample_metadata.update(self._package_metadata(self._read_metadata(xlsx_path)))
+        xlsx_path = one(glob(path + '/*.xlsx'))
+        self.sample_metadata.update(self._package_metadata(self._read_metadata(xlsx_path)))
 
     def get(self, bpa_id, submission_obj):
         if bpa_id in self.sample_metadata:
@@ -246,6 +243,7 @@ class SepsisMetabolomicsLCMSContextual(object):
         for row in rows:
             if not row.bpa_id:
                 continue
+            print(row)
             if row.bpa_id not in sample_metadata:
                 logger.warning("duplicate sample metadata row for {}".format(row.bpa_id))
             sample_metadata[row.bpa_id] = row_meta = {}
@@ -274,11 +272,10 @@ class SepsisMetabolomicsLCMSContextual(object):
         wrapper = ExcelWrapper(
             field_spec,
             metadata_path,
-            sheet_name='Sheet1',
+            sheet_name='Metabolomics',
             header_length=8,
             column_name_row_index=7,
-            formatting_info=True,
-            pick_first_sheet=True)
+            formatting_info=True)
         return wrapper.get_all()
 
 
@@ -339,9 +336,8 @@ class SepsisProteomicsContextual(object):
         wrapper = ExcelWrapper(
             field_spec,
             metadata_path,
-            sheet_name='Sheet1',
+            sheet_name=None,
             header_length=9,
             column_name_row_index=8,
-            formatting_info=True,
-            pick_first_sheet=True)
+            formatting_info=True)
         return wrapper.get_all()

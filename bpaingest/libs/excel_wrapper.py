@@ -11,7 +11,6 @@ being the fist column of the fieldspec, the value are found in the column specis
 as mangled by the provided method.
 '''
 
-import os
 import datetime
 from collections import namedtuple
 
@@ -64,21 +63,19 @@ class ExcelWrapper(object):
                  header_length,
                  column_name_row_index=0,
                  ignore_date=False,
-                 formatting_info=False,
-                 pick_first_sheet=False):
+                 formatting_info=False):
 
         self.ignore_date = ignore_date  # ignore xlrd's attempt at date conversion
         self.file_name = file_name
-        self.sheet_name = sheet_name
         self.header_length = header_length
         self.column_name_row_index = column_name_row_index
         self.field_spec = field_spec
 
         self.workbook = xlrd.open_workbook(file_name, formatting_info=False)  # not implemented
-        if pick_first_sheet:
+        if sheet_name is None:
             self.sheet = self.workbook.sheet_by_index(0)
         else:
-            self.sheet = self.workbook.sheet_by_name(self.sheet_name)
+            self.sheet = self.workbook.sheet_by_name(sheet_name)
 
         self.field_names = self._set_field_names()
         self.missing_headers = []
@@ -99,6 +96,9 @@ class ExcelWrapper(object):
         ''' maps the named field to the actual column in the spreadsheet '''
 
         def strip_unicode(s):
+            if type(s) is not str and type(s) is not unicode:
+                print("%s `%s'" % (type(s), repr(s)))
+                return s
             return ''.join([t for t in s if ord(t) < 128])
 
         header = [strip_unicode(t).strip().lower() for t in self.sheet.row_values(self.column_name_row_index)]

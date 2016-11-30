@@ -48,11 +48,10 @@ class SepsisGenomicsMiseqMetadata(BaseMetadata):
         wrapper = ExcelWrapper(
             field_spec,
             fname,
-            sheet_name="Sheet1",
+            sheet_name=None,
             header_length=2,
             column_name_row_index=1,
-            formatting_info=True,
-            pick_first_sheet=True)
+            formatting_info=True)
         return wrapper.get_all()
 
     def get_packages(self):
@@ -135,11 +134,10 @@ class SepsisGenomicsPacbioMetadata(BaseMetadata):
         wrapper = ExcelWrapper(
             field_spec,
             fname,
-            sheet_name="Sheet1",
+            sheet_name=None,
             header_length=2,
             column_name_row_index=1,
-            formatting_info=True,
-            pick_first_sheet=True)
+            formatting_info=True)
         return wrapper.get_all()
 
     def get_packages(self):
@@ -224,11 +222,10 @@ class SepsisTranscriptomicsHiseqMetadata(BaseMetadata):
         wrapper = ExcelWrapper(
             field_spec,
             fname,
-            sheet_name="Sheet1",
+            sheet_name=None,
             header_length=2,
             column_name_row_index=1,
-            formatting_info=True,
-            pick_first_sheet=True)
+            formatting_info=True)
         return wrapper.get_all()
 
     def get_packages(self):
@@ -315,11 +312,10 @@ class SepsisMetabolomicsLCMSMetadata(BaseMetadata):
         wrapper = ExcelWrapper(
             field_spec,
             fname,
-            sheet_name="Sheet1",
+            sheet_name=None,
             header_length=1,
             column_name_row_index=1,
-            formatting_info=True,
-            pick_first_sheet=True)
+            formatting_info=True)
         return wrapper.get_all()
 
     def get_packages(self):
@@ -408,11 +404,10 @@ class SepsisProteomicsMS1QuantificationMetadata(BaseMetadata):
         wrapper = ExcelWrapper(
             field_spec,
             fname,
-            sheet_name="Sheet1",
+            sheet_name=None,
             header_length=1,
             column_name_row_index=1,
-            formatting_info=True,
-            pick_first_sheet=True)
+            formatting_info=True)
         return wrapper.get_all()
 
     def get_packages(self):
@@ -502,11 +497,10 @@ class SepsisProteomicsSwathMSMetadata(BaseMetadata):
         wrapper = ExcelWrapper(
             field_spec,
             fname,
-            sheet_name="Sheet1",
+            sheet_name=None,
             header_length=1,
             column_name_row_index=1,
-            formatting_info=True,
-            pick_first_sheet=True)
+            formatting_info=True)
         return wrapper.get_all()
 
     def get_packages(self):
