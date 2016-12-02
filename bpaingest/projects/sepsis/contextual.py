@@ -161,7 +161,7 @@ class SepsisTranscriptomicsHiseqContextual(object):
     Genomics sample metadata: used by the genomics classes.
     """
 
-    metadata_urls = ['https://downloads-qcif.bioplatforms.com/bpa/sepsis/projectdata/current/transcriptomics-hiseq/']
+    metadata_urls = ['https://downloads-qcif.bioplatforms.com/bpa/sepsis/projectdata/current/other-omics/']
     name = 'sepsis-transcriptomics-hiseq'
 
     def __init__(self, path):
@@ -212,9 +212,9 @@ class SepsisTranscriptomicsHiseqContextual(object):
         wrapper = ExcelWrapper(
             field_spec,
             metadata_path,
-            sheet_name=None,
-            header_length=8,
-            column_name_row_index=7,
+            sheet_name='RNA HiSeq',
+            header_length=4,
+            column_name_row_index=3,
             formatting_info=True)
         return wrapper.get_all()
 
@@ -273,8 +273,8 @@ class SepsisMetabolomicsLCMSContextual(object):
             field_spec,
             metadata_path,
             sheet_name='Metabolomics',
-            header_length=8,
-            column_name_row_index=7,
+            header_length=4,
+            column_name_row_index=3,
             formatting_info=True)
         return wrapper.get_all()
 
@@ -284,7 +284,7 @@ class SepsisProteomicsContextual(object):
     Proteomics sample metadata: used by both proteomics classes.
     """
 
-    metadata_urls = ['https://downloads-qcif.bioplatforms.com/bpa/sepsis/projectdata/current/proteomics/']
+    metadata_urls = ['https://downloads-qcif.bioplatforms.com/bpa/sepsis/projectdata/current/other-omics/']
     name = 'sepsis-proteomics'
 
     def __init__(self, path):
@@ -336,8 +336,8 @@ class SepsisProteomicsContextual(object):
         wrapper = ExcelWrapper(
             field_spec,
             metadata_path,
-            sheet_name=None,
-            header_length=9,
-            column_name_row_index=8,
+            sheet_name='Proteomics',
+            header_length=4,
+            column_name_row_index=3,
             formatting_info=True)
         return wrapper.get_all()
