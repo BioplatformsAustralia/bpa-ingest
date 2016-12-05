@@ -53,7 +53,7 @@ class SepsisBacterialContextual(object):
         tpl = (submission_obj['taxon_or_organism'], submission_obj['strain_or_isolate'])
         if tpl in self.sample_metadata:
             return self.sample_metadata[tpl]
-        logger.warning("no %s metadata available for: %s" % (type(self), repr(tpl)))
+        logger.warning("no %s metadata available for: %s" % (type(self).__name__, repr(tpl)))
         return {}
 
     def _package_metadata(self, rows):
@@ -114,7 +114,7 @@ class SepsisGenomicsContextual(object):
     def get(self, bpa_id, submission_obj):
         if bpa_id in self.sample_metadata:
             return self.sample_metadata[bpa_id]
-        logger.warning("no %s metadata available for: %s" % (type(self), repr(bpa_id)))
+        logger.warning("no %s metadata available for: %s" % (type(self).__name__, repr(bpa_id)))
         return {}
 
     def _package_metadata(self, rows):
@@ -172,7 +172,7 @@ class SepsisTranscriptomicsHiseqContextual(object):
     def get(self, bpa_id, submission_obj):
         if bpa_id in self.sample_metadata:
             return self.sample_metadata[bpa_id]
-        logger.warning("no %s metadata available for: %s" % (type(self), repr(bpa_id)))
+        logger.warning("no %s metadata available for: %s" % (type(self).__name__, repr(bpa_id)))
         return {}
 
     def _package_metadata(self, rows):
@@ -235,7 +235,7 @@ class SepsisMetabolomicsLCMSContextual(object):
     def get(self, bpa_id, submission_obj):
         if bpa_id in self.sample_metadata:
             return self.sample_metadata[bpa_id]
-        logger.warning("no %s metadata available for: %s" % (type(self), repr(bpa_id)))
+        logger.warning("no %s metadata available for: %s" % (type(self).__name__, repr(bpa_id)))
         return {}
 
     def _package_metadata(self, rows):
@@ -294,7 +294,7 @@ class SepsisProteomicsContextual(object):
     def get(self, bpa_id, submission_obj):
         if bpa_id in self.sample_metadata:
             return self.sample_metadata[bpa_id]
-        logger.warning("no %s metadata available for: %s" % (type(self), repr(bpa_id)))
+        logger.warning("no %s metadata available for: %s" % (type(self).__name__, repr(bpa_id)))
         return {}
 
     def _package_metadata(self, rows):

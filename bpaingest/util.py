@@ -116,3 +116,19 @@ def csv_to_named_tuple(typname, fname):
         for row in r:
             rows.append(typ(*row))
         return header, rows
+
+
+def common_values(dicts):
+    """
+    given a list of dicts, return a dict with only the values shared
+    in common between those dicts
+    """
+    all_keys = set()
+    for d in dicts:
+        all_keys = all_keys.union(set(d.keys()))
+    r = {}
+    for k in all_keys:
+        vals = set([d.get(k) for d in dicts])
+        if len(vals) == 1:
+            r[k] = dicts[0][k]
+    return r

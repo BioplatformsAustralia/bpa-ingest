@@ -5,7 +5,7 @@ from __future__ import print_function
 from unipath import Path
 
 from ...libs import ingest_utils
-from ...util import make_logger, bpa_id_to_ckan_name, csv_to_named_tuple
+from ...util import make_logger, bpa_id_to_ckan_name, csv_to_named_tuple, common_values
 from ...bpa import bpa_mirror_url
 from ...abstract import BaseMetadata
 from ...libs.excel_wrapper import ExcelWrapper
@@ -483,9 +483,14 @@ class SepsisProteomicsSwathMSMetadata(BaseMetadata):
 
     @classmethod
     def parse_spreadsheet(self, fname):
+        def parse_pooled_bpa_id(s):
+            if isinstance(s, unicode) and ',' in s:
+                return tuple([ingest_utils.extract_bpa_id(t.strip()) for t in s.split(',')])
+            else:
+                return ingest_utils.extract_bpa_id(s)
 
         field_spec = [
-            ("bpa_id", "Bacterial sample unique ID", ingest_utils.extract_bpa_id),
+            ("bpa_id", "Bacterial sample unique ID", parse_pooled_bpa_id),
             ("facility", "Facility", None),
             ("sample_fractionation_none_number", "Sample fractionation (none/number)", None),
             ("lc_column_type", "LC/column type", None),
@@ -514,14 +519,21 @@ class SepsisProteomicsSwathMSMetadata(BaseMetadata):
                 bpa_id = row.bpa_id
                 if bpa_id is None:
                     continue
-                track_meta = self.track_meta.get(bpa_id)
-                obj = track_meta.copy()
-                name = bpa_id_to_ckan_name(bpa_id.split('.')[-1], self.ckan_data_type)
+                # if `bpa_id` is a tuple, we've got a pooled sample
+                if type(bpa_id) is tuple:
+                    printable_bpa_id = '_'.join([t.split('.')[-1] for t in sorted(bpa_id)])
+                    track_meta = common_values([self.track_meta.get(t) for t in bpa_id])
+                    obj = {}
+                else:
+                    printable_bpa_id = bpa_id
+                    track_meta = self.track_meta.get(bpa_id)
+                    obj = track_meta.copy()
+                name = bpa_id_to_ckan_name(printable_bpa_id.split('.')[-1], self.ckan_data_type)
                 obj.update({
                     'name': name,
                     'id': name,
-                    'bpa_id': bpa_id,
-                    'title': 'ARP Proteomics LCMS %s' % (bpa_id),
+                    'bpa_id': printable_bpa_id,
+                    'title': 'ARP Proteomics LCMS %s' % (printable_bpa_id),
                     'notes': 'ARP Proteomics LCMS Data: %s %s' % (track_meta['taxon_or_organism'], track_meta['strain_or_isolate']),
                     'sample_fractionation_none_number': row.sample_fractionation_none_number,
                     'lc_column_type': row.lc_column_type,
@@ -562,6 +574,9 @@ class SepsisProteomicsSwathMSMetadata(BaseMetadata):
             for file_info in files.parse_md5_file(swath_patterns, md5_file):
                 resource = dict((t, file_info.get(t)) for t in ('vendor', 'machine_data'))
                 resource['md5'] = resource['id'] = file_info.md5
+                resource['data_type'] = file_info.get('type')
+                resource['vendor'] = file_info.get('vendor')
+                resource['apaf_project_code'] = file_info.get('apaf_project_code')
                 resource['name'] = file_info.filename
                 if file_info.data_type == '1d':
                     package_id = ingest_utils.extract_bpa_id(file_info.get('id'))
@@ -570,6 +585,5 @@ class SepsisProteomicsSwathMSMetadata(BaseMetadata):
                     package_id = file_info.get('id')
                 legacy_url = bpa_mirror_url('bpa/sepsis/proteomics/swathms/' + file_info.filename)
                 resources.append((package_id, legacy_url, resource))
-                print(package_id, file_info.md5, file_info.data_type)
         return []
         # return resources
