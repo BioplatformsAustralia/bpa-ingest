@@ -57,7 +57,6 @@ class SepsisGenomicsMiseqMetadata(BaseMetadata):
     def get_packages(self):
         logger.info("Ingesting Sepsis Genomics Miseq metadata from {0}".format(self.path))
         packages = []
-        # note: the metadata in the package xlsx is quite minimal
         for fname in glob(self.path + '/*.xlsx'):
             logger.info("Processing Sepsis Genomics metadata file {0}".format(fname))
             rows = list(SepsisGenomicsMiseqMetadata.parse_spreadsheet(fname))
@@ -143,7 +142,6 @@ class SepsisGenomicsPacbioMetadata(BaseMetadata):
     def get_packages(self):
         logger.info("Ingesting Sepsis Genomics Pacbio metadata from {0}".format(self.path))
         packages = []
-        # note: the metadata in the package xlsx is quite minimal
         for fname in glob(self.path + '/*.xlsx'):
             logger.info("Processing Sepsis Genomics metadata file {0}".format(fname))
             rows = list(SepsisGenomicsPacbioMetadata.parse_spreadsheet(fname))
@@ -231,7 +229,6 @@ class SepsisTranscriptomicsHiseqMetadata(BaseMetadata):
     def get_packages(self):
         logger.info("Ingesting Sepsis Transcriptomics Hiseq metadata from {0}".format(self.path))
         packages = []
-        # note: the metadata in the package xlsx is quite minimal
         for fname in glob(self.path + '/*.xlsx'):
             logger.info("Processing Sepsis Transcriptomics metadata file {0}".format(fname))
             rows = list(SepsisTranscriptomicsHiseqMetadata.parse_spreadsheet(fname))
@@ -320,7 +317,6 @@ class SepsisMetabolomicsLCMSMetadata(BaseMetadata):
 
     def get_packages(self):
         packages = []
-        # note: the metadata in the package xlsx is quite minimal
         for fname in glob(self.path + '/*.xlsx'):
             logger.info("Processing Sepsis Metabolomics LCMS metadata file {0}".format(fname))
             rows = list(SepsisMetabolomicsLCMSMetadata.parse_spreadsheet(fname))
@@ -412,7 +408,6 @@ class SepsisProteomicsMS1QuantificationMetadata(BaseMetadata):
 
     def get_packages(self):
         packages = []
-        # note: the metadata in the package xlsx is quite minimal
         for fname in glob(self.path + '/*.xlsx'):
             logger.info("Processing Sepsis Proteomics MS1Quantification metadata file {0}".format(fname))
             rows = list(SepsisProteomicsMS1QuantificationMetadata.parse_spreadsheet(fname))
@@ -527,13 +522,16 @@ class SepsisProteomicsSwathMSMetadata(BaseMetadata):
                 if bpa_id is None:
                     continue
                 contextual_meta = {}
+                # if `bpa_id` is a tuple, we've got a pooled sample
                 if type(bpa_id) is tuple:
+                    data_type = '2d'
                     printable_bpa_id = '_'.join([t.split('.')[-1] for t in sorted(bpa_id)])
                     track_meta = common_values([self.track_meta.get(t) for t in bpa_id])
                     track_meta = common_values([self.track_meta.get(t) for t in bpa_id])
                     for contextual_source in self.contextual_metadata:
                         contextual_meta.update(common_values([contextual_source.get(t, track_meta) for t in bpa_id]))
                 else:
+                    data_type = '1d'
                     printable_bpa_id = bpa_id
                     track_meta = self.track_meta.get(bpa_id)
                     for contextual_source in self.contextual_metadata:
@@ -545,7 +543,7 @@ class SepsisProteomicsSwathMSMetadata(BaseMetadata):
                     'mass_spectrometer': row.mass_spectrometer,
                 }
                 package_meta.update(contextual_meta)
-                package_data[name] = (name, printable_bpa_id, track_meta, package_meta)
+                package_data[name] = (name, data_type, printable_bpa_id, track_meta, package_meta)
                 file_data[row.raw_file_name] = {
                     'package_name': name,
                     'sample_fractionation_none_number': row.sample_fractionation_none_number,
@@ -554,11 +552,11 @@ class SepsisProteomicsSwathMSMetadata(BaseMetadata):
                 }
         return package_data, file_data
 
-    def get_packages(self):
+    def get_swath_packages(self, data_type):
         packages = []
-        # note: the metadata in the package xlsx is quite minimal
-        for package_name, (name, printable_bpa_id, track_meta, submission_meta) in self.package_data.items():
-            # if `bpa_id` is a tuple, we've got a pooled sample
+        for package_name, (name, package_data_type, printable_bpa_id, track_meta, submission_meta) in self.package_data.items():
+            if package_data_type != data_type:
+                continue
             obj = track_meta.copy()
             obj.update(submission_meta)
             obj.update({
@@ -573,10 +571,9 @@ class SepsisProteomicsSwathMSMetadata(BaseMetadata):
             tag_names = ['swathms', 'proteomics']
             obj['tags'] = [{'name': t} for t in tag_names]
             packages.append(obj)
-        return []
-        # return packages
+        return packages
 
-    def get_resources(self):
+    def get_swath_resources(self, data_type):
         logger.info("Ingesting Sepsis md5 file information from {0}".format(self.path))
         resources = []
 
@@ -595,8 +592,11 @@ class SepsisProteomicsSwathMSMetadata(BaseMetadata):
         for md5_file in glob(self.path + '/*.md5'):
             logger.info("Processing md5 file {0}".format(md5_file))
             for file_info in files.parse_md5_file(swath_patterns, md5_file):
+                if file_info.data_type != data_type:
+                    continue
                 resource = dict((t, file_info.get(t)) for t in ('vendor', 'machine_data'))
-                # this should exist for all the files, following up with APAF
+                if file_info.filename not in self.file_data:
+                    logger.warning("no submission metadata for `%s'" % (file_info.filename))
                 file_meta = self.file_data.get(file_info.filename, {})
                 resource['md5'] = resource['id'] = file_info.md5
                 resource['data_type'] = file_info.get('type')
@@ -610,5 +610,20 @@ class SepsisProteomicsSwathMSMetadata(BaseMetadata):
                     package_id = package_name
                 legacy_url = bpa_mirror_url('bpa/sepsis/proteomics/swathms/' + file_info.filename)
                 resources.append((package_id, legacy_url, resource))
-        return []
-        # return resources
+        return resources
+
+
+class SepsisProteomicsSwathMS1DMetadata(SepsisProteomicsSwathMSMetadata):
+    def get_packages(self):
+        return self.get_swath_packages('1d')
+
+    def get_resources(self):
+        return self.get_swath_resources('1d')
+
+
+class SepsisProteomicsSwathMS2DMetadata(SepsisProteomicsSwathMSMetadata):
+    def get_packages(self):
+        return self.get_swath_packages('2d')
+
+    def get_resources(self):
+        return self.get_swath_resources('2d')
