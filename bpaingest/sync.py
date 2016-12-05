@@ -121,20 +121,20 @@ def reupload_resources(ckan, archive_info, to_reupload, md5_legacy_url, auth, nu
     q.join()
 
 
-def sync_resources(ckan, resources, ckan_packages, auth, num_threads, do_uploads):
+def sync_resources(ckan, resources, resource_linkage_attr, ckan_packages, auth, num_threads, do_uploads):
     logger.info('syncing %d resources' % (len(resources)))
 
     archive_info = ArchiveInfo(ckan)
 
-    bpa_id_package_id = {}
+    resource_linkage_package_id = {}
     for package_obj in ckan_packages:
-        bpa_id_package_id[package_obj['bpa_id']] = package_obj['id']
+        resource_linkage_package_id[package_obj[resource_linkage_attr]] = package_obj['id']
 
     # wire the resources to their CKAN package
     resource_idx = {}
     md5_legacy_url = {}
-    for bpa_id, legacy_url, resource_obj in resources:
-        package_id = bpa_id_package_id[bpa_id]
+    for resource_linkage, legacy_url, resource_obj in resources:
+        package_id = resource_linkage_package_id[resource_linkage]
         obj = resource_obj.copy()
         obj['package_id'] = package_id
         if package_id not in resource_idx:
@@ -160,4 +160,4 @@ def sync_metadata(ckan, meta, auth, num_threads, do_uploads):
     # check that the IDs in packages are unique
     assert(len(list(set([t['id'] for t in packages]))) == len(packages))
     ckan_packages = sync_packages(ckan, packages, organization, None)
-    sync_resources(ckan, meta.get_resources(), ckan_packages, auth, num_threads, do_uploads)
+    sync_resources(ckan, meta.get_resources(), meta.resource_linkage, ckan_packages, auth, num_threads, do_uploads)

@@ -456,13 +456,12 @@ class SepsisProteomicsMS1QuantificationMetadata(BaseMetadata):
         return resources
 
 
-class SepsisProteomicsSwathMSMetadata(BaseMetadata):
+class SepsisProteomicsSwathMSBaseMetadata(BaseMetadata):
     contextual_classes = [SepsisBacterialContextual]
     metadata_urls = ['https://downloads-qcif.bioplatforms.com/bpa/sepsis/proteomics/swathms/']
     metadata_patterns = [r'^.*\.md5', r'^.*_metadata\.xlsx']
     organization = 'bpa-sepsis'
     auth = ('sepsis', 'sepsis')
-    ckan_data_type = 'arp-proteomics-swathms'
 
     def __init__(self, metadata_path, contextual_metadata=None, track_csv_path=None):
         self.path = Path(metadata_path)
@@ -545,7 +544,7 @@ class SepsisProteomicsSwathMSMetadata(BaseMetadata):
                 package_meta.update(contextual_meta)
                 package_data[name] = (name, data_type, printable_bpa_id, track_meta, package_meta)
                 file_data[row.raw_file_name] = {
-                    'package_name': name,
+                    'package_name': printable_bpa_id,
                     'sample_fractionation_none_number': row.sample_fractionation_none_number,
                     'sample_on_column': row.sample_on_column,
                     'acquisition_mode_fragmentation': row.acquisition_mode_fragmentation,
@@ -559,12 +558,21 @@ class SepsisProteomicsSwathMSMetadata(BaseMetadata):
                 continue
             obj = track_meta.copy()
             obj.update(submission_meta)
+            pool = ''
+            if data_type == '1d':
+                obj.update({
+                    'bpa_id': printable_bpa_id,
+                })
+            if data_type == '2d':
+                pool = 'Pool '
+                obj.update({
+                    'pool_bpa_ids': printable_bpa_id,
+                })
             obj.update({
                 'name': name,
                 'id': name,
-                'bpa_id': printable_bpa_id,
-                'title': 'ARP Proteomics SwathMS %s' % (printable_bpa_id),
-                'notes': 'ARP Proteomics SwathMS Data: %s %s' % (track_meta['taxon_or_organism'], track_meta['strain_or_isolate']),
+                'title': 'ARP Proteomics SwathMS %s%s' % (pool, printable_bpa_id),
+                'notes': 'ARP Proteomics SwathMS %sData: %s %s' % (pool, track_meta['taxon_or_organism'], track_meta['strain_or_isolate']),
                 'type': self.ckan_data_type,
                 'private': True,
             })
@@ -613,7 +621,9 @@ class SepsisProteomicsSwathMSMetadata(BaseMetadata):
         return resources
 
 
-class SepsisProteomicsSwathMS1DMetadata(SepsisProteomicsSwathMSMetadata):
+class SepsisProteomicsSwathMSMetadata(SepsisProteomicsSwathMSBaseMetadata):
+    ckan_data_type = 'arp-proteomics-swathms'
+
     def get_packages(self):
         return self.get_swath_packages('1d')
 
@@ -621,7 +631,10 @@ class SepsisProteomicsSwathMS1DMetadata(SepsisProteomicsSwathMSMetadata):
         return self.get_swath_resources('1d')
 
 
-class SepsisProteomicsSwathMS2DMetadata(SepsisProteomicsSwathMSMetadata):
+class SepsisProteomicsSwathMSPoolMetadata(SepsisProteomicsSwathMSBaseMetadata):
+    ckan_data_type = 'arp-proteomics-swathms-pool'
+    resource_linkage = 'pool_bpa_ids'
+
     def get_packages(self):
         return self.get_swath_packages('2d')
 

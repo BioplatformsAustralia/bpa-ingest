@@ -243,7 +243,6 @@ class SepsisMetabolomicsLCMSContextual(object):
         for row in rows:
             if not row.bpa_id:
                 continue
-            print(row)
             if row.bpa_id not in sample_metadata:
                 logger.warning("duplicate sample metadata row for {}".format(row.bpa_id))
             sample_metadata[row.bpa_id] = row_meta = {}
