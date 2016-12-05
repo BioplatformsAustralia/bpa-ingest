@@ -4,6 +4,7 @@ Utility functions to fetch data from web server
 '''
 
 import os
+import re
 import sys
 import glob
 import requests
@@ -83,9 +84,11 @@ class Fetcher():
                     f.write(chunk)
                     f.flush()
 
-    def fetch_metadata_from_folder(self, fetch_gz=False):
+    def fetch_metadata_from_folder(self, metadata_patterns=None):
         ''' downloads metadata from archive '''
 
+        if metadata_patterns is None:
+            metadata_patterns = [r'^.*\.(md5|xlsx)$']
         logger.info('Fetching folder from {}'.format(self.metadata_source_url))
         response = requests.get(self.metadata_source_url, stream=True, auth=self.auth, verify=False)
         fetched = set()
@@ -93,10 +96,7 @@ class Fetcher():
             metadata_filename = link.get('href')
             if metadata_filename in fetched:
                 continue
-            if metadata_filename.endswith('.xlsx') or \
-                    metadata_filename.endswith('.md5'):
-                self.fetch(metadata_filename)
-                fetched.add(metadata_filename)
-
-            if fetch_gz is True and metadata_filename.endswith('.gz'):
-                self.fetch(metadata_filename)
+            if not any(re.match(pattern, metadata_filename) for pattern in metadata_patterns):
+                continue
+            self.fetch(metadata_filename)
+            fetched.add(metadata_filename)

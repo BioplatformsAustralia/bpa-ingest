@@ -464,6 +464,7 @@ class SepsisProteomicsMS1QuantificationMetadata(BaseMetadata):
 class SepsisProteomicsSwathMSMetadata(BaseMetadata):
     contextual_classes = [SepsisBacterialContextual]
     metadata_urls = ['https://downloads-qcif.bioplatforms.com/bpa/sepsis/proteomics/swathms/']
+    metadata_patterns = [r'^.*\.md5', r'^.*_metadata\.xlsx']
     organization = 'bpa-sepsis'
     auth = ('sepsis', 'sepsis')
     ckan_data_type = 'arp-proteomics-swathms'
@@ -537,7 +538,8 @@ class SepsisProteomicsSwathMSMetadata(BaseMetadata):
                 tag_names = ['swathms', 'proteomics']
                 obj['tags'] = [{'name': t} for t in tag_names]
                 packages.append(obj)
-        return packages
+        return []
+        # return packages
 
     def get_resources(self):
         logger.info("Ingesting Sepsis md5 file information from {0}".format(self.path))
@@ -551,4 +553,5 @@ class SepsisProteomicsSwathMSMetadata(BaseMetadata):
                 bpa_id = ingest_utils.extract_bpa_id(file_info.get('id'))
                 legacy_url = bpa_mirror_url('bpa/sepsis/proteomics/swathms/' + file_info.filename)
                 resources.append((bpa_id, legacy_url, resource))
-        return resources
+        return []
+        # return resources
