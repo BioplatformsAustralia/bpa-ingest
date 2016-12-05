@@ -91,7 +91,7 @@ class SepsisGenomicsMiseqMetadata(BaseMetadata):
         resources = []
         for md5_file in glob(self.path + '/*.md5'):
             logger.info("Processing md5 file {0}".format(md5_file))
-            for file_info in files.parse_md5_file(files.miseq_filename_re, md5_file):
+            for file_info in files.parse_md5_file({'miseq': [files.miseq_filename_re]}, md5_file):
                 resource = dict((t, file_info.get(t)) for t in ('index', 'lane', 'vendor', 'read', 'flow_cell_id', 'library', 'extraction', 'runsamplenum'))
                 resource['seq_size'] = file_info.get('size')
                 resource['md5'] = resource['id'] = file_info.md5
@@ -180,7 +180,7 @@ class SepsisGenomicsPacbioMetadata(BaseMetadata):
         resources = []
         for md5_file in glob(self.path + '/*.md5'):
             logger.info("Processing md5 file {0}".format(md5_file))
-            for file_info in files.parse_md5_file(files.pacbio_filename_re, md5_file):
+            for file_info in files.parse_md5_file({'pacbio': [files.pacbio_filename_re]}, md5_file):
                 resource = dict((t, file_info.get(t)) for t in ('run_id', 'vendor', 'data_type', 'machine_data'))
                 resource['md5'] = resource['id'] = file_info.md5
                 resource['name'] = file_info.filename
@@ -268,7 +268,7 @@ class SepsisTranscriptomicsHiseqMetadata(BaseMetadata):
         resources = []
         for md5_file in glob(self.path + '/*.md5'):
             logger.info("Processing md5 file {0}".format(md5_file))
-            for file_info in files.parse_md5_file(files.hiseq_filename_re, md5_file):
+            for file_info in files.parse_md5_file({'hiseq': [files.hiseq_filename_re]}, md5_file):
                 resource = dict((t, file_info.get(t)) for t in ('library', 'vendor', 'flow_cell_id', 'index', 'lane', 'read'))
                 resource['seq_size'] = file_info.get('size')
                 resource['md5'] = resource['id'] = file_info.md5
@@ -358,7 +358,7 @@ class SepsisMetabolomicsLCMSMetadata(BaseMetadata):
         resources = []
         for md5_file in glob(self.path + '/*.md5'):
             logger.info("Processing md5 file {0}".format(md5_file))
-            for file_info in files.parse_md5_file(files.metabolomics_deepclms_filename_re, md5_file):
+            for file_info in files.parse_md5_file({'lcms': [files.metabolomics_lcms_filename_re]}, md5_file):
                 resource = dict((t, file_info.get(t)) for t in ('vendor', 'platform', 'mastr_ms_id', 'machine_data'))
                 resource['md5'] = resource['id'] = file_info.md5
                 resource['name'] = file_info.filename
@@ -451,7 +451,7 @@ class SepsisProteomicsMS1QuantificationMetadata(BaseMetadata):
         resources = []
         for md5_file in glob(self.path + '/*.md5'):
             logger.info("Processing md5 file {0}".format(md5_file))
-            for file_info in files.parse_md5_file(files.proteomics_deepclms_filename_re, md5_file):
+            for file_info in files.parse_md5_file({'ms1quantification': [files.proteomics_ms1quantification_filename_re]}, md5_file):
                 resource = dict((t, file_info.get(t)) for t in ('vendor', 'machine_data'))
                 resource['md5'] = resource['id'] = file_info.md5
                 resource['name'] = file_info.filename
@@ -544,14 +544,32 @@ class SepsisProteomicsSwathMSMetadata(BaseMetadata):
     def get_resources(self):
         logger.info("Ingesting Sepsis md5 file information from {0}".format(self.path))
         resources = []
+
+        swath_patterns = {
+            '1d': [
+                files.proteomics_swathms_1d_ida_filename_re,
+                files.proteomics_swathms_swath_raw_filename_re
+            ],
+            '2d': [
+                files.proteomics_swathms_mslib_filename_re,
+                files.proteomics_swathms_2d_ida_filename_re,
+                files.proteomics_swathms_mspeak_filename_re,
+                files.proteomics_swathms_msresult_filename_re,
+            ]
+        }
         for md5_file in glob(self.path + '/*.md5'):
             logger.info("Processing md5 file {0}".format(md5_file))
-            for file_info in files.parse_md5_file(files.proteomics_swathms_1d_ida_filename_re, md5_file):
+            for file_info in files.parse_md5_file(swath_patterns, md5_file):
                 resource = dict((t, file_info.get(t)) for t in ('vendor', 'machine_data'))
                 resource['md5'] = resource['id'] = file_info.md5
                 resource['name'] = file_info.filename
-                bpa_id = ingest_utils.extract_bpa_id(file_info.get('id'))
+                if file_info.data_type == '1d':
+                    package_id = ingest_utils.extract_bpa_id(file_info.get('id'))
+                elif file_info.data_type == '2d':
+                    # APAF project code
+                    package_id = file_info.get('id')
                 legacy_url = bpa_mirror_url('bpa/sepsis/proteomics/swathms/' + file_info.filename)
-                resources.append((bpa_id, legacy_url, resource))
+                resources.append((package_id, legacy_url, resource))
+                print(package_id, file_info.md5, file_info.data_type)
         return []
         # return resources

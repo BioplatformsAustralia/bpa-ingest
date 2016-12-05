@@ -77,7 +77,7 @@ def test_hiseq():
         assert(hiseq_filename_re.match(filename) is not None)
 
 
-METABOLOMICS_DEEPLCMS_FILENAME_PATTERN = """
+METABOLOMICS_LCMS_FILENAME_PATTERN = """
     (?P<id>\d{4,6})_
     SEP_
     (?P<vendor>MA)_
@@ -86,19 +86,19 @@ METABOLOMICS_DEEPLCMS_FILENAME_PATTERN = """
     (?P<machine_data>[^\.]+).
     tar.gz
 """
-metabolomics_deepclms_filename_re = re.compile(METABOLOMICS_DEEPLCMS_FILENAME_PATTERN, re.VERBOSE)
+metabolomics_lcms_filename_re = re.compile(METABOLOMICS_LCMS_FILENAME_PATTERN, re.VERBOSE)
 
 
-def test_metabolomics_deeplcms():
+def test_metabolomics_lcms():
     filenames = [
         '25835_SEP_MA_LC-MS_SA2760-1-813-28029_Bio21-LC-QTOF-001.tar.gz'
     ]
 
     for filename in filenames:
-        assert(metabolomics_deepclms_filename_re.match(filename) is not None)
+        assert(metabolomics_lcms_filename_re.match(filename) is not None)
 
 
-PROTEOMICS_DEEPLCMS_FILENAME_PATTERN = """
+PROTEOMICS_MS1QUANTIFICATION_FILENAME_PATTERN = """
     (?P<id>\d{4,6})_
     SEP_
     (?P<vendor>MBPF)_
@@ -106,16 +106,16 @@ PROTEOMICS_DEEPLCMS_FILENAME_PATTERN = """
     (?P<machine_data>[^\.]+).
     raw
 """
-proteomics_deepclms_filename_re = re.compile(PROTEOMICS_DEEPLCMS_FILENAME_PATTERN, re.VERBOSE)
+proteomics_ms1quantification_filename_re = re.compile(PROTEOMICS_MS1QUANTIFICATION_FILENAME_PATTERN, re.VERBOSE)
 
 
-def test_proteomics_deeplcms():
+def test_proteomics_ms1quantification():
     filenames = [
         '26089_SEP_MBPF_MS_QEPlus1.raw'
     ]
 
     for filename in filenames:
-        assert(proteomics_deepclms_filename_re.match(filename) is not None)
+        assert(proteomics_ms1quantification_filename_re.match(filename) is not None)
 
 
 PROTEOMICS_SWATHMS_1D_IDA_FILENAME_PATTERN = """
@@ -255,8 +255,13 @@ def test_proteomics_swathms_msresult():
         assert(proteomics_swathms_msresult_filename_re.match(filename) is not None)
 
 
+class MatchException(Exception):
+    pass
+
+
 class MD5ParsedLine(object):
-    def __init__(self, pattern, md5, path):
+    def __init__(self, data_type, pattern, md5, path):
+        self.data_type = data_type
         self.pattern = pattern
         self._ok = False
         self.md5 = md5
@@ -264,7 +269,7 @@ class MD5ParsedLine(object):
         self.filename = path
         matched = self.pattern.match(self.filename)
         if not matched:
-            raise Exception("unable to match MD5 filename: `%s'" % (self.filename))
+            raise MatchException()
         self.md5data = matched.groupdict()
 
     def get(self, k):
@@ -274,12 +279,20 @@ class MD5ParsedLine(object):
         return "<parsed_md5> {} {} {}".format(self.filename, self.md5, self.md5data)
 
 
-def parse_md5_file(pattern, md5_file):
+def parse_md5_file(patterns, md5_file):
     data = []
     with open(md5_file) as f:
         for md5, path in md5lines(f):
             if path.endswith('.xlsx'):
                 continue
-            parsed_line = MD5ParsedLine(pattern, md5, path)
+            parsed_line = None
+            for data_type, pattern_list in patterns.items():
+                for pattern in pattern_list:
+                    try:
+                        parsed_line = MD5ParsedLine(data_type, pattern, md5, path)
+                    except MatchException:
+                        continue
+            if parsed_line is None:
+                raise Exception("Unable to match filename `%s' from MD5 file." % (path))
             data.append(parsed_line)
     return data
