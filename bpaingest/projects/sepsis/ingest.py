@@ -473,6 +473,7 @@ class SepsisProteomicsSwathMSMetadata(BaseMetadata):
         self.path = Path(metadata_path)
         self.contextual_metadata = contextual_metadata
         self.track_meta = SepsisTrackMetadata(track_csv_path)
+        self.package_data, self.file_data = self.get_spreadsheet_data()
 
     def read_track_csv(self, fname):
         if fname is None:
@@ -509,9 +510,15 @@ class SepsisProteomicsSwathMSMetadata(BaseMetadata):
             formatting_info=True)
         return wrapper.get_all()
 
-    def get_packages(self):
-        packages = []
-        # note: the metadata in the package xlsx is quite minimal
+    def get_spreadsheet_data(self):
+        """
+        proteomics SWATH is a bit different, the spreadsheets might have dupes by `bpa id`,
+        so some data in the sheet is per-file and some is per-ID. the only way to go from
+        filename back to the pool/bpa_id is via the spreadsheet, so we also need to build
+        that mapping
+        """
+        package_data = {}
+        file_data = {}
         for fname in glob(self.path + '/*_metadata.xlsx'):
             logger.info("Processing Sepsis Proteomics SwathMS metadata file {0}".format(fname))
             rows = list(SepsisProteomicsSwathMSMetadata.parse_spreadsheet(fname))
@@ -519,37 +526,53 @@ class SepsisProteomicsSwathMSMetadata(BaseMetadata):
                 bpa_id = row.bpa_id
                 if bpa_id is None:
                     continue
-                # if `bpa_id` is a tuple, we've got a pooled sample
+                contextual_meta = {}
                 if type(bpa_id) is tuple:
                     printable_bpa_id = '_'.join([t.split('.')[-1] for t in sorted(bpa_id)])
                     track_meta = common_values([self.track_meta.get(t) for t in bpa_id])
-                    obj = {}
+                    track_meta = common_values([self.track_meta.get(t) for t in bpa_id])
+                    for contextual_source in self.contextual_metadata:
+                        contextual_meta.update(common_values([contextual_source.get(t, track_meta) for t in bpa_id]))
                 else:
                     printable_bpa_id = bpa_id
                     track_meta = self.track_meta.get(bpa_id)
-                    obj = track_meta.copy()
+                    for contextual_source in self.contextual_metadata:
+                        contextual_meta.update(contextual_source.get(bpa_id, track_meta))
                 name = bpa_id_to_ckan_name(printable_bpa_id.split('.')[-1], self.ckan_data_type)
-                obj.update({
-                    'name': name,
-                    'id': name,
-                    'bpa_id': printable_bpa_id,
-                    'title': 'ARP Proteomics LCMS %s' % (printable_bpa_id),
-                    'notes': 'ARP Proteomics LCMS Data: %s %s' % (track_meta['taxon_or_organism'], track_meta['strain_or_isolate']),
-                    'sample_fractionation_none_number': row.sample_fractionation_none_number,
+                package_meta = {
                     'lc_column_type': row.lc_column_type,
                     'gradient_time_per_acn': row.gradient_time_per_acn,
-                    'sample_on_column': row.sample_on_column,
                     'mass_spectrometer': row.mass_spectrometer,
+                }
+                package_meta.update(contextual_meta)
+                package_data[name] = (name, printable_bpa_id, track_meta, package_meta)
+                file_data[row.raw_file_name] = {
+                    'package_name': name,
+                    'sample_fractionation_none_number': row.sample_fractionation_none_number,
+                    'sample_on_column': row.sample_on_column,
                     'acquisition_mode_fragmentation': row.acquisition_mode_fragmentation,
-                    'raw_file_name': row.raw_file_name,
-                    'type': self.ckan_data_type,
-                    'private': True,
-                })
-                for contextual_source in self.contextual_metadata:
-                    obj.update(contextual_source.get(bpa_id, track_meta))
-                tag_names = ['swathms', 'proteomics']
-                obj['tags'] = [{'name': t} for t in tag_names]
-                packages.append(obj)
+                }
+        return package_data, file_data
+
+    def get_packages(self):
+        packages = []
+        # note: the metadata in the package xlsx is quite minimal
+        for package_name, (name, printable_bpa_id, track_meta, submission_meta) in self.package_data.items():
+            # if `bpa_id` is a tuple, we've got a pooled sample
+            obj = track_meta.copy()
+            obj.update(submission_meta)
+            obj.update({
+                'name': name,
+                'id': name,
+                'bpa_id': printable_bpa_id,
+                'title': 'ARP Proteomics SwathMS %s' % (printable_bpa_id),
+                'notes': 'ARP Proteomics SwathMS Data: %s %s' % (track_meta['taxon_or_organism'], track_meta['strain_or_isolate']),
+                'type': self.ckan_data_type,
+                'private': True,
+            })
+            tag_names = ['swathms', 'proteomics']
+            obj['tags'] = [{'name': t} for t in tag_names]
+            packages.append(obj)
         return []
         # return packages
 
@@ -573,16 +596,18 @@ class SepsisProteomicsSwathMSMetadata(BaseMetadata):
             logger.info("Processing md5 file {0}".format(md5_file))
             for file_info in files.parse_md5_file(swath_patterns, md5_file):
                 resource = dict((t, file_info.get(t)) for t in ('vendor', 'machine_data'))
+                # this should exist for all the files, following up with APAF
+                file_meta = self.file_data.get(file_info.filename, {})
                 resource['md5'] = resource['id'] = file_info.md5
                 resource['data_type'] = file_info.get('type')
                 resource['vendor'] = file_info.get('vendor')
-                resource['apaf_project_code'] = file_info.get('apaf_project_code')
+                package_name = file_meta.pop('package_name', None)
+                resource.update(file_meta)
                 resource['name'] = file_info.filename
                 if file_info.data_type == '1d':
                     package_id = ingest_utils.extract_bpa_id(file_info.get('id'))
                 elif file_info.data_type == '2d':
-                    # APAF project code
-                    package_id = file_info.get('id')
+                    package_id = package_name
                 legacy_url = bpa_mirror_url('bpa/sepsis/proteomics/swathms/' + file_info.filename)
                 resources.append((package_id, legacy_url, resource))
         return []

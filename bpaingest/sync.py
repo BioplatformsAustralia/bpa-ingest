@@ -159,5 +159,5 @@ def sync_metadata(ckan, meta, auth, num_threads, do_uploads):
     packages = meta.get_packages()
     # check that the IDs in packages are unique
     assert(len(list(set([t['id'] for t in packages]))) == len(packages))
-    ckan_packages = sync_packages(ckan, get_packages(), organization, None)
+    ckan_packages = sync_packages(ckan, packages, organization, None)
     sync_resources(ckan, meta.get_resources(), ckan_packages, auth, num_threads, do_uploads)
