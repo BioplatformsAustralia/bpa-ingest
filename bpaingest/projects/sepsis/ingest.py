@@ -15,7 +15,8 @@ from .tracking import (
     SepsisGenomicsTrackMetadata)
 from .contextual import (
     SepsisBacterialContextual,
-    SepsisGenomicsContextual,
+    SepsisGenomicsPacbioContextual,
+    SepsisGenomicsMiseqContextual,
     SepsisMetabolomicsLCMSContextual,
     SepsisProteomicsContextual,
     SepsisTranscriptomicsHiseqContextual)
@@ -25,7 +26,7 @@ logger = make_logger(__name__)
 
 
 class SepsisGenomicsMiseqMetadata(BaseMetadata):
-    contextual_classes = [SepsisBacterialContextual, SepsisGenomicsContextual]
+    contextual_classes = [SepsisBacterialContextual, SepsisGenomicsMiseqContextual]
     metadata_urls = ['https://downloads-qcif.bioplatforms.com/bpa/sepsis/genomics/miseq/']
     organization = 'bpa-sepsis'
     auth = ('sepsis', 'sepsis')
@@ -102,7 +103,7 @@ class SepsisGenomicsMiseqMetadata(BaseMetadata):
 
 
 class SepsisGenomicsPacbioMetadata(BaseMetadata):
-    contextual_classes = [SepsisBacterialContextual, SepsisGenomicsContextual]
+    contextual_classes = [SepsisBacterialContextual, SepsisGenomicsPacbioContextual]
     metadata_urls = ['https://downloads-qcif.bioplatforms.com/bpa/sepsis/genomics/pacbio/']
     organization = 'bpa-sepsis'
     auth = ('sepsis', 'sepsis')

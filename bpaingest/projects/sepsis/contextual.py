@@ -99,7 +99,7 @@ class SepsisBacterialContextual(object):
         return wrapper.get_all()
 
 
-class SepsisGenomicsContextual(object):
+class SepsisGenomicsBaseContextual(object):
     """
     Genomics sample metadata: used by the genomics classes.
     """
@@ -107,7 +107,8 @@ class SepsisGenomicsContextual(object):
     metadata_urls = ['https://downloads-qcif.bioplatforms.com/bpa/sepsis/projectdata/current/genomics/']
     name = 'sepsis-genomics'
 
-    def __init__(self, path):
+    def __init__(self, path, analytical_platform):
+        self.analytical_platform = analytical_platform
         xlsx_path = one(glob(path + '/*.xlsx'))
         self.sample_metadata = self._package_metadata(self._read_metadata(xlsx_path))
 
@@ -122,7 +123,9 @@ class SepsisGenomicsContextual(object):
         for row in rows:
             if not row.bpa_id:
                 continue
-            if row.bpa_id not in sample_metadata:
+            if row.analytical_platform.lower() != self.analytical_platform.lower():
+                continue
+            if row.bpa_id in sample_metadata:
                 logger.warning("duplicate sample metadata row for {}".format(row.bpa_id))
             sample_metadata[row.bpa_id] = row_meta = {}
             for field in row._fields:
@@ -142,7 +145,7 @@ class SepsisGenomicsContextual(object):
             ('growth_condition_notes', "Growth_condition_notes", None),
             ('experimental_replicate', "Experimental_replicate", None),
             ('analytical_facility', "Analytical_facility", None),
-            ('analytical_platform', "Analytical_platform", None),
+            ('analytical_platform', "Analytical_platform", lambda s: s.strip()),
             ('experimental_sample_preparation_method', "Experimental_sample_preparation_method", None),
             ('data_type', "Data type", None),
         ]
@@ -154,6 +157,16 @@ class SepsisGenomicsContextual(object):
             column_name_row_index=4,
             formatting_info=True)
         return wrapper.get_all()
+
+
+class SepsisGenomicsMiseqContextual(SepsisGenomicsBaseContextual):
+    def __init__(self, path):
+        super(SepsisGenomicsMiseqContextual, self).__init__(path, 'Miseq')
+
+
+class SepsisGenomicsPacbioContextual(SepsisGenomicsBaseContextual):
+    def __init__(self, path):
+        super(SepsisGenomicsPacbioContextual, self).__init__(path, 'PacBio')
 
 
 class SepsisTranscriptomicsHiseqContextual(object):
