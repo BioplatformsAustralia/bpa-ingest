@@ -126,7 +126,7 @@ class SepsisGenomicsBaseContextual(object):
             if row.analytical_platform.lower() != self.analytical_platform.lower():
                 continue
             if row.bpa_id in sample_metadata:
-                logger.warning("duplicate sample metadata row for {}".format(row.bpa_id))
+                logger.warning("{}: duplicate sample metadata row for {}".format(self.__class__.__name__, row.bpa_id))
             sample_metadata[row.bpa_id] = row_meta = {}
             for field in row._fields:
                 if field != 'taxon_or_organism' and field != 'strain_or_isolate':
@@ -193,8 +193,8 @@ class SepsisTranscriptomicsHiseqContextual(object):
         for row in rows:
             if not row.bpa_id:
                 continue
-            if row.bpa_id not in sample_metadata:
-                logger.warning("duplicate sample metadata row for {}".format(row.bpa_id))
+            if row.bpa_id in sample_metadata:
+                logger.warning("{}: duplicate sample metadata row for {}".format(self.__class__.__name__, row.bpa_id))
             sample_metadata[row.bpa_id] = row_meta = {}
             for field in row._fields:
                 if field != 'taxon_or_organism' and field != 'strain_or_isolate':
@@ -256,8 +256,8 @@ class SepsisMetabolomicsLCMSContextual(object):
         for row in rows:
             if not row.bpa_id:
                 continue
-            if row.bpa_id not in sample_metadata:
-                logger.warning("duplicate sample metadata row for {}".format(row.bpa_id))
+            if row.bpa_id in sample_metadata:
+                logger.warning("{}: duplicate sample metadata row for {}".format(self.__class__.__name__, row.bpa_id))
             sample_metadata[row.bpa_id] = row_meta = {}
             for field in row._fields:
                 if field != 'taxon_or_organism' and field != 'strain_or_isolate':
@@ -291,7 +291,7 @@ class SepsisMetabolomicsLCMSContextual(object):
         return wrapper.get_all()
 
 
-class SepsisProteomicsContextual(object):
+class SepsisProteomicsBaseContextual(object):
     """
     Proteomics sample metadata: used by both proteomics classes.
     """
@@ -299,7 +299,8 @@ class SepsisProteomicsContextual(object):
     metadata_urls = ['https://downloads-qcif.bioplatforms.com/bpa/sepsis/projectdata/current/other-omics/']
     name = 'sepsis-proteomics'
 
-    def __init__(self, path):
+    def __init__(self, path, analytical_platform):
+        self.analytical_platform = analytical_platform
         xlsx_path = one(glob(path + '/*.xlsx'))
         self.sample_metadata = self._package_metadata(self._read_metadata(xlsx_path))
 
@@ -314,8 +315,10 @@ class SepsisProteomicsContextual(object):
         for row in rows:
             if not row.bpa_id:
                 continue
-            if row.bpa_id not in sample_metadata:
-                logger.warning("duplicate sample metadata row for {}".format(row.bpa_id))
+            if row.analytical_platform.lower() != self.analytical_platform.lower():
+                continue
+            if row.bpa_id in sample_metadata:
+                logger.warning("{}: duplicate sample metadata row for {}".format(self.__class__.__name__, row.bpa_id))
             sample_metadata[row.bpa_id] = row_meta = {}
             for field in row._fields:
                 if field != 'taxon_or_organism' and field != 'strain_or_isolate':
@@ -353,3 +356,13 @@ class SepsisProteomicsContextual(object):
             column_name_row_index=3,
             formatting_info=True)
         return wrapper.get_all()
+
+
+class SepsisProteomicsMS1QuantificationContextual(SepsisProteomicsBaseContextual):
+    def __init__(self, path):
+        super(SepsisProteomicsMS1QuantificationContextual, self).__init__(path, 'MS1 quantification')
+
+
+class SepsisProteomicsSwathMSContextual(SepsisProteomicsBaseContextual):
+    def __init__(self, path):
+        super(SepsisProteomicsSwathMSContextual, self).__init__(path, 'SWATH-MS')

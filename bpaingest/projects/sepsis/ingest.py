@@ -18,7 +18,8 @@ from .contextual import (
     SepsisGenomicsPacbioContextual,
     SepsisGenomicsMiseqContextual,
     SepsisMetabolomicsLCMSContextual,
-    SepsisProteomicsContextual,
+    SepsisProteomicsSwathMSContextual,
+    SepsisProteomicsMS1QuantificationContextual,
     SepsisTranscriptomicsHiseqContextual)
 import files
 
@@ -366,7 +367,7 @@ class SepsisMetabolomicsLCMSMetadata(BaseMetadata):
 
 
 class SepsisProteomicsMS1QuantificationMetadata(BaseMetadata):
-    contextual_classes = [SepsisBacterialContextual, SepsisProteomicsContextual]
+    contextual_classes = [SepsisBacterialContextual, SepsisProteomicsMS1QuantificationContextual]
     metadata_urls = ['https://downloads-qcif.bioplatforms.com/bpa/sepsis/proteomics/ms1quantification/']
     organization = 'bpa-sepsis'
     auth = ('sepsis', 'sepsis')
@@ -458,7 +459,7 @@ class SepsisProteomicsMS1QuantificationMetadata(BaseMetadata):
 
 
 class SepsisProteomicsSwathMSBaseMetadata(BaseMetadata):
-    contextual_classes = [SepsisBacterialContextual, SepsisProteomicsContextual]
+    contextual_classes = [SepsisBacterialContextual, SepsisProteomicsSwathMSContextual]
     metadata_urls = ['https://downloads-qcif.bioplatforms.com/bpa/sepsis/proteomics/swathms/']
     metadata_patterns = [r'^.*\.md5', r'^.*_metadata\.xlsx']
     organization = 'bpa-sepsis'
