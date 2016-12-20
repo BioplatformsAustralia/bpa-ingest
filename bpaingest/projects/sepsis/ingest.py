@@ -458,7 +458,7 @@ class SepsisProteomicsMS1QuantificationMetadata(BaseMetadata):
 
 
 class SepsisProteomicsSwathMSBaseMetadata(BaseMetadata):
-    contextual_classes = [SepsisBacterialContextual]
+    contextual_classes = [SepsisBacterialContextual, SepsisProteomicsContextual]
     metadata_urls = ['https://downloads-qcif.bioplatforms.com/bpa/sepsis/proteomics/swathms/']
     metadata_patterns = [r'^.*\.md5', r'^.*_metadata\.xlsx']
     organization = 'bpa-sepsis'
@@ -526,7 +526,6 @@ class SepsisProteomicsSwathMSBaseMetadata(BaseMetadata):
                 if type(bpa_id) is tuple:
                     data_type = '2d'
                     printable_bpa_id = '_'.join([t.split('.')[-1] for t in sorted(bpa_id)])
-                    track_meta = common_values([self.track_meta.get(t) for t in bpa_id])
                     track_meta = common_values([self.track_meta.get(t) for t in bpa_id])
                     for contextual_source in self.contextual_metadata:
                         contextual_meta.update(common_values([contextual_source.get(t, track_meta) for t in bpa_id]))

@@ -154,8 +154,28 @@ class ExcelWrapper(object):
 
     def _get_rows(self):
         ''' Yields sequence of cells '''
+
+        merge_redirect = {}
+        for crange in self.sheet.merged_cells:
+            rlo, rhi, clo, chi = crange
+            source_coords = (rlo, clo)
+            for rowx in xrange(rlo, rhi):
+                for colx in xrange(clo, chi):
+                    if rowx == rlo and colx == clo:
+                        continue
+                    merge_redirect[(rowx, colx)] = source_coords
+
         for row_idx in xrange(self.header_length, self.sheet.nrows):
-            yield self.sheet.row(row_idx)
+            row = self.sheet.row(row_idx)
+            merged_row = []
+            for colx, val in enumerate(row):
+                coord = (row_idx, colx)
+                if coord in merge_redirect:
+                    merge_row, merge_col = merge_redirect[coord]
+                    merged_row.append(self.sheet.row(merge_row)[merge_col])
+                else:
+                    merged_row.append(val)
+            yield merged_row
 
     def get_date_time(self, i, cell):
         ''' the cell contains a float and pious hope, get a date, if you dare. '''
@@ -187,7 +207,7 @@ class ExcelWrapper(object):
         # row is added so we know where in the spreadsheet this came from
         typ = namedtuple(typname, [n for n in self.field_names])
 
-        for idx, row in enumerate(self._get_rows()):
+        for row in self._get_rows():
             tpl = []
             for name in self.field_names:
                 i = self.name_to_column_map[name]
