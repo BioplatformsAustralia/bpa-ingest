@@ -17,11 +17,8 @@ from .wheat_pathogens_genomes.ingest import WheatPathogensGenomesMetadata
 from .wheat_pathogens_transcript.ingest import WheatPathogensTranscriptMetadata
 
 PROJECTS = {
-    'barcode': BarcodeMetadata,
-    'base': SoilMetadata,
-    'gbr': GbrAmpliconsMetadata,
-    'melanoma': MelanomaMetadata,
-    'mm-amplicons': MarineMicrobesAmpliconsMetadata,
+    # functional ingests
+    'gbr-genomics-amplicons': GbrAmpliconsMetadata,
     'sepsis-genomics-miseq': SepsisGenomicsMiseqMetadata,
     'sepsis-genomics-pacbio': SepsisGenomicsPacbioMetadata,
     'sepsis-transcriptomics-hiseq': SepsisTranscriptomicsHiseqMetadata,
@@ -29,8 +26,14 @@ PROJECTS = {
     'sepsis-proteomics-ms1quantification': SepsisProteomicsMS1QuantificationMetadata,
     'sepsis-proteomics-swathms': SepsisProteomicsSwathMSMetadata,
     'sepsis-proteomics-swathms-pool': SepsisProteomicsSwathMSPoolMetadata,
+    'wheat-cultivars': WheatCultivarsMetadata,  # the entire wheat cultivars project
+    'wheat-pathogens-genomes': WheatPathogensGenomesMetadata,  # the first half of wheat pathogens
+    # under development
     'stemcells': StemcellsMetadata,
-    'wheat-cultivars': WheatCultivarsMetadata,
-    'wheat-pathogens-genomes': WheatPathogensGenomesMetadata,
+    # stubs
+    'barcode': BarcodeMetadata,
+    'base': SoilMetadata,
+    'melanoma': MelanomaMetadata,
+    'marine-genomics-amplicons': MarineMicrobesAmpliconsMetadata,
     'wheat-pathogens-transcript': WheatPathogensTranscriptMetadata,
 }
