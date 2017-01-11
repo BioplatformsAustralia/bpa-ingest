@@ -1,4 +1,5 @@
 from ...util import make_logger
+from ...libs.ingest_utils import get_date_isoformat
 
 logger = make_logger(__name__)
 
@@ -18,7 +19,7 @@ def sample_from_row(e):
         'wheat_pathogenicity': e.wheat_pathogenicity,
         'index': e.index_sequence,
         'library_id': e.library_id,
-        'collection_date': e.collection_date,
+        'collection_date': get_date_isoformat(e.collection_date),
         'collection_location': e.collection_location,
         'dna_extraction_protocol': e.dna_extraction_protocol,
         'contact_scientist': e.contact_scientist,
