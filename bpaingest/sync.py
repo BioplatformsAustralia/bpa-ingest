@@ -127,7 +127,9 @@ def sync_resources(ckan, resources, resource_linkage_attr, ckan_packages, auth, 
     archive_info = ArchiveInfo(ckan)
 
     resource_linkage_package_id = {}
+    from pprint import pprint
     for package_obj in ckan_packages:
+        pprint(package_obj)
         resource_linkage_package_id[package_obj[resource_linkage_attr]] = package_obj['id']
 
     # wire the resources to their CKAN package

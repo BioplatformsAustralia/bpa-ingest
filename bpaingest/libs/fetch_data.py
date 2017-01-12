@@ -18,16 +18,6 @@ requests.packages.urllib3.disable_warnings()
 logger = make_logger(__name__)
 
 
-project_name_passwd_map = {
-    'melanoma': 'BPA_MELANOMA_DOWNLOADS_PASSWORD',
-    'base': 'BPA_BASE_DOWNLOADS_PASSWORD',
-    'users': 'BPA_USERS_DOWNLOADS_PASSWORD',
-    'gbr': 'BPA_GBR_DOWNLOADS_PASSWORD',
-    'sepsis': 'BPA_SEPSIS_DOWNLOADS_PASSWORD',
-    'marine': 'BPA_MM_DOWNLOADS_PASSWORD',
-}
-
-
 def get_password(project_name=None):
     '''Get downloads password for project from environment '''
 
@@ -36,9 +26,9 @@ def get_password(project_name=None):
                                                                                               project_name))
         sys.exit()
 
-    password_env = project_name_passwd_map.get(project_name, None)
+    password_env = 'BPA_%s_DOWNLOADS_PASSWORD' % (project_name.upper())
     if password_env is None:
-        logger.error('Set project_name')
+        logger.error('Set $%s' % (password_env))
         sys.exit()
 
     if password_env not in os.environ:

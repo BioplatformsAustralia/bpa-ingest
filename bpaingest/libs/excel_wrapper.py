@@ -202,11 +202,12 @@ class ExcelWrapper(object):
         return val
 
     def get_all(self, typname='DataRow'):
-        '''Returns all rows for the sheet as namedtuple instances'''
+        '''Returns all rows for the sheet as namedtuple instances. Filters out any exact duplicates.'''
 
         # row is added so we know where in the spreadsheet this came from
         typ = namedtuple(typname, [n for n in self.field_names])
 
+        rows_seen = set()
         for row in self._get_rows():
             tpl = []
             for name in self.field_names:
@@ -229,4 +230,7 @@ class ExcelWrapper(object):
                 if func is not None:
                     val = func(val)
                 tpl.append(val)
-            yield typ(*tpl)
+            named_tpl = typ(*tpl)
+            if named_tpl not in rows_seen:
+                yield typ(*tpl)
+            rows_seen.add(named_tpl)
