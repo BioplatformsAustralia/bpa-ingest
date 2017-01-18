@@ -83,17 +83,15 @@ class StemcellsTranscriptomeMetadata(BaseMetadata):
         return packages
 
     def get_resources(self):
-        return []
         logger.info("Ingesting Sepsis md5 file information from {0}".format(self.path))
         resources = []
         for md5_file in glob(self.path + '/*.md5'):
             logger.info("Processing md5 file {0}".format(md5_file))
-            for file_info in files.parse_md5_file(md5_file):
-                resource = dict((t, file_info.get(t)) for t in ('index', 'lane', 'vendor', 'read', 'flow_cell_id', 'library', 'extraction', 'runsamplenum'))
-                resource['seq_size'] = file_info.get('size')
-                resource['md5'] = resource['id'] = file_info.md5
-                resource['name'] = file_info.filename
+            for filename, md5, file_info in files.parse_md5_file(md5_file, files.transcriptome_filename_re):
+                resource = file_info.copy()
+                resource['md5'] = resource['id'] = md5
+                resource['name'] = filename
                 bpa_id = ingest_utils.extract_bpa_id(file_info.get('id'))
-                legacy_url = bpa_mirror_url('bpa/sepsis/genomics/miseq/' + file_info.filename)
+                legacy_url = bpa_mirror_url('bpa/stemcell/transcriptome/' + filename)
                 resources.append((bpa_id, legacy_url, resource))
         return resources
