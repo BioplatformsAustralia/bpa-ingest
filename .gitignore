@@ -12,3 +12,4 @@ tmp/
 ref/
 venv/
 .#*
+tags

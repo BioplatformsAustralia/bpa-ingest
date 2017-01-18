@@ -29,7 +29,7 @@ def extract_bpa_id(s):
     m = bpa_id_abbrev_re.match(s)
     if m:
         return BPA_PREFIX + m.groups()[0]
-    logger.warning("unable to parse BPA ID: %s" % s)
+    logger.warning("unable to parse BPA ID: `%s'" % s)
     return None
 
 

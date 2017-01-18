@@ -10,6 +10,8 @@ from ...libs.excel_wrapper import ExcelWrapper
 from . import files
 from glob import glob
 
+import re
+
 logger = make_logger(__name__)
 
 
@@ -28,7 +30,7 @@ class StemcellsTranscriptomeMetadata(BaseMetadata):
     @classmethod
     def parse_spreadsheet(self, fname):
         field_spec = [
-            ("bpa_id", "Stem Cells sample unique ID", ingest_utils.extract_bpa_id),
+            ("bpa_id", re.compile(r'^.*sample unique id$'), ingest_utils.extract_bpa_id),
             ("sample_extaction_id", "Sample extraction ID", None),
             ("insert_size_range", "Insert size range", None),
             ("library_construction_protocol", "Library construction protocol", None),
@@ -48,34 +50,36 @@ class StemcellsTranscriptomeMetadata(BaseMetadata):
     def get_packages(self):
         logger.info("Ingesting Stemcells Transcriptomics metadata from {0}".format(self.path))
         packages = []
+        # duplicate rows are an issue in this project. we filter them out by uniquifying
+        # this is harmless as they have to precisly match, and BPA_ID is the primary key
+        all_rows = set()
         for fname in glob(self.path + '/*.xlsx'):
             logger.info("Processing Stemcells Transcriptomics metadata file {0}".format(fname))
-            rows = StemcellsTranscriptomeMetadata.parse_spreadsheet(fname)
-            for row in rows:
-                bpa_id = row.bpa_id
-                print("BPA ID:", row.bpa_id)
-                if bpa_id is None:
-                    continue
-                obj = {}
-                name = bpa_id_to_ckan_name(bpa_id.split('.')[-1], self.ckan_data_type)
-                obj.update({
-                    'name': name,
-                    'id': name,
-                    'bpa_id': bpa_id,
-                    'notes': 'Stemcell Transcriptomics %s' % (bpa_id),
-                    'title': 'Stemcell Transcriptomics %s' % (bpa_id),
-                    'insert_size_range': row.insert_size_range,
-                    'library_construction_protocol': row.library_construction_protocol,
-                    'sequencer': row.sequencer,
-                    'analysis_software_version': row.analysis_software_version,
-                    'type': self.ckan_data_type,
-                    'private': True,
-                })
-                # for contextual_source in self.contextual_metadata:
-                #     obj.update(contextual_source.get(bpa_id, track_meta))
-                tag_names = ['transcriptome']
-                obj['tags'] = [{'name': t} for t in tag_names]
-                packages.append(obj)
+            all_rows.update(StemcellsTranscriptomeMetadata.parse_spreadsheet(fname))
+        for row in sorted(all_rows):
+            bpa_id = row.bpa_id
+            if bpa_id is None:
+                continue
+            obj = {}
+            name = bpa_id_to_ckan_name(bpa_id.split('.')[-1], self.ckan_data_type)
+            obj.update({
+                'name': name,
+                'id': name,
+                'bpa_id': bpa_id,
+                'notes': 'Stemcell Transcriptomics %s' % (bpa_id),
+                'title': 'Stemcell Transcriptomics %s' % (bpa_id),
+                'insert_size_range': row.insert_size_range,
+                'library_construction_protocol': row.library_construction_protocol,
+                'sequencer': row.sequencer,
+                'analysis_software_version': row.analysis_software_version,
+                'type': self.ckan_data_type,
+                'private': True,
+            })
+            # for contextual_source in self.contextual_metadata:
+            #     obj.update(contextual_source.get(bpa_id, track_meta))
+            tag_names = ['transcriptome']
+            obj['tags'] = [{'name': t} for t in tag_names]
+            packages.append(obj)
         return packages
 
     def get_resources(self):

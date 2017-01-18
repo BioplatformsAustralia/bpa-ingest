@@ -7,6 +7,7 @@ from threading import Thread
 from .util import make_logger
 from .util import prune_dict
 from genhash import S3_HASH_FIELD
+from collections import Counter
 
 logger = make_logger(__name__)
 
@@ -127,9 +128,7 @@ def sync_resources(ckan, resources, resource_linkage_attr, ckan_packages, auth, 
     archive_info = ArchiveInfo(ckan)
 
     resource_linkage_package_id = {}
-    from pprint import pprint
     for package_obj in ckan_packages:
-        pprint(package_obj)
         resource_linkage_package_id[package_obj[resource_linkage_attr]] = package_obj['id']
 
     # wire the resources to their CKAN package
@@ -157,9 +156,17 @@ def sync_resources(ckan, resources, resource_linkage_attr, ckan_packages, auth, 
 
 
 def sync_metadata(ckan, meta, auth, num_threads, do_uploads):
+    def check_counts():
+        id_count = Counter(t['id'] for t in packages)
+        ok = True
+        for k, cnt in id_count.items():
+            if cnt > 1:
+                logger.error("package id `%s' appears more than once" % (k))
+                ok = False
+        assert(ok)
+
     organization = get_organization(ckan, meta.organization)
     packages = meta.get_packages()
-    # check that the IDs in packages are unique
-    assert(len(list(set([t['id'] for t in packages]))) == len(packages))
+    check_counts()
     ckan_packages = sync_packages(ckan, packages, organization, None)
     sync_resources(ckan, meta.get_resources(), meta.resource_linkage, ckan_packages, auth, num_threads, do_uploads)

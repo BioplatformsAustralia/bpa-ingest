@@ -104,6 +104,9 @@ class ExcelWrapper(object):
         header = [strip_unicode(t).strip().lower() for t in self.sheet.row_values(self.column_name_row_index)]
 
         def find_column(column_name):
+            # if has the 'match' attribute, it's a regexp
+            if hasattr(column_name, 'match'):
+                return find_column_re(column_name)
             col_index = -1
             try:
                 col_index = header.index(column_name.strip().lower())
@@ -111,10 +114,15 @@ class ExcelWrapper(object):
                 pass
             return col_index
 
+        def find_column_re(column_name_re):
+            for idx, name in enumerate(header):
+                if column_name.match(name):
+                    return idx
+            return -1
+
         cmap = {}
         for attribute, column_name, _ in self.field_spec:
             col_index = -1
-            # try a few different ways to match column names
             if type(column_name) == tuple:
                 for c, _name in enumerate(column_name):
                     col_index = find_column(_name)
@@ -207,7 +215,6 @@ class ExcelWrapper(object):
         # row is added so we know where in the spreadsheet this came from
         typ = namedtuple(typname, [n for n in self.field_names])
 
-        rows_seen = set()
         for row in self._get_rows():
             tpl = []
             for name in self.field_names:
@@ -230,7 +237,4 @@ class ExcelWrapper(object):
                 if func is not None:
                     val = func(val)
                 tpl.append(val)
-            named_tpl = typ(*tpl)
-            if named_tpl not in rows_seen:
-                yield typ(*tpl)
-            rows_seen.add(named_tpl)
+            yield typ(*tpl)
