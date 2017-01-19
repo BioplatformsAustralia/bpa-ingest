@@ -25,6 +25,28 @@ def test_transcriptome():
         assert(transcriptome_filename_re.match(filename) is not None)
 
 
+smallrna_filename_re = re.compile("""
+    (?P<id>\d{4,6})_
+    (?P<insert_size>[\d-]+nt)_
+    smRNA_
+    (?P<project>\w+)_
+    (?P<vendor>AGRF|UNSW)_
+    (?P<flow_id>\w{9})_
+    (?P<index>[G|A|T|C|-]*)_
+    (?P<lane>L\d{3})_
+    (?P<read>[R|I][1|2])\.fastq\.gz
+""", re.VERBOSE)
+
+
+def test_smallrna():
+    filenames = [
+        '24695_15-50nt_smRNA_STEMCELLS_AGRF_H5KHCADXY_TGACCA_L001_R1.fastq.gz',
+        '29572_15-35nt_smRNA_STEMCELLS_AGRF_CA7VCANXX_AGTTCC_L008_R1.fastq.gz',
+    ]
+    for filename in filenames:
+        assert(smallrna_filename_re.match(filename) is not None)
+
+
 def parse_md5_file(md5_file, regexp):
     with open(md5_file) as f:
         for md5, path in md5lines(f):
