@@ -258,6 +258,6 @@ class StemcellsSingleCellRNASeqMetadata(BaseMetadata):
                 resource['md5'] = resource['id'] = md5
                 resource['name'] = filename
                 bpa_id_range = file_info.get('id')
-                legacy_url = bpa_mirror_url('bpa/stemcell/small_rna/' + filename)
+                legacy_url = bpa_mirror_url('bpa/stemcell/single_cell_rnaseq/' + filename)
                 resources.append((bpa_id_range, legacy_url, resource))
         return resources
