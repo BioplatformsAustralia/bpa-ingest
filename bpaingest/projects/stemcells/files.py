@@ -25,6 +25,28 @@ def test_transcriptome():
         assert(transcriptome_filename_re.match(filename) is not None)
 
 
+singlecell_filename_re = re.compile("""
+    (?P<id>\d{4,6}-\d{4,6})_
+    (?P<library>PE|MP)_
+    (?P<insert_size>\d*bp)_
+    (?P<project>\w+)_
+    (?P<vendor>AGRF|UNSW)_
+    (?P<flow_id>\w{9})_
+    (?P<index>[G|A|T|C|-]*|NoIndex)_
+    (?P<lane>L\d{3})_
+    (?P<read>[R|I][1|2])\.fastq\.gz
+""", re.VERBOSE)
+
+
+def test_singlecell():
+    filenames = [
+        '25116-28799_PE_400bp_Stemcells_UNSW_HVC2VBGXY_NoIndex_L002_R1.fastq.gz',
+        '25116-28799_PE_400bp_Stemcells_UNSW_HVC2VBGXY_NoIndex_L004_R2.fastq.gz',
+    ]
+    for filename in filenames:
+        assert(singlecell_filename_re.match(filename) is not None)
+
+
 smallrna_filename_re = re.compile("""
     (?P<id>\d{4,6})_
     (?P<insert_size>[\d-]+nt)_
