@@ -2,7 +2,13 @@ from .barcode.ingest import BarcodeMetadata
 from .base.ingest import SoilMetadata
 from .gbr_amplicons.ingest import GbrAmpliconsMetadata
 from .melanoma.ingest import MelanomaMetadata
-from .mm.ingest import MarineMicrobesAmpliconsMetadata
+from .mm.ingest import (
+    MarineMicrobesGenomicsAmplicons16SMetadata,
+    MarineMicrobesGenomicsAmpliconsA16SMetadata,
+    MarineMicrobesGenomicsAmplicons18SMetadata,
+    MarineMicrobesGenomicsAmpliconsITSMetadata,
+    MarineMicrobesMetagenomicsMetadata,
+    MarineMicrobesMetatranscriptomeMetadata)
 from .sepsis.ingest import (
     SepsisGenomicsMiseqMetadata,
     SepsisTranscriptomicsHiseqMetadata,
@@ -39,6 +45,11 @@ PROJECTS = {
     'barcode': BarcodeMetadata,
     'base': SoilMetadata,
     'melanoma': MelanomaMetadata,
-    'marine-genomics-amplicons': MarineMicrobesAmpliconsMetadata,
+    'mm-genomics-amplicons-16s': MarineMicrobesGenomicsAmplicons16SMetadata,
+    'mm-genomics-amplicons-a16s': MarineMicrobesGenomicsAmpliconsA16SMetadata,
+    'mm-genomics-amplicons-18s': MarineMicrobesGenomicsAmplicons18SMetadata,
+    'mm-genomics-amplicons-its': MarineMicrobesGenomicsAmpliconsITSMetadata,
+    'mm-metagenomics': MarineMicrobesMetagenomicsMetadata,
+    'mm-metatranscriptome': MarineMicrobesMetatranscriptomeMetadata,
     'wheat-pathogens-transcript': WheatPathogensTranscriptMetadata,
 }
