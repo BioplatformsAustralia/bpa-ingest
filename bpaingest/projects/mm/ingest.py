@@ -37,15 +37,19 @@ class BaseMarineMicrobesAmpliconsMetadata(BaseMetadata):
             ("sequencer", "Sequencer", None),
             ("analysis_software_version", "CASAVA version", None),
         ]
-        wrapper = ExcelWrapper(
-            field_spec,
-            fname,
-            sheet_name=None,
-            header_length=2,
-            column_name_row_index=1,
-            formatting_info=True)
-        rows = list(wrapper.get_all())
-        return rows
+        try:
+            wrapper = ExcelWrapper(
+                field_spec,
+                fname,
+                sheet_name=None,
+                header_length=2,
+                column_name_row_index=1,
+                formatting_info=True)
+            rows = list(wrapper.get_all())
+            return rows
+        except:
+            logger.error("Cannot parse: `%s'" % (fname))
+            return []
 
     def get_packages(self):
         logger.info("Ingesting Marine Microbes Transcriptomics metadata from {0}".format(self.path))
@@ -87,7 +91,10 @@ class BaseMarineMicrobesAmpliconsMetadata(BaseMetadata):
         resources = []
         for md5_file in glob(self.path + '/*.md5'):
             logger.info("Processing md5 file {0}".format(md5_file))
-            for filename, md5, file_info in files.parse_md5_file(md5_file, files.transcriptome_filename_re):
+            for filename, md5, file_info in files.parse_md5_file(md5_file, files.amplicon_filename_re):
+                if file_info is None:
+                    logger.warning("unable to parse filename: `%s'" % (filename))
+                    continue
                 resource = file_info.copy()
                 resource['md5'] = resource['id'] = md5
                 resource['name'] = filename
