@@ -135,7 +135,9 @@ def sync_resources(ckan, resources, resource_linkage_attr, ckan_packages, auth, 
     resource_idx = {}
     md5_legacy_url = {}
     for resource_linkage, legacy_url, resource_obj in resources:
-        package_id = resource_linkage_package_id[resource_linkage]
+        package_id = resource_linkage_package_id.get(resource_linkage)
+        if package_id is None:
+            logger.error("Unable to find package_id for `%s', skipping resource." % (resource_linkage))
         obj = resource_obj.copy()
         obj['package_id'] = package_id
         if package_id not in resource_idx:
@@ -156,17 +158,17 @@ def sync_resources(ckan, resources, resource_linkage_attr, ckan_packages, auth, 
 
 
 def sync_metadata(ckan, meta, auth, num_threads, do_uploads):
-    def check_counts():
+    def unique_packages():
+        by_id = dict((t['id'], t) for t in packages)
         id_count = Counter(t['id'] for t in packages)
-        ok = True
         for k, cnt in id_count.items():
             if cnt > 1:
-                logger.error("package id `%s' appears more than once" % (k))
-                ok = False
-        assert(ok)
+                logger.error("package id `%s' appears more than once: excluded from sync" % (k))
+                continue
+            yield by_id[k]
 
     organization = get_organization(ckan, meta.organization)
     packages = meta.get_packages()
-    check_counts()
+    packages = list(unique_packages())
     ckan_packages = sync_packages(ckan, packages, organization, None)
     sync_resources(ckan, meta.get_resources(), meta.resource_linkage, ckan_packages, auth, num_threads, do_uploads)

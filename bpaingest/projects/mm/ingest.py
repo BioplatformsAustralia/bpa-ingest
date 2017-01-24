@@ -70,6 +70,7 @@ class BaseMarineMicrobesAmpliconsMetadata(BaseMetadata):
                 'name': name,
                 'id': name,
                 'bpa_id': bpa_id,
+                'amplicon': self.amplicon,
                 'notes': 'Marine Microbes Amplicons %s %s' % (self.amplicon, bpa_id),
                 'title': 'Marine Microbes Amplicons %s %s' % (self.amplicon, bpa_id),
                 'insert_size_range': row.insert_size_range,
