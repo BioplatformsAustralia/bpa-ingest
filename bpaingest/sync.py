@@ -41,7 +41,7 @@ def sync_packages(ckan, packages, org, group):
     # we have to post the group back in package objects, send a minimal version of it
     api_group_obj = prune_dict(group, ('display_name', 'description', 'title', 'image_display_url', 'id', 'name'))
     ckan_packages = []
-    for package in packages:
+    for package in sorted(packages, key=lambda p: p['name']):
         obj = package.copy()
         obj['owner_org'] = org['id']
         if api_group_obj is not None:
@@ -122,14 +122,15 @@ def reupload_resources(ckan, archive_info, to_reupload, md5_legacy_url, auth, nu
     q.join()
 
 
-def sync_resources(ckan, resources, resource_linkage_attr, ckan_packages, auth, num_threads, do_uploads):
+def sync_resources(ckan, resources, resource_linkage_attrs, ckan_packages, auth, num_threads, do_uploads):
     logger.info('syncing %d resources' % (len(resources)))
 
     archive_info = ArchiveInfo(ckan)
 
     resource_linkage_package_id = {}
     for package_obj in ckan_packages:
-        resource_linkage_package_id[package_obj[resource_linkage_attr]] = package_obj['id']
+        linkage_tpl = tuple(package_obj[t] for t in resource_linkage_attrs)
+        resource_linkage_package_id[linkage_tpl] = package_obj['id']
 
     # wire the resources to their CKAN package
     resource_idx = {}
@@ -137,7 +138,7 @@ def sync_resources(ckan, resources, resource_linkage_attr, ckan_packages, auth, 
     for resource_linkage, legacy_url, resource_obj in resources:
         package_id = resource_linkage_package_id.get(resource_linkage)
         if package_id is None:
-            logger.error("Unable to find package_id for `%s', skipping resource." % (resource_linkage))
+            logger.error("Unable to find package for `%s', skipping resource." % (repr(resource_linkage)))
         obj = resource_obj.copy()
         obj['package_id'] = package_id
         if package_id not in resource_idx:
@@ -146,7 +147,7 @@ def sync_resources(ckan, resources, resource_linkage_attr, ckan_packages, auth, 
         md5_legacy_url[obj['md5']] = legacy_url
 
     to_reupload = []
-    for package_obj in ckan_packages:
+    for package_obj in sorted(ckan_packages, key=lambda p: p['name']):
         package_id = package_obj['id']
         package_resources = resource_idx.get(package_id)
         if package_resources is None:

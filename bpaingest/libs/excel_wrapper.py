@@ -14,6 +14,7 @@ as mangled by the provided method.
 import datetime
 from collections import namedtuple
 
+import os
 import xlrd
 
 from ..util import make_logger
@@ -69,7 +70,7 @@ class ExcelWrapper(object):
         self.file_name = file_name
         self.header_length = header_length
         self.column_name_row_index = column_name_row_index
-        self.field_spec = field_spec
+        self.field_spec = ExcelWrapper._pad_field_spec(field_spec)
 
         self.workbook = xlrd.open_workbook(file_name, formatting_info=False)  # not implemented
         if sheet_name is None:
@@ -82,11 +83,24 @@ class ExcelWrapper(object):
         self.header, self.name_to_column_map = self.set_name_to_column_map()
         self.name_to_func_map = self.set_name_to_func_map()
 
+    @classmethod
+    def _pad_field_spec(cls, spec):
+        # attribute, column_name, func, is_optional
+        new_spec = []
+        for tpl in spec:
+            if len(tpl) == 2:
+                new_spec.append(tpl + (None, False))
+            elif len(tpl) == 3:
+                new_spec.append(tpl + (False,))
+            else:
+                new_spec.append(tpl)
+        return new_spec
+
     def _set_field_names(self):
         ''' sets field name list '''
 
         names = []
-        for attribute, _, _ in self.field_spec:
+        for attribute, _, _, _ in self.field_spec:
             if attribute in names:
                 logger.error('Attribute {0} is listed more than once in the field specification'.format(attribute))
             names.append(attribute)
@@ -97,8 +111,8 @@ class ExcelWrapper(object):
 
         def strip_unicode(s):
             if type(s) is not str and type(s) is not unicode:
-                print("%s `%s'" % (type(s), repr(s)))
-                return s
+                logger.error("header is not a string: %s `%s'" % (type(s), repr(s)))
+                return str(s)
             return ''.join([t for t in s if ord(t) < 128])
 
         header = [strip_unicode(t).strip().lower() for t in self.sheet.row_values(self.column_name_row_index)]
@@ -116,13 +130,16 @@ class ExcelWrapper(object):
 
         def find_column_re(column_name_re):
             for idx, name in enumerate(header):
-                if column_name.match(name):
+                if column_name_re.match(name):
                     return idx
             return -1
 
         cmap = {}
-        for attribute, column_name, _ in self.field_spec:
+        for attribute, column_name, _, is_optional in self.field_spec:
             col_index = -1
+            col_descr = column_name
+            if hasattr(column_name, 'match'):
+                col_descr = column_name.pattern
             if type(column_name) == tuple:
                 for c, _name in enumerate(column_name):
                     col_index = find_column(_name)
@@ -135,7 +152,8 @@ class ExcelWrapper(object):
                 cmap[attribute] = col_index
             else:
                 self.missing_headers.append(column_name)
-                logger.warning('Column `{}` not found in `{}` (columns are: {})'.format(column_name, self.file_name, header))
+                if not is_optional:
+                    logger.warning('Column `{}` not found in `{}` (columns are: {})'.format(col_descr, os.path.basename(self.file_name), header))
                 cmap[attribute] = None
 
         return header, cmap
@@ -144,7 +162,7 @@ class ExcelWrapper(object):
         ''' Map the spec fields to their corresponding functions '''
 
         function_map = {}
-        for attribute, _, func in self.field_spec:
+        for attribute, _, func, _ in self.field_spec:
             function_map[attribute] = func
         return function_map
 

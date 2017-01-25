@@ -51,7 +51,7 @@ class WheatCultivarsMetadata(BaseMetadata):
         for file_obj in self.files:
             run_obj = self.runs.get(file_obj['run'], BLANK_RUN)
             legacy_url, resource = ckan_resource_from_file(file_obj, run_obj)
-            resources.append((file_obj['bpa_id'], legacy_url, resource))
+            resources.append(((file_obj['bpa_id'],), legacy_url, resource))
         return resources
 
 

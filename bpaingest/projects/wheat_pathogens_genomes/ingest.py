@@ -41,7 +41,7 @@ class WheatPathogensGenomesMetadata(BaseMetadata):
         resources = []
         for bpa_id, file_obj in files_from_metadata(self.metadata):
             legacy_url, resource = ckan_resource_from_file(file_obj)
-            resources.append((bpa_id, legacy_url, resource))
+            resources.append(((bpa_id,), legacy_url, resource))
         return resources
 
 

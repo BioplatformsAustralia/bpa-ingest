@@ -1,6 +1,7 @@
 import logging
 import string
 import os
+import re
 
 import ckanapi
 import csv
@@ -15,12 +16,15 @@ def one(l):
     return l[0]
 
 
-def bpa_id_to_ckan_name(bpa_id, suborg=None):
+def bpa_id_to_ckan_name(bpa_id, suborg=None, postfix=None):
     r = 'bpa-'
     if suborg is not None:
         r += suborg + '-'
     r += bpa_id.replace('/', '_').replace('.', '_')
-    return r
+    if postfix is not None:
+        r += '-' + postfix
+    # CKAN insists upon lowercase
+    return r.lower()
 
 
 def prune_dict(d, keys):
@@ -96,7 +100,7 @@ digit_words = {
 }
 
 
-def csv_to_named_tuple(typname, fname):
+def csv_to_named_tuple(typname, fname, mode='r'):
     if fname is None:
         return [], []
 
@@ -106,9 +110,10 @@ def csv_to_named_tuple(typname, fname):
         if s[0] in string.digits:
             s = digit_words[s[0]] + s[1:]
         s = s.strip('_')
+        s = re.sub(r'__+', '_', s).strip('_')
         return s
 
-    with open(fname) as fd:
+    with open(fname, mode) as fd:
         r = csv.reader(fd)
         header = [clean_name(t) for t in next(r)]
         typ = namedtuple(typname, header)

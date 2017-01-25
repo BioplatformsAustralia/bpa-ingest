@@ -30,7 +30,7 @@ class GbrAmpliconsMetadata(BaseMetadata):
         resources = []
         for bpa_id, file_obj in self.files:
             legacy_url, resource = ckan_resource_from_file(file_obj)
-            resources.append((bpa_id, legacy_url, resource))
+            resources.append(((bpa_id,), legacy_url, resource))
         return resources
 
     def amplicon_packages(self):

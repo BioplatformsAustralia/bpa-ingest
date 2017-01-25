@@ -69,7 +69,6 @@ class DownloadMetadata(object):
 def bootstrap(ckan, args):
     "bootstrap basic organisation data"
     for organization in ORGANIZATIONS:
-        logger.info("%s" % (organization['name']))
         make_organization(ckan, organization)
 
 

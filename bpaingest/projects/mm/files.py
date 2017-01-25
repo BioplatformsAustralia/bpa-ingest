@@ -3,13 +3,37 @@ from ...libs.md5lines import md5lines
 import re
 
 
+amplicon_control_filename_re = re.compile("""
+    ^(?P<control_type>Arc_mock_community|Bac_mock_community|Fungal_mock_community|Soil_DNA|STAN)_
+    (?P<extra_descriptor>).*
+    (?P<vendor>AGRF|UNSW)_
+    (?P<index>[G|A|T|C|-]*)_
+    (?P<flow_id>\w{5})_
+    (?P<runsamplenum>\S\d*)_
+    (?P<lane>L\d{3})_
+    (?P<read>[R|I][1|2])\.fastq\.gz
+""", re.VERBOSE)
+
+
+def test_amplicon_control():
+    filenames = [
+        'Arc_mock_community_1_A16S_UNSW_CGATCAGT-CCTAGAGT_ARVTL_S105_L001_R2.fastq.gz',
+        'Bac_mock_community_16S_UNSW_GGATCGCA-CTAGTATG_AUWLK_S124_L001_I2.fastq.gz',
+        'Fungal_mock_community_18S_UNSW_CGAGGCTG-AAGGCTAT_APK6N_S105_L001_I2.fastq.gz',
+        'Soil_DNA_16S_UNSW_CAGCTAGA-GATAGCGT_AYBVB_S110_L001_I1.fastq.gz',
+        'STAN_16S_UNSW_TATCAGGTGTGC_AL1HY_S97_L001_R1.fastq.gz',
+    ]
+    for filename in filenames:
+        assert(amplicon_control_filename_re.match(filename) is not None)
+
+
 amplicon_filename_re = re.compile("""
     (?P<id>\d{4,6})_
     (?P<extraction>\d)_
     (?P<amplicon>16S|18S|A16S)_
     (?P<vendor>AGRF|UNSW)_
     (?P<index>[G|A|T|C|-]*)_
-    (?P<flowcell>\w{5})_
+    (?P<flow_id>\w{5})_
     (?P<runsamplenum>\S\d*)_
     (?P<lane>L\d{3})_
     (?P<read>[R|I][1|2])\.fastq\.gz
@@ -19,6 +43,7 @@ amplicon_filename_re = re.compile("""
 def test_amplicon():
     filenames = [
         '21878_1_A16S_UNSW_GGACTCCT-TATCCTCT_AP3JE_S17_L001_R1.fastq.gz',
+        '21644_1_16S_UNSW_GAACTAGTCACC_AFGB7_S61_L001_R1.fastq.gz',
     ]
     for filename in filenames:
         assert(amplicon_filename_re.match(filename) is not None)
@@ -67,6 +92,30 @@ def test_metatranscriptome():
     ]
     for filename in filenames:
         assert(metatranscriptome_filename_re.match(filename) is not None)
+
+
+metagenomics_filename_re = re.compile("""
+    (?P<id>\d{4,6})_
+    (?P<extraction>\d)_
+    (?P<library>PE|MP)_
+    (?P<insert_size>\d*bp)_
+    MM_
+    (?P<vendor>AGRF|UNSW)_
+    (?P<flowcell>\w{9})_
+    (?P<index>[G|A|T|C|-]*)_
+    (?P<lane>L\d{3})_
+    (?P<read>R[1|2])\.fastq\.gz
+""", re.VERBOSE)
+
+
+def test_genomics():
+    filenames = [
+        '21744_1_PE_700bp_MM_UNSW_HM7K2BCXX_AAGAGGCA-AAGGAGTA_L001_R1.fastq.gz',
+        '34318_1_PE_680bp_MM_AGRF_H3KWTBCXY_CTCTCTAC-ACTGCATA_L002_R1.fastq.gz',
+        '21730_1_PE_700bp_MM_UNSW_HL7NGBCXX_GTAGAGGA-ACTGCATA_L002_R1.fastq.gz',
+    ]
+    for filename in filenames:
+        assert(metagenomics_filename_re.match(filename) is not None)
 
 
 def parse_md5_file(md5_file, regexp):

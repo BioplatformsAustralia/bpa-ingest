@@ -11,7 +11,7 @@ AMPLICON_FILE_PATTERN = """
     (?P<vendor>AGRF|UNSW)_
     (?P<amplicon>16S|18S|A16S|ITS)_
     (?P<reach>R\d{3,4}-\d{3,4})_
-    (?P<flowcell>\w{5})_
+    (?P<flow_id>\w{5})_
     (?P<index>[GATC]{8}_[GATC]{8})_
     (?P<post>.*)
 """
@@ -25,7 +25,7 @@ def _file_from_line(line):
         'md5': line.md5,
         'amplicon': line.md5data['amplicon'],
         'reach': line.md5data['reach'],
-        'flowcell': line.md5data['flowcell'],
+        'flow_id': line.md5data['flow_id'],
         'index': line.md5data['index']
     }
     return line.md5data['id'], obj

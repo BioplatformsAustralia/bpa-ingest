@@ -93,7 +93,7 @@ class StemcellsTranscriptomeMetadata(BaseMetadata):
                 resource['name'] = filename
                 bpa_id = ingest_utils.extract_bpa_id(file_info.get('id'))
                 legacy_url = bpa_mirror_url('bpa/stemcell/transcriptome/' + filename)
-                resources.append((bpa_id, legacy_url, resource))
+                resources.append(((bpa_id,), legacy_url, resource))
         return resources
 
 
@@ -175,7 +175,7 @@ class StemcellsSmallRNAMetadata(BaseMetadata):
                 resource['name'] = filename
                 bpa_id = ingest_utils.extract_bpa_id(file_info.get('id'))
                 legacy_url = bpa_mirror_url('bpa/stemcell/small_rna/' + filename)
-                resources.append((bpa_id, legacy_url, resource))
+                resources.append(((bpa_id,), legacy_url, resource))
         return resources
 
 
@@ -186,7 +186,7 @@ class StemcellsSingleCellRNASeqMetadata(BaseMetadata):
     organization = 'bpa-stemcells'
     auth = ('stemcell', 'stemcell')
     ckan_data_type = 'stemcells-singlecellrnaseq'
-    resource_linkage = 'bpa_id_range'
+    resource_linkage = ('bpa_id_range',)
 
     def __init__(self, metadata_path, contextual_metadata=None, track_csv_path=None):
         self.path = Path(metadata_path)
@@ -259,5 +259,5 @@ class StemcellsSingleCellRNASeqMetadata(BaseMetadata):
                 resource['name'] = filename
                 bpa_id_range = file_info.get('id')
                 legacy_url = bpa_mirror_url('bpa/stemcell/single_cell_rnaseq/' + filename)
-                resources.append((bpa_id_range, legacy_url, resource))
+                resources.append(((bpa_id_range,), legacy_url, resource))
         return resources

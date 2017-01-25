@@ -4,7 +4,7 @@ import abc
 class BaseMetadata(object):
     __metaclass__ = abc.ABCMeta
     # the package attribute we use to link resources to packages
-    resource_linkage = 'bpa_id'
+    resource_linkage = ('bpa_id',)
 
     @abc.abstractmethod
     def __init__(self, metadata_path):

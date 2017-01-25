@@ -6,7 +6,9 @@ from .mm.ingest import (
     MarineMicrobesGenomicsAmplicons16SMetadata,
     MarineMicrobesGenomicsAmpliconsA16SMetadata,
     MarineMicrobesGenomicsAmplicons18SMetadata,
-    MarineMicrobesGenomicsAmpliconsITSMetadata,
+    MarineMicrobesGenomicsAmplicons16SControlMetadata,
+    MarineMicrobesGenomicsAmpliconsA16SControlMetadata,
+    MarineMicrobesGenomicsAmplicons18SControlMetadata,
     MarineMicrobesMetagenomicsMetadata,
     MarineMicrobesMetatranscriptomeMetadata)
 from .sepsis.ingest import (
@@ -48,7 +50,9 @@ PROJECTS = {
     'mm-genomics-amplicons-16s': MarineMicrobesGenomicsAmplicons16SMetadata,
     'mm-genomics-amplicons-a16s': MarineMicrobesGenomicsAmpliconsA16SMetadata,
     'mm-genomics-amplicons-18s': MarineMicrobesGenomicsAmplicons18SMetadata,
-    'mm-genomics-amplicons-its': MarineMicrobesGenomicsAmpliconsITSMetadata,
+    'mm-genomics-amplicons-16s-control': MarineMicrobesGenomicsAmplicons16SControlMetadata,
+    'mm-genomics-amplicons-a16s-control': MarineMicrobesGenomicsAmpliconsA16SControlMetadata,
+    'mm-genomics-amplicons-18s-control': MarineMicrobesGenomicsAmplicons18SControlMetadata,
     'mm-metagenomics': MarineMicrobesMetagenomicsMetadata,
     'mm-metatranscriptome': MarineMicrobesMetatranscriptomeMetadata,
     'wheat-pathogens-transcript': WheatPathogensTranscriptMetadata,

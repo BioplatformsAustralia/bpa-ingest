@@ -162,7 +162,17 @@ def get_date(dt):
         pass
 
     try:
+        return datetime.datetime.strptime(dt, '%Y-%b-%d').date()
+    except ValueError:
+        pass
+
+    try:
         return datetime.datetime.strptime(dt, '%d/%m/%Y').date()
+    except ValueError:
+        pass
+
+    try:
+        return datetime.datetime.strptime(dt, '%d/%m/%y').date()
     except ValueError:
         pass
 

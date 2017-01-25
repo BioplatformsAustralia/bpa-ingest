@@ -99,7 +99,7 @@ class SepsisGenomicsMiseqMetadata(BaseMetadata):
                 resource['name'] = file_info.filename
                 bpa_id = ingest_utils.extract_bpa_id(file_info.get('id'))
                 legacy_url = bpa_mirror_url('bpa/sepsis/genomics/miseq/' + file_info.filename)
-                resources.append((bpa_id, legacy_url, resource))
+                resources.append(((bpa_id,), legacy_url, resource))
         return resources
 
 
@@ -186,7 +186,7 @@ class SepsisGenomicsPacbioMetadata(BaseMetadata):
                 resource['name'] = file_info.filename
                 bpa_id = ingest_utils.extract_bpa_id(file_info.get('id'))
                 legacy_url = bpa_mirror_url('bpa/sepsis/genomics/pacbio/' + file_info.filename)
-                resources.append((bpa_id, legacy_url, resource))
+                resources.append(((bpa_id,), legacy_url, resource))
         return resources
 
 
@@ -274,7 +274,7 @@ class SepsisTranscriptomicsHiseqMetadata(BaseMetadata):
                 resource['name'] = file_info.filename
                 bpa_id = ingest_utils.extract_bpa_id(file_info.get('id'))
                 legacy_url = bpa_mirror_url('bpa/sepsis/transcriptomics/hiseq/' + file_info.filename)
-                resources.append((bpa_id, legacy_url, resource))
+                resources.append(((bpa_id,), legacy_url, resource))
         return resources
 
 
@@ -362,7 +362,7 @@ class SepsisMetabolomicsLCMSMetadata(BaseMetadata):
                 resource['name'] = file_info.filename
                 bpa_id = ingest_utils.extract_bpa_id(file_info.get('id'))
                 legacy_url = bpa_mirror_url('bpa/sepsis/metabolomics/lcms/' + file_info.filename)
-                resources.append((bpa_id, legacy_url, resource))
+                resources.append(((bpa_id,), legacy_url, resource))
         return resources
 
 
@@ -454,7 +454,7 @@ class SepsisProteomicsMS1QuantificationMetadata(BaseMetadata):
                 resource['name'] = file_info.filename
                 bpa_id = ingest_utils.extract_bpa_id(file_info.get('id'))
                 legacy_url = bpa_mirror_url('bpa/sepsis/proteomics/ms1quantification/' + file_info.filename)
-                resources.append((bpa_id, legacy_url, resource))
+                resources.append(((bpa_id,), legacy_url, resource))
         return resources
 
 
@@ -618,7 +618,7 @@ class SepsisProteomicsSwathMSBaseMetadata(BaseMetadata):
                 elif file_info.data_type == '2d':
                     package_id = package_name
                 legacy_url = bpa_mirror_url('bpa/sepsis/proteomics/swathms/' + file_info.filename)
-                resources.append((package_id, legacy_url, resource))
+                resources.append(((package_id,), legacy_url, resource))
         return resources
 
 
@@ -634,7 +634,7 @@ class SepsisProteomicsSwathMSMetadata(SepsisProteomicsSwathMSBaseMetadata):
 
 class SepsisProteomicsSwathMSPoolMetadata(SepsisProteomicsSwathMSBaseMetadata):
     ckan_data_type = 'arp-proteomics-swathms-pool'
-    resource_linkage = 'pool_bpa_ids'
+    resource_linkage = ('pool_bpa_ids',)
 
     def get_packages(self):
         return self.get_swath_packages('2d')
