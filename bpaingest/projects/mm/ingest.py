@@ -10,6 +10,8 @@ from ...abstract import BaseMetadata
 from ...libs.excel_wrapper import ExcelWrapper
 from . import files
 
+import datetime
+import os
 import re
 
 
@@ -29,13 +31,21 @@ class BaseMarineMicrobesAmpliconsMetadata(BaseMetadata):
 
     @classmethod
     def parse_spreadsheet(self, fname):
+        def fix_dilution(val):
+            # 1:10 is in excel date format in some columns; convert back
+            if isinstance(val, datetime.time):
+                return '%s:%s' % (val.hour, val.minute)
+            return val
+
         field_spec = [
             ("bpa_id", re.compile(r'^.*sample unique id$'), ingest_utils.extract_bpa_id),
-            ("sample_extaction_id", "Sample extraction ID", None),
-            ("insert_size_range", "Insert size range", None),
-            ("library_construction_protocol", "Library construction protocol", None),
-            ("sequencer", "Sequencer", None),
-            ("analysis_software_version", "CASAVA version", None),
+            ("sample_extraction_id", "Sample extraction ID", None),
+            ("target", "Target", None),
+            ("pass_fail", "P=pass, F=fail", None),
+            ("dilution_used", "Dilution used", fix_dilution),
+            ("reads", "# of reads", None),
+            ("analysis_software_version", "AnalysisSoftwareVersion", None),
+            ("comments", "Comments", None),
         ]
         try:
             wrapper = ExcelWrapper(
@@ -58,7 +68,7 @@ class BaseMarineMicrobesAmpliconsMetadata(BaseMetadata):
         # this is harmless as they have to precisly match, and BPA_ID is the primary key
         all_rows = set()
         for fname in glob(self.path + '/*.xlsx'):
-            logger.info("Processing Marine Microbes Transcriptomics metadata file {0}".format(fname))
+            logger.info("Processing Marine Microbes Transcriptomics metadata file {0}".format(os.path.basename(fname)))
             all_rows.update(BaseMarineMicrobesAmpliconsMetadata.parse_spreadsheet(fname))
         for row in sorted(all_rows):
             bpa_id = row.bpa_id
@@ -70,13 +80,15 @@ class BaseMarineMicrobesAmpliconsMetadata(BaseMetadata):
                 'name': name,
                 'id': name,
                 'bpa_id': bpa_id,
+                'sample_extraction_id': row.sample_extraction_id,
+                'target': row.target,
+                'pass_fail': row.pass_fail,
+                'dilution_used': row.dilution_used,
+                'reads': row.reads,
+                'analysis_software_version': row.analysis_software_version,
                 'amplicon': self.amplicon,
                 'notes': 'Marine Microbes Amplicons %s %s' % (self.amplicon, bpa_id),
                 'title': 'Marine Microbes Amplicons %s %s' % (self.amplicon, bpa_id),
-                'insert_size_range': row.insert_size_range,
-                'library_construction_protocol': row.library_construction_protocol,
-                'sequencer': row.sequencer,
-                'analysis_software_version': row.analysis_software_version,
                 'type': self.ckan_data_type,
                 'private': True,
             })

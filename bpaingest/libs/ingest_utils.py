@@ -23,6 +23,9 @@ def extract_bpa_id(s):
         s = int(s)
     if isinstance(s, int):
         s = str(s)
+    # if someone has appended extraction number, remove it
+    if '_' in s:
+        s = s.rsplit('_', 1)[0]
     m = bpa_id_re.match(s)
     if m:
         return BPA_PREFIX + m.groups()[0]
