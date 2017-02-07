@@ -22,16 +22,20 @@ index_from_comment_re = re.compile(r'([G|A|T|C|-]{6,}_[G|A|T|C|-]{6,})')
 index_from_comment_pilot_re = re.compile(r'_([G|A|T|C|-]{6,})_')
 
 
-def index_from_comment(comment):
+def index_from_comment(attrs):
     # return the index from a comment (for linkage on pilot data)
     # 34865_1_18S_UNSW_ATCTCAGG_GTAAGGAG_AWMVL
     # 21644_16S_UNSW_GTCAATTGACCG_AFGB7
-    m = index_from_comment_re.search(comment)
-    if not m:
-        m = index_from_comment_pilot_re.search(comment)
-    if not m:
-        return None
-    return m.groups()[0]
+    # 21644_A16S_UNSW_CGGAGCCT_TCGACTAG_AG27L
+    for attr in attrs:
+        if not attr:
+            continue
+        m = index_from_comment_re.search(attr)
+        if not m:
+            m = index_from_comment_pilot_re.search(attr)
+        if not m:
+            continue
+        return m.groups()[0]
 
 
 def build_mm_amplicon_linkage(index_linkage, flow_id, index):
@@ -112,6 +116,7 @@ class BaseMarineMicrobesAmpliconsMetadata(BaseMetadata):
             ("reads", re.compile(r"^# of (raw )?reads$")),
             ("analysis_software_version", "AnalysisSoftwareVersion"),
             ("comments", "Comments"),
+            ("sample_name_on_sample_sheet", "Sample name on sample sheet"),
             # special case: we merge these together (and throw a hard error if more than one has data for a given row)
             ("pass_fail", "P=pass, F=fail"),
             ("pass_fail_neat", "1:10 PCR, P=pass, F=fail", None, True),
@@ -154,7 +159,8 @@ class BaseMarineMicrobesAmpliconsMetadata(BaseMetadata):
                 if bpa_id is None:
                     continue
                 obj = {}
-                mm_amplicon_linkage = build_mm_amplicon_linkage(index_linkage, flow_id, index_from_comment(row.comments))
+                index = index_from_comment([row.comments, row.sample_name_on_sample_sheet])
+                mm_amplicon_linkage = build_mm_amplicon_linkage(index_linkage, flow_id, index)
                 name = bpa_id_to_ckan_name(bpa_id.split('.')[-1], self.ckan_data_type + '-' + self.amplicon, mm_amplicon_linkage)
                 obj.update({
                     'name': name,
@@ -213,7 +219,7 @@ class MarineMicrobesGenomicsAmplicons16SMetadata(BaseMarineMicrobesAmpliconsMeta
 
 class MarineMicrobesGenomicsAmpliconsA16SMetadata(BaseMarineMicrobesAmpliconsMetadata):
     amplicon = 'a16s'
-    index_linkage_spreadsheets = ('MM-Pilot_A16S_UNSW_AG27L_metadata.xlsx',)
+    index_linkage_spreadsheets = ('MM-Pilot_A16S_UNSW_AG27L_metadata_UPDATE.xlsx',)
     index_linkage_md5s = ('MM_Pilot_A16S_UNSW_AG27L_checksums.md5',)
     metadata_urls = [
         'https://downloads-qcif.bioplatforms.com/bpa/marine_microbes/amplicons/a16s/'
