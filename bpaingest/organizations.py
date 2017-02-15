@@ -1,3 +1,5 @@
+# _*_ coding: utf-8 _*_
+
 barcode_desc = """
 Of the estimated 10 million species that exist on our planet, only just over a million have so far been identified and described.
 
@@ -233,6 +235,13 @@ ORGANIZATIONS = [
         'display_name': 'Wheat Pathogens Transcript',
         'image_url': 'https://data.bioplatforms.com/wheat.png',
         'description': wheat_path_transcript_desc,
+        'groups': [{'capacity': 'public', 'name': BPA_ORGANIZATION_ID}],
+    },
+    {
+        'name': 'bpa-omg',
+        'title': 'Oz Mammals Genome Initiative',
+        'display_name': 'Oz Mammals Genome Initiative',
+        'image_url': 'https://s3-ap-southeast-2.amazonaws.com/bpa-web-assets/Dasyurus_viverrinus_Taranna_AnnaMacDonald_CCBY.1200x1200.jpeg',
         'groups': [{'capacity': 'public', 'name': BPA_ORGANIZATION_ID}],
     }
 ]
