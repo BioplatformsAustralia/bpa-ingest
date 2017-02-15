@@ -391,7 +391,7 @@ class MarineMicrobesMetagenomicsMetadata(BaseMetadata):
                 resource['md5'] = resource['id'] = md5
                 resource['name'] = filename
                 bpa_id = ingest_utils.extract_bpa_id(file_info.get('id'))
-                legacy_url = bpa_mirror_url('bpa/marine_microbes/transcriptome/' + filename)
+                legacy_url = bpa_mirror_url('bpa/marine_microbes/metagenomics/' + filename)
                 resources.append(((bpa_id,), legacy_url, resource))
         return resources
 
