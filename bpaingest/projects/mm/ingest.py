@@ -202,6 +202,7 @@ class BaseMarineMicrobesAmpliconsMetadata(BaseMetadata):
                 resource = file_info.copy()
                 resource['md5'] = resource['id'] = md5
                 resource['name'] = filename
+                resource['resource_type'] = self.ckan_data_type
                 bpa_id = ingest_utils.extract_bpa_id(file_info.get('id'))
                 legacy_url = bpa_mirror_url('bpa/marine_microbes/amplicons/' + self.amplicon + '/' + filename)
                 resources.append(((bpa_id, build_mm_amplicon_linkage(index_linkage, resource['flow_id'], resource['index'])), legacy_url, resource))
@@ -286,6 +287,7 @@ class BaseMarineMicrobesAmpliconsControlMetadata(BaseMetadata):
             resource = file_info.copy()
             resource['md5'] = resource['id'] = md5
             resource['name'] = filename
+            resource['resource_type'] = self.ckan_data_type
             legacy_url = bpa_mirror_url('bpa/marine_microbes/amplicons/' + self.amplicon + '/' + filename)
             resources.append(((self.amplicon, resource['flow_id']), legacy_url, resource))
         return resources
@@ -390,6 +392,7 @@ class MarineMicrobesMetagenomicsMetadata(BaseMetadata):
                 resource = file_info.copy()
                 resource['md5'] = resource['id'] = md5
                 resource['name'] = filename
+                resource['resource_type'] = self.ckan_data_type
                 bpa_id = ingest_utils.extract_bpa_id(file_info.get('id'))
                 legacy_url = bpa_mirror_url('bpa/marine_microbes/metagenomics/' + filename)
                 resources.append(((bpa_id,), legacy_url, resource))
@@ -476,6 +479,7 @@ class MarineMicrobesMetatranscriptomeMetadata(BaseMetadata):
                 resource = file_info.copy()
                 resource['md5'] = resource['id'] = md5
                 resource['name'] = filename
+                resource['resource_type'] = self.ckan_data_type
                 bpa_id = ingest_utils.extract_bpa_id(file_info.get('id'))
                 legacy_url = bpa_mirror_url('bpa/marine_microbes/metatranscriptome/' + filename)
                 resources.append(((bpa_id,), legacy_url, resource))

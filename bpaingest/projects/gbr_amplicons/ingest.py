@@ -15,6 +15,7 @@ logger = make_logger(__name__)
 class GbrAmpliconsMetadata(BaseMetadata):
     metadata_urls = ['https://downloads-qcif.bioplatforms.com/bpa/gbr/metadata/amplicons/']
     organization = 'bpa-great-barrier-reef'
+    ckan_data_type = 'great-barrier-reef-amplicon'
     auth = ("bpa", "gbr")
 
     def __init__(self, metadata_path, track_csv_path=None):
@@ -45,7 +46,7 @@ class GbrAmpliconsMetadata(BaseMetadata):
                 'title': 'Amplicon {}'.format(bpa_id),
                 'notes': 'Amplicon Data for Great Barrier Reef Sample {}'.format(bpa_id),
                 'tags': [{'name': 'Amplicon'}],
-                'type': 'great-barrier-reef-amplicon',
+                'type': GbrAmpliconsMetadata.ckan_data_type,
                 'private': True,
             })
             yield obj
@@ -55,6 +56,7 @@ def ckan_resource_from_file(file_obj):
     ckan_obj = file_obj.copy()
     url = bpa_mirror_url('gbr/amplicons/{}/{}'.format(file_obj['amplicon'].lower(), file_obj['filename']))
     ckan_obj.update({
-        'id': file_obj['md5']
+        'id': file_obj['md5'],
+        'resource_type': GbrAmpliconsMetadata.ckan_data_type,
     })
     return url, ckan_obj

@@ -16,6 +16,7 @@ logger = make_logger(__name__)
 class WheatCultivarsMetadata(BaseMetadata):
     metadata_urls = ['https://downloads-qcif.bioplatforms.com/bpa/wheat_cultivars/tracking/']
     organization = 'bpa-wheat-cultivars'
+    ckan_data_type = 'wheat-cultivars'
 
     def __init__(self, metadata_path, track_csv_path=None):
         path = Path(metadata_path)
@@ -33,7 +34,7 @@ class WheatCultivarsMetadata(BaseMetadata):
                 'bpa_id': bpa_id,
                 'title': bpa_id,
                 'notes': '%s (%s): %s' % (data.variety, data.code, data.classification),
-                'type': 'wheat-cultivars',
+                'type': self.ckan_data_type,
             }
             for field in ('source_name', 'code', 'characteristics', 'classification', 'organism', 'variety',
                           'organism_part', 'pedigree', 'dev_stage', 'yield_properties', 'morphology', 'maturity',

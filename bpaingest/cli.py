@@ -98,7 +98,7 @@ sync.setup = setup_sync
 def makeschema(ckan, args):
     schema_template = {
         "scheming_version": 1,
-        "about_url": "https://downloads.bioplatforms.com/sepsis/",
+        "about_url": "https://data.bioplatforms.com/",
         "dataset_fields": [
             {
                 "field_name": "owner_org",

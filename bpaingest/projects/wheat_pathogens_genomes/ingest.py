@@ -16,6 +16,7 @@ logger = make_logger(__name__)
 class WheatPathogensGenomesMetadata(BaseMetadata):
     metadata_urls = ['https://downloads-qcif.bioplatforms.com/bpa/wheat_pathogens/metadata/']
     organization = 'bpa-wheat-pathogens-genomes'
+    ckan_data_type = 'wheat-pathogens'
 
     def __init__(self, metadata_path, track_csv_path=None):
         path = Path(metadata_path)
@@ -32,7 +33,7 @@ class WheatPathogensGenomesMetadata(BaseMetadata):
                 'bpa_id': bpa_id,
                 'title': bpa_id,
                 'notes': '%s' % (data['official_variety_name']),
-                'type': 'wheat-pathogens',
+                'type': self.ckan_data_type,
             })
             packages.append(obj)
         return packages
@@ -50,6 +51,6 @@ def ckan_resource_from_file(file_obj):
     url = bpa_mirror_url('wheat_pathogens/all/' + file_obj['filename'])
     ckan_obj.update({
         'id': file_obj['md5'],
-        'resource_type': 'wheat-pathogens'
+        'resource_type': WheatPathogensGenomesMetadata.ckan_data_type,
     })
     return url, ckan_obj
