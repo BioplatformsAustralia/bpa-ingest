@@ -9,7 +9,7 @@ import sys
 import requests
 from bs4 import BeautifulSoup
 from distutils.dir_util import mkpath
-from urlparse import urljoin
+from urlparse import urljoin, urlsplit
 from ..util import make_logger
 
 import requests.packages.urllib3
@@ -64,7 +64,7 @@ class Fetcher():
                     f.write(chunk)
                     f.flush()
 
-    def fetch_metadata_from_folder(self, metadata_patterns, metadata_info, target_depth=0, url=None):
+    def fetch_metadata_from_folder(self, metadata_patterns, metadata_info, target_depth=0, url=None, _metadata_fn=None):
         """
         walk a directory structure. if `target_depth` == 0, then download files
         if `target_depth` > 0, recurse into subdirectories
@@ -75,6 +75,9 @@ class Fetcher():
             metadata_patterns = [r'^.*\.(md5|xlsx)$']
         if url is None:
             url = self.metadata_source_url
+        if _metadata_fn is None:
+            def _metadata_fn(url):
+                return urlsplit(url).path.strip('/').split('/')[-target_depth:]
 
         logger.info('Fetching folder from {}'.format(url))
         response = requests.get(url, stream=True, auth=self.auth, verify=False)
@@ -88,14 +91,14 @@ class Fetcher():
             fetched.add(link_target)
             if recursive:
                 if Fetcher.recurse_re.match(link_target):
-                    print("RECURSE:", link_target)
                     self.fetch_metadata_from_folder(
                         metadata_patterns,
                         metadata_info,
                         target_depth=target_depth - 1,
-                        url=urljoin(url, link_target))
+                        url=urljoin(url, link_target),
+                        _metadata_fn=_metadata_fn)
             else:
                 if not any(re.match(pattern, link_target) for pattern in metadata_patterns):
                     continue
-                metadata_info[link_target] = url
+                metadata_info[link_target] = _metadata_fn(url)
                 self._fetch(url, link_target)
