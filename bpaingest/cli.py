@@ -40,19 +40,31 @@ class DownloadMetadata(object):
         meta_kwargs = {
             'track_csv_path': track_csv_path
         }
+        info_json = os.path.join(self.path, 'bpa-ingest.json')
         contextual_classes = getattr(project_class, 'contextual_classes', [])
         self.contextual = [(os.path.join(self.path, c.name), c) for c in contextual_classes]
         if fetch:
+            metadata_info = {}
             for metadata_url in project_class.metadata_urls:
                 logger.info("fetching submission metadata: %s" % (project_class.metadata_urls))
                 fetcher = Fetcher(self.path, metadata_url, self.auth)
-                fetcher.fetch_metadata_from_folder(getattr(project_class, 'metadata_patterns', None))
+                fetcher.fetch_metadata_from_folder(
+                    getattr(project_class, 'metadata_patterns', None),
+                    metadata_info,
+                    target_depth=getattr(project_class, 'metadata_depth', 0))
             for contextual_path, contextual_cls in self.contextual:
                 os.mkdir(contextual_path)
                 logger.info("fetching contextal metadata: %s" % (contextual_cls.metadata_urls))
                 for metadata_url in contextual_cls.metadata_urls:
                     fetcher = Fetcher(contextual_path, metadata_url, self.auth)
-                    fetcher.fetch_metadata_from_folder(getattr(contextual_cls, 'metadata_patterns', None))
+                    fetcher.fetch_metadata_from_folder(
+                        getattr(contextual_cls, 'metadata_patterns', None),
+                        metadata_info,
+                        target_depth=getattr(contextual_cls, 'metadata_depth', 0))
+            with open(info_json, 'w') as fd:
+                json.dump(metadata_info, fd)
+        with open(info_json, 'r') as fd:
+            meta_kwargs['metadata_info'] = json.load(fd)
         if self.contextual:
             meta_kwargs['contextual_metadata'] = [c(p) for (p, c) in self.contextual]
         self.meta = project_class(self.path, **meta_kwargs)

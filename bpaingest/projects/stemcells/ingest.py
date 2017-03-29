@@ -17,15 +17,17 @@ logger = make_logger(__name__)
 
 class StemcellsTranscriptomeMetadata(BaseMetadata):
     contextual_classes = []
-    metadata_urls = ['https://downloads-qcif.bioplatforms.com/bpa/stemcell/transcriptome/']
+    metadata_urls = ['https://downloads-qcif.bioplatforms.com/bpa/stemcell/raw/transcriptome/']
+    metadata_depth = 2
     metadata_patterns = [r'^.*\.md5', r'^.*_metadata\.xlsx']
     organization = 'bpa-stemcells'
     auth = ('stemcell', 'stemcell')
     ckan_data_type = 'stemcells-transcriptomics'
 
-    def __init__(self, metadata_path, contextual_metadata=None, track_csv_path=None):
+    def __init__(self, metadata_path, contextual_metadata=None, track_csv_path=None, metadata_info=None):
         self.path = Path(metadata_path)
         self.contextual_metadata = contextual_metadata
+        print(metadata_info)
 
     @classmethod
     def parse_spreadsheet(self, fname):
@@ -83,6 +85,7 @@ class StemcellsTranscriptomeMetadata(BaseMetadata):
         return packages
 
     def get_resources(self):
+        return []
         logger.info("Ingesting Sepsis md5 file information from {0}".format(self.path))
         resources = []
         for md5_file in glob(self.path + '/*.md5'):
