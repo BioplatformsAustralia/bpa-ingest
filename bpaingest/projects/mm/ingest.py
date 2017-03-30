@@ -96,12 +96,13 @@ class BaseMarineMicrobesAmpliconsMetadata(BaseMetadata):
     metadata_patterns = [r'^.*\.md5', r'^.*_metadata.*.*\.xlsx']
     resource_linkage = ('bpa_id', 'mm_amplicon_linkage')
 
-    def __init__(self, metadata_path, contextual_metadata=None, track_csv_path=None):
+    def __init__(self, metadata_path, contextual_metadata=None, track_csv_path=None, metadata_info=None):
         self.path = Path(metadata_path)
         self.contextual_metadata = contextual_metadata
+        self.metadata_info = metadata_info
 
     @classmethod
-    def parse_spreadsheet(self, fname):
+    def parse_spreadsheet(self, fname, metadata_info):
         def fix_dilution(val):
             # 1:10 is in excel date format in some columns; convert back
             if isinstance(val, datetime.time):
@@ -130,7 +131,8 @@ class BaseMarineMicrobesAmpliconsMetadata(BaseMetadata):
                 sheet_name=None,
                 header_length=2,
                 column_name_row_index=1,
-                formatting_info=True)
+                formatting_info=True,
+                additional_context=metadata_info[os.path.basename(fname)])
             rows = list(wrapper.get_all())
             return rows
         except:
@@ -154,7 +156,7 @@ class BaseMarineMicrobesAmpliconsMetadata(BaseMetadata):
             flow_id = get_flow_id(fname)
             # the pilot data needs increased linkage, due to multiple trials on the same BPA ID
             index_linkage = base_fname in self.index_linkage_spreadsheets
-            for row in BaseMarineMicrobesAmpliconsMetadata.parse_spreadsheet(fname):
+            for row in BaseMarineMicrobesAmpliconsMetadata.parse_spreadsheet(fname, self.metadata_info):
                 bpa_id = row.bpa_id
                 if bpa_id is None:
                     continue
@@ -177,6 +179,8 @@ class BaseMarineMicrobesAmpliconsMetadata(BaseMetadata):
                     'amplicon': self.amplicon,
                     'notes': 'Marine Microbes Amplicons %s %s %s' % (self.amplicon, bpa_id, flow_id),
                     'title': 'Marine Microbes Amplicons %s %s %s' % (self.amplicon, bpa_id, flow_id),
+                    'ticket': row.ticket,
+                    'facility': row.facility_code.upper(),
                     'type': self.ckan_data_type,
                     'comments': row.comments,
                     'private': True,
@@ -214,8 +218,9 @@ class MarineMicrobesGenomicsAmplicons16SMetadata(BaseMarineMicrobesAmpliconsMeta
     index_linkage_spreadsheets = ('MM_Pilot_1_16S_UNSW_AFGB7_metadata.xlsx',)
     index_linkage_md5s = ('MM_1_16S_UNSW_AFGB7_checksums.md5',)
     metadata_urls = [
-        'https://downloads-qcif.bioplatforms.com/bpa/marine_microbes/amplicons/16s/'
+        'https://downloads-qcif.bioplatforms.com/bpa/marine_microbes/raw/amplicons/16s/'
     ]
+    metadata_url_components = ('facility_code', 'ticket')
 
 
 class MarineMicrobesGenomicsAmpliconsA16SMetadata(BaseMarineMicrobesAmpliconsMetadata):
@@ -223,8 +228,9 @@ class MarineMicrobesGenomicsAmpliconsA16SMetadata(BaseMarineMicrobesAmpliconsMet
     index_linkage_spreadsheets = ('MM-Pilot_A16S_UNSW_AG27L_metadata_UPDATE.xlsx',)
     index_linkage_md5s = ('MM_Pilot_A16S_UNSW_AG27L_checksums.md5',)
     metadata_urls = [
-        'https://downloads-qcif.bioplatforms.com/bpa/marine_microbes/amplicons/a16s/'
+        'https://downloads-qcif.bioplatforms.com/bpa/marine_microbes/raw/amplicons/a16s/'
     ]
+    metadata_url_components = ('facility_code', 'ticket')
 
 
 class MarineMicrobesGenomicsAmplicons18SMetadata(BaseMarineMicrobesAmpliconsMetadata):
@@ -232,8 +238,9 @@ class MarineMicrobesGenomicsAmplicons18SMetadata(BaseMarineMicrobesAmpliconsMeta
     index_linkage_spreadsheets = ('MM_Pilot_18S_UNSW_AGGNB_metadata.xlsx',)
     index_linkage_md5s = ('MM_18S_UNSW_AGGNB_checksums.md5',)
     metadata_urls = [
-        'https://downloads-qcif.bioplatforms.com/bpa/marine_microbes/amplicons/18s/'
+        'https://downloads-qcif.bioplatforms.com/bpa/marine_microbes/raw/amplicons/18s/'
     ]
+    metadata_url_components = ('facility_code', 'ticket')
 
 
 class BaseMarineMicrobesAmpliconsControlMetadata(BaseMetadata):
@@ -244,8 +251,9 @@ class BaseMarineMicrobesAmpliconsControlMetadata(BaseMetadata):
     metadata_patterns = [r'^.*\.md5']
     resource_linkage = ('amplicon', 'flow_id')
 
-    def __init__(self, metadata_path, contextual_metadata=None, track_csv_path=None):
+    def __init__(self, metadata_path, contextual_metadata=None, track_csv_path=None, metadata_info=None):
         self.path = Path(metadata_path)
+        self.metadata_info = metadata_info
 
     def md5_lines(self):
         logger.info("Ingesting MM md5 file information from {0}".format(self.path))
@@ -265,7 +273,6 @@ class BaseMarineMicrobesAmpliconsControlMetadata(BaseMetadata):
         for flow_id in sorted(flow_ids):
             obj = {}
             name = bpa_id_to_ckan_name('control', self.ckan_data_type + '-' + self.amplicon, flow_id).lower()
-            logger.debug(name)
             obj.update({
                 'name': name,
                 'id': name,
@@ -296,8 +303,9 @@ class BaseMarineMicrobesAmpliconsControlMetadata(BaseMetadata):
 class MarineMicrobesGenomicsAmplicons16SControlMetadata(BaseMarineMicrobesAmpliconsControlMetadata):
     amplicon = '16s'
     metadata_urls = [
-        'https://downloads-qcif.bioplatforms.com/bpa/marine_microbes/amplicons/16s/'
+        'https://downloads-qcif.bioplatforms.com/bpa/marine_microbes/raw/amplicons/16s/'
     ]
+    metadata_url_components = ('facility_code', 'ticket')
 
 
 class MarineMicrobesGenomicsAmpliconsA16SControlMetadata(BaseMarineMicrobesAmpliconsControlMetadata):
@@ -321,15 +329,17 @@ class MarineMicrobesMetagenomicsMetadata(BaseMetadata):
     contextual_classes = [MarineMicrobesSampleContextual]
     metadata_patterns = [r'^.*\.md5', r'^.*_metadata.*\.xlsx']
     metadata_urls = [
-        'https://downloads-qcif.bioplatforms.com/bpa/marine_microbes/metagenomics/'
+        'https://downloads-qcif.bioplatforms.com/bpa/marine_microbes/raw/metagenomics/'
     ]
+    metadata_url_components = ('facility_code', 'ticket')
 
-    def __init__(self, metadata_path, contextual_metadata=None, track_csv_path=None):
+    def __init__(self, metadata_path, contextual_metadata=None, track_csv_path=None, metadata_info=None):
         self.path = Path(metadata_path)
         self.contextual_metadata = contextual_metadata
+        self.metadata_info = metadata_info
 
     @classmethod
-    def parse_spreadsheet(self, fname):
+    def parse_spreadsheet(self, fname, metadata_info):
         field_spec = [
             ("bpa_id", re.compile(r'^.*sample unique id$'), ingest_utils.extract_bpa_id),
             ("sample_extraction_id", "Sample extraction ID", None, True),
@@ -344,7 +354,8 @@ class MarineMicrobesMetagenomicsMetadata(BaseMetadata):
             sheet_name=None,
             header_length=2,
             column_name_row_index=1,
-            formatting_info=True)
+            formatting_info=True,
+            additional_context=metadata_info[os.path.basename(fname)])
         rows = list(wrapper.get_all())
         return rows
 
@@ -353,7 +364,7 @@ class MarineMicrobesMetagenomicsMetadata(BaseMetadata):
         packages = []
         for fname in unique_spreadsheets(glob(self.path + '/*.xlsx')):
             logger.info("Processing Marine Microbes Transcriptomics metadata file {0}".format(os.path.basename(fname)))
-            for row in MarineMicrobesMetagenomicsMetadata.parse_spreadsheet(fname):
+            for row in MarineMicrobesMetagenomicsMetadata.parse_spreadsheet(fname, self.metadata_info):
                 bpa_id = row.bpa_id
                 if bpa_id is None:
                     continue
@@ -370,6 +381,8 @@ class MarineMicrobesMetagenomicsMetadata(BaseMetadata):
                     'library_construction_protocol': row.library_construction_protocol,
                     'sequencer': row.sequencer,
                     'analysis_software_version': row.analysis_software_version,
+                    'ticket': row.ticket,
+                    'facility': row.facility_code.upper(),
                     'type': self.ckan_data_type,
                     'private': True,
                 })
@@ -406,15 +419,17 @@ class MarineMicrobesMetatranscriptomeMetadata(BaseMetadata):
     contextual_classes = [MarineMicrobesSampleContextual]
     metadata_patterns = [r'^.*\.md5', r'^.*_metadata.*\.xlsx']
     metadata_urls = [
-        'https://downloads-qcif.bioplatforms.com/bpa/marine_microbes/metatranscriptome/'
+        'https://downloads-qcif.bioplatforms.com/bpa/marine_microbes/raw/metatranscriptome/'
     ]
+    metadata_url_components = ('facility_code', 'ticket')
 
-    def __init__(self, metadata_path, contextual_metadata=None, track_csv_path=None):
+    def __init__(self, metadata_path, contextual_metadata=None, track_csv_path=None, metadata_info=None):
         self.path = Path(metadata_path)
         self.contextual_metadata = contextual_metadata
+        self.metadata_info = metadata_info
 
     @classmethod
-    def parse_spreadsheet(self, fname):
+    def parse_spreadsheet(self, fname, metadata_info):
         field_spec = [
             ("bpa_id", re.compile(r'^.*sample unique id$'), ingest_utils.extract_bpa_id),
             ("sample_extraction_id", "Sample extraction ID", None),
@@ -429,7 +444,8 @@ class MarineMicrobesMetatranscriptomeMetadata(BaseMetadata):
             sheet_name=None,
             header_length=2,
             column_name_row_index=1,
-            formatting_info=True)
+            formatting_info=True,
+            additional_context=metadata_info[os.path.basename(fname)])
         rows = list(wrapper.get_all())
         return rows
 
@@ -441,7 +457,7 @@ class MarineMicrobesMetatranscriptomeMetadata(BaseMetadata):
         all_rows = set()
         for fname in unique_spreadsheets(glob(self.path + '/*.xlsx')):
             logger.info("Processing Marine Microbes Transcriptomics metadata file {0}".format(os.path.basename(fname)))
-            for row in MarineMicrobesMetatranscriptomeMetadata.parse_spreadsheet(fname):
+            for row in MarineMicrobesMetatranscriptomeMetadata.parse_spreadsheet(fname, self.metadata_info):
                 all_rows.add(row)
         for row in sorted(all_rows):
             bpa_id = row.bpa_id
@@ -460,6 +476,8 @@ class MarineMicrobesMetatranscriptomeMetadata(BaseMetadata):
                 'library_construction_protocol': row.library_construction_protocol,
                 'sequencer': row.sequencer,
                 'analysis_software_version': row.analysis_software_version,
+                'ticket': row.ticket,
+                'facility': row.facility_code.upper(),
                 'type': self.ckan_data_type,
                 'private': True,
             })
