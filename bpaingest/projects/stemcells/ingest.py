@@ -506,7 +506,7 @@ class StemcellsProteomicMetadata(BaseMetadata):
         resources = []
         for md5_file in glob(self.path + '/*.md5'):
             logger.info("Processing md5 file {0}".format(md5_file))
-            for filename, md5, file_info in files.parse_md5_file(md5_file, files.metabolomics_filename_re):
+            for filename, md5, file_info in files.parse_md5_file(md5_file, files.proteomics_filename_re):
                 resource = file_info.copy()
                 resource['md5'] = resource['id'] = md5
                 resource['name'] = filename

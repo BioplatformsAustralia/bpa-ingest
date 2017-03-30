@@ -44,6 +44,28 @@ def test_metabolomics():
         assert(metabolomics_filename_re.match(filename) is not None)
 
 
+proteomics_filename_re = re.compile("""
+    (?P<id>\d{4,6})_
+    SC_
+    (?P<vendor>APAF)_
+    .*
+    (\.wiff|\.wiff\.scan|\.txt)$
+""", re.VERBOSE)
+
+
+def test_proteomics():
+    filenames = [
+        '29614_SC_APAF_MS_1D_IDA_161102_P19598_025e6_01.wiff',
+        '29614_SC_APAF_MS_1D_IDA_161102_P19598_025e6_01.wiff.scan',
+        '29614_SC_APAF_MS_1D_IDA_161102_P19598_05e6_01_DistinctPeptideSummary.txt',
+        '29614_SC_APAF_MS_1D_IDA_161102_P19598_05e6_01_ProteinSummary.txt',
+        '29613_SC_APAF_MS_2D_IDA_161102_P19598_1e6_All_DistinctPeptideSummary.txt',
+
+    ]
+    for filename in filenames:
+        assert(proteomics_filename_re.match(filename) is not None)
+
+
 singlecell_filename_re = re.compile("""
     (?P<id>\d{4,6}-\d{4,6})_
     (?P<library>PE|MP)_
@@ -91,6 +113,10 @@ def test_smallrna():
 def parse_md5_file(md5_file, regexp):
     with open(md5_file) as f:
         for md5, path in md5lines(f):
+            if path.endswith('_metadata.xlsx'):
+                continue
+            if path.endswith('_Report.pdf'):
+                continue
             m = regexp.match(path)
             if not m:
                 raise Exception("no match for {}".format(path))
