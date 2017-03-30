@@ -18,7 +18,7 @@ class WheatPathogensGenomesMetadata(BaseMetadata):
     organization = 'bpa-wheat-pathogens-genomes'
     ckan_data_type = 'wheat-pathogens'
 
-    def __init__(self, metadata_path, track_csv_path=None):
+    def __init__(self, metadata_path, track_csv_path=None, metadata_info=None):
         path = Path(metadata_path)
         self.metadata = parse_metadata(path)
 

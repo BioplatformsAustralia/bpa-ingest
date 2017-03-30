@@ -18,7 +18,7 @@ class WheatCultivarsMetadata(BaseMetadata):
     organization = 'bpa-wheat-cultivars'
     ckan_data_type = 'wheat-cultivars'
 
-    def __init__(self, metadata_path, track_csv_path=None):
+    def __init__(self, metadata_path, track_csv_path=None, metadata_info=None):
         path = Path(metadata_path)
         self.runs = parse_run_data(path)
         self.samples = parse_sample_data(path)
