@@ -64,13 +64,15 @@ class ExcelWrapper(object):
                  header_length,
                  column_name_row_index=0,
                  ignore_date=False,
-                 formatting_info=False):
+                 formatting_info=False,
+                 additional_context=None):
 
         self.ignore_date = ignore_date  # ignore xlrd's attempt at date conversion
         self.file_name = file_name
         self.header_length = header_length
         self.column_name_row_index = column_name_row_index
         self.field_spec = ExcelWrapper._pad_field_spec(field_spec)
+        self.additional_context = additional_context
 
         self.workbook = xlrd.open_workbook(file_name, formatting_info=False)  # not implemented
         if sheet_name is None:
@@ -231,7 +233,10 @@ class ExcelWrapper(object):
         '''Returns all rows for the sheet as namedtuple instances. Filters out any exact duplicates.'''
 
         # row is added so we know where in the spreadsheet this came from
-        typ = namedtuple(typname, [n for n in self.field_names])
+        typ_attrs = [n for n in self.field_names]
+        if self.additional_context is not None:
+            typ_attrs += self.additional_context.keys()
+        typ = namedtuple(typname, typ_attrs)
 
         for row in self._get_rows():
             tpl = []
@@ -255,4 +260,6 @@ class ExcelWrapper(object):
                 if func is not None:
                     val = func(val)
                 tpl.append(val)
+            if self.additional_context:
+                tpl += self.additional_context.values()
             yield typ(*tpl)

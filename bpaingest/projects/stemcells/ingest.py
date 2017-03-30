@@ -10,6 +10,7 @@ from ...libs.excel_wrapper import ExcelWrapper
 from . import files
 from glob import glob
 
+import os
 import re
 
 logger = make_logger(__name__)
@@ -18,7 +19,7 @@ logger = make_logger(__name__)
 class StemcellsTranscriptomeMetadata(BaseMetadata):
     contextual_classes = []
     metadata_urls = ['https://downloads-qcif.bioplatforms.com/bpa/stemcell/raw/transcriptome/']
-    metadata_depth = 2
+    metadata_url_components = ('facility_code', 'ticket')
     metadata_patterns = [r'^.*\.md5', r'^.*_metadata\.xlsx']
     organization = 'bpa-stemcells'
     auth = ('stemcell', 'stemcell')
@@ -27,10 +28,10 @@ class StemcellsTranscriptomeMetadata(BaseMetadata):
     def __init__(self, metadata_path, contextual_metadata=None, track_csv_path=None, metadata_info=None):
         self.path = Path(metadata_path)
         self.contextual_metadata = contextual_metadata
-        print(metadata_info)
+        self.metadata_info = metadata_info
 
     @classmethod
-    def parse_spreadsheet(self, fname):
+    def parse_spreadsheet(self, fname, additional_context):
         field_spec = [
             ("bpa_id", re.compile(r'^.*sample unique id$'), ingest_utils.extract_bpa_id),
             ("sample_extaction_id", "Sample extraction ID", None),
@@ -45,7 +46,8 @@ class StemcellsTranscriptomeMetadata(BaseMetadata):
             sheet_name=None,
             header_length=2,
             column_name_row_index=1,
-            formatting_info=True)
+            formatting_info=True,
+            additional_context=additional_context)
         rows = list(wrapper.get_all())
         return rows
 
@@ -57,7 +59,8 @@ class StemcellsTranscriptomeMetadata(BaseMetadata):
         all_rows = set()
         for fname in glob(self.path + '/*.xlsx'):
             logger.info("Processing Stemcells Transcriptomics metadata file {0}".format(fname))
-            all_rows.update(StemcellsTranscriptomeMetadata.parse_spreadsheet(fname))
+            xlsx_info = self.metadata_info[os.path.basename(fname)]
+            all_rows.update(StemcellsTranscriptomeMetadata.parse_spreadsheet(fname, xlsx_info))
         for row in sorted(all_rows):
             bpa_id = row.bpa_id
             if bpa_id is None:
@@ -85,7 +88,6 @@ class StemcellsTranscriptomeMetadata(BaseMetadata):
         return packages
 
     def get_resources(self):
-        return []
         logger.info("Ingesting Sepsis md5 file information from {0}".format(self.path))
         resources = []
         for md5_file in glob(self.path + '/*.md5'):

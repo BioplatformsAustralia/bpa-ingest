@@ -51,7 +51,7 @@ class DownloadMetadata(object):
                 fetcher.fetch_metadata_from_folder(
                     getattr(project_class, 'metadata_patterns', None),
                     metadata_info,
-                    target_depth=getattr(project_class, 'metadata_depth', 0))
+                    getattr(project_class, 'metadata_url_components', []))
             for contextual_path, contextual_cls in self.contextual:
                 os.mkdir(contextual_path)
                 logger.info("fetching contextal metadata: %s" % (contextual_cls.metadata_urls))
@@ -60,7 +60,7 @@ class DownloadMetadata(object):
                     fetcher.fetch_metadata_from_folder(
                         getattr(contextual_cls, 'metadata_patterns', None),
                         metadata_info,
-                        target_depth=getattr(contextual_cls, 'metadata_depth', 0))
+                        getattr(contextual_cls, 'metadata_url_components', []))
             with open(info_json, 'w') as fd:
                 json.dump(metadata_info, fd)
         with open(info_json, 'r') as fd:

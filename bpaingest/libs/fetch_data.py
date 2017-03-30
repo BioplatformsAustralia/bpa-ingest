@@ -64,7 +64,7 @@ class Fetcher():
                     f.write(chunk)
                     f.flush()
 
-    def fetch_metadata_from_folder(self, metadata_patterns, metadata_info, target_depth=0, url=None, _metadata_fn=None):
+    def fetch_metadata_from_folder(self, metadata_patterns, metadata_info, url_components, _target_depth=-1, _url=None):
         """
         walk a directory structure. if `target_depth` == 0, then download files
         if `target_depth` > 0, recurse into subdirectories
@@ -73,17 +73,17 @@ class Fetcher():
         """
         if metadata_patterns is None:
             metadata_patterns = [r'^.*\.(md5|xlsx)$']
-        if url is None:
-            url = self.metadata_source_url
-        if _metadata_fn is None:
-            def _metadata_fn(url):
-                return urlsplit(url).path.strip('/').split('/')[-target_depth:]
+        if _url is None:
+            _url = self.metadata_source_url
+        if _target_depth == -1:
+            _target_depth = len(url_components)
+        # def _metadata_fn(url):
+        #    return urlsplit(url).path.strip('/').split('/')[-target_depth:]
 
-        logger.info('Fetching folder from {}'.format(url))
-        response = requests.get(url, stream=True, auth=self.auth, verify=False)
-        recursive = target_depth > 0
+        logger.info('Fetching folder from {}'.format(_url))
+        response = requests.get(_url, stream=True, auth=self.auth, verify=False)
+        recursive = _target_depth > 0
         fetched = set()
-        print(url, target_depth, metadata_patterns)
         for link in BeautifulSoup(response.content, 'html.parser').find_all('a'):
             link_target = link.get('href')
             if link_target in fetched:
@@ -94,11 +94,12 @@ class Fetcher():
                     self.fetch_metadata_from_folder(
                         metadata_patterns,
                         metadata_info,
-                        target_depth=target_depth - 1,
-                        url=urljoin(url, link_target),
-                        _metadata_fn=_metadata_fn)
+                        url_components,
+                        _target_depth=_target_depth - 1,
+                        _url=urljoin(_url, link_target))
             else:
                 if not any(re.match(pattern, link_target) for pattern in metadata_patterns):
                     continue
-                metadata_info[link_target] = _metadata_fn(url)
-                self._fetch(url, link_target)
+                meta_parts = urlsplit(_url).path.strip('/').split('/')[-len(url_components):]
+                metadata_info[link_target] = dict(zip(url_components, meta_parts))
+                self._fetch(_url, link_target)
