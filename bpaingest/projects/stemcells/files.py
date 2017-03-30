@@ -28,6 +28,8 @@ def test_transcriptome():
 # FIXME: we need the full convention from BPA / MA
 metabolomics_filename_re = re.compile("""
     (?P<id>\d{4,6})_
+    SC_
+    (?P<vendor>MA)_
     .*
     (\.tar\.gz|\.mzML)$
 """, re.VERBOSE)
