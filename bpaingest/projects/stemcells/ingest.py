@@ -77,6 +77,8 @@ class StemcellsTranscriptomeMetadata(BaseMetadata):
                 'library_construction_protocol': row.library_construction_protocol,
                 'sequencer': row.sequencer,
                 'analysis_software_version': row.analysis_software_version,
+                'ticket': row.ticket,
+                'facility': row.facility_code.upper(),
                 'type': self.ckan_data_type,
                 'private': True,
             })
@@ -104,18 +106,20 @@ class StemcellsTranscriptomeMetadata(BaseMetadata):
 
 class StemcellsSmallRNAMetadata(BaseMetadata):
     contextual_classes = []
-    metadata_urls = ['https://downloads-qcif.bioplatforms.com/bpa/stemcell/small_rna/']
+    metadata_urls = ['https://downloads-qcif.bioplatforms.com/bpa/stemcell/raw/small_rna/']
+    metadata_url_components = ('facility_code', 'ticket')
     metadata_patterns = [r'^.*\.md5', r'^.*_metadata\.xlsx']
     organization = 'bpa-stemcells'
     auth = ('stemcell', 'stemcell')
     ckan_data_type = 'stemcells-smallrna'
 
-    def __init__(self, metadata_path, contextual_metadata=None, track_csv_path=None):
+    def __init__(self, metadata_path, contextual_metadata=None, track_csv_path=None, metadata_info=None):
         self.path = Path(metadata_path)
         self.contextual_metadata = contextual_metadata
+        self.metadata_info = metadata_info
 
     @classmethod
-    def parse_spreadsheet(self, fname):
+    def parse_spreadsheet(self, fname, additional_context):
         field_spec = [
             ("bpa_id", re.compile(r'^.*sample unique id$'), ingest_utils.extract_bpa_id),
             ("sample_extaction_id", "Sample extraction ID", None),
@@ -130,7 +134,8 @@ class StemcellsSmallRNAMetadata(BaseMetadata):
             sheet_name=None,
             header_length=2,
             column_name_row_index=1,
-            formatting_info=True)
+            formatting_info=True,
+            additional_context=additional_context)
         rows = list(wrapper.get_all())
         return rows
 
@@ -142,7 +147,8 @@ class StemcellsSmallRNAMetadata(BaseMetadata):
         all_rows = set()
         for fname in glob(self.path + '/*.xlsx'):
             logger.info("Processing Stemcells SmallRNA metadata file {0}".format(fname))
-            all_rows.update(StemcellsSmallRNAMetadata.parse_spreadsheet(fname))
+            xlsx_info = self.metadata_info[os.path.basename(fname)]
+            all_rows.update(StemcellsSmallRNAMetadata.parse_spreadsheet(fname, xlsx_info))
         for row in sorted(all_rows):
             bpa_id = row.bpa_id
             if bpa_id is None:
@@ -159,6 +165,8 @@ class StemcellsSmallRNAMetadata(BaseMetadata):
                 'library_construction_protocol': row.library_construction_protocol,
                 'sequencer': row.sequencer,
                 'analysis_software_version': row.analysis_software_version,
+                'ticket': row.ticket,
+                'facility': row.facility_code.upper(),
                 'type': self.ckan_data_type,
                 'private': True,
             })
@@ -186,19 +194,21 @@ class StemcellsSmallRNAMetadata(BaseMetadata):
 
 class StemcellsSingleCellRNASeqMetadata(BaseMetadata):
     contextual_classes = []
-    metadata_urls = ['https://downloads-qcif.bioplatforms.com/bpa/stemcell/single_cell_rnaseq/']
+    metadata_urls = ['https://downloads-qcif.bioplatforms.com/bpa/stemcell/raw/single_cell_rnaseq/']
+    metadata_url_components = ('facility_code', 'ticket')
     metadata_patterns = [r'^.*\.md5', r'^.*_metadata\.xlsx']
     organization = 'bpa-stemcells'
     auth = ('stemcell', 'stemcell')
     ckan_data_type = 'stemcells-singlecellrnaseq'
     resource_linkage = ('bpa_id_range',)
 
-    def __init__(self, metadata_path, contextual_metadata=None, track_csv_path=None):
+    def __init__(self, metadata_path, contextual_metadata=None, track_csv_path=None, metadata_info=None):
         self.path = Path(metadata_path)
         self.contextual_metadata = contextual_metadata
+        self.metadata_info = metadata_info
 
     @classmethod
-    def parse_spreadsheet(self, fname):
+    def parse_spreadsheet(self, fname, additional_context):
         def parse_bpa_id_range(s):
             return s.strip().split('/')[-1]
 
@@ -216,7 +226,8 @@ class StemcellsSingleCellRNASeqMetadata(BaseMetadata):
             sheet_name=None,
             header_length=2,
             column_name_row_index=1,
-            formatting_info=True)
+            formatting_info=True,
+            additional_context=additional_context)
         rows = list(wrapper.get_all())
         return rows
 
@@ -228,7 +239,8 @@ class StemcellsSingleCellRNASeqMetadata(BaseMetadata):
         all_rows = set()
         for fname in glob(self.path + '/*.xlsx'):
             logger.info("Processing Stemcells SingleCellRNASeq metadata file {0}".format(fname))
-            all_rows.update(StemcellsSingleCellRNASeqMetadata.parse_spreadsheet(fname))
+            xlsx_info = self.metadata_info[os.path.basename(fname)]
+            all_rows.update(StemcellsSingleCellRNASeqMetadata.parse_spreadsheet(fname, xlsx_info))
         for row in sorted(all_rows):
             bpa_id_range = row.bpa_id_range
             if bpa_id_range is None:
@@ -245,6 +257,8 @@ class StemcellsSingleCellRNASeqMetadata(BaseMetadata):
                 'library_construction_protocol': row.library_construction_protocol,
                 'sequencer': row.sequencer,
                 'fastq_generation': row.fastq_generation,
+                'ticket': row.ticket,
+                'facility': row.facility_code.upper(),
                 'type': self.ckan_data_type,
                 'private': True,
             })
