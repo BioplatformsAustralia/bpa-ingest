@@ -7,6 +7,7 @@ from ...util import make_logger, bpa_id_to_ckan_name
 from ...bpa import bpa_mirror_url
 from ...abstract import BaseMetadata
 from ...libs.excel_wrapper import ExcelWrapper
+from .tracking import StemcellTrackMetadata
 from . import files
 from glob import glob
 
@@ -29,6 +30,7 @@ class StemcellsTranscriptomeMetadata(BaseMetadata):
         self.path = Path(metadata_path)
         self.contextual_metadata = contextual_metadata
         self.metadata_info = metadata_info
+        self.track_meta = StemcellTrackMetadata(track_csv_path)
 
     @classmethod
     def parse_spreadsheet(self, fname, additional_context):
@@ -67,6 +69,7 @@ class StemcellsTranscriptomeMetadata(BaseMetadata):
                 continue
             obj = {}
             name = bpa_id_to_ckan_name(bpa_id.split('.')[-1], self.ckan_data_type)
+            track_meta = self.track_meta.get(row.ticket)
             obj.update({
                 'name': name,
                 'id': name,
@@ -80,6 +83,15 @@ class StemcellsTranscriptomeMetadata(BaseMetadata):
                 'ticket': row.ticket,
                 'facility': row.facility_code.upper(),
                 'type': self.ckan_data_type,
+                'date_of_transfer': ingest_utils.get_date_isoformat(track_meta.date_of_transfer),
+                'data_type': track_meta.data_type,
+                'description': track_meta.description,
+                'folder_name': track_meta.folder_name,
+                'sample_submission_date': ingest_utils.get_date_isoformat(track_meta.date_of_transfer),
+                'contextual_data_submission_date': None,
+                'data_generated': ingest_utils.get_date_isoformat(track_meta.date_of_transfer_to_archive),
+                'archive_ingestion_date': ingest_utils.get_date_isoformat(track_meta.date_of_transfer_to_archive),
+                'dataset_url': track_meta.download,
                 'private': True,
             })
             # for contextual_source in self.contextual_metadata:
@@ -117,6 +129,7 @@ class StemcellsSmallRNAMetadata(BaseMetadata):
         self.path = Path(metadata_path)
         self.contextual_metadata = contextual_metadata
         self.metadata_info = metadata_info
+        self.track_meta = StemcellTrackMetadata(track_csv_path)
 
     @classmethod
     def parse_spreadsheet(self, fname, additional_context):
@@ -155,6 +168,7 @@ class StemcellsSmallRNAMetadata(BaseMetadata):
                 continue
             obj = {}
             name = bpa_id_to_ckan_name(bpa_id.split('.')[-1], self.ckan_data_type)
+            track_meta = self.track_meta.get(row.ticket)
             obj.update({
                 'name': name,
                 'id': name,
@@ -168,6 +182,15 @@ class StemcellsSmallRNAMetadata(BaseMetadata):
                 'ticket': row.ticket,
                 'facility': row.facility_code.upper(),
                 'type': self.ckan_data_type,
+                'date_of_transfer': ingest_utils.get_date_isoformat(track_meta.date_of_transfer),
+                'data_type': track_meta.data_type,
+                'description': track_meta.description,
+                'folder_name': track_meta.folder_name,
+                'sample_submission_date': ingest_utils.get_date_isoformat(track_meta.date_of_transfer),
+                'contextual_data_submission_date': None,
+                'data_generated': ingest_utils.get_date_isoformat(track_meta.date_of_transfer_to_archive),
+                'archive_ingestion_date': ingest_utils.get_date_isoformat(track_meta.date_of_transfer_to_archive),
+                'dataset_url': track_meta.download,
                 'private': True,
             })
             # for contextual_source in self.contextual_metadata:
@@ -206,6 +229,7 @@ class StemcellsSingleCellRNASeqMetadata(BaseMetadata):
         self.path = Path(metadata_path)
         self.contextual_metadata = contextual_metadata
         self.metadata_info = metadata_info
+        self.track_meta = StemcellTrackMetadata(track_csv_path)
 
     @classmethod
     def parse_spreadsheet(self, fname, additional_context):
@@ -247,6 +271,7 @@ class StemcellsSingleCellRNASeqMetadata(BaseMetadata):
                 continue
             obj = {}
             name = bpa_id_to_ckan_name(bpa_id_range, self.ckan_data_type)
+            track_meta = self.track_meta.get(row.ticket)
             obj.update({
                 'name': name,
                 'id': name,
@@ -260,6 +285,15 @@ class StemcellsSingleCellRNASeqMetadata(BaseMetadata):
                 'ticket': row.ticket,
                 'facility': row.facility_code.upper(),
                 'type': self.ckan_data_type,
+                'date_of_transfer': ingest_utils.get_date_isoformat(track_meta.date_of_transfer),
+                'data_type': track_meta.data_type,
+                'description': track_meta.description,
+                'folder_name': track_meta.folder_name,
+                'sample_submission_date': ingest_utils.get_date_isoformat(track_meta.date_of_transfer),
+                'contextual_data_submission_date': None,
+                'data_generated': ingest_utils.get_date_isoformat(track_meta.date_of_transfer_to_archive),
+                'archive_ingestion_date': ingest_utils.get_date_isoformat(track_meta.date_of_transfer_to_archive),
+                'dataset_url': track_meta.download,
                 'private': True,
             })
             tag_names = ['single-cell-rnaseq']
