@@ -22,7 +22,8 @@ from .sepsis.ingest import (
 from .stemcells.ingest import (
     StemcellsTranscriptomeMetadata,
     StemcellsSmallRNAMetadata,
-    StemcellsSingleCellRNASeqMetadata)
+    StemcellsSingleCellRNASeqMetadata,
+    StemcellsMetabolomicMetadata)
 from .wheat_cultivars.ingest import WheatCultivarsMetadata
 from .wheat_pathogens_genomes.ingest import WheatPathogensGenomesMetadata
 from .wheat_pathogens_transcript.ingest import WheatPathogensTranscriptMetadata
@@ -43,6 +44,7 @@ PROJECTS = {
     'stemcells-transcriptome': StemcellsTranscriptomeMetadata,
     'stemcells-smallrna': StemcellsSmallRNAMetadata,
     'stemcells-singlecellrnaseq': StemcellsSingleCellRNASeqMetadata,
+    'stemcells-metabolomic': StemcellsMetabolomicMetadata,
     # stubs
     'barcode': BarcodeMetadata,
     'base': SoilMetadata,

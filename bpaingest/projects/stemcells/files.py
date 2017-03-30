@@ -25,6 +25,23 @@ def test_transcriptome():
         assert(transcriptome_filename_re.match(filename) is not None)
 
 
+# FIXME: we need the full convention from BPA / MA
+metabolomics_filename_re = re.compile("""
+    (?P<id>\d{4,6})_
+    .*
+    (\.tar\.gz|\.mzML)$
+""", re.VERBOSE)
+
+
+def test_metabolomics():
+    filenames = [
+        '24721_SC_MA_GCMS_PosC-1-857-29036_Bio21-GCMS-001.tar.gz',
+        '24729_SC_MA_GCMS_NegC-4-857-29046_Bio21-GCMS-001.mzML',
+    ]
+    for filename in filenames:
+        assert(metabolomics_filename_re.match(filename) is not None)
+
+
 singlecell_filename_re = re.compile("""
     (?P<id>\d{4,6}-\d{4,6})_
     (?P<library>PE|MP)_
