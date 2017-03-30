@@ -3,6 +3,7 @@ from __future__ import print_function
 from ...libs.excel_wrapper import ExcelWrapper
 from ...util import make_logger
 from ...libs import ingest_utils
+import os
 
 logger = make_logger(__name__)
 
@@ -33,7 +34,7 @@ def strip_bpa_prefix(val):
     return val.split('/')[1]
 
 
-def get_amplicon_data(file_name):
+def get_amplicon_data(file_name, additional_context):
     ''' Get amplion data from metadata spreadsheets '''
 
     field_spec = [
@@ -63,12 +64,13 @@ def get_amplicon_data(file_name):
                            sheet_name=None,
                            header_length=4,
                            column_name_row_index=1,
-                           formatting_info=True)
+                           formatting_info=True,
+                           additional_context=additional_context)
 
     return wrapper.get_all()
 
 
-def parse_metadata(path):
+def parse_metadata(path, metadata_info):
     def is_metadata(path):
         if path.isfile() and path.ext == '.xlsx':
             return True
@@ -76,7 +78,8 @@ def parse_metadata(path):
     logger.info('Ingesting GBR Amplicon metadata from {0}'.format(path))
     rows = []
     for metadata_file in path.walk(filter=is_metadata):
+        xlsx_info = metadata_info[os.path.basename(metadata_file)]
         logger.info('Processing GBR Amplicon {0}'.format(metadata_file))
-        for sample in get_amplicon_data(metadata_file):
+        for sample in get_amplicon_data(metadata_file, xlsx_info):
             rows.append(sample)
     return rows

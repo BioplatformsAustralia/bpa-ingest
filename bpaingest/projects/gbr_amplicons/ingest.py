@@ -13,14 +13,16 @@ logger = make_logger(__name__)
 
 
 class GbrAmpliconsMetadata(BaseMetadata):
-    metadata_urls = ['https://downloads-qcif.bioplatforms.com/bpa/gbr/metadata/amplicons/']
+    metadata_urls = ['https://downloads-qcif.bioplatforms.com/bpa/gbr/raw/amplicons/']
+    metadata_url_components = ('amplicon_', 'facility_code', 'ticket')
     organization = 'bpa-great-barrier-reef'
     ckan_data_type = 'great-barrier-reef-amplicon'
     auth = ("bpa", "gbr")
 
-    def __init__(self, metadata_path, track_csv_path=None):
+    def __init__(self, metadata_path, track_csv_path=None, metadata_info=None):
         self.path = Path(metadata_path)
         self.files = files_from_md5(self.path)
+        self.metadata_info = metadata_info
 
     def get_packages(self):
         packages = []
@@ -35,7 +37,7 @@ class GbrAmpliconsMetadata(BaseMetadata):
         return resources
 
     def amplicon_packages(self):
-        metadata = amplicons_parse_metadata(self.path)
+        metadata = amplicons_parse_metadata(self.path, self.metadata_info)
         for bpa_id, data in samples_from_metadata(metadata).items():
             name = bpa_id_to_ckan_name(bpa_id)
             obj = data.copy()

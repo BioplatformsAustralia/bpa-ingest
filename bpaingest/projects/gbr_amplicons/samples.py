@@ -20,6 +20,8 @@ def sample_from_row(e):
         'sequencing_run_number': e.sequencing_run_number,
         'flow_cell_id': e.flow_cell_id,
         'reads': e.reads,
+        'ticket': e.ticket,
+        'facility_code': e.facility_code,
         # 'sample_name': e.sample_name, # WTF not ? FIXME
         'analysis_software_version': e.analysis_software_version,
         'notes': e.comments,
