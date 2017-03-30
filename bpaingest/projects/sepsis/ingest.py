@@ -22,23 +22,25 @@ from .contextual import (
     SepsisProteomicsMS1QuantificationContextual,
     SepsisTranscriptomicsHiseqContextual)
 import files
+import os
 
 logger = make_logger(__name__)
 
 
 class SepsisGenomicsMiseqMetadata(BaseMetadata):
     contextual_classes = [SepsisBacterialContextual, SepsisGenomicsMiseqContextual]
-    metadata_urls = ['https://downloads-qcif.bioplatforms.com/bpa/sepsis/genomics/miseq/']
+    metadata_urls = ['https://downloads-qcif.bioplatforms.com/bpa/sepsis/genomics/raw/miseq/']
+    metadata_url_components = ('facility_code', 'ticket')
     organization = 'bpa-sepsis'
     auth = ('sepsis', 'sepsis')
     ckan_data_type = 'arp-genomics-miseq'
 
-    def __init__(self, metadata_path, contextual_metadata=None, track_csv_path=None):
+    def __init__(self, metadata_path, contextual_metadata=None, track_csv_path=None, metadata_info=None):
         self.path = Path(metadata_path)
         self.contextual_metadata = contextual_metadata
         self.track_meta = SepsisGenomicsTrackMetadata(track_csv_path)
+        self.metadata_info = metadata_info
 
-    @classmethod
     def parse_spreadsheet(self, fname):
         field_spec = [
             ("bpa_id", "Bacterial sample unique ID", ingest_utils.extract_bpa_id),
@@ -53,7 +55,8 @@ class SepsisGenomicsMiseqMetadata(BaseMetadata):
             sheet_name=None,
             header_length=2,
             column_name_row_index=1,
-            formatting_info=True)
+            formatting_info=True,
+            additional_context=self.metadata_info[os.path.basename(fname)])
         return wrapper.get_all()
 
     def get_packages(self):
@@ -61,7 +64,7 @@ class SepsisGenomicsMiseqMetadata(BaseMetadata):
         packages = []
         for fname in glob(self.path + '/*.xlsx'):
             logger.info("Processing Sepsis Genomics metadata file {0}".format(fname))
-            rows = list(SepsisGenomicsMiseqMetadata.parse_spreadsheet(fname))
+            rows = list(self.parse_spreadsheet(fname))
             for row in rows:
                 bpa_id = row.bpa_id
                 track_meta = self.track_meta.get(bpa_id)
@@ -73,6 +76,8 @@ class SepsisGenomicsMiseqMetadata(BaseMetadata):
                     'bpa_id': bpa_id,
                     'notes': 'ARP Genomics Miseq Data: %s %s' % (track_meta['taxon_or_organism'], track_meta['strain_or_isolate']),
                     'title': 'Sepsis Genomics Miseq %s' % (bpa_id),
+                    'ticket': row.ticket,
+                    'facility': row.facility_code.upper(),
                     'insert_size_range': row.insert_size_range,
                     'library_construction_protocol': row.library_construction_protocol,
                     'sequencer': row.sequencer,
@@ -106,22 +111,23 @@ class SepsisGenomicsMiseqMetadata(BaseMetadata):
 
 class SepsisGenomicsPacbioMetadata(BaseMetadata):
     contextual_classes = [SepsisBacterialContextual, SepsisGenomicsPacbioContextual]
-    metadata_urls = ['https://downloads-qcif.bioplatforms.com/bpa/sepsis/genomics/pacbio/']
+    metadata_urls = ['https://downloads-qcif.bioplatforms.com/bpa/sepsis/genomics/raw/pacbio/']
+    metadata_url_components = ('facility_code', 'ticket')
     organization = 'bpa-sepsis'
     auth = ('sepsis', 'sepsis')
     ckan_data_type = 'arp-genomics-pacbio'
 
-    def __init__(self, metadata_path, contextual_metadata=None, track_csv_path=None):
+    def __init__(self, metadata_path, contextual_metadata=None, track_csv_path=None, metadata_info=None):
         self.path = Path(metadata_path)
         self.contextual_metadata = contextual_metadata
         self.track_meta = SepsisGenomicsTrackMetadata(track_csv_path)
+        self.metadata_info = metadata_info
 
     def read_track_csv(self, fname):
         header, rows = csv_to_named_tuple('SepsisGenomicsPacbioTrack', fname)
         logger.info("track csv header: %s" % (repr(header)))
         return dict((ingest_utils.extract_bpa_id(t.five_digit_bpa_id), t) for t in rows)
 
-    @classmethod
     def parse_spreadsheet(self, fname):
         field_spec = [
             ("bpa_id", "Bacterial sample unique ID", ingest_utils.extract_bpa_id),
@@ -139,7 +145,8 @@ class SepsisGenomicsPacbioMetadata(BaseMetadata):
             sheet_name=None,
             header_length=2,
             column_name_row_index=1,
-            formatting_info=True)
+            formatting_info=True,
+            additional_context=self.metadata_info[os.path.basename(fname)])
         return wrapper.get_all()
 
     def get_packages(self):
@@ -147,7 +154,7 @@ class SepsisGenomicsPacbioMetadata(BaseMetadata):
         packages = []
         for fname in glob(self.path + '/*.xlsx'):
             logger.info("Processing Sepsis Genomics metadata file {0}".format(fname))
-            rows = list(SepsisGenomicsPacbioMetadata.parse_spreadsheet(fname))
+            rows = list(self.parse_spreadsheet(fname))
             for row in rows:
                 bpa_id = row.bpa_id
                 track_meta = self.track_meta.get(bpa_id)
@@ -158,6 +165,8 @@ class SepsisGenomicsPacbioMetadata(BaseMetadata):
                     'id': name,
                     'bpa_id': bpa_id,
                     'title': 'Sepsis Genomics Pacbio %s' % (bpa_id),
+                    'ticket': row.ticket,
+                    'facility': row.facility_code.upper(),
                     'notes': 'ARP Genomics Pacbio Data: %s %s' % (track_meta['taxon_or_organism'], track_meta['strain_or_isolate']),
                     'insert_size_range': row.insert_size_range,
                     'library_construction_protocol': row.library_construction_protocol,
@@ -194,15 +203,17 @@ class SepsisGenomicsPacbioMetadata(BaseMetadata):
 
 class SepsisTranscriptomicsHiseqMetadata(BaseMetadata):
     contextual_classes = [SepsisBacterialContextual, SepsisTranscriptomicsHiseqContextual]
-    metadata_urls = ['https://downloads-qcif.bioplatforms.com/bpa/sepsis/transcriptomics/hiseq/']
+    metadata_urls = ['https://downloads-qcif.bioplatforms.com/bpa/sepsis/transcriptomics/raw/hiseq/']
+    metadata_url_components = ('facility_code', 'ticket')
     organization = 'bpa-sepsis'
     auth = ('sepsis', 'sepsis')
     ckan_data_type = 'arp-transcriptomics-hiseq'
 
-    def __init__(self, metadata_path, contextual_metadata=None, track_csv_path=None):
+    def __init__(self, metadata_path, contextual_metadata=None, track_csv_path=None, metadata_info=None):
         self.path = Path(metadata_path)
         self.contextual_metadata = contextual_metadata
         self.track_meta = SepsisTrackMetadata(track_csv_path)
+        self.metadata_info = metadata_info
 
     def read_track_csv(self, fname):
         if fname is None:
@@ -211,7 +222,6 @@ class SepsisTranscriptomicsHiseqMetadata(BaseMetadata):
         logger.info("track csv header: %s" % (repr(header)))
         return dict((ingest_utils.extract_bpa_id(t.five_digit_bpa_id), t) for t in rows)
 
-    @classmethod
     def parse_spreadsheet(self, fname):
         field_spec = [
             ("bpa_id", "Antibiotic Resistant Pathogen sample unique ID", ingest_utils.extract_bpa_id),
@@ -227,7 +237,8 @@ class SepsisTranscriptomicsHiseqMetadata(BaseMetadata):
             sheet_name=None,
             header_length=2,
             column_name_row_index=1,
-            formatting_info=True)
+            formatting_info=True,
+            additional_context=self.metadata_info[os.path.basename(fname)])
         return wrapper.get_all()
 
     def get_packages(self):
@@ -235,7 +246,7 @@ class SepsisTranscriptomicsHiseqMetadata(BaseMetadata):
         packages = []
         for fname in glob(self.path + '/*.xlsx'):
             logger.info("Processing Sepsis Transcriptomics metadata file {0}".format(fname))
-            rows = list(SepsisTranscriptomicsHiseqMetadata.parse_spreadsheet(fname))
+            rows = list(self.parse_spreadsheet(fname))
             for row in rows:
                 bpa_id = row.bpa_id
                 if bpa_id is None:
@@ -248,6 +259,8 @@ class SepsisTranscriptomicsHiseqMetadata(BaseMetadata):
                     'id': name,
                     'bpa_id': bpa_id,
                     'title': 'ARP Transcriptomics Hiseq %s' % (bpa_id),
+                    'ticket': row.ticket,
+                    'facility': row.facility_code.upper(),
                     'notes': 'ARP Transcriptomics Hiseq Data: %s %s' % (track_meta['taxon_or_organism'], track_meta['strain_or_isolate']),
                     'sample': row.sample,
                     'library_construction_protocol': row.library_construction_protocol,
@@ -283,15 +296,17 @@ class SepsisTranscriptomicsHiseqMetadata(BaseMetadata):
 
 class SepsisMetabolomicsLCMSMetadata(BaseMetadata):
     contextual_classes = [SepsisBacterialContextual, SepsisMetabolomicsLCMSContextual]
-    metadata_urls = ['https://downloads-qcif.bioplatforms.com/bpa/sepsis/metabolomics/lcms/']
+    metadata_urls = ['https://downloads-qcif.bioplatforms.com/bpa/sepsis/metabolomics/raw/lcms/']
+    metadata_url_components = ('facility_code', 'ticket')
     organization = 'bpa-sepsis'
     auth = ('sepsis', 'sepsis')
     ckan_data_type = 'arp-metabolomics-lcms'
 
-    def __init__(self, metadata_path, contextual_metadata=None, track_csv_path=None):
+    def __init__(self, metadata_path, contextual_metadata=None, track_csv_path=None, metadata_info=None):
         self.path = Path(metadata_path)
         self.contextual_metadata = contextual_metadata
         self.track_meta = SepsisTrackMetadata(track_csv_path)
+        self.metadata_info = metadata_info
 
     def read_track_csv(self, fname):
         if fname is None:
@@ -300,7 +315,6 @@ class SepsisMetabolomicsLCMSMetadata(BaseMetadata):
         logger.info("track csv header: %s" % (repr(header)))
         return dict((ingest_utils.extract_bpa_id(t.five_digit_bpa_id), t) for t in rows)
 
-    @classmethod
     def parse_spreadsheet(self, fname):
         field_spec = [
             ("bpa_id", "Bacterial sample unique ID", ingest_utils.extract_bpa_id),
@@ -317,14 +331,15 @@ class SepsisMetabolomicsLCMSMetadata(BaseMetadata):
             sheet_name=None,
             header_length=1,
             column_name_row_index=1,
-            formatting_info=True)
+            formatting_info=True,
+            additional_context=self.metadata_info[os.path.basename(fname)])
         return wrapper.get_all()
 
     def get_packages(self):
         packages = []
         for fname in glob(self.path + '/*.xlsx'):
             logger.info("Processing Sepsis Metabolomics LCMS metadata file {0}".format(fname))
-            rows = list(SepsisMetabolomicsLCMSMetadata.parse_spreadsheet(fname))
+            rows = list(self.parse_spreadsheet(fname))
             for row in rows:
                 bpa_id = row.bpa_id
                 if bpa_id is None:
@@ -337,6 +352,8 @@ class SepsisMetabolomicsLCMSMetadata(BaseMetadata):
                     'id': name,
                     'bpa_id': bpa_id,
                     'title': 'ARP Metabolomics LCMS %s' % (bpa_id),
+                    'ticket': row.ticket,
+                    'facility': row.facility_code.upper(),
                     'notes': 'ARP Metabolomics LCMS Data: %s %s' % (track_meta['taxon_or_organism'], track_meta['strain_or_isolate']),
                     'sample_fractionation_extract_solvent': row.sample_fractionation_extract_solvent,
                     'lc_column_type': row.lc_column_type,
@@ -372,15 +389,17 @@ class SepsisMetabolomicsLCMSMetadata(BaseMetadata):
 
 class SepsisProteomicsMS1QuantificationMetadata(BaseMetadata):
     contextual_classes = [SepsisBacterialContextual, SepsisProteomicsMS1QuantificationContextual]
-    metadata_urls = ['https://downloads-qcif.bioplatforms.com/bpa/sepsis/proteomics/ms1quantification/']
+    metadata_urls = ['https://downloads-qcif.bioplatforms.com/bpa/sepsis/proteomics/raw/ms1quantification/']
+    metadata_url_components = ('facility_code', 'ticket')
     organization = 'bpa-sepsis'
     auth = ('sepsis', 'sepsis')
     ckan_data_type = 'arp-proteomics-ms1quantification'
 
-    def __init__(self, metadata_path, contextual_metadata=None, track_csv_path=None):
+    def __init__(self, metadata_path, contextual_metadata=None, track_csv_path=None, metadata_info=None):
         self.path = Path(metadata_path)
         self.contextual_metadata = contextual_metadata
         self.track_meta = SepsisTrackMetadata(track_csv_path)
+        self.metadata_info = metadata_info
 
     def read_track_csv(self, fname):
         if fname is None:
@@ -389,7 +408,6 @@ class SepsisProteomicsMS1QuantificationMetadata(BaseMetadata):
         logger.info("track csv header: %s" % (repr(header)))
         return dict((ingest_utils.extract_bpa_id(t.five_digit_bpa_id), t) for t in rows)
 
-    @classmethod
     def parse_spreadsheet(self, fname):
 
         field_spec = [
@@ -409,14 +427,15 @@ class SepsisProteomicsMS1QuantificationMetadata(BaseMetadata):
             sheet_name=None,
             header_length=1,
             column_name_row_index=1,
-            formatting_info=True)
+            formatting_info=True,
+            additional_context=self.metadata_info[os.path.basename(fname)])
         return wrapper.get_all()
 
     def get_packages(self):
         packages = []
         for fname in glob(self.path + '/*.xlsx'):
             logger.info("Processing Sepsis Proteomics MS1Quantification metadata file {0}".format(fname))
-            rows = list(SepsisProteomicsMS1QuantificationMetadata.parse_spreadsheet(fname))
+            rows = list(self.parse_spreadsheet(fname))
             for row in rows:
                 bpa_id = row.bpa_id
                 if bpa_id is None:
@@ -429,6 +448,8 @@ class SepsisProteomicsMS1QuantificationMetadata(BaseMetadata):
                     'id': name,
                     'bpa_id': bpa_id,
                     'title': 'ARP Proteomics LCMS %s' % (bpa_id),
+                    'ticket': row.ticket,
+                    'facility': row.facility_code.upper(),
                     'notes': 'ARP Proteomics LCMS Data: %s %s' % (track_meta['taxon_or_organism'], track_meta['strain_or_isolate']),
                     'sample_fractionation_none_number': row.sample_fractionation_none_number,
                     'lc_column_type': row.lc_column_type,
@@ -465,13 +486,15 @@ class SepsisProteomicsMS1QuantificationMetadata(BaseMetadata):
 
 class SepsisProteomicsSwathMSBaseMetadata(BaseMetadata):
     contextual_classes = [SepsisBacterialContextual, SepsisProteomicsSwathMSContextual]
-    metadata_urls = ['https://downloads-qcif.bioplatforms.com/bpa/sepsis/proteomics/swathms/']
+    metadata_urls = ['https://downloads-qcif.bioplatforms.com/bpa/sepsis/proteomics/raw/swathms/']
+    metadata_url_components = ('facility_code', 'ticket')
     metadata_patterns = [r'^.*\.md5', r'^.*_metadata\.xlsx']
     organization = 'bpa-sepsis'
     auth = ('sepsis', 'sepsis')
 
-    def __init__(self, metadata_path, contextual_metadata=None, track_csv_path=None):
+    def __init__(self, metadata_path, contextual_metadata=None, track_csv_path=None, metadata_info=None):
         self.path = Path(metadata_path)
+        self.metadata_info = metadata_info
         self.contextual_metadata = contextual_metadata
         self.track_meta = SepsisTrackMetadata(track_csv_path)
         self.package_data, self.file_data = self.get_spreadsheet_data()
@@ -483,7 +506,6 @@ class SepsisProteomicsSwathMSBaseMetadata(BaseMetadata):
         logger.info("track csv header: %s" % (repr(header)))
         return dict((ingest_utils.extract_bpa_id(t.five_digit_bpa_id), t) for t in rows)
 
-    @classmethod
     def parse_spreadsheet(self, fname):
         def parse_pooled_bpa_id(s):
             if isinstance(s, unicode) and ',' in s:
@@ -508,7 +530,8 @@ class SepsisProteomicsSwathMSBaseMetadata(BaseMetadata):
             sheet_name=None,
             header_length=1,
             column_name_row_index=1,
-            formatting_info=True)
+            formatting_info=True,
+            additional_context=self.metadata_info[os.path.basename(fname)])
         return wrapper.get_all()
 
     def get_spreadsheet_data(self):
@@ -522,7 +545,7 @@ class SepsisProteomicsSwathMSBaseMetadata(BaseMetadata):
         file_data = {}
         for fname in glob(self.path + '/*_metadata.xlsx'):
             logger.info("Processing Sepsis Proteomics SwathMS metadata file {0}".format(fname))
-            rows = list(SepsisProteomicsSwathMSMetadata.parse_spreadsheet(fname))
+            rows = list(self.parse_spreadsheet(fname))
             for row in rows:
                 bpa_id = row.bpa_id
                 if bpa_id is None:
