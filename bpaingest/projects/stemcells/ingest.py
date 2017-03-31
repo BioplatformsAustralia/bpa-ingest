@@ -474,6 +474,13 @@ class StemcellsProteomicMetadata(BaseMetadata):
             xlsx_info = self.metadata_info[os.path.basename(fname)]
             all_rows.update(StemcellsProteomicMetadata.parse_spreadsheet(fname, xlsx_info))
         bpa_id_ticket = dict((t.bpa_id, t.ticket) for t in all_rows)
+        self.filename_metadata = {}
+        self.filename_metadata.update(
+            dict((t.raw_filename, t) for t in all_rows))
+        self.filename_metadata.update(
+            dict((t.protein_result_filename, t) for t in all_rows))
+        self.filename_metadata.update(
+            dict((t.peptide_result_filename, t) for t in all_rows))
         for bpa_id, ticket in sorted(bpa_id_ticket.items()):
             if bpa_id is None:
                 continue
@@ -514,8 +521,12 @@ class StemcellsProteomicMetadata(BaseMetadata):
                 resource = file_info.copy()
                 resource['md5'] = resource['id'] = md5
                 resource['name'] = filename
+                resource_meta = self.filename_metadata.get(filename, {})
+                for k in ("sample_fractionation", "lc_column_type", "gradient_time", "sample_on_column", "mass_spectrometer", "acquisition_mode", "database", "database_size"):
+                    resource[k] = getattr(resource_meta, k)
                 bpa_id = ingest_utils.extract_bpa_id(file_info.get('id'))
                 xlsx_info = self.metadata_info[os.path.basename(md5_file)]
                 legacy_url = bpa_mirror_url('bpa/stemcell/raw/proteomic/%(facility_code)s/%(ticket)s/' % xlsx_info + filename)
+                logger.error(resource)
                 resources.append(((bpa_id,), legacy_url, resource))
         return resources
