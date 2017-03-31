@@ -339,6 +339,7 @@ class StemcellsMetabolomicMetadata(BaseMetadata):
     metadata_patterns = [r'^.*\.md5', r'^.*_metadata.*\.xlsx']
     organization = 'bpa-stemcells'
     auth = ('stemcell', 'stemcell')
+    resource_linkage = ('bpa_id', 'analytical_platform')
     ckan_data_type = 'stemcells-metabolomic'
 
     def __init__(self, metadata_path, contextual_metadata=None, track_csv_path=None, metadata_info=None):
@@ -352,7 +353,7 @@ class StemcellsMetabolomicMetadata(BaseMetadata):
         field_spec = [
             ("bpa_id", re.compile(r'^.*sample unique id$'), ingest_utils.extract_bpa_id),
             ("sample_fractionation_extraction_solvent", "sample fractionation / extraction solvent", None),
-            ("platform", "platform", None),
+            ("analytical_platform", "platform", None),
             ("instrument_column_type", "instrument/column type", None),
             ("method", "Method", None),
             ("mass_spectrometer", "Mass Spectrometer", None),
@@ -384,7 +385,7 @@ class StemcellsMetabolomicMetadata(BaseMetadata):
             if bpa_id is None:
                 continue
             obj = {}
-            name = bpa_id_to_ckan_name(bpa_id.split('.')[-1], self.ckan_data_type)
+            name = bpa_id_to_ckan_name(bpa_id.split('.')[-1] + '-' + row.analytical_platform, self.ckan_data_type)
             track_meta = self.track_meta.get(row.ticket)
             obj.update({
                 'name': name,
@@ -395,7 +396,7 @@ class StemcellsMetabolomicMetadata(BaseMetadata):
                 'omics': 'transcriptomics',
                 'data_generated': 'True',
                 'sample_fractionation_extraction_solvent': row.sample_fractionation_extraction_solvent,
-                'platform': row.platform,
+                'analytical_platform': row.analytical_platform,
                 'instrument_column_type': row.instrument_column_type,
                 'method': row.method,
                 'mass_spectrometer': row.mass_spectrometer,
@@ -548,5 +549,5 @@ class StemcellsProteomicMetadata(BaseMetadata):
                 bpa_id = ingest_utils.extract_bpa_id(file_info.get('id'))
                 xlsx_info = self.metadata_info[os.path.basename(md5_file)]
                 legacy_url = bpa_mirror_url('bpa/stemcell/raw/proteomic/%(facility_code)s/%(ticket)s/' % xlsx_info + filename)
-                resources.append(((bpa_id,), legacy_url, resource))
+                resources.append(((bpa_id, resource['analytical_platform']), legacy_url, resource))
         return resources

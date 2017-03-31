@@ -198,10 +198,11 @@ class StemcellMetabolomicsContextual(object):
         xlsx_path = one(glob(path + '/*.xlsx'))
         self.sample_metadata = self._package_metadata(self._read_metadata(xlsx_path))
 
-    def get(self, bpa_id):
+    def get(self, bpa_id, analytical_platform):
+        tpl = (bpa_id, analytical_platform)
         if bpa_id in self.sample_metadata:
-            return self.sample_metadata[bpa_id]
-        logger.warning("no %s metadata available for: %s" % (type(self).__name__, bpa_id))
+            return self.sample_metadata[tpl]
+        logger.warning("no %s metadata available for: %s" % (type(self).__name__, tpl))
         return {}
 
     def _package_metadata(self, rows):
@@ -209,10 +210,11 @@ class StemcellMetabolomicsContextual(object):
         for row in rows:
             if row.bpa_id is None:
                 continue
-            assert(row.bpa_id not in sample_metadata)
-            sample_metadata[row.bpa_id] = row_meta = {}
+            tpl = (row.bpa_id, row.analytical_platform)
+            assert(tpl not in sample_metadata)
+            sample_metadata[tpl] = row_meta = {}
             for field in row._fields:
-                if field != 'bpa_id':
+                if field != 'bpa_id' and field != 'analytical_platform':
                     row_meta[field] = getattr(row, field)
         return sample_metadata
 
