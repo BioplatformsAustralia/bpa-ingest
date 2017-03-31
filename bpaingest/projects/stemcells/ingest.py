@@ -8,6 +8,8 @@ from ...bpa import bpa_mirror_url
 from ...abstract import BaseMetadata
 from ...libs.excel_wrapper import ExcelWrapper
 from .tracking import StemcellTrackMetadata
+from .contextual import (
+    StemcellAGRFTranscriptomeContextual)
 from . import files
 from glob import glob
 
@@ -18,7 +20,7 @@ logger = make_logger(__name__)
 
 
 class StemcellsTranscriptomeMetadata(BaseMetadata):
-    contextual_classes = []
+    contextual_classes = [StemcellAGRFTranscriptomeContextual]
     metadata_urls = ['https://downloads-qcif.bioplatforms.com/bpa/stemcell/raw/transcriptome/']
     metadata_url_components = ('facility_code', 'ticket')
     metadata_patterns = [r'^.*\.md5', r'^.*_metadata\.xlsx']
@@ -76,6 +78,8 @@ class StemcellsTranscriptomeMetadata(BaseMetadata):
                 'bpa_id': bpa_id,
                 'notes': 'Stemcell Transcriptomics %s' % (bpa_id),
                 'title': 'Stemcell Transcriptomics %s' % (bpa_id),
+                'omics': 'transcriptomics',
+                'data_generated': 'True',
                 'insert_size_range': row.insert_size_range,
                 'library_construction_protocol': row.library_construction_protocol,
                 'sequencer': row.sequencer,
@@ -94,8 +98,8 @@ class StemcellsTranscriptomeMetadata(BaseMetadata):
                 'dataset_url': track_meta.download,
                 'private': True,
             })
-            # for contextual_source in self.contextual_metadata:
-            #     obj.update(contextual_source.get(bpa_id, track_meta))
+            for contextual_source in self.contextual_metadata:
+                obj.update(contextual_source.get(bpa_id))
             tag_names = ['transcriptome']
             obj['tags'] = [{'name': t} for t in tag_names]
             packages.append(obj)
@@ -176,6 +180,8 @@ class StemcellsSmallRNAMetadata(BaseMetadata):
                 'bpa_id': bpa_id,
                 'notes': 'Stemcell SmallRNA %s' % (bpa_id),
                 'title': 'Stemcell SmallRNA %s' % (bpa_id),
+                'omics': 'transcriptomics',
+                'data_generated': 'True',
                 'insert_size_range': row.insert_size_range,
                 'library_construction_protocol': row.library_construction_protocol,
                 'sequencer': row.sequencer,
@@ -379,6 +385,8 @@ class StemcellsMetabolomicMetadata(BaseMetadata):
                 'bpa_id': bpa_id,
                 'notes': 'Stemcell Metabolomics %s' % (bpa_id),
                 'title': 'Stemcell Metabolomics %s' % (bpa_id),
+                'omics': 'transcriptomics',
+                'data_generated': 'True',
                 'sample_fractionation_extraction_solvent': row.sample_fractionation_extraction_solvent,
                 'platform': row.platform,
                 'instrument_column_type': row.instrument_column_type,
@@ -495,6 +503,8 @@ class StemcellsProteomicMetadata(BaseMetadata):
                 'bpa_id': bpa_id,
                 'notes': 'Stemcell Proteomics %s' % (bpa_id),
                 'title': 'Stemcell Proteomics %s' % (bpa_id),
+                'omics': 'proteomics',
+                'data_generated': 'True',
                 'type': self.ckan_data_type,
                 'date_of_transfer': ingest_utils.get_date_isoformat(track_meta.date_of_transfer),
                 'ticket': ticket,
