@@ -385,6 +385,8 @@ class StemcellsMetabolomicMetadata(BaseMetadata):
                 'method': row.method,
                 'mass_spectrometer': row.mass_spectrometer,
                 'acquisition_mode': row.acquisition_mode,
+                'ticket': row.ticket,
+                'facility': row.facility_code.upper(),
                 'type': self.ckan_data_type,
                 'date_of_transfer': ingest_utils.get_date_isoformat(track_meta.date_of_transfer),
                 'data_type': track_meta.data_type,
@@ -473,7 +475,7 @@ class StemcellsProteomicMetadata(BaseMetadata):
             logger.info("Processing Stemcells Proteomics metadata file {0}".format(fname))
             xlsx_info = self.metadata_info[os.path.basename(fname)]
             all_rows.update(StemcellsProteomicMetadata.parse_spreadsheet(fname, xlsx_info))
-        bpa_id_ticket = dict((t.bpa_id, t.ticket) for t in all_rows)
+        bpa_id_ticket_facility = dict((t.bpa_id, (t.ticket, t.facility_code)) for t in all_rows)
         self.filename_metadata = {}
         self.filename_metadata.update(
             dict((t.raw_filename, t) for t in all_rows))
@@ -481,7 +483,7 @@ class StemcellsProteomicMetadata(BaseMetadata):
             dict((t.protein_result_filename, t) for t in all_rows))
         self.filename_metadata.update(
             dict((t.peptide_result_filename, t) for t in all_rows))
-        for bpa_id, ticket in sorted(bpa_id_ticket.items()):
+        for bpa_id, (ticket, facility_code) in sorted(bpa_id_ticket_facility.items()):
             if bpa_id is None:
                 continue
             obj = {}
@@ -495,6 +497,8 @@ class StemcellsProteomicMetadata(BaseMetadata):
                 'title': 'Stemcell Proteomics %s' % (bpa_id),
                 'type': self.ckan_data_type,
                 'date_of_transfer': ingest_utils.get_date_isoformat(track_meta.date_of_transfer),
+                'ticket': ticket,
+                'facility': facility_code,
                 'data_type': track_meta.data_type,
                 'description': track_meta.description,
                 'folder_name': track_meta.folder_name,
@@ -527,6 +531,5 @@ class StemcellsProteomicMetadata(BaseMetadata):
                 bpa_id = ingest_utils.extract_bpa_id(file_info.get('id'))
                 xlsx_info = self.metadata_info[os.path.basename(md5_file)]
                 legacy_url = bpa_mirror_url('bpa/stemcell/raw/proteomic/%(facility_code)s/%(ticket)s/' % xlsx_info + filename)
-                logger.error(resource)
                 resources.append(((bpa_id,), legacy_url, resource))
         return resources

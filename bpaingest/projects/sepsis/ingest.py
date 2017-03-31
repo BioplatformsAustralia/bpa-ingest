@@ -104,7 +104,8 @@ class SepsisGenomicsMiseqMetadata(BaseMetadata):
                 resource['name'] = file_info.filename
                 resource['resource_type'] = self.ckan_data_type
                 bpa_id = ingest_utils.extract_bpa_id(file_info.get('id'))
-                legacy_url = bpa_mirror_url('bpa/sepsis/genomics/miseq/' + file_info.filename)
+                xlsx_info = self.metadata_info[os.path.basename(md5_file)]
+                legacy_url = bpa_mirror_url('bpa/sepsis/raw/genomics/miseq/%(facility_code)s/%(ticket)s/' % xlsx_info + file_info.filename)
                 resources.append(((bpa_id,), legacy_url, resource))
         return resources
 
@@ -196,7 +197,8 @@ class SepsisGenomicsPacbioMetadata(BaseMetadata):
                 resource['name'] = file_info.filename
                 resource['resource_type'] = self.ckan_data_type
                 bpa_id = ingest_utils.extract_bpa_id(file_info.get('id'))
-                legacy_url = bpa_mirror_url('bpa/sepsis/genomics/pacbio/' + file_info.filename)
+                xlsx_info = self.metadata_info[os.path.basename(md5_file)]
+                legacy_url = bpa_mirror_url('bpa/sepsis/raw/genomics/pacbio/%(facility_code)s/%(ticket)s/' % xlsx_info + file_info.filename)
                 resources.append(((bpa_id,), legacy_url, resource))
         return resources
 
@@ -289,7 +291,8 @@ class SepsisTranscriptomicsHiseqMetadata(BaseMetadata):
                 resource['name'] = file_info.filename
                 resource['resource_type'] = self.ckan_data_type
                 bpa_id = ingest_utils.extract_bpa_id(file_info.get('id'))
-                legacy_url = bpa_mirror_url('bpa/sepsis/transcriptomics/hiseq/' + file_info.filename)
+                xlsx_info = self.metadata_info[os.path.basename(md5_file)]
+                legacy_url = bpa_mirror_url('bpa/sepsis/raw/transcriptomics/hiseq/%(facility_code)s/%(ticket)s/' % xlsx_info + file_info.filename)
                 resources.append(((bpa_id,), legacy_url, resource))
         return resources
 
@@ -382,7 +385,8 @@ class SepsisMetabolomicsLCMSMetadata(BaseMetadata):
                 resource['name'] = file_info.filename
                 resource['resource_type'] = self.ckan_data_type
                 bpa_id = ingest_utils.extract_bpa_id(file_info.get('id'))
-                legacy_url = bpa_mirror_url('bpa/sepsis/metabolomics/lcms/' + file_info.filename)
+                xlsx_info = self.metadata_info[os.path.basename(md5_file)]
+                legacy_url = bpa_mirror_url('bpa/sepsis/raw/metabolomics/lcms/%(facility_code)s/%(ticket)s/' % xlsx_info + file_info.filename)
                 resources.append(((bpa_id,), legacy_url, resource))
         return resources
 
@@ -479,7 +483,8 @@ class SepsisProteomicsMS1QuantificationMetadata(BaseMetadata):
                 resource['name'] = file_info.filename
                 resource['resource_type'] = self.ckan_data_type
                 bpa_id = ingest_utils.extract_bpa_id(file_info.get('id'))
-                legacy_url = bpa_mirror_url('bpa/sepsis/proteomics/ms1quantification/' + file_info.filename)
+                xlsx_info = self.metadata_info[os.path.basename(md5_file)]
+                legacy_url = bpa_mirror_url('bpa/sepsis/raw/proteomics/ms1quantification/%(facility_code)s/%(ticket)s/' % xlsx_info + file_info.filename)
                 resources.append(((bpa_id,), legacy_url, resource))
         return resources
 
@@ -646,7 +651,8 @@ class SepsisProteomicsSwathMSBaseMetadata(BaseMetadata):
                     package_id = ingest_utils.extract_bpa_id(file_info.get('id'))
                 elif file_info.data_type == '2d':
                     package_id = package_name
-                legacy_url = bpa_mirror_url('bpa/sepsis/proteomics/swathms/' + file_info.filename)
+                xlsx_info = self.metadata_info[os.path.basename(md5_file)]
+                legacy_url = bpa_mirror_url('bpa/sepsis/raw/proteomics/swathms/%(facility_code)s/%(ticket)s/' % xlsx_info + file_info.filename)
                 resources.append(((package_id,), legacy_url, resource))
         return resources
 

@@ -208,7 +208,8 @@ class BaseMarineMicrobesAmpliconsMetadata(BaseMetadata):
                 resource['name'] = filename
                 resource['resource_type'] = self.ckan_data_type
                 bpa_id = ingest_utils.extract_bpa_id(file_info.get('id'))
-                legacy_url = bpa_mirror_url('bpa/marine_microbes/amplicons/' + self.amplicon + '/' + filename)
+                xlsx_info = self.metadata_info[os.path.basename(md5_file)]
+                legacy_url = bpa_mirror_url('bpa/marine_microbes/raw/amplicons/' + self.amplicon + '/%(facility_code)s/%(ticket)s/' % xlsx_info + filename)
                 resources.append(((bpa_id, build_mm_amplicon_linkage(index_linkage, resource['flow_id'], resource['index'])), legacy_url, resource))
         return resources
 
@@ -265,10 +266,10 @@ class BaseMarineMicrobesAmpliconsControlMetadata(BaseMetadata):
                         logger.debug("unable to parse filename: `%s'" % (filename))
                     continue
 
-                yield filename, md5, file_info
+                yield filename, md5, md5_file, file_info
 
     def get_packages(self):
-        flow_ids = set(t['flow_id'] for _, _, t in self.md5_lines())
+        flow_ids = set(t['flow_id'] for _, _, _, t in self.md5_lines())
         packages = []
         for flow_id in sorted(flow_ids):
             obj = {}
@@ -290,12 +291,13 @@ class BaseMarineMicrobesAmpliconsControlMetadata(BaseMetadata):
 
     def get_resources(self):
         resources = []
-        for filename, md5, file_info in self.md5_lines():
+        for filename, md5, md5_file, file_info in self.md5_lines():
             resource = file_info.copy()
             resource['md5'] = resource['id'] = md5
             resource['name'] = filename
             resource['resource_type'] = self.ckan_data_type
-            legacy_url = bpa_mirror_url('bpa/marine_microbes/amplicons/' + self.amplicon + '/' + filename)
+            xlsx_info = self.metadata_info[os.path.basename(md5_file)]
+            legacy_url = bpa_mirror_url('bpa/marine_microbes/raw/amplicons/' + self.amplicon + '/%(facility_code)s/%(ticket)s/' % xlsx_info + filename)
             resources.append(((self.amplicon, resource['flow_id']), legacy_url, resource))
         return resources
 
@@ -311,15 +313,17 @@ class MarineMicrobesGenomicsAmplicons16SControlMetadata(BaseMarineMicrobesAmplic
 class MarineMicrobesGenomicsAmpliconsA16SControlMetadata(BaseMarineMicrobesAmpliconsControlMetadata):
     amplicon = 'a16s'
     metadata_urls = [
-        'https://downloads-qcif.bioplatforms.com/bpa/marine_microbes/amplicons/a16s/'
+        'https://downloads-qcif.bioplatforms.com/bpa/marine_microbes/raw/amplicons/a16s/'
     ]
+    metadata_url_components = ('facility_code', 'ticket')
 
 
 class MarineMicrobesGenomicsAmplicons18SControlMetadata(BaseMarineMicrobesAmpliconsControlMetadata):
     amplicon = '18s'
     metadata_urls = [
-        'https://downloads-qcif.bioplatforms.com/bpa/marine_microbes/amplicons/18s/'
+        'https://downloads-qcif.bioplatforms.com/bpa/marine_microbes/raw/amplicons/18s/'
     ]
+    metadata_url_components = ('facility_code', 'ticket')
 
 
 class MarineMicrobesMetagenomicsMetadata(BaseMetadata):
@@ -407,7 +411,8 @@ class MarineMicrobesMetagenomicsMetadata(BaseMetadata):
                 resource['name'] = filename
                 resource['resource_type'] = self.ckan_data_type
                 bpa_id = ingest_utils.extract_bpa_id(file_info.get('id'))
-                legacy_url = bpa_mirror_url('bpa/marine_microbes/metagenomics/' + filename)
+                xlsx_info = self.metadata_info[os.path.basename(md5_file)]
+                legacy_url = bpa_mirror_url('bpa/marine_microbes/raw/metagenomics/%(facility_code)s/%(ticket)s/' % xlsx_info + filename)
                 resources.append(((bpa_id,), legacy_url, resource))
         return resources
 
@@ -499,6 +504,7 @@ class MarineMicrobesMetatranscriptomeMetadata(BaseMetadata):
                 resource['name'] = filename
                 resource['resource_type'] = self.ckan_data_type
                 bpa_id = ingest_utils.extract_bpa_id(file_info.get('id'))
-                legacy_url = bpa_mirror_url('bpa/marine_microbes/metatranscriptome/' + filename)
+                xlsx_info = self.metadata_info[os.path.basename(md5_file)]
+                legacy_url = bpa_mirror_url('bpa/marine_microbes/raw/metatranscriptome/%(facility_code)s/%(ticket)s/' % xlsx_info + filename)
                 resources.append(((bpa_id,), legacy_url, resource))
         return resources
