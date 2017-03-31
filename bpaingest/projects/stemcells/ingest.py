@@ -9,7 +9,10 @@ from ...abstract import BaseMetadata
 from ...libs.excel_wrapper import ExcelWrapper
 from .tracking import StemcellTrackMetadata
 from .contextual import (
-    StemcellAGRFTranscriptomeContextual)
+    StemcellAGRFTranscriptomeContextual,
+    StemcellAGRFsmRNAContextual,
+    StemcellRamaciottiSingleCell,
+    StemcellMetabolomicsContextual)
 from . import files
 from glob import glob
 
@@ -122,7 +125,7 @@ class StemcellsTranscriptomeMetadata(BaseMetadata):
 
 
 class StemcellsSmallRNAMetadata(BaseMetadata):
-    contextual_classes = []
+    contextual_classes = [StemcellAGRFsmRNAContextual]
     metadata_urls = ['https://downloads-qcif.bioplatforms.com/bpa/stemcell/raw/small_rna/']
     metadata_url_components = ('facility_code', 'ticket')
     metadata_patterns = [r'^.*\.md5', r'^.*_metadata\.xlsx']
@@ -200,8 +203,8 @@ class StemcellsSmallRNAMetadata(BaseMetadata):
                 'dataset_url': track_meta.download,
                 'private': True,
             })
-            # for contextual_source in self.contextual_metadata:
-            #     obj.update(contextual_source.get(bpa_id, track_meta))
+            for contextual_source in self.contextual_metadata:
+                obj.update(contextual_source.get(bpa_id))
             tag_names = ['small-rna']
             obj['tags'] = [{'name': t} for t in tag_names]
             packages.append(obj)
@@ -224,7 +227,7 @@ class StemcellsSmallRNAMetadata(BaseMetadata):
 
 
 class StemcellsSingleCellRNASeqMetadata(BaseMetadata):
-    contextual_classes = []
+    contextual_classes = [StemcellRamaciottiSingleCell]
     metadata_urls = ['https://downloads-qcif.bioplatforms.com/bpa/stemcell/raw/single_cell_rnaseq/']
     metadata_url_components = ('facility_code', 'ticket')
     metadata_patterns = [r'^.*\.md5', r'^.*_metadata\.xlsx']
@@ -304,6 +307,10 @@ class StemcellsSingleCellRNASeqMetadata(BaseMetadata):
                 'dataset_url': track_meta.download,
                 'private': True,
             })
+            for contextual_source in self.contextual_metadata:
+                # NB: the rows in the contextual metadata are all identical across the range, so this works
+                bpa_id_start = ingest_utils.extract_bpa_id(bpa_id_range.split('-', 1)[0])
+                obj.update(contextual_source.get(bpa_id_start))
             tag_names = ['single-cell-rnaseq']
             obj['tags'] = [{'name': t} for t in tag_names]
             packages.append(obj)
@@ -326,10 +333,10 @@ class StemcellsSingleCellRNASeqMetadata(BaseMetadata):
 
 
 class StemcellsMetabolomicMetadata(BaseMetadata):
-    contextual_classes = []
+    contextual_classes = [StemcellMetabolomicsContextual]
     metadata_urls = ['https://downloads-qcif.bioplatforms.com/bpa/stemcell/raw/metabolomic/']
     metadata_url_components = ('facility_code', 'ticket')
-    metadata_patterns = [r'^.*\.md5', r'^.*_metadata\.xlsx']
+    metadata_patterns = [r'^.*\.md5', r'^.*_metadata.*\.xlsx']
     organization = 'bpa-stemcells'
     auth = ('stemcell', 'stemcell')
     ckan_data_type = 'stemcells-metabolomic'
