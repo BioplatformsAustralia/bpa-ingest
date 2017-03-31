@@ -417,7 +417,7 @@ class StemcellsMetabolomicMetadata(BaseMetadata):
                 resource['name'] = filename
                 bpa_id = ingest_utils.extract_bpa_id(file_info.get('id'))
                 xlsx_info = self.metadata_info[os.path.basename(md5_file)]
-                legacy_url = bpa_mirror_url('bpa/stemcell/raw/metabolomics/%(facility_code)s/%(ticket)s/' % xlsx_info + filename)
+                legacy_url = bpa_mirror_url('bpa/stemcell/raw/metabolomic/%(facility_code)s/%(ticket)s/' % xlsx_info + filename)
                 resources.append(((bpa_id,), legacy_url, resource))
         return resources
 
