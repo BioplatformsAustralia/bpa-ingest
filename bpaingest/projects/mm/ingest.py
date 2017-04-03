@@ -9,6 +9,7 @@ from ...bpa import bpa_mirror_url
 from ...abstract import BaseMetadata
 from ...libs.excel_wrapper import ExcelWrapper
 from . import files
+from . tracking import MarineMicrobesTrackMetadata
 from .contextual import MarineMicrobesSampleContextual
 
 import datetime
@@ -100,6 +101,7 @@ class BaseMarineMicrobesAmpliconsMetadata(BaseMetadata):
         self.path = Path(metadata_path)
         self.contextual_metadata = contextual_metadata
         self.metadata_info = metadata_info
+        self.track_meta = MarineMicrobesTrackMetadata(track_csv_path)
 
     @classmethod
     def parse_spreadsheet(self, fname, metadata_info):
@@ -157,6 +159,7 @@ class BaseMarineMicrobesAmpliconsMetadata(BaseMetadata):
             # the pilot data needs increased linkage, due to multiple trials on the same BPA ID
             index_linkage = base_fname in self.index_linkage_spreadsheets
             for row in BaseMarineMicrobesAmpliconsMetadata.parse_spreadsheet(fname, self.metadata_info):
+                track_meta = self.track_meta.get(row.ticket)
                 bpa_id = row.bpa_id
                 if bpa_id is None:
                     continue
@@ -179,6 +182,15 @@ class BaseMarineMicrobesAmpliconsMetadata(BaseMetadata):
                     'amplicon': self.amplicon,
                     'notes': 'Marine Microbes Amplicons %s %s %s' % (self.amplicon, bpa_id, flow_id),
                     'title': 'Marine Microbes Amplicons %s %s %s' % (self.amplicon, bpa_id, flow_id),
+                    'date_of_transfer': ingest_utils.get_date_isoformat(track_meta.date_of_transfer),
+                    'data_type': track_meta.data_type,
+                    'description': track_meta.description,
+                    'folder_name': track_meta.folder_name,
+                    'sample_submission_date': ingest_utils.get_date_isoformat(track_meta.date_of_transfer),
+                    'contextual_data_submission_date': None,
+                    'data_generated': ingest_utils.get_date_isoformat(track_meta.date_of_transfer_to_archive),
+                    'archive_ingestion_date': ingest_utils.get_date_isoformat(track_meta.date_of_transfer_to_archive),
+                    'dataset_url': track_meta.download,
                     'ticket': row.ticket,
                     'facility': row.facility_code.upper(),
                     'type': self.ckan_data_type,
@@ -255,6 +267,7 @@ class BaseMarineMicrobesAmpliconsControlMetadata(BaseMetadata):
     def __init__(self, metadata_path, contextual_metadata=None, track_csv_path=None, metadata_info=None):
         self.path = Path(metadata_path)
         self.metadata_info = metadata_info
+        self.track_meta = MarineMicrobesTrackMetadata(track_csv_path)
 
     def md5_lines(self):
         logger.info("Ingesting MM md5 file information from {0}".format(self.path))
@@ -269,17 +282,29 @@ class BaseMarineMicrobesAmpliconsControlMetadata(BaseMetadata):
                 yield filename, md5, md5_file, file_info
 
     def get_packages(self):
-        flow_ids = set(t['flow_id'] for _, _, _, t in self.md5_lines())
+        flow_id_ticket = dict((t['flow_id'], self.metadata_info[os.path.basename(fname)]) for _, _, fname, t in self.md5_lines())
         packages = []
-        for flow_id in sorted(flow_ids):
+        for flow_id, info in sorted(flow_id_ticket.items()):
             obj = {}
             name = bpa_id_to_ckan_name('control', self.ckan_data_type + '-' + self.amplicon, flow_id).lower()
+            track_meta = self.track_meta.get(info['ticket'])
             obj.update({
                 'name': name,
                 'id': name,
                 'flow_id': flow_id,
                 'notes': 'Marine Microbes Amplicons Control %s %s' % (self.amplicon, flow_id),
                 'title': 'Marine Microbes Amplicons Control %s %s' % (self.amplicon, flow_id),
+                'date_of_transfer': ingest_utils.get_date_isoformat(track_meta.date_of_transfer),
+                'data_type': track_meta.data_type,
+                'description': track_meta.description,
+                'folder_name': track_meta.folder_name,
+                'sample_submission_date': ingest_utils.get_date_isoformat(track_meta.date_of_transfer),
+                'contextual_data_submission_date': None,
+                'data_generated': ingest_utils.get_date_isoformat(track_meta.date_of_transfer_to_archive),
+                'archive_ingestion_date': ingest_utils.get_date_isoformat(track_meta.date_of_transfer_to_archive),
+                'dataset_url': track_meta.download,
+                'ticket': info['ticket'],
+                'facility': info['facility_code'].upper(),
                 'amplicon': self.amplicon,
                 'type': self.ckan_data_type,
                 'private': True,
@@ -341,6 +366,7 @@ class MarineMicrobesMetagenomicsMetadata(BaseMetadata):
         self.path = Path(metadata_path)
         self.contextual_metadata = contextual_metadata
         self.metadata_info = metadata_info
+        self.track_meta = MarineMicrobesTrackMetadata(track_csv_path)
 
     @classmethod
     def parse_spreadsheet(self, fname, metadata_info):
@@ -372,6 +398,7 @@ class MarineMicrobesMetagenomicsMetadata(BaseMetadata):
                 bpa_id = row.bpa_id
                 if bpa_id is None:
                     continue
+                track_meta = self.track_meta.get(row.ticket)
                 obj = {}
                 name = bpa_id_to_ckan_name(bpa_id.split('.')[-1], self.ckan_data_type)
                 obj.update({
@@ -380,6 +407,15 @@ class MarineMicrobesMetagenomicsMetadata(BaseMetadata):
                     'bpa_id': bpa_id,
                     'notes': 'Marine Microbes Metagenomics %s' % (bpa_id),
                     'title': 'Marine Microbes Metagenomics %s' % (bpa_id),
+                    'date_of_transfer': ingest_utils.get_date_isoformat(track_meta.date_of_transfer),
+                    'data_type': track_meta.data_type,
+                    'description': track_meta.description,
+                    'folder_name': track_meta.folder_name,
+                    'sample_submission_date': ingest_utils.get_date_isoformat(track_meta.date_of_transfer),
+                    'contextual_data_submission_date': None,
+                    'data_generated': ingest_utils.get_date_isoformat(track_meta.date_of_transfer_to_archive),
+                    'archive_ingestion_date': ingest_utils.get_date_isoformat(track_meta.date_of_transfer_to_archive),
+                    'dataset_url': track_meta.download,
                     'sample_extraction_id': make_sample_extraction_id(row.sample_extraction_id, bpa_id),
                     'insert_size_range': row.insert_size_range,
                     'library_construction_protocol': row.library_construction_protocol,
@@ -432,6 +468,7 @@ class MarineMicrobesMetatranscriptomeMetadata(BaseMetadata):
         self.path = Path(metadata_path)
         self.contextual_metadata = contextual_metadata
         self.metadata_info = metadata_info
+        self.track_meta = MarineMicrobesTrackMetadata(track_csv_path)
 
     @classmethod
     def parse_spreadsheet(self, fname, metadata_info):
@@ -468,6 +505,7 @@ class MarineMicrobesMetatranscriptomeMetadata(BaseMetadata):
             bpa_id = row.bpa_id
             if bpa_id is None:
                 continue
+            track_meta = self.track_meta.get(row.ticket)
             obj = {}
             name = bpa_id_to_ckan_name(bpa_id.split('.')[-1], self.ckan_data_type)
             obj.update({
@@ -476,6 +514,15 @@ class MarineMicrobesMetatranscriptomeMetadata(BaseMetadata):
                 'bpa_id': bpa_id,
                 'notes': 'Marine Microbes Metatranscriptome %s' % (bpa_id),
                 'title': 'Marine Microbes Metatranscriptome %s' % (bpa_id),
+                'date_of_transfer': ingest_utils.get_date_isoformat(track_meta.date_of_transfer),
+                'data_type': track_meta.data_type,
+                'description': track_meta.description,
+                'folder_name': track_meta.folder_name,
+                'sample_submission_date': ingest_utils.get_date_isoformat(track_meta.date_of_transfer),
+                'contextual_data_submission_date': None,
+                'data_generated': ingest_utils.get_date_isoformat(track_meta.date_of_transfer_to_archive),
+                'archive_ingestion_date': ingest_utils.get_date_isoformat(track_meta.date_of_transfer_to_archive),
+                'dataset_url': track_meta.download,
                 'sample_extraction_id': make_sample_extraction_id(row.sample_extraction_id, bpa_id),
                 'insert_size_range': row.insert_size_range,
                 'library_construction_protocol': row.library_construction_protocol,
