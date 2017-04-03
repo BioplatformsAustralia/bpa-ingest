@@ -94,6 +94,7 @@ def setup_sync(subparser):
 def setup_hash(subparser):
     subparser.add_argument('project_name', choices=sorted(PROJECTS.keys()), help='path to metadata')
     subparser.add_argument('mirror_path', help='path to locally mounted mirror')
+    subparser.add_argument('--track-metadata', type=str, default=None, help='metadata tracking spreadsheet (CSV)')
 
 
 @register_command
@@ -222,7 +223,7 @@ def genhash(ckan, args):
     verify MD5 sums for a local (filesystem mounted) mirror of the BPA
     data, and generate expected E-Tag and SHA256 values.
     """
-    with DownloadMetadata(PROJECTS[args.project_name], None, path=args.download_path) as dlmeta:
+    with DownloadMetadata(PROJECTS[args.project_name], args.track_metadata, path=args.download_path) as dlmeta:
         genhash_fn(ckan, dlmeta.meta, args.mirror_path)
         print_accounts()
 
