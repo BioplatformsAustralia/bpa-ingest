@@ -397,7 +397,6 @@ class StemcellsMetabolomicMetadata(BaseMetadata):
             obj = {}
             name = bpa_id_to_ckan_name(bpa_id.split('.')[-1] + '-' + row.analytical_platform, self.ckan_data_type)
             track_meta = self.track_meta.get(row.ticket)
-            logger.error(obj)
             analytical_platform = fix_analytical_platform(row.analytical_platform)
             obj.update({
                 'name': name,
@@ -428,7 +427,7 @@ class StemcellsMetabolomicMetadata(BaseMetadata):
                 'private': True,
             })
             for contextual_source in self.contextual_metadata:
-                obj.update(contextual_source.get(bpa_id, track_meta))
+                obj.update(contextual_source.get(bpa_id, analytical_platform))
             tag_names = ['metabolomic', analytical_platform]
             obj['tags'] = [{'name': t} for t in tag_names]
             packages.append(obj)

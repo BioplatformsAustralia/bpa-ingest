@@ -200,7 +200,7 @@ class StemcellMetabolomicsContextual(object):
 
     def get(self, bpa_id, analytical_platform):
         tpl = (bpa_id, analytical_platform)
-        if bpa_id in self.sample_metadata:
+        if tpl in self.sample_metadata:
             return self.sample_metadata[tpl]
         logger.warning("no %s metadata available for: %s" % (type(self).__name__, tpl))
         return {}
