@@ -7,7 +7,7 @@ setup(author="CCG, Murdoch University",
       keywords="",
       url="https://github.com/muccg/bpa-ingest",
       name="bpaingest",
-      version="1.13.0",
+      version="1.13.1",
       packages=find_packages(exclude=["*.tests", "*.tests.*", "tests.*", "tests"]),
       entry_points={
           'console_scripts': [

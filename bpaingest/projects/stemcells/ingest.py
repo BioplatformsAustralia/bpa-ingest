@@ -293,9 +293,12 @@ class StemcellsSingleCellRNASeqMetadata(BaseMetadata):
             obj = {}
             name = bpa_id_to_ckan_name(bpa_id_range, self.ckan_data_type)
             track_meta = self.track_meta.get(row.ticket)
+            # NB: this isn't really the BPA ID, it's the first BPA ID
+            bpa_id = ingest_utils.extract_bpa_id(bpa_id_range.split('-', 1)[0])
             obj.update({
                 'name': name,
                 'id': name,
+                'bpa_id': bpa_id,
                 'bpa_id_range': bpa_id_range,
                 'notes': 'Stemcell SingleCellRNASeq %s' % (bpa_id_range),
                 'title': 'Stemcell SingleCellRNASeq %s' % (bpa_id_range),
@@ -319,8 +322,7 @@ class StemcellsSingleCellRNASeqMetadata(BaseMetadata):
             })
             for contextual_source in self.contextual_metadata:
                 # NB: the rows in the contextual metadata are all identical across the range, so this works
-                bpa_id_start = ingest_utils.extract_bpa_id(bpa_id_range.split('-', 1)[0])
-                obj.update(contextual_source.get(bpa_id_start))
+                obj.update(contextual_source.get(bpa_id))
             tag_names = ['single-cell-rnaseq']
             obj['tags'] = [{'name': t} for t in tag_names]
             packages.append(obj)
