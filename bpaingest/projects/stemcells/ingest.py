@@ -466,6 +466,7 @@ class StemcellsProteomicMetadata(BaseMetadata):
         self.contextual_metadata = contextual_metadata
         self.metadata_info = metadata_info
         self.track_meta = StemcellTrackMetadata(track_csv_path)
+        self.filename_metadata = {}
 
     @classmethod
     def parse_spreadsheet(self, fname, additional_context):
@@ -506,7 +507,6 @@ class StemcellsProteomicMetadata(BaseMetadata):
             xlsx_info = self.metadata_info[os.path.basename(fname)]
             all_rows.update(StemcellsProteomicMetadata.parse_spreadsheet(fname, xlsx_info))
         bpa_id_ticket_facility = dict((t.bpa_id, (t.ticket, t.facility_code)) for t in all_rows)
-        self.filename_metadata = {}
         self.filename_metadata.update(
             dict((t.raw_filename, t) for t in all_rows))
         self.filename_metadata.update(
