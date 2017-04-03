@@ -22,6 +22,16 @@ import re
 logger = make_logger(__name__)
 
 
+def fix_analytical_platform(s):
+    if s == 'LC-MS' or s == 'GC-MS':
+        return s
+    if s == 'LCMS':
+        return 'LC-MS'
+    if s == 'GCMS':
+        return 'GC-MS'
+    raise Exception("invalid metabolomics analytical platform: `%s'" % (s))
+
+
 class StemcellsTranscriptomeMetadata(BaseMetadata):
     contextual_classes = [StemcellAGRFTranscriptomeContextual]
     metadata_urls = ['https://downloads-qcif.bioplatforms.com/bpa/stemcell/raw/transcriptome/']
@@ -387,16 +397,18 @@ class StemcellsMetabolomicMetadata(BaseMetadata):
             obj = {}
             name = bpa_id_to_ckan_name(bpa_id.split('.')[-1] + '-' + row.analytical_platform, self.ckan_data_type)
             track_meta = self.track_meta.get(row.ticket)
+            logger.error(obj)
+            analytical_platform = fix_analytical_platform(row.analytical_platform)
             obj.update({
                 'name': name,
                 'id': name,
                 'bpa_id': bpa_id,
-                'notes': 'Stemcell Metabolomics %s' % (bpa_id),
-                'title': 'Stemcell Metabolomics %s' % (bpa_id),
+                'notes': 'Stemcell Metabolomics %s %s' % (bpa_id, analytical_platform),
+                'title': 'Stemcell Metabolomics %s %s' % (bpa_id, analytical_platform),
                 'omics': 'transcriptomics',
                 'data_generated': 'True',
                 'sample_fractionation_extraction_solvent': row.sample_fractionation_extraction_solvent,
-                'analytical_platform': row.analytical_platform,
+                'analytical_platform': analytical_platform,
                 'instrument_column_type': row.instrument_column_type,
                 'method': row.method,
                 'mass_spectrometer': row.mass_spectrometer,
@@ -415,9 +427,9 @@ class StemcellsMetabolomicMetadata(BaseMetadata):
                 'dataset_url': track_meta.download,
                 'private': True,
             })
-            # for contextual_source in self.contextual_metadata:
-            #     obj.update(contextual_source.get(bpa_id, track_meta))
-            tag_names = ['metabolomic']
+            for contextual_source in self.contextual_metadata:
+                obj.update(contextual_source.get(bpa_id, track_meta))
+            tag_names = ['metabolomic', analytical_platform]
             obj['tags'] = [{'name': t} for t in tag_names]
             packages.append(obj)
         return packages
@@ -431,10 +443,11 @@ class StemcellsMetabolomicMetadata(BaseMetadata):
                 resource = file_info.copy()
                 resource['md5'] = resource['id'] = md5
                 resource['name'] = filename
+                resource['analytical_platform'] = fix_analytical_platform(resource['analytical_platform'])
                 bpa_id = ingest_utils.extract_bpa_id(file_info.get('id'))
                 xlsx_info = self.metadata_info[os.path.basename(md5_file)]
                 legacy_url = bpa_mirror_url('bpa/stemcell/raw/metabolomic/%(facility_code)s/%(ticket)s/' % xlsx_info + filename)
-                resources.append(((bpa_id,), legacy_url, resource))
+                resources.append(((bpa_id, resource['analytical_platform']), legacy_url, resource))
         return resources
 
 
@@ -549,5 +562,5 @@ class StemcellsProteomicMetadata(BaseMetadata):
                 bpa_id = ingest_utils.extract_bpa_id(file_info.get('id'))
                 xlsx_info = self.metadata_info[os.path.basename(md5_file)]
                 legacy_url = bpa_mirror_url('bpa/stemcell/raw/proteomic/%(facility_code)s/%(ticket)s/' % xlsx_info + filename)
-                resources.append(((bpa_id, resource['analytical_platform']), legacy_url, resource))
+                resources.append(((bpa_id, ), legacy_url, resource))
         return resources
