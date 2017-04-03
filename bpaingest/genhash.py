@@ -48,6 +48,9 @@ def localpath(mirror_path, legacy_url):
 
 
 def genhash(ckan, meta, mirror_path):
+    # unfortunately sometimes we need to grab the package data, due to side-effects.
+    # this is a bug.
+    packages = meta.get_packages()  # noqa
     for bpa_id, legacy_url, resource in meta.get_resources():
         try:
             ckan_resource = ckan_method(ckan, 'resource', 'show')(id=resource['id'])
