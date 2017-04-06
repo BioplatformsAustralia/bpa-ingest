@@ -113,7 +113,7 @@ class StemcellsTranscriptomeMetadata(BaseMetadata):
             })
             for contextual_source in self.contextual_metadata:
                 obj.update(contextual_source.get(bpa_id))
-            tag_names = ['transcriptome']
+            tag_names = ['transcriptome', 'raw']
             obj['tags'] = [{'name': t} for t in tag_names]
             packages.append(obj)
         return packages
@@ -215,7 +215,7 @@ class StemcellsSmallRNAMetadata(BaseMetadata):
             })
             for contextual_source in self.contextual_metadata:
                 obj.update(contextual_source.get(bpa_id))
-            tag_names = ['small-rna']
+            tag_names = ['small-rna', 'raw']
             obj['tags'] = [{'name': t} for t in tag_names]
             packages.append(obj)
         return packages
@@ -323,7 +323,7 @@ class StemcellsSingleCellRNASeqMetadata(BaseMetadata):
             for contextual_source in self.contextual_metadata:
                 # NB: the rows in the contextual metadata are all identical across the range, so this works
                 obj.update(contextual_source.get(bpa_id))
-            tag_names = ['single-cell-rnaseq']
+            tag_names = ['single-cell-rnaseq', 'raw']
             obj['tags'] = [{'name': t} for t in tag_names]
             packages.append(obj)
         return packages
@@ -430,7 +430,7 @@ class StemcellsMetabolomicMetadata(BaseMetadata):
             })
             for contextual_source in self.contextual_metadata:
                 obj.update(contextual_source.get(bpa_id, analytical_platform))
-            tag_names = ['metabolomic', analytical_platform]
+            tag_names = ['metabolomic', analytical_platform, 'raw']
             obj['tags'] = [{'name': t} for t in tag_names]
             packages.append(obj)
         return packages
@@ -543,7 +543,7 @@ class StemcellsProteomicMetadata(BaseMetadata):
             })
             # for contextual_source in self.contextual_metadata:
             #     obj.update(contextual_source.get(bpa_id, track_meta))
-            tag_names = ['proteomic']
+            tag_names = ['proteomic', 'raw']
             obj['tags'] = [{'name': t} for t in tag_names]
             packages.append(obj)
         return packages
