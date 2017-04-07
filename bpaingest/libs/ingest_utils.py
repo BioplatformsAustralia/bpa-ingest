@@ -1,4 +1,3 @@
-import string
 import unittest
 import json
 import re
@@ -63,7 +62,7 @@ def get_clean_number(val, default=None):
     except ValueError:
         pass
 
-    matches = number_find_re.findall(str(val))
+    matches = number_find_re.findall(unicode(val))
     if len(matches) == 0:
         return default
     return float(matches[0])

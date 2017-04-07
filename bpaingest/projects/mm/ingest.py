@@ -29,15 +29,12 @@ def add_spatial_extra(package):
     "add a ckanext-spatial extra to the package"
     lat = ingest_utils.get_clean_number(package.get('latitude'))
     lng = ingest_utils.get_clean_number(package.get('longitude'))
-    logger.info(package.get('latitude'))
-    logger.info(package.get('longitude'))
     if not lat or not lng:
         return
     geo = {
         "type": "Point",
         "coordinates": [lng, lat]
     }
-    logger.info(geo)
     package['spatial'] = json.dumps(geo)
 
 

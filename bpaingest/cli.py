@@ -150,6 +150,13 @@ def makeschema(ckan, args):
                     "data-module-tags": "",
                     "data-module-source": "/api/2/util/tag/autocomplete?incomplete=?"
                 }
+            },
+            {
+                "field_name": "spatial",
+                "label": "Geospatial Coverage",
+                "display_property": "dcat:Dataset/dct:spatial",
+                "form_placeholder": "Paste a valid GeoJSON geometry",
+                "display_snippet": "spatial.html"
             }
         ],
         "resource_fields": [
@@ -188,7 +195,7 @@ def makeschema(ckan, args):
         p = {}
         for package in meta.get_packages():
             p.update(package)
-        skip = ('id', 'tags', 'private', 'type')
+        skip = ('id', 'tags', 'private', 'type', 'spatial')
         for k in sorted(p.keys()):
             if k in skip:
                 continue
