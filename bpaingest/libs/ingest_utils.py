@@ -9,10 +9,6 @@ import datetime
 
 logger = make_logger(__name__)
 
-# list of chars to delete
-remove_letters_map = dict((ord(char), None) for char in string.punctuation + string.ascii_letters)
-
-
 bpa_id_re = re.compile(r'^102\.100\.100[/\.](\d+)$')
 bpa_id_abbrev_re = re.compile(r'^(\d+)$')
 
@@ -36,30 +32,6 @@ def extract_bpa_id(s):
     return None
 
 
-def get_clean_number(val, default=None, debug=False):
-    """
-    Try to clean up numbers
-    """
-
-    if debug:
-        logger.debug(val)
-
-    if val in (None, ""):
-        return default
-
-    if isinstance(val, int):
-        return val
-
-    if isinstance(val, float):
-        return val
-
-    # remove_letters_map = dict((ord(char), None) for char in string.letters)
-    try:
-        return int(val.translate(remove_letters_map))
-    except ValueError:
-        return default
-
-
 def get_int(val, default=None):
     """
     get a int from a string containing other alpha characters
@@ -74,43 +46,27 @@ def get_int(val, default=None):
         return default
 
 
-def get_clean_float(val, default=None, stringconvert=True):
-    """
-    Try to hammer an arb value into a float.
-    If stringconvert is true (the default behaviour), try to convert the string to a float,
-    if not, return the given default value
-    """
+number_find_re = re.compile(r'(-?\d+\.?\d*)')
 
-    def to_float(var):
-        try:
-            return float(var)
-        except ValueError:
-            logger.warning("ValueError Value '{0}' not floatable, returning default '{1}'".format(var, default))
-            return default
-        except TypeError:
-            logger.warning("TypeError Value '{0}' not floatable, returning default '{1}'".format(var, default))
-            return default
 
-    # if its a float, its probably ok
+def get_clean_number(val, default=None):
     if isinstance(val, float):
         return val
 
-    # if its an integer, make it a float
-    if isinstance(val, int):
-        return to_float(val)
-
-    # the empty string gets the default
-    if val == '':
+    if val is None:
         return default
 
-    # if its not a string, forget it, return the default
-    if not isinstance(val, basestring):
-        return default
+    try:
+        return float(val)
+    except TypeError:
+        pass
+    except ValueError:
+        pass
 
-    if stringconvert:
-        return to_float(filter(lambda x: x.isdigit(), val))
-    else:
+    matches = number_find_re.findall(str(val))
+    if len(matches) == 0:
         return default
+    return float(matches[0])
 
 
 def strip_all(reader):
@@ -197,26 +153,31 @@ def pretty_print_namedtuple(named_tuple):
     return json.dumps(named_tuple._asdict(), indent=4, default=json_serial)
 
 
-class TestGetCleanFloat(unittest.TestCase):
+class TestGetCleanNumber(unittest.TestCase):
     """
-    get_clean_float tester
+    get_clean_number tester
     """
 
     def setUp(self):
         self.floats = (12131.5345, 22.444, 33.0)
+        self.strings = (('3.1415926535', 3.1415926535), ('-2.71828', -2.71828), ('37.1 degrees', 37.1))
 
-    def test_get_clean_float(self):
+    def test_get_clean_number(self):
         for f in self.floats:
-            self.assertTrue(f == get_clean_float(f))
+            self.assertTrue(f == get_clean_number(f))
 
-    def test_xxx(self):
-        self.assertTrue(get_clean_float('', 'XXX') == 'XXX')
+    def test_empty_string(self):
+        self.assertIs(get_clean_number(''), None)
+
+    def test_string(self):
+        for s, f in self.strings:
+            self.assertEqual(get_clean_number(s), f)
+
+    def test_integer(self):
+        self.assertEqual(get_clean_number(123), 123)
 
     def test_none(self):
-        self.assertTrue(get_clean_float('') is None)
-
-    def test_int(self):
-        self.assertTrue(get_clean_float(123) == 123)
+        self.assertIs(get_clean_number(None), None)
 
 
 if __name__ == '__main__':
