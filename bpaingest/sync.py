@@ -20,7 +20,8 @@ def sync_package(ckan, obj):
             'type': obj['type'],
             'id': obj['id'],
             'name': obj['name'],
-            'owner_org': obj['owner_org']
+            'owner_org': obj['owner_org'],
+            'private': obj['private'],
         }
         ckan_obj = ckan_method(ckan, 'package', 'create')(**create_obj)
         logger.info('created package object: %s' % (obj['id']))
