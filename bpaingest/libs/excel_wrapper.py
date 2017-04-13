@@ -22,19 +22,6 @@ from ..util import make_logger
 logger = make_logger(__name__)
 
 
-class ColumnNotFoundException(Exception):
-    column_name = 'Not Set'
-
-    def __init__(self, column_name):
-        self.column_name = column_name
-
-    def __str__(self):
-        return 'Column [{0}] not found'.format(self.column_name)
-
-    def __repr__(self):
-        return '{}({})'.format(type(self).__name__, self.column_name)
-
-
 def _stringify(s):
     if isinstance(s, str):
         return str(s.decode('utf8'))
