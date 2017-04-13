@@ -10,6 +10,56 @@ logger = make_logger(__name__)
 
 bpa_id_re = re.compile(r'^102\.100\.100[/\.](\d+)$')
 bpa_id_abbrev_re = re.compile(r'^(\d+)$')
+# this format of BPA ID has been used in older projects (e.g. BASE)
+bpa_id_abbrev_2_re = re.compile(r'^102\.100\.\.100[/\.](\d+)$')
+
+
+def fix_sample_extraction_id(val):
+    if val is None:
+        return val
+    if type(val) is float:
+        return '%s_1' % (int(val))
+    val = unicode(val).strip().replace('-', '_')
+    if val == '':
+        return None
+    return val
+
+
+def make_sample_extraction_id(extraction_id, bpa_id):
+    # instructions from project manager: if no extraction_id in the spreadsheet,
+    # append _1 to the bpa_id_to_ckan_name
+    return extraction_id or (bpa_id.split('.')[-1] + "_1")
+
+
+def fix_date_interval(val):
+    # 1:10 is in excel date format in some columns; convert back
+    if isinstance(val, datetime.time):
+        return '%s:%s' % (val.hour, val.minute)
+    return val
+
+
+def merge_pass_fail(row):
+    # some of the early BASE/MM amplicon submission sheets have more than one pass fail column,
+    # but only one should have real data (we key on 'dilution_used')
+    dilution = row.dilution_used.strip().lower()
+    if dilution == 'neat':
+        pass_fail_attrs = ('pass_fail', 'pass_fail_neat')
+    elif dilution == '1:10':
+        pass_fail_attrs = ('pass_fail', 'pass_fail_10')
+    elif dilution == '1:100':
+        pass_fail_attrs = ('pass_fail', 'pass_fail_100')
+    else:
+        raise Exception('unknown dilution: %s' % (dilution))
+    vals = []
+    for attr in pass_fail_attrs:
+        v = getattr(row, attr)
+        if v:
+            vals.append(v)
+    if len(vals) == 0:
+        return None
+    elif len(vals) == 1:
+        return vals[0]
+    raise Exception("more than one amplicon pass_fail column value: %s" % (vals))
 
 
 def extract_bpa_id(s):
@@ -19,12 +69,22 @@ def extract_bpa_id(s):
     if isinstance(s, int):
         s = str(s)
     # if someone has appended extraction number, remove it
+    s = s.strip()
+    if s == '':
+        return None
+    # handle a sample extraction id tacked on the end with an underscore
     if '_' in s:
         s = s.rsplit('_', 1)[0]
+    # handle a sample extraction id tacked on the end with a hyphen
+    if s.endswith('-1') or s.endswith('-2') or s.endswith('-3'):
+        s = s[:-2]
     m = bpa_id_re.match(s)
     if m:
         return BPA_PREFIX + m.groups()[0]
     m = bpa_id_abbrev_re.match(s)
+    if m:
+        return BPA_PREFIX + m.groups()[0]
+    m = bpa_id_abbrev_2_re.match(s)
     if m:
         return BPA_PREFIX + m.groups()[0]
     logger.warning("unable to parse BPA ID: `%s'" % s)

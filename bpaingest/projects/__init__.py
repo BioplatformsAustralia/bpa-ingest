@@ -1,5 +1,7 @@
 from .barcode.ingest import BarcodeMetadata
-from .base.ingest import SoilMetadata
+from .base.ingest import (
+    BASEAmpliconsMetadata,
+    BASEMetagenomicsMetadata)
 from .gbr_amplicons.ingest import GbrAmpliconsMetadata
 from .melanoma.ingest import MelanomaMetadata
 from .mm.ingest import (
@@ -46,11 +48,6 @@ PROJECTS = {
     'stemcells-singlecellrnaseq': StemcellsSingleCellRNASeqMetadata,
     'stemcells-metabolomic': StemcellsMetabolomicMetadata,
     'stemcells-proteomic': StemcellsProteomicMetadata,
-    # under development
-    # stubs
-    'barcode': BarcodeMetadata,
-    'base': SoilMetadata,
-    'melanoma': MelanomaMetadata,
     'mm-genomics-amplicons-16s': MarineMicrobesGenomicsAmplicons16SMetadata,
     'mm-genomics-amplicons-a16s': MarineMicrobesGenomicsAmpliconsA16SMetadata,
     'mm-genomics-amplicons-18s': MarineMicrobesGenomicsAmplicons18SMetadata,
@@ -59,5 +56,11 @@ PROJECTS = {
     'mm-genomics-amplicons-18s-control': MarineMicrobesGenomicsAmplicons18SControlMetadata,
     'mm-metagenomics': MarineMicrobesMetagenomicsMetadata,
     'mm-metatranscriptome': MarineMicrobesMetatranscriptomeMetadata,
+    # under development
+    'base-amplicons': BASEAmpliconsMetadata,
+    'base-metagenomics': BASEMetagenomicsMetadata,
+    # stubs
+    'barcode': BarcodeMetadata,
+    'melanoma': MelanomaMetadata,
     'wheat-pathogens-transcript': WheatPathogensTranscriptMetadata,
 }

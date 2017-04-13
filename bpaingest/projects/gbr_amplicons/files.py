@@ -1,7 +1,7 @@
 import re
 
-from ...libs import md5parser
 from ...util import make_logger
+from ...libs.md5lines import md5lines
 
 logger = make_logger(__name__)
 
@@ -43,8 +43,11 @@ def _get_parsed_lines(path):
     md5parsedlines = []
     for md5_file in path.walk(filter=is_md5):
         logger.info('Processing GBR md5 checksum file {0}'.format(md5_file))
-        md5parsedlines.extend(md5parser.parse_md5_file(AMPLICON_FILE_PATTERN, md5_file))
-
+        with open(md5_file) as md5_fd:
+            for md5, path in md5lines(md5_fd):
+                m = re.match(AMPLICON_FILE_PATTERN, md5_file)
+                if m:
+                    md5parsedlines.append(m.groupdict())
     return md5parsedlines
 
 

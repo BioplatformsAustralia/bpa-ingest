@@ -108,7 +108,7 @@ metagenomics_filename_re = re.compile("""
 """, re.VERBOSE)
 
 
-def test_genomics():
+def test_metagenomics():
     filenames = [
         '21744_1_PE_700bp_MM_UNSW_HM7K2BCXX_AAGAGGCA-AAGGAGTA_L001_R1.fastq.gz',
         '34318_1_PE_680bp_MM_AGRF_H3KWTBCXY_CTCTCTAC-ACTGCATA_L002_R1.fastq.gz',

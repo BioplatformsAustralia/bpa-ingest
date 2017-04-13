@@ -8,16 +8,6 @@ import os
 logger = make_logger(__name__)
 
 
-def fix_dilution(val):
-    '''
-    Some source xcell files ship with the dilution column type as time.
-    xlrd advertises support for format strings but not implemented.
-    '''
-    if isinstance(val, float):
-        return u'1:10'  # default
-    return val
-
-
 def fix_pcr(pcr):
     '''
     Check pcr value
@@ -50,7 +40,7 @@ def get_amplicon_data(file_name, additional_context):
         ('pcr_1_to_10', '1:10 PCR, P=pass, F=fail', fix_pcr),
         ('pcr_1_to_100', '1:100 PCR, P=pass, F=fail', fix_pcr),
         ('pcr_neat', 'neat PCR, P=pass, F=fail', fix_pcr),
-        ('dilution', 'Dilution used', fix_dilution),
+        ('dilution', 'Dilution used', ingest_utils.fix_date_interval),
         ('sequencing_run_number', 'Sequencing run number', None),
         ('flow_cell_id', 'Flowcell', None),
         ('reads', '# of reads', ingest_utils.get_int),

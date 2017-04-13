@@ -60,8 +60,13 @@ def patch_if_required(ckan, object_type, ckan_object, patch_object, skip_differe
         # co-erce to string to cope with numeric types in the JSON data
         if v1 != v2 and unicode(v1) != unicode(v2):
             differences.append((k, v1, v2))
-    for k, v, v2 in differences:
-        logger.debug("%s/%s: difference on k `%s', we have `%s' vs ckan `%s'" % (object_type, ckan_object.get('id', '<no id?>'), k, v, v2))
+    if differences:
+        logger.debug("%s/%s: differs" % (object_type, ckan_object.get('id', '<no id?>')))
+    differences.sort()
+    for k, v1, v2 in differences:
+        logger.debug("   -  %s=%s (%s)" % (k, v2, type(v2).__name__))
+    for k, v1, v2 in differences:
+        logger.debug("   +  %s=%s (%s)" % (k, v1, type(v1).__name__))
     patch_needed = len(differences) > 0
     if patch_needed:
         ckan_object = ckan_method(ckan, object_type, "patch")(**patch_object)

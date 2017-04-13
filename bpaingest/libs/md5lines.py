@@ -9,6 +9,9 @@ def md5lines(fd):
     "read MD5 lines from `fd` and yield pairs of (md5, path)"
     for line in fd:
         line = line.strip()
+        # skip blank lines
+        if line == '':
+            continue
         m = bsd_md5_re.match(line)
         if m:
             path, md5 = m.groups()

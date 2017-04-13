@@ -9,7 +9,7 @@ import sys
 import requests
 from bs4 import BeautifulSoup
 from distutils.dir_util import mkpath
-from urlparse import urljoin, urlsplit
+from urlparse import urljoin
 from ..util import make_logger
 
 import requests.packages.urllib3
@@ -55,21 +55,21 @@ class Fetcher():
         if not os.path.exists(self.target_folder):
             mkpath(self.target_folder)
 
-    def _fetch(self, url, name):
+    def _fetch(self, session, url, name):
         logger.info('Fetching {0} from {1}'.format(name, url))
-        r = requests.get(url + name, stream=True, auth=self.auth, verify=False)
-        with open(self.target_folder + '/' + name, 'wb') as f:
+        r = session.get(url + name, stream=True, auth=self.auth, verify=False)
+        full_url = self.target_folder + '/' + name
+        with open(full_url, 'wb') as f:
             for chunk in r.iter_content(chunk_size=1024):
                 if chunk:
                     f.write(chunk)
                     f.flush()
 
-    def fetch_metadata_from_folder(self, metadata_patterns, metadata_info, url_components, _target_depth=-1, _url=None):
+    def fetch_metadata_from_folder(self, metadata_patterns, metadata_info, url_components, _target_depth=-1, _url=None, _session=None):
         """
-        walk a directory structure. if `target_depth` == 0, then download files
-        if `target_depth` > 0, recurse into subdirectories
-        updates `metadata_info` if it is not `None` an entry for each metadata file
-        downloaded
+        walk a directory structure, grabbing files matching `metadata_patterns`.
+        `url_components` gives an expected minimum level of recursing to find matching files,
+        and the names in `url_components` are used to set `metadata_info` for each downloaded file.
         """
         if metadata_patterns is None:
             metadata_patterns = [r'^.*\.(md5|xlsx)$']
@@ -77,29 +77,43 @@ class Fetcher():
             _url = self.metadata_source_url
         if _target_depth == -1:
             _target_depth = len(url_components)
-        # def _metadata_fn(url):
-        #    return urlsplit(url).path.strip('/').split('/')[-target_depth:]
+        if _session is None:
+            _session = requests.Session()
 
         logger.info('Fetching folder from {}'.format(_url))
-        response = requests.get(_url, stream=True, auth=self.auth, verify=False)
-        recursive = _target_depth > 0
+        response = _session.get(_url, stream=True, auth=self.auth, verify=False)
         fetched = set()
         for link in BeautifulSoup(response.content, 'html.parser').find_all('a'):
             link_target = link.get('href')
             if link_target in fetched:
                 continue
             fetched.add(link_target)
-            if recursive:
+            # we need to descend directory tree further in order to find all `url_components`
+            if _target_depth > 0:
                 if Fetcher.recurse_re.match(link_target):
                     self.fetch_metadata_from_folder(
                         metadata_patterns,
                         metadata_info,
                         url_components,
+                        _session=_session,
                         _target_depth=_target_depth - 1,
                         _url=urljoin(_url, link_target))
             else:
-                if not any(re.match(pattern, link_target) for pattern in metadata_patterns):
+                # descend anyway, to find whatever is there, but we've already hit target_depth
+                if Fetcher.recurse_re.match(link_target):
+                    self.fetch_metadata_from_folder(
+                        metadata_patterns,
+                        metadata_info,
+                        url_components,
+                        _session=_session,
+                        _target_depth=_target_depth,
+                        _url=urljoin(_url, link_target))
+                elif not any(re.match(pattern, link_target) for pattern in metadata_patterns):
                     continue
-                meta_parts = urlsplit(_url).path.strip('/').split('/')[-len(url_components):]
-                metadata_info[link_target] = dict(zip(url_components, meta_parts))
-                self._fetch(_url, link_target)
+                else:
+                    subdir = _url[len(self.metadata_source_url):].strip('/')
+                    meta_parts = subdir.split('/')[:len(url_components)]
+                    assert(len(meta_parts) == len(url_components))
+                    metadata_info[link_target] = dict(zip(url_components, meta_parts))
+                    metadata_info[link_target]['base_url'] = _url
+                    self._fetch(_session, _url, link_target)

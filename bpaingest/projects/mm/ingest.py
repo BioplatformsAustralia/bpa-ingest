@@ -8,12 +8,10 @@ from ...libs import ingest_utils
 from ...bpa import bpa_mirror_url
 from ...abstract import BaseMetadata
 from ...libs.excel_wrapper import ExcelWrapper
-from ...libs import ingest_utils
 from . import files
 from . tracking import MarineMicrobesTrackMetadata
 from .contextual import MarineMicrobesSampleContextual
 
-import datetime
 import json
 import os
 import re
@@ -63,36 +61,6 @@ def build_mm_amplicon_linkage(index_linkage, flow_id, index):
     return flow_id
 
 
-def merge_pass_fail(row):
-    # some of the early MM amplicon submission sheets have more than one pass fail column,
-    # but only one should have real data (we key on 'dilution_used')
-    dilution = row.dilution_used.strip().lower()
-    if dilution == 'neat':
-        pass_fail_attrs = ('pass_fail', 'pass_fail_neat')
-    elif dilution == '1:10':
-        pass_fail_attrs = ('pass_fail', 'pass_fail_10')
-    elif dilution == '1:100':
-        pass_fail_attrs = ('pass_fail', 'pass_fail_100')
-    else:
-        raise Exception('unknown dilution: %s' % (dilution))
-    vals = []
-    for attr in pass_fail_attrs:
-        v = getattr(row, attr)
-        if v:
-            vals.append(v)
-    if len(vals) == 0:
-        return None
-    elif len(vals) == 1:
-        return vals[0]
-    raise Exception("more than one amplicon pass_fail column value: %s" % (vals))
-
-
-def make_sample_extraction_id(extraction_id, bpa_id):
-    # instructions from project manager: if no extraction_id in the spreadsheet,
-    # append _1 to the bpa_id_to_ckan_name
-    return extraction_id or (bpa_id + "_1")
-
-
 def unique_spreadsheets(fnames):
     # project manager is updating submission sheets to correct errors
     # we want to keep the originals in case of any problems, so override
@@ -120,17 +88,11 @@ class BaseMarineMicrobesAmpliconsMetadata(BaseMetadata):
 
     @classmethod
     def parse_spreadsheet(self, fname, metadata_info):
-        def fix_dilution(val):
-            # 1:10 is in excel date format in some columns; convert back
-            if isinstance(val, datetime.time):
-                return '%s:%s' % (val.hour, val.minute)
-            return val
-
         field_spec = [
             ("bpa_id", re.compile(r'^.*sample unique id$'), ingest_utils.extract_bpa_id),
             ("sample_extraction_id", "Sample extraction ID"),
             ("target", "Target"),
-            ("dilution_used", "Dilution used", fix_dilution),
+            ("dilution_used", "Dilution used", ingest_utils.fix_date_interval),
             ("reads", re.compile(r"^# of (raw )?reads$")),
             ("analysis_software_version", "AnalysisSoftwareVersion"),
             ("comments", "Comments"),
@@ -188,9 +150,9 @@ class BaseMarineMicrobesAmpliconsMetadata(BaseMetadata):
                     'bpa_id': bpa_id,
                     'flow_id': flow_id,
                     'mm_amplicon_linkage': mm_amplicon_linkage,
-                    'sample_extraction_id': make_sample_extraction_id(row.sample_extraction_id, bpa_id),
+                    'sample_extraction_id': ingest_utils.make_sample_extraction_id(row.sample_extraction_id, bpa_id),
                     'target': row.target,
-                    'pass_fail': merge_pass_fail(row),
+                    'pass_fail': ingest_utils.merge_pass_fail(row),
                     'dilution_used': row.dilution_used,
                     'reads': row.reads,
                     'analysis_software_version': row.analysis_software_version,
@@ -433,7 +395,7 @@ class MarineMicrobesMetagenomicsMetadata(BaseMetadata):
                     'data_generated': ingest_utils.get_date_isoformat(track_meta.date_of_transfer_to_archive),
                     'archive_ingestion_date': ingest_utils.get_date_isoformat(track_meta.date_of_transfer_to_archive),
                     'dataset_url': track_meta.download,
-                    'sample_extraction_id': make_sample_extraction_id(row.sample_extraction_id, bpa_id),
+                    'sample_extraction_id': ingest_utils.make_sample_extraction_id(row.sample_extraction_id, bpa_id),
                     'insert_size_range': row.insert_size_range,
                     'library_construction_protocol': row.library_construction_protocol,
                     'sequencer': row.sequencer,
@@ -541,7 +503,7 @@ class MarineMicrobesMetatranscriptomeMetadata(BaseMetadata):
                 'data_generated': ingest_utils.get_date_isoformat(track_meta.date_of_transfer_to_archive),
                 'archive_ingestion_date': ingest_utils.get_date_isoformat(track_meta.date_of_transfer_to_archive),
                 'dataset_url': track_meta.download,
-                'sample_extraction_id': make_sample_extraction_id(row.sample_extraction_id, bpa_id),
+                'sample_extraction_id': ingest_utils.make_sample_extraction_id(row.sample_extraction_id, bpa_id),
                 'insert_size_range': row.insert_size_range,
                 'library_construction_protocol': row.library_construction_protocol,
                 'sequencer': row.sequencer,
