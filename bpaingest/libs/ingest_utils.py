@@ -37,6 +37,9 @@ def fix_sample_extraction_id(val):
     val = unicode(val).strip().replace('-', '_')
     if val == '':
         return None
+    # header row left in
+    if val.startswith('e.g. '):
+        return None
     if not sample_extraction_id_re.match(val):
         logger.warning("invalid sample_extraction_id: %s" % (val))
         return None
@@ -89,6 +92,9 @@ def extract_bpa_id(s):
     # if someone has appended extraction number, remove it
     s = s.strip()
     if s == '':
+        return None
+    # header row left in
+    if s.startswith('e.g. '):
         return None
     # handle a sample extraction id tacked on the end with an underscore
     if '_' in s:
