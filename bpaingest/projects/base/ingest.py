@@ -35,16 +35,6 @@ def add_spatial_extra(package):
     package['spatial'] = json.dumps(geo)
 
 
-def fix_pcr(pcr):
-    """ Check pcr value """
-
-    val = pcr.encode('utf-8').strip()
-    if val not in ("P", "F", ""):
-        logger.error("PCR value [{}] is neither F, P or " ", setting to X".format(val))
-        val = "X"
-    return val
-
-
 class BASEAmpliconsMetadata(BaseMetadata):
     auth = ('base', 'base')
     organization = 'bpa-base'
@@ -73,9 +63,9 @@ class BASEAmpliconsMetadata(BaseMetadata):
             ("index", "Index", lambda s: s[:12]),
             ("index1", "Index 1", lambda s: s[:12]),
             ("index2", "Index2", lambda s: s[:12]),
-            ("pcr_1_to_10", "1:10 PCR, P=pass, F=fail", fix_pcr),
-            ("pcr_1_to_100", "1:100 PCR, P=pass, F=fail", fix_pcr),
-            ("pcr_neat", "neat PCR, P=pass, F=fail", fix_pcr),
+            ("pcr_1_to_10", "1:10 PCR, P=pass, F=fail", ingest_utils.fix_pcr),
+            ("pcr_1_to_100", "1:100 PCR, P=pass, F=fail", ingest_utils.fix_pcr),
+            ("pcr_neat", "neat PCR, P=pass, F=fail", ingest_utils.fix_pcr),
             ("dilution", "Dilution used", ingest_utils.fix_date_interval),
             ("sequencing_run_number", "Sequencing run number", None),
             ("flow_cell_id", "Flowcell", None),
@@ -192,6 +182,7 @@ class BASEAmpliconsMetadata(BaseMetadata):
                 sample_extraction_id = bpa_id.split('.')[-1] + '_' + file_info.get('extraction')
                 xlsx_info = self.metadata_info[os.path.basename(md5_file)]
                 legacy_url = urljoin(xlsx_info['base_url'], filename)
+                logger.error("resource linkage: %s" % ([sample_extraction_id, resource['amplicon'], resource['flow_id']]))
                 resources.append(((sample_extraction_id, resource['amplicon'], resource['flow_id']), legacy_url, resource))
         return resources
 

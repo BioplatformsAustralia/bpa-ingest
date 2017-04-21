@@ -1,22 +1,12 @@
 from __future__ import print_function
 
 from ...libs.excel_wrapper import ExcelWrapper
+from ...libs.ingest_utils import fix_pcr
 from ...util import make_logger
 from ...libs import ingest_utils
 import os
 
 logger = make_logger(__name__)
-
-
-def fix_pcr(pcr):
-    '''
-    Check pcr value
-    '''
-    val = pcr.strip()
-    if val not in ('P', 'F', ''):
-        logger.error('PCR value [{0}] is neither F, P or ' ', setting to X'.format(pcr.encode('utf8')))
-        val = 'X'
-    return val
 
 
 def strip_bpa_prefix(val):

@@ -12,15 +12,33 @@ bpa_id_re = re.compile(r'^102\.100\.100[/\.](\d+)$')
 bpa_id_abbrev_re = re.compile(r'^(\d+)$')
 # this format of BPA ID has been used in older projects (e.g. BASE)
 bpa_id_abbrev_2_re = re.compile(r'^102\.100\.\.100[/\.](\d+)$')
+# <BPA_ID>_<extraction>
+sample_extraction_id_re = re.compile(r'^\d{4,6}_\d')
+
+
+def fix_pcr(pcr):
+    """ Check pcr value """
+
+    val = pcr.encode('utf-8').strip()
+    # header in the spreadsheet
+    if val == 'i.e. P or F':
+        return None
+    if val not in ("P", "F", ""):
+        logger.error("PCR value is neither F, P or " ", setting to X: `%s'" % (val))
+        val = "X"
+    return val
 
 
 def fix_sample_extraction_id(val):
     if val is None:
         return val
-    if type(val) is float:
+    if type(val) is float or type(val) is int:
         return '%s_1' % (int(val))
     val = unicode(val).strip().replace('-', '_')
     if val == '':
+        return None
+    if not sample_extraction_id_re.match(val):
+        logger.warning("invalid sample_extraction_id: %s" % (val))
         return None
     return val
 
@@ -75,9 +93,6 @@ def extract_bpa_id(s):
     # handle a sample extraction id tacked on the end with an underscore
     if '_' in s:
         s = s.rsplit('_', 1)[0]
-    # handle a sample extraction id tacked on the end with a hyphen
-    if s.endswith('-1') or s.endswith('-2') or s.endswith('-3'):
-        s = s[:-2]
     m = bpa_id_re.match(s)
     if m:
         return BPA_PREFIX + m.groups()[0]
