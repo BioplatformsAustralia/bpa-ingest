@@ -45,7 +45,7 @@ class BASESampleContextual(object):
     name = 'base-contextual'
 
     def __init__(self, path):
-        xlsx_path = path + '/contextual-latest.xlsx'
+        xlsx_path = path + '/contextual-provisional.xlsx'
         self.sample_metadata = self._package_metadata(self._read_metadata(xlsx_path))
 
     def get(self, bpa_id):
