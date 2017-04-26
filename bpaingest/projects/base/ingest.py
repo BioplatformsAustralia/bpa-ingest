@@ -182,7 +182,6 @@ class BASEAmpliconsMetadata(BaseMetadata):
                 sample_extraction_id = bpa_id.split('.')[-1] + '_' + file_info.get('extraction')
                 xlsx_info = self.metadata_info[os.path.basename(md5_file)]
                 legacy_url = urljoin(xlsx_info['base_url'], filename)
-                logger.error("resource linkage: %s" % ([sample_extraction_id, resource['amplicon'], resource['flow_id']]))
                 resources.append(((sample_extraction_id, resource['amplicon'], resource['flow_id']), legacy_url, resource))
         return resources
 

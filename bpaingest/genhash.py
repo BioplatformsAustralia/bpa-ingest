@@ -42,9 +42,11 @@ def generate_hashes(fname):
 
 
 def localpath(mirror_path, legacy_url):
-    return os.path.join(
-        mirror_path,
-        urlparse.urlparse(legacy_url).path.lstrip('/bpa/').lstrip('/'))
+    path = urlparse.urlparse(legacy_url).path
+    if pat.startswith('/bpa/'):
+        pat = legacy_url[5:]
+    path = path.lstrip('/'))
+    return os.path.join(mirror_path, path)
 
 
 def genhash(ckan, meta, mirror_path):
