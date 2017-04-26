@@ -44,7 +44,7 @@ def generate_hashes(fname):
 def localpath(mirror_path, legacy_url):
     path = urlparse.urlparse(legacy_url).path
     if path.startswith('/bpa/'):
-        path = legacy_url[5:]
+        path = path[5:]
     path = path.lstrip('/')
     return os.path.join(mirror_path, path)
 
