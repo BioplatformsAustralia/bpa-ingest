@@ -54,7 +54,7 @@ class DownloadMetadata(object):
                     getattr(project_class, 'metadata_url_components', []))
             for contextual_path, contextual_cls in self.contextual:
                 os.mkdir(contextual_path)
-                logger.info("fetching contextal metadata: %s" % (contextual_cls.metadata_urls))
+                logger.info("fetching contextual metadata: %s" % (contextual_cls.metadata_urls))
                 for metadata_url in contextual_cls.metadata_urls:
                     fetcher = Fetcher(contextual_path, metadata_url, self.auth)
                     fetcher.fetch_metadata_from_folder(

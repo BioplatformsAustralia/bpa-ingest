@@ -111,6 +111,9 @@ def csv_to_named_tuple(typname, fname, mode='r'):
             s = digit_words[s[0]] + s[1:]
         s = s.strip('_')
         s = re.sub(r'__+', '_', s).strip('_')
+        # reserved words aren't permitted
+        if s == 'class':
+            s = 'class_'
         return s
 
     with open(fname, mode) as fd:

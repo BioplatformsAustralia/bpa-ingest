@@ -19,7 +19,7 @@ logger = make_logger(__name__)
 
 
 def get_password(project_name=None):
-    '''Get downloads password for project from environment '''
+    '''Get downloads password for legacy auth username from environment '''
 
     def complain_and_quit():
         logger.error('Please set shell variable {} to current BPA {} project password'.format(password_env,
@@ -82,6 +82,8 @@ class Fetcher():
 
         logger.info('Fetching folder from {}'.format(_url))
         response = _session.get(_url, stream=True, auth=self.auth, verify=False)
+        if response.status_code != 200:
+            logger.error('warning: status code %d for url %s' % (response.status_code, _url))
         fetched = set()
         for link in BeautifulSoup(response.content, 'html.parser').find_all('a'):
             link_target = link.get('href')

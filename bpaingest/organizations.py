@@ -89,7 +89,7 @@ ORGANIZATIONS = [
         'name': 'bpa-omg',
         'title': 'Oz Mammals Genome Initiative',
         'display_name': 'Oz Mammals Genome Initiative',
-        'image_url': 'https://s3-ap-southeast-2.amazonaws.com/bpa-web-assets/Dasyurus_viverrinus_Taranna_AnnaMacDonald_CCBY.1200x1200.jpeg',
+        'image_url': 'https://data.bioplatforms.com/omg-logo.png',
         'groups': [{'capacity': 'public', 'name': BPA_ORGANIZATION_ID}],
     }
 ]

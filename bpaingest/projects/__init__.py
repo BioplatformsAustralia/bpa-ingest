@@ -30,6 +30,7 @@ from .stemcells.ingest import (
 from .wheat_cultivars.ingest import WheatCultivarsMetadata
 from .wheat_pathogens_genomes.ingest import WheatPathogensGenomesMetadata
 from .wheat_pathogens_transcript.ingest import WheatPathogensTranscriptMetadata
+from .omg.ingest import (OMG10XProcessedIlluminaMetadata, OMG10XRawIlluminaMetadata)
 
 PROJECTS = {
     # functional ingests
@@ -56,9 +57,11 @@ PROJECTS = {
     'mm-genomics-amplicons-18s-control': MarineMicrobesGenomicsAmplicons18SControlMetadata,
     'mm-metagenomics': MarineMicrobesMetagenomicsMetadata,
     'mm-metatranscriptome': MarineMicrobesMetatranscriptomeMetadata,
-    # under development
     'base-amplicons': BASEAmpliconsMetadata,
     'base-metagenomics': BASEMetagenomicsMetadata,
+    # under development
+    "omg-10xraw": OMG10XRawIlluminaMetadata,
+    "omg-10xprocessed": OMG10XProcessedIlluminaMetadata,
     # stubs
     'barcode': BarcodeMetadata,
     'melanoma': MelanomaMetadata,
