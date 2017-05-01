@@ -69,6 +69,20 @@ def test_proteomics():
         assert(proteomics_filename_re.match(filename) is not None)
 
 
+proteomics_analysed_filename_re = re.compile("""
+    (?P<zip_file_name>.*)
+    (\.zip)$
+""", re.VERBOSE)
+
+
+def test_proteomics_analysed():
+    filenames = [
+        'P16_0064_Exp1_SC_MBPF_MS_Analysed_20161213.zip',
+    ]
+    for filename in filenames:
+        assert(proteomics_analysed_filename_re.match(filename) is not None)
+
+
 singlecell_filename_re = re.compile("""
     (?P<id>\d{4,6}-\d{4,6})_
     (?P<library>PE|MP)_
