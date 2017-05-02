@@ -20,7 +20,8 @@ from .sepsis.ingest import (
     SepsisMetabolomicsLCMSMetadata,
     SepsisProteomicsMS1QuantificationMetadata,
     SepsisProteomicsSwathMSMetadata,
-    SepsisProteomicsSwathMSPoolMetadata)
+    SepsisProteomicsSwathMSPoolMetadata,
+    SepsisProteomicsAnalysedMetadata)
 from .stemcells.ingest import (
     StemcellsTranscriptomeMetadata,
     StemcellsSmallRNAMetadata,
@@ -44,6 +45,7 @@ PROJECTS = {
     'sepsis-proteomics-ms1quantification': SepsisProteomicsMS1QuantificationMetadata,
     'sepsis-proteomics-swathms': SepsisProteomicsSwathMSMetadata,
     'sepsis-proteomics-swathms-pool': SepsisProteomicsSwathMSPoolMetadata,
+    'sepsis-proteomics-analysed': SepsisProteomicsAnalysedMetadata,
     'wheat-cultivars': WheatCultivarsMetadata,  # the entire wheat cultivars project
     'wheat-pathogens-genomes': WheatPathogensGenomesMetadata,  # the first half of wheat pathogens
     'stemcells-transcriptome': StemcellsTranscriptomeMetadata,
