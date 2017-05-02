@@ -27,7 +27,8 @@ from .stemcells.ingest import (
     StemcellsSingleCellRNASeqMetadata,
     StemcellsMetabolomicMetadata,
     StemcellsProteomicMetadata,
-    StemcellsAnalysedProteomicMetadata)
+    StemcellsAnalysedProteomicMetadata,
+    StemcellsAnalysedMetabolomicMetadata)
 from .wheat_cultivars.ingest import WheatCultivarsMetadata
 from .wheat_pathogens_genomes.ingest import WheatPathogensGenomesMetadata
 from .wheat_pathogens_transcript.ingest import WheatPathogensTranscriptMetadata
@@ -62,8 +63,9 @@ PROJECTS = {
     'base-metagenomics': BASEMetagenomicsMetadata,
     'omg-10xraw': OMG10XRawIlluminaMetadata,
     'omg-10xprocessed': OMG10XProcessedIlluminaMetadata,
-    # under development
     'stemcells-analysed-proteomic': StemcellsAnalysedProteomicMetadata,
+    'stemcells-analysed-metabolomic': StemcellsAnalysedMetabolomicMetadata,
+    # under development
     # stubs
     'barcode': BarcodeMetadata,
     'melanoma': MelanomaMetadata,

@@ -20,7 +20,7 @@ def bpa_id_to_ckan_name(bpa_id, suborg=None, postfix=None):
     r = 'bpa-'
     if suborg is not None:
         r += suborg + '-'
-    r += bpa_id.replace('/', '_').replace('.', '_')
+    r += bpa_id.replace('/', '_').replace('.', '_').replace(' ', '')
     if postfix is not None:
         r += '-' + postfix
     # CKAN insists upon lowercase
