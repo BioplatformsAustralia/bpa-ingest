@@ -22,7 +22,8 @@ from .sepsis.ingest import (
     SepsisProteomicsSwathMSMetadata,
     SepsisProteomicsSwathMSPoolMetadata,
     SepsisProteomicsAnalysedMetadata,
-    SepsisTranscriptomicsAnalysedMetadata)
+    SepsisTranscriptomicsAnalysedMetadata,
+    SepsisMetabolomicsAnalysedMetadata)
 from .stemcells.ingest import (
     StemcellsTranscriptomeMetadata,
     StemcellsSmallRNAMetadata,
@@ -44,6 +45,7 @@ PROJECTS = {
     'sepsis-transcriptomics-analysed': SepsisTranscriptomicsAnalysedMetadata,
     'sepsis-transcriptomics-hiseq': SepsisTranscriptomicsHiseqMetadata,
     'sepsis-metabolomics-lcms': SepsisMetabolomicsLCMSMetadata,
+    'sepsis-metabolomics-analysed': SepsisMetabolomicsAnalysedMetadata,
     'sepsis-proteomics-ms1quantification': SepsisProteomicsMS1QuantificationMetadata,
     'sepsis-proteomics-swathms': SepsisProteomicsSwathMSMetadata,
     'sepsis-proteomics-swathms-pool': SepsisProteomicsSwathMSPoolMetadata,
