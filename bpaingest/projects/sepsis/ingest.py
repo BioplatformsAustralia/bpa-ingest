@@ -898,7 +898,7 @@ class SepsisTranscriptomicsAnalysedMetadata(BaseMetadata):
                 'dataset_url': track_meta.download,
                 'private': True,
             })
-            tag_names = ['proteomics', 'analysed']
+            tag_names = ['transcriptomics', 'analysed']
             obj['tags'] = [{'name': t} for t in tag_names]
             packages.append(obj)
         return packages
@@ -1013,7 +1013,7 @@ class SepsisMetabolomicsAnalysedMetadata(BaseMetadata):
                 'dataset_url': track_meta.download,
                 'private': True,
             })
-            tag_names = ['proteomics', 'analysed']
+            tag_names = ['metabolomics', 'analysed']
             obj['tags'] = [{'name': t} for t in tag_names]
             packages.append(obj)
         return packages
