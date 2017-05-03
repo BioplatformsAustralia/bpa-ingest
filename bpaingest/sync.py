@@ -139,7 +139,7 @@ def sync_resources(ckan, resources, resource_linkage_attrs, ckan_packages, auth,
     for resource_linkage, legacy_url, resource_obj in resources:
         package_id = resource_linkage_package_id.get(resource_linkage)
         if package_id is None:
-            logger.error("Unable to find package for `%s', skipping resource." % (repr(resource_linkage)))
+            logger.error("Unable to find package for `%s', skipping resource (%s)" % (repr(resource_linkage), legacy_url))
         obj = resource_obj.copy()
         obj['package_id'] = package_id
         if package_id not in resource_idx:
