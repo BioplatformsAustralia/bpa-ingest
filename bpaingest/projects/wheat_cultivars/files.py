@@ -5,6 +5,7 @@ from ...util import make_logger
 
 logger = make_logger(__name__)
 
+
 def parse_base_pair(val):
     if val.find("bp") > -1:
         return int(val[:-2])

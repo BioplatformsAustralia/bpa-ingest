@@ -139,6 +139,5 @@ class WheatPathogensGenomesMetadata(BaseMetadata):
                 }
                 resource['md5'] = resource['id'] = row.md5_checksum
                 legacy_url = urljoin(xlsx_info['base_url'], '../all/' + resource['name'])
-                logger.debug(legacy_url)
                 resources.append(((bpa_id,), legacy_url, resource))
         return resources
