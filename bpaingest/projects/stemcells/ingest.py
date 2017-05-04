@@ -6,7 +6,6 @@ from collections import defaultdict
 
 from ...libs import ingest_utils
 from ...util import make_logger, bpa_id_to_ckan_name, common_values
-from ...bpa import bpa_mirror_url
 from ...abstract import BaseMetadata
 from ...libs.excel_wrapper import ExcelWrapper
 from ...libs.md5lines import md5lines
@@ -132,7 +131,7 @@ class StemcellsTranscriptomeMetadata(BaseMetadata):
                 resource['name'] = filename
                 bpa_id = ingest_utils.extract_bpa_id(file_info.get('id'))
                 xlsx_info = self.metadata_info[os.path.basename(md5_file)]
-                legacy_url = bpa_mirror_url('bpa/stemcell/raw/transcriptome/%(facility_code)s/%(ticket)s/' % xlsx_info + filename)
+                legacy_url = urljoin(xlsx_info['base_url'], filename)
                 resources.append(((bpa_id,), legacy_url, resource))
         return resources
 
@@ -234,7 +233,7 @@ class StemcellsSmallRNAMetadata(BaseMetadata):
                 resource['name'] = filename
                 bpa_id = ingest_utils.extract_bpa_id(file_info.get('id'))
                 xlsx_info = self.metadata_info[os.path.basename(md5_file)]
-                legacy_url = bpa_mirror_url('bpa/stemcell/raw/small_rna/%(facility_code)s/%(ticket)s/' % xlsx_info + filename)
+                legacy_url = urljoin(xlsx_info['base_url'], filename)
                 resources.append(((bpa_id,), legacy_url, resource))
         return resources
 
@@ -342,7 +341,7 @@ class StemcellsSingleCellRNASeqMetadata(BaseMetadata):
                 resource['name'] = filename
                 bpa_id_range = file_info.get('id')
                 xlsx_info = self.metadata_info[os.path.basename(md5_file)]
-                legacy_url = bpa_mirror_url('bpa/stemcell/raw/single_cell_rnaseq/%(facility_code)s/%(ticket)s/' % xlsx_info + filename)
+                legacy_url = urljoin(xlsx_info['base_url'], filename)
                 resources.append(((bpa_id_range,), legacy_url, resource))
         return resources
 
@@ -450,7 +449,7 @@ class StemcellsMetabolomicMetadata(BaseMetadata):
                 resource['analytical_platform'] = fix_analytical_platform(resource['analytical_platform'])
                 bpa_id = ingest_utils.extract_bpa_id(file_info.get('id'))
                 xlsx_info = self.metadata_info[os.path.basename(md5_file)]
-                legacy_url = bpa_mirror_url('bpa/stemcell/raw/metabolomic/%(facility_code)s/%(ticket)s/' % xlsx_info + filename)
+                legacy_url = urljoin(xlsx_info['base_url'], filename)
                 resources.append(((bpa_id, resource['analytical_platform']), legacy_url, resource))
         return resources
 
@@ -565,7 +564,7 @@ class StemcellsProteomicMetadata(BaseMetadata):
                     resource[k] = getattr(resource_meta, k)
                 bpa_id = ingest_utils.extract_bpa_id(file_info.get('id'))
                 xlsx_info = self.metadata_info[os.path.basename(md5_file)]
-                legacy_url = bpa_mirror_url('bpa/stemcell/raw/proteomic/%(facility_code)s/%(ticket)s/' % xlsx_info + filename)
+                legacy_url = urljoin(xlsx_info['base_url'], filename)
                 resources.append(((bpa_id, ), legacy_url, resource))
         return resources
 

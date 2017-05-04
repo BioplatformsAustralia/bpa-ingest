@@ -10,7 +10,6 @@ from hashlib import md5 as md5hash
 from ...libs import ingest_utils
 from ...libs.md5lines import md5lines
 from ...util import make_logger, bpa_id_to_ckan_name, csv_to_named_tuple, common_values
-from ...bpa import bpa_mirror_url
 from ...abstract import BaseMetadata
 from ...libs.excel_wrapper import ExcelWrapper
 from glob import glob
@@ -110,7 +109,7 @@ class SepsisGenomicsMiseqMetadata(BaseMetadata):
                 resource['resource_type'] = self.ckan_data_type
                 bpa_id = ingest_utils.extract_bpa_id(file_info.get('id'))
                 xlsx_info = self.metadata_info[os.path.basename(md5_file)]
-                legacy_url = bpa_mirror_url('bpa/sepsis/raw/genomics/miseq/%(facility_code)s/%(ticket)s/' % xlsx_info + file_info.filename)
+                legacy_url = urljoin(xlsx_info['base_url'], file_info.filename)
                 resources.append(((bpa_id,), legacy_url, resource))
         return resources
 
@@ -203,7 +202,7 @@ class SepsisGenomicsPacbioMetadata(BaseMetadata):
                 resource['resource_type'] = self.ckan_data_type
                 bpa_id = ingest_utils.extract_bpa_id(file_info.get('id'))
                 xlsx_info = self.metadata_info[os.path.basename(md5_file)]
-                legacy_url = bpa_mirror_url('bpa/sepsis/raw/genomics/pacbio/%(facility_code)s/%(ticket)s/' % xlsx_info + file_info.filename)
+                legacy_url = urljoin(xlsx_info['base_url'], file_info.filename)
                 resources.append(((bpa_id,), legacy_url, resource))
         return resources
 
@@ -297,7 +296,7 @@ class SepsisTranscriptomicsHiseqMetadata(BaseMetadata):
                 resource['resource_type'] = self.ckan_data_type
                 bpa_id = ingest_utils.extract_bpa_id(file_info.get('id'))
                 xlsx_info = self.metadata_info[os.path.basename(md5_file)]
-                legacy_url = bpa_mirror_url('bpa/sepsis/raw/transcriptomics/hiseq/%(facility_code)s/%(ticket)s/' % xlsx_info + file_info.filename)
+                legacy_url = urljoin(xlsx_info['base_url'], file_info.filename)
                 resources.append(((bpa_id,), legacy_url, resource))
         return resources
 
@@ -391,7 +390,7 @@ class SepsisMetabolomicsLCMSMetadata(BaseMetadata):
                 resource['resource_type'] = self.ckan_data_type
                 bpa_id = ingest_utils.extract_bpa_id(file_info.get('id'))
                 xlsx_info = self.metadata_info[os.path.basename(md5_file)]
-                legacy_url = bpa_mirror_url('bpa/sepsis/raw/metabolomics/lcms/%(facility_code)s/%(ticket)s/' % xlsx_info + file_info.filename)
+                legacy_url = urljoin(xlsx_info['base_url'], file_info.filename)
                 resources.append(((bpa_id,), legacy_url, resource))
         return resources
 
@@ -489,7 +488,7 @@ class SepsisProteomicsMS1QuantificationMetadata(BaseMetadata):
                 resource['resource_type'] = self.ckan_data_type
                 bpa_id = ingest_utils.extract_bpa_id(file_info.get('id'))
                 xlsx_info = self.metadata_info[os.path.basename(md5_file)]
-                legacy_url = bpa_mirror_url('bpa/sepsis/raw/proteomics/ms1quantification/%(facility_code)s/%(ticket)s/' % xlsx_info + file_info.filename)
+                legacy_url = urljoin(xlsx_info['base_url'], file_info.filename)
                 resources.append(((bpa_id,), legacy_url, resource))
         return resources
 
@@ -657,7 +656,7 @@ class SepsisProteomicsSwathMSBaseMetadata(BaseMetadata):
                 elif file_info.data_type == '2d':
                     package_id = package_name
                 xlsx_info = self.metadata_info[os.path.basename(md5_file)]
-                legacy_url = bpa_mirror_url('bpa/sepsis/raw/proteomics/swathms/%(facility_code)s/%(ticket)s/' % xlsx_info + file_info.filename)
+                legacy_url = urljoin(xlsx_info['base_url'], file_info.filename)
                 resources.append(((package_id,), legacy_url, resource))
         return resources
 

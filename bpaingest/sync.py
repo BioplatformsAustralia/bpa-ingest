@@ -80,7 +80,7 @@ def sync_package_resources(ckan, archive_info, package_obj, md5_legacy_url, reso
         create_obj['url'] = legacy_url
         current_ckan_obj = create_resource(ckan, create_obj)
         if current_ckan_obj:
-            logger.info('created resource: %s' % (obj_id))
+            logger.info('created resource: %s/%s' % (create_obj['package_id'], obj_id))
             to_reupload.append((current_ckan_obj, legacy_url))
 
     for obj_id in to_delete:
