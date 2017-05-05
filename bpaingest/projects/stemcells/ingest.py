@@ -296,7 +296,9 @@ class StemcellsSingleCellRNASeqMetadata(BaseMetadata):
             name = bpa_id_to_ckan_name(bpa_id_range, self.ckan_data_type)
             track_meta = self.track_meta.get(row.ticket)
             # check that it really is a range
-            assert('-' in bpa_id_range)
+            if '-' not in bpa_id_range:
+                logger.error("Skipping row with BPA ID Range `%s'" % (bpa_id_range))
+                continue
             # NB: this isn't really the BPA ID, it's the first BPA ID
             bpa_id = ingest_utils.extract_bpa_id(bpa_id_range.split('-', 1)[0])
             obj.update({
