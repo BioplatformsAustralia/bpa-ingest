@@ -125,7 +125,7 @@ class StemcellsTranscriptomeMetadata(BaseMetadata):
         resources = []
         for md5_file in glob(self.path + '/*.md5'):
             logger.info("Processing md5 file {0}".format(md5_file))
-            for filename, md5, file_info in files.parse_md5_file(md5_file, files.transcriptome_filename_re):
+            for filename, md5, file_info in files.parse_md5_file(md5_file, [files.transcriptome_filename_re]):
                 resource = file_info.copy()
                 resource['md5'] = resource['id'] = md5
                 resource['name'] = filename
@@ -227,7 +227,7 @@ class StemcellsSmallRNAMetadata(BaseMetadata):
         resources = []
         for md5_file in glob(self.path + '/*.md5'):
             logger.info("Processing md5 file {0}".format(md5_file))
-            for filename, md5, file_info in files.parse_md5_file(md5_file, files.smallrna_filename_re):
+            for filename, md5, file_info in files.parse_md5_file(md5_file, [files.smallrna_filename_re]):
                 resource = file_info.copy()
                 resource['md5'] = resource['id'] = md5
                 resource['name'] = filename
@@ -295,6 +295,8 @@ class StemcellsSingleCellRNASeqMetadata(BaseMetadata):
             obj = {}
             name = bpa_id_to_ckan_name(bpa_id_range, self.ckan_data_type)
             track_meta = self.track_meta.get(row.ticket)
+            # check that it really is a range
+            assert('-' in bpa_id_range)
             # NB: this isn't really the BPA ID, it's the first BPA ID
             bpa_id = ingest_utils.extract_bpa_id(bpa_id_range.split('-', 1)[0])
             obj.update({
@@ -335,7 +337,7 @@ class StemcellsSingleCellRNASeqMetadata(BaseMetadata):
         resources = []
         for md5_file in glob(self.path + '/*.md5'):
             logger.info("Processing md5 file {0}".format(md5_file))
-            for filename, md5, file_info in files.parse_md5_file(md5_file, files.singlecell_filename_re):
+            for filename, md5, file_info in files.parse_md5_file(md5_file, [files.singlecell_filename_re, files.singlecell_index_info_filename_re]):
                 resource = file_info.copy()
                 resource['md5'] = resource['id'] = md5
                 resource['name'] = filename
@@ -442,7 +444,7 @@ class StemcellsMetabolomicMetadata(BaseMetadata):
         resources = []
         for md5_file in glob(self.path + '/*.md5'):
             logger.info("Processing md5 file {0}".format(md5_file))
-            for filename, md5, file_info in files.parse_md5_file(md5_file, files.metabolomics_filename_re):
+            for filename, md5, file_info in files.parse_md5_file(md5_file, [files.metabolomics_filename_re]):
                 resource = file_info.copy()
                 resource['md5'] = resource['id'] = md5
                 resource['name'] = filename
@@ -555,7 +557,7 @@ class StemcellsProteomicMetadata(BaseMetadata):
         resources = []
         for md5_file in glob(self.path + '/*.md5'):
             logger.info("Processing md5 file {0}".format(md5_file))
-            for filename, md5, file_info in files.parse_md5_file(md5_file, files.proteomics_filename_re):
+            for filename, md5, file_info in files.parse_md5_file(md5_file, [files.proteomics_filename_re]):
                 resource = file_info.copy()
                 resource['md5'] = resource['id'] = md5
                 resource['name'] = filename
@@ -669,7 +671,7 @@ class StemcellsAnalysedProteomicMetadata(BaseMetadata):
         resources = []
         for md5_file in glob(self.path + '/*.md5'):
             logger.info("Processing md5 file {0}".format(md5_file))
-            for filename, md5, file_info in files.parse_md5_file(md5_file, files.proteomics_analysed_filename_re):
+            for filename, md5, file_info in files.parse_md5_file(md5_file, [files.proteomics_analysed_filename_re]):
                 resource = {}
                 resource['md5'] = resource['id'] = md5
                 resource['name'] = filename
