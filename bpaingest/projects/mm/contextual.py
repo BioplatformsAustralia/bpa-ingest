@@ -13,7 +13,7 @@ METADATA_BASE = 'https://downloads-qcif.bioplatforms.com/bpa/marine_microbes/met
 class MarineMicrobesSampleContextual(object):
     # each BPA_ID will have precisely /one/ or /zero/ rows
     metadata_urls = [
-        METADATA_BASE + '/coastal/',
+        METADATA_BASE + '/coastal_water/',
         METADATA_BASE + '/coral/',
         METADATA_BASE + '/open_water/',
         METADATA_BASE + '/pelagic/',
