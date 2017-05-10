@@ -6,7 +6,7 @@ from ...libs.md5lines import md5lines
 logger = make_logger(__name__)
 
 AMPLICON_FILE_PATTERN = """
-    (?P<id>\d{4,6})_
+    (?P<bpa_id>\d{4,6})_
     GBR_
     (?P<vendor>AGRF|UNSW)_
     (?P<amplicon>16S|18S|A16S|ITS)_
@@ -15,7 +15,7 @@ AMPLICON_FILE_PATTERN = """
     (?P<index>[GATC]{8}_[GATC]{8})_
     (?P<post>.*)
 """
-AMPLICON_FILE_PATTERN = re.compile(AMPLICON_FILE_PATTERN, re.VERBOSE)
+amplicon_filename_re = re.compile(AMPLICON_FILE_PATTERN, re.VERBOSE)
 
 
 def _file_from_line(line):
@@ -45,7 +45,7 @@ def _get_parsed_lines(path):
         logger.info('Processing GBR md5 checksum file {0}'.format(md5_file))
         with open(md5_file) as md5_fd:
             for md5, path in md5lines(md5_fd):
-                m = re.match(AMPLICON_FILE_PATTERN, md5_file)
+                m = re.match(AMPLICON_FILE_PATTERN, path)
                 if m:
                     md5parsedlines.append(m.groupdict())
     return md5parsedlines
@@ -57,3 +57,12 @@ def files_from_md5(path):
     for line in lines:
         files.append(_file_from_line(line))
     return files
+
+
+def parse_md5_file(md5_file, regexp):
+    with open(md5_file) as f:
+        for md5, path in md5lines(f):
+            m = regexp.match(path)
+            if not m:
+                raise Exception("no match for {}".format(path))
+            yield path, md5, m.groupdict()

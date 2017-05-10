@@ -88,7 +88,7 @@ singlecell_filename_re = re.compile("""
     (?P<library>PE|MP)_
     (?P<insert_size>\d*bp)_
     (?P<project>\w+)_
-    (?P<vendor>AGRF|UNSW)_
+    (?P<vendor>WEHI|UNSW)_
     (?P<flow_id>\w{9})_
     (?P<index>[G|A|T|C|-]*|NoIndex)_
     (?P<lane>L\d{3})_
@@ -100,9 +100,28 @@ def test_singlecell():
     filenames = [
         '25116-28799_PE_400bp_Stemcells_UNSW_HVC2VBGXY_NoIndex_L002_R1.fastq.gz',
         '25116-28799_PE_400bp_Stemcells_UNSW_HVC2VBGXY_NoIndex_L004_R2.fastq.gz',
+        '24732-25115_PE_550bp_Stemcells_WEHI_HHMYYBGXY_NoIndex_L001_R1.fastq.gz',
     ]
     for filename in filenames:
         assert(singlecell_filename_re.match(filename) is not None)
+
+
+singlecell_index_info_filename_re = re.compile("""
+    Stemcells_
+    (?P<vendor>WEHI|UNSW)_
+    (?P<flow_id>\w{9})_
+    index_info_
+    BPA(?P<id>\d{4,6}-\d{4,6})\.xlsx$
+""", re.VERBOSE)
+
+
+def test_singlecell_index_info():
+    filenames = [
+        'Stemcells_UNSW_HVC2VBGXY_index_info_BPA25116-28799.xlsx',
+        'Stemcells_WEHI_HHMYYBGXY_index_info_BPA24732-25115.xlsx',
+    ]
+    for filename in filenames:
+        assert(singlecell_index_info_filename_re.match(filename) is not None)
 
 
 smallrna_filename_re = re.compile("""
@@ -127,14 +146,18 @@ def test_smallrna():
         assert(smallrna_filename_re.match(filename) is not None)
 
 
-def parse_md5_file(md5_file, regexp):
+def parse_md5_file(md5_file, regexps):
     with open(md5_file) as f:
         for md5, path in md5lines(f):
             if path.endswith('_metadata.xlsx'):
                 continue
             if path.endswith('_Report.pdf'):
                 continue
-            m = regexp.match(path)
-            if not m:
+            matches = filter(None, (regexp.match(path.split('/')[-1]) for regexp in regexps))
+            m = None
+            if matches:
+                m = matches[0]
+            if m:
+                yield path, md5, m.groupdict()
+            else:
                 raise Exception("no match for {}".format(path))
-            yield path, md5, m.groupdict()

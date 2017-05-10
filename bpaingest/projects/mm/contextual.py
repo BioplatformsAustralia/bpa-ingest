@@ -13,7 +13,7 @@ METADATA_BASE = 'https://downloads-qcif.bioplatforms.com/bpa/marine_microbes/met
 class MarineMicrobesSampleContextual(object):
     # each BPA_ID will have precisely /one/ or /zero/ rows
     metadata_urls = [
-        METADATA_BASE + '/coastal/',
+        METADATA_BASE + '/coastal_water/',
         METADATA_BASE + '/coral/',
         METADATA_BASE + '/open_water/',
         METADATA_BASE + '/pelagic/',
@@ -69,6 +69,7 @@ class MarineMicrobesSampleContextual(object):
         data = {}
         all_headers = set()
         for csv_file in glob(path + '/*.csv'):
+            logger.info("Parsing contextual CSV: %s" % (csv_file))
             header, rows = csv_to_named_tuple('MMSample', csv_file, mode='rU')
             file_type = file_type_re.match(os.path.basename(csv_file).lower()).groups()[0]
             for row in rows:

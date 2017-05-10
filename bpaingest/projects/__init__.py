@@ -2,7 +2,7 @@ from .barcode.ingest import BarcodeMetadata
 from .base.ingest import (
     BASEAmpliconsMetadata,
     BASEMetagenomicsMetadata)
-from .gbr_amplicons.ingest import GbrAmpliconsMetadata
+from .gbr.ingest import GbrAmpliconsMetadata
 from .melanoma.ingest import MelanomaMetadata
 from .mm.ingest import (
     MarineMicrobesGenomicsAmplicons16SMetadata,

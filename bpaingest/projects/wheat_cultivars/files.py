@@ -39,11 +39,11 @@ def make_file_metadata(md5_lines):
             'read_number': md5_line.read,
             'lane_number': md5_line.lane,
             'md5': md5_line.md5,
-            'filename': md5_line.filename
+            'name': md5_line.filename
         }
 
 
-def parse_md5_file(md5_file):
+def cultivars_parse_md5_file(md5_file):
     """
     Parse md5 file
     PAS_AD08TAACXX_GCCAAT_L002_R1.fastq.gz
@@ -148,19 +148,7 @@ def parse_md5_file(md5_file):
     return data
 
 
-def parse_file_data(path):
-    """
-    Ingest the md5 files
-    """
-
-    def is_md5file(path):
-        if path.isfile() and path.ext == '.md5':
-            return True
-
-    logger.info('Ingesting Wheat Cultivar md5 file information from {0}'.format(path))
-    files = []
-    for md5_file in path.walk(filter=is_md5file):
-        logger.info('Processing Wheat Cultivar md5 file {0}'.format(md5_file))
-        data = parse_md5_file(md5_file)
-        files += list(make_file_metadata(data))
-    return files
+def parse_md5_file(md5_file):
+    data = cultivars_parse_md5_file(md5_file)
+    for file_info in make_file_metadata(data):
+        yield file_info['name'], file_info['md5'], file_info

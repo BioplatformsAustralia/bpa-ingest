@@ -6,7 +6,6 @@ from collections import defaultdict
 
 from ...libs import ingest_utils
 from ...util import make_logger, bpa_id_to_ckan_name, common_values
-from ...bpa import bpa_mirror_url
 from ...abstract import BaseMetadata
 from ...libs.excel_wrapper import ExcelWrapper
 from ...libs.md5lines import md5lines
@@ -126,13 +125,13 @@ class StemcellsTranscriptomeMetadata(BaseMetadata):
         resources = []
         for md5_file in glob(self.path + '/*.md5'):
             logger.info("Processing md5 file {0}".format(md5_file))
-            for filename, md5, file_info in files.parse_md5_file(md5_file, files.transcriptome_filename_re):
+            for filename, md5, file_info in files.parse_md5_file(md5_file, [files.transcriptome_filename_re]):
                 resource = file_info.copy()
                 resource['md5'] = resource['id'] = md5
                 resource['name'] = filename
                 bpa_id = ingest_utils.extract_bpa_id(file_info.get('id'))
                 xlsx_info = self.metadata_info[os.path.basename(md5_file)]
-                legacy_url = bpa_mirror_url('bpa/stemcell/raw/transcriptome/%(facility_code)s/%(ticket)s/' % xlsx_info + filename)
+                legacy_url = urljoin(xlsx_info['base_url'], filename)
                 resources.append(((bpa_id,), legacy_url, resource))
         return resources
 
@@ -228,13 +227,13 @@ class StemcellsSmallRNAMetadata(BaseMetadata):
         resources = []
         for md5_file in glob(self.path + '/*.md5'):
             logger.info("Processing md5 file {0}".format(md5_file))
-            for filename, md5, file_info in files.parse_md5_file(md5_file, files.smallrna_filename_re):
+            for filename, md5, file_info in files.parse_md5_file(md5_file, [files.smallrna_filename_re]):
                 resource = file_info.copy()
                 resource['md5'] = resource['id'] = md5
                 resource['name'] = filename
                 bpa_id = ingest_utils.extract_bpa_id(file_info.get('id'))
                 xlsx_info = self.metadata_info[os.path.basename(md5_file)]
-                legacy_url = bpa_mirror_url('bpa/stemcell/raw/small_rna/%(facility_code)s/%(ticket)s/' % xlsx_info + filename)
+                legacy_url = urljoin(xlsx_info['base_url'], filename)
                 resources.append(((bpa_id,), legacy_url, resource))
         return resources
 
@@ -296,6 +295,10 @@ class StemcellsSingleCellRNASeqMetadata(BaseMetadata):
             obj = {}
             name = bpa_id_to_ckan_name(bpa_id_range, self.ckan_data_type)
             track_meta = self.track_meta.get(row.ticket)
+            # check that it really is a range
+            if '-' not in bpa_id_range:
+                logger.error("Skipping row with BPA ID Range `%s'" % (bpa_id_range))
+                continue
             # NB: this isn't really the BPA ID, it's the first BPA ID
             bpa_id = ingest_utils.extract_bpa_id(bpa_id_range.split('-', 1)[0])
             obj.update({
@@ -336,13 +339,13 @@ class StemcellsSingleCellRNASeqMetadata(BaseMetadata):
         resources = []
         for md5_file in glob(self.path + '/*.md5'):
             logger.info("Processing md5 file {0}".format(md5_file))
-            for filename, md5, file_info in files.parse_md5_file(md5_file, files.singlecell_filename_re):
+            for filename, md5, file_info in files.parse_md5_file(md5_file, [files.singlecell_filename_re, files.singlecell_index_info_filename_re]):
                 resource = file_info.copy()
                 resource['md5'] = resource['id'] = md5
                 resource['name'] = filename
                 bpa_id_range = file_info.get('id')
                 xlsx_info = self.metadata_info[os.path.basename(md5_file)]
-                legacy_url = bpa_mirror_url('bpa/stemcell/raw/single_cell_rnaseq/%(facility_code)s/%(ticket)s/' % xlsx_info + filename)
+                legacy_url = urljoin(xlsx_info['base_url'], filename)
                 resources.append(((bpa_id_range,), legacy_url, resource))
         return resources
 
@@ -443,14 +446,14 @@ class StemcellsMetabolomicMetadata(BaseMetadata):
         resources = []
         for md5_file in glob(self.path + '/*.md5'):
             logger.info("Processing md5 file {0}".format(md5_file))
-            for filename, md5, file_info in files.parse_md5_file(md5_file, files.metabolomics_filename_re):
+            for filename, md5, file_info in files.parse_md5_file(md5_file, [files.metabolomics_filename_re]):
                 resource = file_info.copy()
                 resource['md5'] = resource['id'] = md5
                 resource['name'] = filename
                 resource['analytical_platform'] = fix_analytical_platform(resource['analytical_platform'])
                 bpa_id = ingest_utils.extract_bpa_id(file_info.get('id'))
                 xlsx_info = self.metadata_info[os.path.basename(md5_file)]
-                legacy_url = bpa_mirror_url('bpa/stemcell/raw/metabolomic/%(facility_code)s/%(ticket)s/' % xlsx_info + filename)
+                legacy_url = urljoin(xlsx_info['base_url'], filename)
                 resources.append(((bpa_id, resource['analytical_platform']), legacy_url, resource))
         return resources
 
@@ -556,7 +559,7 @@ class StemcellsProteomicMetadata(BaseMetadata):
         resources = []
         for md5_file in glob(self.path + '/*.md5'):
             logger.info("Processing md5 file {0}".format(md5_file))
-            for filename, md5, file_info in files.parse_md5_file(md5_file, files.proteomics_filename_re):
+            for filename, md5, file_info in files.parse_md5_file(md5_file, [files.proteomics_filename_re]):
                 resource = file_info.copy()
                 resource['md5'] = resource['id'] = md5
                 resource['name'] = filename
@@ -565,7 +568,7 @@ class StemcellsProteomicMetadata(BaseMetadata):
                     resource[k] = getattr(resource_meta, k)
                 bpa_id = ingest_utils.extract_bpa_id(file_info.get('id'))
                 xlsx_info = self.metadata_info[os.path.basename(md5_file)]
-                legacy_url = bpa_mirror_url('bpa/stemcell/raw/proteomic/%(facility_code)s/%(ticket)s/' % xlsx_info + filename)
+                legacy_url = urljoin(xlsx_info['base_url'], filename)
                 resources.append(((bpa_id, ), legacy_url, resource))
         return resources
 
@@ -670,7 +673,7 @@ class StemcellsAnalysedProteomicMetadata(BaseMetadata):
         resources = []
         for md5_file in glob(self.path + '/*.md5'):
             logger.info("Processing md5 file {0}".format(md5_file))
-            for filename, md5, file_info in files.parse_md5_file(md5_file, files.proteomics_analysed_filename_re):
+            for filename, md5, file_info in files.parse_md5_file(md5_file, [files.proteomics_analysed_filename_re]):
                 resource = {}
                 resource['md5'] = resource['id'] = md5
                 resource['name'] = filename
