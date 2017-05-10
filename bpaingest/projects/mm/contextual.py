@@ -69,6 +69,7 @@ class MarineMicrobesSampleContextual(object):
         data = {}
         all_headers = set()
         for csv_file in glob(path + '/*.csv'):
+            logger.info("Parsing contextual CSV: %s" % (csv_file))
             header, rows = csv_to_named_tuple('MMSample', csv_file, mode='rU')
             file_type = file_type_re.match(os.path.basename(csv_file).lower()).groups()[0]
             for row in rows:

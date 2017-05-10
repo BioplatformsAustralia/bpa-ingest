@@ -626,10 +626,11 @@ class SepsisProteomicsSwathMSBaseMetadata(BaseMetadata):
         swath_patterns = {
             '1d': [
                 files.proteomics_swathms_1d_ida_filename_re,
+                files.proteomics_swathms_lib_filename_re,
                 files.proteomics_swathms_swath_raw_filename_re
             ],
             '2d': [
-                files.proteomics_swathms_mslib_filename_re,
+                files.proteomics_swathms_lib_filename_re,
                 files.proteomics_swathms_2d_ida_filename_re,
                 files.proteomics_swathms_mspeak_filename_re,
                 files.proteomics_swathms_msresult_filename_re,
