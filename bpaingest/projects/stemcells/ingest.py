@@ -409,7 +409,7 @@ class StemcellsMetabolomicMetadata(BaseMetadata):
                 'bpa_id': bpa_id,
                 'notes': 'Stemcell Metabolomics %s %s' % (bpa_id, analytical_platform),
                 'title': 'Stemcell Metabolomics %s %s' % (bpa_id, analytical_platform),
-                'omics': 'transcriptomics',
+                'omics': 'metabolomics',
                 'data_generated': 'True',
                 'sample_fractionation_extraction_solvent': row.sample_fractionation_extraction_solvent,
                 'analytical_platform': analytical_platform,
