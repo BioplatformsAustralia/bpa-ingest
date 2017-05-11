@@ -186,7 +186,13 @@ def makeschema(ckan, args):
             {
                 "field_name": "s3etag_8388608",
                 "label": "S3 E-Tag (8MB multipart)"
-            }
+            },
+            {
+                "field_name": "format",
+                "label": "Format",
+                "preset": "resource_format_autocomplete",
+                "display_property": "dcat:Dataset/dcat:distribution/dcat:Distribution/dcat:format"
+            },
         ]}
     with DownloadMetadata(PROJECTS[args.project_name], args.track_metadata, path=args.download_path) as dlmeta:
         meta = dlmeta.meta

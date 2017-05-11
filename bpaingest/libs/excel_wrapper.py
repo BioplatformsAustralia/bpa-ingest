@@ -124,6 +124,7 @@ class ExcelWrapper(object):
             return -1
 
         cmap = {}
+        missing_columns = False
         for attribute, column_name, _, is_optional in self.field_spec:
             col_index = -1
             col_descr = column_name
@@ -142,8 +143,16 @@ class ExcelWrapper(object):
             else:
                 self.missing_headers.append(column_name)
                 if not is_optional:
-                    logger.warning('Column `{}` not found in `{}` (columns are: {})'.format(col_descr, os.path.basename(self.file_name), [str(t) for t in header]))
+                    logger.warning('Column `{}` not found in `{}`'.format(col_descr, os.path.basename(self.file_name), [str(t) for t in header]))
+                    missing_columns = True
                 cmap[attribute] = None
+
+        if missing_columns:
+            template = ['[']
+            for header in (str(t) for t in header):
+                template.append("    ('%s', '%s')," % (header.lower().replace(' ', '_'), header))
+            template.append(']')
+            logger.warning('Missing columns -- template for columns in spreadsheet is:\n%s' % ('\n'.join(template)))
 
         return header, cmap
 

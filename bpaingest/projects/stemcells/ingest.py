@@ -324,6 +324,7 @@ class StemcellsSingleCellRNASeqMetadata(BaseMetadata):
                 'data_generated': ingest_utils.get_date_isoformat(track_meta.date_of_transfer_to_archive),
                 'archive_ingestion_date': ingest_utils.get_date_isoformat(track_meta.date_of_transfer_to_archive),
                 'dataset_url': track_meta.download,
+                'omics': 'transcriptomics',
                 'private': True,
             })
             for contextual_source in self.contextual_metadata:
