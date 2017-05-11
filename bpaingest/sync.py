@@ -61,7 +61,7 @@ def sync_package_resources(ckan, archive_info, package_obj, md5_legacy_url, reso
 
     for current_ckan_obj in current_resources:
         obj_id = current_ckan_obj['id']
-        legacy_url = md5_legacy_url[obj_id]
+        legacy_url = md5_legacy_url.get(obj_id)
         current_url = current_ckan_obj.get('url')
         resource_issue = check_resource(ckan, archive_info, current_url, legacy_url, current_ckan_obj.get(S3_HASH_FIELD), auth)
         if resource_issue:
@@ -84,8 +84,9 @@ def sync_package_resources(ckan, archive_info, package_obj, md5_legacy_url, reso
             to_reupload.append((current_ckan_obj, legacy_url))
 
     for obj_id in to_delete:
+        delete_obj = existing_resources[obj_id]
         ckan_method(ckan, 'resource', 'delete')(id=obj_id)
-        logger.info('deleted resource: %s' % (obj_id))
+        logger.info('deleted resource: %s/%s' % (delete_obj['package_id'], obj_id))
 
     # patch all the resources, to ensure everything is synced on
     # existing resources
