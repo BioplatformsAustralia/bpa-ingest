@@ -87,8 +87,8 @@ ORGANIZATIONS = [
     },
     {
         'name': 'bpa-omg',
-        'title': 'Oz Mammals Genome Initiative',
-        'display_name': 'Oz Mammals Genome Initiative',
+        'title': 'Oz Mammals Genomics Initiative',
+        'display_name': 'Oz Mammals Genomics Initiative',
         'image_url': 'https://data.bioplatforms.com/omg-logo.png',
         'groups': [{'capacity': 'public', 'name': BPA_ORGANIZATION_ID}],
     }
