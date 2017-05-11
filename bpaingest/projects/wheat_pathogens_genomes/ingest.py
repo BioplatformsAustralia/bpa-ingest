@@ -70,7 +70,7 @@ class WheatPathogensGenomesMetadata(BaseMetadata):
 
     def get_packages(self):
         packages = []
-        for fname in glob(self.path + '/*.xlsx'):
+        for fname in glob(self.path + '/Wheat_pathogens_genomic_metadata.xlsx'):
             logger.info("Processing Stemcells Transcriptomics metadata file {0}".format(fname))
             xlsx_info = self.metadata_info[os.path.basename(fname)]
             # there are duplicates by BPA ID -- the spreadsheet is per-file data
@@ -118,7 +118,7 @@ class WheatPathogensGenomesMetadata(BaseMetadata):
             return os.path.split(s)[1].strip()
 
         resources = []
-        for fname in glob(self.path + '/*.xlsx'):
+        for fname in glob(self.path + '/Wheat_pathogens_genomic_metadata.xlsx'):
             xlsx_info = self.metadata_info[os.path.basename(fname)]
             for row in self.parse_spreadsheet(fname, xlsx_info):
                 bpa_id = row.bpa_id
