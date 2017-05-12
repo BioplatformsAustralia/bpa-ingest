@@ -3,6 +3,7 @@ from __future__ import print_function
 from unipath import Path
 from urlparse import urljoin
 from collections import defaultdict
+from hashlib import md5 as md5_hash
 
 from ...libs import ingest_utils
 from ...util import make_logger, bpa_id_to_ckan_name, common_values
@@ -683,9 +684,12 @@ class StemcellsAnalysedProteomicMetadata(BaseMetadata):
             logger.info("Processing md5 file {0}".format(md5_file))
             for filename, md5, file_info in files.parse_md5_file(md5_file, [files.proteomics_analysed_filename_re, files.xlsx_filename_re, files.pdf_filename_re]):
                 resource = {}
-                resource['md5'] = resource['id'] = md5
-                resource['name'] = filename
+                resource['md5'] = md5
                 xlsx_info = self.metadata_info[os.path.basename(md5_file)]
+                # analysed data has duplicate PNG images in it -- we need to keep the ID unique
+                resource['id'] = 'u-' + md5_hash(self.ckan_data_type + xlsx_info['ticket'] + md5).hexdigest()
+                resource['name'] = filename
+                logger.critical(resource)
                 legacy_url = urljoin(xlsx_info['base_url'], filename)
                 resources.append(((xlsx_info['ticket'],), legacy_url, resource))
         return resources
@@ -793,9 +797,11 @@ class StemcellsAnalysedMetabolomicMetadata(BaseMetadata):
             with open(md5_file) as fd:
                 for md5, filename in md5lines(fd):
                     resource = {}
-                    resource['md5'] = resource['id'] = md5
-                    resource['name'] = filename
+                    resource['md5'] = md5
                     xlsx_info = self.metadata_info[os.path.basename(md5_file)]
+                    # analysed data has duplicate PNG images in it - we need to keep the id unique
+                    resource['id'] = 'u-' + md5_hash(self.ckan_data_type + xlsx_info['base_url'] + md5).hexdigest()
+                    resource['name'] = filename
                     folder_name = self.track_meta.get(xlsx_info['ticket']).folder_name
                     legacy_url = urljoin(xlsx_info['base_url'], filename)
                     resources.append(((folder_name,), legacy_url, resource))

@@ -8,6 +8,7 @@ from .util import make_logger
 from .util import prune_dict
 from genhash import S3_HASH_FIELD
 from collections import Counter
+from urlparse import urlparse
 
 logger = make_logger(__name__)
 
@@ -51,17 +52,17 @@ def sync_packages(ckan, packages, org, group):
     return ckan_packages
 
 
-def sync_package_resources(ckan, archive_info, package_obj, md5_legacy_url, resources, auth):
+def sync_package_resources(ckan, archive_info, package_obj, resource_id_legacy_url, resources, auth):
     to_reupload = []
     current_resources = package_obj['resources']
     existing_resources = dict((t['id'], t) for t in current_resources)
-    needed_resources = dict((t['md5'], t) for t in resources)
+    needed_resources = dict((t['id'], t) for t in resources)
     to_create = set(needed_resources) - set(existing_resources)
     to_delete = set(existing_resources) - set(needed_resources)
 
     for current_ckan_obj in current_resources:
         obj_id = current_ckan_obj['id']
-        legacy_url = md5_legacy_url.get(obj_id)
+        legacy_url = resource_id_legacy_url.get(obj_id)
         current_url = current_ckan_obj.get('url')
         resource_issue = check_resource(ckan, archive_info, current_url, legacy_url, current_ckan_obj.get(S3_HASH_FIELD), auth)
         if resource_issue:
@@ -72,7 +73,7 @@ def sync_package_resources(ckan, archive_info, package_obj, md5_legacy_url, reso
 
     for obj_id in to_create:
         resource_obj = needed_resources[obj_id]
-        legacy_url = md5_legacy_url[obj_id]
+        legacy_url = resource_id_legacy_url[obj_id]
         # we don't upload at the time we create the resource: it's more useful to immediately
         # get all the metadata into the CKAN instance, with links to legacy mirrors. we can
         # them come back and upload into CKAN using the reupload functionality of this script
@@ -95,7 +96,7 @@ def sync_package_resources(ckan, archive_info, package_obj, md5_legacy_url, reso
     for current_ckan_obj in current_resources:
         obj_id = current_ckan_obj['id']
         resource_obj = needed_resources[obj_id]
-        legacy_url = md5_legacy_url[obj_id]
+        legacy_url = resource_id_legacy_url[obj_id]
         was_patched, ckan_obj = patch_if_required(ckan, 'resource', current_ckan_obj, resource_obj)
         if was_patched:
             logger.info('patched resource: %s' % (obj_id))
@@ -103,7 +104,7 @@ def sync_package_resources(ckan, archive_info, package_obj, md5_legacy_url, reso
     return to_reupload
 
 
-def reupload_resources(ckan, archive_info, to_reupload, md5_legacy_url, auth, num_threads):
+def reupload_resources(ckan, archive_info, to_reupload, resource_id_legacy_url, auth, num_threads):
     # this is not a lot of code, but it's about 99% of the time we spend in
     # this script. hence, the uploads run in parallel.
     def upload_worker():
@@ -136,7 +137,7 @@ def sync_resources(ckan, resources, resource_linkage_attrs, ckan_packages, auth,
 
     # wire the resources to their CKAN package
     resource_idx = {}
-    md5_legacy_url = {}
+    resource_id_legacy_url = {}
     for resource_linkage, legacy_url, resource_obj in resources:
         package_id = resource_linkage_package_id.get(resource_linkage)
         if package_id is None:
@@ -146,7 +147,7 @@ def sync_resources(ckan, resources, resource_linkage_attrs, ckan_packages, auth,
         if package_id not in resource_idx:
             resource_idx[package_id] = []
         resource_idx[package_id].append(obj)
-        md5_legacy_url[obj['md5']] = legacy_url
+        resource_id_legacy_url[obj['id']] = legacy_url
 
     to_reupload = []
     for package_obj in sorted(ckan_packages, key=lambda p: p['name']):
@@ -155,9 +156,37 @@ def sync_resources(ckan, resources, resource_linkage_attrs, ckan_packages, auth,
         if package_resources is None:
             logger.warning("No resources for package `%s`" % (package_id))
             continue
-        to_reupload += sync_package_resources(ckan, archive_info, package_obj, md5_legacy_url, package_resources, auth)
+        to_reupload += sync_package_resources(ckan, archive_info, package_obj, resource_id_legacy_url, package_resources, auth)
     if do_uploads:
-        reupload_resources(ckan, archive_info, to_reupload, md5_legacy_url, auth, num_threads)
+        reupload_resources(ckan, archive_info, to_reupload, resource_id_legacy_url, auth, num_threads)
+
+
+def resources_add_format(resources):
+    """
+    centrally assign formats to resources, based on file extension: no point
+    duplicating this function in all the get_resources() implementations.
+    if a get_resources() implementation needs to override this, it can just set
+    the format key in the resource, and this function will leave the resource
+    alone
+    """
+    extension_map = {
+        'JPG': 'JPEG',
+        'TGZ': 'TAR',
+    }
+    for resource_linkage, legacy_url, resource_obj in resources:
+        if 'format' in resource_obj:
+            continue
+        filename = urlparse(legacy_url).path.split('/')[-1]
+        if '.' not in filename:
+            continue
+        extension = filename.rsplit('.', 1)[-1].upper()
+        extension = extension_map.get(extension, extension)
+        if filename.lower().endswith('.fastq.gz'):
+            resource_obj['format'] = 'FASTQ'
+        if filename.lower().endswith('.fasta.gz'):
+            resource_obj['format'] = 'FASTA'
+        elif extension in ('PNG', 'XLSX', 'XLS', 'PPTX', 'ZIP', 'TAR', 'GZ', 'DOC', 'DOCX', 'PDF', 'CSV', 'JPEG', 'XML', 'BZ2', 'EXE', 'EXF', 'FASTA', 'FASTQ', 'SCAN', 'WIFF'):
+            resource_obj['format'] = extension
 
 
 def sync_metadata(ckan, meta, auth, num_threads, do_uploads):
@@ -175,4 +204,5 @@ def sync_metadata(ckan, meta, auth, num_threads, do_uploads):
     packages = list(unique_packages())
     ckan_packages = sync_packages(ckan, packages, organization, None)
     resources = meta.get_resources()
+    resources_add_format(resources)
     sync_resources(ckan, resources, meta.resource_linkage, ckan_packages, auth, num_threads, do_uploads)
