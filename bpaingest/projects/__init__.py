@@ -36,7 +36,10 @@ from .stemcells.ingest import (
 from .wheat_cultivars.ingest import WheatCultivarsMetadata
 from .wheat_pathogens_genomes.ingest import WheatPathogensGenomesMetadata
 from .wheat_pathogens_transcript.ingest import WheatPathogensTranscriptMetadata
-from .omg.ingest import (OMG10XProcessedIlluminaMetadata, OMG10XRawIlluminaMetadata)
+from .omg.ingest import (
+    OMG10XProcessedIlluminaMetadata,
+    OMG10XRawIlluminaMetadata,
+    OMGExonCaptureMetadata)
 
 PROJECTS = {
     # functional ingests
@@ -71,9 +74,9 @@ PROJECTS = {
     'base-metagenomics': BASEMetagenomicsMetadata,
     'omg-10xraw': OMG10XRawIlluminaMetadata,
     'omg-10xprocessed': OMG10XProcessedIlluminaMetadata,
+    'omg-exoncapture': OMGExonCaptureMetadata,
     'stemcells-analysed-proteomic': StemcellsAnalysedProteomicMetadata,
     'stemcells-analysed-metabolomic': StemcellsAnalysedMetabolomicMetadata,
-    # under development
     # stubs
     'barcode': BarcodeMetadata,
     'melanoma': MelanomaMetadata,
