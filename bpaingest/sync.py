@@ -183,7 +183,7 @@ def resources_add_format(resources):
         extension = extension_map.get(extension, extension)
         if filename.lower().endswith('.fastq.gz'):
             resource_obj['format'] = 'FASTQ'
-        if filename.lower().endswith('.fasta.gz'):
+        elif filename.lower().endswith('.fasta.gz'):
             resource_obj['format'] = 'FASTA'
         elif extension in ('PNG', 'XLSX', 'XLS', 'PPTX', 'ZIP', 'TAR', 'GZ', 'DOC', 'DOCX', 'PDF', 'CSV', 'JPEG', 'XML', 'BZ2', 'EXE', 'EXF', 'FASTA', 'FASTQ', 'SCAN', 'WIFF'):
             resource_obj['format'] = extension
