@@ -267,3 +267,24 @@ class OMG10XProcessedIlluminaMetadata(BaseMetadata):
                 legacy_url = urljoin(xlsx_info['base_url'], filename)
                 resources.append(((bpa_id, flow_id), legacy_url, resource))
         return resources
+
+
+class OMG10XExonCaptureMetadata(BaseMetadata):
+    auth = ('omg', 'omg')
+    organization = 'bpa-omg'
+    ckan_data_type = 'omg-exon-capture'
+    contextual_classes = [OMGSampleContextual]
+    metadata_patterns = [r'^.*\.md5$', r'^.*_metadata.*.*\.xlsx$']
+    metadata_urls = [
+        'https://downloads-qcif.bioplatforms.com/bpa/omg_staging/exon_capture/',
+    ]
+    metadata_url_components = ('ticket',)
+    resource_linkage = ('bpa_id', 'flow_id')
+
+    def __init__(self, metadata_path, contextual_metadata=None, track_csv_path=None, metadata_info=None):
+        self.path = Path(metadata_path)
+        self.contextual_metadata = contextual_metadata
+        self.metadata_info = metadata_info
+        self.track_meta = OMGTrackMetadata(track_csv_path)
+        # each row in the spreadsheet maps through to a single tar file
+        self.file_package = {}

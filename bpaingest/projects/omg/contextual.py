@@ -1,7 +1,8 @@
 import re
+from glob import glob
 from ...libs import ingest_utils
 from ...util import csv_to_named_tuple
-from...util import make_logger
+from ...util import make_logger
 
 logger = make_logger(__name__)
 
@@ -12,8 +13,9 @@ class OMGSampleContextual(object):
     name = 'omg-sample-contextual'
 
     def __init__(self, path):
-        xlsx_path = path + '/OMG_GenomeSamples_metadata_genomes20170404.csv'
-        self.sample_metadata = self._package_metadata(self._read_metadata(xlsx_path))
+        self.sample_metadata = {}
+        for csv_path in glob(path + '/*.csv'):
+            self.sample_metadata.update(self._package_metadata(self._read_metadata(csv_path)))
 
     def get(self, bpa_id):
         if bpa_id in self.sample_metadata:
@@ -29,7 +31,8 @@ class OMGSampleContextual(object):
         }
         sample_metadata = {}
         for row in rows:
-            assert(row.bpa_id)
+            if not row.bpa_id:
+                continue
             assert(row.bpa_id not in sample_metadata)
             bpa_id = ingest_utils.extract_bpa_id(row.bpa_id)
             sample_metadata[bpa_id] = row_meta = {}
