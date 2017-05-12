@@ -575,6 +575,11 @@ class StemcellsProteomicMetadata(BaseMetadata):
 
 
 class StemcellsAnalysedProteomicMetadata(BaseMetadata):
+    """
+    we one zip file per ticket, a metadata spreadsheet, and an MD5 file
+    we use the ticket as linkage between the package and the resource
+    """
+
     contextual_classes = []
     metadata_urls = ['https://downloads-qcif.bioplatforms.com/bpa/stemcell/analysed/proteomic/']
     metadata_url_components = ('facility_code', 'ticket')
@@ -582,7 +587,7 @@ class StemcellsAnalysedProteomicMetadata(BaseMetadata):
     organization = 'bpa-stemcells'
     auth = ('stemcell', 'stemcell')
     ckan_data_type = 'stemcells-proteomics-analysed'
-    resource_linkage = ('zip_file_name',)
+    resource_linkage = ('ticket',)
 
     def __init__(self, metadata_path, contextual_metadata=None, track_csv_path=None, metadata_info=None):
         self.path = Path(metadata_path)
@@ -629,7 +634,7 @@ class StemcellsAnalysedProteomicMetadata(BaseMetadata):
         logger.info("Ingesting Stemcells metadata from {0}".format(self.path))
         # we have one package per Zip of analysed data, and we take the common
         # meta-data for each bpa-id
-        folder_rows = defaultdict(list)
+        ticket_rows = defaultdict(list)
         for fname in glob(self.path + '/*.xlsx'):
             logger.info("Processing Stemcells metadata file {0}".format(fname))
             xlsx_info = self.metadata_info[os.path.basename(fname)]
@@ -637,18 +642,20 @@ class StemcellsAnalysedProteomicMetadata(BaseMetadata):
             if not ticket:
                 continue
             for row in self.parse_spreadsheet(fname, xlsx_info):
-                folder_rows[(row.zip_file_name, ticket)].append(row)
+                ticket_rows[ticket].append(row)
         packages = []
-        for (zip_file_name, ticket), rows in folder_rows.items():
+        for ticket, rows in ticket_rows.items():
             obj = common_values([t._asdict() for t in rows])
-            name = bpa_id_to_ckan_name(zip_file_name, self.ckan_data_type)
             track_meta = self.track_meta.get(ticket)
+            name = bpa_id_to_ckan_name(track_meta.folder_name, self.ckan_data_type)
+            # folder names can be quite long, truncate
+            name = name[:100]
             bpa_ids = sorted(set([ingest_utils.extract_bpa_id(t.bpa_id) for t in rows]))
             obj.update({
                 'name': name,
                 'id': name,
-                'notes': 'Stemcell Proteomics Analysed %s' % (zip_file_name),
-                'title': 'Stemcell Proteomics Analysed %s' % (zip_file_name),
+                'notes': 'Stemcell Proteomics Analysed %s' % (track_meta.folder_name),
+                'title': 'Stemcell Proteomics Analysed %s' % (track_meta.folder_name),
                 'omics': 'proteomics',
                 'bpa_ids': ', '.join(bpa_ids),
                 'data_generated': 'True',
@@ -674,13 +681,13 @@ class StemcellsAnalysedProteomicMetadata(BaseMetadata):
         resources = []
         for md5_file in glob(self.path + '/*.md5'):
             logger.info("Processing md5 file {0}".format(md5_file))
-            for filename, md5, file_info in files.parse_md5_file(md5_file, [files.proteomics_analysed_filename_re]):
+            for filename, md5, file_info in files.parse_md5_file(md5_file, [files.proteomics_analysed_filename_re, files.xlsx_filename_re, files.pdf_filename_re]):
                 resource = {}
                 resource['md5'] = resource['id'] = md5
                 resource['name'] = filename
                 xlsx_info = self.metadata_info[os.path.basename(md5_file)]
                 legacy_url = urljoin(xlsx_info['base_url'], filename)
-                resources.append(((file_info['zip_file_name'],), legacy_url, resource))
+                resources.append(((xlsx_info['ticket'],), legacy_url, resource))
         return resources
 
 
