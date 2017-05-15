@@ -1,8 +1,7 @@
 import re
 from glob import glob
 from ...libs import ingest_utils
-from ...util import csv_to_named_tuple
-from ...util import make_logger
+from ...util import csv_to_named_tuple, make_logger, strip_to_ascii
 
 logger = make_logger(__name__)
 
@@ -37,8 +36,12 @@ class OMGSampleContextual(object):
             bpa_id = ingest_utils.extract_bpa_id(row.bpa_id)
             sample_metadata[bpa_id] = row_meta = {}
             for field in row._fields:
+                value = getattr(row, field)
+                stripped = strip_to_ascii(value)
+                if len(value) != len(stripped):
+                    logger.warning("invalid characters removed: %s" % (field))
                 if field != 'bpa_id':
-                    row_meta[name_mapping.get(field, field)] = getattr(row, field)
+                    row_meta[name_mapping.get(field, field)] = stripped
         return sample_metadata
 
     def _read_metadata(self, metadata_path):

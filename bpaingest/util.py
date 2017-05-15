@@ -119,7 +119,6 @@ def csv_to_named_tuple(typname, fname, mode='r', additional_context=None):
     additional_keys = []
     if additional_context is not None:
         additional_keys += list(sorted(additional_context.keys()))
-    print("ARGH", additional_keys)
     with open(fname, mode) as fd:
         r = csv.reader(fd)
         header = [clean_name(t) for t in next(r)] + additional_keys
@@ -128,6 +127,10 @@ def csv_to_named_tuple(typname, fname, mode='r', additional_context=None):
         for row in r:
             rows.append(typ(*(row + [additional_context[t] for t in additional_keys])))
         return header, rows
+
+
+def strip_to_ascii(s):
+    return ''.join([t for t in s if ord(t) < 128])
 
 
 def common_values(dicts):

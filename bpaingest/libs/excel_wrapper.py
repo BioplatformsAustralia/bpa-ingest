@@ -17,7 +17,7 @@ from collections import namedtuple
 import os
 import xlrd
 
-from ..util import make_logger
+from ..util import make_logger, strip_to_ascii
 
 logger = make_logger(__name__)
 
@@ -98,13 +98,13 @@ class ExcelWrapper(object):
     def set_name_to_column_map(self):
         ''' maps the named field to the actual column in the spreadsheet '''
 
-        def strip_unicode(s):
+        def coerce_header(s):
             if type(s) is not str and type(s) is not unicode:
                 logger.error("header is not a string: %s `%s'" % (type(s), repr(s)))
                 return str(s)
-            return ''.join([t for t in s if ord(t) < 128])
+            return strip_to_ascii(s)
 
-        header = [strip_unicode(t).strip().lower() for t in self.sheet.row_values(self.column_name_row_index)]
+        header = [coerce_header(t).strip().lower() for t in self.sheet.row_values(self.column_name_row_index)]
 
         def find_column(column_name):
             # if has the 'match' attribute, it's a regexp
