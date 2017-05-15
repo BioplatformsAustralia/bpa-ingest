@@ -105,7 +105,7 @@ def check_package_resources(ckan, ckan_packages, resource_id_legacy_url, auth):
         current_resources = package_obj['resources']
         all_resources += current_resources
 
-    return check_resources(ckan, all_resources, resource_id_legacy_url, auth, 16)
+    return check_resources(ckan, all_resources, resource_id_legacy_url, auth, 8)
 
 
 def sync_package_resources(ckan, package_obj, resource_id_legacy_url, resources, auth):
