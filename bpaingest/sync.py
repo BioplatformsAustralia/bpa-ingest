@@ -66,6 +66,7 @@ def check_resources(ckan, current_resources, resource_id_legacy_url, auth, num_t
             if task is None:
                 break
             current_ckan_obj, legacy_url, current_url = task
+            obj_id = current_ckan_obj['id']
             resource_issue = check_resource(ckan_address, archive_info, current_url, legacy_url, current_ckan_obj.get(S3_HASH_FIELD), auth)
             if resource_issue:
                 logger.error('resource check failed (%s) queued for re-upload: %s' % (resource_issue, obj_id))
@@ -104,9 +105,7 @@ def check_package_resources(ckan, ckan_packages, resource_id_legacy_url, auth):
         current_resources = package_obj['resources']
         all_resources += current_resources
 
-    to_reupload = check_resources(ckan, all_resources, resource_id_legacy_url, auth, 8)
-
-    return to_reupload
+    return check_resources(ckan, all_resources, resource_id_legacy_url, auth, 8)
 
 
 def sync_package_resources(ckan, package_obj, resource_id_legacy_url, resources, auth):
