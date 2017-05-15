@@ -52,24 +52,71 @@ def sync_packages(ckan, packages, org, group):
     return ckan_packages
 
 
-def sync_package_resources(ckan, archive_info, package_obj, resource_id_legacy_url, resources, auth):
+def check_resources(ckan, current_resources, resource_id_legacy_url, auth, num_threads):
+    # another time-consuming activity: runs in parallel
+
+    ckan_address = ckan.address
+    archive_info = ArchiveInfo(ckan)
+    # appending to a list is thread-safe in Python
     to_reupload = []
+
+    def check_worker():
+        while True:
+            task = q.get()
+            if task is None:
+                break
+            current_ckan_obj, legacy_url, current_url = task
+            resource_issue = check_resource(ckan_address, archive_info, current_url, legacy_url, current_ckan_obj.get(S3_HASH_FIELD), auth)
+            if resource_issue:
+                logger.error('resource check failed (%s) queued for re-upload: %s' % (resource_issue, obj_id))
+                to_reupload.append((current_ckan_obj, legacy_url))
+            else:
+                logger.info('resource check OK: %s' % (obj_id))
+            q.task_done()
+
+    q = Queue()
+    threads = []
+    for i in range(num_threads):
+        t = Thread(target=check_worker)
+        threads.append(t)
+        t.start()
+
+    logger.info("%d resources to be checked" % (len(current_resources)))
+    for current_ckan_obj in current_resources:
+        obj_id = current_ckan_obj['id']
+        legacy_url = resource_id_legacy_url.get(obj_id)
+        current_url = current_ckan_obj.get('url')
+        q.put((current_ckan_obj, legacy_url, current_url))
+    q.join()
+
+    for thread in threads:
+        q.put(None)
+
+    for thread in threads:
+        thread.join()
+
+    return to_reupload
+
+
+def check_package_resources(ckan, ckan_packages, resource_id_legacy_url, auth):
+    all_resources = []
+    for package_obj in sorted(ckan_packages, key=lambda p: p['name']):
+        current_resources = package_obj['resources']
+        all_resources += current_resources
+
+    to_reupload = check_resources(ckan, all_resources, resource_id_legacy_url, auth, 8)
+
+    return to_reupload
+
+
+def sync_package_resources(ckan, package_obj, resource_id_legacy_url, resources, auth):
     current_resources = package_obj['resources']
     existing_resources = dict((t['id'], t) for t in current_resources)
     needed_resources = dict((t['id'], t) for t in resources)
     to_create = set(needed_resources) - set(existing_resources)
     to_delete = set(existing_resources) - set(needed_resources)
 
-    for current_ckan_obj in current_resources:
-        obj_id = current_ckan_obj['id']
-        legacy_url = resource_id_legacy_url.get(obj_id)
-        current_url = current_ckan_obj.get('url')
-        resource_issue = check_resource(ckan, archive_info, current_url, legacy_url, current_ckan_obj.get(S3_HASH_FIELD), auth)
-        if resource_issue:
-            logger.error('resource check failed (%s) queued for re-upload: %s' % (resource_issue, obj_id))
-            to_reupload.append((current_ckan_obj, legacy_url))
-        else:
-            logger.info('resource check OK: %s' % (obj_id))
+    to_reupload = []
 
     for obj_id in to_create:
         resource_obj = needed_resources[obj_id]
@@ -104,19 +151,23 @@ def sync_package_resources(ckan, archive_info, package_obj, resource_id_legacy_u
     return to_reupload
 
 
-def reupload_resources(ckan, archive_info, to_reupload, resource_id_legacy_url, auth, num_threads):
-    # this is not a lot of code, but it's about 99% of the time we spend in
+def reupload_resources(ckan, to_reupload, resource_id_legacy_url, auth, num_threads):
+    # this is not a lot of code, but it's a lot of the time we spend in
     # this script. hence, the uploads run in parallel.
     def upload_worker():
         while True:
-            reupload_obj, legacy_url = q.get()
+            task = q.get()
+            if task is None:
+                break
+            reupload_obj, legacy_url = task
             reupload_resource(ckan, reupload_obj, legacy_url, auth)
             q.task_done()
 
     q = Queue()
+    threads = []
     for i in range(num_threads):
         t = Thread(target=upload_worker)
-        t.daemon = True
+        threads.append(t)
         t.start()
 
     logger.info("%d objects to be re-uploaded" % (len(to_reupload)))
@@ -124,11 +175,14 @@ def reupload_resources(ckan, archive_info, to_reupload, resource_id_legacy_url, 
         q.put(item)
     q.join()
 
+    for thread in threads:
+        q.put(None)
+    for thread in threads:
+        thread.join()
+
 
 def sync_resources(ckan, resources, resource_linkage_attrs, ckan_packages, auth, num_threads, do_uploads):
     logger.info('syncing %d resources' % (len(resources)))
-
-    archive_info = ArchiveInfo(ckan)
 
     resource_linkage_package_id = {}
     for package_obj in ckan_packages:
@@ -149,16 +203,18 @@ def sync_resources(ckan, resources, resource_linkage_attrs, ckan_packages, auth,
         resource_idx[package_id].append(obj)
         resource_id_legacy_url[obj['id']] = legacy_url
 
-    to_reupload = []
+    # check all existing resources on all existing packages, in parallel
+    to_reupload = check_package_resources(ckan, ckan_packages, resource_id_legacy_url, auth)
+
     for package_obj in sorted(ckan_packages, key=lambda p: p['name']):
         package_id = package_obj['id']
         package_resources = resource_idx.get(package_id)
         if package_resources is None:
             logger.warning("No resources for package `%s`" % (package_id))
             continue
-        to_reupload += sync_package_resources(ckan, archive_info, package_obj, resource_id_legacy_url, package_resources, auth)
+        to_reupload += sync_package_resources(ckan, package_obj, resource_id_legacy_url, package_resources, auth)
     if do_uploads:
-        reupload_resources(ckan, archive_info, to_reupload, resource_id_legacy_url, auth, num_threads)
+        reupload_resources(ckan, to_reupload, resource_id_legacy_url, auth, num_threads)
 
 
 def resources_add_format(resources):

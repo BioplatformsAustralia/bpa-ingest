@@ -172,7 +172,7 @@ def same_netloc(u1, u2):
     return n1 == n2
 
 
-def check_resource(ckan, archive_info, current_url, legacy_url, metadata_etag, auth=None):
+def check_resource(ckan_address, archive_info, current_url, legacy_url, metadata_etag, auth=None):
     """
     returns None if the ckan_obj looks good (is on the CKAN server, size matches legacy url size)
     otherwise returns a short string describing the problem
@@ -182,7 +182,7 @@ def check_resource(ckan, archive_info, current_url, legacy_url, metadata_etag, a
         logger.error('resource missing (no current URL)')
         return 'missing'
 
-    if not same_netloc(current_url, ckan.address):
+    if not same_netloc(current_url, ckan_address):
         logger.error('resource is not hosted on CKAN server: %s' % (current_url))
         return 'not-on-ckan'
 
