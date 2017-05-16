@@ -180,7 +180,7 @@ def reupload_resources(ckan, to_reupload, resource_id_legacy_url, auth, num_thre
         thread.join()
 
 
-def sync_resources(ckan, resources, resource_linkage_attrs, ckan_packages, auth, num_threads, do_uploads):
+def sync_resources(ckan, resources, resource_linkage_attrs, ckan_packages, auth, num_threads, do_uploads, do_resource_checks):
     logger.info('syncing %d resources' % (len(resources)))
 
     resource_linkage_package_id = {}
@@ -202,8 +202,11 @@ def sync_resources(ckan, resources, resource_linkage_attrs, ckan_packages, auth,
         resource_idx[package_id].append(obj)
         resource_id_legacy_url[obj['id']] = legacy_url
 
-    # check all existing resources on all existing packages, in parallel
-    to_reupload = check_package_resources(ckan, ckan_packages, resource_id_legacy_url, auth)
+    if not do_resource_checks:
+        logger.warning("resource checks disabled: resource integrity will not be confirmed")
+    else:
+        # check all existing resources on all existing packages, in parallel
+        to_reupload = check_package_resources(ckan, ckan_packages, resource_id_legacy_url, auth)
 
     for package_obj in sorted(ckan_packages, key=lambda p: p['name']):
         package_id = package_obj['id']
@@ -244,7 +247,7 @@ def resources_add_format(resources):
             resource_obj['format'] = extension
 
 
-def sync_metadata(ckan, meta, auth, num_threads, do_uploads):
+def sync_metadata(ckan, meta, auth, num_threads, do_uploads, do_resource_checks):
     def unique_packages():
         by_id = dict((t['id'], t) for t in packages)
         id_count = Counter(t['id'] for t in packages)
@@ -260,4 +263,4 @@ def sync_metadata(ckan, meta, auth, num_threads, do_uploads):
     ckan_packages = sync_packages(ckan, packages, organization, None)
     resources = meta.get_resources()
     resources_add_format(resources)
-    sync_resources(ckan, resources, meta.resource_linkage, ckan_packages, auth, num_threads, do_uploads)
+    sync_resources(ckan, resources, meta.resource_linkage, ckan_packages, auth, num_threads, do_uploads, do_resource_checks)
