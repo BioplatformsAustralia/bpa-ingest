@@ -15,24 +15,10 @@ from . import files
 from .tracking import BASETrackMetadata
 from .contextual import BASESampleContextual
 
-import json
 import os
 import re
 
 logger = make_logger(__name__)
-
-
-def add_spatial_extra(package):
-    "add a ckanext-spatial extra to the package"
-    lat = ingest_utils.get_clean_number(package.get('latitude'))
-    lng = ingest_utils.get_clean_number(package.get('longitude'))
-    if not lat or not lng:
-        return
-    geo = {
-        "type": "Point",
-        "coordinates": [lng, lat]
-    }
-    package['spatial'] = json.dumps(geo)
 
 
 class BASEAmpliconsMetadata(BaseMetadata):
@@ -156,7 +142,7 @@ class BASEAmpliconsMetadata(BaseMetadata):
                 })
                 for contextual_source in self.contextual_metadata:
                     obj.update(contextual_source.get(bpa_id))
-                add_spatial_extra(obj)
+                ingest_utils.add_spatial_extra(obj)
                 tag_names = ['amplicons', amplicon]
                 obj['tags'] = [{'name': t} for t in tag_names]
                 packages.append(obj)
@@ -284,7 +270,7 @@ class BASEMetagenomicsMetadata(BaseMetadata):
                 })
                 for contextual_source in self.contextual_metadata:
                     obj.update(contextual_source.get(bpa_id))
-                add_spatial_extra(obj)
+                ingest_utils.add_spatial_extra(obj)
                 tag_names = ['metagenomics']
                 obj['tags'] = [{'name': t} for t in tag_names]
                 packages.append(obj)

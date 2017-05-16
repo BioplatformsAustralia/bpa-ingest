@@ -12,7 +12,6 @@ from . import files
 from . tracking import MarineMicrobesTrackMetadata
 from .contextual import MarineMicrobesSampleContextual
 
-import json
 import os
 import re
 
@@ -21,19 +20,6 @@ logger = make_logger(__name__)
 
 index_from_comment_re = re.compile(r'([G|A|T|C|-]{6,}_[G|A|T|C|-]{6,})')
 index_from_comment_pilot_re = re.compile(r'_([G|A|T|C|-]{6,})_')
-
-
-def add_spatial_extra(package):
-    "add a ckanext-spatial extra to the package"
-    lat = ingest_utils.get_clean_number(package.get('latitude'))
-    lng = ingest_utils.get_clean_number(package.get('longitude'))
-    if not lat or not lng:
-        return
-    geo = {
-        "type": "Point",
-        "coordinates": [lng, lat]
-    }
-    package['spatial'] = json.dumps(geo)
 
 
 def index_from_comment(attrs):
@@ -178,7 +164,7 @@ class BaseMarineMicrobesAmpliconsMetadata(BaseMetadata):
                 })
                 for contextual_source in self.contextual_metadata:
                     obj.update(contextual_source.get(bpa_id))
-                add_spatial_extra(obj)
+                ingest_utils.add_spatial_extra(obj)
                 tag_names = ['amplicons', self.amplicon]
                 obj['tags'] = [{'name': t} for t in tag_names]
                 packages.append(obj)
@@ -291,7 +277,7 @@ class BaseMarineMicrobesAmpliconsControlMetadata(BaseMetadata):
                 'type': self.ckan_data_type,
                 'private': True,
             })
-            add_spatial_extra(obj)
+            ingest_utils.add_spatial_extra(obj)
             tag_names = ['amplicons-control', self.amplicon, 'raw']
             obj['tags'] = [{'name': t} for t in tag_names]
             packages.append(obj)
@@ -413,7 +399,7 @@ class MarineMicrobesMetagenomicsMetadata(BaseMetadata):
                 })
                 for contextual_source in self.contextual_metadata:
                     obj.update(contextual_source.get(bpa_id))
-                add_spatial_extra(obj)
+                ingest_utils.add_spatial_extra(obj)
                 tag_names = ['metagenomics', 'raw']
                 obj['tags'] = [{'name': t} for t in tag_names]
                 packages.append(obj)
@@ -523,7 +509,7 @@ class MarineMicrobesMetatranscriptomeMetadata(BaseMetadata):
             })
             for contextual_source in self.contextual_metadata:
                 obj.update(contextual_source.get(bpa_id))
-            add_spatial_extra(obj)
+            ingest_utils.add_spatial_extra(obj)
             tag_names = ['metatranscriptome', 'raw']
             obj['tags'] = [{'name': t} for t in tag_names]
             packages.append(obj)

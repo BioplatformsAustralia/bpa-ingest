@@ -117,6 +117,7 @@ class OMG10XRawIlluminaMetadata(BaseMetadata):
                     'private': True,
                 })
                 obj.update(context)
+                ingest_utils.add_spatial_extra(obj)
                 tag_names = ['10x-raw']
                 obj['tags'] = [{'name': t} for t in tag_names]
                 packages.append(obj)
@@ -243,6 +244,7 @@ class OMG10XProcessedIlluminaMetadata(BaseMetadata):
                     'private': True,
                 })
                 obj.update(context)
+                ingest_utils.add_spatial_extra(obj)
                 tag_names = ['10x-processed']
                 obj['tags'] = [{'name': t} for t in tag_names]
                 packages.append(obj)
@@ -306,7 +308,7 @@ class OMGExonCaptureMetadata(BaseMetadata):
             for k, v in row.items():
                 stripped = strip_to_ascii(v)
                 if len(v) != len(stripped):
-                    logger.warning("stripped invalid characters from field %s" % (k))
+                    logger.warning("stripped invalid characters from field %s, '%s' '%s'" % (k, v, stripped))
                     row[k] = stripped
         return rows
 
@@ -350,6 +352,7 @@ class OMGExonCaptureMetadata(BaseMetadata):
                     'private': True,
                 })
                 obj.update(context)
+                ingest_utils.add_spatial_extra(obj)
                 tag_names = ['exon-capture', 'raw']
                 obj['tags'] = [{'name': t} for t in tag_names]
                 packages.append(obj)

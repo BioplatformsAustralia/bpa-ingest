@@ -13,7 +13,7 @@ class OMGSampleContextual(object):
 
     def __init__(self, path):
         self.sample_metadata = {}
-        for csv_path in glob(path + '/*.csv'):
+        for csv_path in glob(path + '/latest.csv'):
             self.sample_metadata.update(self._package_metadata(self._read_metadata(csv_path)))
 
     def get(self, bpa_id):

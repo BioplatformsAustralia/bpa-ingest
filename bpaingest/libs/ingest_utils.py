@@ -29,6 +29,19 @@ def fix_pcr(pcr):
     return val
 
 
+def add_spatial_extra(package):
+    "add a ckanext-spatial extra to the package which has a longitude and latitude"
+    lat = get_clean_number(package.get('latitude'))
+    lng = get_clean_number(package.get('longitude'))
+    if not lat or not lng:
+        return
+    geo = {
+        "type": "Point",
+        "coordinates": [lng, lat]
+    }
+    package['spatial'] = json.dumps(geo)
+
+
 def fix_sample_extraction_id(val):
     if val is None:
         return val
