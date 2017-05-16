@@ -204,6 +204,7 @@ def sync_resources(ckan, resources, resource_linkage_attrs, ckan_packages, auth,
 
     if not do_resource_checks:
         logger.warning("resource checks disabled: resource integrity will not be confirmed")
+        to_reupload = []
     else:
         # check all existing resources on all existing packages, in parallel
         to_reupload = check_package_resources(ckan, ckan_packages, resource_id_legacy_url, auth)
