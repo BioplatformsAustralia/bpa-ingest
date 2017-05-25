@@ -9,7 +9,7 @@ from hashlib import md5 as md5hash
 
 from ...libs import ingest_utils
 from ...libs.md5lines import md5lines
-from ...util import make_logger, bpa_id_to_ckan_name, csv_to_named_tuple, common_values
+from ...util import make_logger, bpa_id_to_ckan_name, csv_to_named_tuple, common_values, clean_tag_name
 from ...abstract import BaseMetadata
 from ...libs.excel_wrapper import ExcelWrapper
 from glob import glob
@@ -31,6 +31,15 @@ import os
 logger = make_logger(__name__)
 
 
+def sepsis_contextual_tags(cls, obj):
+    tags = [cls.omics, cls.technology]
+    taxon = obj.get('taxon_or_organism')
+    strain = obj.get('strain_or_isolate')
+    if taxon and strain:
+        tags.append(clean_tag_name(('%s_%s' % (taxon, strain)).replace(' ', '_')))
+    return tags
+
+
 class SepsisGenomicsMiseqMetadata(BaseMetadata):
     contextual_classes = [SepsisBacterialContextual, SepsisGenomicsMiseqContextual]
     metadata_urls = ['https://downloads-qcif.bioplatforms.com/bpa/sepsis/genomics/raw/miseq/']
@@ -38,6 +47,8 @@ class SepsisGenomicsMiseqMetadata(BaseMetadata):
     organization = 'bpa-sepsis'
     auth = ('sepsis', 'sepsis')
     ckan_data_type = 'arp-genomics-miseq'
+    omics = 'genomics'
+    technology = 'miseq'
 
     def __init__(self, metadata_path, contextual_metadata=None, track_csv_path=None, metadata_info=None):
         self.path = Path(metadata_path)
@@ -91,7 +102,7 @@ class SepsisGenomicsMiseqMetadata(BaseMetadata):
                 })
                 for contextual_source in self.contextual_metadata:
                     obj.update(contextual_source.get(bpa_id, track_meta))
-                tag_names = ['miseq', 'genomics']
+                tag_names = sepsis_contextual_tags(self, obj)
                 obj['tags'] = [{'name': t} for t in tag_names]
                 packages.append(obj)
         return packages
@@ -121,6 +132,8 @@ class SepsisGenomicsPacbioMetadata(BaseMetadata):
     organization = 'bpa-sepsis'
     auth = ('sepsis', 'sepsis')
     ckan_data_type = 'arp-genomics-pacbio'
+    omics = 'genomics'
+    technology = 'pacbio'
 
     def __init__(self, metadata_path, contextual_metadata=None, track_csv_path=None, metadata_info=None):
         self.path = Path(metadata_path)
@@ -185,7 +198,7 @@ class SepsisGenomicsPacbioMetadata(BaseMetadata):
                 })
                 for contextual_source in self.contextual_metadata:
                     obj.update(contextual_source.get(bpa_id, track_meta))
-                tag_names = ['pacbio', 'genomics']
+                tag_names = sepsis_contextual_tags(self, obj)
                 obj['tags'] = [{'name': t} for t in tag_names]
                 packages.append(obj)
         return packages
@@ -214,6 +227,8 @@ class SepsisTranscriptomicsHiseqMetadata(BaseMetadata):
     organization = 'bpa-sepsis'
     auth = ('sepsis', 'sepsis')
     ckan_data_type = 'arp-transcriptomics-hiseq'
+    omics = 'transcriptomics'
+    technology = 'hiseq'
 
     def __init__(self, metadata_path, contextual_metadata=None, track_csv_path=None, metadata_info=None):
         self.path = Path(metadata_path)
@@ -278,7 +293,7 @@ class SepsisTranscriptomicsHiseqMetadata(BaseMetadata):
                 })
                 for contextual_source in self.contextual_metadata:
                     obj.update(contextual_source.get(bpa_id, track_meta))
-                tag_names = ['hiseq', 'transcriptomics']
+                tag_names = sepsis_contextual_tags(self, obj)
                 obj['tags'] = [{'name': t} for t in tag_names]
                 packages.append(obj)
         return packages
@@ -308,6 +323,8 @@ class SepsisMetabolomicsLCMSMetadata(BaseMetadata):
     organization = 'bpa-sepsis'
     auth = ('sepsis', 'sepsis')
     ckan_data_type = 'arp-metabolomics-lcms'
+    omics = 'metabolomics'
+    technology = 'lcms'
 
     def __init__(self, metadata_path, contextual_metadata=None, track_csv_path=None, metadata_info=None):
         self.path = Path(metadata_path)
@@ -373,7 +390,7 @@ class SepsisMetabolomicsLCMSMetadata(BaseMetadata):
                 })
                 for contextual_source in self.contextual_metadata:
                     obj.update(contextual_source.get(bpa_id, track_meta))
-                tag_names = ['lcms', 'metabolomics']
+                tag_names = sepsis_contextual_tags(self, obj)
                 obj['tags'] = [{'name': t} for t in tag_names]
                 packages.append(obj)
         return packages
@@ -402,6 +419,8 @@ class SepsisProteomicsMS1QuantificationMetadata(BaseMetadata):
     organization = 'bpa-sepsis'
     auth = ('sepsis', 'sepsis')
     ckan_data_type = 'arp-proteomics-ms1quantification'
+    omics = 'proteomics'
+    technology = 'ms1quantification'
 
     def __init__(self, metadata_path, contextual_metadata=None, track_csv_path=None, metadata_info=None):
         self.path = Path(metadata_path)
@@ -471,7 +490,7 @@ class SepsisProteomicsMS1QuantificationMetadata(BaseMetadata):
                 })
                 for contextual_source in self.contextual_metadata:
                     obj.update(contextual_source.get(bpa_id, track_meta))
-                tag_names = ['ms1quantification', 'proteomics']
+                tag_names = sepsis_contextual_tags(self, obj)
                 obj['tags'] = [{'name': t} for t in tag_names]
                 packages.append(obj)
         return packages
@@ -500,6 +519,8 @@ class SepsisProteomicsSwathMSBaseMetadata(BaseMetadata):
     metadata_patterns = [r'^.*\.md5$', r'^.*_metadata\.xlsx']
     organization = 'bpa-sepsis'
     auth = ('sepsis', 'sepsis')
+    omics = 'proteomics'
+    technology = 'swathms'
 
     def __init__(self, metadata_path, contextual_metadata=None, track_csv_path=None, metadata_info=None):
         self.path = Path(metadata_path)
@@ -614,7 +635,7 @@ class SepsisProteomicsSwathMSBaseMetadata(BaseMetadata):
                 'type': self.ckan_data_type,
                 'private': True,
             })
-            tag_names = ['swathms', 'proteomics']
+            tag_names = sepsis_contextual_tags(self, obj)
             obj['tags'] = [{'name': t} for t in tag_names]
             packages.append(obj)
         return packages
@@ -692,6 +713,8 @@ class SepsisProteomicsAnalysedMetadata(BaseMetadata):
     auth = ('sepsis', 'sepsis')
     ckan_data_type = 'arp-proteomics-analysed'
     resource_linkage = ('folder_name',)
+    omics = 'proteomics'
+    technology = 'analysed'
 
     def __init__(self, metadata_path, contextual_metadata=None, track_csv_path=None, metadata_info=None):
         self.path = Path(metadata_path)
@@ -780,7 +803,7 @@ class SepsisProteomicsAnalysedMetadata(BaseMetadata):
                 'dataset_url': track_meta.download,
                 'private': True,
             })
-            tag_names = ['proteomics', 'analysed']
+            tag_names = sepsis_contextual_tags(self, obj)
             obj['tags'] = [{'name': t} for t in tag_names]
             packages.append(obj)
         return packages
@@ -812,6 +835,8 @@ class SepsisTranscriptomicsAnalysedMetadata(BaseMetadata):
     auth = ('sepsis', 'sepsis')
     ckan_data_type = 'arp-transcriptomics-analysed'
     resource_linkage = ('folder_name',)
+    omics = 'transcriptomics'
+    technology = 'analysed'
 
     def __init__(self, metadata_path, contextual_metadata=None, track_csv_path=None, metadata_info=None):
         self.path = Path(metadata_path)
@@ -898,7 +923,7 @@ class SepsisTranscriptomicsAnalysedMetadata(BaseMetadata):
                 'dataset_url': track_meta.download,
                 'private': True,
             })
-            tag_names = ['transcriptomics', 'analysed']
+            tag_names = sepsis_contextual_tags(self, obj)
             obj['tags'] = [{'name': t} for t in tag_names]
             packages.append(obj)
         return packages
@@ -930,6 +955,8 @@ class SepsisMetabolomicsAnalysedMetadata(BaseMetadata):
     auth = ('sepsis', 'sepsis')
     ckan_data_type = 'arp-metabolomics-analysed'
     resource_linkage = ('folder_name',)
+    omics = 'metabolomics'
+    technology = 'analysed'
 
     def __init__(self, metadata_path, contextual_metadata=None, track_csv_path=None, metadata_info=None):
         self.path = Path(metadata_path)
@@ -1013,7 +1040,7 @@ class SepsisMetabolomicsAnalysedMetadata(BaseMetadata):
                 'dataset_url': track_meta.download,
                 'private': True,
             })
-            tag_names = ['metabolomics', 'analysed']
+            tag_names = sepsis_contextual_tags(self, obj)
             obj['tags'] = [{'name': t} for t in tag_names]
             packages.append(obj)
         return packages
@@ -1045,6 +1072,8 @@ class SepsisGenomicsAnalysedMetadata(BaseMetadata):
     auth = ('sepsis', 'sepsis')
     ckan_data_type = 'arp-genomics-analysed'
     resource_linkage = ('folder_name',)
+    omics = 'genomics'
+    technology = 'analysed'
 
     def __init__(self, metadata_path, contextual_metadata=None, track_csv_path=None, metadata_info=None):
         self.path = Path(metadata_path)
@@ -1125,7 +1154,7 @@ class SepsisGenomicsAnalysedMetadata(BaseMetadata):
                 'dataset_url': track_meta.download,
                 'private': True,
             })
-            tag_names = ['genomics', 'analysed']
+            tag_names = sepsis_contextual_tags(self, obj)
             obj['tags'] = [{'name': t} for t in tag_names]
             packages.append(obj)
         return packages
