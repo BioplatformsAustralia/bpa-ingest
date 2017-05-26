@@ -29,7 +29,6 @@ class SepsisTrackMetadata(object):
             'work_order': track_meta.work_order,
             'contextual_data_submission_date': track_meta.contextual_data_submission_date,
             'sample_submission_date': track_meta.sample_submission_date,
-            'data_generated': track_meta.data_generated,
             'archive_ingestion_date': track_meta.archive_ingestion_date,
             'archive_id': track_meta.archive_id,
         }

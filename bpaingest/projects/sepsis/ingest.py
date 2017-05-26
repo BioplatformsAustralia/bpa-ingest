@@ -105,6 +105,7 @@ class SepsisGenomicsMiseqMetadata(BaseSepsisMetadata):
                     'sequencer': row.sequencer,
                     'analysis_software_version': row.analysis_software_version,
                     'type': self.ckan_data_type,
+                    'data_generated': True,
                     'private': True,
                 })
                 for contextual_source in self.contextual_metadata:
@@ -202,6 +203,7 @@ class SepsisGenomicsPacbioMetadata(BaseSepsisMetadata):
                     'rs_version': row.rs_version,
                     'type': self.ckan_data_type,
                     'private': True,
+                    'data_generated': True,
                 })
                 for contextual_source in self.contextual_metadata:
                     obj.update(contextual_source.get(bpa_id, track_meta))
@@ -297,6 +299,7 @@ class SepsisTranscriptomicsHiseqMetadata(BaseSepsisMetadata):
                     'casava_version': row.casava_version,
                     'type': self.ckan_data_type,
                     'private': True,
+                    'data_generated': True,
                 })
                 for contextual_source in self.contextual_metadata:
                     obj.update(contextual_source.get(bpa_id, track_meta))
@@ -394,6 +397,7 @@ class SepsisMetabolomicsLCMSMetadata(BaseSepsisMetadata):
                     'raw_file_name': row.raw_file_name,
                     'type': self.ckan_data_type,
                     'private': True,
+                    'data_generated': True,
                 })
                 for contextual_source in self.contextual_metadata:
                     obj.update(contextual_source.get(bpa_id, track_meta))
@@ -494,6 +498,7 @@ class SepsisProteomicsMS1QuantificationMetadata(BaseSepsisMetadata):
                     'raw_file_name': row.raw_file_name,
                     'type': self.ckan_data_type,
                     'private': True,
+                    'data_generated': True,
                 })
                 for contextual_source in self.contextual_metadata:
                     obj.update(contextual_source.get(bpa_id, track_meta))
@@ -641,6 +646,7 @@ class SepsisProteomicsSwathMSBaseSepsisMetadata(BaseSepsisMetadata):
                 'notes': 'ARP Proteomics SwathMS %sData: %s %s' % (pool, track_meta['taxon_or_organism'], track_meta['strain_or_isolate']),
                 'type': self.ckan_data_type,
                 'private': True,
+                'data_generated': True,
             })
             tag_names = sepsis_contextual_tags(self, obj)
             obj['tags'] = [{'name': t} for t in tag_names]
