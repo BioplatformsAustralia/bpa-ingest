@@ -203,23 +203,25 @@ def makeschema(ckan, args):
         for package in meta.get_packages():
             p.update(package)
         skip = ('id', 'tags', 'private', 'type', 'spatial')
+        package_field_mapping = getattr(meta, 'package_field_names', {})
         for k in sorted(p.keys()):
             if k in skip:
                 continue
             schema['dataset_fields'].append({
                 "field_name": k,
-                "label": k,
+                "label": package_field_mapping.get(k, k),
                 "form_placeholder": ""
             })
         r = {}
         for _, _, resource in meta.get_resources():
             r.update(resource)
+        resource_field_mapping = getattr(meta, 'resource_field_names', {})
         for k in sorted(r.keys()):
             if k in skip:
                 continue
             schema['resource_fields'].append({
                 "field_name": k,
-                "label": k,
+                "label": resource_field_mapping.get(k, k),
             })
         schema['dataset_type'] = meta.ckan_data_type
         outf = '/tmp/{}.json'.format(meta.ckan_data_type.replace('-', '_'))

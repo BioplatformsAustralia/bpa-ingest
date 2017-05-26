@@ -39,7 +39,15 @@ def sepsis_contextual_tags(cls, obj):
     return tags
 
 
-class SepsisGenomicsMiseqMetadata(BaseMetadata):
+class BaseSepsisMetadata(BaseMetadata):
+    # printable names used when generating CKAN schemas
+    # package_field: printable name
+    package_field_names = {
+        'growth_condition_time': 'growth_condition_time_(h)'
+    }
+
+
+class SepsisGenomicsMiseqMetadata(BaseSepsisMetadata):
     contextual_classes = [SepsisBacterialContextual, SepsisGenomicsContextual]
     metadata_urls = ['https://downloads-qcif.bioplatforms.com/bpa/sepsis/genomics/raw/miseq/']
     metadata_url_components = ('facility_code', 'ticket')
@@ -124,7 +132,7 @@ class SepsisGenomicsMiseqMetadata(BaseMetadata):
         return resources
 
 
-class SepsisGenomicsPacbioMetadata(BaseMetadata):
+class SepsisGenomicsPacbioMetadata(BaseSepsisMetadata):
     contextual_classes = [SepsisBacterialContextual, SepsisGenomicsContextual]
     metadata_urls = ['https://downloads-qcif.bioplatforms.com/bpa/sepsis/genomics/raw/pacbio/']
     metadata_url_components = ('facility_code', 'ticket')
@@ -219,7 +227,7 @@ class SepsisGenomicsPacbioMetadata(BaseMetadata):
         return resources
 
 
-class SepsisTranscriptomicsHiseqMetadata(BaseMetadata):
+class SepsisTranscriptomicsHiseqMetadata(BaseSepsisMetadata):
     contextual_classes = [SepsisBacterialContextual, SepsisTranscriptomicsHiseqContextual]
     metadata_urls = ['https://downloads-qcif.bioplatforms.com/bpa/sepsis/transcriptomics/raw/hiseq/']
     metadata_url_components = ('facility_code', 'ticket')
@@ -315,7 +323,7 @@ class SepsisTranscriptomicsHiseqMetadata(BaseMetadata):
         return resources
 
 
-class SepsisMetabolomicsLCMSMetadata(BaseMetadata):
+class SepsisMetabolomicsLCMSMetadata(BaseSepsisMetadata):
     contextual_classes = [SepsisBacterialContextual, SepsisMetabolomicsLCMSContextual]
     metadata_urls = ['https://downloads-qcif.bioplatforms.com/bpa/sepsis/metabolomics/raw/lcms/']
     metadata_url_components = ('facility_code', 'ticket')
@@ -411,7 +419,7 @@ class SepsisMetabolomicsLCMSMetadata(BaseMetadata):
         return resources
 
 
-class SepsisProteomicsMS1QuantificationMetadata(BaseMetadata):
+class SepsisProteomicsMS1QuantificationMetadata(BaseSepsisMetadata):
     contextual_classes = [SepsisBacterialContextual, SepsisProteomicsMS1QuantificationContextual]
     metadata_urls = ['https://downloads-qcif.bioplatforms.com/bpa/sepsis/proteomics/raw/ms1quantification/']
     metadata_url_components = ('facility_code', 'ticket')
@@ -511,7 +519,7 @@ class SepsisProteomicsMS1QuantificationMetadata(BaseMetadata):
         return resources
 
 
-class SepsisProteomicsSwathMSBaseMetadata(BaseMetadata):
+class SepsisProteomicsSwathMSBaseSepsisMetadata(BaseSepsisMetadata):
     contextual_classes = [SepsisBacterialContextual, SepsisProteomicsSwathMSContextual]
     metadata_urls = ['https://downloads-qcif.bioplatforms.com/bpa/sepsis/proteomics/raw/swathms/']
     metadata_url_components = ('facility_code', 'ticket')
@@ -682,7 +690,7 @@ class SepsisProteomicsSwathMSBaseMetadata(BaseMetadata):
         return resources
 
 
-class SepsisProteomicsSwathMSMetadata(SepsisProteomicsSwathMSBaseMetadata):
+class SepsisProteomicsSwathMSMetadata(SepsisProteomicsSwathMSBaseSepsisMetadata):
     ckan_data_type = 'arp-proteomics-swathms'
 
     def get_packages(self):
@@ -692,7 +700,7 @@ class SepsisProteomicsSwathMSMetadata(SepsisProteomicsSwathMSBaseMetadata):
         return self.get_swath_resources('1d')
 
 
-class SepsisProteomicsSwathMSPoolMetadata(SepsisProteomicsSwathMSBaseMetadata):
+class SepsisProteomicsSwathMSPoolMetadata(SepsisProteomicsSwathMSBaseSepsisMetadata):
     ckan_data_type = 'arp-proteomics-swathms-pool'
     resource_linkage = ('pool_bpa_ids',)
 
@@ -703,7 +711,7 @@ class SepsisProteomicsSwathMSPoolMetadata(SepsisProteomicsSwathMSBaseMetadata):
         return self.get_swath_resources('2d')
 
 
-class SepsisProteomicsAnalysedMetadata(BaseMetadata):
+class SepsisProteomicsAnalysedMetadata(BaseSepsisMetadata):
     contextual_classes = []
     metadata_urls = ['https://downloads-qcif.bioplatforms.com/bpa/sepsis/proteomics/analysed/']
     metadata_url_components = ('facility_code', 'ticket')
@@ -731,7 +739,7 @@ class SepsisProteomicsAnalysedMetadata(BaseMetadata):
             ('strain_or_isolate', 'strain_or_isolate'),
             ('serovar', 'serovar'),
             ('growth_media', 'growth media'),
-            ('replicate', 'replicate'),
+            ('replicate', 'replicate', ingest_utils.get_int),
             ('growth_condition_time', 'growth_condition_time'),
             ('growth_condition_growth', 'growth_condition_growth phase'),
             ('growth_condition_od600', 'growth_condition_od600 reading'),
@@ -797,7 +805,6 @@ class SepsisProteomicsAnalysedMetadata(BaseMetadata):
                 'folder_name': track_meta.folder_name,
                 'sample_submission_date': ingest_utils.get_date_isoformat(track_meta.date_of_transfer),
                 'contextual_data_submission_date': None,
-                'data_generated': ingest_utils.get_date_isoformat(track_meta.date_of_transfer_to_archive),
                 'archive_ingestion_date': ingest_utils.get_date_isoformat(track_meta.date_of_transfer_to_archive),
                 'dataset_url': track_meta.download,
                 'private': True,
@@ -825,7 +832,7 @@ class SepsisProteomicsAnalysedMetadata(BaseMetadata):
         return resources
 
 
-class SepsisTranscriptomicsAnalysedMetadata(BaseMetadata):
+class SepsisTranscriptomicsAnalysedMetadata(BaseSepsisMetadata):
     contextual_classes = []
     metadata_urls = ['https://downloads-qcif.bioplatforms.com/bpa/sepsis/transcriptomics/analysed/']
     metadata_url_components = ('facility_code', 'ticket')
@@ -852,7 +859,7 @@ class SepsisTranscriptomicsAnalysedMetadata(BaseMetadata):
             ('strain_or_isolate', 'strain_or_isolate'),
             ('serovar', 'serovar'),
             ('growth_media', 'growth media'),
-            ('replicate', 'replicate'),
+            ('replicate', 'replicate', ingest_utils.get_int),
             ('growth_condition_time', 'growth_condition_time'),
             ('growth_condition_growth_phase', 'growth_condition_growth phase'),
             ('growth_condition_od600_reading', 'growth_condition_od600 reading'),
@@ -917,7 +924,6 @@ class SepsisTranscriptomicsAnalysedMetadata(BaseMetadata):
                 'folder_name': track_meta.folder_name,
                 'sample_submission_date': ingest_utils.get_date_isoformat(track_meta.date_of_transfer),
                 'contextual_data_submission_date': None,
-                'data_generated': ingest_utils.get_date_isoformat(track_meta.date_of_transfer_to_archive),
                 'archive_ingestion_date': ingest_utils.get_date_isoformat(track_meta.date_of_transfer_to_archive),
                 'dataset_url': track_meta.download,
                 'private': True,
@@ -945,7 +951,7 @@ class SepsisTranscriptomicsAnalysedMetadata(BaseMetadata):
         return resources
 
 
-class SepsisMetabolomicsAnalysedMetadata(BaseMetadata):
+class SepsisMetabolomicsAnalysedMetadata(BaseSepsisMetadata):
     contextual_classes = []
     metadata_urls = ['https://downloads-qcif.bioplatforms.com/bpa/sepsis/metabolomics/analysed/']
     metadata_url_components = ('facility_code', 'ticket')
@@ -972,7 +978,7 @@ class SepsisMetabolomicsAnalysedMetadata(BaseMetadata):
             ('strain_or_isolate', 'strain_or_isolate'),
             ('serovar', 'serovar'),
             ('growth_media', 'growth media'),
-            ('replicate', 'replicate'),
+            ('replicate', 'replicate', ingest_utils.get_int),
             ('growth_condition_time', 'growth_condition_time'),
             ('growth_condition_growth_phase', 'growth_condition_growth phase'),
             ('growth_condition_od600_reading', 'growth_condition_od600 reading'),
@@ -1034,7 +1040,6 @@ class SepsisMetabolomicsAnalysedMetadata(BaseMetadata):
                 'folder_name': track_meta.folder_name,
                 'sample_submission_date': ingest_utils.get_date_isoformat(track_meta.date_of_transfer),
                 'contextual_data_submission_date': None,
-                'data_generated': ingest_utils.get_date_isoformat(track_meta.date_of_transfer_to_archive),
                 'archive_ingestion_date': ingest_utils.get_date_isoformat(track_meta.date_of_transfer_to_archive),
                 'dataset_url': track_meta.download,
                 'private': True,
@@ -1062,7 +1067,7 @@ class SepsisMetabolomicsAnalysedMetadata(BaseMetadata):
         return resources
 
 
-class SepsisGenomicsAnalysedMetadata(BaseMetadata):
+class SepsisGenomicsAnalysedMetadata(BaseSepsisMetadata):
     contextual_classes = []
     metadata_urls = ['https://downloads-qcif.bioplatforms.com/bpa/sepsis/genomics/analysed/']
     metadata_url_components = ('facility_code', 'ticket')
@@ -1092,7 +1097,7 @@ class SepsisGenomicsAnalysedMetadata(BaseMetadata):
             ('growth_condition_temperature', 'growth_condition_temperature'),
             ('growth_condition_media', 'growth_condition_media'),
             ('growth_condition_notes', 'growth_condition_notes'),
-            ('experimental_replicate', 'experimental_replicate'),
+            ('experimental_replicate', 'experimental_replicate', ingest_utils.get_int),
             ('analytical_platform', 'analytical_platform'),
             ('analytical_facility', 'analytical_facility'),
             ('experimental_sample_preparation_method', 'experimental_sample_preparation_method'),
@@ -1148,7 +1153,6 @@ class SepsisGenomicsAnalysedMetadata(BaseMetadata):
                 'folder_name': track_meta.folder_name,
                 'sample_submission_date': ingest_utils.get_date_isoformat(track_meta.date_of_transfer),
                 'contextual_data_submission_date': None,
-                'data_generated': ingest_utils.get_date_isoformat(track_meta.date_of_transfer_to_archive),
                 'archive_ingestion_date': ingest_utils.get_date_isoformat(track_meta.date_of_transfer_to_archive),
                 'dataset_url': track_meta.download,
                 'private': True,
