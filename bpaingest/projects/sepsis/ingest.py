@@ -19,8 +19,7 @@ from .tracking import (
     SepsisAnalysedTrackMetadata)
 from .contextual import (
     SepsisBacterialContextual,
-    SepsisGenomicsPacbioContextual,
-    SepsisGenomicsMiseqContextual,
+    SepsisGenomicsContextual,
     SepsisMetabolomicsLCMSContextual,
     SepsisProteomicsSwathMSContextual,
     SepsisProteomicsMS1QuantificationContextual,
@@ -41,7 +40,7 @@ def sepsis_contextual_tags(cls, obj):
 
 
 class SepsisGenomicsMiseqMetadata(BaseMetadata):
-    contextual_classes = [SepsisBacterialContextual, SepsisGenomicsMiseqContextual]
+    contextual_classes = [SepsisBacterialContextual, SepsisGenomicsContextual]
     metadata_urls = ['https://downloads-qcif.bioplatforms.com/bpa/sepsis/genomics/raw/miseq/']
     metadata_url_components = ('facility_code', 'ticket')
     organization = 'bpa-sepsis'
@@ -126,7 +125,7 @@ class SepsisGenomicsMiseqMetadata(BaseMetadata):
 
 
 class SepsisGenomicsPacbioMetadata(BaseMetadata):
-    contextual_classes = [SepsisBacterialContextual, SepsisGenomicsPacbioContextual]
+    contextual_classes = [SepsisBacterialContextual, SepsisGenomicsContextual]
     metadata_urls = ['https://downloads-qcif.bioplatforms.com/bpa/sepsis/genomics/raw/pacbio/']
     metadata_url_components = ('facility_code', 'ticket')
     organization = 'bpa-sepsis'
