@@ -21,6 +21,15 @@ import re
 logger = make_logger(__name__)
 
 
+def build_base_amplicon_linkage(index_linkage, flow_id, index):
+    # build linkage, `index_linkage` indicates whether we need
+    # to include index in the linkage
+    if index_linkage:
+        # strip out _ and - as usage inconsistent in pilot data
+        return flow_id + '_' + index.replace('-', '').replace('_', '')
+    return flow_id
+
+
 class BASEAmpliconsMetadata(BaseMetadata):
     auth = ('base', 'base')
     organization = 'bpa-base'
@@ -31,7 +40,10 @@ class BASEAmpliconsMetadata(BaseMetadata):
         'https://downloads-qcif.bioplatforms.com/bpa/base/raw/amplicons/',
     ]
     metadata_url_components = ('amplicon', 'facility_code', 'ticket')
-    resource_linkage = ('sample_extraction_id', 'amplicon', 'flow_id')
+    resource_linkage = ('sample_extraction_id', 'amplicon', 'base_amplicon_linkage')
+    # pilot data
+    index_linkage_spreadsheets = ('BASE_18S_UNSW_A6BRJ_metadata.xlsx',)
+    index_linkage_md5s = ('BASE_18S_UNSW_A6BRJ_checksums.md5',)
 
     def __init__(self, metadata_path, contextual_metadata=None, track_csv_path=None, metadata_info=None):
         self.path = Path(metadata_path)
@@ -100,14 +112,22 @@ class BASEAmpliconsMetadata(BaseMetadata):
                 if bpa_id is None:
                     continue
                 sample_extraction_id = ingest_utils.make_sample_extraction_id(row.sample_extraction_id, bpa_id)
+                base_fname = os.path.basename(fname)
+                index_linkage = base_fname in self.index_linkage_spreadsheets
+                base_amplicon_linkage = build_base_amplicon_linkage(index_linkage, flow_id, row.index)
+                if index_linkage:
+                    note_extra = '%s %s' % (flow_id, row.index)
+                else:
+                    note_extra = flow_id
                 obj = {}
                 amplicon = row.amplicon.upper()
-                name = bpa_id_to_ckan_name(sample_extraction_id, self.ckan_data_type + '-' + amplicon, flow_id)
+                name = bpa_id_to_ckan_name(sample_extraction_id, self.ckan_data_type + '-' + amplicon, base_amplicon_linkage)
                 obj.update({
                     'name': name,
                     'id': name,
                     'bpa_id': bpa_id,
                     'flow_id': flow_id,
+                    'base_amplicon_linkage': base_amplicon_linkage,
                     'sample_extraction_id': sample_extraction_id,
                     'target': row.target,
                     'index': row.index,
@@ -123,8 +143,8 @@ class BASEAmpliconsMetadata(BaseMetadata):
                     'sample_name': row.sample_name,
                     'analysis_software_version': row.analysis_software_version,
                     'amplicon': amplicon,
-                    'notes': 'BASE Amplicons %s %s' % (amplicon, sample_extraction_id),
-                    'title': 'BASE Amplicons %s %s' % (amplicon, sample_extraction_id),
+                    'notes': 'BASE Amplicons %s %s %s' % (amplicon, sample_extraction_id, note_extra),
+                    'title': 'BASE Amplicons %s %s %s' % (amplicon, sample_extraction_id, note_extra),
                     'date_of_transfer': ingest_utils.get_date_isoformat(track_get('date_of_transfer')),
                     'data_type': track_get('data_type'),
                     'description': track_get('description'),
@@ -152,6 +172,7 @@ class BASEAmpliconsMetadata(BaseMetadata):
         logger.info("Ingesting BASE Amplicon md5 file information from {0}".format(self.path))
         resources = []
         for md5_file in glob(self.path + '/*.md5'):
+            index_linkage = os.path.basename(md5_file) in self.index_linkage_md5s
             logger.info("Processing md5 file {}".format(md5_file))
             for filename, md5, file_info in files.parse_md5_file(md5_file, files.amplicon_regexps):
                 if filename.endswith('_metadata.xlsx') or filename.find('SampleSheet') != -1:
@@ -168,7 +189,7 @@ class BASEAmpliconsMetadata(BaseMetadata):
                 sample_extraction_id = bpa_id.split('.')[-1] + '_' + file_info.get('extraction')
                 xlsx_info = self.metadata_info[os.path.basename(md5_file)]
                 legacy_url = urljoin(xlsx_info['base_url'], filename)
-                resources.append(((sample_extraction_id, resource['amplicon'], resource['flow_id']), legacy_url, resource))
+                resources.append(((sample_extraction_id, resource['amplicon'], build_base_amplicon_linkage(index_linkage, resource['flow_id'], resource['index'])), legacy_url, resource))
         return resources
 
 

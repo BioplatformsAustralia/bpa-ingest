@@ -24,7 +24,6 @@ register_command, command_fns = make_registration_decorator()
 class DownloadMetadata(object):
     def __init__(self, project_class, track_csv_path, path=None):
         self.cleanup = True
-        self.path = tempfile.mkdtemp(prefix='bpaingest-metadata-')
         fetch = True
         if path is not None:
             self.path = path
@@ -32,6 +31,8 @@ class DownloadMetadata(object):
             if os.access(path, os.R_OK):
                 logger.info("skipping metadata download, specified directory `%s' exists" % path)
                 fetch = False
+        else:
+            self.path = tempfile.mkdtemp(prefix='bpaingest-metadata-')
         self.auth = None
         self.contextual = []
         if hasattr(project_class, 'auth'):

@@ -194,7 +194,7 @@ def sync_resources(ckan, resources, resource_linkage_attrs, ckan_packages, auth,
     for resource_linkage, legacy_url, resource_obj in resources:
         package_id = resource_linkage_package_id.get(resource_linkage)
         if package_id is None:
-            logger.error("Unable to find package for `%s', skipping resource (%s)" % (repr(resource_linkage), legacy_url))
+            logger.critical("Unable to find package for `%s', skipping resource (%s)" % (repr(resource_linkage), legacy_url))
         obj = resource_obj.copy()
         obj['package_id'] = package_id
         if package_id not in resource_idx:
@@ -254,7 +254,7 @@ def sync_metadata(ckan, meta, auth, num_threads, do_uploads, do_resource_checks)
         id_count = Counter(t['id'] for t in packages)
         for k, cnt in id_count.items():
             if cnt > 1:
-                logger.error("package id `%s' appears more than once: excluded from sync" % (k))
+                logger.critical("package id `%s' appears more than once: excluded from sync" % (k))
                 continue
             yield by_id[k]
 
