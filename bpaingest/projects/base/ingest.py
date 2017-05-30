@@ -4,7 +4,7 @@ from unipath import Path
 
 from ...abstract import BaseMetadata
 
-from ...util import make_logger, bpa_id_to_ckan_name
+from ...util import make_logger, bpa_id_to_ckan_name, one
 from urlparse import urljoin
 
 from glob import glob
@@ -84,7 +84,7 @@ class BASEAmpliconsMetadata(BaseMetadata):
             rows = list(wrapper.get_all())
             return rows
         except:
-            logger.error("Cannot parse: `%s'" % (fname))
+            logger.critical("Cannot parse: `%s'" % (fname))
             return []
 
     def get_packages(self):
@@ -204,6 +204,25 @@ class BASEMetagenomicsMetadata(BaseMetadata):
     ]
     metadata_url_components = ('facility_code', 'ticket')
     resource_linkage = ('sample_extraction_id', 'flow_id')
+    # these are packages from the pilot, which have missing metadata
+    # we synthethise minimal packages for this data - see
+    # https://github.com/muccg/bpa-archive-ops/issues/140
+    missing_packages = [
+        ('8154_2', 'H9BB6ADXX'),
+        ('8155_2', 'H81M8ADXX'),
+        ('8158_2', 'H9BB6ADXX'),
+        ('8159_2', 'H9BB6ADXX'),
+        ('8160_3', 'H81M8ADXX'),
+        ('8161_3', 'H81M8ADXX'),
+        ('8262_2', 'H9EV8ADXX'),
+        ('8263_2', 'H9BB6ADXX'),
+        ('8268_2', 'H80EYADXX'),
+        ('8268_2', 'H9EV8ADXX'),
+        ('8269_2', 'H80EYADXX'),
+        ('8269_2', 'H9EV8ADXX'),
+        ('8270_2', 'H80EYADXX'),
+        ('8271_2', 'H80EYADXX'),
+        ('8271_2', 'H9EV8ADXX')]
 
     def __init__(self, metadata_path, contextual_metadata=None, track_csv_path=None, metadata_info=None):
         self.path = Path(metadata_path)
@@ -219,7 +238,8 @@ class BASEMetagenomicsMetadata(BaseMetadata):
             ('insert_size_range', 'Insert size range', None),
             ('library_construction_protocol', 'Library construction protocol', None),
             ('sequencer', 'Sequencer', None),
-            ('casava_version', 'CASAVA version', None)
+            ('casava_version', 'CASAVA version', None),
+            ('flow_cell_id', 'Run #:Flow Cell ID', None)
         ]
         try:
             wrapper = ExcelWrapper(
@@ -233,68 +253,96 @@ class BASEMetagenomicsMetadata(BaseMetadata):
             rows = list(wrapper.get_all())
             return rows
         except:
-            logger.error("Cannot parse: `%s'" % (fname))
+            logger.critical("Cannot parse: `%s'" % (fname))
             return []
 
+    def assemble_obj(self, bpa_id, sample_extraction_id, flow_id, row, track_meta):
+        def track_get(k):
+            if track_meta is None:
+                return None
+            return getattr(track_meta, k)
+
+        def row_get(k, v_fn=None):
+            if row is None:
+                return None
+            res = getattr(row, k)
+            if v_fn is not None:
+                res = v_fn(res)
+            return res
+
+        name = bpa_id_to_ckan_name(sample_extraction_id, self.ckan_data_type, flow_id)
+        obj = {
+            'name': name,
+            'id': name,
+            'bpa_id': bpa_id,
+            'flow_id': flow_id,
+            'sample_extraction_id': sample_extraction_id,
+            'insert_size_range': row_get('insert_size_range'),
+            'library_construction_protocol': row_get('library_construction_protocol'),
+            'sequencer': row_get('sequencer'),
+            'analysis_software_version': row_get('casava_version'),
+            'notes': 'BASE Metagenomics %s' % (sample_extraction_id),
+            'title': 'BASE Metagenomics %s' % (sample_extraction_id),
+            'date_of_transfer': ingest_utils.get_date_isoformat(track_get('date_of_transfer')),
+            'data_type': track_get('data_type'),
+            'description': track_get('description'),
+            'folder_name': track_get('folder_name'),
+            'sample_submission_date': ingest_utils.get_date_isoformat(track_get('date_of_transfer')),
+            'contextual_data_submission_date': None,
+            'data_generated': ingest_utils.get_date_isoformat(track_get('date_of_transfer_to_archive')),
+            'archive_ingestion_date': ingest_utils.get_date_isoformat(track_get('date_of_transfer_to_archive')),
+            'dataset_url': track_get('download'),
+            'ticket': row_get('ticket'),
+            'facility': row_get('facility_code', lambda v: v.upper()),
+            'type': self.ckan_data_type,
+            'private': True,
+        }
+        for contextual_source in self.contextual_metadata:
+            obj.update(contextual_source.get(bpa_id))
+        ingest_utils.add_spatial_extra(obj)
+        tag_names = ['metagenomics']
+        obj['tags'] = [{'name': t} for t in tag_names]
+        return obj
+
     def get_packages(self):
-        xlsx_re = re.compile(r'^.*_(\w+)_metadata.*\.xlsx$')
+        xlsx_re = re.compile(r'^.*_([A-Z0-9]{9})_metadata.*\.xlsx$')
 
         def get_flow_id(fname):
             m = xlsx_re.match(fname)
             if not m:
-                raise Exception("unable to find flowcell for filename: `%s'" % (fname))
+                logger.warning("unable to find flowcell for filename: `%s'" % (fname))
+                return None
             return m.groups()[0]
 
         logger.info("Ingesting BASE Metagenomics metadata from {0}".format(self.path))
         packages = []
+        # missing metadata (see note above)
+        for sample_extraction_id, flow_id in self.missing_packages:
+            bpa_id = ingest_utils.extract_bpa_id(sample_extraction_id.split('_')[0])
+            sample_extraction_id = ingest_utils.make_sample_extraction_id(sample_extraction_id, bpa_id)
+            md5_file = one(glob(self.path + '/*%s*.md5' % (flow_id)))
+            xlsx_info = self.metadata_info[os.path.basename(md5_file)]
+            track_meta = self.track_meta.get(xlsx_info['ticket'])
+            packages.append(self.assemble_obj(bpa_id, sample_extraction_id, flow_id, None, track_meta))
+
         for fname in glob(self.path + '/*.xlsx'):
             logger.info("Processing BASE Metagenomics metadata file {0}".format(os.path.basename(fname)))
             for row in self.parse_spreadsheet(fname, self.metadata_info):
                 track_meta = self.track_meta.get(row.ticket)
-                flow_id = get_flow_id(fname)
+                # pilot data has the flow cell in the spreadsheet; in the main dataset
+                # there is one flow-cell per spreadsheet, so it's in the spreadsheet
+                # filename
+                flow_id = row.flow_cell_id
+                if flow_id is None:
+                    flow_id = get_flow_id(fname)
+                if flow_id is None:
+                    raise Exception("can't determine flow_id for %s / %s" % (fname, repr(row)))
 
-                def track_get(k):
-                    if track_meta is None:
-                        return None
-                    return getattr(track_meta, k)
                 bpa_id = row.bpa_id
                 if bpa_id is None:
                     continue
                 sample_extraction_id = ingest_utils.make_sample_extraction_id(row.sample_extraction_id, bpa_id)
-                obj = {}
-                name = bpa_id_to_ckan_name(sample_extraction_id, self.ckan_data_type, flow_id)
-                obj.update({
-                    'name': name,
-                    'id': name,
-                    'bpa_id': bpa_id,
-                    'flow_id': flow_id,
-                    'sample_extraction_id': sample_extraction_id,
-                    'insert_size_range': row.insert_size_range,
-                    'library_construction_protocol': row.library_construction_protocol,
-                    'sequencer': row.sequencer,
-                    'analysis_software_version': row.casava_version,
-                    'notes': 'BASE Metagenomics %s' % (sample_extraction_id),
-                    'title': 'BASE Metagenomics %s' % (sample_extraction_id),
-                    'date_of_transfer': ingest_utils.get_date_isoformat(track_get('date_of_transfer')),
-                    'data_type': track_get('data_type'),
-                    'description': track_get('description'),
-                    'folder_name': track_get('folder_name'),
-                    'sample_submission_date': ingest_utils.get_date_isoformat(track_get('date_of_transfer')),
-                    'contextual_data_submission_date': None,
-                    'data_generated': ingest_utils.get_date_isoformat(track_get('date_of_transfer_to_archive')),
-                    'archive_ingestion_date': ingest_utils.get_date_isoformat(track_get('date_of_transfer_to_archive')),
-                    'dataset_url': track_get('download'),
-                    'ticket': row.ticket,
-                    'facility': row.facility_code.upper(),
-                    'type': self.ckan_data_type,
-                    'private': True,
-                })
-                for contextual_source in self.contextual_metadata:
-                    obj.update(contextual_source.get(bpa_id))
-                ingest_utils.add_spatial_extra(obj)
-                tag_names = ['metagenomics']
-                obj['tags'] = [{'name': t} for t in tag_names]
-                packages.append(obj)
+                packages.append(self.assemble_obj(bpa_id, sample_extraction_id, flow_id, row, track_meta))
         return packages
 
     def get_resources(self):
