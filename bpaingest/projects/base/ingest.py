@@ -171,6 +171,13 @@ class BASEAmpliconsMetadata(BaseMetadata):
     def get_resources(self):
         logger.info("Ingesting BASE Amplicon md5 file information from {0}".format(self.path))
         resources = []
+
+        control_files = set()
+        for md5_file in glob(self.path + '/*.md5'):
+            for filename, md5, file_info in files.parse_md5_file(md5_file, files.amplicon_control_regexps):
+                if file_info is not None:
+                    control_files.add(filename)
+
         for md5_file in glob(self.path + '/*.md5'):
             index_linkage = os.path.basename(md5_file) in self.index_linkage_md5s
             logger.info("Processing md5 file {}".format(md5_file))
@@ -178,7 +185,7 @@ class BASEAmpliconsMetadata(BaseMetadata):
                 if filename.endswith('_metadata.xlsx') or filename.find('SampleSheet') != -1:
                     continue
                 if file_info is None:
-                    if not files.amplicon_control_filename_re.match(filename):
+                    if filename not in control_files:
                         logger.debug("unable to parse filename: `%s'" % (filename))
                     continue
                 bpa_id = ingest_utils.extract_bpa_id(file_info.get('id'))
