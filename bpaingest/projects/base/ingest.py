@@ -193,6 +193,94 @@ class BASEAmpliconsMetadata(BaseMetadata):
         return resources
 
 
+class BASEAmpliconsControlMetadata(BaseMetadata):
+    auth = ('base', 'base')
+    organization = 'bpa-base'
+    ckan_data_type = 'base-genomics-amplicon-control'
+    contextual_classes = [BASESampleContextual]
+    metadata_patterns = [r'^.*\.md5$', r'^.*_metadata.*.*\.xlsx$']
+    metadata_urls = [
+        'https://downloads-qcif.bioplatforms.com/bpa/base/raw/amplicons/',
+    ]
+    metadata_url_components = ('amplicon', 'facility_code', 'ticket')
+    resource_linkage = ('amplicon', 'flow_id')
+
+    def __init__(self, metadata_path, contextual_metadata=None, track_csv_path=None, metadata_info=None):
+        self.path = Path(metadata_path)
+        self.metadata_info = metadata_info
+        self.track_meta = BASETrackMetadata(track_csv_path)
+
+    def md5_lines(self):
+        amplicon_files = set()
+        for md5_file in glob(self.path + '/*.md5'):
+            for filename, md5, file_info in files.parse_md5_file(md5_file, files.amplicon_regexps):
+                if file_info is not None:
+                    amplicon_files.add(filename)
+
+            logger.info("Processing md5 file {}".format(md5_file))
+            for filename, md5, file_info in files.parse_md5_file(md5_file, files.amplicon_control_regexps):
+                if file_info is None:
+                    if filename not in amplicon_files:
+                        logger.debug("unable to parse filename: `%s'" % (filename))
+                    continue
+
+                yield filename, md5, md5_file, file_info
+
+    def get_packages(self):
+        flow_id_ticket = dict(((t['amplicon'], t['flow_id']), self.metadata_info[os.path.basename(fname)]) for _, _, fname, t in self.md5_lines())
+        packages = []
+        for (amplicon, flow_id), info in sorted(flow_id_ticket.items()):
+            obj = {}
+            name = bpa_id_to_ckan_name('control', self.ckan_data_type + '-' + amplicon, flow_id).lower()
+            track_meta = self.track_meta.get(info['ticket'])
+
+            def track_get(k):
+                if track_meta is None:
+                    return None
+                return getattr(track_meta, k)
+
+            obj.update({
+                'name': name,
+                'id': name,
+                'flow_id': flow_id,
+                'notes': 'BASE Amplicons Control %s %s' % (amplicon, flow_id),
+                'title': 'BASE Amplicons Control %s %s' % (amplicon, flow_id),
+                'omics': 'Genomics',
+                'analytical_platform': 'MiSeq',
+                'date_of_transfer': ingest_utils.get_date_isoformat(track_get('date_of_transfer')),
+                'data_type': track_get('data_type'),
+                'description': track_get('description'),
+                'folder_name': track_get('folder_name'),
+                'sample_submission_date': ingest_utils.get_date_isoformat(track_get('date_of_transfer')),
+                'contextual_data_submission_date': None,
+                'data_generated': ingest_utils.get_date_isoformat(track_get('date_of_transfer_to_archive')),
+                'archive_ingestion_date': ingest_utils.get_date_isoformat(track_get('date_of_transfer_to_archive')),
+                'dataset_url': track_get('download'),
+                'ticket': info['ticket'],
+                'facility': info['facility_code'].upper(),
+                'amplicon': amplicon,
+                'type': self.ckan_data_type,
+                'private': True,
+            })
+            ingest_utils.add_spatial_extra(obj)
+            tag_names = ['amplicons-control', amplicon, 'raw']
+            obj['tags'] = [{'name': t} for t in tag_names]
+            packages.append(obj)
+        return packages
+
+    def get_resources(self):
+        resources = []
+        for filename, md5, md5_file, file_info in self.md5_lines():
+            resource = file_info.copy()
+            resource['md5'] = resource['id'] = md5
+            resource['name'] = filename
+            resource['resource_type'] = self.ckan_data_type
+            xlsx_info = self.metadata_info[os.path.basename(md5_file)]
+            legacy_url = urljoin(xlsx_info['base_url'], filename)
+            resources.append(((resource['amplicon'], resource['flow_id']), legacy_url, resource))
+        return resources
+
+
 class BASEMetagenomicsMetadata(BaseMetadata):
     auth = ('base', 'base')
     organization = 'bpa-base'

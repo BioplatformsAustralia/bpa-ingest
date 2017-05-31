@@ -1,7 +1,8 @@
 from .barcode.ingest import BarcodeMetadata
 from .base.ingest import (
     BASEAmpliconsMetadata,
-    BASEMetagenomicsMetadata)
+    BASEMetagenomicsMetadata,
+    BASEAmpliconsControlMetadata)
 from .gbr.ingest import GbrAmpliconsMetadata
 from .melanoma.ingest import MelanomaMetadata
 from .mm.ingest import (
@@ -71,6 +72,7 @@ PROJECTS = {
     'mm-metagenomics': MarineMicrobesMetagenomicsMetadata,
     'mm-metatranscriptome': MarineMicrobesMetatranscriptomeMetadata,
     'base-amplicons': BASEAmpliconsMetadata,
+    'base-amplicons-control': BASEAmpliconsControlMetadata,
     'base-metagenomics': BASEMetagenomicsMetadata,
     'omg-10xraw': OMG10XRawIlluminaMetadata,
     'omg-10xprocessed': OMG10XProcessedIlluminaMetadata,
