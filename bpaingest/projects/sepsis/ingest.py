@@ -738,7 +738,7 @@ class SepsisProteomicsAnalysedMetadata(BaseSepsisMetadata):
     @classmethod
     def parse_spreadsheet(self, fname, additional_context):
         field_spec = [
-            ('data_analysis_date', 'data analysis date (yyyy-mm-dd)'),
+            ('data_analysis_date', 'data analysis date (yyyy-mm-dd)', ingest_utils.get_date_isoformat),
             ('facility_project_code_experiment_code', 'facility project code_facility experiment code'),
             ('bpa_id', 'sample name (5 digit bpa id)', ingest_utils.extract_bpa_id),
             ('taxon_or_organism', 'taxon_or_organism'),
@@ -859,7 +859,7 @@ class SepsisTranscriptomicsAnalysedMetadata(BaseSepsisMetadata):
     @classmethod
     def parse_spreadsheet(self, fname, additional_context):
         field_spec = [
-            ('data_analysis_date', 'data analysis date (yyyy-mm-dd)'),
+            ('data_analysis_date', 'data analysis date (yyyy-mm-dd)', ingest_utils.get_date_isoformat),
             ('bpa_id', 'sample name (5 digit bpa id)', ingest_utils.extract_bpa_id),
             ('taxon_or_organism', 'taxon_or_organism'),
             ('strain_or_isolate', 'strain_or_isolate'),
@@ -978,7 +978,7 @@ class SepsisMetabolomicsAnalysedMetadata(BaseSepsisMetadata):
     @classmethod
     def parse_spreadsheet(self, fname, additional_context):
         field_spec = [
-            ('data_analysis_date', 'data analysis date (yyyy-mm-dd)'),
+            ('data_analysis_date', 'data analysis date (yyyy-mm-dd)', ingest_utils.get_date_isoformat),
             ('bpa_id', 'sample name (5 digit bpa id)', ingest_utils.extract_bpa_id),
             ('taxon_or_organism', 'taxon_or_organism'),
             ('strain_or_isolate', 'strain_or_isolate'),
@@ -1094,7 +1094,7 @@ class SepsisGenomicsAnalysedMetadata(BaseSepsisMetadata):
     @classmethod
     def parse_spreadsheet(self, fname, additional_context):
         field_spec = [
-            ('data_analysis_date', 'data analysis date (yyyy-mm-dd)'),
+            ('data_analysis_date', 'data analysis date (yyyy-mm-dd)', ingest_utils.get_date_isoformat),
             ('bpa_id', 'sample name (5 digit bpa id)', ingest_utils.extract_bpa_id),
             ('taxon_or_organism', 'taxon_or_organism'),
             ('strain_or_isolate', 'strain_or_isolate'),
