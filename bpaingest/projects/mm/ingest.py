@@ -166,6 +166,8 @@ class BaseMarineMicrobesAmpliconsMetadata(BaseMetadata):
                     obj.update(contextual_source.get(bpa_id))
                 ingest_utils.add_spatial_extra(obj)
                 tag_names = ['amplicons', self.amplicon]
+                if obj.get('sample_type'):
+                    tag_names.append(obj['sample_type'])
                 obj['tags'] = [{'name': t} for t in tag_names]
                 packages.append(obj)
         return packages
@@ -401,6 +403,8 @@ class MarineMicrobesMetagenomicsMetadata(BaseMetadata):
                     obj.update(contextual_source.get(bpa_id))
                 ingest_utils.add_spatial_extra(obj)
                 tag_names = ['metagenomics', 'raw']
+                if obj.get('sample_type'):
+                    tag_names.append(obj['sample_type'])
                 obj['tags'] = [{'name': t} for t in tag_names]
                 packages.append(obj)
         return packages
@@ -511,6 +515,8 @@ class MarineMicrobesMetatranscriptomeMetadata(BaseMetadata):
                 obj.update(contextual_source.get(bpa_id))
             ingest_utils.add_spatial_extra(obj)
             tag_names = ['metatranscriptome', 'raw']
+            if obj.get('sample_type'):
+                tag_names.append(obj['sample_type'])
             obj['tags'] = [{'name': t} for t in tag_names]
             packages.append(obj)
         return packages

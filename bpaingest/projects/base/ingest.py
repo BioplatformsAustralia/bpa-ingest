@@ -125,6 +125,7 @@ class BASEAmpliconsMetadata(BaseMetadata):
                 obj.update({
                     'name': name,
                     'id': name,
+                    'sample_type': 'soil',
                     'bpa_id': bpa_id,
                     'flow_id': flow_id,
                     'base_amplicon_linkage': base_amplicon_linkage,
@@ -163,7 +164,7 @@ class BASEAmpliconsMetadata(BaseMetadata):
                 for contextual_source in self.contextual_metadata:
                     obj.update(contextual_source.get(bpa_id))
                 ingest_utils.add_spatial_extra(obj)
-                tag_names = ['amplicons', amplicon]
+                tag_names = ['amplicons', amplicon, obj['sample_type']]
                 obj['tags'] = [{'name': t} for t in tag_names]
                 packages.append(obj)
         return packages
@@ -368,6 +369,7 @@ class BASEMetagenomicsMetadata(BaseMetadata):
         name = bpa_id_to_ckan_name(sample_extraction_id, self.ckan_data_type, flow_id)
         obj = {
             'name': name,
+            'sample_type': 'soil',
             'id': name,
             'bpa_id': bpa_id,
             'flow_id': flow_id,
@@ -395,7 +397,7 @@ class BASEMetagenomicsMetadata(BaseMetadata):
         for contextual_source in self.contextual_metadata:
             obj.update(contextual_source.get(bpa_id))
         ingest_utils.add_spatial_extra(obj)
-        tag_names = ['metagenomics']
+        tag_names = ['metagenomics', obj['sample_type']]
         obj['tags'] = [{'name': t} for t in tag_names]
         return obj
 

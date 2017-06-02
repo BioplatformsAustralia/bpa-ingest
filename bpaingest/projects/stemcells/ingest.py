@@ -689,7 +689,6 @@ class StemcellsAnalysedProteomicMetadata(BaseMetadata):
                 # analysed data has duplicate PNG images in it -- we need to keep the ID unique
                 resource['id'] = 'u-' + md5_hash(self.ckan_data_type + xlsx_info['ticket'] + md5).hexdigest()
                 resource['name'] = filename
-                logger.critical(resource)
                 legacy_url = urljoin(xlsx_info['base_url'], filename)
                 resources.append(((xlsx_info['ticket'],), legacy_url, resource))
         return resources
