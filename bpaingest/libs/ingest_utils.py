@@ -96,7 +96,7 @@ def merge_pass_fail(row):
     raise Exception("more than one amplicon pass_fail column value: %s" % (vals))
 
 
-def extract_bpa_id(s):
+def extract_bpa_id(s, silent=False):
     "parse a BPA ID, with or without the prefix, returning with the prefix"
     if isinstance(s, float):
         s = int(s)
@@ -121,8 +121,13 @@ def extract_bpa_id(s):
     m = bpa_id_abbrev_2_re.match(s)
     if m:
         return BPA_PREFIX + m.groups()[0]
-    logger.warning("unable to parse BPA ID: `%s'" % s)
+    if not silent:
+        logger.warning("unable to parse BPA ID: `%s'" % s)
     return None
+
+
+def extract_bpa_id_silent(s):
+    return extract_bpa_id(s, silent=True)
 
 
 def get_int(val, default=None):

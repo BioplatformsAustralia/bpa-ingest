@@ -32,6 +32,7 @@ from .stemcells.ingest import (
     StemcellsSingleCellRNASeqMetadata,
     StemcellsMetabolomicMetadata,
     StemcellsProteomicMetadata,
+    StemcellsProteomicPoolMetadata,
     StemcellsAnalysedProteomicMetadata,
     StemcellsAnalysedMetabolomicMetadata)
 from .wheat_cultivars.ingest import WheatCultivarsMetadata
@@ -63,6 +64,9 @@ PROJECTS = {
     'stemcells-singlecellrnaseq': StemcellsSingleCellRNASeqMetadata,
     'stemcells-metabolomic': StemcellsMetabolomicMetadata,
     'stemcells-proteomic': StemcellsProteomicMetadata,
+    'stemcells-proteomic-pool': StemcellsProteomicPoolMetadata,
+    'stemcells-analysed-proteomic': StemcellsAnalysedProteomicMetadata,
+    'stemcells-analysed-metabolomic': StemcellsAnalysedMetabolomicMetadata,
     'mm-genomics-amplicons-16s': MarineMicrobesGenomicsAmplicons16SMetadata,
     'mm-genomics-amplicons-a16s': MarineMicrobesGenomicsAmpliconsA16SMetadata,
     'mm-genomics-amplicons-18s': MarineMicrobesGenomicsAmplicons18SMetadata,
@@ -77,8 +81,6 @@ PROJECTS = {
     'omg-10xraw': OMG10XRawIlluminaMetadata,
     'omg-10xprocessed': OMG10XProcessedIlluminaMetadata,
     'omg-exoncapture': OMGExonCaptureMetadata,
-    'stemcells-analysed-proteomic': StemcellsAnalysedProteomicMetadata,
-    'stemcells-analysed-metabolomic': StemcellsAnalysedMetabolomicMetadata,
     # stubs
     'barcode': BarcodeMetadata,
     'melanoma': MelanomaMetadata,

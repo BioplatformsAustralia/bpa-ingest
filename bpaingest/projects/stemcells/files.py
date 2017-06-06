@@ -50,9 +50,9 @@ def test_metabolomics():
 proteomics_filename_re = re.compile("""
     (?P<id>\d{4,6})_
     SC_
-    (?P<vendor>APAF)_
+    (?P<vendor>APAF|MBPF)_
     .*
-    (\.wiff|\.wiff\.scan|\.txt)$
+    (\.wiff|\.wiff\.scan|\.txt|\.raw)$
 """, re.VERBOSE)
 
 
@@ -63,10 +63,25 @@ def test_proteomics():
         '29614_SC_APAF_MS_1D_IDA_161102_P19598_05e6_01_DistinctPeptideSummary.txt',
         '29614_SC_APAF_MS_1D_IDA_161102_P19598_05e6_01_ProteinSummary.txt',
         '29613_SC_APAF_MS_2D_IDA_161102_P19598_1e6_All_DistinctPeptideSummary.txt',
-
+        '29707_SC_MBPF_MS_DIA1_P16_0064_Exp2_Fusion.raw',
     ]
     for filename in filenames:
         assert(proteomics_filename_re.match(filename) is not None)
+
+
+proteomics_pool_filename_re = re.compile("""
+    (?P<pool_id>P\d+_\d+_Exp\d+_Pool\d+)_
+    .*
+    (\.raw)$
+""", re.VERBOSE)
+
+
+def test_proteomics_pool():
+    filenames = [
+        'P16_0064_Exp2_Pool2_F5_SC_MBPF_MS_2D_DDA_Fusion.raw'
+    ]
+    for filename in filenames:
+        assert(proteomics_pool_filename_re.match(filename) is not None)
 
 
 proteomics_analysed_filename_re = re.compile("""
@@ -163,4 +178,4 @@ def parse_md5_file(md5_file, regexps):
                     continue
                 if path.endswith('_Report.pdf'):
                     continue
-                raise Exception("no match for {}".format(path))
+                yield path, md5, None

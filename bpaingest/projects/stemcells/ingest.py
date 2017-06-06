@@ -35,6 +35,15 @@ def fix_analytical_platform(s):
     raise Exception("invalid metabolomics analytical platform: `%s'" % (s))
 
 
+def extract_pool_id(v):
+    if v is None:
+        return
+    m = files.proteomics_pool_filename_re.match(v)
+    if m is None:
+        return
+    return m.groupdict()['pool_id']
+
+
 class StemcellsTranscriptomeMetadata(BaseMetadata):
     contextual_classes = [StemcellAGRFTranscriptomeContextual]
     metadata_urls = ['https://downloads-qcif.bioplatforms.com/bpa/stemcell/raw/transcriptome/']
@@ -460,30 +469,46 @@ class StemcellsMetabolomicMetadata(BaseMetadata):
         return resources
 
 
-class StemcellsProteomicMetadata(BaseMetadata):
+class StemcellsProteomicBaseMetadata(BaseMetadata):
     contextual_classes = []
     metadata_urls = ['https://downloads-qcif.bioplatforms.com/bpa/stemcell/raw/proteomic/']
     metadata_url_components = ('facility_code', 'ticket')
     metadata_patterns = [r'^.*\.md5', r'^.*_metadata\.xlsx']
     organization = 'bpa-stemcells'
     auth = ('stemcell', 'stemcell')
-    ckan_data_type = 'stemcells-proteomic'
 
-    def __init__(self, metadata_path, contextual_metadata=None, track_csv_path=None, metadata_info=None):
-        self.path = Path(metadata_path)
-        self.contextual_metadata = contextual_metadata
-        self.metadata_info = metadata_info
-        self.track_meta = StemcellTrackMetadata(track_csv_path)
+    def __init__(self, *args, **kwargs):
         self.filename_metadata = {}
 
+    def read_all_rows(self, mode):
+        all_rows = set()
+        for fname in glob(self.path + '/*.xlsx'):
+            logger.info("Processing Stemcells Proteomics metadata file {0}".format(fname))
+            xlsx_info = self.metadata_info[os.path.basename(fname)]
+            all_rows.update(StemcellsProteomicMetadata.parse_spreadsheet(fname, xlsx_info, mode))
+        self.filename_metadata.update(
+            dict((t.raw_filename, t) for t in all_rows))
+        self.filename_metadata.update(
+            dict((t.protein_result_filename, t) for t in all_rows))
+        self.filename_metadata.update(
+            dict((t.peptide_result_filename, t) for t in all_rows))
+        return all_rows
+
     @classmethod
-    def parse_spreadsheet(self, fname, additional_context):
-        field_spec = [
-            ("bpa_id", re.compile(r'^.*sample unique id$'), ingest_utils.extract_bpa_id),
+    def parse_spreadsheet(self, fname, additional_context, mode):
+        if mode == '1d':
+            field_spec = [
+                ("bpa_id", re.compile(r'^.*sample unique id$'), ingest_utils.extract_bpa_id_silent),
+            ]
+        elif mode == '2d':
+            field_spec = [
+                ("pool_id", 'raw file name', extract_pool_id),
+            ]
+        field_spec += [
             ("facility", 'facility', None),
             ("sample_fractionation", 'sample fractionation (none/number)', None),
             ("lc_column_type", 'lc/column type', None),
-            ("gradient_time", re.compile(r'gradient time (min).*'), None),
+            ("gradient_time", re.compile(r'gradient time \(min\).*'), None),
             ("sample_on_column", 'sample on column (g)', None),
             ("mass_spectrometer", 'mass spectrometer', None),
             ("acquisition_mode", 'acquisition mode / fragmentation', None),
@@ -497,33 +522,35 @@ class StemcellsProteomicMetadata(BaseMetadata):
             field_spec,
             fname,
             sheet_name=None,
-            header_length=1,
-            column_name_row_index=0,
+            header_length=2,
+            column_name_row_index=1,
             formatting_info=True,
             additional_context=additional_context)
         rows = list(wrapper.get_all())
         return rows
+
+
+class StemcellsProteomicMetadata(StemcellsProteomicBaseMetadata):
+    ckan_data_type = 'stemcells-proteomic'
+
+    def __init__(self, metadata_path, contextual_metadata=None, track_csv_path=None, metadata_info=None):
+        super(StemcellsProteomicMetadata, self).__init__()
+        self.path = Path(metadata_path)
+        self.contextual_metadata = contextual_metadata
+        self.metadata_info = metadata_info
+        self.track_meta = StemcellTrackMetadata(track_csv_path)
 
     def get_packages(self):
         logger.info("Ingesting Stemcells Proteomics metadata from {0}".format(self.path))
         packages = []
         # duplicate rows are an issue in this project. we filter them out by uniquifying
         # this is harmless as they have to precisly match, and BPA_ID is the primary key
-        all_rows = set()
-        for fname in glob(self.path + '/*.xlsx'):
-            logger.info("Processing Stemcells Proteomics metadata file {0}".format(fname))
-            xlsx_info = self.metadata_info[os.path.basename(fname)]
-            all_rows.update(StemcellsProteomicMetadata.parse_spreadsheet(fname, xlsx_info))
-        bpa_id_ticket_facility = dict((t.bpa_id, (t.ticket, t.facility_code)) for t in all_rows)
-        self.filename_metadata.update(
-            dict((t.raw_filename, t) for t in all_rows))
-        self.filename_metadata.update(
-            dict((t.protein_result_filename, t) for t in all_rows))
-        self.filename_metadata.update(
-            dict((t.peptide_result_filename, t) for t in all_rows))
+        #
+        # we also have rows relating to pooled data, and non-pooled data (this class
+        # considers only non-pooled data)
+        all_rows = self.read_all_rows('1d')
+        bpa_id_ticket_facility = dict((t.bpa_id, (t.ticket, t.facility_code)) for t in all_rows if t.bpa_id)
         for bpa_id, (ticket, facility_code) in sorted(bpa_id_ticket_facility.items()):
-            if bpa_id is None:
-                continue
             obj = {}
             name = bpa_id_to_ckan_name(bpa_id.split('.')[-1], self.ckan_data_type)
             track_meta = self.track_meta.get(ticket)
@@ -562,6 +589,10 @@ class StemcellsProteomicMetadata(BaseMetadata):
         for md5_file in glob(self.path + '/*.md5'):
             logger.info("Processing md5 file {0}".format(md5_file))
             for filename, md5, file_info in files.parse_md5_file(md5_file, [files.proteomics_filename_re]):
+                if file_info is None:
+                    if not files.proteomics_pool_filename_re.match(filename):
+                        raise Exception("unhandled file: %s" % (filename))
+                    continue
                 resource = file_info.copy()
                 resource['md5'] = resource['id'] = md5
                 resource['name'] = filename
@@ -572,6 +603,83 @@ class StemcellsProteomicMetadata(BaseMetadata):
                 xlsx_info = self.metadata_info[os.path.basename(md5_file)]
                 legacy_url = urljoin(xlsx_info['base_url'], filename)
                 resources.append(((bpa_id, ), legacy_url, resource))
+        return resources
+
+
+class StemcellsProteomicPoolMetadata(StemcellsProteomicBaseMetadata):
+    ckan_data_type = 'stemcells-proteomic-pool'
+    resource_linkage = ('pool_id',)
+
+    def __init__(self, metadata_path, contextual_metadata=None, track_csv_path=None, metadata_info=None):
+        super(StemcellsProteomicPoolMetadata, self).__init__()
+        self.path = Path(metadata_path)
+        self.contextual_metadata = contextual_metadata
+        self.metadata_info = metadata_info
+        self.track_meta = StemcellTrackMetadata(track_csv_path)
+
+    def get_packages(self):
+        logger.info("Ingesting Stemcells Proteomics Pool metadata from {0}".format(self.path))
+        packages = []
+        # duplicate rows are an issue in this project. we filter them out by uniquifying
+        # this is harmless as they have to precisly match, and BPA_ID is the primary key
+        #
+        # we also have rows relating to pooled data, and non-pooled data (this class
+        # considers only non-pooled data)
+        all_rows = self.read_all_rows('2d')
+        pool_id_ticket_facility = dict((t.pool_id, (t.ticket, t.facility_code)) for t in all_rows if t.pool_id)
+        for pool_id, (ticket, facility_code) in sorted(pool_id_ticket_facility.items()):
+            obj = {}
+            name = bpa_id_to_ckan_name(pool_id, self.ckan_data_type)
+            track_meta = self.track_meta.get(ticket)
+            obj.update({
+                'name': name,
+                'id': name,
+                'pool_id': pool_id,
+                'notes': 'Stemcell Proteomics Pool %s' % (pool_id),
+                'title': 'Stemcell Proteomics Pool %s' % (pool_id),
+                'omics': 'proteomics',
+                'data_generated': 'True',
+                'type': self.ckan_data_type,
+                'date_of_transfer': ingest_utils.get_date_isoformat(track_meta.date_of_transfer),
+                'ticket': ticket,
+                'facility': facility_code,
+                'data_type': track_meta.data_type,
+                'description': track_meta.description,
+                'folder_name': track_meta.folder_name,
+                'sample_submission_date': ingest_utils.get_date_isoformat(track_meta.date_of_transfer),
+                'contextual_data_submission_date': None,
+                'data_generated': ingest_utils.get_date_isoformat(track_meta.date_of_transfer_to_archive),
+                'archive_ingestion_date': ingest_utils.get_date_isoformat(track_meta.date_of_transfer_to_archive),
+                'dataset_url': track_meta.download,
+                'private': True,
+            })
+            # for contextual_source in self.contextual_metadata:
+            #     obj.update(contextual_source.get(bpa_id, track_meta))
+            tag_names = ['proteomic', 'raw']
+            obj['tags'] = [{'name': t} for t in tag_names]
+            packages.append(obj)
+        return packages
+
+    def get_resources(self):
+        logger.info("Ingesting Sepsis md5 file information from {0}".format(self.path))
+        resources = []
+        for md5_file in glob(self.path + '/*.md5'):
+            logger.info("Processing md5 file {0}".format(md5_file))
+            for filename, md5, file_info in files.parse_md5_file(md5_file, [files.proteomics_pool_filename_re]):
+                if file_info is None:
+                    if not files.proteomics_filename_re.match(filename):
+                        raise Exception("unhandled file: %s" % (filename))
+                    continue
+                resource = file_info.copy()
+                resource['md5'] = resource['id'] = md5
+                resource['name'] = filename
+                resource_meta = self.filename_metadata.get(filename, {})
+                for k in ("sample_fractionation", "lc_column_type", "gradient_time", "sample_on_column", "mass_spectrometer", "acquisition_mode", "database", "database_size"):
+                    resource[k] = getattr(resource_meta, k)
+                pool_id = file_info['pool_id']
+                xlsx_info = self.metadata_info[os.path.basename(md5_file)]
+                legacy_url = urljoin(xlsx_info['base_url'], filename)
+                resources.append(((pool_id, ), legacy_url, resource))
         return resources
 
 
