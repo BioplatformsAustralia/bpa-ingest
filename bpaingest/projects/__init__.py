@@ -22,6 +22,7 @@ from .sepsis.ingest import (
     SepsisProteomicsMS1QuantificationMetadata,
     SepsisProteomicsSwathMSMetadata,
     SepsisProteomicsSwathMSPoolMetadata,
+    SepsisProteomicsSwathMSCombinedSampleMetadata,
     SepsisProteomicsAnalysedMetadata,
     SepsisTranscriptomicsAnalysedMetadata,
     SepsisMetabolomicsAnalysedMetadata,
@@ -55,6 +56,7 @@ PROJECTS = {
     'sepsis-metabolomics-analysed': SepsisMetabolomicsAnalysedMetadata,
     'sepsis-proteomics-ms1quantification': SepsisProteomicsMS1QuantificationMetadata,
     'sepsis-proteomics-swathms': SepsisProteomicsSwathMSMetadata,
+    'sepsis-proteomics-swathms-combined-sample': SepsisProteomicsSwathMSCombinedSampleMetadata,
     'sepsis-proteomics-swathms-pool': SepsisProteomicsSwathMSPoolMetadata,
     'sepsis-proteomics-analysed': SepsisProteomicsAnalysedMetadata,
     'wheat-cultivars': WheatCultivarsMetadata,  # the entire wheat cultivars project
