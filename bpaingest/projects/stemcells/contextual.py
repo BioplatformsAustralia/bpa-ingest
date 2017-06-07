@@ -8,7 +8,7 @@ logger = make_logger(__name__)
 
 
 class StemcellAGRFTranscriptomeContextual(object):
-    metadata_urls = ['https://downloads-qcif.bioplatforms.com/bpa/stemcell/projectdata/current/']
+    metadata_urls = ['https://downloads-qcif.bioplatforms.com/bpa/stemcell/projectdata/2017-06-07/']
     name = 'stemcell-agrf-transcriptome'
 
     def __init__(self, path):
@@ -36,18 +36,19 @@ class StemcellAGRFTranscriptomeContextual(object):
     def _read_metadata(self, metadata_path):
         field_spec = [
             ('data_set_id', 'data set id'),
-            ('bpa_id', 'bpa identifier', ingest_utils.extract_bpa_id),
+            ('bpa_id', 'bpa id', ingest_utils.extract_bpa_id),
             ('number_samples', 'number samples'),
             ('submitter', 'submitter'),
-            ('group', 'group group'),
-            ('stem_cell_type', 'stem cell type'),
+            ('research_group', 'research group'),
+            ('stem_cell_line', 'stem cell line'),
             ('stem_cell_state', 'stem cell state'),
             ('work_order', 'work order'),
+            ('omics_type', 'omics type'),
             ('analytical_platform', 'analytical platform'),
             ('facility', 'facility'),
-            ('contextual_data_submission_date', 'contextual data submission date yyyy-mm-dd', ingest_utils.get_date_isoformat),
+            ('contextual_data_submission_date', 'contextual data submission date', ingest_utils.get_date_isoformat),
             ('sample_submission_date', 'sample submission date yyyy-mm-dd', ingest_utils.get_date_isoformat),
-            ('data_generated', 'data generated'),
+            ('data_generated', 'data generated', ingest_utils.get_date_isoformat),
             ('archive_ingestion_date', 'archive ingestion date yyyy-mm-dd', ingest_utils.get_date_isoformat),
             ('bpaops', 'bpaops'),
             ('sample_name', 'sample name'),
@@ -56,7 +57,7 @@ class StemcellAGRFTranscriptomeContextual(object):
             ('species', 'species'),
             ('sample_description', 'sample description'),
             ('tissue', 'tissue'),
-            ('cell_type', 'celll type'),
+            ('cell_type', 'cell type'),
             ('disease_state', 'disease state'),
             ('growth_protocol', 'growth protocol'),
             ('treatment_protocol', 'treatment protocol'),
@@ -78,7 +79,7 @@ class StemcellAGRFTranscriptomeContextual(object):
 
 
 class StemcellAGRFsmRNAContextual(object):
-    metadata_urls = ['https://downloads-qcif.bioplatforms.com/bpa/stemcell/projectdata/current/']
+    metadata_urls = ['https://downloads-qcif.bioplatforms.com/bpa/stemcell/projectdata/2017-06-07/']
     name = 'stemcell-agrf-smallrna'
 
     def __init__(self, path):
@@ -106,19 +107,20 @@ class StemcellAGRFsmRNAContextual(object):
     def _read_metadata(self, metadata_path):
         field_spec = [
             ('data_set_id', 'data set id'),
-            ('bpa_id', 'bpa identifier', ingest_utils.extract_bpa_id),
-            ('number_samples', 'number samples'),
+            ('bpa_id', 'bpa id', ingest_utils.extract_bpa_id),
+            ('total_samples', 'total samples'),
             ('submitter', 'submitter'),
-            ('group', 'research group'),
-            ('stem_cell_type', 'stem cell type'),
+            ('research_group', 'research group'),
+            ('stem_cell_line', 'stem cell line'),
             ('stem_cell_state', 'stem cell state'),
             ('work_order', 'work order'),
+            ('omics_type', 'omics type'),
             ('analytical_platform', 'analytical platform'),
             ('facility', 'facility'),
-            ('contextual_data_submission_date', 'contextual data submission date yyyy-mm-dd', ingest_utils.get_date_isoformat),
+            ('contextual_data_submission_date', 'contextual data submission date', ingest_utils.get_date_isoformat),
             ('sample_submission_date', 'sample submission date yyyy-mm-dd', ingest_utils.get_date_isoformat),
-            ('data_generated', 'data generated'),
-            ('archive_ingestion_date', 'archive ingestion date  yyyy-mm-dd', ingest_utils.get_date_isoformat),
+            ('data_generated', 'data generated', ingest_utils.get_date_isoformat),
+            ('archive_ingestion_date', 'archive ingestion date yyyy-mm-dd', ingest_utils.get_date_isoformat),
             ('bpaops', 'bpaops'),
             ('sample_name', 'sample name'),
             ('replicate_group_id', 'replicate group id'),
@@ -148,7 +150,7 @@ class StemcellAGRFsmRNAContextual(object):
 
 
 class StemcellRamaciottiSingleCell(object):
-    metadata_urls = ['https://downloads-qcif.bioplatforms.com/bpa/stemcell/projectdata/current/']
+    metadata_urls = ['https://downloads-qcif.bioplatforms.com/bpa/stemcell/projectdata/2017-06-07/']
     name = 'stemcell-ramaciotti-singlecell'
 
     def __init__(self, path):
@@ -176,34 +178,38 @@ class StemcellRamaciottiSingleCell(object):
     def _read_metadata(self, metadata_path):
         field_spec = [
             ('data_set_id', 'data set id'),
-            ('bpa_id', 'bpa identifier', ingest_utils.extract_bpa_id),
-            ('number_samples', 'number samples'),
+            ('bpa_id', 'bpa id', ingest_utils.extract_bpa_id),
+            ('total_samples', 'total samples'),
             ('submitter', 'submitter'),
-            ('group', 'research group'),
-            ('stem_cell_type', 'stem cell type'),
+            ('research_group', 'research group'),
+            ('stem_cell_line', 'stem cell line'),
             ('stem_cell_state', 'stem cell state'),
-            ('work_order', 'work oder'),
-            ('data_set', 'data set'),
-            ('analytical_platform', 'analitical platfom'),
+            ('work_order', 'work order'),
+            ('omics_type', 'omics type'),
+            ('analytical_platform', 'analytical platform'),
             ('facility', 'facility'),
-            ('contextual_data_submission_date', 'contextual data submision date yyyy-mm-dd', ingest_utils.get_date_isoformat),
+            ('contextual_data_submission_date', 'contextual data submission date', ingest_utils.get_date_isoformat),
             ('sample_submission_date', 'sample submission date yyyy-mm-dd', ingest_utils.get_date_isoformat),
             ('data_generated', 'data generated', ingest_utils.get_date_isoformat),
             ('archive_ingestion_date', 'archive ingestion date yyyy-mm-dd', ingest_utils.get_date_isoformat),
+            ('bpaops', 'bpaops'),
             ('sample_name', 'sample name'),
             ('replicate_group_id', 'replicate group id'),
+            ('data_set', 'data set'),
             ('species', 'species'),
             ('sample_description', 'sample description'),
             ('tissue', 'tissue'),
-            ('cell_type', 'celll type'),
+            ('cell_type', 'cell type'),
             ('disease_state', 'disease state'),
             ('growth_protocol', 'growth protocol'),
             ('treatment_protocol', 'treatment protocol'),
             ('extract_protocol', 'extract protocol'),
             ('library_strategy', 'library strategy'),
+            ('date', 'date', ingest_utils.get_date_isoformat),
             ('insert_size_range', 'insert size range'),
             ('library_construction_protocol', 'library construction protocol'),
-            ('platform', 'platform')]
+            ('platform', 'platform'),
+        ]
         wrapper = ExcelWrapper(
             field_spec,
             metadata_path,
@@ -215,7 +221,7 @@ class StemcellRamaciottiSingleCell(object):
 
 
 class StemcellMetabolomicsContextual(object):
-    metadata_urls = ['https://downloads-qcif.bioplatforms.com/bpa/stemcell/projectdata/current/']
+    metadata_urls = ['https://downloads-qcif.bioplatforms.com/bpa/stemcell/projectdata/2017-06-07/']
     name = 'stemcell-metabolomics'
 
     def __init__(self, path):
@@ -245,21 +251,22 @@ class StemcellMetabolomicsContextual(object):
     def _read_metadata(self, metadata_path):
         def fix_analytical_platform(s):
             return s.replace('/', '-')
-
         field_spec = [
             ('data_set_id', 'data set id'),
-            ('bpa_id', 'bpa identifier', ingest_utils.extract_bpa_id),
+            ('bpa_id', 'bpa id', ingest_utils.extract_bpa_id),
+            ('total_samples', 'total samples'),
             ('submitter', 'submitter'),
-            ('group', 'research group'),
-            ('stem_cell_type', 'stem cell type'),
+            ('research_group', 'research group'),
+            ('stem_cell_line', 'stem cell line'),
             ('stem_cell_state', 'stem cell state'),
-            ('work_order', 'work oder'),
+            ('work_order', 'work order'),
+            ('omics_type', 'omics type'),
             ('analytical_platform', 'analytical platform', fix_analytical_platform),
             ('facility', 'facility'),
-            ('contextual_data_submission_date', 'contextual data submission date yyyy-mm-dd', ingest_utils.get_date_isoformat),
-            ('date_submission', 'date submission', ingest_utils.get_date_isoformat),
-            ('data_generated', 'data generated'),
-            ('archive_ingestion_date', 'archive ingestion date', ingest_utils.get_date_isoformat),
+            ('contextual_data_submission_date', 'contextual data submission date', ingest_utils.get_date_isoformat),
+            ('sample_submission_date', 'sample submission date yyyy-mm-dd', ingest_utils.get_date_isoformat),
+            ('data_generated', 'data generated', ingest_utils.get_date_isoformat),
+            ('archive_ingestion_date', 'archive ingestion date yyyy-mm-dd', ingest_utils.get_date_isoformat),
             ('bpaops', 'bpaops'),
             ('sample_name', 'sample name'),
             ('replicate_group_id', 'replicate group id'),
