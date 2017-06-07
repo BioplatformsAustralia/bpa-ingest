@@ -65,7 +65,7 @@ def genhash(ckan, meta, mirror_path):
         fpath = localpath(mirror_path, legacy_url)
         hashes = generate_hashes(fpath)
         if hashes['md5'] != resource['md5']:
-            logger.error("md5 mismatch, have `%s' and expected `%s': %s" % (hashes['md5'], resource['md5'], fpath))
+            logger.critical("MD5 hash mismatch of on-disk data. Have `%s' and expected `%s': %s" % (hashes['md5'], resource['md5'], fpath))
             continue
         patch_obj = hashes.copy()
         patch_obj['id'] = ckan_resource['id']
