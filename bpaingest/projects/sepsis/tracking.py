@@ -49,7 +49,7 @@ class SepsisAnalysedTrackMetadata(object):
         self.track_meta = self.read_track_csv(track_csv_path)
 
     def read_track_csv(self, fname):
-        header, rows = csv_to_named_tuple('StemcellTrack', fname)
+        header, rows = csv_to_named_tuple('SepsisTrack', fname)
         return dict((t.ccg_jira_ticket.strip().lower(), t) for t in rows)
 
     def get(self, ticket):

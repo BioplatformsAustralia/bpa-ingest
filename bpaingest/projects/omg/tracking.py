@@ -14,7 +14,6 @@ class OMGTrackMetadata(object):
 
     def read_track_csv(self, fname):
         header, rows = csv_to_named_tuple('OMGTrack', fname)
-        logger.info("track csv header: %s" % (repr(header)))
         return dict((t.ccg_jira_ticket.strip().lower(), t) for t in rows)
 
     def get(self, ticket):
