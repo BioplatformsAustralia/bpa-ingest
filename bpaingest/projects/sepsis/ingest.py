@@ -903,7 +903,7 @@ class SepsisProteomicsAnalysedMetadata(BaseSepsisMetadata):
             folder_name_md5 = md5hash(folder_name).hexdigest()
             name = bpa_id_to_ckan_name(folder_name_md5, self.ckan_data_type)
             track_meta = self.track_meta.get(ticket)
-            bpa_ids = sorted(set([t.bpa_id for t in rows]))
+            bpa_ids = sorted(set([t.bpa_id for t in rows if t.bpa_id]))
             obj.update({
                 'name': name,
                 'id': name,
