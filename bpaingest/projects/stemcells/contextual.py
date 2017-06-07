@@ -10,6 +10,7 @@ logger = make_logger(__name__)
 class StemcellAGRFTranscriptomeContextual(object):
     metadata_urls = ['https://downloads-qcif.bioplatforms.com/bpa/stemcell/projectdata/2017-06-07/']
     name = 'stemcell-agrf-transcriptome'
+    sheet_name = 'AGRF-Transcriptome'
 
     def __init__(self, path):
         xlsx_path = one(glob(path + '/*.xlsx'))
@@ -71,7 +72,7 @@ class StemcellAGRFTranscriptomeContextual(object):
         wrapper = ExcelWrapper(
             field_spec,
             metadata_path,
-            sheet_name='AGRF-Transcriptome',
+            sheet_name=self.sheet_name,
             header_length=2,
             column_name_row_index=1,
             formatting_info=True)
@@ -81,6 +82,7 @@ class StemcellAGRFTranscriptomeContextual(object):
 class StemcellAGRFsmRNAContextual(object):
     metadata_urls = ['https://downloads-qcif.bioplatforms.com/bpa/stemcell/projectdata/2017-06-07/']
     name = 'stemcell-agrf-smallrna'
+    sheet_name = 'AGRF-smRNA'
 
     def __init__(self, path):
         xlsx_path = one(glob(path + '/*.xlsx'))
@@ -142,7 +144,7 @@ class StemcellAGRFsmRNAContextual(object):
         wrapper = ExcelWrapper(
             field_spec,
             metadata_path,
-            sheet_name='AGRF-smRNA',
+            sheet_name=self.sheet_name,
             header_length=2,
             column_name_row_index=1,
             formatting_info=True)
@@ -152,6 +154,7 @@ class StemcellAGRFsmRNAContextual(object):
 class StemcellRamaciottiSingleCell(object):
     metadata_urls = ['https://downloads-qcif.bioplatforms.com/bpa/stemcell/projectdata/2017-06-07/']
     name = 'stemcell-ramaciotti-singlecell'
+    sheet_name = 'Ramaciotti-Single Cell '
 
     def __init__(self, path):
         xlsx_path = one(glob(path + '/*.xlsx'))
@@ -213,7 +216,7 @@ class StemcellRamaciottiSingleCell(object):
         wrapper = ExcelWrapper(
             field_spec,
             metadata_path,
-            sheet_name='Ramaciotti-Single Cell ',
+            sheet_name=self.sheet_name,
             header_length=2,
             column_name_row_index=1,
             formatting_info=True)
@@ -223,6 +226,7 @@ class StemcellRamaciottiSingleCell(object):
 class StemcellMetabolomicsContextual(object):
     metadata_urls = ['https://downloads-qcif.bioplatforms.com/bpa/stemcell/projectdata/2017-06-07/']
     name = 'stemcell-metabolomics'
+    sheet_name = 'Metabolomics_Raw'
 
     def __init__(self, path):
         xlsx_path = one(glob(path + '/*.xlsx'))
@@ -291,7 +295,7 @@ class StemcellMetabolomicsContextual(object):
         wrapper = ExcelWrapper(
             field_spec,
             metadata_path,
-            sheet_name='Metabolomics_Raw',
+            sheet_name=self.sheet_name,
             header_length=2,
             column_name_row_index=1,
             formatting_info=True)
