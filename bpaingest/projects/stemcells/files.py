@@ -179,3 +179,12 @@ def parse_md5_file(md5_file, regexps):
                 if path.endswith('_Report.pdf'):
                     continue
                 yield path, md5, None
+
+
+def proteomics_raw_extract_pool_id(v):
+    if v is None:
+        return
+    m = proteomics_pool_filename_re.match(v)
+    if m is None:
+        return
+    return m.groupdict()['pool_id']

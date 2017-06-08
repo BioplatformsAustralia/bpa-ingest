@@ -10,12 +10,15 @@ from ...util import make_logger, bpa_id_to_ckan_name, common_values
 from ...abstract import BaseMetadata
 from ...libs.excel_wrapper import ExcelWrapper
 from ...libs.md5lines import md5lines
-from .tracking import StemcellTrackMetadata
+from .tracking import StemcellsTrackMetadata
 from .contextual import (
-    StemcellAGRFTranscriptomeContextual,
-    StemcellAGRFsmRNAContextual,
-    StemcellRamaciottiSingleCell,
-    StemcellMetabolomicsContextual)
+    StemcellsAGRFTranscriptomeContextual,
+    StemcellsAGRFsmRNAContextual,
+    StemcellsRamaciottiSingleCell,
+    StemcellsMetabolomicsContextual,
+    StemcellsProteomicsRawContextual,
+    StemcellsProteomicsAnalysedContextual,
+    StemcellsMetabolomicsAnalysedContextual)
 from . import files
 from glob import glob
 
@@ -35,17 +38,8 @@ def fix_analytical_platform(s):
     raise Exception("invalid metabolomics analytical platform: `%s'" % (s))
 
 
-def extract_pool_id(v):
-    if v is None:
-        return
-    m = files.proteomics_pool_filename_re.match(v)
-    if m is None:
-        return
-    return m.groupdict()['pool_id']
-
-
 class StemcellsTranscriptomeMetadata(BaseMetadata):
-    contextual_classes = [StemcellAGRFTranscriptomeContextual]
+    contextual_classes = [StemcellsAGRFTranscriptomeContextual]
     metadata_urls = ['https://downloads-qcif.bioplatforms.com/bpa/stemcell/raw/transcriptome/']
     metadata_url_components = ('facility_code', 'ticket')
     metadata_patterns = [r'^.*\.md5', r'^.*_metadata\.xlsx']
@@ -57,7 +51,7 @@ class StemcellsTranscriptomeMetadata(BaseMetadata):
         self.path = Path(metadata_path)
         self.contextual_metadata = contextual_metadata
         self.metadata_info = metadata_info
-        self.track_meta = StemcellTrackMetadata(track_csv_path)
+        self.track_meta = StemcellsTrackMetadata(track_csv_path)
 
     @classmethod
     def parse_spreadsheet(self, fname, additional_context):
@@ -147,7 +141,7 @@ class StemcellsTranscriptomeMetadata(BaseMetadata):
 
 
 class StemcellsSmallRNAMetadata(BaseMetadata):
-    contextual_classes = [StemcellAGRFsmRNAContextual]
+    contextual_classes = [StemcellsAGRFsmRNAContextual]
     metadata_urls = ['https://downloads-qcif.bioplatforms.com/bpa/stemcell/raw/small_rna/']
     metadata_url_components = ('facility_code', 'ticket')
     metadata_patterns = [r'^.*\.md5', r'^.*_metadata\.xlsx']
@@ -159,7 +153,7 @@ class StemcellsSmallRNAMetadata(BaseMetadata):
         self.path = Path(metadata_path)
         self.contextual_metadata = contextual_metadata
         self.metadata_info = metadata_info
-        self.track_meta = StemcellTrackMetadata(track_csv_path)
+        self.track_meta = StemcellsTrackMetadata(track_csv_path)
 
     @classmethod
     def parse_spreadsheet(self, fname, additional_context):
@@ -249,7 +243,7 @@ class StemcellsSmallRNAMetadata(BaseMetadata):
 
 
 class StemcellsSingleCellRNASeqMetadata(BaseMetadata):
-    contextual_classes = [StemcellRamaciottiSingleCell]
+    contextual_classes = [StemcellsRamaciottiSingleCell]
     metadata_urls = ['https://downloads-qcif.bioplatforms.com/bpa/stemcell/raw/single_cell_rnaseq/']
     metadata_url_components = ('facility_code', 'ticket')
     metadata_patterns = [r'^.*\.md5', r'^.*_metadata\.xlsx']
@@ -262,7 +256,7 @@ class StemcellsSingleCellRNASeqMetadata(BaseMetadata):
         self.path = Path(metadata_path)
         self.contextual_metadata = contextual_metadata
         self.metadata_info = metadata_info
-        self.track_meta = StemcellTrackMetadata(track_csv_path)
+        self.track_meta = StemcellsTrackMetadata(track_csv_path)
 
     @classmethod
     def parse_spreadsheet(self, fname, additional_context):
@@ -361,8 +355,8 @@ class StemcellsSingleCellRNASeqMetadata(BaseMetadata):
         return resources
 
 
-class StemcellsMetabolomicMetadata(BaseMetadata):
-    contextual_classes = [StemcellMetabolomicsContextual]
+class StemcellsMetabolomicsMetadata(BaseMetadata):
+    contextual_classes = [StemcellsMetabolomicsContextual]
     metadata_urls = ['https://downloads-qcif.bioplatforms.com/bpa/stemcell/raw/metabolomic/']
     metadata_url_components = ('facility_code', 'ticket')
     metadata_patterns = [r'^.*\.md5', r'^.*_metadata.*\.xlsx']
@@ -375,7 +369,7 @@ class StemcellsMetabolomicMetadata(BaseMetadata):
         self.path = Path(metadata_path)
         self.contextual_metadata = contextual_metadata
         self.metadata_info = metadata_info
-        self.track_meta = StemcellTrackMetadata(track_csv_path)
+        self.track_meta = StemcellsTrackMetadata(track_csv_path)
 
     @classmethod
     def parse_spreadsheet(self, fname, additional_context):
@@ -408,7 +402,7 @@ class StemcellsMetabolomicMetadata(BaseMetadata):
         for fname in glob(self.path + '/*.xlsx'):
             logger.info("Processing Stemcells Metabolomics metadata file {0}".format(fname))
             xlsx_info = self.metadata_info[os.path.basename(fname)]
-            all_rows.update(StemcellsMetabolomicMetadata.parse_spreadsheet(fname, xlsx_info))
+            all_rows.update(StemcellsMetabolomicsMetadata.parse_spreadsheet(fname, xlsx_info))
         for row in sorted(all_rows):
             bpa_id = row.bpa_id
             if bpa_id is None:
@@ -469,8 +463,8 @@ class StemcellsMetabolomicMetadata(BaseMetadata):
         return resources
 
 
-class StemcellsProteomicBaseMetadata(BaseMetadata):
-    contextual_classes = []
+class StemcellsProteomicsBaseMetadata(BaseMetadata):
+    contextual_classes = [StemcellsProteomicsRawContextual]
     metadata_urls = ['https://downloads-qcif.bioplatforms.com/bpa/stemcell/raw/proteomic/']
     metadata_url_components = ('facility_code', 'ticket')
     metadata_patterns = [r'^.*\.md5', r'^.*_metadata\.xlsx']
@@ -485,7 +479,7 @@ class StemcellsProteomicBaseMetadata(BaseMetadata):
         for fname in glob(self.path + '/*.xlsx'):
             logger.info("Processing Stemcells Proteomics metadata file {0}".format(fname))
             xlsx_info = self.metadata_info[os.path.basename(fname)]
-            all_rows.update(StemcellsProteomicMetadata.parse_spreadsheet(fname, xlsx_info, mode))
+            all_rows.update(StemcellsProteomicsMetadata.parse_spreadsheet(fname, xlsx_info, mode))
         self.filename_metadata.update(
             dict((t.raw_filename, t) for t in all_rows))
         self.filename_metadata.update(
@@ -502,7 +496,7 @@ class StemcellsProteomicBaseMetadata(BaseMetadata):
             ]
         elif mode == '2d':
             field_spec = [
-                ("pool_id", 'raw file name', extract_pool_id),
+                ("pool_id", 'raw file name', files.proteomics_raw_extract_pool_id),
             ]
         field_spec += [
             ("facility", 'facility', None),
@@ -530,15 +524,15 @@ class StemcellsProteomicBaseMetadata(BaseMetadata):
         return rows
 
 
-class StemcellsProteomicMetadata(StemcellsProteomicBaseMetadata):
+class StemcellsProteomicsMetadata(StemcellsProteomicsBaseMetadata):
     ckan_data_type = 'stemcells-proteomic'
 
     def __init__(self, metadata_path, contextual_metadata=None, track_csv_path=None, metadata_info=None):
-        super(StemcellsProteomicMetadata, self).__init__()
+        super(StemcellsProteomicsMetadata, self).__init__()
         self.path = Path(metadata_path)
         self.contextual_metadata = contextual_metadata
         self.metadata_info = metadata_info
-        self.track_meta = StemcellTrackMetadata(track_csv_path)
+        self.track_meta = StemcellsTrackMetadata(track_csv_path)
 
     def get_packages(self):
         logger.info("Ingesting Stemcells Proteomics metadata from {0}".format(self.path))
@@ -576,8 +570,8 @@ class StemcellsProteomicMetadata(StemcellsProteomicBaseMetadata):
                 'dataset_url': track_meta.download,
                 'private': True,
             })
-            # for contextual_source in self.contextual_metadata:
-            #     obj.update(contextual_source.get(bpa_id, track_meta))
+            for contextual_source in self.contextual_metadata:
+                obj.update(contextual_source.get(bpa_id))
             tag_names = ['proteomic', 'raw']
             obj['tags'] = [{'name': t} for t in tag_names]
             packages.append(obj)
@@ -606,16 +600,16 @@ class StemcellsProteomicMetadata(StemcellsProteomicBaseMetadata):
         return resources
 
 
-class StemcellsProteomicPoolMetadata(StemcellsProteomicBaseMetadata):
+class StemcellsProteomicsPoolMetadata(StemcellsProteomicsBaseMetadata):
     ckan_data_type = 'stemcells-proteomic-pool'
     resource_linkage = ('pool_id',)
 
     def __init__(self, metadata_path, contextual_metadata=None, track_csv_path=None, metadata_info=None):
-        super(StemcellsProteomicPoolMetadata, self).__init__()
+        super(StemcellsProteomicsPoolMetadata, self).__init__()
         self.path = Path(metadata_path)
         self.contextual_metadata = contextual_metadata
         self.metadata_info = metadata_info
-        self.track_meta = StemcellTrackMetadata(track_csv_path)
+        self.track_meta = StemcellsTrackMetadata(track_csv_path)
 
     def get_packages(self):
         logger.info("Ingesting Stemcells Proteomics Pool metadata from {0}".format(self.path))
@@ -653,8 +647,8 @@ class StemcellsProteomicPoolMetadata(StemcellsProteomicBaseMetadata):
                 'dataset_url': track_meta.download,
                 'private': True,
             })
-            # for contextual_source in self.contextual_metadata:
-            #     obj.update(contextual_source.get(bpa_id, track_meta))
+            for contextual_source in self.contextual_metadata:
+                obj.update(contextual_source.get(pool_id))
             tag_names = ['proteomic', 'raw']
             obj['tags'] = [{'name': t} for t in tag_names]
             packages.append(obj)
@@ -683,13 +677,13 @@ class StemcellsProteomicPoolMetadata(StemcellsProteomicBaseMetadata):
         return resources
 
 
-class StemcellsAnalysedProteomicMetadata(BaseMetadata):
+class StemcellsProteomicsAnalysedMetadata(BaseMetadata):
     """
     we one zip file per ticket, a metadata spreadsheet, and an MD5 file
     we use the ticket as linkage between the package and the resource
     """
 
-    contextual_classes = []
+    contextual_classes = [StemcellsProteomicsAnalysedContextual]
     metadata_urls = ['https://downloads-qcif.bioplatforms.com/bpa/stemcell/analysed/proteomic/']
     metadata_url_components = ('facility_code', 'ticket')
     metadata_patterns = [r'^.*\.md5', r'^.*_metadata\.xlsx$']
@@ -702,7 +696,7 @@ class StemcellsAnalysedProteomicMetadata(BaseMetadata):
         self.path = Path(metadata_path)
         self.contextual_metadata = contextual_metadata
         self.metadata_info = metadata_info
-        self.track_meta = StemcellTrackMetadata(track_csv_path)
+        self.track_meta = StemcellsTrackMetadata(track_csv_path)
 
     @classmethod
     def parse_spreadsheet(self, fname, additional_context):
@@ -780,6 +774,8 @@ class StemcellsAnalysedProteomicMetadata(BaseMetadata):
                 'dataset_url': track_meta.download,
                 'private': True,
             })
+            for contextual_source in self.contextual_metadata:
+                obj.update(contextual_source.get(track_meta.folder_name))
             tag_names = ['proteomics', 'analysed']
             obj['tags'] = [{'name': t} for t in tag_names]
             packages.append(obj)
@@ -802,8 +798,8 @@ class StemcellsAnalysedProteomicMetadata(BaseMetadata):
         return resources
 
 
-class StemcellsAnalysedMetabolomicMetadata(BaseMetadata):
-    contextual_classes = []
+class StemcellsMetabolomicsAnalysedMetadata(BaseMetadata):
+    contextual_classes = [StemcellsMetabolomicsAnalysedContextual]
     metadata_urls = ['https://downloads-qcif.bioplatforms.com/bpa/stemcell/analysed/metabolomic/']
     metadata_url_components = ('facility_code', 'ticket')
     metadata_patterns = [r'^.*\.md5', r'^.*_metadata\.xlsx$']
@@ -816,7 +812,7 @@ class StemcellsAnalysedMetabolomicMetadata(BaseMetadata):
         self.path = Path(metadata_path)
         self.contextual_metadata = contextual_metadata
         self.metadata_info = metadata_info
-        self.track_meta = StemcellTrackMetadata(track_csv_path)
+        self.track_meta = StemcellsTrackMetadata(track_csv_path)
 
     @classmethod
     def parse_spreadsheet(self, fname, additional_context):
@@ -890,6 +886,8 @@ class StemcellsAnalysedMetabolomicMetadata(BaseMetadata):
                 'dataset_url': track_meta.download,
                 'private': True,
             })
+            for contextual_source in self.contextual_metadata:
+                obj.update(contextual_source.get(ticket))
             tag_names = ['metabolomics', 'analysed']
             obj['tags'] = [{'name': t} for t in tag_names]
             packages.append(obj)

@@ -31,11 +31,11 @@ from .stemcells.ingest import (
     StemcellsTranscriptomeMetadata,
     StemcellsSmallRNAMetadata,
     StemcellsSingleCellRNASeqMetadata,
-    StemcellsMetabolomicMetadata,
-    StemcellsProteomicMetadata,
-    StemcellsProteomicPoolMetadata,
-    StemcellsAnalysedProteomicMetadata,
-    StemcellsAnalysedMetabolomicMetadata)
+    StemcellsMetabolomicsMetadata,
+    StemcellsProteomicsMetadata,
+    StemcellsProteomicsPoolMetadata,
+    StemcellsProteomicsAnalysedMetadata,
+    StemcellsMetabolomicsAnalysedMetadata)
 from .wheat_cultivars.ingest import WheatCultivarsMetadata
 from .wheat_pathogens_genomes.ingest import WheatPathogensGenomesMetadata
 from .wheat_pathogens_transcript.ingest import WheatPathogensTranscriptMetadata
@@ -64,11 +64,11 @@ PROJECTS = {
     'stemcells-transcriptome': StemcellsTranscriptomeMetadata,
     'stemcells-smallrna': StemcellsSmallRNAMetadata,
     'stemcells-singlecellrnaseq': StemcellsSingleCellRNASeqMetadata,
-    'stemcells-metabolomic': StemcellsMetabolomicMetadata,
-    'stemcells-proteomic': StemcellsProteomicMetadata,
-    'stemcells-proteomic-pool': StemcellsProteomicPoolMetadata,
-    'stemcells-analysed-proteomic': StemcellsAnalysedProteomicMetadata,
-    'stemcells-analysed-metabolomic': StemcellsAnalysedMetabolomicMetadata,
+    'stemcells-metabolomics': StemcellsMetabolomicsMetadata,
+    'stemcells-proteomics': StemcellsProteomicsMetadata,
+    'stemcells-proteomics-pool': StemcellsProteomicsPoolMetadata,
+    'stemcells-proteomics-analysed': StemcellsProteomicsAnalysedMetadata,
+    'stemcells-metabolomics-analysed': StemcellsMetabolomicsAnalysedMetadata,
     'mm-genomics-amplicons-16s': MarineMicrobesGenomicsAmplicons16SMetadata,
     'mm-genomics-amplicons-a16s': MarineMicrobesGenomicsAmpliconsA16SMetadata,
     'mm-genomics-amplicons-18s': MarineMicrobesGenomicsAmplicons18SMetadata,

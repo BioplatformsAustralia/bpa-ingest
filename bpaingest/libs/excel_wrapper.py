@@ -143,7 +143,7 @@ class ExcelWrapper(object):
             else:
                 self.missing_headers.append(column_name)
                 if not is_optional:
-                    logger.warning('Column `{}` not found in `{}`'.format(col_descr, os.path.basename(self.file_name), [str(t) for t in header]))
+                    logger.warning("Column `{}' not found in `{}' `{}'".format(col_descr, os.path.basename(self.file_name), self.sheet.name))
                     missing_columns = True
                 cmap[attribute] = None
 
