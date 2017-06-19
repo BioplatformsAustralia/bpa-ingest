@@ -48,6 +48,7 @@ class StemcellsTranscriptomeMetadata(BaseMetadata):
     ckan_data_type = 'stemcells-transcriptomics'
 
     def __init__(self, metadata_path, contextual_metadata=None, metadata_info=None):
+        super(StemcellsTranscriptomeMetadata, self).__init__()
         self.path = Path(metadata_path)
         self.contextual_metadata = contextual_metadata
         self.metadata_info = metadata_info
@@ -74,7 +75,7 @@ class StemcellsTranscriptomeMetadata(BaseMetadata):
         rows = list(wrapper.get_all())
         return rows
 
-    def get_packages(self):
+    def _get_packages(self):
         logger.info("Ingesting Stemcells Transcriptomics metadata from {0}".format(self.path))
         packages = []
         # duplicate rows are an issue in this project. we filter them out by uniquifying
@@ -124,7 +125,7 @@ class StemcellsTranscriptomeMetadata(BaseMetadata):
             packages.append(obj)
         return packages
 
-    def get_resources(self):
+    def _get_resources(self):
         logger.info("Ingesting Sepsis md5 file information from {0}".format(self.path))
         resources = []
         for md5_file in glob(self.path + '/*.md5'):
@@ -150,6 +151,7 @@ class StemcellsSmallRNAMetadata(BaseMetadata):
     ckan_data_type = 'stemcells-smallrna'
 
     def __init__(self, metadata_path, contextual_metadata=None, metadata_info=None):
+        super(StemcellsSmallRNAMetadata, self).__init__()
         self.path = Path(metadata_path)
         self.contextual_metadata = contextual_metadata
         self.metadata_info = metadata_info
@@ -176,7 +178,7 @@ class StemcellsSmallRNAMetadata(BaseMetadata):
         rows = list(wrapper.get_all())
         return rows
 
-    def get_packages(self):
+    def _get_packages(self):
         logger.info("Ingesting Stemcells SmallRNA metadata from {0}".format(self.path))
         packages = []
         # duplicate rows are an issue in this project. we filter them out by uniquifying
@@ -226,7 +228,7 @@ class StemcellsSmallRNAMetadata(BaseMetadata):
             packages.append(obj)
         return packages
 
-    def get_resources(self):
+    def _get_resources(self):
         logger.info("Ingesting Sepsis md5 file information from {0}".format(self.path))
         resources = []
         for md5_file in glob(self.path + '/*.md5'):
@@ -253,6 +255,7 @@ class StemcellsSingleCellRNASeqMetadata(BaseMetadata):
     resource_linkage = ('bpa_id_range',)
 
     def __init__(self, metadata_path, contextual_metadata=None, metadata_info=None):
+        super(StemcellsSingleCellRNASeqMetadata, self).__init__()
         self.path = Path(metadata_path)
         self.contextual_metadata = contextual_metadata
         self.metadata_info = metadata_info
@@ -282,7 +285,7 @@ class StemcellsSingleCellRNASeqMetadata(BaseMetadata):
         rows = list(wrapper.get_all())
         return rows
 
-    def get_packages(self):
+    def _get_packages(self):
         logger.info("Ingesting Stemcells SingleCellRNASeq metadata from {0}".format(self.path))
         packages = []
         # duplicate rows are an issue in this project. we filter them out by uniquifying
@@ -339,7 +342,7 @@ class StemcellsSingleCellRNASeqMetadata(BaseMetadata):
             packages.append(obj)
         return packages
 
-    def get_resources(self):
+    def _get_resources(self):
         logger.info("Ingesting Sepsis md5 file information from {0}".format(self.path))
         resources = []
         for md5_file in glob(self.path + '/*.md5'):
@@ -366,6 +369,7 @@ class StemcellsMetabolomicsMetadata(BaseMetadata):
     ckan_data_type = 'stemcells-metabolomic'
 
     def __init__(self, metadata_path, contextual_metadata=None, metadata_info=None):
+        super(StemcellsMetabolomicsMetadata, self).__init__()
         self.path = Path(metadata_path)
         self.contextual_metadata = contextual_metadata
         self.metadata_info = metadata_info
@@ -393,7 +397,7 @@ class StemcellsMetabolomicsMetadata(BaseMetadata):
         rows = list(wrapper.get_all())
         return rows
 
-    def get_packages(self):
+    def _get_packages(self):
         logger.info("Ingesting Stemcells Metabolomics metadata from {0}".format(self.path))
         packages = []
         # duplicate rows are an issue in this project. we filter them out by uniquifying
@@ -446,7 +450,7 @@ class StemcellsMetabolomicsMetadata(BaseMetadata):
             packages.append(obj)
         return packages
 
-    def get_resources(self):
+    def _get_resources(self):
         logger.info("Ingesting Sepsis md5 file information from {0}".format(self.path))
         resources = []
         for md5_file in glob(self.path + '/*.md5'):
@@ -472,6 +476,7 @@ class StemcellsProteomicsBaseMetadata(BaseMetadata):
     auth = ('stemcell', 'stemcell')
 
     def __init__(self, *args, **kwargs):
+        super(StemcellsProteomicsBaseMetadata, self).__init__()
         self.filename_metadata = {}
 
     def read_all_rows(self, mode):
@@ -534,7 +539,7 @@ class StemcellsProteomicsMetadata(StemcellsProteomicsBaseMetadata):
         self.metadata_info = metadata_info
         self.track_meta = StemcellsTrackMetadata()
 
-    def get_packages(self):
+    def _get_packages(self):
         logger.info("Ingesting Stemcells Proteomics metadata from {0}".format(self.path))
         packages = []
         # duplicate rows are an issue in this project. we filter them out by uniquifying
@@ -577,7 +582,7 @@ class StemcellsProteomicsMetadata(StemcellsProteomicsBaseMetadata):
             packages.append(obj)
         return packages
 
-    def get_resources(self):
+    def _get_resources(self):
         logger.info("Ingesting Sepsis md5 file information from {0}".format(self.path))
         resources = []
         for md5_file in glob(self.path + '/*.md5'):
@@ -611,7 +616,7 @@ class StemcellsProteomicsPoolMetadata(StemcellsProteomicsBaseMetadata):
         self.metadata_info = metadata_info
         self.track_meta = StemcellsTrackMetadata()
 
-    def get_packages(self):
+    def _get_packages(self):
         logger.info("Ingesting Stemcells Proteomics Pool metadata from {0}".format(self.path))
         packages = []
         # duplicate rows are an issue in this project. we filter them out by uniquifying
@@ -654,7 +659,7 @@ class StemcellsProteomicsPoolMetadata(StemcellsProteomicsBaseMetadata):
             packages.append(obj)
         return packages
 
-    def get_resources(self):
+    def _get_resources(self):
         logger.info("Ingesting Sepsis md5 file information from {0}".format(self.path))
         resources = []
         for md5_file in glob(self.path + '/*.md5'):
@@ -693,6 +698,7 @@ class StemcellsProteomicsAnalysedMetadata(BaseMetadata):
     resource_linkage = ('ticket',)
 
     def __init__(self, metadata_path, contextual_metadata=None, metadata_info=None):
+        super(StemcellsProteomicsAnalysedMetadata, self).__init__()
         self.path = Path(metadata_path)
         self.contextual_metadata = contextual_metadata
         self.metadata_info = metadata_info
@@ -733,7 +739,7 @@ class StemcellsProteomicsAnalysedMetadata(BaseMetadata):
         rows = list(wrapper.get_all())
         return rows
 
-    def get_packages(self):
+    def _get_packages(self):
         logger.info("Ingesting Stemcells metadata from {0}".format(self.path))
         # we have one package per Zip of analysed data, and we take the common
         # meta-data for each bpa-id
@@ -781,7 +787,7 @@ class StemcellsProteomicsAnalysedMetadata(BaseMetadata):
             packages.append(obj)
         return packages
 
-    def get_resources(self):
+    def _get_resources(self):
         logger.info("Ingesting Sepsis md5 file information from {0}".format(self.path))
         resources = []
         for md5_file in glob(self.path + '/*.md5'):
@@ -809,6 +815,7 @@ class StemcellsMetabolomicsAnalysedMetadata(BaseMetadata):
     resource_linkage = ('folder_name',)
 
     def __init__(self, metadata_path, contextual_metadata=None, metadata_info=None):
+        super(StemcellsMetabolomicsAnalysedMetadata, self).__init__()
         self.path = Path(metadata_path)
         self.contextual_metadata = contextual_metadata
         self.metadata_info = metadata_info
@@ -846,7 +853,7 @@ class StemcellsMetabolomicsAnalysedMetadata(BaseMetadata):
         rows = list(wrapper.get_all())
         return rows
 
-    def get_packages(self):
+    def _get_packages(self):
         logger.info("Ingesting Stemcells metadata from {0}".format(self.path))
         # we have one package per Zip of analysed data, and we take the common
         # meta-data for each bpa-id
@@ -893,7 +900,7 @@ class StemcellsMetabolomicsAnalysedMetadata(BaseMetadata):
             packages.append(obj)
         return packages
 
-    def get_resources(self):
+    def _get_resources(self):
         logger.info("Ingesting Sepsis md5 file information from {0}".format(self.path))
         resources = []
         # one MD5 file per 'folder_name', so we just take every file and upload

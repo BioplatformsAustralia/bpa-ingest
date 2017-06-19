@@ -13,10 +13,11 @@ class BarcodeMetadata(BaseMetadata):
     organization = 'bpa-barcode'
 
     def __init__(self, metadata_path):
+        super(BarcodeMetadata, self).__init__()
         self.path = Path(metadata_path)
 
-    def get_packages(self):
+    def _get_packages(self):
         return []
 
-    def get_resources(self):
+    def _get_resources(self):
         return []

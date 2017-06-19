@@ -46,6 +46,7 @@ class BASEAmpliconsMetadata(BaseMetadata):
     index_linkage_md5s = ('BASE_18S_UNSW_A6BRJ_checksums.md5',)
 
     def __init__(self, metadata_path, contextual_metadata=None, metadata_info=None):
+        super(BASEAmpliconsMetadata, self).__init__()
         self.path = Path(metadata_path)
         self.contextual_metadata = contextual_metadata
         self.metadata_info = metadata_info
@@ -87,7 +88,7 @@ class BASEAmpliconsMetadata(BaseMetadata):
             logger.critical("Cannot parse: `%s'" % (fname))
             return []
 
-    def get_packages(self):
+    def _get_packages(self):
         xlsx_re = re.compile(r'^.*_(\w+)_metadata.*\.xlsx$')
 
         def get_flow_id(fname):
@@ -169,7 +170,7 @@ class BASEAmpliconsMetadata(BaseMetadata):
                 packages.append(obj)
         return packages
 
-    def get_resources(self):
+    def _get_resources(self):
         logger.info("Ingesting BASE Amplicon md5 file information from {0}".format(self.path))
         resources = []
 
@@ -214,6 +215,7 @@ class BASEAmpliconsControlMetadata(BaseMetadata):
     resource_linkage = ('amplicon', 'flow_id')
 
     def __init__(self, metadata_path, contextual_metadata=None, metadata_info=None):
+        super(BASEAmpliconsControlMetadata, self).__init__()
         self.path = Path(metadata_path)
         self.metadata_info = metadata_info
         self.track_meta = BASETrackMetadata()
@@ -234,7 +236,7 @@ class BASEAmpliconsControlMetadata(BaseMetadata):
 
                 yield filename, md5, md5_file, file_info
 
-    def get_packages(self):
+    def _get_packages(self):
         flow_id_ticket = dict(((t['amplicon'], t['flow_id']), self.metadata_info[os.path.basename(fname)]) for _, _, fname, t in self.md5_lines())
         packages = []
         for (amplicon, flow_id), info in sorted(flow_id_ticket.items()):
@@ -276,7 +278,7 @@ class BASEAmpliconsControlMetadata(BaseMetadata):
             packages.append(obj)
         return packages
 
-    def get_resources(self):
+    def _get_resources(self):
         resources = []
         for filename, md5, md5_file, file_info in self.md5_lines():
             resource = file_info.copy()
@@ -321,6 +323,7 @@ class BASEMetagenomicsMetadata(BaseMetadata):
         ('8271_2', 'H9EV8ADXX')]
 
     def __init__(self, metadata_path, contextual_metadata=None, metadata_info=None):
+        super(BASEMetagenomicsMetadata, self).__init__()
         self.path = Path(metadata_path)
         self.contextual_metadata = contextual_metadata
         self.metadata_info = metadata_info
@@ -401,7 +404,7 @@ class BASEMetagenomicsMetadata(BaseMetadata):
         obj['tags'] = [{'name': t} for t in tag_names]
         return obj
 
-    def get_packages(self):
+    def _get_packages(self):
         xlsx_re = re.compile(r'^.*_([A-Z0-9]{9})_metadata.*\.xlsx$')
 
         def get_flow_id(fname):
@@ -442,7 +445,7 @@ class BASEMetagenomicsMetadata(BaseMetadata):
                 packages.append(self.assemble_obj(bpa_id, sample_extraction_id, flow_id, row, track_meta))
         return packages
 
-    def get_resources(self):
+    def _get_resources(self):
         logger.info("Ingesting BASE Metagenomics md5 file information from {0}".format(self.path))
         resources = []
         for md5_file in glob(self.path + '/*.md5'):

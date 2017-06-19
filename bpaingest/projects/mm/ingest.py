@@ -67,6 +67,7 @@ class BaseMarineMicrobesAmpliconsMetadata(BaseMetadata):
     resource_linkage = ('bpa_id', 'mm_amplicon_linkage')
 
     def __init__(self, metadata_path, contextual_metadata=None, metadata_info=None):
+        super(BaseMarineMicrobesAmpliconsMetadata, self).__init__()
         self.path = Path(metadata_path)
         self.contextual_metadata = contextual_metadata
         self.metadata_info = metadata_info
@@ -104,7 +105,7 @@ class BaseMarineMicrobesAmpliconsMetadata(BaseMetadata):
             logger.error("Cannot parse: `%s'" % (fname))
             return []
 
-    def get_packages(self):
+    def _get_packages(self):
         xlsx_re = re.compile(r'^.*_(\w+)_metadata.*\.xlsx$')
 
         def get_flow_id(fname):
@@ -113,11 +114,11 @@ class BaseMarineMicrobesAmpliconsMetadata(BaseMetadata):
                 raise Exception("unable to find flowcell for filename: `%s'" % (fname))
             return m.groups()[0]
 
-        logger.info("Ingesting Marine Microbes Transcriptomics metadata from {0}".format(self.path))
+        logger.info("Ingesting Marine Microbes metadata from {0}".format(self.path))
         packages = []
         for fname in unique_spreadsheets(glob(self.path + '/*.xlsx')):
             base_fname = os.path.basename(fname)
-            logger.info("Processing Marine Microbes Transcriptomics metadata file {0}".format(os.path.basename(fname)))
+            logger.info("Processing Marine Microbes metadata file {0}".format(os.path.basename(fname)))
             flow_id = get_flow_id(fname)
             # the pilot data needs increased linkage, due to multiple trials on the same BPA ID
             index_linkage = base_fname in self.index_linkage_spreadsheets
@@ -172,7 +173,7 @@ class BaseMarineMicrobesAmpliconsMetadata(BaseMetadata):
                 packages.append(obj)
         return packages
 
-    def get_resources(self):
+    def _get_resources(self):
         logger.info("Ingesting MM md5 file information from {0}".format(self.path))
         resources = []
         for md5_file in glob(self.path + '/*.md5'):
@@ -233,6 +234,7 @@ class BaseMarineMicrobesAmpliconsControlMetadata(BaseMetadata):
     resource_linkage = ('amplicon', 'flow_id')
 
     def __init__(self, metadata_path, contextual_metadata=None, metadata_info=None):
+        super(BaseMarineMicrobesAmpliconsControlMetadata, self).__init__()
         self.path = Path(metadata_path)
         self.metadata_info = metadata_info
         self.track_meta = MarineMicrobesTrackMetadata()
@@ -249,7 +251,7 @@ class BaseMarineMicrobesAmpliconsControlMetadata(BaseMetadata):
 
                 yield filename, md5, md5_file, file_info
 
-    def get_packages(self):
+    def _get_packages(self):
         flow_id_ticket = dict((t['flow_id'], self.metadata_info[os.path.basename(fname)]) for _, _, fname, t in self.md5_lines())
         packages = []
         for flow_id, info in sorted(flow_id_ticket.items()):
@@ -285,7 +287,7 @@ class BaseMarineMicrobesAmpliconsControlMetadata(BaseMetadata):
             packages.append(obj)
         return packages
 
-    def get_resources(self):
+    def _get_resources(self):
         resources = []
         for filename, md5, md5_file, file_info in self.md5_lines():
             resource = file_info.copy()
@@ -334,6 +336,7 @@ class MarineMicrobesMetagenomicsMetadata(BaseMetadata):
     metadata_url_components = ('facility_code', 'ticket')
 
     def __init__(self, metadata_path, contextual_metadata=None, metadata_info=None):
+        super(MarineMicrobesMetagenomicsMetadata, self).__init__()
         self.path = Path(metadata_path)
         self.contextual_metadata = contextual_metadata
         self.metadata_info = metadata_info
@@ -360,11 +363,11 @@ class MarineMicrobesMetagenomicsMetadata(BaseMetadata):
         rows = list(wrapper.get_all())
         return rows
 
-    def get_packages(self):
-        logger.info("Ingesting Marine Microbes Transcriptomics metadata from {0}".format(self.path))
+    def _get_packages(self):
+        logger.info("Ingesting Marine Microbes metadata from {0}".format(self.path))
         packages = []
         for fname in unique_spreadsheets(glob(self.path + '/*.xlsx')):
-            logger.info("Processing Marine Microbes Transcriptomics metadata file {0}".format(os.path.basename(fname)))
+            logger.info("Processing Marine Microbes metadata file {0}".format(os.path.basename(fname)))
             for row in MarineMicrobesMetagenomicsMetadata.parse_spreadsheet(fname, self.metadata_info):
                 bpa_id = row.bpa_id
                 if bpa_id is None:
@@ -409,7 +412,7 @@ class MarineMicrobesMetagenomicsMetadata(BaseMetadata):
                 packages.append(obj)
         return packages
 
-    def get_resources(self):
+    def _get_resources(self):
         logger.info("Ingesting MM md5 file information from {0}".format(self.path))
         resources = []
         for md5_file in glob(self.path + '/*.md5'):
@@ -441,6 +444,7 @@ class MarineMicrobesMetatranscriptomeMetadata(BaseMetadata):
     metadata_url_components = ('facility_code', 'ticket')
 
     def __init__(self, metadata_path, contextual_metadata=None, metadata_info=None):
+        super(MarineMicrobesMetatranscriptomeMetadata, self).__init__()
         self.path = Path(metadata_path)
         self.contextual_metadata = contextual_metadata
         self.metadata_info = metadata_info
@@ -467,7 +471,7 @@ class MarineMicrobesMetatranscriptomeMetadata(BaseMetadata):
         rows = list(wrapper.get_all())
         return rows
 
-    def get_packages(self):
+    def _get_packages(self):
         logger.info("Ingesting Marine Microbes Transcriptomics metadata from {0}".format(self.path))
         packages = []
         # duplicate rows are an issue in this project. we filter them out by uniquifying
@@ -521,7 +525,7 @@ class MarineMicrobesMetatranscriptomeMetadata(BaseMetadata):
             packages.append(obj)
         return packages
 
-    def get_resources(self):
+    def _get_resources(self):
         logger.info("Ingesting MM md5 file information from {0}".format(self.path))
         resources = []
         for md5_file in glob(self.path + '/*.md5'):

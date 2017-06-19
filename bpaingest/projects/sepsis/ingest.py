@@ -58,6 +58,7 @@ class SepsisGenomicsMiseqMetadata(BaseSepsisMetadata):
     technology = 'miseq'
 
     def __init__(self, metadata_path, contextual_metadata=None, metadata_info=None):
+        super(SepsisGenomicsMiseqMetadata, self).__init__()
         self.path = Path(metadata_path)
         self.contextual_metadata = contextual_metadata
         self.track_meta = SepsisGenomicsTrackMetadata('GenomicsMiSeq')
@@ -81,7 +82,7 @@ class SepsisGenomicsMiseqMetadata(BaseSepsisMetadata):
             additional_context=self.metadata_info[os.path.basename(fname)])
         return wrapper.get_all()
 
-    def get_packages(self):
+    def _get_packages(self):
         logger.info("Ingesting Sepsis Genomics Miseq metadata from {0}".format(self.path))
         packages = []
         for fname in glob(self.path + '/*.xlsx'):
@@ -115,7 +116,7 @@ class SepsisGenomicsMiseqMetadata(BaseSepsisMetadata):
                 packages.append(obj)
         return packages
 
-    def get_resources(self):
+    def _get_resources(self):
         logger.info("Ingesting Sepsis md5 file information from {0}".format(self.path))
         resources = []
         for md5_file in glob(self.path + '/*.md5'):
@@ -144,6 +145,7 @@ class SepsisGenomicsPacbioMetadata(BaseSepsisMetadata):
     technology = 'pacbio'
 
     def __init__(self, metadata_path, contextual_metadata=None, metadata_info=None):
+        super(SepsisGenomicsPacbioMetadata, self).__init__()
         self.path = Path(metadata_path)
         self.contextual_metadata = contextual_metadata
         self.track_meta = SepsisGenomicsTrackMetadata('GenomicsPacBio')
@@ -174,7 +176,7 @@ class SepsisGenomicsPacbioMetadata(BaseSepsisMetadata):
             additional_context=self.metadata_info[os.path.basename(fname)])
         return wrapper.get_all()
 
-    def get_packages(self):
+    def _get_packages(self):
         logger.info("Ingesting Sepsis Genomics Pacbio metadata from {0}".format(self.path))
         packages = []
         for fname in glob(self.path + '/*.xlsx'):
@@ -211,7 +213,7 @@ class SepsisGenomicsPacbioMetadata(BaseSepsisMetadata):
                 packages.append(obj)
         return packages
 
-    def get_resources(self):
+    def _get_resources(self):
         logger.info("Ingesting Sepsis md5 file information from {0}".format(self.path))
         resources = []
         for md5_file in glob(self.path + '/*.md5'):
@@ -239,6 +241,7 @@ class SepsisTranscriptomicsHiseqMetadata(BaseSepsisMetadata):
     technology = 'hiseq'
 
     def __init__(self, metadata_path, contextual_metadata=None, metadata_info=None):
+        super(SepsisTranscriptomicsHiseqMetadata, self).__init__()
         self.path = Path(metadata_path)
         self.contextual_metadata = contextual_metadata
         self.track_meta = SepsisTrackMetadata('TranscriptomicsHiSeq')
@@ -269,7 +272,7 @@ class SepsisTranscriptomicsHiseqMetadata(BaseSepsisMetadata):
             additional_context=self.metadata_info[os.path.basename(fname)])
         return wrapper.get_all()
 
-    def get_packages(self):
+    def _get_packages(self):
         logger.info("Ingesting Sepsis Transcriptomics Hiseq metadata from {0}".format(self.path))
         packages = []
         for fname in glob(self.path + '/*.xlsx'):
@@ -306,7 +309,7 @@ class SepsisTranscriptomicsHiseqMetadata(BaseSepsisMetadata):
                 packages.append(obj)
         return packages
 
-    def get_resources(self):
+    def _get_resources(self):
         logger.info("Ingesting Sepsis md5 file information from {0}".format(self.path))
         resources = []
         for md5_file in glob(self.path + '/*.md5'):
@@ -335,6 +338,7 @@ class SepsisMetabolomicsLCMSMetadata(BaseSepsisMetadata):
     technology = 'lcms'
 
     def __init__(self, metadata_path, contextual_metadata=None, metadata_info=None):
+        super(SepsisMetabolomicsLCMSMetadata, self).__init__()
         self.path = Path(metadata_path)
         self.contextual_metadata = contextual_metadata
         self.track_meta = SepsisTrackMetadata('MetabolomicsLCMS')
@@ -366,7 +370,7 @@ class SepsisMetabolomicsLCMSMetadata(BaseSepsisMetadata):
             additional_context=self.metadata_info[os.path.basename(fname)])
         return wrapper.get_all()
 
-    def get_packages(self):
+    def _get_packages(self):
         packages = []
         for fname in glob(self.path + '/*.xlsx'):
             logger.info("Processing Sepsis Metabolomics LCMS metadata file {0}".format(fname))
@@ -403,7 +407,7 @@ class SepsisMetabolomicsLCMSMetadata(BaseSepsisMetadata):
                 packages.append(obj)
         return packages
 
-    def get_resources(self):
+    def _get_resources(self):
         logger.info("Ingesting Sepsis md5 file information from {0}".format(self.path))
         resources = []
         for md5_file in glob(self.path + '/*.md5'):
@@ -431,6 +435,7 @@ class SepsisProteomicsMS1QuantificationMetadata(BaseSepsisMetadata):
     technology = 'ms1quantification'
 
     def __init__(self, metadata_path, contextual_metadata=None, metadata_info=None):
+        super(SepsisProteomicsMS1QuantificationMetadata, self).__init__()
         self.path = Path(metadata_path)
         self.contextual_metadata = contextual_metadata
         self.track_meta = SepsisTrackMetadata('ProteomicsMS1Quantification')
@@ -465,7 +470,7 @@ class SepsisProteomicsMS1QuantificationMetadata(BaseSepsisMetadata):
             additional_context=self.metadata_info[os.path.basename(fname)])
         return wrapper.get_all()
 
-    def get_packages(self):
+    def _get_packages(self):
         packages = []
         for fname in glob(self.path + '/*.xlsx'):
             logger.info("Processing Sepsis Proteomics MS1Quantification metadata file {0}".format(fname))
@@ -503,7 +508,7 @@ class SepsisProteomicsMS1QuantificationMetadata(BaseSepsisMetadata):
                 packages.append(obj)
         return packages
 
-    def get_resources(self):
+    def _get_resources(self):
         logger.info("Ingesting Sepsis md5 file information from {0}".format(self.path))
         resources = []
         for md5_file in glob(self.path + '/*.md5'):
@@ -531,6 +536,7 @@ class SepsisProteomicsSwathMSBaseSepsisMetadata(BaseSepsisMetadata):
     technology = 'swathms'
 
     def __init__(self, metadata_path, contextual_metadata=None, metadata_info=None):
+        super(SepsisProteomicsSwathMSBaseSepsisMetadata, self).__init__()
         self.path = Path(metadata_path)
         self.metadata_info = metadata_info
         self.contextual_metadata = contextual_metadata
@@ -709,6 +715,7 @@ class SepsisProteomicsSwathMSCombinedSampleMetadata(BaseSepsisMetadata):
     technology = 'swathms-combined-sample'
 
     def __init__(self, metadata_path, contextual_metadata=None, metadata_info=None):
+        super(SepsisProteomicsSwathMSCombinedSampleMetadata, self).__init__()
         self.path = Path(metadata_path)
         self.contextual_metadata = contextual_metadata
         self.metadata_info = metadata_info
@@ -741,7 +748,7 @@ class SepsisProteomicsSwathMSCombinedSampleMetadata(BaseSepsisMetadata):
         rows = list(wrapper.get_all())
         return rows
 
-    def get_packages(self):
+    def _get_packages(self):
         logger.info("Ingesting Sepsis metadata from {0}".format(self.path))
         # we have one package per Zip of analysed data, and we take the common
         # meta-data for each bpa-id
@@ -786,7 +793,7 @@ class SepsisProteomicsSwathMSCombinedSampleMetadata(BaseSepsisMetadata):
             packages.append(obj)
         return packages
 
-    def get_resources(self):
+    def _get_resources(self):
         logger.info("Ingesting Sepsis md5 file information from {0}".format(self.path))
         resources = []
         # one MD5 file per 'folder_name', so we just take every file and upload
@@ -807,10 +814,10 @@ class SepsisProteomicsSwathMSCombinedSampleMetadata(BaseSepsisMetadata):
 class SepsisProteomicsSwathMSMetadata(SepsisProteomicsSwathMSBaseSepsisMetadata):
     ckan_data_type = 'arp-proteomics-swathms'
 
-    def get_packages(self):
+    def _get_packages(self):
         return self.get_swath_packages('1d')
 
-    def get_resources(self):
+    def _get_resources(self):
         return self.get_swath_resources('1d')
 
 
@@ -818,10 +825,10 @@ class SepsisProteomicsSwathMSPoolMetadata(SepsisProteomicsSwathMSBaseSepsisMetad
     ckan_data_type = 'arp-proteomics-swathms-pool'
     resource_linkage = ('pool_bpa_ids',)
 
-    def get_packages(self):
+    def _get_packages(self):
         return self.get_swath_packages('2d')
 
-    def get_resources(self):
+    def _get_resources(self):
         return self.get_swath_resources('2d')
 
 
@@ -838,6 +845,7 @@ class SepsisProteomicsAnalysedMetadata(BaseSepsisMetadata):
     technology = 'analysed'
 
     def __init__(self, metadata_path, contextual_metadata=None, metadata_info=None):
+        super(SepsisProteomicsAnalysedMetadata, self).__init__()
         self.path = Path(metadata_path)
         self.contextual_metadata = contextual_metadata
         self.metadata_info = metadata_info
@@ -881,7 +889,7 @@ class SepsisProteomicsAnalysedMetadata(BaseSepsisMetadata):
         rows = list(wrapper.get_all())
         return rows
 
-    def get_packages(self):
+    def _get_packages(self):
         logger.info("Ingesting Sepsis metadata from {0}".format(self.path))
         # we have one package per Zip of analysed data, and we take the common
         # meta-data for each bpa-id
@@ -928,7 +936,7 @@ class SepsisProteomicsAnalysedMetadata(BaseSepsisMetadata):
             packages.append(obj)
         return packages
 
-    def get_resources(self):
+    def _get_resources(self):
         logger.info("Ingesting Sepsis md5 file information from {0}".format(self.path))
         resources = []
         # one MD5 file per 'folder_name', so we just take every file and upload
@@ -959,6 +967,7 @@ class SepsisTranscriptomicsAnalysedMetadata(BaseSepsisMetadata):
     technology = 'analysed'
 
     def __init__(self, metadata_path, contextual_metadata=None, metadata_info=None):
+        super(SepsisTranscriptomicsAnalysedMetadata, self).__init__()
         self.path = Path(metadata_path)
         self.contextual_metadata = contextual_metadata
         self.metadata_info = metadata_info
@@ -1000,7 +1009,7 @@ class SepsisTranscriptomicsAnalysedMetadata(BaseSepsisMetadata):
         rows = list(wrapper.get_all())
         return rows
 
-    def get_packages(self):
+    def _get_packages(self):
         logger.info("Ingesting Sepsis metadata from {0}".format(self.path))
         # we have one package per Zip of analysed data, and we take the common
         # meta-data for each bpa-id
@@ -1047,7 +1056,7 @@ class SepsisTranscriptomicsAnalysedMetadata(BaseSepsisMetadata):
             packages.append(obj)
         return packages
 
-    def get_resources(self):
+    def _get_resources(self):
         logger.info("Ingesting Sepsis md5 file information from {0}".format(self.path))
         resources = []
         # one MD5 file per 'folder_name', so we just take every file and upload
@@ -1078,6 +1087,7 @@ class SepsisMetabolomicsAnalysedMetadata(BaseSepsisMetadata):
     technology = 'analysed'
 
     def __init__(self, metadata_path, contextual_metadata=None, metadata_info=None):
+        super(SepsisMetabolomicsAnalysedMetadata, self).__init__()
         self.path = Path(metadata_path)
         self.contextual_metadata = contextual_metadata
         self.metadata_info = metadata_info
@@ -1116,7 +1126,7 @@ class SepsisMetabolomicsAnalysedMetadata(BaseSepsisMetadata):
         rows = list(wrapper.get_all())
         return rows
 
-    def get_packages(self):
+    def _get_packages(self):
         logger.info("Ingesting Sepsis metadata from {0}".format(self.path))
         # we have one package per Zip of analysed data, and we take the common
         # meta-data for each bpa-id
@@ -1163,7 +1173,7 @@ class SepsisMetabolomicsAnalysedMetadata(BaseSepsisMetadata):
             packages.append(obj)
         return packages
 
-    def get_resources(self):
+    def _get_resources(self):
         logger.info("Ingesting Sepsis md5 file information from {0}".format(self.path))
         resources = []
         # one MD5 file per 'folder_name', so we just take every file and upload
@@ -1194,6 +1204,7 @@ class SepsisGenomicsAnalysedMetadata(BaseSepsisMetadata):
     technology = 'analysed'
 
     def __init__(self, metadata_path, contextual_metadata=None, metadata_info=None):
+        super(SepsisGenomicsAnalysedMetadata, self).__init__()
         self.path = Path(metadata_path)
         self.contextual_metadata = contextual_metadata
         self.metadata_info = metadata_info
@@ -1229,7 +1240,7 @@ class SepsisGenomicsAnalysedMetadata(BaseSepsisMetadata):
         rows = list(wrapper.get_all())
         return rows
 
-    def get_packages(self):
+    def _get_packages(self):
         logger.info("Ingesting Sepsis metadata from {0}".format(self.path))
         # we have one package per Zip of analysed data, and we take the common
         # meta-data for each bpa-id
@@ -1276,7 +1287,7 @@ class SepsisGenomicsAnalysedMetadata(BaseSepsisMetadata):
             packages.append(obj)
         return packages
 
-    def get_resources(self):
+    def _get_resources(self):
         logger.info("Ingesting Sepsis md5 file information from {0}".format(self.path))
         resources = []
         # one MD5 file per 'folder_name', so we just take every file and upload

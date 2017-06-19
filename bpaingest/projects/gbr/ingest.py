@@ -25,6 +25,7 @@ class GbrAmpliconsMetadata(BaseMetadata):
     extract_index_re = re.compile('^.*_([GATC]{8}_[GATC]{8})$')
 
     def __init__(self, metadata_path, metadata_info=None):
+        super(GbrAmpliconsMetadata, self).__init__()
         self.path = Path(metadata_path)
         self.metadata_info = metadata_info
 
@@ -63,7 +64,7 @@ class GbrAmpliconsMetadata(BaseMetadata):
 
         return wrapper.get_all()
 
-    def get_packages(self):
+    def _get_packages(self):
         packages = []
         for fname in glob(self.path + '/*.xlsx'):
             logger.info("Processing Stemcells Transcriptomics metadata file {0}".format(fname))
@@ -108,7 +109,7 @@ class GbrAmpliconsMetadata(BaseMetadata):
                 packages.append(obj)
         return packages
 
-    def get_resources(self):
+    def _get_resources(self):
         logger.info("Ingesting md5 file information from {0}".format(self.path))
         resources = []
         for md5_file in glob(self.path + '/*.md5'):

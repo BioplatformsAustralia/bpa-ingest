@@ -22,6 +22,7 @@ class WheatPathogensGenomesMetadata(BaseMetadata):
     ckan_data_type = 'wheat-pathogens'
 
     def __init__(self, metadata_path, metadata_info=None):
+        super(WheatPathogensGenomesMetadata, self).__init__()
         self.path = Path(metadata_path)
         self.metadata_info = metadata_info
 
@@ -68,7 +69,7 @@ class WheatPathogensGenomesMetadata(BaseMetadata):
         wrapper = ExcelWrapper(field_spec, file_name, sheet_name="Metadata", header_length=1, column_name_row_index=0, additional_context=additional_context)
         return wrapper.get_all()
 
-    def get_packages(self):
+    def _get_packages(self):
         packages = []
         for fname in glob(self.path + '/Wheat_pathogens_genomic_metadata.xlsx'):
             logger.info("Processing Stemcells Transcriptomics metadata file {0}".format(fname))
@@ -113,7 +114,7 @@ class WheatPathogensGenomesMetadata(BaseMetadata):
                 packages.append(obj)
             return packages
 
-    def get_resources(self):
+    def _get_resources(self):
         def get_file_name(s):
             return os.path.split(s)[1].strip()
 

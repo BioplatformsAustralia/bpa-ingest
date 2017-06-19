@@ -34,6 +34,7 @@ class OMG10XRawIlluminaMetadata(BaseMetadata):
     resource_linkage = ('bpa_id', 'flow_id')
 
     def __init__(self, metadata_path, contextual_metadata=None, metadata_info=None):
+        super(OMG10XRawIlluminaMetadata, self).__init__()
         self.path = Path(metadata_path)
         self.contextual_metadata = contextual_metadata
         self.metadata_info = metadata_info
@@ -64,7 +65,7 @@ class OMG10XRawIlluminaMetadata(BaseMetadata):
             logger.error("Cannot parse: `%s'" % (fname))
             return []
 
-    def get_packages(self):
+    def _get_packages(self):
         xlsx_re = re.compile(r'^.*_(\w+)_metadata.*\.xlsx$')
 
         def get_flow_id(fname):
@@ -123,7 +124,7 @@ class OMG10XRawIlluminaMetadata(BaseMetadata):
                 packages.append(obj)
         return packages
 
-    def get_resources(self):
+    def _get_resources(self):
         logger.info("Ingesting OMG md5 file information from {0}".format(self.path))
         resources = []
         for md5_file in glob(self.path + '/*.md5'):
@@ -161,6 +162,7 @@ class OMG10XProcessedIlluminaMetadata(BaseMetadata):
     resource_linkage = ('bpa_id', 'flow_id')
 
     def __init__(self, metadata_path, contextual_metadata=None, metadata_info=None):
+        super(OMG10XProcessedIlluminaMetadata, self).__init__()
         self.path = Path(metadata_path)
         self.contextual_metadata = contextual_metadata
         self.metadata_info = metadata_info
@@ -191,7 +193,7 @@ class OMG10XProcessedIlluminaMetadata(BaseMetadata):
             logger.error("Cannot parse: `%s'" % (fname))
             return []
 
-    def get_packages(self):
+    def _get_packages(self):
         xlsx_re = re.compile(r'^.*_(\w+)_metadata.*\.xlsx$')
 
         def get_flow_id(fname):
@@ -250,7 +252,7 @@ class OMG10XProcessedIlluminaMetadata(BaseMetadata):
                 packages.append(obj)
         return packages
 
-    def get_resources(self):
+    def _get_resources(self):
         logger.info("Ingesting OMG md5 file information from {0}".format(self.path))
         resources = []
         for md5_file in glob(self.path + '/*.md5'):
@@ -288,6 +290,7 @@ class OMGExonCaptureMetadata(BaseMetadata):
     resource_linkage = ('bpa_id', 'flowcell_id', 'index_sequence')
 
     def __init__(self, metadata_path, contextual_metadata=None, metadata_info=None):
+        super(OMGExonCaptureMetadata, self).__init__()
         self.path = Path(metadata_path)
         self.contextual_metadata = contextual_metadata
         self.metadata_info = metadata_info
@@ -312,7 +315,7 @@ class OMGExonCaptureMetadata(BaseMetadata):
                     row[k] = stripped
         return rows
 
-    def get_packages(self):
+    def _get_packages(self):
         logger.info("Ingesting OMG metadata from {0}".format(self.path))
         packages = []
         for fname in glob(self.path + '/*_metadata.csv'):
@@ -358,7 +361,7 @@ class OMGExonCaptureMetadata(BaseMetadata):
                 packages.append(obj)
         return packages
 
-    def get_resources(self):
+    def _get_resources(self):
         logger.info("Ingesting OMG md5 file information from {0}".format(self.path))
         resources = []
         for md5_file in glob(self.path + '/*.md5'):

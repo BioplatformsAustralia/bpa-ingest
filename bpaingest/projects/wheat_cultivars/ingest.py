@@ -22,6 +22,7 @@ class WheatCultivarsMetadata(BaseMetadata):
     ckan_data_type = 'wheat-cultivars'
 
     def __init__(self, metadata_path, metadata_info=None):
+        super(WheatCultivarsMetadata, self).__init__()
         self.metadata_info = metadata_info
         self.path = Path(metadata_path)
         self.runs = parse_run_data(self.path)
@@ -55,7 +56,7 @@ class WheatCultivarsMetadata(BaseMetadata):
         wrapper = ExcelWrapper(field_spec, file_name, sheet_name="Characteristics", header_length=1)
         return wrapper.get_all()
 
-    def get_packages(self):
+    def _get_packages(self):
         packages = []
         for fname in glob(self.path + '/*.xlsx'):
             logger.info("Processing Stemcells Transcriptomics metadata file {0}".format(fname))
@@ -85,7 +86,7 @@ class WheatCultivarsMetadata(BaseMetadata):
                 packages.append(obj)
         return packages
 
-    def get_resources(self):
+    def _get_resources(self):
         logger.info("Ingesting md5 file information from {0}".format(self.path))
         resources = []
         for md5_file in glob(self.path + '/*.md5'):
