@@ -10,7 +10,7 @@ class SepsisTrackMetadata(object):
         self.track_meta = self.read_track_csv(track_csv_path)
 
     def read_track_csv(self, fname):
-        header, rows = csv_to_named_tuple('SepsisGenomicsMiseqTrack', fname)
+        header, rows = csv_to_named_tuple('SepsisTrack', fname)
         return dict((ingest_utils.extract_bpa_id(t.five_digit_bpa_id), t) for t in rows)
 
     def get(self, bpa_id):
