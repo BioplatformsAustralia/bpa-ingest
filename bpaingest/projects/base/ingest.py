@@ -45,11 +45,11 @@ class BASEAmpliconsMetadata(BaseMetadata):
     index_linkage_spreadsheets = ('BASE_18S_UNSW_A6BRJ_metadata.xlsx',)
     index_linkage_md5s = ('BASE_18S_UNSW_A6BRJ_checksums.md5',)
 
-    def __init__(self, metadata_path, contextual_metadata=None, track_csv_path=None, metadata_info=None):
+    def __init__(self, metadata_path, contextual_metadata=None, metadata_info=None):
         self.path = Path(metadata_path)
         self.contextual_metadata = contextual_metadata
         self.metadata_info = metadata_info
-        self.track_meta = BASETrackMetadata(track_csv_path)
+        self.track_meta = BASETrackMetadata()
 
     @classmethod
     def parse_spreadsheet(self, fname, metadata_info):
@@ -213,10 +213,10 @@ class BASEAmpliconsControlMetadata(BaseMetadata):
     metadata_url_components = ('amplicon', 'facility_code', 'ticket')
     resource_linkage = ('amplicon', 'flow_id')
 
-    def __init__(self, metadata_path, contextual_metadata=None, track_csv_path=None, metadata_info=None):
+    def __init__(self, metadata_path, contextual_metadata=None, metadata_info=None):
         self.path = Path(metadata_path)
         self.metadata_info = metadata_info
-        self.track_meta = BASETrackMetadata(track_csv_path)
+        self.track_meta = BASETrackMetadata()
 
     def md5_lines(self):
         amplicon_files = set()
@@ -320,11 +320,11 @@ class BASEMetagenomicsMetadata(BaseMetadata):
         ('8271_2', 'H80EYADXX'),
         ('8271_2', 'H9EV8ADXX')]
 
-    def __init__(self, metadata_path, contextual_metadata=None, track_csv_path=None, metadata_info=None):
+    def __init__(self, metadata_path, contextual_metadata=None, metadata_info=None):
         self.path = Path(metadata_path)
         self.contextual_metadata = contextual_metadata
         self.metadata_info = metadata_info
-        self.track_meta = BASETrackMetadata(track_csv_path)
+        self.track_meta = BASETrackMetadata()
 
     @classmethod
     def parse_spreadsheet(self, fname, metadata_info):

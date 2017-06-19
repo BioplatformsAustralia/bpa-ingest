@@ -66,11 +66,11 @@ class BaseMarineMicrobesAmpliconsMetadata(BaseMetadata):
     metadata_patterns = [r'^.*\.md5', r'^.*_metadata.*.*\.xlsx']
     resource_linkage = ('bpa_id', 'mm_amplicon_linkage')
 
-    def __init__(self, metadata_path, contextual_metadata=None, track_csv_path=None, metadata_info=None):
+    def __init__(self, metadata_path, contextual_metadata=None, metadata_info=None):
         self.path = Path(metadata_path)
         self.contextual_metadata = contextual_metadata
         self.metadata_info = metadata_info
-        self.track_meta = MarineMicrobesTrackMetadata(track_csv_path)
+        self.track_meta = MarineMicrobesTrackMetadata()
 
     @classmethod
     def parse_spreadsheet(self, fname, metadata_info):
@@ -232,10 +232,10 @@ class BaseMarineMicrobesAmpliconsControlMetadata(BaseMetadata):
     metadata_patterns = [r'^.*\.md5']
     resource_linkage = ('amplicon', 'flow_id')
 
-    def __init__(self, metadata_path, contextual_metadata=None, track_csv_path=None, metadata_info=None):
+    def __init__(self, metadata_path, contextual_metadata=None, metadata_info=None):
         self.path = Path(metadata_path)
         self.metadata_info = metadata_info
-        self.track_meta = MarineMicrobesTrackMetadata(track_csv_path)
+        self.track_meta = MarineMicrobesTrackMetadata()
 
     def md5_lines(self):
         logger.info("Ingesting MM md5 file information from {0}".format(self.path))
@@ -333,11 +333,11 @@ class MarineMicrobesMetagenomicsMetadata(BaseMetadata):
     ]
     metadata_url_components = ('facility_code', 'ticket')
 
-    def __init__(self, metadata_path, contextual_metadata=None, track_csv_path=None, metadata_info=None):
+    def __init__(self, metadata_path, contextual_metadata=None, metadata_info=None):
         self.path = Path(metadata_path)
         self.contextual_metadata = contextual_metadata
         self.metadata_info = metadata_info
-        self.track_meta = MarineMicrobesTrackMetadata(track_csv_path)
+        self.track_meta = MarineMicrobesTrackMetadata()
 
     @classmethod
     def parse_spreadsheet(self, fname, metadata_info):
@@ -440,11 +440,11 @@ class MarineMicrobesMetatranscriptomeMetadata(BaseMetadata):
     ]
     metadata_url_components = ('facility_code', 'ticket')
 
-    def __init__(self, metadata_path, contextual_metadata=None, track_csv_path=None, metadata_info=None):
+    def __init__(self, metadata_path, contextual_metadata=None, metadata_info=None):
         self.path = Path(metadata_path)
         self.contextual_metadata = contextual_metadata
         self.metadata_info = metadata_info
-        self.track_meta = MarineMicrobesTrackMetadata(track_csv_path)
+        self.track_meta = MarineMicrobesTrackMetadata()
 
     @classmethod
     def parse_spreadsheet(self, fname, metadata_info):

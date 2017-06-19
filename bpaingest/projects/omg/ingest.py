@@ -33,11 +33,11 @@ class OMG10XRawIlluminaMetadata(BaseMetadata):
     metadata_url_components = ('ticket',)
     resource_linkage = ('bpa_id', 'flow_id')
 
-    def __init__(self, metadata_path, contextual_metadata=None, track_csv_path=None, metadata_info=None):
+    def __init__(self, metadata_path, contextual_metadata=None, metadata_info=None):
         self.path = Path(metadata_path)
         self.contextual_metadata = contextual_metadata
         self.metadata_info = metadata_info
-        self.track_meta = OMGTrackMetadata(track_csv_path)
+        self.track_meta = OMGTrackMetadata()
         # each row in the spreadsheet maps through to a single tar file
         self.file_package = {}
 
@@ -160,11 +160,11 @@ class OMG10XProcessedIlluminaMetadata(BaseMetadata):
     metadata_url_components = ('ticket',)
     resource_linkage = ('bpa_id', 'flow_id')
 
-    def __init__(self, metadata_path, contextual_metadata=None, track_csv_path=None, metadata_info=None):
+    def __init__(self, metadata_path, contextual_metadata=None, metadata_info=None):
         self.path = Path(metadata_path)
         self.contextual_metadata = contextual_metadata
         self.metadata_info = metadata_info
-        self.track_meta = OMGTrackMetadata(track_csv_path)
+        self.track_meta = OMGTrackMetadata()
         # each row in the spreadsheet maps through to a single tar file
         self.file_package = {}
 
@@ -287,11 +287,11 @@ class OMGExonCaptureMetadata(BaseMetadata):
     metadata_url_components = ('ticket',)
     resource_linkage = ('bpa_id', 'flowcell_id', 'index_sequence')
 
-    def __init__(self, metadata_path, contextual_metadata=None, track_csv_path=None, metadata_info=None):
+    def __init__(self, metadata_path, contextual_metadata=None, metadata_info=None):
         self.path = Path(metadata_path)
         self.contextual_metadata = contextual_metadata
         self.metadata_info = metadata_info
-        self.track_meta = OMGTrackMetadata(track_csv_path)
+        self.track_meta = OMGTrackMetadata()
 
     @classmethod
     def flow_cell_index_linkage(cls, flow_id, index):

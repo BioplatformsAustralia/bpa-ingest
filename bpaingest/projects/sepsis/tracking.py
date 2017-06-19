@@ -1,13 +1,15 @@
 from ...util import make_logger, csv_to_named_tuple
 from ...libs import ingest_utils
+from ...tracking import GoogleDriveTrackMetadata, get_track_csv
 
 
 logger = make_logger(__name__)
 
 
 class SepsisTrackMetadata(object):
-    def __init__(self, track_csv_path):
-        self.track_meta = self.read_track_csv(track_csv_path)
+    def __init__(self, name):
+        fname = get_track_csv('bpam', '*' + name + '*.csv')
+        self.track_meta = self.read_track_csv(fname)
 
     def read_track_csv(self, fname):
         header, rows = csv_to_named_tuple('SepsisTrack', fname)
@@ -41,16 +43,5 @@ class SepsisGenomicsTrackMetadata(SepsisTrackMetadata):
         return obj
 
 
-# in the case of analysed data, this is the metadata coming over from the
-# BPA Projects Data Transfer Summary on Google Drive, at least for now
-# key is the CCG Jira Ticket column
-class SepsisAnalysedTrackMetadata(object):
-    def __init__(self, track_csv_path):
-        self.track_meta = self.read_track_csv(track_csv_path)
-
-    def read_track_csv(self, fname):
-        header, rows = csv_to_named_tuple('SepsisTrack', fname)
-        return dict((t.ccg_jira_ticket.strip().lower(), t) for t in rows)
-
-    def get(self, ticket):
-        return self.track_meta[ticket.strip().lower()]
+class SepsisAnalysedTrackMetadata(GoogleDriveTrackMetadata):
+    name = 'Antibiotic Resistant Pathogen'

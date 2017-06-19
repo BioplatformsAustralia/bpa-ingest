@@ -57,10 +57,10 @@ class SepsisGenomicsMiseqMetadata(BaseSepsisMetadata):
     omics = 'genomics'
     technology = 'miseq'
 
-    def __init__(self, metadata_path, contextual_metadata=None, track_csv_path=None, metadata_info=None):
+    def __init__(self, metadata_path, contextual_metadata=None, metadata_info=None):
         self.path = Path(metadata_path)
         self.contextual_metadata = contextual_metadata
-        self.track_meta = SepsisGenomicsTrackMetadata(track_csv_path)
+        self.track_meta = SepsisGenomicsTrackMetadata('GenomicsMiSeq')
         self.metadata_info = metadata_info
 
     def parse_spreadsheet(self, fname):
@@ -143,10 +143,10 @@ class SepsisGenomicsPacbioMetadata(BaseSepsisMetadata):
     omics = 'genomics'
     technology = 'pacbio'
 
-    def __init__(self, metadata_path, contextual_metadata=None, track_csv_path=None, metadata_info=None):
+    def __init__(self, metadata_path, contextual_metadata=None, metadata_info=None):
         self.path = Path(metadata_path)
         self.contextual_metadata = contextual_metadata
-        self.track_meta = SepsisGenomicsTrackMetadata(track_csv_path)
+        self.track_meta = SepsisGenomicsTrackMetadata('GenomicsPacBio')
         self.metadata_info = metadata_info
 
     def read_track_csv(self, fname):
@@ -238,10 +238,10 @@ class SepsisTranscriptomicsHiseqMetadata(BaseSepsisMetadata):
     omics = 'transcriptomics'
     technology = 'hiseq'
 
-    def __init__(self, metadata_path, contextual_metadata=None, track_csv_path=None, metadata_info=None):
+    def __init__(self, metadata_path, contextual_metadata=None, metadata_info=None):
         self.path = Path(metadata_path)
         self.contextual_metadata = contextual_metadata
-        self.track_meta = SepsisTrackMetadata(track_csv_path)
+        self.track_meta = SepsisTrackMetadata('TranscriptomicsHiSeq')
         self.metadata_info = metadata_info
 
     def read_track_csv(self, fname):
@@ -334,10 +334,10 @@ class SepsisMetabolomicsLCMSMetadata(BaseSepsisMetadata):
     omics = 'metabolomics'
     technology = 'lcms'
 
-    def __init__(self, metadata_path, contextual_metadata=None, track_csv_path=None, metadata_info=None):
+    def __init__(self, metadata_path, contextual_metadata=None, metadata_info=None):
         self.path = Path(metadata_path)
         self.contextual_metadata = contextual_metadata
-        self.track_meta = SepsisTrackMetadata(track_csv_path)
+        self.track_meta = SepsisTrackMetadata('MetabolomicsLCMS')
         self.metadata_info = metadata_info
 
     def read_track_csv(self, fname):
@@ -430,10 +430,10 @@ class SepsisProteomicsMS1QuantificationMetadata(BaseSepsisMetadata):
     omics = 'proteomics'
     technology = 'ms1quantification'
 
-    def __init__(self, metadata_path, contextual_metadata=None, track_csv_path=None, metadata_info=None):
+    def __init__(self, metadata_path, contextual_metadata=None, metadata_info=None):
         self.path = Path(metadata_path)
         self.contextual_metadata = contextual_metadata
-        self.track_meta = SepsisTrackMetadata(track_csv_path)
+        self.track_meta = SepsisTrackMetadata('ProteomicsMS1Quantification')
         self.metadata_info = metadata_info
 
     def read_track_csv(self, fname):
@@ -530,11 +530,11 @@ class SepsisProteomicsSwathMSBaseSepsisMetadata(BaseSepsisMetadata):
     omics = 'proteomics'
     technology = 'swathms'
 
-    def __init__(self, metadata_path, contextual_metadata=None, track_csv_path=None, metadata_info=None):
+    def __init__(self, metadata_path, contextual_metadata=None, metadata_info=None):
         self.path = Path(metadata_path)
         self.metadata_info = metadata_info
         self.contextual_metadata = contextual_metadata
-        self.track_meta = SepsisTrackMetadata(track_csv_path)
+        self.track_meta = SepsisTrackMetadata('ProteomicsSwathMS')
         self.package_data, self.file_data = self.get_spreadsheet_data()
 
     def read_track_csv(self, fname):
@@ -708,11 +708,11 @@ class SepsisProteomicsSwathMSCombinedSampleMetadata(BaseSepsisMetadata):
     omics = 'proteomics'
     technology = 'swathms-combined-sample'
 
-    def __init__(self, metadata_path, contextual_metadata=None, track_csv_path=None, metadata_info=None):
+    def __init__(self, metadata_path, contextual_metadata=None, metadata_info=None):
         self.path = Path(metadata_path)
         self.contextual_metadata = contextual_metadata
         self.metadata_info = metadata_info
-        self.track_meta = SepsisAnalysedTrackMetadata(track_csv_path)
+        self.track_meta = SepsisAnalysedTrackMetadata()
 
     @classmethod
     def parse_spreadsheet(self, fname, additional_context):
@@ -837,11 +837,11 @@ class SepsisProteomicsAnalysedMetadata(BaseSepsisMetadata):
     omics = 'proteomics'
     technology = 'analysed'
 
-    def __init__(self, metadata_path, contextual_metadata=None, track_csv_path=None, metadata_info=None):
+    def __init__(self, metadata_path, contextual_metadata=None, metadata_info=None):
         self.path = Path(metadata_path)
         self.contextual_metadata = contextual_metadata
         self.metadata_info = metadata_info
-        self.track_meta = SepsisAnalysedTrackMetadata(track_csv_path)
+        self.track_meta = SepsisAnalysedTrackMetadata()
 
     @classmethod
     def parse_spreadsheet(self, fname, additional_context):
@@ -958,11 +958,11 @@ class SepsisTranscriptomicsAnalysedMetadata(BaseSepsisMetadata):
     omics = 'transcriptomics'
     technology = 'analysed'
 
-    def __init__(self, metadata_path, contextual_metadata=None, track_csv_path=None, metadata_info=None):
+    def __init__(self, metadata_path, contextual_metadata=None, metadata_info=None):
         self.path = Path(metadata_path)
         self.contextual_metadata = contextual_metadata
         self.metadata_info = metadata_info
-        self.track_meta = SepsisAnalysedTrackMetadata(track_csv_path)
+        self.track_meta = SepsisAnalysedTrackMetadata()
 
     @classmethod
     def parse_spreadsheet(self, fname, additional_context):
@@ -1077,11 +1077,11 @@ class SepsisMetabolomicsAnalysedMetadata(BaseSepsisMetadata):
     omics = 'metabolomics'
     technology = 'analysed'
 
-    def __init__(self, metadata_path, contextual_metadata=None, track_csv_path=None, metadata_info=None):
+    def __init__(self, metadata_path, contextual_metadata=None, metadata_info=None):
         self.path = Path(metadata_path)
         self.contextual_metadata = contextual_metadata
         self.metadata_info = metadata_info
-        self.track_meta = SepsisAnalysedTrackMetadata(track_csv_path)
+        self.track_meta = SepsisAnalysedTrackMetadata()
 
     @classmethod
     def parse_spreadsheet(self, fname, additional_context):
@@ -1193,11 +1193,11 @@ class SepsisGenomicsAnalysedMetadata(BaseSepsisMetadata):
     omics = 'genomics'
     technology = 'analysed'
 
-    def __init__(self, metadata_path, contextual_metadata=None, track_csv_path=None, metadata_info=None):
+    def __init__(self, metadata_path, contextual_metadata=None, metadata_info=None):
         self.path = Path(metadata_path)
         self.contextual_metadata = contextual_metadata
         self.metadata_info = metadata_info
-        self.track_meta = SepsisAnalysedTrackMetadata(track_csv_path)
+        self.track_meta = SepsisAnalysedTrackMetadata()
 
     @classmethod
     def parse_spreadsheet(self, fname, additional_context):

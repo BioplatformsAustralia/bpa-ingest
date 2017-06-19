@@ -1,0 +1,6 @@
+Sequencing facility,Date of transfer,Description,Data type,Folder name,Date of transfer to archive,File Count,CCG JIRA Ticket,Download
+AGRF,29/03/2017,10X Genomics- 102.100.100/40065 ,Raw Illumina Run Folder,170314_D00626_0269_AHFMKJBCXY,28/04/2017,1,BPAOPS-119,https://data.bioplatforms.com/dataset/bpa-omg-10x-raw-illumina-102_100_100_40065-hfmkjbcxy
+AGRF,29/03/2017,10X Genomics- 102.100.100/40065 ,Raw Illumina Run Folder,170314_D00626_0270_BHCGFNBCXY,28/04/2017,1,BPAOPS-120,https://data.bioplatforms.com/dataset/bpa-omg-10x-raw-illumina-102_100_100_40065-hcgfnbcxy
+AGRF,29/03/2017,10X Genomics- 102.100.100/40065 ,Illumina FASTQ,HCGFNBCXY,28/04/2017,1,BPAOPS-121,https://data.bioplatforms.com/dataset/bpa-omg-10x-processed-illumina-102_100_100_40065-hcgfnbcxy
+AGRF,29/03/2017,10X Genomics- 102.100.100/40065 ,Illumina FASTQ,HFMKJBCXY,28/04/2017,1,BPAOPS-122,https://data.bioplatforms.com/dataset/bpa-omg-10x-processed-illumina-102_100_100_40065-hfmkjbcxy
+BRF,05/05/2017,HiSeq 2500 100bp PE - exon capture pool 102.100.100/40067 (samples 102.100.100/40069-40124),Illumina FASTQ,SN877_0482_AMacDonald_JCSMR_Marsupial_gDNA_exon_capture,,113,BPAOPS-135,

@@ -12,7 +12,7 @@ class BarcodeMetadata(BaseMetadata):
     metadata_urls = ['https://downloads-qcif.bioplatforms.com/bpa/barcode/tracking/']
     organization = 'bpa-barcode'
 
-    def __init__(self, metadata_path, track_csv_path=None):
+    def __init__(self, metadata_path):
         self.path = Path(metadata_path)
 
     def get_packages(self):

@@ -22,7 +22,7 @@ register_command, command_fns = make_registration_decorator()
 
 
 class DownloadMetadata(object):
-    def __init__(self, project_class, track_csv_path, path=None):
+    def __init__(self, project_class, path=None):
         self.cleanup = True
         fetch = True
         if path is not None:
@@ -38,9 +38,6 @@ class DownloadMetadata(object):
         if hasattr(project_class, 'auth'):
             auth_user, auth_env_name = project_class.auth
             self.auth = (auth_user, get_password(auth_env_name))
-        meta_kwargs = {
-            'track_csv_path': track_csv_path
-        }
         info_json = os.path.join(self.path, 'bpa-ingest.json')
         contextual_classes = getattr(project_class, 'contextual_classes', [])
         self.contextual = [(os.path.join(self.path, c.name), c) for c in contextual_classes]
@@ -64,6 +61,7 @@ class DownloadMetadata(object):
                         getattr(contextual_cls, 'metadata_url_components', []))
             with open(info_json, 'w') as fd:
                 json.dump(metadata_info, fd)
+        meta_kwargs = {}
         with open(info_json, 'r') as fd:
             meta_kwargs['metadata_info'] = json.load(fd)
         if self.contextual:
@@ -90,19 +88,17 @@ def setup_sync(subparser):
     subparser.add_argument('--uploads', type=int, default=4, help='number of parallel uploads')
     subparser.add_argument('--metadata-only', '-m', action='store_const', const=True, default=False, help='set metadata only, no data uploads')
     subparser.add_argument('--skip-resource-checks', action='store_const', const=True, default=False, help='skip resource checks')
-    subparser.add_argument('--track-metadata', type=str, default=None, help='metadata tracking spreadsheet (CSV)')
 
 
 def setup_hash(subparser):
     subparser.add_argument('project_name', choices=sorted(PROJECTS.keys()), help='path to metadata')
     subparser.add_argument('mirror_path', help='path to locally mounted mirror')
-    subparser.add_argument('--track-metadata', type=str, default=None, help='metadata tracking spreadsheet (CSV)')
 
 
 @register_command
 def sync(ckan, args):
     """sync a project"""
-    with DownloadMetadata(PROJECTS[args.project_name], args.track_metadata, path=args.download_path) as dlmeta:
+    with DownloadMetadata(PROJECTS[args.project_name], path=args.download_path) as dlmeta:
         sync_metadata(ckan, dlmeta.meta, dlmeta.auth, args.uploads, not args.metadata_only, not args.skip_resource_checks)
         print_accounts()
 
@@ -196,7 +192,7 @@ def makeschema(ckan, args):
                 "display_property": "dcat:Dataset/dcat:distribution/dcat:Distribution/dcat:format"
             },
         ]}
-    with DownloadMetadata(PROJECTS[args.project_name], args.track_metadata, path=args.download_path) as dlmeta:
+    with DownloadMetadata(PROJECTS[args.project_name], path=args.download_path) as dlmeta:
         meta = dlmeta.meta
         schema = schema_template.copy()
         print(type(meta).__name__)
@@ -240,7 +236,7 @@ def genhash(ckan, args):
     verify MD5 sums for a local (filesystem mounted) mirror of the BPA
     data, and generate expected E-Tag and SHA256 values.
     """
-    with DownloadMetadata(PROJECTS[args.project_name], args.track_metadata, path=args.download_path) as dlmeta:
+    with DownloadMetadata(PROJECTS[args.project_name], path=args.download_path) as dlmeta:
         genhash_fn(ckan, dlmeta.meta, args.mirror_path)
         print_accounts()
 

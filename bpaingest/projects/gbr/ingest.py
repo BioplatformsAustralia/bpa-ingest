@@ -24,7 +24,7 @@ class GbrAmpliconsMetadata(BaseMetadata):
     resource_linkage = ('bpa_id', 'amplicon', 'index')
     extract_index_re = re.compile('^.*_([GATC]{8}_[GATC]{8})$')
 
-    def __init__(self, metadata_path, track_csv_path=None, metadata_info=None):
+    def __init__(self, metadata_path, metadata_info=None):
         self.path = Path(metadata_path)
         self.metadata_info = metadata_info
 

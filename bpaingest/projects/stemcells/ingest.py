@@ -47,11 +47,11 @@ class StemcellsTranscriptomeMetadata(BaseMetadata):
     auth = ('stemcell', 'stemcell')
     ckan_data_type = 'stemcells-transcriptomics'
 
-    def __init__(self, metadata_path, contextual_metadata=None, track_csv_path=None, metadata_info=None):
+    def __init__(self, metadata_path, contextual_metadata=None, metadata_info=None):
         self.path = Path(metadata_path)
         self.contextual_metadata = contextual_metadata
         self.metadata_info = metadata_info
-        self.track_meta = StemcellsTrackMetadata(track_csv_path)
+        self.track_meta = StemcellsTrackMetadata()
 
     @classmethod
     def parse_spreadsheet(self, fname, additional_context):
@@ -149,11 +149,11 @@ class StemcellsSmallRNAMetadata(BaseMetadata):
     auth = ('stemcell', 'stemcell')
     ckan_data_type = 'stemcells-smallrna'
 
-    def __init__(self, metadata_path, contextual_metadata=None, track_csv_path=None, metadata_info=None):
+    def __init__(self, metadata_path, contextual_metadata=None, metadata_info=None):
         self.path = Path(metadata_path)
         self.contextual_metadata = contextual_metadata
         self.metadata_info = metadata_info
-        self.track_meta = StemcellsTrackMetadata(track_csv_path)
+        self.track_meta = StemcellsTrackMetadata()
 
     @classmethod
     def parse_spreadsheet(self, fname, additional_context):
@@ -252,11 +252,11 @@ class StemcellsSingleCellRNASeqMetadata(BaseMetadata):
     ckan_data_type = 'stemcells-singlecellrnaseq'
     resource_linkage = ('bpa_id_range',)
 
-    def __init__(self, metadata_path, contextual_metadata=None, track_csv_path=None, metadata_info=None):
+    def __init__(self, metadata_path, contextual_metadata=None, metadata_info=None):
         self.path = Path(metadata_path)
         self.contextual_metadata = contextual_metadata
         self.metadata_info = metadata_info
-        self.track_meta = StemcellsTrackMetadata(track_csv_path)
+        self.track_meta = StemcellsTrackMetadata()
 
     @classmethod
     def parse_spreadsheet(self, fname, additional_context):
@@ -365,11 +365,11 @@ class StemcellsMetabolomicsMetadata(BaseMetadata):
     resource_linkage = ('bpa_id', 'analytical_platform')
     ckan_data_type = 'stemcells-metabolomic'
 
-    def __init__(self, metadata_path, contextual_metadata=None, track_csv_path=None, metadata_info=None):
+    def __init__(self, metadata_path, contextual_metadata=None, metadata_info=None):
         self.path = Path(metadata_path)
         self.contextual_metadata = contextual_metadata
         self.metadata_info = metadata_info
-        self.track_meta = StemcellsTrackMetadata(track_csv_path)
+        self.track_meta = StemcellsTrackMetadata()
 
     @classmethod
     def parse_spreadsheet(self, fname, additional_context):
@@ -527,12 +527,12 @@ class StemcellsProteomicsBaseMetadata(BaseMetadata):
 class StemcellsProteomicsMetadata(StemcellsProteomicsBaseMetadata):
     ckan_data_type = 'stemcells-proteomic'
 
-    def __init__(self, metadata_path, contextual_metadata=None, track_csv_path=None, metadata_info=None):
+    def __init__(self, metadata_path, contextual_metadata=None, metadata_info=None):
         super(StemcellsProteomicsMetadata, self).__init__()
         self.path = Path(metadata_path)
         self.contextual_metadata = contextual_metadata
         self.metadata_info = metadata_info
-        self.track_meta = StemcellsTrackMetadata(track_csv_path)
+        self.track_meta = StemcellsTrackMetadata()
 
     def get_packages(self):
         logger.info("Ingesting Stemcells Proteomics metadata from {0}".format(self.path))
@@ -604,12 +604,12 @@ class StemcellsProteomicsPoolMetadata(StemcellsProteomicsBaseMetadata):
     ckan_data_type = 'stemcells-proteomic-pool'
     resource_linkage = ('pool_id',)
 
-    def __init__(self, metadata_path, contextual_metadata=None, track_csv_path=None, metadata_info=None):
+    def __init__(self, metadata_path, contextual_metadata=None, metadata_info=None):
         super(StemcellsProteomicsPoolMetadata, self).__init__()
         self.path = Path(metadata_path)
         self.contextual_metadata = contextual_metadata
         self.metadata_info = metadata_info
-        self.track_meta = StemcellsTrackMetadata(track_csv_path)
+        self.track_meta = StemcellsTrackMetadata()
 
     def get_packages(self):
         logger.info("Ingesting Stemcells Proteomics Pool metadata from {0}".format(self.path))
@@ -692,11 +692,11 @@ class StemcellsProteomicsAnalysedMetadata(BaseMetadata):
     ckan_data_type = 'stemcells-proteomics-analysed'
     resource_linkage = ('ticket',)
 
-    def __init__(self, metadata_path, contextual_metadata=None, track_csv_path=None, metadata_info=None):
+    def __init__(self, metadata_path, contextual_metadata=None, metadata_info=None):
         self.path = Path(metadata_path)
         self.contextual_metadata = contextual_metadata
         self.metadata_info = metadata_info
-        self.track_meta = StemcellsTrackMetadata(track_csv_path)
+        self.track_meta = StemcellsTrackMetadata()
 
     @classmethod
     def parse_spreadsheet(self, fname, additional_context):
@@ -808,11 +808,11 @@ class StemcellsMetabolomicsAnalysedMetadata(BaseMetadata):
     ckan_data_type = 'stemcells-metabolomics-analysed'
     resource_linkage = ('folder_name',)
 
-    def __init__(self, metadata_path, contextual_metadata=None, track_csv_path=None, metadata_info=None):
+    def __init__(self, metadata_path, contextual_metadata=None, metadata_info=None):
         self.path = Path(metadata_path)
         self.contextual_metadata = contextual_metadata
         self.metadata_info = metadata_info
-        self.track_meta = StemcellsTrackMetadata(track_csv_path)
+        self.track_meta = StemcellsTrackMetadata()
 
     @classmethod
     def parse_spreadsheet(self, fname, additional_context):

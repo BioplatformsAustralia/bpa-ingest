@@ -1,0 +1,31 @@
+5 digit BPA ID,Data type,Taxon_OR_organism,Strain_OR_isolate,Serovar,Growth Media,Replicate,Omics,Analytical platform,Facility,Work order #,Contextual Data Submission Date,Sample submission date,Data generated,Archive Ingestion Date,Archive ID,id,curation_url,in_data_portal,last_modified
+102.100.100.25986,Pilot,Staphylococcus aureus,BPH2900,,Pooled sera,1,Transcriptomics,HiSeq,AGRF,,2017-04-11,2017-04-11,0,,,56,,0,2017-04-13 12:53:29
+102.100.100.25985,Pilot,Staphylococcus aureus,BPH2760,,Pooled sera,1,Transcriptomics,HiSeq,AGRF,,2017-04-11,2017-04-11,0,,,55,,0,2017-04-13 12:53:29
+102.100.100.25984,Pilot,Klebsiella pneumoniae,AJ218,,Pooled sera,1,Transcriptomics,HiSeq,AGRF,,2017-04-11,2017-04-11,0,,,54,,0,2017-04-13 12:53:29
+102.100.100.25983,Pilot,Klebsiella pneumoniae,KPC2,,Pooled sera,1,Transcriptomics,HiSeq,AGRF,,2017-04-11,2017-04-11,0,,,53,,0,2017-04-13 12:53:29
+102.100.100.25982,Pilot,Klebsiella pneumoniae,AJ218,,RPMI,1,Transcriptomics,HiSeq,AGRF,,2017-04-11,2017-04-11,0,,,52,,0,2017-04-13 12:53:29
+102.100.100.25981,Pilot,Klebsiella pneumoniae,KPC2,,RPMI,1,Transcriptomics,HiSeq,AGRF,,2017-04-11,2017-04-11,0,,,51,,0,2017-04-13 12:53:29
+102.100.100.25884,Pilot,Staphylococcus aureus,BPH2760,ST1,RPMI,6,Transcriptomics,HiSeq,AGRF,8,2016-09-06,2016-09-01,1,2016-10-17,BPAOPS-34,50,,1,2017-05-24 08:56:06
+102.100.100.25883,Pilot,Staphylococcus aureus,BPH2760,ST1,RPMI,5,Transcriptomics,HiSeq,AGRF,8,2016-09-06,2016-09-01,1,2016-10-17,BPAOPS-34,49,,1,2017-05-24 08:56:06
+102.100.100.25882,Pilot,Staphylococcus aureus,BPH2760,ST1,RPMI,4,Transcriptomics,HiSeq,AGRF,8,2016-09-06,2016-09-01,1,2016-10-17,BPAOPS-34,48,,1,2017-05-24 08:56:06
+102.100.100.25881,Pilot,Staphylococcus aureus,BPH2760,ST1,RPMI,3,Transcriptomics,HiSeq,AGRF,8,2016-09-06,2016-09-01,1,2016-10-17,BPAOPS-34,47,,1,2017-05-24 08:56:06
+102.100.100.25880,Pilot,Staphylococcus aureus,BPH2760,ST1,RPMI,2,Transcriptomics,HiSeq,AGRF,8,2016-09-06,2016-09-01,1,2016-10-17,BPAOPS-34,46,,1,2017-05-24 08:56:06
+102.100.100.25879,Pilot,Staphylococcus aureus,BPH2760,ST1,RPMI,1,Transcriptomics,HiSeq,AGRF,8,2016-09-06,2016-09-01,1,2016-10-17,BPAOPS-34,45,,1,2017-05-24 08:56:06
+102.100.100.25878,Pilot,Staphylococcus aureus,BPH2900,ST22,RPMI,6,Transcriptomics,HiSeq,AGRF,8,2016-09-06,2016-09-01,1,2016-10-17,BPAOPS-34,44,,1,2017-05-24 08:56:06
+102.100.100.25877,Pilot,Staphylococcus aureus,BPH2900,ST22,RPMI,5,Transcriptomics,HiSeq,AGRF,8,2016-09-06,2016-09-01,1,2016-10-17,BPAOPS-34,43,,1,2017-05-24 08:56:06
+102.100.100.25876,Pilot,Staphylococcus aureus,BPH2900,ST22,RPMI,4,Transcriptomics,HiSeq,AGRF,8,2016-09-06,2016-09-01,1,2016-10-17,BPAOPS-34,42,,1,2017-05-24 08:56:06
+102.100.100.25875,Pilot,Staphylococcus aureus,BPH2900,ST22,RPMI,3,Transcriptomics,HiSeq,AGRF,8,2016-09-06,2016-09-01,1,2016-10-17,BPAOPS-34,41,,1,2017-05-24 08:56:06
+102.100.100.25874,Pilot,Staphylococcus aureus,BPH2900,ST22,RPMI,2,Transcriptomics,HiSeq,AGRF,8,2016-09-06,2016-09-01,1,2016-10-17,BPAOPS-34,40,,1,2017-05-24 08:56:06
+102.100.100.25873,Pilot,Staphylococcus aureus,BPH2900,ST22,RPMI,1,Transcriptomics,HiSeq,AGRF,8,2016-09-06,2016-09-01,1,2016-10-17,BPAOPS-34,39,,1,2017-05-24 08:56:06
+102.100.100.25872,Pilot,Klebsiella pneumoniae,KPC2,Unknown,RPMI,6,Transcriptomics,HiSeq,AGRF,8,2016-09-06,2016-09-01,1,2016-10-17,BPAOPS-34,38,,1,2017-05-24 08:56:06
+102.100.100.25871,Pilot,Klebsiella pneumoniae,KPC2,Unknown,RPMI,5,Transcriptomics,HiSeq,AGRF,8,2016-09-06,2016-09-01,1,2016-10-17,BPAOPS-34,37,,1,2017-05-24 08:56:06
+102.100.100.25870,Pilot,Klebsiella pneumoniae,KPC2,Unknown,RPMI,4,Transcriptomics,HiSeq,AGRF,8,2016-09-06,2016-09-01,1,2016-10-17,BPAOPS-34,36,,1,2017-05-24 08:56:06
+102.100.100.25869,Pilot,Klebsiella pneumoniae,KPC2,Unknown,RPMI,3,Transcriptomics,HiSeq,AGRF,8,2016-09-06,2016-09-01,1,2016-10-17,BPAOPS-34,35,,1,2017-05-24 08:56:06
+102.100.100.25868,Pilot,Klebsiella pneumoniae,KPC2,Unknown,RPMI,2,Transcriptomics,HiSeq,AGRF,8,2016-09-06,2016-09-01,1,2016-10-17,BPAOPS-34,34,,1,2017-05-24 08:56:06
+102.100.100.25867,Pilot,Klebsiella pneumoniae,KPC2,Unknown,RPMI,1,Transcriptomics,HiSeq,AGRF,8,2016-09-06,2016-09-01,1,2016-10-17,BPAOPS-34,33,,1,2017-05-24 08:56:06
+102.100.100.25866,Pilot,Klebsiella pneumoniae,AJ218,K54,RPMI,6,Transcriptomics,HiSeq,AGRF,8,2016-09-06,2016-09-01,1,2016-10-17,BPAOPS-34,32,,1,2017-05-24 08:56:06
+102.100.100.25865,Pilot,Klebsiella pneumoniae,AJ218,K54,RPMI,5,Transcriptomics,HiSeq,AGRF,8,2016-09-06,2016-09-01,1,2016-10-17,BPAOPS-34,31,,1,2017-05-24 08:56:06
+102.100.100.25864,Pilot,Klebsiella pneumoniae,AJ218,K54,RPMI,4,Transcriptomics,HiSeq,AGRF,8,2016-09-06,2016-09-01,1,2016-10-17,BPAOPS-34,30,,1,2017-05-24 08:56:06
+102.100.100.25863,Pilot,Klebsiella pneumoniae,AJ218,K54,RPMI,3,Transcriptomics,HiSeq,AGRF,8,2016-09-06,2016-09-01,1,2016-10-17,BPAOPS-34,29,,1,2017-05-24 08:56:06
+102.100.100.25862,Pilot,Klebsiella pneumoniae,AJ218,K54,RPMI,2,Transcriptomics,HiSeq,AGRF,8,2016-09-06,2016-09-01,1,2016-10-17,BPAOPS-34,28,,1,2017-05-24 08:56:06
+102.100.100.25861,Pilot,Klebsiella pneumoniae,AJ218,K54,RPMI,1,Transcriptomics,HiSeq,AGRF,8,2016-09-06,2016-09-01,1,2016-10-17,BPAOPS-34,27,,1,2017-05-24 08:56:06
