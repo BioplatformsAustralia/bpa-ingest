@@ -124,8 +124,6 @@ all()
 }
 
 
-set -e
-
 action="$1"
 apikey="$2"
 task="$3"
@@ -157,4 +155,5 @@ if [ x"$bpain" = x ]; then
 fi
 
 echo "ingest.sh: running task: $task"
+set -e
 "$task" "$taskarg"
