@@ -1,4 +1,4 @@
-#!/bin/bash -x
+#!/bin/bash
 
 #
 # This shell script synchronises the entire BPA legacy archive to CKAN.
@@ -8,6 +8,18 @@
 #     CKAN_USERNAME, CKAN_PASSWORD, CKAN_URL and BPA_*_PASSWORD
 #   - if the bpa-ingest tool is installed in a virtualenv, source the
 #     activate script
+#
+# Example usage:
+#
+# in prod, syncing everything (will take some time)
+# ./ingest.sh sync <x>
+# in prod, syncing all components of the stemcell project (faster)
+# ./ingest.sh sync <x> stemcell
+# in prod, syncing a single components of the stemcell project (fast)
+# ./ingest.sh sync <x> run stemcells-singlecellrnaseq
+# 
+# in local dev, running a single project component:
+# DEV_MODE=1 ./ingest.sh sync <x> run stemcells-singlecellrnaseq
 #
 
 apply()
