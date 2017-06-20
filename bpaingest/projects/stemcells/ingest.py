@@ -348,6 +348,8 @@ class StemcellsSingleCellRNASeqMetadata(BaseMetadata):
         for md5_file in glob(self.path + '/*.md5'):
             logger.info("Processing md5 file {0}".format(md5_file))
             for filename, md5, file_info in files.parse_md5_file(md5_file, [files.singlecell_filename_re, files.singlecell_index_info_filename_re]):
+                if file_info is None:
+                    raise Exception("cannot parse filename: %s" % filename)
                 resource = file_info.copy()
                 resource['md5'] = resource['id'] = md5
                 resource['name'] = filename

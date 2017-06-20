@@ -96,6 +96,10 @@ wheat() {
   apply wheat-pathogens-genomes
 }
 
+run() {
+  apply "$1"
+}
+
 all()
 {
   base
@@ -113,6 +117,7 @@ set -e
 action="$1"
 apikey="$2"
 task="$3"
+taskarg="$4"
 
 usage()
 {
@@ -140,4 +145,4 @@ if [ x"$bpain" = x ]; then
 fi
 
 echo "ingest.sh: running task: $task"
-$task
+"$task" "$taskarg"
