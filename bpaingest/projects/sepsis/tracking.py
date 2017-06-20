@@ -43,5 +43,5 @@ class SepsisGenomicsTrackMetadata(SepsisTrackMetadata):
         return obj
 
 
-class SepsisAnalysedTrackMetadata(GoogleDriveTrackMetadata):
+class SepsisGoogleTrackMetadata(GoogleDriveTrackMetadata):
     name = 'Antibiotic Resistant Pathogen'

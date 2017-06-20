@@ -16,7 +16,7 @@ from glob import glob
 from .tracking import (
     SepsisTrackMetadata,
     SepsisGenomicsTrackMetadata,
-    SepsisAnalysedTrackMetadata)
+    SepsisGoogleTrackMetadata)
 from .contextual import (
     SepsisBacterialContextual,
     SepsisGenomicsContextual,
@@ -61,7 +61,7 @@ class SepsisGenomicsMiseqMetadata(BaseSepsisMetadata):
         super(SepsisGenomicsMiseqMetadata, self).__init__()
         self.path = Path(metadata_path)
         self.contextual_metadata = contextual_metadata
-        self.track_meta = SepsisGenomicsTrackMetadata('GenomicsMiSeq')
+        self.bpam_track_meta = SepsisGenomicsTrackMetadata('GenomicsMiSeq')
         self.metadata_info = metadata_info
 
     def parse_spreadsheet(self, fname):
@@ -90,7 +90,7 @@ class SepsisGenomicsMiseqMetadata(BaseSepsisMetadata):
             rows = list(self.parse_spreadsheet(fname))
             for row in rows:
                 bpa_id = row.bpa_id
-                track_meta = self.track_meta.get(bpa_id)
+                track_meta = self.bpam_track_meta.get(bpa_id)
                 obj = track_meta.copy()
                 name = bpa_id_to_ckan_name(bpa_id.split('.')[-1], self.ckan_data_type)
                 obj.update({
@@ -148,7 +148,7 @@ class SepsisGenomicsPacbioMetadata(BaseSepsisMetadata):
         super(SepsisGenomicsPacbioMetadata, self).__init__()
         self.path = Path(metadata_path)
         self.contextual_metadata = contextual_metadata
-        self.track_meta = SepsisGenomicsTrackMetadata('GenomicsPacBio')
+        self.bpam_track_meta = SepsisGenomicsTrackMetadata('GenomicsPacBio')
         self.metadata_info = metadata_info
 
     def read_track_csv(self, fname):
@@ -184,7 +184,7 @@ class SepsisGenomicsPacbioMetadata(BaseSepsisMetadata):
             rows = list(self.parse_spreadsheet(fname))
             for row in rows:
                 bpa_id = row.bpa_id
-                track_meta = self.track_meta.get(bpa_id)
+                track_meta = self.bpam_track_meta.get(bpa_id)
                 obj = track_meta.copy()
                 name = bpa_id_to_ckan_name(bpa_id.split('.')[-1], self.ckan_data_type)
                 obj.update({
@@ -244,7 +244,7 @@ class SepsisTranscriptomicsHiseqMetadata(BaseSepsisMetadata):
         super(SepsisTranscriptomicsHiseqMetadata, self).__init__()
         self.path = Path(metadata_path)
         self.contextual_metadata = contextual_metadata
-        self.track_meta = SepsisTrackMetadata('TranscriptomicsHiSeq')
+        self.bpam_track_meta = SepsisTrackMetadata('TranscriptomicsHiSeq')
         self.metadata_info = metadata_info
 
     def read_track_csv(self, fname):
@@ -282,7 +282,7 @@ class SepsisTranscriptomicsHiseqMetadata(BaseSepsisMetadata):
                 bpa_id = row.bpa_id
                 if bpa_id is None:
                     continue
-                track_meta = self.track_meta.get(bpa_id)
+                track_meta = self.bpam_track_meta.get(bpa_id)
                 name = bpa_id_to_ckan_name(bpa_id.split('.')[-1], self.ckan_data_type)
                 obj = track_meta.copy()
                 obj.update({
@@ -341,7 +341,7 @@ class SepsisMetabolomicsLCMSMetadata(BaseSepsisMetadata):
         super(SepsisMetabolomicsLCMSMetadata, self).__init__()
         self.path = Path(metadata_path)
         self.contextual_metadata = contextual_metadata
-        self.track_meta = SepsisTrackMetadata('MetabolomicsLCMS')
+        self.bpam_track_meta = SepsisTrackMetadata('MetabolomicsLCMS')
         self.metadata_info = metadata_info
 
     def read_track_csv(self, fname):
@@ -379,7 +379,7 @@ class SepsisMetabolomicsLCMSMetadata(BaseSepsisMetadata):
                 bpa_id = row.bpa_id
                 if bpa_id is None:
                     continue
-                track_meta = self.track_meta.get(bpa_id)
+                track_meta = self.bpam_track_meta.get(bpa_id)
                 obj = track_meta.copy()
                 name = bpa_id_to_ckan_name(bpa_id.split('.')[-1], self.ckan_data_type)
                 obj.update({
@@ -438,7 +438,7 @@ class SepsisProteomicsMS1QuantificationMetadata(BaseSepsisMetadata):
         super(SepsisProteomicsMS1QuantificationMetadata, self).__init__()
         self.path = Path(metadata_path)
         self.contextual_metadata = contextual_metadata
-        self.track_meta = SepsisTrackMetadata('ProteomicsMS1Quantification')
+        self.bpam_track_meta = SepsisTrackMetadata('ProteomicsMS1Quantification')
         self.metadata_info = metadata_info
 
     def read_track_csv(self, fname):
@@ -479,7 +479,7 @@ class SepsisProteomicsMS1QuantificationMetadata(BaseSepsisMetadata):
                 bpa_id = row.bpa_id
                 if bpa_id is None:
                     continue
-                track_meta = self.track_meta.get(bpa_id)
+                track_meta = self.bpam_track_meta.get(bpa_id)
                 obj = track_meta.copy()
                 name = bpa_id_to_ckan_name(bpa_id.split('.')[-1], self.ckan_data_type)
                 obj.update({
@@ -540,7 +540,7 @@ class SepsisProteomicsSwathMSBaseSepsisMetadata(BaseSepsisMetadata):
         self.path = Path(metadata_path)
         self.metadata_info = metadata_info
         self.contextual_metadata = contextual_metadata
-        self.track_meta = SepsisTrackMetadata('ProteomicsSwathMS')
+        self.bpam_track_meta = SepsisTrackMetadata('ProteomicsSwathMS')
         self.package_data, self.file_data = self.get_spreadsheet_data()
 
     def read_track_csv(self, fname):
@@ -598,13 +598,13 @@ class SepsisProteomicsSwathMSBaseSepsisMetadata(BaseSepsisMetadata):
                 if type(bpa_id) is tuple:
                     data_type = '2d'
                     printable_bpa_id = '_'.join([t.split('.')[-1] for t in sorted(bpa_id)])
-                    track_meta = common_values([self.track_meta.get(t) for t in bpa_id])
+                    track_meta = common_values([self.bpam_track_meta.get(t) for t in bpa_id])
                     for contextual_source in self.contextual_metadata:
                         contextual_meta.update(common_values([contextual_source.get(t, track_meta) for t in bpa_id]))
                 else:
                     data_type = '1d'
                     printable_bpa_id = bpa_id
-                    track_meta = self.track_meta.get(bpa_id)
+                    track_meta = self.bpam_track_meta.get(bpa_id)
                     for contextual_source in self.contextual_metadata:
                         contextual_meta.update(contextual_source.get(bpa_id, track_meta))
                 name = bpa_id_to_ckan_name(printable_bpa_id.split('.')[-1], self.ckan_data_type)
@@ -719,7 +719,7 @@ class SepsisProteomicsSwathMSCombinedSampleMetadata(BaseSepsisMetadata):
         self.path = Path(metadata_path)
         self.contextual_metadata = contextual_metadata
         self.metadata_info = metadata_info
-        self.track_meta = SepsisAnalysedTrackMetadata()
+        self.google_track_meta = SepsisGoogleTrackMetadata()
 
     @classmethod
     def parse_spreadsheet(self, fname, additional_context):
@@ -759,7 +759,7 @@ class SepsisProteomicsSwathMSCombinedSampleMetadata(BaseSepsisMetadata):
             ticket = xlsx_info['ticket']
             if not ticket:
                 continue
-            folder_name = self.track_meta.get(ticket).folder_name
+            folder_name = self.google_track_meta.get(ticket).folder_name
             for row in self.parse_spreadsheet(fname, xlsx_info):
                 folder_rows[(ticket, folder_name)].append(row)
         packages = []
@@ -769,7 +769,7 @@ class SepsisProteomicsSwathMSCombinedSampleMetadata(BaseSepsisMetadata):
             # generating the CKAN name
             folder_name_md5 = md5hash(folder_name).hexdigest()
             name = bpa_id_to_ckan_name(folder_name_md5, self.ckan_data_type)
-            track_meta = self.track_meta.get(ticket)
+            track_meta = self.google_track_meta.get(ticket)
             obj.update({
                 'name': name,
                 'id': name,
@@ -805,7 +805,7 @@ class SepsisProteomicsSwathMSCombinedSampleMetadata(BaseSepsisMetadata):
                     resource['md5'] = resource['id'] = md5
                     resource['name'] = filename
                     xlsx_info = self.metadata_info[os.path.basename(md5_file)]
-                    folder_name = self.track_meta.get(xlsx_info['ticket']).folder_name
+                    folder_name = self.google_track_meta.get(xlsx_info['ticket']).folder_name
                     legacy_url = urljoin(xlsx_info['base_url'], filename)
                     resources.append(((folder_name,), legacy_url, resource))
         return resources
@@ -849,7 +849,7 @@ class SepsisProteomicsAnalysedMetadata(BaseSepsisMetadata):
         self.path = Path(metadata_path)
         self.contextual_metadata = contextual_metadata
         self.metadata_info = metadata_info
-        self.track_meta = SepsisAnalysedTrackMetadata()
+        self.google_track_meta = SepsisGoogleTrackMetadata()
 
     @classmethod
     def parse_spreadsheet(self, fname, additional_context):
@@ -900,7 +900,7 @@ class SepsisProteomicsAnalysedMetadata(BaseSepsisMetadata):
             ticket = xlsx_info['ticket']
             if not ticket:
                 continue
-            folder_name = self.track_meta.get(ticket).folder_name
+            folder_name = self.google_track_meta.get(ticket).folder_name
             for row in self.parse_spreadsheet(fname, xlsx_info):
                 folder_rows[(ticket, folder_name)].append(row)
         packages = []
@@ -910,7 +910,7 @@ class SepsisProteomicsAnalysedMetadata(BaseSepsisMetadata):
             # generating the CKAN name
             folder_name_md5 = md5hash(folder_name).hexdigest()
             name = bpa_id_to_ckan_name(folder_name_md5, self.ckan_data_type)
-            track_meta = self.track_meta.get(ticket)
+            track_meta = self.google_track_meta.get(ticket)
             bpa_ids = sorted(set([t.bpa_id for t in rows if t.bpa_id]))
             obj.update({
                 'name': name,
@@ -948,7 +948,7 @@ class SepsisProteomicsAnalysedMetadata(BaseSepsisMetadata):
                     resource['md5'] = resource['id'] = md5
                     resource['name'] = filename
                     xlsx_info = self.metadata_info[os.path.basename(md5_file)]
-                    folder_name = self.track_meta.get(xlsx_info['ticket']).folder_name
+                    folder_name = self.google_track_meta.get(xlsx_info['ticket']).folder_name
                     legacy_url = urljoin(xlsx_info['base_url'], filename)
                     resources.append(((folder_name,), legacy_url, resource))
         return resources
@@ -971,7 +971,7 @@ class SepsisTranscriptomicsAnalysedMetadata(BaseSepsisMetadata):
         self.path = Path(metadata_path)
         self.contextual_metadata = contextual_metadata
         self.metadata_info = metadata_info
-        self.track_meta = SepsisAnalysedTrackMetadata()
+        self.google_track_meta = SepsisGoogleTrackMetadata()
 
     @classmethod
     def parse_spreadsheet(self, fname, additional_context):
@@ -1020,7 +1020,7 @@ class SepsisTranscriptomicsAnalysedMetadata(BaseSepsisMetadata):
             ticket = xlsx_info['ticket']
             if not ticket:
                 continue
-            folder_name = self.track_meta.get(ticket).folder_name
+            folder_name = self.google_track_meta.get(ticket).folder_name
             for row in self.parse_spreadsheet(fname, xlsx_info):
                 folder_rows[(ticket, folder_name)].append(row)
         packages = []
@@ -1030,7 +1030,7 @@ class SepsisTranscriptomicsAnalysedMetadata(BaseSepsisMetadata):
             # generating the CKAN name
             folder_name_md5 = md5hash(folder_name).hexdigest()
             name = bpa_id_to_ckan_name(folder_name_md5, self.ckan_data_type)
-            track_meta = self.track_meta.get(ticket)
+            track_meta = self.google_track_meta.get(ticket)
             bpa_ids = sorted(set([t.bpa_id for t in rows]))
             obj.update({
                 'name': name,
@@ -1068,7 +1068,7 @@ class SepsisTranscriptomicsAnalysedMetadata(BaseSepsisMetadata):
                     resource['md5'] = resource['id'] = md5
                     resource['name'] = filename
                     xlsx_info = self.metadata_info[os.path.basename(md5_file)]
-                    folder_name = self.track_meta.get(xlsx_info['ticket']).folder_name
+                    folder_name = self.google_track_meta.get(xlsx_info['ticket']).folder_name
                     legacy_url = urljoin(xlsx_info['base_url'], filename)
                     resources.append(((folder_name,), legacy_url, resource))
         return resources
@@ -1091,7 +1091,7 @@ class SepsisMetabolomicsAnalysedMetadata(BaseSepsisMetadata):
         self.path = Path(metadata_path)
         self.contextual_metadata = contextual_metadata
         self.metadata_info = metadata_info
-        self.track_meta = SepsisAnalysedTrackMetadata()
+        self.google_track_meta = SepsisGoogleTrackMetadata()
 
     @classmethod
     def parse_spreadsheet(self, fname, additional_context):
@@ -1137,7 +1137,7 @@ class SepsisMetabolomicsAnalysedMetadata(BaseSepsisMetadata):
             ticket = xlsx_info['ticket']
             if not ticket:
                 continue
-            folder_name = self.track_meta.get(ticket).folder_name
+            folder_name = self.google_track_meta.get(ticket).folder_name
             for row in self.parse_spreadsheet(fname, xlsx_info):
                 folder_rows[(ticket, folder_name)].append(row)
         packages = []
@@ -1147,7 +1147,7 @@ class SepsisMetabolomicsAnalysedMetadata(BaseSepsisMetadata):
             # generating the CKAN name
             folder_name_md5 = md5hash(folder_name).hexdigest()
             name = bpa_id_to_ckan_name(folder_name_md5, self.ckan_data_type)
-            track_meta = self.track_meta.get(ticket)
+            track_meta = self.google_track_meta.get(ticket)
             bpa_ids = sorted(set([t.bpa_id for t in rows]))
             obj.update({
                 'name': name,
@@ -1185,7 +1185,7 @@ class SepsisMetabolomicsAnalysedMetadata(BaseSepsisMetadata):
                     resource['md5'] = resource['id'] = md5
                     resource['name'] = filename
                     xlsx_info = self.metadata_info[os.path.basename(md5_file)]
-                    folder_name = self.track_meta.get(xlsx_info['ticket']).folder_name
+                    folder_name = self.google_track_meta.get(xlsx_info['ticket']).folder_name
                     legacy_url = urljoin(xlsx_info['base_url'], filename)
                     resources.append(((folder_name,), legacy_url, resource))
         return resources
@@ -1208,7 +1208,7 @@ class SepsisGenomicsAnalysedMetadata(BaseSepsisMetadata):
         self.path = Path(metadata_path)
         self.contextual_metadata = contextual_metadata
         self.metadata_info = metadata_info
-        self.track_meta = SepsisAnalysedTrackMetadata()
+        self.google_track_meta = SepsisGoogleTrackMetadata()
 
     @classmethod
     def parse_spreadsheet(self, fname, additional_context):
@@ -1251,7 +1251,7 @@ class SepsisGenomicsAnalysedMetadata(BaseSepsisMetadata):
             ticket = xlsx_info['ticket']
             if not ticket:
                 continue
-            folder_name = self.track_meta.get(ticket).folder_name
+            folder_name = self.google_track_meta.get(ticket).folder_name
             for row in self.parse_spreadsheet(fname, xlsx_info):
                 folder_rows[(ticket, folder_name)].append(row)
         packages = []
@@ -1261,7 +1261,7 @@ class SepsisGenomicsAnalysedMetadata(BaseSepsisMetadata):
             # generating the CKAN name
             folder_name_md5 = md5hash(folder_name).hexdigest()
             name = bpa_id_to_ckan_name(folder_name_md5, self.ckan_data_type)
-            track_meta = self.track_meta.get(ticket)
+            track_meta = self.google_track_meta.get(ticket)
             bpa_ids = sorted(set([t.bpa_id for t in rows if t.bpa_id]))
             obj.update({
                 'name': name,
@@ -1299,7 +1299,7 @@ class SepsisGenomicsAnalysedMetadata(BaseSepsisMetadata):
                     resource['md5'] = resource['id'] = md5
                     resource['name'] = filename
                     xlsx_info = self.metadata_info[os.path.basename(md5_file)]
-                    folder_name = self.track_meta.get(xlsx_info['ticket']).folder_name
+                    folder_name = self.google_track_meta.get(xlsx_info['ticket']).folder_name
                     legacy_url = urljoin(xlsx_info['base_url'], filename)
                     resources.append(((folder_name,), legacy_url, resource))
         return resources

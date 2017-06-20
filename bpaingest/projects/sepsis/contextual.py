@@ -322,7 +322,7 @@ class SepsisProteomicsBaseContextual(object):
 
     def _read_metadata(self, metadata_path):
         field_spec = [
-            ('sample_submission_date', 'Sample submission date (YYYY-MM-DD)', None),
+            ('sample_submission_date', 'Sample submission date (YYYY-MM-DD)', ingest_utils.get_date_isoformat),
             ('bpa_id', 'Sample name i.e. 5 digit BPA ID', ingest_utils.extract_bpa_id),
             ('sample_type', 'Sample type', None),
             ('protein_yield_total_ug', 'protein yield - total (g)', None),  # it really is ug, just unicode stripping drops the 'u'
