@@ -213,16 +213,7 @@ class ExcelWrapper(object):
             else:
                 val = datetime.datetime(*date_time_tup)
         except ValueError as e:
-            logger.warning('Error [{0:!r}] column:{1}, val: {2} cannot be converted to a date'.format(e, i, val))
-            # OK so its not really a date, maybe something can be done with the float
-            # This functionality is not currently implemented in the xlrd library
-            # xf_index = cell.xf_index
-            # if xf_index:
-            # xf = self.workbook.xf_list[xf_index] # gets an XF object
-            #     format_key = xf.format_key
-            #     format = self.workbook.format_map[format_key] # gets a Format object
-            #     format_str = format.format_str # this is the 'number format string'
-            #     print format_str
+            logger.warning('column: `%s\' -- value `%s\' cannot be converted to a date' % (i, val))
         return val
 
     def get_all(self, typname='DataRow'):
