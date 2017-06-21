@@ -92,7 +92,7 @@ def setup_sync(subparser):
 
 def setup_hash(subparser):
     subparser.add_argument('project_name', choices=sorted(PROJECTS.keys()), help='path to metadata')
-    subparser.add_argument('mirror_path', help='path to locally mounted mirror')
+    subparser.add_argument('mirror_path', help='path to locally mounted mirror', nargs='?', default=os.environ.get('MIRROR_PATH'))
 
 
 @register_command

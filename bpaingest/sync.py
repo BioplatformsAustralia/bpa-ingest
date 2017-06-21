@@ -215,6 +215,7 @@ def sync_resources(ckan, resources, resource_linkage_attrs, ckan_packages, auth,
             logger.warning("No resources for package `%s`" % (package_id))
             continue
         to_reupload += sync_package_resources(ckan, package_obj, resource_id_legacy_url, package_resources, auth)
+
     if do_uploads:
         reupload_resources(ckan, to_reupload, resource_id_legacy_url, auth, num_threads)
 
