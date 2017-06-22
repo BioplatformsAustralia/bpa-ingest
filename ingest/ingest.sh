@@ -21,6 +21,9 @@
 # in local dev, running a single project component:
 # DEV_MODE=1 ./ingest.sh sync <x> run stemcells-singlecellrnaseq
 #
+# to pass additional flags to bpa-ingest, set INGEST_ARGS:
+# INGEST_ARGS="--skip-resource-checks" ./ingest.sh sync <x> run stemcells-singlecellrnaseq
+#
 
 apply()
 {
@@ -32,7 +35,8 @@ apply()
   # force a re-download of the metadata
 
   extra_args1=""
-  extra_args2=""
+  extra_args2="$INGEST_ARGS "
+
   if [ x"$DEV_MODE" != x ]; then
     extra_args1="-p /tmp/ingest/$project/"
     extra_args2="--skip-resource-checks --metadata-only"
