@@ -1,8 +1,9 @@
 import datetime
+import os
 from glob import glob
 from ...libs import ingest_utils
 from ...libs.excel_wrapper import ExcelWrapper
-from ...util import make_logger, one
+from ...util import make_logger, one, csv_to_named_tuple
 
 logger = make_logger(__name__)
 
@@ -121,3 +122,34 @@ class BASESampleContextual(object):
         wrapper = ExcelWrapper(field_spec, metadata_path, sheet_name=None, header_length=1, column_name_row_index=0)
 
         return wrapper.get_all()
+
+
+class BASENCBIContextual(object):
+    metadata_urls = ['https://downloads-qcif.bioplatforms.com/bpa/base/metadata/ncbi/2016-04/']
+    metadata_patterns = [r'^.*\.csv$']
+    name = 'base-ncbi-contextual'
+
+    def __init__(self, path):
+        self._read_metadata(path)
+
+    def get(self, bpa_id):
+        metadata = {}
+        if bpa_id in self.bpaid_bioproject:
+            metadata['ncbi_bioproject_accession'] = self.bpaid_bioproject[bpa_id]
+        if bpa_id in self.bpaid_biosample:
+            metadata['ncbi_biosample_accession'] = self.bpaid_biosample[bpa_id]
+        return metadata
+
+    def _read_metadata(self, path):
+        _, bioproject_rows = csv_to_named_tuple(
+            'BioProject',
+            os.path.join(path, 'bioproject_accession.csv'),
+            mode='rU')
+        _, biosample_rows = csv_to_named_tuple(
+            'BioSample',
+            os.path.join(path, 'Biosample_accessions.csv'),
+            mode='rU')
+        logger.debug(bioproject_rows[0])
+        logger.debug(biosample_rows[0])
+        self.bpaid_bioproject = dict((ingest_utils.extract_bpa_id(t.sample_name), t.bioproject_accession.strip()) for t in bioproject_rows)
+        self.bpaid_biosample = dict((ingest_utils.extract_bpa_id(t.sample_name), t.accession.strip()) for t in biosample_rows)

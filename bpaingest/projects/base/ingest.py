@@ -13,12 +13,15 @@ from ...libs import ingest_utils
 from ...libs.excel_wrapper import ExcelWrapper
 from . import files
 from .tracking import BASETrackMetadata
-from .contextual import BASESampleContextual
+from .contextual import BASESampleContextual, BASENCBIContextual
 
 import os
 import re
 
 logger = make_logger(__name__)
+
+
+common_context = [BASESampleContextual, BASENCBIContextual]
 
 
 def build_base_amplicon_linkage(index_linkage, flow_id, index):
@@ -34,7 +37,7 @@ class BASEAmpliconsMetadata(BaseMetadata):
     auth = ('base', 'base')
     organization = 'bpa-base'
     ckan_data_type = 'base-genomics-amplicon'
-    contextual_classes = [BASESampleContextual]
+    contextual_classes = common_context
     metadata_patterns = [r'^.*\.md5$', r'^.*_metadata.*.*\.xlsx$']
     metadata_urls = [
         'https://downloads-qcif.bioplatforms.com/bpa/base/raw/amplicons/',
@@ -206,7 +209,7 @@ class BASEAmpliconsControlMetadata(BaseMetadata):
     auth = ('base', 'base')
     organization = 'bpa-base'
     ckan_data_type = 'base-genomics-amplicon-control'
-    contextual_classes = [BASESampleContextual]
+    contextual_classes = common_context
     metadata_patterns = [r'^.*\.md5$', r'^.*_metadata.*.*\.xlsx$']
     metadata_urls = [
         'https://downloads-qcif.bioplatforms.com/bpa/base/raw/amplicons/',
@@ -295,7 +298,7 @@ class BASEMetagenomicsMetadata(BaseMetadata):
     auth = ('base', 'base')
     organization = 'bpa-base'
     ckan_data_type = 'base-metagenomics'
-    contextual_classes = [BASESampleContextual]
+    contextual_classes = common_context
     metadata_patterns = [r'^.*\.md5$', r'^.*_metadata.*.*\.xlsx$']
     metadata_urls = [
         'https://downloads-qcif.bioplatforms.com/bpa/base/raw/metagenomics/',
