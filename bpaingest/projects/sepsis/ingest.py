@@ -46,6 +46,10 @@ class BaseSepsisMetadata(BaseMetadata):
         'growth_condition_time': 'growth_condition_time_(h)'
     }
 
+    def __init__(self, *args, **kwargs):
+        super(BaseSepsisMetadata, self).__init__(*args, **kwargs)
+        self.google_track_meta = SepsisGoogleTrackMetadata()
+
 
 class SepsisGenomicsMiseqMetadata(BaseSepsisMetadata):
     contextual_classes = [SepsisBacterialContextual, SepsisGenomicsContextual]
@@ -88,6 +92,9 @@ class SepsisGenomicsMiseqMetadata(BaseSepsisMetadata):
         for fname in glob(self.path + '/*.xlsx'):
             logger.info("Processing Sepsis Genomics metadata file {0}".format(fname))
             rows = list(self.parse_spreadsheet(fname))
+            xlsx_info = self.metadata_info[os.path.basename(fname)]
+            ticket = xlsx_info['ticket']
+            google_track_meta = self.google_track_meta.get(ticket)
             for row in rows:
                 bpa_id = row.bpa_id
                 track_meta = self.bpam_track_meta.get(bpa_id)
@@ -97,6 +104,7 @@ class SepsisGenomicsMiseqMetadata(BaseSepsisMetadata):
                     'name': name,
                     'id': name,
                     'bpa_id': bpa_id,
+                    'archive_ingestion_date': ingest_utils.get_date_isoformat(google_track_meta.date_of_transfer_to_archive),
                     'notes': 'ARP Genomics Miseq Data: %s %s' % (track_meta['taxon_or_organism'], track_meta['strain_or_isolate']),
                     'title': 'Sepsis Genomics Miseq %s' % (bpa_id),
                     'ticket': row.ticket,
@@ -182,6 +190,9 @@ class SepsisGenomicsPacbioMetadata(BaseSepsisMetadata):
         for fname in glob(self.path + '/*.xlsx'):
             logger.info("Processing Sepsis Genomics metadata file {0}".format(fname))
             rows = list(self.parse_spreadsheet(fname))
+            xlsx_info = self.metadata_info[os.path.basename(fname)]
+            ticket = xlsx_info['ticket']
+            google_track_meta = self.google_track_meta.get(ticket)
             for row in rows:
                 bpa_id = row.bpa_id
                 track_meta = self.bpam_track_meta.get(bpa_id)
@@ -191,6 +202,7 @@ class SepsisGenomicsPacbioMetadata(BaseSepsisMetadata):
                     'name': name,
                     'id': name,
                     'bpa_id': bpa_id,
+                    'archive_ingestion_date': ingest_utils.get_date_isoformat(google_track_meta.date_of_transfer_to_archive),
                     'title': 'Sepsis Genomics Pacbio %s' % (bpa_id),
                     'ticket': row.ticket,
                     'facility': row.facility_code.upper(),
@@ -278,6 +290,9 @@ class SepsisTranscriptomicsHiseqMetadata(BaseSepsisMetadata):
         for fname in glob(self.path + '/*.xlsx'):
             logger.info("Processing Sepsis Transcriptomics metadata file {0}".format(fname))
             rows = list(self.parse_spreadsheet(fname))
+            xlsx_info = self.metadata_info[os.path.basename(fname)]
+            ticket = xlsx_info['ticket']
+            google_track_meta = self.google_track_meta.get(ticket)
             for row in rows:
                 bpa_id = row.bpa_id
                 if bpa_id is None:
@@ -289,6 +304,7 @@ class SepsisTranscriptomicsHiseqMetadata(BaseSepsisMetadata):
                     'name': name,
                     'id': name,
                     'bpa_id': bpa_id,
+                    'archive_ingestion_date': ingest_utils.get_date_isoformat(google_track_meta.date_of_transfer_to_archive),
                     'title': 'ARP Transcriptomics Hiseq %s' % (bpa_id),
                     'ticket': row.ticket,
                     'facility': row.facility_code.upper(),
@@ -375,6 +391,9 @@ class SepsisMetabolomicsLCMSMetadata(BaseSepsisMetadata):
         for fname in glob(self.path + '/*.xlsx'):
             logger.info("Processing Sepsis Metabolomics LCMS metadata file {0}".format(fname))
             rows = list(self.parse_spreadsheet(fname))
+            xlsx_info = self.metadata_info[os.path.basename(fname)]
+            ticket = xlsx_info['ticket']
+            google_track_meta = self.google_track_meta.get(ticket)
             for row in rows:
                 bpa_id = row.bpa_id
                 if bpa_id is None:
@@ -386,6 +405,7 @@ class SepsisMetabolomicsLCMSMetadata(BaseSepsisMetadata):
                     'name': name,
                     'id': name,
                     'bpa_id': bpa_id,
+                    'archive_ingestion_date': ingest_utils.get_date_isoformat(google_track_meta.date_of_transfer_to_archive),
                     'title': 'ARP Metabolomics LCMS %s' % (bpa_id),
                     'ticket': row.ticket,
                     'facility': row.facility_code.upper(),
@@ -448,7 +468,6 @@ class SepsisProteomicsMS1QuantificationMetadata(BaseSepsisMetadata):
         return dict((ingest_utils.extract_bpa_id(t.five_digit_bpa_id), t) for t in rows)
 
     def parse_spreadsheet(self, fname):
-
         field_spec = [
             ("bpa_id", "Bacterial sample unique ID", ingest_utils.extract_bpa_id),
             ("facility", "Facility", None),
@@ -475,12 +494,15 @@ class SepsisProteomicsMS1QuantificationMetadata(BaseSepsisMetadata):
         for fname in glob(self.path + '/*.xlsx'):
             logger.info("Processing Sepsis Proteomics MS1Quantification metadata file {0}".format(fname))
             rows = list(self.parse_spreadsheet(fname))
+            xlsx_info = self.metadata_info[os.path.basename(fname)]
+            ticket = xlsx_info['ticket']
+            google_track_meta = self.google_track_meta.get(ticket)
             for row in rows:
                 bpa_id = row.bpa_id
                 if bpa_id is None:
                     continue
-                track_meta = self.bpam_track_meta.get(bpa_id)
-                obj = track_meta.copy()
+                bpam_track_meta = self.bpam_track_meta.get(bpa_id)
+                obj = bpam_track_meta.copy()
                 name = bpa_id_to_ckan_name(bpa_id.split('.')[-1], self.ckan_data_type)
                 obj.update({
                     'name': name,
@@ -489,7 +511,8 @@ class SepsisProteomicsMS1QuantificationMetadata(BaseSepsisMetadata):
                     'title': 'ARP Proteomics MS1Quantification %s' % (bpa_id),
                     'ticket': row.ticket,
                     'facility': row.facility_code.upper(),
-                    'notes': 'ARP Proteomics MS1Quantification Data: %s %s' % (track_meta['taxon_or_organism'], track_meta['strain_or_isolate']),
+                    'archive_ingestion_date': ingest_utils.get_date_isoformat(google_track_meta.date_of_transfer_to_archive),
+                    'notes': 'ARP Proteomics MS1Quantification Data: %s %s' % (bpam_track_meta['taxon_or_organism'], bpam_track_meta['strain_or_isolate']),
                     'sample_fractionation_none_number': row.sample_fractionation_none_number,
                     'lc_column_type': row.lc_column_type,
                     'gradient_time_per_acn': row.gradient_time_per_acn,
@@ -502,7 +525,7 @@ class SepsisProteomicsMS1QuantificationMetadata(BaseSepsisMetadata):
                     'data_generated': True,
                 })
                 for contextual_source in self.contextual_metadata:
-                    obj.update(contextual_source.get(bpa_id, track_meta))
+                    obj.update(contextual_source.get(bpa_id, bpam_track_meta))
                 tag_names = sepsis_contextual_tags(self, obj)
                 obj['tags'] = [{'name': t} for t in tag_names]
                 packages.append(obj)
@@ -589,6 +612,9 @@ class SepsisProteomicsSwathMSBaseSepsisMetadata(BaseSepsisMetadata):
         for fname in glob(self.path + '/*_metadata.xlsx'):
             logger.info("Processing Sepsis Proteomics SwathMS metadata file {0}".format(fname))
             rows = list(self.parse_spreadsheet(fname))
+            xlsx_info = self.metadata_info[os.path.basename(fname)]
+            ticket = xlsx_info['ticket']
+            google_track_meta = self.google_track_meta.get(ticket)
             for row in rows:
                 bpa_id = row.bpa_id
                 if bpa_id is None:
@@ -612,6 +638,7 @@ class SepsisProteomicsSwathMSBaseSepsisMetadata(BaseSepsisMetadata):
                     'lc_column_type': row.lc_column_type,
                     'gradient_time_per_acn': row.gradient_time_per_acn,
                     'mass_spectrometer': row.mass_spectrometer,
+                    'archive_ingestion_date': ingest_utils.get_date_isoformat(google_track_meta.date_of_transfer_to_archive),
                 }
                 package_meta.update(contextual_meta)
                 package_data[name] = (name, data_type, printable_bpa_id, track_meta, package_meta)
