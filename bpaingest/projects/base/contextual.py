@@ -49,8 +49,13 @@ class BASESampleContextual(object):
             assert(row.bpa_id not in sample_metadata)
             sample_metadata[row.bpa_id] = row_meta = {}
             for field in row._fields:
+                val = getattr(row, field)
+                if field == 'latitude':
+                    if val and val > 0:
+                        logger.warning("Positioned in northern hemisphere, inverting: %s / %s" % (row.bpa_id, val))
+                        val *= -1
                 if field != 'bpa_id':
-                    row_meta[field] = getattr(row, field)
+                    row_meta[field] = val
         return sample_metadata
 
     def _read_metadata(self, metadata_path):
