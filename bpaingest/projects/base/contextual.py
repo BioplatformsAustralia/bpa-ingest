@@ -28,7 +28,7 @@ def fix_slope_date(val):
 
 
 class BASESampleContextual(object):
-    metadata_urls = ['https://downloads-qcif.bioplatforms.com/bpa/base/metadata/contextual/2017-06-21/']
+    metadata_urls = ['https://downloads-qcif.bioplatforms.com/bpa/base/metadata/contextual/2017-06-28/']
     name = 'base-contextual'
 
     def __init__(self, path):
@@ -67,6 +67,7 @@ class BASESampleContextual(object):
             ('depth', 'depth'),
             ('horizon_classification', 'horizon'),
             ('soil_sample_storage_method', 'soil sample storage method'),
+            ('geo_loc_name', 'geo_loc'),
             ('location_description', 'location description'),
             ('broad_land_use', 'broad land use'),
             ('detailed_land_use', 'detailed land use'),
