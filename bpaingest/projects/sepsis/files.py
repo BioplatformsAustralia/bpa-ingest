@@ -186,10 +186,10 @@ def test_proteomics_swathms_swath_raw():
 
 PROTEOMICS_SWATHMS_LIB_FILENAME_PATTERN = """
     (?P<id>P\d{4,6})_
-    (?P<taxon>[A-Za-z]+)_
+    (?P<taxon>\w+)_
     SEP_
     (?P<vendor>APAF)_
-    (?P<type>MS_Lib_|Lib_extended)
+    (?P<type>MS_Lib_|Lib_extended|MS_Lib)
     (?P<machine_data>)
 """
 proteomics_swathms_lib_filename_re = re.compile(PROTEOMICS_SWATHMS_LIB_FILENAME_PATTERN, re.VERBOSE)
@@ -199,7 +199,8 @@ def test_proteomics_swathms_lib():
     filenames = [
         'P19471_Kleb_SEP_APAF_MS_Lib_V1.txt',
         'P19471_Staph_SEP_APAF_MS_Lib_V1.txt',
-        'P19471_Staph_SEP_APAF_Lib_extended_V1.txt'
+        'P19471_Staph_SEP_APAF_Lib_extended_V1.txt',
+        'P20249_Staph2900_SEP_APAF_MS_Lib.txt'
     ]
 
     for filename in filenames:
