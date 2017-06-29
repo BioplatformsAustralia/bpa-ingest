@@ -21,6 +21,16 @@ logger = make_logger(__name__)
 index_from_comment_re = re.compile(r'([G|A|T|C|-]{6,}_[G|A|T|C|-]{6,})')
 index_from_comment_pilot_re = re.compile(r'_([G|A|T|C|-]{6,})_')
 
+read_lengths = {
+    '16S': '300bp',
+    'A16S': '300bp',
+    '18S': '250bp'
+}
+
+
+def mm_amplicon_read_length(amplicon):
+    return read_lengths[amplicon.upper()]
+
 
 def index_from_comment(attrs):
     # return the index from a comment (for linkage on pilot data)
@@ -138,6 +148,7 @@ class BaseMarineMicrobesAmpliconsMetadata(BaseMetadata):
                     'flow_id': flow_id,
                     'mm_amplicon_linkage': mm_amplicon_linkage,
                     'sample_extraction_id': ingest_utils.make_sample_extraction_id(row.sample_extraction_id, bpa_id),
+                    'read_length': mm_amplicon_read_length(self.amplicon),
                     'target': row.target,
                     'pass_fail': ingest_utils.merge_pass_fail(row),
                     'dilution_used': row.dilution_used,
@@ -266,6 +277,7 @@ class BaseMarineMicrobesAmpliconsControlMetadata(BaseMetadata):
                 'title': 'Marine Microbes Amplicons Control %s %s' % (self.amplicon, flow_id),
                 'omics': 'Genomics',
                 'analytical_platform': 'MiSeq',
+                'read_length': mm_amplicon_read_length(self.amplicon),
                 'date_of_transfer': ingest_utils.get_date_isoformat(track_meta.date_of_transfer),
                 'data_type': track_meta.data_type,
                 'description': track_meta.description,
@@ -383,6 +395,7 @@ class MarineMicrobesMetagenomicsMetadata(BaseMetadata):
                     'title': 'Marine Microbes Metagenomics %s' % (bpa_id),
                     'omics': 'metagenomics',
                     'analytical_platform': 'HiSeq',
+                    'read_length': '250bp',
                     'date_of_transfer': ingest_utils.get_date_isoformat(track_meta.date_of_transfer),
                     'data_type': track_meta.data_type,
                     'description': track_meta.description,
@@ -496,6 +509,7 @@ class MarineMicrobesMetatranscriptomeMetadata(BaseMetadata):
                 'title': 'Marine Microbes Metatranscriptome %s' % (bpa_id),
                 'omics': 'metatranscriptomics',
                 'analytical_platform': 'HiSeq',
+                'read_length': '250bp',  # to be confirmed by Jason Koval
                 'date_of_transfer': ingest_utils.get_date_isoformat(track_meta.date_of_transfer),
                 'data_type': track_meta.data_type,
                 'description': track_meta.description,
