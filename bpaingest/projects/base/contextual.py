@@ -27,7 +27,15 @@ def fix_slope_date(val):
     return val
 
 
-class BASESampleContextual(object):
+class ContextualBase(object):
+    def get(self, *args, **kwargs):
+        return {}
+
+    def filename_metadata(self, *args, **kwargs):
+        return {}
+
+
+class BASESampleContextual(ContextualBase):
     metadata_urls = ['https://downloads-qcif.bioplatforms.com/bpa/base/metadata/contextual/2017-06-28/']
     name = 'base-contextual'
 
@@ -130,9 +138,9 @@ class BASESampleContextual(object):
         return wrapper.get_all()
 
 
-class BASENCBIContextual(object):
+class BASENCBIContextual(ContextualBase):
     metadata_urls = ['https://downloads-qcif.bioplatforms.com/bpa/base/metadata/ncbi/2016-04/']
-    metadata_patterns = [r'^.*\.csv$']
+    metadata_patterns = [r'^.*accession.*\.csv$']
     name = 'base-ncbi-contextual'
 
     def __init__(self, path):
@@ -155,7 +163,28 @@ class BASENCBIContextual(object):
             'BioSample',
             os.path.join(path, 'Biosample_accessions.csv'),
             mode='rU')
-        logger.debug(bioproject_rows[0])
-        logger.debug(biosample_rows[0])
         self.bpaid_bioproject = dict((ingest_utils.extract_bpa_id(t.sample_name), t.bioproject_accession.strip()) for t in bioproject_rows)
         self.bpaid_biosample = dict((ingest_utils.extract_bpa_id(t.sample_name), t.accession.strip()) for t in biosample_rows)
+
+
+class BASENCBIResourceContextual(ContextualBase):
+    metadata_urls = ['https://downloads-qcif.bioplatforms.com/bpa/base/metadata/ncbi/2016-04/']
+    metadata_patterns = [r'^files_submitted.csv$']
+    name = 'base-ncbi-resource-contextual'
+
+    def __init__(self, path):
+        self._read_metadata(path)
+
+    def filename_metadata(self, filename):
+        return {
+            'ncbi_file_uploaded': filename in self.uploaded_files
+        }
+
+    def _read_metadata(self, path):
+        _, upload_rows = csv_to_named_tuple(
+            'BioProject',
+            os.path.join(path, 'files_submitted.csv'),
+            mode='rU')
+        self.uploaded_files = set()
+        for row in upload_rows:
+            self.uploaded_files.add(row.filename)

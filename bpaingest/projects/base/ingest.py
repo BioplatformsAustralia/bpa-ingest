@@ -12,8 +12,12 @@ from glob import glob
 from ...libs import ingest_utils
 from ...libs.excel_wrapper import ExcelWrapper
 from . import files
-from .tracking import BASETrackMetadata
-from .contextual import BASESampleContextual, BASENCBIContextual
+from .tracking import (
+    BASETrackMetadata)
+from .contextual import (
+    BASESampleContextual,
+    BASENCBIContextual,
+    BASENCBIResourceContextual)
 
 import os
 import re
@@ -21,7 +25,20 @@ import re
 logger = make_logger(__name__)
 
 
-common_context = [BASESampleContextual, BASENCBIContextual]
+common_context = [BASESampleContextual, BASENCBIContextual, BASENCBIResourceContextual]
+
+
+# fixed read lengths provided by AB at CSIRO
+amplicon_read_length = {
+    '16S': '300bp',
+    'A16S': '300bp',
+    'ITS': '300bp',
+    '18S': '150bp',
+}
+
+
+def base_amplicon_read_length(amplicon):
+    return amplicon_read_length[amplicon]
 
 
 def build_base_amplicon_linkage(index_linkage, flow_id, index):
@@ -130,6 +147,7 @@ class BASEAmpliconsMetadata(BaseMetadata):
                     'name': name,
                     'id': name,
                     'sample_type': 'soil',
+                    'read_length': base_amplicon_read_length(amplicon),  # hard-coded for now, on advice of AB at CSIRO
                     'bpa_id': bpa_id,
                     'flow_id': flow_id,
                     'base_amplicon_linkage': base_amplicon_linkage,
@@ -198,6 +216,8 @@ class BASEAmpliconsMetadata(BaseMetadata):
                 resource['md5'] = resource['id'] = md5
                 resource['name'] = filename
                 resource['resource_type'] = self.ckan_data_type
+                for contextual_source in self.contextual_metadata:
+                    resource.update(contextual_source.filename_metadata(filename))
                 sample_extraction_id = bpa_id.split('.')[-1] + '_' + file_info.get('extraction')
                 xlsx_info = self.metadata_info[os.path.basename(md5_file)]
                 legacy_url = urljoin(xlsx_info['base_url'], filename)
@@ -221,6 +241,7 @@ class BASEAmpliconsControlMetadata(BaseMetadata):
         super(BASEAmpliconsControlMetadata, self).__init__()
         self.path = Path(metadata_path)
         self.metadata_info = metadata_info
+        self.contextual_metadata = contextual_metadata
         self.track_meta = BASETrackMetadata()
 
     def md5_lines(self):
@@ -258,6 +279,7 @@ class BASEAmpliconsControlMetadata(BaseMetadata):
                 'flow_id': flow_id,
                 'notes': 'BASE Amplicons Control %s %s' % (amplicon, flow_id),
                 'title': 'BASE Amplicons Control %s %s' % (amplicon, flow_id),
+                'read_length': base_amplicon_read_length(amplicon),  # hard-coded for now, on advice of AB at CSIRO
                 'omics': 'Genomics',
                 'analytical_platform': 'MiSeq',
                 'date_of_transfer': ingest_utils.get_date_isoformat(track_get('date_of_transfer')),
@@ -288,6 +310,8 @@ class BASEAmpliconsControlMetadata(BaseMetadata):
             resource['md5'] = resource['id'] = md5
             resource['name'] = filename
             resource['resource_type'] = self.ckan_data_type
+            for contextual_source in self.contextual_metadata:
+                resource.update(contextual_source.filename_metadata(filename))
             xlsx_info = self.metadata_info[os.path.basename(md5_file)]
             legacy_url = urljoin(xlsx_info['base_url'], filename)
             resources.append(((resource['amplicon'], resource['flow_id']), legacy_url, resource))
@@ -379,6 +403,7 @@ class BASEMetagenomicsMetadata(BaseMetadata):
             'id': name,
             'bpa_id': bpa_id,
             'flow_id': flow_id,
+            'read_length': '150bp',  # hard-coded for now, on advice of AB at CSIRO
             'sample_extraction_id': sample_extraction_id,
             'insert_size_range': row_get('insert_size_range'),
             'library_construction_protocol': row_get('library_construction_protocol'),
@@ -464,6 +489,8 @@ class BASEMetagenomicsMetadata(BaseMetadata):
                 resource['md5'] = resource['id'] = md5
                 resource['name'] = filename
                 resource['resource_type'] = self.ckan_data_type
+                for contextual_source in self.contextual_metadata:
+                    resource.update(contextual_source.filename_metadata(filename))
                 sample_extraction_id = bpa_id.split('.')[-1] + '_' + file_info.get('extraction')
                 xlsx_info = self.metadata_info[os.path.basename(md5_file)]
                 legacy_url = urljoin(xlsx_info['base_url'], filename)
