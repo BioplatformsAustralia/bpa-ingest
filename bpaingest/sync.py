@@ -1,6 +1,6 @@
 from __future__ import print_function
 
-from .ops import ckan_method, patch_if_required, check_resource, create_resource, reupload_resource, get_organization, ArchiveInfo
+from .ops import ckan_method, patch_if_required, check_resource, create_resource, reupload_resource, get_organization, ArchiveInfo, diff_objects
 import ckanapi
 from Queue import Queue
 from threading import Thread
@@ -226,8 +226,10 @@ def sync_metadata(ckan, meta, auth, num_threads, do_uploads, do_resource_checks)
         id_count = Counter(t['id'] for t in packages)
         for k, cnt in id_count.items():
             if cnt > 1:
-                logger.critical("package id `%s' appears more than once: excluded from sync" % (k))
-                continue
+                dupes = [t for t in packages if t['id'] == k]
+                logger.critical("package id `%s' appears %d times: excluded from sync" % (k, len(dupes)))
+                for dupe in dupes[1:]:
+                    logger.debug(diff_objects(dupes[0], dupe, dupes[0]['type']))
             yield by_id[k]
 
     organization = get_organization(ckan, meta.organization)

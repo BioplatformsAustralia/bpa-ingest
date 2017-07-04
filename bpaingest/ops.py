@@ -42,32 +42,36 @@ def print_accounts():
         print("  %14s  %6s  %d" % (object_type, method, method_stats[(object_type, method)]))
 
 
-def patch_if_required(ckan, object_type, ckan_object, patch_object, skip_differences=None):
-    """
-    patch ckan_object if applying patch_object would change it. ckan_object is unchanged
-    for any keys which are not mentioned in patch_object
-    """
+def diff_objects(obj1, obj2, desc, skip_differences=None):
     def sort_if_list(v):
         if type(v) is list:
             return list(sorted(v))
         return v
     differences = []
-    for k in patch_object.keys():
+    for k in obj1.keys():
         if skip_differences and k in skip_differences:
             continue
-        v1 = sort_if_list(patch_object.get(k))
-        v2 = sort_if_list(ckan_object.get(k))
+        v1 = sort_if_list(obj1.get(k))
+        v2 = sort_if_list(obj2.get(k))
         # co-erce to string to cope with numeric types in the JSON data
         if v1 != v2 and unicode(v1) != unicode(v2):
             differences.append((k, v1, v2))
     if differences:
-        logger.debug("%s/%s: differs" % (object_type, ckan_object.get('id', '<no id?>')))
+        logger.debug("%s/%s: differs" % (desc, obj2.get('id', '<no id?>')))
     differences.sort()
     for k, v1, v2 in differences:
         logger.debug("   -  %s=%s (%s)" % (k, v2, type(v2).__name__))
     for k, v1, v2 in differences:
         logger.debug("   +  %s=%s (%s)" % (k, v1, type(v1).__name__))
-    patch_needed = len(differences) > 0
+    return len(differences) > 0
+
+
+def patch_if_required(ckan, object_type, ckan_object, patch_object, skip_differences=None):
+    """
+    patch ckan_object if applying patch_object would change it. ckan_object is unchanged
+    for any keys which are not mentioned in patch_object
+    """
+    patch_needed = diff_objects(patch_object, ckan_object, object_type)
     if patch_needed:
         ckan_object = ckan_method(ckan, object_type, "patch")(**patch_object)
     return patch_needed, ckan_object

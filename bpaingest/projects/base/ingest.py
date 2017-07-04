@@ -334,11 +334,8 @@ class BASEMetagenomicsMetadata(BaseMetadata):
     # https://github.com/muccg/bpa-archive-ops/issues/140
     missing_packages = [
         ('8154_2', 'H9BB6ADXX'),
-        ('8155_2', 'H81M8ADXX'),
         ('8158_2', 'H9BB6ADXX'),
         ('8159_2', 'H9BB6ADXX'),
-        ('8160_3', 'H81M8ADXX'),
-        ('8161_3', 'H81M8ADXX'),
         ('8262_2', 'H9EV8ADXX'),
         ('8263_2', 'H9BB6ADXX'),
         ('8268_2', 'H80EYADXX'),
@@ -444,6 +441,7 @@ class BASEMetagenomicsMetadata(BaseMetadata):
 
         logger.info("Ingesting BASE Metagenomics metadata from {0}".format(self.path))
         packages = []
+
         # missing metadata (see note above)
         for sample_extraction_id, flow_id in self.missing_packages:
             bpa_id = ingest_utils.extract_bpa_id(sample_extraction_id.split('_')[0])
@@ -453,9 +451,14 @@ class BASEMetagenomicsMetadata(BaseMetadata):
             track_meta = self.track_meta.get(xlsx_info['ticket'])
             packages.append(self.assemble_obj(bpa_id, sample_extraction_id, flow_id, None, track_meta))
 
+        # the generated package IDs will have duplicates, due to data issues in the pilot data
+        # we simply skip over the duplicates, which don't have any significant data differences
+        generated_packages = set()
         for fname in glob(self.path + '/*.xlsx'):
             logger.info("Processing BASE Metagenomics metadata file {0}".format(os.path.basename(fname)))
-            for row in self.parse_spreadsheet(fname, self.metadata_info):
+            # unique the rows, duplicates in some of the sheets
+            uniq_rows = set(t for t in self.parse_spreadsheet(fname, self.metadata_info))
+            for row in uniq_rows:
                 track_meta = self.track_meta.get(row.ticket)
                 # pilot data has the flow cell in the spreadsheet; in the main dataset
                 # there is one flow-cell per spreadsheet, so it's in the spreadsheet
@@ -465,12 +468,17 @@ class BASEMetagenomicsMetadata(BaseMetadata):
                     flow_id = get_flow_id(fname)
                 if flow_id is None:
                     raise Exception("can't determine flow_id for %s / %s" % (fname, repr(row)))
-
                 bpa_id = row.bpa_id
                 if bpa_id is None:
                     continue
                 sample_extraction_id = ingest_utils.make_sample_extraction_id(row.sample_extraction_id, bpa_id)
-                packages.append(self.assemble_obj(bpa_id, sample_extraction_id, flow_id, row, track_meta))
+                new_obj = self.assemble_obj(bpa_id, sample_extraction_id, flow_id, row, track_meta)
+                if new_obj['id'] in generated_packages:
+                    logger.debug('skipped attempt to generate duplicate package: %s' % new_obj['id'])
+                    continue
+                generated_packages.add(new_obj['id'])
+                packages.append(new_obj)
+
         return packages
 
     def _get_resources(self):
