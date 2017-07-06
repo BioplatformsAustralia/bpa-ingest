@@ -230,6 +230,7 @@ def sync_metadata(ckan, meta, auth, num_threads, do_uploads, do_resource_checks)
                 logger.critical("package id `%s' appears %d times: excluded from sync" % (k, len(dupes)))
                 for dupe in dupes[1:]:
                     logger.debug(diff_objects(dupes[0], dupe, dupes[0]['type']))
+                continue
             yield by_id[k]
 
     organization = get_organization(ckan, meta.organization)

@@ -1,10 +1,11 @@
 from __future__ import print_function
 
 from unipath import Path
+from collections import defaultdict
 
 from ...abstract import BaseMetadata
 
-from ...util import make_logger, bpa_id_to_ckan_name
+from ...util import make_logger, bpa_id_to_ckan_name, common_values
 from urlparse import urljoin
 
 from glob import glob
@@ -439,8 +440,6 @@ class OMGGenomicsHiSeqMetadata(BaseMetadata):
         self.contextual_metadata = contextual_metadata
         self.metadata_info = metadata_info
         self.track_meta = OMGTrackMetadata()
-        # each row in the spreadsheet maps through to a single tar file
-        self.file_package = {}
 
     @classmethod
     def parse_spreadsheet(self, fname, metadata_info):
@@ -485,20 +484,26 @@ class OMGGenomicsHiSeqMetadata(BaseMetadata):
         packages = []
         for fname in glob(self.path + '/*.xlsx'):
             logger.info("Processing OMG metadata file {0}".format(os.path.basename(fname)))
+            flow_id = get_flow_id(fname)
+
+            objs = defaultdict(list)
             for row in self.parse_spreadsheet(fname, self.metadata_info):
-                track_meta = self.track_meta.get(row.ticket)
-                flow_id = get_flow_id(fname)
+                obj = row._asdict()
+                obj.pop('file')
+                objs[obj['bpa_id']].append(obj)
+
+            for bpa_id, row_objs in objs.items():
+                obj = common_values(row_objs)
+                track_meta = self.track_meta.get(obj['ticket'])
 
                 def track_get(k):
                     if track_meta is None:
                         return None
                     return getattr(track_meta, k)
-                bpa_id = row.bpa_id
+                bpa_id = obj['bpa_id']
                 if bpa_id is None:
                     continue
-                obj = row._asdict()
                 name = bpa_id_to_ckan_name(bpa_id, self.ckan_data_type, flow_id)
-                self.file_package[row.file] = (bpa_id, flow_id)
                 context = {}
                 for contextual_source in self.contextual_metadata:
                     context.update(contextual_source.get(bpa_id))
@@ -539,12 +544,11 @@ class OMGGenomicsHiSeqMetadata(BaseMetadata):
                 if file_info is None:
                     logger.debug("unable to parse filename: `%s'" % (filename))
                     continue
-                bpa_id, flow_id = self.file_package[filename]
                 resource = file_info.copy()
                 resource['md5'] = resource['id'] = md5
                 resource['name'] = filename
                 resource['resource_type'] = self.ckan_data_type
                 xlsx_info = self.metadata_info[os.path.basename(md5_file)]
                 legacy_url = urljoin(xlsx_info['base_url'], filename)
-                resources.append(((bpa_id, flow_id), legacy_url, resource))
+                resources.append(((ingest_utils.extract_bpa_id(resource['bpa_id']), resource['flow_cell_id']), legacy_url, resource))
         return resources

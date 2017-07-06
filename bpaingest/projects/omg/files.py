@@ -44,7 +44,7 @@ def test_exon():
 # <BPA sample ID>_<flowcell ID>_<index sequence>_<sample number>_<lane>_<read>_001.fastq.gz
 # If there is a missing field (eg if you have no index sequences), keep the field in the filename but use Ns instead.
 HISEQ_FILENAME_PATTERN = """
-    (?P<id>\d{4,6})_
+    (?P<bpa_id>\d{4,6})_
     (?P<flow_cell_id>\w{9})_
     (?P<index>[G|A|T|C|-]*|N)_
     (?P<sample_number>S\d)_
