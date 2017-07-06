@@ -4,7 +4,7 @@ from unipath import Path
 
 from ...abstract import BaseMetadata
 
-from ...util import make_logger, bpa_id_to_ckan_name, csv_to_named_tuple, strip_to_ascii
+from ...util import make_logger, bpa_id_to_ckan_name
 from urlparse import urljoin
 
 from glob import glob
@@ -282,7 +282,7 @@ class OMGExonCaptureMetadata(BaseMetadata):
     organization = 'bpa-omg'
     ckan_data_type = 'omg-exon-capture'
     contextual_classes = [OMGSampleContextual]
-    metadata_patterns = [r'^.*\.md5$', r'^.*_metadata.*.*\.csv$']
+    metadata_patterns = [r'^.*\.md5$', r'^.*_metadata.*.*\.xlsx$']
     metadata_urls = [
         'https://downloads-qcif.bioplatforms.com/bpa/omg_staging/exon_capture/',
     ]
@@ -302,37 +302,74 @@ class OMGExonCaptureMetadata(BaseMetadata):
 
     @classmethod
     def parse_spreadsheet(self, fname, metadata_info):
-        _, rows = csv_to_named_tuple(
-            'OMGExonRow',
+        field_spec = [
+            ("bpa_id", "bpa_id", ingest_utils.extract_bpa_id),
+            ('voucher_id', 'voucher_id'),
+            ('dna_extraction_date', 'dna_extraction_date'),
+            ('dna_extracted_by', 'dna_extracted_by'),
+            ('dna_extraction_method', 'dna_extraction_method'),
+            ('sample_origin', 'sample_origin'),
+            ('dsdna_conc_ng_ul', 'dsdna__conc_ng_ul'),
+            ('experimental_design', 'experimental_design'),
+            ('library_construction_method', 'library_construction_method'),
+            ('n_samples_pooled', 'n_samples_pooled'),
+            ('capture_type', 'capture_type'),
+            ('exon_capture_pool', 'exon_capture_pool', ingest_utils.get_int),
+            ('index_used', 'index_used', ingest_utils.get_int),
+            ('brf_sample_id', 'brf_sample_id'),
+            ('oligo_id', 'oligo_id'),
+            ('oligo_sequence', 'oligo_sequence'),
+            ('index_sequence', 'index_sequence'),
+            ('index_pcr_rep1_cycles', 'index_pcr_rep1_cycles', ingest_utils.get_int),
+            ('index_pcr_rep2_cycles', 'index_pcr_rep2_cycles', ingest_utils.get_int),
+            ('indexpcr_conc_ng_ul', 'indexpcr_conc_ng_ul'),
+            ('bpa_work_order', 'bpa_work_order', ingest_utils.get_int),
+            ('sequencing_facility', 'sequencing_facility'),
+            ('sequencing_platform', 'sequencing_platform'),
+            ('sequence_length', 'sequence_length'),
+            ('flowcell_id', 'flowcell_id'),
+            ('pre_capture_conc_ng_ul', 'pre_capture_conc_ng_ul'),
+            ('hyb_duration_hours', 'hyb_duration_hours'),
+            ('post_capture_conc_ng_ul', 'post_capture_conc_ng_ul'),
+            ('qpcr_p1_meancp_pre', 'qpcr_p1_meancp_pre'),
+            ('qpcr_p1_meancp_post', 'qpcr_p1_meancp_post'),
+            ('qpcr_p2_meancp_pre', 'qpcr_p2_meancp_pre'),
+            ('qpcr_p2_meancp_post', 'qpcr_p2_meancp_post'),
+            ('qpcr_n1_meancp_pre', 'qpcr_n1_meancp_pre'),
+            ('qpcr_n1_meancp_post', 'qpcr_n1_meancp_post'),
+            ('qpcr_n2_meancp_pre', 'qpcr_n2_meancp_pre'),
+            ('qpcr_n2_meancp_post', 'qpcr_n2_meancp_post'),
+        ]
+
+        wrapper = ExcelWrapper(
+            field_spec,
             fname,
+            sheet_name=None,
+            header_length=1,
+            column_name_row_index=0,
+            formatting_info=True,
             additional_context=metadata_info[os.path.basename(fname)])
-        rows = [t._asdict() for t in rows]
-        for row in rows:
-            for k, v in row.items():
-                stripped = strip_to_ascii(v)
-                if len(v) != len(stripped):
-                    logger.warning("stripped invalid characters from field %s, '%s' '%s'" % (k, v, stripped))
-                    row[k] = stripped
+        rows = list(wrapper.get_all())
         return rows
 
     def _get_packages(self):
         logger.info("Ingesting OMG metadata from {0}".format(self.path))
         packages = []
-        for fname in glob(self.path + '/*_metadata.csv'):
+        for fname in glob(self.path + '/*.xlsx'):
             logger.info("Processing OMG metadata file {0}".format(os.path.basename(fname)))
             for row in self.parse_spreadsheet(fname, self.metadata_info):
-                track_meta = self.track_meta.get(row['ticket'])
+                track_meta = self.track_meta.get(row.ticket)
 
                 def track_get(k):
                     if track_meta is None:
                         return None
                     return getattr(track_meta, k)
-                bpa_id = ingest_utils.extract_bpa_id(row['bpa_id'])
+                bpa_id = ingest_utils.extract_bpa_id(row.bpa_id)
                 if bpa_id is None:
                     continue
-                linkage = self.flow_cell_index_linkage(row['flowcell_id'], row['index_sequence'])
+                linkage = self.flow_cell_index_linkage(row.flowcell_id, row.index_sequence)
                 name = bpa_id_to_ckan_name(bpa_id, self.ckan_data_type, linkage)
-                obj = row.copy()
+                obj = row._asdict()
                 context = {}
                 for contextual_source in self.contextual_metadata:
                     context.update(contextual_source.get(bpa_id))
@@ -340,7 +377,7 @@ class OMGExonCaptureMetadata(BaseMetadata):
                     'name': name,
                     'id': name,
                     'bpa_id': bpa_id,
-                    'title': 'OMG Exon Capture Raw %s %s %s' % (bpa_id, row['flowcell_id'], row['index_sequence']),
+                    'title': 'OMG Exon Capture Raw %s %s %s' % (bpa_id, row.flowcell_id, row.index_sequence),
                     'notes': '%s. %s.' % (context['common_name'], context['institution_name']),
                     'date_of_transfer': ingest_utils.get_date_isoformat(track_get('date_of_transfer')),
                     'data_type': track_get('data_type'),

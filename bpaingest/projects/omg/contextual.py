@@ -2,7 +2,7 @@ import re
 from glob import glob
 from ...libs import ingest_utils
 from ...libs.excel_wrapper import ExcelWrapper
-from ...util import make_logger, strip_to_ascii, one
+from ...util import make_logger, one
 
 logger = make_logger(__name__)
 

@@ -201,6 +201,9 @@ def get_date(dt):
     if dt is None:
         return None
 
+    if dt == 'unknown':
+        return None
+
     if isinstance(dt, datetime.date):
         return dt
 
