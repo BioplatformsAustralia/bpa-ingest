@@ -77,6 +77,7 @@ omg()
   apply omg-exoncapture
   apply omg-10xraw
   apply omg-10xprocessed
+  apply omg-genomics-hiseq
 }
 
 sepsis()

@@ -419,3 +419,132 @@ class OMGExonCaptureMetadata(BaseMetadata):
                 legacy_url = urljoin(xlsx_info['base_url'], filename)
                 resources.append(((bpa_id, resource['flow_cell_id'], resource['index']), legacy_url, resource))
         return resources
+
+
+class OMGGenomicsHiSeqMetadata(BaseMetadata):
+    auth = ('omg', 'omg')
+    organization = 'bpa-omg'
+    ckan_data_type = 'omg-genomics-hiseq'
+    contextual_classes = [OMGSampleContextual]
+    metadata_patterns = [r'^.*\.md5$', r'^.*_metadata.*.*\.xlsx$']
+    metadata_urls = [
+        'https://downloads-qcif.bioplatforms.com/bpa/omg_staging/genomics/raw/',
+    ]
+    metadata_url_components = ('ticket',)
+    resource_linkage = ('bpa_id', 'flow_id')
+
+    def __init__(self, metadata_path, contextual_metadata=None, metadata_info=None):
+        super(OMGGenomicsHiSeqMetadata, self).__init__()
+        self.path = Path(metadata_path)
+        self.contextual_metadata = contextual_metadata
+        self.metadata_info = metadata_info
+        self.track_meta = OMGTrackMetadata()
+        # each row in the spreadsheet maps through to a single tar file
+        self.file_package = {}
+
+    @classmethod
+    def parse_spreadsheet(self, fname, metadata_info):
+        field_spec = [
+            ('facility_sample_id', 'facility_sample_id'),
+            ('bpa_id', 'bpa_sample_id', ingest_utils.extract_bpa_id),
+            ('bpa_dataset_id', 'bpa_dataset_id'),
+            ('bpa_work_order', 'bpa_work_order'),
+            ('file', 'file'),
+            ('library_prep_method', 'library_prep_method'),
+            ('sequencing_facility', 'sequencing_facility'),
+            ('sequencing_platform', 'sequencing_platform'),
+            ('software_version', 'software_version'),
+            ('omg_project', 'omg_project'),
+            ('data_custodian', 'data_custodian'),
+        ]
+        try:
+            wrapper = ExcelWrapper(
+                field_spec,
+                fname,
+                sheet_name=None,
+                header_length=1,
+                column_name_row_index=0,
+                formatting_info=True,
+                additional_context=metadata_info[os.path.basename(fname)])
+            rows = list(wrapper.get_all())
+            return rows
+        except:
+            logger.error("Cannot parse: `%s'" % (fname))
+            return []
+
+    def _get_packages(self):
+        xlsx_re = re.compile(r'^.*_(\w+)_metadata.*\.xlsx$')
+
+        def get_flow_id(fname):
+            m = xlsx_re.match(fname)
+            if not m:
+                raise Exception("unable to find flowcell for filename: `%s'" % (fname))
+            return m.groups()[0]
+
+        logger.info("Ingesting OMG metadata from {0}".format(self.path))
+        packages = []
+        for fname in glob(self.path + '/*.xlsx'):
+            logger.info("Processing OMG metadata file {0}".format(os.path.basename(fname)))
+            for row in self.parse_spreadsheet(fname, self.metadata_info):
+                track_meta = self.track_meta.get(row.ticket)
+                flow_id = get_flow_id(fname)
+
+                def track_get(k):
+                    if track_meta is None:
+                        return None
+                    return getattr(track_meta, k)
+                bpa_id = row.bpa_id
+                if bpa_id is None:
+                    continue
+                obj = row._asdict()
+                name = bpa_id_to_ckan_name(bpa_id, self.ckan_data_type, flow_id)
+                self.file_package[row.file] = (bpa_id, flow_id)
+                context = {}
+                for contextual_source in self.contextual_metadata:
+                    context.update(contextual_source.get(bpa_id))
+                obj.update({
+                    'name': name,
+                    'id': name,
+                    'flow_id': flow_id,
+                    'title': 'OMG Genomics HiSeq Raw %s %s' % (bpa_id, flow_id),
+                    'notes': '%s. %s.' % (context['common_name'], context['institution_name']),
+                    'date_of_transfer': ingest_utils.get_date_isoformat(track_get('date_of_transfer')),
+                    'data_type': track_get('data_type'),
+                    'description': track_get('description'),
+                    'folder_name': track_get('folder_name'),
+                    'sample_submission_date': ingest_utils.get_date_isoformat(track_get('date_of_transfer')),
+                    'contextual_data_submission_date': None,
+                    'data_generated': ingest_utils.get_date_isoformat(track_get('date_of_transfer_to_archive')),
+                    'archive_ingestion_date': ingest_utils.get_date_isoformat(track_get('date_of_transfer_to_archive')),
+                    'dataset_url': track_get('download'),
+                    'type': self.ckan_data_type,
+                    'private': True,
+                })
+                obj.update(context)
+                ingest_utils.add_spatial_extra(obj)
+                tag_names = ['genomics-hiseq']
+                obj['tags'] = [{'name': t} for t in tag_names]
+                packages.append(obj)
+        return packages
+
+    def _get_resources(self):
+        logger.info("Ingesting OMG md5 file information from {0}".format(self.path))
+        resources = []
+        for md5_file in glob(self.path + '/*.md5'):
+            logger.info("Processing md5 file {}".format(md5_file))
+            for filename, md5, file_info in files.parse_md5_file(md5_file, [files.hiseq_filename_re]):
+                # FIXME: we should upload these somewhere centrally
+                if filename.endswith('_metadata.xlsx'):
+                    continue
+                if file_info is None:
+                    logger.debug("unable to parse filename: `%s'" % (filename))
+                    continue
+                bpa_id, flow_id = self.file_package[filename]
+                resource = file_info.copy()
+                resource['md5'] = resource['id'] = md5
+                resource['name'] = filename
+                resource['resource_type'] = self.ckan_data_type
+                xlsx_info = self.metadata_info[os.path.basename(md5_file)]
+                legacy_url = urljoin(xlsx_info['base_url'], filename)
+                resources.append(((bpa_id, flow_id), legacy_url, resource))
+        return resources

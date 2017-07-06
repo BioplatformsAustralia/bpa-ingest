@@ -40,6 +40,28 @@ def test_exon():
     for filename in filenames:
         assert(exon_filename_re.match(filename) is not None)
 
+# For the short read data we should follow the new BPA file naming protocol that Mabel circulated fairly recently - I'm not sure if it reached you, but I've attached it here. Essentially it is:
+# <BPA sample ID>_<flowcell ID>_<index sequence>_<sample number>_<lane>_<read>_001.fastq.gz
+# If there is a missing field (eg if you have no index sequences), keep the field in the filename but use Ns instead.
+HISEQ_FILENAME_PATTERN = """
+    (?P<id>\d{4,6})_
+    (?P<flow_cell_id>\w{9})_
+    (?P<index>[G|A|T|C|-]*|N)_
+    (?P<sample_number>S\d)_
+    (?P<lane>L\d{3})_
+    (?P<read>[R|I][1|2])_001\.fastq\.gz
+"""
+hiseq_filename_re = re.compile(HISEQ_FILENAME_PATTERN, re.VERBOSE)
+
+
+def test_hiseq():
+    filenames = [
+        '40066_HGTV5ALXX_N_S1_L001_R1_001.fastq.gz'
+    ]
+
+    for filename in filenames:
+        assert(hiseq_filename_re.match(filename) is not None)
+
 
 sample_sheet_re = re.compile(r'^SampleSheet\.csv$')
 

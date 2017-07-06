@@ -42,7 +42,8 @@ from .wheat_pathogens_transcript.ingest import WheatPathogensTranscriptMetadata
 from .omg.ingest import (
     OMG10XProcessedIlluminaMetadata,
     OMG10XRawIlluminaMetadata,
-    OMGExonCaptureMetadata)
+    OMGExonCaptureMetadata,
+    OMGGenomicsHiSeqMetadata)
 
 PROJECTS = {
     # functional ingests
@@ -83,6 +84,7 @@ PROJECTS = {
     'omg-10xraw': OMG10XRawIlluminaMetadata,
     'omg-10xprocessed': OMG10XProcessedIlluminaMetadata,
     'omg-exoncapture': OMGExonCaptureMetadata,
+    'omg-genomics-hiseq': OMGGenomicsHiSeqMetadata,
     # stubs
     'barcode': BarcodeMetadata,
     'melanoma': MelanomaMetadata,
