@@ -237,7 +237,7 @@ def genhash(ckan, args):
     data, and generate expected E-Tag and SHA256 values.
     """
     with DownloadMetadata(PROJECTS[args.project_name], path=args.download_path) as dlmeta:
-        genhash_fn(ckan, dlmeta.meta, args.mirror_path)
+        genhash_fn(ckan, dlmeta.meta, args.mirror_path, num_threads=4)
         print_accounts()
 
 genhash.setup = setup_hash
