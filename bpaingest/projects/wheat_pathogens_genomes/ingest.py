@@ -17,7 +17,7 @@ logger = make_logger(__name__)
 
 
 class WheatPathogensGenomesMetadata(BaseMetadata):
-    metadata_urls = ['https://downloads-qcif.bioplatforms.com/bpa/wheat_pathogens/metadata/']
+    metadata_urls = ['https://downloads-qcif.bioplatforms.com/bpa/wheat_pathogens/metadata/2017-07-07/']
     organization = 'bpa-wheat-pathogens-genomes'
     ckan_data_type = 'wheat-pathogens'
 
@@ -138,9 +138,6 @@ class WheatPathogensGenomesMetadata(BaseMetadata):
                     'file_size': row.file_size,
                     'resource_type': self.ckan_data_type,
                 }
-                # this file doesn't exist on disk, was never made
-                if resource['name'] == '13698_AC0B4AACXX_ATCACG_L007_R2.fastq.gz':
-                    continue
                 resource['md5'] = resource['id'] = row.md5_checksum
                 legacy_url = urljoin(xlsx_info['base_url'], '../all/' + resource['name'])
                 resources.append(((bpa_id,), legacy_url, resource))
