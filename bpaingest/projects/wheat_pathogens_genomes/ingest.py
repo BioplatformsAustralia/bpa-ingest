@@ -138,6 +138,9 @@ class WheatPathogensGenomesMetadata(BaseMetadata):
                     'file_size': row.file_size,
                     'resource_type': self.ckan_data_type,
                 }
+                # this file doesn't exist on disk, was never made
+                if resource['name'] == '13698_AC0B4AACXX_ATCACG_L007_R2.fastq.gz':
+                    continue
                 resource['md5'] = resource['id'] = row.md5_checksum
                 legacy_url = urljoin(xlsx_info['base_url'], '../all/' + resource['name'])
                 resources.append(((bpa_id,), legacy_url, resource))
