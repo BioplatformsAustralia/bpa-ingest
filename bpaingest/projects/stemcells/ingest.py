@@ -12,13 +12,11 @@ from ...libs.excel_wrapper import ExcelWrapper
 from ...libs.md5lines import md5lines
 from .tracking import StemcellsTrackMetadata
 from .contextual import (
-    StemcellsAGRFTranscriptomeContextual,
-    StemcellsAGRFsmRNAContextual,
-    StemcellsRamaciottiSingleCell,
+    StemcellsTranscriptomeContextual,
+    StemcellsSmallRNAContextual,
+    StemcellsSingleCellRNASeq,
     StemcellsMetabolomicsContextual,
-    StemcellsProteomicsRawContextual,
-    StemcellsProteomicsAnalysedContextual,
-    StemcellsMetabolomicsAnalysedContextual)
+    StemcellsProteomicsContextual)
 from . import files
 from glob import glob
 
@@ -39,7 +37,7 @@ def fix_analytical_platform(s):
 
 
 class StemcellsTranscriptomeMetadata(BaseMetadata):
-    contextual_classes = [StemcellsAGRFTranscriptomeContextual]
+    contextual_classes = [StemcellsTranscriptomeContextual]
     metadata_urls = ['https://downloads-qcif.bioplatforms.com/bpa/stemcell/raw/transcriptome/']
     metadata_url_components = ('facility_code', 'ticket')
     metadata_patterns = [r'^.*\.md5', r'^.*_metadata\.xlsx']
@@ -142,7 +140,7 @@ class StemcellsTranscriptomeMetadata(BaseMetadata):
 
 
 class StemcellsSmallRNAMetadata(BaseMetadata):
-    contextual_classes = [StemcellsAGRFsmRNAContextual]
+    contextual_classes = [StemcellsSmallRNAContextual]
     metadata_urls = ['https://downloads-qcif.bioplatforms.com/bpa/stemcell/raw/small_rna/']
     metadata_url_components = ('facility_code', 'ticket')
     metadata_patterns = [r'^.*\.md5', r'^.*_metadata\.xlsx']
@@ -245,7 +243,7 @@ class StemcellsSmallRNAMetadata(BaseMetadata):
 
 
 class StemcellsSingleCellRNASeqMetadata(BaseMetadata):
-    contextual_classes = [StemcellsRamaciottiSingleCell]
+    contextual_classes = [StemcellsSingleCellRNASeq]
     metadata_urls = ['https://downloads-qcif.bioplatforms.com/bpa/stemcell/raw/single_cell_rnaseq/']
     metadata_url_components = ('facility_code', 'ticket')
     metadata_patterns = [r'^.*\.md5', r'^.*_metadata\.xlsx']
@@ -470,7 +468,7 @@ class StemcellsMetabolomicsMetadata(BaseMetadata):
 
 
 class StemcellsProteomicsBaseMetadata(BaseMetadata):
-    contextual_classes = [StemcellsProteomicsRawContextual]
+    contextual_classes = [StemcellsProteomicsContextual]
     metadata_urls = ['https://downloads-qcif.bioplatforms.com/bpa/stemcell/raw/proteomic/']
     metadata_url_components = ('facility_code', 'ticket')
     metadata_patterns = [r'^.*\.md5', r'^.*_metadata\.xlsx']
@@ -690,7 +688,7 @@ class StemcellsProteomicsAnalysedMetadata(BaseMetadata):
     we use the ticket as linkage between the package and the resource
     """
 
-    contextual_classes = [StemcellsProteomicsAnalysedContextual]
+    contextual_classes = []
     metadata_urls = ['https://downloads-qcif.bioplatforms.com/bpa/stemcell/analysed/proteomic/']
     metadata_url_components = ('facility_code', 'ticket')
     metadata_patterns = [r'^.*\.md5', r'^.*_metadata\.xlsx$']
@@ -782,8 +780,8 @@ class StemcellsProteomicsAnalysedMetadata(BaseMetadata):
                 'dataset_url': track_meta.download,
                 'private': True,
             })
-            for contextual_source in self.contextual_metadata:
-                obj.update(contextual_source.get(track_meta.folder_name))
+            # for contextual_source in self.contextual_metadata:
+            #     obj.update(contextual_source.get(track_meta.folder_name))
             tag_names = ['proteomics', 'analysed']
             obj['tags'] = [{'name': t} for t in tag_names]
             packages.append(obj)
@@ -807,7 +805,7 @@ class StemcellsProteomicsAnalysedMetadata(BaseMetadata):
 
 
 class StemcellsMetabolomicsAnalysedMetadata(BaseMetadata):
-    contextual_classes = [StemcellsMetabolomicsAnalysedContextual]
+    contextual_classes = []
     metadata_urls = ['https://downloads-qcif.bioplatforms.com/bpa/stemcell/analysed/metabolomic/']
     metadata_url_components = ('facility_code', 'ticket')
     metadata_patterns = [r'^.*\.md5', r'^.*_metadata\.xlsx$']
@@ -895,8 +893,8 @@ class StemcellsMetabolomicsAnalysedMetadata(BaseMetadata):
                 'dataset_url': track_meta.download,
                 'private': True,
             })
-            for contextual_source in self.contextual_metadata:
-                obj.update(contextual_source.get(ticket))
+            # for contextual_source in self.contextual_metadata:
+            #     obj.update(contextual_source.get(ticket))
             tag_names = ['metabolomics', 'analysed']
             obj['tags'] = [{'name': t} for t in tag_names]
             packages.append(obj)
