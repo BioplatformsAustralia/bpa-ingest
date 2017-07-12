@@ -557,17 +557,6 @@ class BASESiteImagesMetadata(BaseMetadata):
             info = self.id_to_resources[id_tpl]
             obj = {}
             name = bpa_id_to_ckan_name('%s-%s' % id_tpl, self.ckan_data_type).lower()
-            obj.update({
-                'name': name,
-                'id': name,
-                'site_ids': self.id_tpl_to_site_ids(id_tpl),
-                'title': 'BASE Site Image %s %s' % id_tpl,
-                'omics': 'Genomics',
-                'analytical_platform': 'MiSeq',
-                'ticket': info['ticket'],
-                'type': self.ckan_data_type,
-                'private': True,
-            })
             # find the common contextual metadata for the site IDs
             context = []
             for abbrev in id_tpl:
@@ -576,6 +565,18 @@ class BASESiteImagesMetadata(BaseMetadata):
                     fragment.update(contextual_source.get(ingest_utils.extract_bpa_id(abbrev)))
                 context.append(fragment)
             obj.update(common_values(context))
+            obj.update({
+                'name': name,
+                'id': name,
+                'site_ids': self.id_tpl_to_site_ids(id_tpl),
+                'title': 'BASE Site Image %s %s' % id_tpl,
+                'notes': 'Site image: %s' % (obj['location_description']),
+                'omics': 'Genomics',
+                'analytical_platform': 'MiSeq',
+                'ticket': info['ticket'],
+                'type': self.ckan_data_type,
+                'private': True,
+            })
             ingest_utils.add_spatial_extra(obj)
             tag_names = ['site-images']
             obj['tags'] = [{'name': t} for t in tag_names]
