@@ -54,6 +54,7 @@ base()
   apply base-amplicons-control
   apply base-amplicons
   apply base-metagenomics
+  apply base-site-images
 }
 
 gbr() {

@@ -2,7 +2,8 @@ from .barcode.ingest import BarcodeMetadata
 from .base.ingest import (
     BASEAmpliconsMetadata,
     BASEMetagenomicsMetadata,
-    BASEAmpliconsControlMetadata)
+    BASEAmpliconsControlMetadata,
+    BASESiteImagesMetadata)
 from .gbr.ingest import GbrAmpliconsMetadata
 from .melanoma.ingest import MelanomaMetadata
 from .mm.ingest import (
@@ -46,7 +47,6 @@ from .omg.ingest import (
     OMGGenomicsHiSeqMetadata)
 
 PROJECTS = {
-    # functional ingests
     'gbr-genomics-amplicons': GbrAmpliconsMetadata,
     'sepsis-genomics-miseq': SepsisGenomicsMiseqMetadata,
     'sepsis-genomics-pacbio': SepsisGenomicsPacbioMetadata,
@@ -81,6 +81,7 @@ PROJECTS = {
     'base-amplicons': BASEAmpliconsMetadata,
     'base-amplicons-control': BASEAmpliconsControlMetadata,
     'base-metagenomics': BASEMetagenomicsMetadata,
+    'base-site-images': BASESiteImagesMetadata,
     'omg-10xraw': OMG10XRawIlluminaMetadata,
     'omg-10xprocessed': OMG10XProcessedIlluminaMetadata,
     'omg-exoncapture': OMGExonCaptureMetadata,

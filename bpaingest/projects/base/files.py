@@ -33,10 +33,6 @@ def test_amplicon_control():
         'Soil-DNA_ITS_AGRF_ACACTAGATCCG_AN5TK_AN5TK_ACACTAGATCCG_L001_R2.fastq.gz',
     ]
     for filename in filenames:
-        m = amplicon_control_tech_vendor_filename_re.match(filename)
-        import sys
-        sys.stderr.write(repr(m.groupdict()))
-        sys.stderr.flush()
         assert(amplicon_control_tech_vendor_filename_re.match(filename) is not None)
 
 
@@ -204,6 +200,21 @@ def test_metagenomics_run():
 
 
 metagenomics_regexps = [metagenomics_filename_re, metagenomics_run_filename_re]
+
+
+site_image_filename_re = re.compile("""
+    (?P<id1>\d{4,6})-
+    (?P<id2>\d{4,6}).jpg
+""", re.VERBOSE)
+
+
+def test_site_image():
+    filenames = [
+        '7075-7076.jpg',
+        '19233-19234.jpg'
+    ]
+    for filename in filenames:
+        assert(site_image_filename_re.match(filename) is not None)
 
 
 def parse_md5_file(md5_file, regexps):

@@ -4,7 +4,8 @@ from unipath import Path
 
 from ...abstract import BaseMetadata
 
-from ...util import make_logger, bpa_id_to_ckan_name, one
+from ...util import make_logger, bpa_id_to_ckan_name, one, common_values
+from ...libs.md5lines import md5lines
 from urlparse import urljoin
 
 from glob import glob
@@ -503,4 +504,94 @@ class BASEMetagenomicsMetadata(BaseMetadata):
                 xlsx_info = self.metadata_info[os.path.basename(md5_file)]
                 legacy_url = urljoin(xlsx_info['base_url'], filename)
                 resources.append(((sample_extraction_id, resource['flow_id']), legacy_url, resource))
+        return resources
+
+
+class BASESiteImagesMetadata(BaseMetadata):
+    auth = ('base', 'base')
+    organization = 'bpa-base'
+    ckan_data_type = 'base-site-image'
+    contextual_classes = common_context
+    metadata_patterns = [r'^.*\.md5$']
+    metadata_urls = [
+        'https://downloads-qcif.bioplatforms.com/bpa/base/site-images/',
+    ]
+    metadata_url_components = ('ticket',)
+    resource_linkage = ('site_ids',)
+
+    def __init__(self, metadata_path, contextual_metadata=None, metadata_info=None):
+        super(BASESiteImagesMetadata, self).__init__()
+        self.path = Path(metadata_path)
+        self.contextual_metadata = contextual_metadata
+        self.metadata_info = metadata_info
+        self.id_to_resources = self._read_md5s()
+
+    def _read_md5s(self):
+        id_to_resources = {}
+        for fname in glob(self.path + '/*.md5'):
+            logger.info("Processing MD5 file %s" % (fname))
+            xlsx_info = self.metadata_info[os.path.basename(fname)]
+            with open(fname) as fd:
+                for md5, filename in md5lines(fd):
+                    m = files.site_image_filename_re.match(filename)
+                    if not m:
+                        raise AssertionError("filename not matched: %s" % filename)
+                    id_tpl = m.groups()
+                    assert(id_tpl not in id_to_resources)
+                    obj = {
+                        'md5': md5,
+                        'filename': filename
+                    }
+                    obj.update(xlsx_info)
+                    id_to_resources[id_tpl] = obj
+        return id_to_resources
+
+    @classmethod
+    def id_tpl_to_site_ids(cls, id_tpl):
+        return ', '.join([ingest_utils.extract_bpa_id(t) for t in id_tpl])
+
+    def _get_packages(self):
+        logger.info("Ingesting BPA BASE Images metadata from {0}".format(self.path))
+        packages = []
+        for id_tpl in sorted(self.id_to_resources):
+            info = self.id_to_resources[id_tpl]
+            obj = {}
+            name = bpa_id_to_ckan_name('%s-%s' % id_tpl, self.ckan_data_type).lower()
+            obj.update({
+                'name': name,
+                'id': name,
+                'site_ids': self.id_tpl_to_site_ids(id_tpl),
+                'title': 'BASE Site Image %s %s' % id_tpl,
+                'omics': 'Genomics',
+                'analytical_platform': 'MiSeq',
+                'ticket': info['ticket'],
+                'type': self.ckan_data_type,
+                'private': True,
+            })
+            # find the common contextual metadata for the site IDs
+            context = []
+            for abbrev in id_tpl:
+                fragment = {}
+                for contextual_source in self.contextual_metadata:
+                    fragment.update(contextual_source.get(ingest_utils.extract_bpa_id(abbrev)))
+                context.append(fragment)
+            obj.update(common_values(context))
+            ingest_utils.add_spatial_extra(obj)
+            tag_names = ['site-images']
+            obj['tags'] = [{'name': t} for t in tag_names]
+            packages.append(obj)
+        return packages
+
+    def _get_resources(self):
+        logger.info("Ingesting Sepsis md5 file information from {0}".format(self.path))
+        resources = []
+        for id_tpl in sorted(self.id_to_resources):
+            site_ids = self.id_tpl_to_site_ids(id_tpl)
+            info = self.id_to_resources[id_tpl]
+            resource = {}
+            resource['md5'] = resource['id'] = info['md5']
+            filename = info['filename']
+            resource['name'] = filename
+            legacy_url = urljoin(info['base_url'], filename)
+            resources.append(((site_ids,), legacy_url, resource))
         return resources
