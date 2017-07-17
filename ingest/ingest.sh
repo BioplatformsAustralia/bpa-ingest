@@ -41,6 +41,9 @@ apply()
     extra_args1="-p /tmp/ingest/$project/"
     extra_args2="--skip-resource-checks --metadata-only"
   fi
+  echo
+  echo ">>> Executing bpa-ingest: $project"
+  echo
   bpa-ingest -k "$apikey" -u "$CKAN_URL" $extra_args1 "$action" $extra_args2 "$project" $*
 }
 

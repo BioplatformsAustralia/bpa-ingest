@@ -191,6 +191,10 @@ def get_date_isoformat(s):
     return dt.strftime("%Y-%m-%d")
 
 
+def get_time(t):
+    return str(t)
+
+
 def get_date(dt):
     '''
     convert `dt` into a datetime.date, returning `dt` if it is already an
