@@ -118,11 +118,36 @@ def test_metagenomics():
         assert(metagenomics_filename_re.match(filename) is not None)
 
 
-def parse_md5_file(md5_file, regexp):
+metagenomics_filename_v2_re = re.compile("""
+    (?P<id>\d{4,6})_
+    (?P<extraction>\d)_
+    (?P<library>PE|MP)_
+    (?P<insert_size>\d*bp)_
+    MM_
+    (?P<vendor>AGRF|UNSW)_
+    (?P<flowcell>\w{9})_
+    (?P<index>[G|A|T|C|-]*)_
+    (?P<runsamplenum>S\d+)_
+    (?P<lane>L\d{3})_
+    (?P<read>R[1|2])_
+    001\.fastq\.gz
+""", re.VERBOSE)
+
+
+def test_metagenomics_v2():
+    filenames = [
+        '34734_1_PE_700bp_MM_UNSW_HMMJFBCXY_TAAGGCGA-CTCTCTAT_S5_L001_R2_001.fastq.gz',
+        '36064_1_PE_700bp_MM_UNSW_HM35MBCXY_ACTGAGCG-GAGCCTTA_S13_L002_R1_001.fastq.gz',
+    ]
+    for filename in filenames:
+        assert(metagenomics_filename_v2_re.match(filename) is not None)
+
+
+def parse_md5_file(md5_file, regexps):
     with open(md5_file) as f:
         for md5, path in md5lines(f):
-            m = regexp.match(path)
-            if m:
-                yield path, md5, m.groupdict()
+            matches = filter(None, [t.match(path) for t in regexps])
+            if matches:
+                yield path, md5, matches[0].groupdict()
             else:
                 yield path, md5, None
