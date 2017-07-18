@@ -155,7 +155,7 @@ class MarineMicrobesSampleContextual(object):
             ('rp', 'rp'),
             ('bottom_depth', 'bottom depth'),
             ('pressure', 'pressure'),
-            ('time', 'time'),
+            ('time', 'time', ingest_utils.get_time),
             ('chl_a_epi', 'chl_a_epi'),
             ('chl_a_allomer', 'chl_a_allomer'),
             ('zm_delta_sigmat', 'zm (delta.sigmat)'),

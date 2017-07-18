@@ -185,17 +185,17 @@ def strip_all(reader):
 
 def get_date_isoformat(s):
     "try to parse the date, if we can, return the date as an ISO format string"
-    dt = get_date(s)
+    dt = _get_date(s)
     if dt is None:
         return None
     return dt.strftime("%Y-%m-%d")
 
 
-def get_time(t):
-    return str(t)
+def get_time(s):
+    return str(s)
 
 
-def get_date(dt):
+def _get_date(dt):
     '''
     convert `dt` into a datetime.date, returning `dt` if it is already an
     instance of datetime.date. only two string date formats are supported:
