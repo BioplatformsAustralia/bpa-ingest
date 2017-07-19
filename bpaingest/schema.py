@@ -1,5 +1,15 @@
 
 import json
+import os
+from collections import defaultdict
+from .projects import PROJECTS
+from .metadata import DownloadMetadata
+from .util import make_logger
+from copy import deepcopy
+
+
+logger = make_logger(__name__)
+
 
 schema_template = {
     "scheming_version": 1,
@@ -88,36 +98,58 @@ schema_template = {
     ]}
 
 
-def generate_schema(cka, args, meta):
-    schema = schema_template.copy()
-    print(type(meta).__name__)
-    p = {}
-    for package in meta.get_packages():
-        p.update(package)
-    skip = ('id', 'tags', 'private', 'type', 'spatial')
-    package_field_mapping = getattr(meta, 'package_field_names', {})
-    for k in sorted(p.keys()):
-        if k in skip:
-            continue
-        schema['dataset_fields'].append({
-            "field_name": k,
-            "label": package_field_mapping.get(k, k),
-            "form_placeholder": ""
-        })
-    r = {}
-    for _, _, resource in meta.get_resources():
-        r.update(resource)
-    resource_field_mapping = getattr(meta, 'resource_field_names', {})
-    for k in sorted(r.keys()):
-        if k in skip:
-            continue
-        schema['resource_fields'].append({
-            "field_name": k,
-            "label": resource_field_mapping.get(k, k),
-        })
-    schema['dataset_type'] = meta.ckan_data_type
-    outf = '/tmp/{}.json'.format(meta.ckan_data_type.replace('-', '_'))
-    with open(outf, 'w') as fd:
-        json.dump(schema, fd, sort_keys=True, indent=4, separators=(',', ': '))
-        fd.write('\n')
-    print("generated schema written to: {}".format(outf))
+def _write_schemas(package_keys, resource_keys, package_field_mapping, resource_field_mapping):
+    skip_fields = ('id', 'tags', 'private', 'type', 'spatial')
+    for data_type in sorted(package_keys):
+        schema = deepcopy(schema_template)
+        mapping = package_field_mapping[data_type]
+        for k in sorted(package_keys[data_type]):
+            if k in skip_fields:
+                continue
+            schema['dataset_fields'].append({
+                "field_name": k,
+                "label": mapping.get(k, k),
+                "form_placeholder": ""
+            })
+        mapping = resource_field_mapping[data_type]
+        for k in sorted(resource_keys[data_type]):
+            if k in skip_fields:
+                continue
+            schema['resource_fields'].append({
+                "field_name": k,
+                "label": mapping.get(k, k),
+            })
+        schema['dataset_type'] = data_type
+        outf = '/tmp/{}.json'.format(data_type.replace('-', '_'))
+        with open(outf, 'w') as fd:
+            json.dump(schema, fd, sort_keys=True, indent=4, separators=(',', ': '))
+            fd.write('\n')
+        print("generated schema written to: {}".format(outf))
+
+
+def generate_schemas(args):
+    """
+    Generate schemas for all data types.
+    Note that several classes may have the same CKAN data type: e.g. MM Amplicons
+    As a result, we must build the union of all possible package and resource fields.
+    """
+    package_keys = defaultdict(set)
+    resource_keys = defaultdict(set)
+    package_field_mapping = defaultdict(dict)
+    resource_field_mapping = defaultdict(dict)
+
+    # download metadata for all project types and aggregate metadata keys
+    for project_name, project_cls in sorted(PROJECTS.items()):
+        logger.info("Schema generation: %s / %s" % (project_name, project_cls))
+        dlpath = os.path.join(args.download_path, project_cls.__name__)
+        with DownloadMetadata(project_cls, path=dlpath) as dlmeta:
+            meta = dlmeta.meta
+            data_type = meta.ckan_data_type
+            package_field_mapping[data_type].update(getattr(meta, 'package_field_names', {}))
+            resource_field_mapping[data_type].update(getattr(meta, 'resource_field_names', {}))
+            for package in meta.get_packages():
+                package_keys[data_type].update(package.keys())
+            for _, _, resource in meta.get_resources():
+                resource_keys[data_type].update(resource.keys())
+
+    _write_schemas(package_keys, resource_keys, package_field_mapping, resource_field_mapping)

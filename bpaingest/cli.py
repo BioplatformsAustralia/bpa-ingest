@@ -1,90 +1,39 @@
 from __future__ import print_function
 
-import tempfile
 import argparse
-import shutil
-import json
 import sys
 import os
 
 from .util import make_registration_decorator, make_ckan_api
 from .sync import sync_metadata
-from .schema import generate_schema
+from .schema import generate_schemas
 from .ops import print_accounts, make_organization
 from .util import make_logger
 from .genhash import genhash as genhash_fn
 from .projects import PROJECTS
 from .organizations import ORGANIZATIONS
-from .libs.fetch_data import Fetcher, get_password
+from .metadata import DownloadMetadata
 
 
 logger = make_logger(__name__)
 register_command, command_fns = make_registration_decorator()
 
 
-class DownloadMetadata(object):
-    def __init__(self, project_class, path=None):
-        self.cleanup = True
-        fetch = True
-        if path is not None:
-            self.path = path
-            self.cleanup = False
-            if os.access(path, os.R_OK):
-                logger.info("skipping metadata download, specified directory `%s' exists" % path)
-                fetch = False
-        else:
-            self.path = tempfile.mkdtemp(prefix='bpaingest-metadata-')
-        self.auth = None
-        self.contextual = []
-        if hasattr(project_class, 'auth'):
-            auth_user, auth_env_name = project_class.auth
-            self.auth = (auth_user, get_password(auth_env_name))
-        info_json = os.path.join(self.path, 'bpa-ingest.json')
-        contextual_classes = getattr(project_class, 'contextual_classes', [])
-        self.contextual = [(os.path.join(self.path, c.name), c) for c in contextual_classes]
-        if fetch:
-            metadata_info = {}
-            for metadata_url in project_class.metadata_urls:
-                logger.info("fetching submission metadata: %s" % (project_class.metadata_urls))
-                fetcher = Fetcher(self.path, metadata_url, self.auth)
-                fetcher.fetch_metadata_from_folder(
-                    getattr(project_class, 'metadata_patterns', None),
-                    metadata_info,
-                    getattr(project_class, 'metadata_url_components', []))
-            for contextual_path, contextual_cls in self.contextual:
-                os.mkdir(contextual_path)
-                logger.info("fetching contextual metadata: %s" % (contextual_cls.metadata_urls))
-                for metadata_url in contextual_cls.metadata_urls:
-                    fetcher = Fetcher(contextual_path, metadata_url, self.auth)
-                    fetcher.fetch_metadata_from_folder(
-                        getattr(contextual_cls, 'metadata_patterns', None),
-                        metadata_info,
-                        getattr(contextual_cls, 'metadata_url_components', []))
-            with open(info_json, 'w') as fd:
-                json.dump(metadata_info, fd)
-        meta_kwargs = {}
-        with open(info_json, 'r') as fd:
-            meta_kwargs['metadata_info'] = json.load(fd)
-        if self.contextual:
-            meta_kwargs['contextual_metadata'] = [c(p) for (p, c) in self.contextual]
-        self.meta = project_class(self.path, **meta_kwargs)
-
-    def __enter__(self):
-        return self
-
-    def __exit__(self, exc_type, exc_val, exc_tb):
-        if self.cleanup:
-            shutil.rmtree(self.path)
-
-
 @register_command
 def bootstrap(ckan, args):
     "bootstrap basic organisation data"
+    ckan = make_ckan_api(args)
     for organization in ORGANIZATIONS:
         make_organization(ckan, organization)
 
 
+def setup_ckan(subparser):
+    subparser.add_argument('-k', '--api-key', required=True, help='CKAN API Key')
+    subparser.add_argument('-u', '--ckan-url', required=True, help='CKAN base url')
+
+
 def setup_sync(subparser):
+    setup_ckan(subparser)
     subparser.add_argument('project_name', choices=sorted(PROJECTS.keys()), help='path to metadata')
     subparser.add_argument('--uploads', type=int, default=4, help='number of parallel uploads')
     subparser.add_argument('--metadata-only', '-m', action='store_const', const=True, default=False, help='set metadata only, no data uploads')
@@ -92,13 +41,15 @@ def setup_sync(subparser):
 
 
 def setup_hash(subparser):
+    setup_ckan(subparser)
     subparser.add_argument('project_name', choices=sorted(PROJECTS.keys()), help='path to metadata')
     subparser.add_argument('mirror_path', help='path to locally mounted mirror', nargs='?', default=os.environ.get('MIRROR_PATH'))
 
 
 @register_command
-def sync(ckan, args):
+def sync(args):
     """sync a project"""
+    ckan = make_ckan_api(args)
     with DownloadMetadata(PROJECTS[args.project_name], path=args.download_path) as dlmeta:
         sync_metadata(ckan, dlmeta.meta, dlmeta.auth, args.uploads, not args.metadata_only, not args.skip_resource_checks)
         print_accounts()
@@ -107,15 +58,13 @@ sync.setup = setup_sync
 
 
 @register_command
-def makeschema(ckan, args):
-    with DownloadMetadata(PROJECTS[args.project_name], path=args.download_path) as dlmeta:
-        generate_schema(ckan, args, dlmeta.meta)
-
-makeschema.setup = setup_sync
+def makeschema(args):
+    generate_schemas(args)
 
 
 @register_command
 def genhash(ckan, args):
+    ckan = make_ckan_api(args)
     """
     verify MD5 sums for a local (filesystem mounted) mirror of the BPA
     data, and generate expected E-Tag and SHA256 values.
@@ -154,8 +103,6 @@ def commands():
 def main():
     parser = argparse.ArgumentParser()
     parser.add_argument('--version', action='store_true', help='print version and exit')
-    parser.add_argument('-k', '--api-key', required=True, help='CKAN API Key')
-    parser.add_argument('-u', '--ckan-url', required=True, help='CKAN base url')
     parser.add_argument('-p', '--download-path', required=False, default=None, help='CKAN base url')
 
     subparsers = parser.add_subparsers(dest='name')
@@ -169,5 +116,4 @@ def main():
         version()
     if 'func' not in args:
         usage(parser)
-    ckan = make_ckan_api(args)
-    args.func(ckan, args)
+    args.func(args)

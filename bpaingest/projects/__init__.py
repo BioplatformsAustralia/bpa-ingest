@@ -87,7 +87,7 @@ PROJECTS = {
     'omg-exoncapture': OMGExonCaptureMetadata,
     'omg-genomics-hiseq': OMGGenomicsHiSeqMetadata,
     # stubs
-    'barcode': BarcodeMetadata,
-    'melanoma': MelanomaMetadata,
-    'wheat-pathogens-transcript': WheatPathogensTranscriptMetadata,
+    # 'barcode': BarcodeMetadata,
+    # 'melanoma': MelanomaMetadata,
+    # 'wheat-pathogens-transcript': WheatPathogensTranscriptMetadata,
 }
