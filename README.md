@@ -6,6 +6,16 @@ Primary usage information is contained in the comments at the
 top of the ```ingest/ingest.sh``` script, which is the gateway
 to synchronising the archive.
 
+## Generating CKAN schemas
+
+`bpa-ingest` can generate `ckanext-scheming` schemas.
+
+Usage:
+
+```
+$ bpa-ingest -p /tmp/ingest/ makeschema
+```
+
 ## Tracking metadata
 
 Two types of tracking metadata are stored within this repository.
