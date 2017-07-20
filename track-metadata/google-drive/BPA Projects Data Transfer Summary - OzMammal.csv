@@ -3,4 +3,7 @@ AGRF,29/03/2017,10X Genomics- 102.100.100/40065 ,Raw Illumina Run Folder,170314_
 AGRF,29/03/2017,10X Genomics- 102.100.100/40065 ,Raw Illumina Run Folder,170314_D00626_0270_BHCGFNBCXY,28/04/2017,1,BPAOPS-120,https://data.bioplatforms.com/dataset/bpa-omg-10x-raw-illumina-102_100_100_40065-hcgfnbcxy
 AGRF,29/03/2017,10X Genomics- 102.100.100/40065 ,Illumina FASTQ,HCGFNBCXY,28/04/2017,1,BPAOPS-121,https://data.bioplatforms.com/dataset/bpa-omg-10x-processed-illumina-102_100_100_40065-hcgfnbcxy
 AGRF,29/03/2017,10X Genomics- 102.100.100/40065 ,Illumina FASTQ,HFMKJBCXY,28/04/2017,1,BPAOPS-122,https://data.bioplatforms.com/dataset/bpa-omg-10x-processed-illumina-102_100_100_40065-hfmkjbcxy
-BRF,05/05/2017,HiSeq 2500 100bp PE - exon capture pool 102.100.100/40067 (samples 102.100.100/40069-40124),Illumina FASTQ,SN877_0482_AMacDonald_JCSMR_Marsupial_gDNA_exon_capture,,113,BPAOPS-135,
+BRF,05/05/2017,HiSeq 2500 100bp PE - exon capture pool 102.100.100/40067 (samples 102.100.100/40069-40124),Illumina FASTQ,SN877_0482_AMacDonald_JCSMR_Marsupial_gDNA_exon_capture,15/05/2017,113,BPAOPS-135,https://data.bioplatforms.com/organization/bpa-omg?q=%22BPAOPS-135%22&sort=score+desc%2C+metadata_modified+desc
+UNSW,29/6/17,HiSeq XTen 150bp PE 102.100.100/40066,Illumina FASTQ,20170629_UNSW_BPA_OMG_HGTV5ALXX,06/07/2017,2,BPAOPS-214,https://data.bioplatforms.com/dataset/bpa-omg-genomics-hiseq-102_100_100_40066-hgtv5alxx
+UNSW,20/7/17,HiSeq XTen 150bp PE 102.100.100/40128,Illumina FASTQ,20170719_UNSW_BPA_OMG_H5HHCALXX,06/07/2017,2,BPAOPS-213,https://data.bioplatforms.com/dataset/bpa-omg-genomics-hiseq-102_100_100_40066-hhfc5alxx
+UNSW,20/7/17,HiSeq XTen 150bp PE 102.100.100/40129,Illumina FASTQ,20170719_UNSW_BPA_OMG_H5HHCALXX,,,BPAOPS-260,
