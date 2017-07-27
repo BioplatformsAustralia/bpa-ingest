@@ -8,7 +8,7 @@ logger = make_logger(__name__)
 
 
 class OMGSampleContextual(object):
-    metadata_urls = ['https://downloads-qcif.bioplatforms.com/bpa/omg_staging/metadata/2017-05-17/']
+    metadata_urls = ['https://downloads-qcif.bioplatforms.com/bpa/omg_staging/metadata/2017-07-27/']
     metadata_patterns = [re.compile(r'^.*\.xlsx$')]
     name = 'omg-sample-contextual'
 
@@ -23,7 +23,7 @@ class OMGSampleContextual(object):
 
     def _read_metadata(self, fname):
         field_spec = [
-            ('bpa_id', 'bpa_id', ingest_utils.extract_bpa_id),
+            ('bpa_id', 'bpa_sample_id', ingest_utils.extract_bpa_id),
             ('voucher_id', 'voucher_id'),
             ('tissue_number', 'tissue_number'),
             ('institution_name', 'institution_name'),
@@ -69,6 +69,14 @@ class OMGSampleContextual(object):
             ('dna_extracted_by', 'dna_extracted_by'),
             ('dna_extraction_method', 'dna_extraction_method'),
             ('dna_conc_ng_ul', 'dna_conc_ng_ul'),
+            ('taxonomic_group', 'taxonomic_group'),
+            ('genome_sample', 'genome_sample'),
+            ('genome_status', 'genome_status'),
+            ('phylogenomic_sample', 'phylogenomic_sample'),
+            ('phylogenomic_status', 'phylogenomic_status'),
+            ('conservation_sample', 'conservation_sample'),
+            ('conservation_status', 'conservation_status'),
+            ('trace_lab', 'trace_lab'),
         ]
 
         wrapper = ExcelWrapper(
