@@ -44,7 +44,7 @@ apply()
   echo
   echo ">>> Executing bpa-ingest: $project"
   echo
-  bpa-ingest $extraargs1 "$action" -k "$apikey" -u "$CKAN_URL" $extra_args2 "$project" $*
+  bpa-ingest $extra_args1 "$action" -k "$apikey" -u "$CKAN_URL" $extra_args2 "$project" $*
 }
 
 bootstrap()
