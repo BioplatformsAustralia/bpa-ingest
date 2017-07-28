@@ -12,7 +12,7 @@ logger = make_logger(__name__)
 
 
 class StemcellsTranscriptomeContextual(object):
-    metadata_urls = ['https://downloads-qcif.bioplatforms.com/bpa/stemcell/projectdata/2017-07-07/']
+    metadata_urls = ['https://downloads-qcif.bioplatforms.com/bpa/stemcell/projectdata/2017-07-28/']
     name = 'stemcell-agrf-transcriptome'
     sheet_name = 'Transcriptome'
 
@@ -81,7 +81,7 @@ class StemcellsTranscriptomeContextual(object):
 
 
 class StemcellsSmallRNAContextual(object):
-    metadata_urls = ['https://downloads-qcif.bioplatforms.com/bpa/stemcell/projectdata/2017-07-07/']
+    metadata_urls = ['https://downloads-qcif.bioplatforms.com/bpa/stemcell/projectdata/2017-07-28/']
     name = 'stemcell-agrf-smallrna'
     sheet_name = 'Small RNA'
 
@@ -150,7 +150,7 @@ class StemcellsSmallRNAContextual(object):
 
 
 class StemcellsSingleCellRNASeq(object):
-    metadata_urls = ['https://downloads-qcif.bioplatforms.com/bpa/stemcell/projectdata/2017-07-07/']
+    metadata_urls = ['https://downloads-qcif.bioplatforms.com/bpa/stemcell/projectdata/2017-07-28/']
     name = 'stemcell-ramaciotti-singlecell'
     sheet_name = 'Single Cell RNAseq'
 
@@ -219,7 +219,7 @@ class StemcellsSingleCellRNASeq(object):
 
 
 class StemcellsMetabolomicsContextual(object):
-    metadata_urls = ['https://downloads-qcif.bioplatforms.com/bpa/stemcell/projectdata/2017-07-07/']
+    metadata_urls = ['https://downloads-qcif.bioplatforms.com/bpa/stemcell/projectdata/2017-07-28/']
     name = 'stemcell-metabolomics'
     sheet_name = 'Metabolomics'
 
@@ -289,7 +289,7 @@ class StemcellsMetabolomicsContextual(object):
 
 
 class StemcellsProteomicsContextual(object):
-    metadata_urls = ['https://downloads-qcif.bioplatforms.com/bpa/stemcell/projectdata/2017-07-07/']
+    metadata_urls = ['https://downloads-qcif.bioplatforms.com/bpa/stemcell/projectdata/2017-07-28/']
     name = 'stemcell-proteomics'
     sheet_names = ['Proteomics']
 
