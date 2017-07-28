@@ -35,7 +35,7 @@ def prune_dict(d, keys):
 
 def clean_tag_name(s):
     "reduce s to strings acceptable in a tag name"
-    return ''.join(t for t in s if t in string.digits or t in string.ascii_letters or t in '-_.')
+    return ''.join(t for t in s if t in string.digits or t in string.ascii_letters or t in '-_. ')
 
 
 def make_registration_decorator():
