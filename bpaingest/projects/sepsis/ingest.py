@@ -816,7 +816,6 @@ class SepsisProteomicsSwathMSCombinedSampleMetadata(BaseSepsisMetadata):
                 'description': track_meta.description,
                 'folder_name': track_meta.folder_name,
                 'sample_submission_date': ingest_utils.get_date_isoformat(track_meta.date_of_transfer),
-                'contextual_data_submission_date': None,
                 'archive_ingestion_date': ingest_utils.get_date_isoformat(track_meta.date_of_transfer_to_archive),
                 'dataset_url': track_meta.download,
                 'private': True,
@@ -865,8 +864,41 @@ class SepsisProteomicsSwathMSPoolMetadata(SepsisProteomicsSwathMSBaseSepsisMetad
         return self.get_swath_resources('2d')
 
 
-class SepsisProteomicsAnalysedMetadata(BaseSepsisMetadata):
-    contextual_classes = []
+class BaseSepsisAnalysedMetadata(BaseSepsisMetadata):
+    def apply_common_context(self, obj, bpa_ids):
+        # find the contextual metadata in common between these BPA IDs
+        context_objs = []
+        for bpa_id in bpa_ids:
+            context_obj = {}
+            for contextual_source in self.contextual_metadata:
+                context_obj.update(contextual_source.get(bpa_id, obj))
+            context_objs.append(context_obj)
+        obj.update(common_values(context_objs))
+        # find the tracking metadata in common between these BPA IDs
+        tracking_objs = []
+        for bpa_id in bpa_ids:
+            tracking_obj = {}
+            for bpam_source in self.bpam_track_meta:
+                tracking_obj.update(bpam_source.get(bpa_id))
+            tracking_objs.append(tracking_obj)
+        obj.update(common_values(tracking_objs))
+        return obj
+
+    @classmethod
+    def google_drive_track_to_object(cls, trk):
+        "copy over the relevant bits of a sepsis google drive track object, to a package object"
+        obj = {
+            'facility': trk.omics_facility,
+            'data_type': trk.data_type_pre_pilot_pilot_or_main_dataset,
+            'ticket': trk.ccg_jira_ticket
+        }
+        for fld in ('date_of_transfer', 'taxon_or_organism', 'strain_or_isolate', 'growth_media', 'folder_name', 'date_of_transfer_to_archive', 'file_count'):
+            obj[fld] = getattr(trk, fld)
+        return obj
+
+
+class SepsisProteomicsAnalysedMetadata(BaseSepsisAnalysedMetadata):
+    contextual_classes = [SepsisBacterialContextual, SepsisProteomicsSwathMSContextual]
     metadata_urls = ['https://downloads-qcif.bioplatforms.com/bpa/sepsis/proteomics/analysed/']
     metadata_url_components = ('facility_code', 'ticket')
     metadata_patterns = [r'^.*\.md5$', r'^.*_metadata\.xlsx$']
@@ -883,6 +915,7 @@ class SepsisProteomicsAnalysedMetadata(BaseSepsisMetadata):
         self.contextual_metadata = contextual_metadata
         self.metadata_info = metadata_info
         self.google_track_meta = SepsisGoogleTrackMetadata()
+        self.bpam_track_meta = [SepsisTrackMetadata('ProteomicsMS1Quantification'), SepsisTrackMetadata('ProteomicsSwathMS')]
 
     @classmethod
     def parse_spreadsheet(self, fname, additional_context):
@@ -944,7 +977,9 @@ class SepsisProteomicsAnalysedMetadata(BaseSepsisMetadata):
             folder_name_md5 = md5hash(folder_name).hexdigest()
             name = bpa_id_to_ckan_name(folder_name_md5, self.ckan_data_type)
             track_meta = self.google_track_meta.get(ticket)
-            bpa_ids = sorted(set([t.bpa_id for t in rows if t.bpa_id]))
+            bpa_ids = list(sorted(set([t.bpa_id for t in rows if t.bpa_id])))
+            obj.update(self.google_drive_track_to_object(track_meta))
+            self.apply_common_context(obj, bpa_ids)
             obj.update({
                 'name': name,
                 'id': name,
@@ -959,7 +994,6 @@ class SepsisProteomicsAnalysedMetadata(BaseSepsisMetadata):
                 'description': track_meta.description,
                 'folder_name': track_meta.folder_name,
                 'sample_submission_date': ingest_utils.get_date_isoformat(track_meta.date_of_transfer),
-                'contextual_data_submission_date': None,
                 'archive_ingestion_date': ingest_utils.get_date_isoformat(track_meta.date_of_transfer_to_archive),
                 'dataset_url': track_meta.download,
                 'private': True,
@@ -987,8 +1021,8 @@ class SepsisProteomicsAnalysedMetadata(BaseSepsisMetadata):
         return resources
 
 
-class SepsisTranscriptomicsAnalysedMetadata(BaseSepsisMetadata):
-    contextual_classes = []
+class SepsisTranscriptomicsAnalysedMetadata(BaseSepsisAnalysedMetadata):
+    contextual_classes = [SepsisBacterialContextual, SepsisProteomicsSwathMSContextual]
     metadata_urls = ['https://downloads-qcif.bioplatforms.com/bpa/sepsis/transcriptomics/analysed/']
     metadata_url_components = ('facility_code', 'ticket')
     metadata_patterns = [r'^.*\.md5$', r'^.*_metadata\.xlsx$']
@@ -1005,6 +1039,7 @@ class SepsisTranscriptomicsAnalysedMetadata(BaseSepsisMetadata):
         self.contextual_metadata = contextual_metadata
         self.metadata_info = metadata_info
         self.google_track_meta = SepsisGoogleTrackMetadata()
+        self.bpam_track_meta = [SepsisTrackMetadata('TranscriptomicsHiSeq')]
 
     @classmethod
     def parse_spreadsheet(self, fname, additional_context):
@@ -1064,7 +1099,9 @@ class SepsisTranscriptomicsAnalysedMetadata(BaseSepsisMetadata):
             folder_name_md5 = md5hash(folder_name).hexdigest()
             name = bpa_id_to_ckan_name(folder_name_md5, self.ckan_data_type)
             track_meta = self.google_track_meta.get(ticket)
-            bpa_ids = sorted(set([t.bpa_id for t in rows]))
+            bpa_ids = list(sorted(set([t.bpa_id for t in rows])))
+            obj.update(self.google_drive_track_to_object(track_meta))
+            self.apply_common_context(obj, bpa_ids)
             obj.update({
                 'name': name,
                 'id': name,
@@ -1079,7 +1116,6 @@ class SepsisTranscriptomicsAnalysedMetadata(BaseSepsisMetadata):
                 'description': track_meta.description,
                 'folder_name': track_meta.folder_name,
                 'sample_submission_date': ingest_utils.get_date_isoformat(track_meta.date_of_transfer),
-                'contextual_data_submission_date': None,
                 'archive_ingestion_date': ingest_utils.get_date_isoformat(track_meta.date_of_transfer_to_archive),
                 'dataset_url': track_meta.download,
                 'private': True,
@@ -1107,8 +1143,8 @@ class SepsisTranscriptomicsAnalysedMetadata(BaseSepsisMetadata):
         return resources
 
 
-class SepsisMetabolomicsAnalysedMetadata(BaseSepsisMetadata):
-    contextual_classes = []
+class SepsisMetabolomicsAnalysedMetadata(BaseSepsisAnalysedMetadata):
+    contextual_classes = [SepsisBacterialContextual, SepsisProteomicsSwathMSContextual]
     metadata_urls = ['https://downloads-qcif.bioplatforms.com/bpa/sepsis/metabolomics/analysed/']
     metadata_url_components = ('facility_code', 'ticket')
     metadata_patterns = [r'^.*\.md5$', r'^.*_metadata\.xlsx$']
@@ -1125,6 +1161,7 @@ class SepsisMetabolomicsAnalysedMetadata(BaseSepsisMetadata):
         self.contextual_metadata = contextual_metadata
         self.metadata_info = metadata_info
         self.google_track_meta = SepsisGoogleTrackMetadata()
+        self.bpam_track_meta = [SepsisTrackMetadata('MetabolomicsLCMS')]
 
     @classmethod
     def parse_spreadsheet(self, fname, additional_context):
@@ -1181,7 +1218,9 @@ class SepsisMetabolomicsAnalysedMetadata(BaseSepsisMetadata):
             folder_name_md5 = md5hash(folder_name).hexdigest()
             name = bpa_id_to_ckan_name(folder_name_md5, self.ckan_data_type)
             track_meta = self.google_track_meta.get(ticket)
-            bpa_ids = sorted(set([t.bpa_id for t in rows]))
+            bpa_ids = list(sorted(set([t.bpa_id for t in rows])))
+            obj.update(self.google_drive_track_to_object(track_meta))
+            self.apply_common_context(obj, bpa_ids)
             obj.update({
                 'name': name,
                 'id': name,
@@ -1196,7 +1235,6 @@ class SepsisMetabolomicsAnalysedMetadata(BaseSepsisMetadata):
                 'description': track_meta.description,
                 'folder_name': track_meta.folder_name,
                 'sample_submission_date': ingest_utils.get_date_isoformat(track_meta.date_of_transfer),
-                'contextual_data_submission_date': None,
                 'archive_ingestion_date': ingest_utils.get_date_isoformat(track_meta.date_of_transfer_to_archive),
                 'dataset_url': track_meta.download,
                 'private': True,
@@ -1224,8 +1262,8 @@ class SepsisMetabolomicsAnalysedMetadata(BaseSepsisMetadata):
         return resources
 
 
-class SepsisGenomicsAnalysedMetadata(BaseSepsisMetadata):
-    contextual_classes = []
+class SepsisGenomicsAnalysedMetadata(BaseSepsisAnalysedMetadata):
+    contextual_classes = [SepsisBacterialContextual, SepsisProteomicsSwathMSContextual]
     metadata_urls = ['https://downloads-qcif.bioplatforms.com/bpa/sepsis/genomics/analysed/']
     metadata_url_components = ('facility_code', 'ticket')
     metadata_patterns = [r'^.*\.md5$', r'^.*_metadata\.xlsx$']
@@ -1242,6 +1280,7 @@ class SepsisGenomicsAnalysedMetadata(BaseSepsisMetadata):
         self.contextual_metadata = contextual_metadata
         self.metadata_info = metadata_info
         self.google_track_meta = SepsisGoogleTrackMetadata()
+        self.bpam_track_meta = [SepsisGenomicsTrackMetadata('MetabolomicsLCMS')]
 
     @classmethod
     def parse_spreadsheet(self, fname, additional_context):
@@ -1295,7 +1334,9 @@ class SepsisGenomicsAnalysedMetadata(BaseSepsisMetadata):
             folder_name_md5 = md5hash(folder_name).hexdigest()
             name = bpa_id_to_ckan_name(folder_name_md5, self.ckan_data_type)
             track_meta = self.google_track_meta.get(ticket)
-            bpa_ids = sorted(set([t.bpa_id for t in rows if t.bpa_id]))
+            bpa_ids = list(sorted(set([t.bpa_id for t in rows if t.bpa_id])))
+            obj.update(self.google_drive_track_to_object(track_meta))
+            self.apply_common_context(obj, bpa_ids)
             obj.update({
                 'name': name,
                 'id': name,
@@ -1310,7 +1351,6 @@ class SepsisGenomicsAnalysedMetadata(BaseSepsisMetadata):
                 'description': track_meta.description,
                 'folder_name': track_meta.folder_name,
                 'sample_submission_date': ingest_utils.get_date_isoformat(track_meta.date_of_transfer),
-                'contextual_data_submission_date': None,
                 'archive_ingestion_date': ingest_utils.get_date_isoformat(track_meta.date_of_transfer_to_archive),
                 'dataset_url': track_meta.download,
                 'private': True,
