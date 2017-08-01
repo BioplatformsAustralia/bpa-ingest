@@ -140,7 +140,7 @@ def generate_schemas(args):
 
     # download metadata for all project types and aggregate metadata keys
     for project_name, project_cls in sorted(PROJECTS.items()):
-        logger.info("Schema generation: %s / %s" % (project_name, project_cls))
+        logger.info("Schema generation: %s / %s" % (project_name, project_cls.__name__))
         dlpath = os.path.join(args.download_path, project_cls.__name__)
         with DownloadMetadata(project_cls, path=dlpath) as dlmeta:
             meta = dlmeta.meta

@@ -3,7 +3,7 @@
 from unipath import Path
 from urllib.parse import urljoin
 from collections import defaultdict
-from hashlib import md5 as md5_hash
+from hashlib import md5 as md5hash
 
 from ...libs import ingest_utils
 from ...util import make_logger, bpa_id_to_ckan_name, common_values, clean_tag_name
@@ -74,7 +74,7 @@ class StemcellsTranscriptomeMetadata(BaseMetadata):
             logger.info("Processing Stemcells Transcriptomics metadata file {0}".format(fname))
             xlsx_info = self.metadata_info[os.path.basename(fname)]
             all_rows.update(StemcellsTranscriptomeMetadata.parse_spreadsheet(fname, xlsx_info))
-        for row in sorted(all_rows):
+        for row in all_rows:
             bpa_id = row.bpa_id
             if bpa_id is None:
                 continue
@@ -176,7 +176,7 @@ class StemcellsSmallRNAMetadata(BaseMetadata):
             logger.info("Processing Stemcells SmallRNA metadata file {0}".format(fname))
             xlsx_info = self.metadata_info[os.path.basename(fname)]
             all_rows.update(StemcellsSmallRNAMetadata.parse_spreadsheet(fname, xlsx_info))
-        for row in sorted(all_rows):
+        for row in all_rows:
             bpa_id = row.bpa_id
             if bpa_id is None:
                 continue
@@ -282,7 +282,7 @@ class StemcellsSingleCellRNASeqMetadata(BaseMetadata):
             logger.info("Processing Stemcells SingleCellRNASeq metadata file {0}".format(fname))
             xlsx_info = self.metadata_info[os.path.basename(fname)]
             all_rows.update(StemcellsSingleCellRNASeqMetadata.parse_spreadsheet(fname, xlsx_info))
-        for row in sorted(all_rows):
+        for row in all_rows:
             bpa_id_range = row.bpa_id_range
             if bpa_id_range is None:
                 continue
@@ -396,7 +396,7 @@ class StemcellsMetabolomicsMetadata(BaseMetadata):
             logger.info("Processing Stemcells Metabolomics metadata file {0}".format(fname))
             xlsx_info = self.metadata_info[os.path.basename(fname)]
             all_rows.update(StemcellsMetabolomicsMetadata.parse_spreadsheet(fname, xlsx_info))
-        for row in sorted(all_rows):
+        for row in all_rows:
             bpa_id = row.bpa_id
             if bpa_id is None:
                 continue
@@ -782,7 +782,7 @@ class StemcellsProteomicsAnalysedMetadata(BaseMetadata):
                 resource['md5'] = md5
                 xlsx_info = self.metadata_info[os.path.basename(md5_file)]
                 # analysed data has duplicate PNG images in it -- we need to keep the ID unique
-                resource['id'] = 'u-' + md5_hash(self.ckan_data_type + xlsx_info['ticket'] + md5).hexdigest()
+                resource['id'] = 'u-' + md5hash((self.ckan_data_type + xlsx_info['ticket'] + md5).encode('utf8')).hexdigest()
                 resource['name'] = filename
                 legacy_url = urljoin(xlsx_info['base_url'], filename)
                 resources.append(((xlsx_info['ticket'],), legacy_url, resource))
@@ -896,7 +896,7 @@ class StemcellsMetabolomicsAnalysedMetadata(BaseMetadata):
                     resource['md5'] = md5
                     xlsx_info = self.metadata_info[os.path.basename(md5_file)]
                     # analysed data has duplicate PNG images in it - we need to keep the id unique
-                    resource['id'] = 'u-' + md5_hash(self.ckan_data_type + xlsx_info['base_url'] + md5).hexdigest()
+                    resource['id'] = 'u-' + md5hash((self.ckan_data_type + xlsx_info['base_url'] + md5).encode('utf8')).hexdigest()
                     resource['name'] = filename
                     folder_name = self.track_meta.get(xlsx_info['ticket']).folder_name
                     legacy_url = urljoin(xlsx_info['base_url'], filename)

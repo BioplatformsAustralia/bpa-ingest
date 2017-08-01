@@ -494,7 +494,7 @@ class MarineMicrobesMetatranscriptomeMetadata(BaseMetadata):
             logger.info("Processing Marine Microbes Transcriptomics metadata file {0}".format(os.path.basename(fname)))
             for row in MarineMicrobesMetatranscriptomeMetadata.parse_spreadsheet(fname, self.metadata_info):
                 all_rows.add(row)
-        for row in sorted(all_rows):
+        for row in all_rows:
             bpa_id = row.bpa_id
             if bpa_id is None:
                 continue

@@ -798,7 +798,7 @@ class SepsisProteomicsSwathMSCombinedSampleMetadata(BaseSepsisMetadata):
             obj = common_values([t._asdict() for t in rows])
             # we're hitting the 100-char limit, so we have to hash the folder name when
             # generating the CKAN name
-            folder_name_md5 = md5hash(folder_name).hexdigest()
+            folder_name_md5 = md5hash(folder_name.encode('utf8')).hexdigest()
             name = bpa_id_to_ckan_name(folder_name_md5, self.ckan_data_type)
             track_meta = self.google_track_meta.get(ticket)
             obj.update({
@@ -972,7 +972,7 @@ class SepsisProteomicsAnalysedMetadata(BaseSepsisAnalysedMetadata):
             obj = common_values([t._asdict() for t in rows])
             # we're hitting the 100-char limit, so we have to hash the folder name when
             # generating the CKAN name
-            folder_name_md5 = md5hash(folder_name).hexdigest()
+            folder_name_md5 = md5hash(folder_name.encode('utf8')).hexdigest()
             name = bpa_id_to_ckan_name(folder_name_md5, self.ckan_data_type)
             track_meta = self.google_track_meta.get(ticket)
             bpa_ids = list(sorted(set([t.bpa_id for t in rows if t.bpa_id])))
@@ -1094,7 +1094,7 @@ class SepsisTranscriptomicsAnalysedMetadata(BaseSepsisAnalysedMetadata):
             obj = common_values([t._asdict() for t in rows])
             # we're hitting the 100-char limit, so we have to hash the folder name when
             # generating the CKAN name
-            folder_name_md5 = md5hash(folder_name).hexdigest()
+            folder_name_md5 = md5hash(folder_name.encode('utf8')).hexdigest()
             name = bpa_id_to_ckan_name(folder_name_md5, self.ckan_data_type)
             track_meta = self.google_track_meta.get(ticket)
             bpa_ids = list(sorted(set([t.bpa_id for t in rows])))
@@ -1213,7 +1213,7 @@ class SepsisMetabolomicsAnalysedMetadata(BaseSepsisAnalysedMetadata):
             obj = common_values([t._asdict() for t in rows])
             # we're hitting the 100-char limit, so we have to hash the folder name when
             # generating the CKAN name
-            folder_name_md5 = md5hash(folder_name).hexdigest()
+            folder_name_md5 = md5hash(folder_name.encode('utf8')).hexdigest()
             name = bpa_id_to_ckan_name(folder_name_md5, self.ckan_data_type)
             track_meta = self.google_track_meta.get(ticket)
             bpa_ids = list(sorted(set([t.bpa_id for t in rows])))
@@ -1329,7 +1329,7 @@ class SepsisGenomicsAnalysedMetadata(BaseSepsisAnalysedMetadata):
             obj = common_values([t._asdict() for t in rows])
             # we're hitting the 100-char limit, so we have to hash the folder name when
             # generating the CKAN name
-            folder_name_md5 = md5hash(folder_name).hexdigest()
+            folder_name_md5 = md5hash(folder_name.encode('utf8')).hexdigest()
             name = bpa_id_to_ckan_name(folder_name_md5, self.ckan_data_type)
             track_meta = self.google_track_meta.get(ticket)
             bpa_ids = list(sorted(set([t.bpa_id for t in rows if t.bpa_id])))
