@@ -212,7 +212,7 @@ class ExcelWrapper(object):
                 val = datetime.time(*date_time_tup[3:])
             else:
                 val = datetime.datetime(*date_time_tup)
-        except ValueError as e:
+        except ValueError:
             logger.warning('column: `%s\' -- value `%s\' cannot be converted to a date' % (i, val))
         return val
 

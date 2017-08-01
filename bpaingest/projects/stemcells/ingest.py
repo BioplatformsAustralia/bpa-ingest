@@ -6,7 +6,7 @@ from collections import defaultdict
 from hashlib import md5 as md5_hash
 
 from ...libs import ingest_utils
-from ...util import make_logger, bpa_id_to_ckan_name, common_values
+from ...util import make_logger, bpa_id_to_ckan_name, common_values, clean_tag_name
 from ...abstract import BaseMetadata
 from ...libs.excel_wrapper import ExcelWrapper
 from ...libs.md5lines import md5lines
@@ -18,22 +18,13 @@ from .contextual import (
     StemcellsMetabolomicsContextual,
     StemcellsProteomicsContextual)
 from . import files
+from .util import fix_analytical_platform
 from glob import glob
 
 import os
 import re
 
 logger = make_logger(__name__)
-
-
-def fix_analytical_platform(s):
-    if s == 'LC-MS' or s == 'GC-MS':
-        return s
-    if s == 'LCMS':
-        return 'LC-MS'
-    if s == 'GCMS':
-        return 'GC-MS'
-    raise Exception("invalid metabolomics analytical platform: `%s'" % (s))
 
 
 class StemcellsTranscriptomeMetadata(BaseMetadata):
@@ -380,7 +371,7 @@ class StemcellsMetabolomicsMetadata(BaseMetadata):
         field_spec = [
             ("bpa_id", re.compile(r'^.*sample unique id$'), ingest_utils.extract_bpa_id),
             ("sample_fractionation_extraction_solvent", "sample fractionation / extraction solvent", None),
-            ("analytical_platform", "platform", None),
+            ("analytical_platform", "platform", fix_analytical_platform),
             ("instrument_column_type", "instrument/column type", None),
             ("method", "Method", None),
             ("mass_spectrometer", "Mass Spectrometer", None),
@@ -445,7 +436,7 @@ class StemcellsMetabolomicsMetadata(BaseMetadata):
             })
             for contextual_source in self.contextual_metadata:
                 obj.update(contextual_source.get(bpa_id, analytical_platform))
-            tag_names = ['metabolomic', analytical_platform, 'raw']
+            tag_names = ['metabolomic', clean_tag_name(analytical_platform), 'raw']
             obj['tags'] = [{'name': t} for t in tag_names]
             packages.append(obj)
         return packages
@@ -720,7 +711,7 @@ class StemcellsProteomicsAnalysedMetadata(BaseMetadata):
             ('growth_protocol', 'growth protocol'),
             ('extract_protocol', 'extract protocol'),
             ('omics', 'omics'),
-            ('analytical_platform', 'analytical plaform'),
+            ('analytical_platform', 'analytical plaform', fix_analytical_platform),
             ('facility', 'facility'),
             ('date_type', 'data type'),
             ('zip_file_name', 'file name of analysed data (folder or zip file)'),
@@ -835,7 +826,7 @@ class StemcellsMetabolomicsAnalysedMetadata(BaseMetadata):
             ('disease_state', 'disease state'),
             ('growth_protocol', 'growth protocol'),
             ('omics', 'omics'),
-            ('analytical_platform', 'analytical platform'),
+            ('analytical_platform', 'analytical platform', fix_analytical_platform),
             ('facility', 'facility'),
             ('method_type', 'method type'),
             ('data_type', 'data type'),

@@ -1,6 +1,7 @@
 from ...util import make_logger, one
 from ...libs import ingest_utils
 from ...libs.excel_wrapper import ExcelWrapper
+from .util import fix_analytical_platform
 from glob import glob
 
 
@@ -55,7 +56,7 @@ class StemcellsTranscriptomeContextual(object):
             ('sample_name', 'sample name'),
             ('replicate_group_id', 'replicate group id'),
             ('omics', 'omics'),
-            ('analytical_platform', 'analytical platform'),
+            ('analytical_platform', 'analytical platform', fix_analytical_platform),
             ('facility', 'facility'),
             ('species', 'species'),
             ('sample_description', 'sample description'),
@@ -124,7 +125,7 @@ class StemcellsSmallRNAContextual(object):
             ('sample_name', 'sample name'),
             ('replicate_group_id', 'replicate group id'),
             ('omics', 'omics'),
-            ('analytical_platform', 'analytical platform'),
+            ('analytical_platform', 'analytical platform', fix_analytical_platform),
             ('facility', 'facility'),
             ('species', 'species'),
             ('sample_description', 'sample description'),
@@ -193,7 +194,7 @@ class StemcellsSingleCellRNASeq(object):
             ('sample_name', 'sample name'),
             ('replicate_group_id', 'replicate group id'),
             ('omics', 'omics'),
-            ('analytical_platform', 'analytical platform'),
+            ('analytical_platform', 'analytical platform', fix_analytical_platform),
             ('facility', 'facility'),
             ('species', 'species'),
             ('sample_description', 'sample description'),
@@ -232,6 +233,7 @@ class StemcellsMetabolomicsContextual(object):
         if tpl in self.sample_metadata:
             return self.sample_metadata[tpl]
         logger.warning("no %s metadata available for: %s" % (type(self).__name__, tpl))
+        logger.warning(list(sorted(self.sample_metadata.keys())))
         return {}
 
     def _package_metadata(self, rows):
@@ -248,8 +250,6 @@ class StemcellsMetabolomicsContextual(object):
         return sample_metadata
 
     def _read_metadata(self, metadata_path):
-        def fix_analytical_platform(s):
-            return s.replace('/', '-')
         field_spec = [
             ('submitter', 'submitter'),
             ('research_group', 'research group'),
@@ -334,7 +334,7 @@ class StemcellsProteomicsContextual(object):
             ('sample_name', 'sample name', ingest_utils.get_int),
             ('replicate_group_id', 'replicate group id'),
             ('omics', 'omics'),
-            ('analytical_platform', 'analytical platform'),
+            ('analytical_platform', 'analytical platform', fix_analytical_platform),
             ('facility', 'facility'),
             ('species', 'species'),
             ('sample_description', 'sample_description'),

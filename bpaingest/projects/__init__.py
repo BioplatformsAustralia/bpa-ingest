@@ -1,11 +1,9 @@
-from .barcode.ingest import BarcodeMetadata
 from .base.ingest import (
     BASEAmpliconsMetadata,
     BASEMetagenomicsMetadata,
     BASEAmpliconsControlMetadata,
     BASESiteImagesMetadata)
 from .gbr.ingest import GbrAmpliconsMetadata
-from .melanoma.ingest import MelanomaMetadata
 from .mm.ingest import (
     MarineMicrobesGenomicsAmplicons16SMetadata,
     MarineMicrobesGenomicsAmpliconsA16SMetadata,
@@ -39,12 +37,16 @@ from .stemcells.ingest import (
     StemcellsMetabolomicsAnalysedMetadata)
 from .wheat_cultivars.ingest import WheatCultivarsMetadata
 from .wheat_pathogens_genomes.ingest import WheatPathogensGenomesMetadata
-from .wheat_pathogens_transcript.ingest import WheatPathogensTranscriptMetadata
 from .omg.ingest import (
     OMG10XProcessedIlluminaMetadata,
     OMG10XRawIlluminaMetadata,
     OMGExonCaptureMetadata,
     OMGGenomicsHiSeqMetadata)
+
+# from .barcode.ingest import BarcodeMetadata
+# from .melanoma.ingest import MelanomaMetadata
+# from .wheat_pathogens_transcript.ingest import WheatPathogensTranscriptMetadata
+
 
 PROJECTS = {
     'gbr-genomics-amplicons': GbrAmpliconsMetadata,
