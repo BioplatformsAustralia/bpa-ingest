@@ -9,7 +9,7 @@ import sys
 import requests
 from bs4 import BeautifulSoup
 from distutils.dir_util import mkpath
-from urlparse import urljoin
+from urllib.parse import urljoin
 from ..util import make_logger
 
 import requests.packages.urllib3
@@ -119,6 +119,6 @@ class Fetcher():
                     assert(len(meta_parts) == len(url_components))
                     if link_target in metadata_info:
                         raise Exception("Legacy archive contains non-unique filename: %s" % (link_target))
-                    metadata_info[link_target] = dict(zip(url_components, meta_parts))
+                    metadata_info[link_target] = dict(list(zip(url_components, meta_parts)))
                     metadata_info[link_target]['base_url'] = _url
                     self._fetch(_session, _url, link_target)

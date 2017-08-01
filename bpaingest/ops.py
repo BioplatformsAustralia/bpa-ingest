@@ -3,7 +3,7 @@ import tempfile
 import requests
 import ckanapi
 import os
-from urlparse import urlparse
+from urllib.parse import urlparse
 from collections import defaultdict
 from .util import make_logger, authenticated_ckan_session
 
@@ -39,7 +39,7 @@ def ckan_method(ckan, object_type, method):
 def print_accounts():
     print("API call accounting:")
     for object_type, method in sorted(method_stats, key=lambda x: method_stats[x]):
-        print("  %14s  %6s  %d" % (object_type, method, method_stats[(object_type, method)]))
+        print(("  %14s  %6s  %d" % (object_type, method, method_stats[(object_type, method)])))
 
 
 def diff_objects(obj1, obj2, desc, skip_differences=None):
@@ -48,13 +48,13 @@ def diff_objects(obj1, obj2, desc, skip_differences=None):
             return list(sorted(v))
         return v
     differences = []
-    for k in obj1.keys():
+    for k in list(obj1.keys()):
         if skip_differences and k in skip_differences:
             continue
         v1 = sort_if_list(obj1.get(k))
         v2 = sort_if_list(obj2.get(k))
         # co-erce to string to cope with numeric types in the JSON data
-        if v1 != v2 and unicode(v1) != unicode(v2):
+        if v1 != v2 and str(v1) != str(v2):
             differences.append((k, v1, v2))
     if differences:
         logger.debug("%s/%s: differs" % (desc, obj2.get('id', '<no id?>')))
@@ -267,7 +267,7 @@ def reupload_resource(ckan, ckan_obj, legacy_url, auth=None):
                     updated_obj = ckan_method(ckan, 'resource', 'update')(upload=fd, id=upload_obj['id'])
                 logger.debug("upload successful: %s" % (updated_obj['url']))
                 break
-            except Exception, e:
+            except Exception as e:
                 logger.error("attempt %d/%d - upload failed: %s" % (i + 1, UPLOAD_RETRY, str(e)))
         return True
     finally:

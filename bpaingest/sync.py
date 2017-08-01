@@ -1,12 +1,12 @@
-from __future__ import print_function
+
 
 from .ops import ckan_method, patch_if_required, check_resource, create_resource, reupload_resource, get_organization, ArchiveInfo, diff_objects
 import ckanapi
-from Queue import Queue
+from queue import Queue
 from threading import Thread
 from .util import make_logger
 from .util import prune_dict
-from genhash import S3_HASH_FIELD
+from .genhash import S3_HASH_FIELD
 from collections import Counter
 
 logger = make_logger(__name__)
@@ -224,7 +224,7 @@ def sync_metadata(ckan, meta, auth, num_threads, do_uploads, do_resource_checks)
     def unique_packages():
         by_id = dict((t['id'], t) for t in packages)
         id_count = Counter(t['id'] for t in packages)
-        for k, cnt in id_count.items():
+        for k, cnt in list(id_count.items()):
             if cnt > 1:
                 dupes = [t for t in packages if t['id'] == k]
                 logger.critical("package id `%s' appears %d times: excluded from sync" % (k, len(dupes)))

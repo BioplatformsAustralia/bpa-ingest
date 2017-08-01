@@ -1,10 +1,10 @@
 # -*- coding: utf-8 -*-
 
-from __future__ import print_function
+
 
 from unipath import Path
 from collections import defaultdict
-from urlparse import urljoin
+from urllib.parse import urljoin
 from hashlib import md5 as md5hash
 
 from ...libs import ingest_utils
@@ -24,7 +24,7 @@ from .contextual import (
     SepsisProteomicsSwathMSContextual,
     SepsisProteomicsMS1QuantificationContextual,
     SepsisTranscriptomicsHiseqContextual)
-import files
+from . import files
 import os
 
 logger = make_logger(__name__)
@@ -580,7 +580,7 @@ class SepsisProteomicsSwathMSBaseSepsisMetadata(BaseSepsisMetadata):
 
     def parse_spreadsheet(self, fname):
         def parse_pooled_bpa_id(s):
-            if isinstance(s, unicode) and ',' in s:
+            if isinstance(s, str) and ',' in s:
                 return tuple([ingest_utils.extract_bpa_id(t.strip()) for t in s.split(',')])
             else:
                 return ingest_utils.extract_bpa_id(s)
@@ -658,7 +658,7 @@ class SepsisProteomicsSwathMSBaseSepsisMetadata(BaseSepsisMetadata):
 
     def get_swath_packages(self, data_type):
         packages = []
-        for package_name, (name, package_data_type, printable_bpa_id, track_meta, submission_meta) in self.package_data.items():
+        for package_name, (name, package_data_type, printable_bpa_id, track_meta, submission_meta) in list(self.package_data.items()):
             if package_data_type != data_type:
                 continue
             obj = track_meta.copy()
@@ -796,7 +796,7 @@ class SepsisProteomicsSwathMSCombinedSampleMetadata(BaseSepsisMetadata):
             for row in self.parse_spreadsheet(fname, xlsx_info):
                 folder_rows[(ticket, folder_name)].append(row)
         packages = []
-        for (ticket, folder_name), rows in folder_rows.items():
+        for (ticket, folder_name), rows in list(folder_rows.items()):
             obj = common_values([t._asdict() for t in rows])
             # we're hitting the 100-char limit, so we have to hash the folder name when
             # generating the CKAN name
@@ -970,7 +970,7 @@ class SepsisProteomicsAnalysedMetadata(BaseSepsisAnalysedMetadata):
             for row in self.parse_spreadsheet(fname, xlsx_info):
                 folder_rows[(ticket, folder_name)].append(row)
         packages = []
-        for (ticket, folder_name), rows in folder_rows.items():
+        for (ticket, folder_name), rows in list(folder_rows.items()):
             obj = common_values([t._asdict() for t in rows])
             # we're hitting the 100-char limit, so we have to hash the folder name when
             # generating the CKAN name
@@ -1092,7 +1092,7 @@ class SepsisTranscriptomicsAnalysedMetadata(BaseSepsisAnalysedMetadata):
             for row in self.parse_spreadsheet(fname, xlsx_info):
                 folder_rows[(ticket, folder_name)].append(row)
         packages = []
-        for (ticket, folder_name), rows in folder_rows.items():
+        for (ticket, folder_name), rows in list(folder_rows.items()):
             obj = common_values([t._asdict() for t in rows])
             # we're hitting the 100-char limit, so we have to hash the folder name when
             # generating the CKAN name
@@ -1211,7 +1211,7 @@ class SepsisMetabolomicsAnalysedMetadata(BaseSepsisAnalysedMetadata):
             for row in self.parse_spreadsheet(fname, xlsx_info):
                 folder_rows[(ticket, folder_name)].append(row)
         packages = []
-        for (ticket, folder_name), rows in folder_rows.items():
+        for (ticket, folder_name), rows in list(folder_rows.items()):
             obj = common_values([t._asdict() for t in rows])
             # we're hitting the 100-char limit, so we have to hash the folder name when
             # generating the CKAN name
@@ -1327,7 +1327,7 @@ class SepsisGenomicsAnalysedMetadata(BaseSepsisAnalysedMetadata):
             for row in self.parse_spreadsheet(fname, xlsx_info):
                 folder_rows[(ticket, folder_name)].append(row)
         packages = []
-        for (ticket, folder_name), rows in folder_rows.items():
+        for (ticket, folder_name), rows in list(folder_rows.items()):
             obj = common_values([t._asdict() for t in rows])
             # we're hitting the 100-char limit, so we have to hash the folder name when
             # generating the CKAN name

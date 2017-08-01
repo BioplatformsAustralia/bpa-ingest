@@ -1,7 +1,7 @@
 import unittest
 import json
 import re
-from bpa_constants import BPA_PREFIX
+from .bpa_constants import BPA_PREFIX
 
 from ..util import make_logger
 import datetime
@@ -47,7 +47,7 @@ def fix_sample_extraction_id(val):
         return val
     if type(val) is float or type(val) is int:
         return '%s_1' % (int(val))
-    val = unicode(val).strip().replace('-', '_')
+    val = str(val).strip().replace('-', '_')
     if val == '':
         return None
     # header row left in
@@ -161,7 +161,7 @@ def get_clean_number(val, default=None):
     except ValueError:
         pass
 
-    matches = number_find_re.findall(unicode(val))
+    matches = number_find_re.findall(str(val))
     if len(matches) == 0:
         return default
     return float(matches[0])
@@ -176,7 +176,7 @@ def strip_all(reader):
     entries = []
     for entry in reader:
         new_e = {}
-        for k, v in entry.items():
+        for k, v in list(entry.items()):
             new_e[k] = smart_text(v.strip())
         entries.append(new_e)
 
@@ -211,7 +211,7 @@ def _get_date(dt):
     if isinstance(dt, datetime.date):
         return dt
 
-    if not isinstance(dt, basestring):
+    if not isinstance(dt, str):
         return None
 
     if dt.strip() == '':

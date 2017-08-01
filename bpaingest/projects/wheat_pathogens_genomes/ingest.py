@@ -1,10 +1,10 @@
-from __future__ import print_function
+
 
 import os
 import re
 
 from unipath import Path
-from urlparse import urljoin
+from urllib.parse import urljoin
 from collections import defaultdict
 from glob import glob
 from ...libs.excel_wrapper import ExcelWrapper
@@ -79,7 +79,7 @@ class WheatPathogensGenomesMetadata(BaseMetadata):
             by_bpaid = defaultdict(list)
             for row in self.parse_spreadsheet(fname, xlsx_info):
                 by_bpaid[row.bpa_id].append(row)
-            for bpa_id, rows in by_bpaid.items():
+            for bpa_id, rows in list(by_bpaid.items()):
                 data = common_values([t._asdict() for t in rows])
                 bpa_id = data['bpa_id']
                 if bpa_id is None:

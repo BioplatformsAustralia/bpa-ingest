@@ -124,7 +124,7 @@ def _write_schemas(package_keys, resource_keys, package_field_mapping, resource_
         with open(outf, 'w') as fd:
             json.dump(schema, fd, sort_keys=True, indent=4, separators=(',', ': '))
             fd.write('\n')
-        print("generated schema written to: {}".format(outf))
+        print(("generated schema written to: {}".format(outf)))
 
 
 def generate_schemas(args):
@@ -148,8 +148,8 @@ def generate_schemas(args):
             package_field_mapping[data_type].update(getattr(meta, 'package_field_names', {}))
             resource_field_mapping[data_type].update(getattr(meta, 'resource_field_names', {}))
             for package in meta.get_packages():
-                package_keys[data_type].update(package.keys())
+                package_keys[data_type].update(list(package.keys()))
             for _, _, resource in meta.get_resources():
-                resource_keys[data_type].update(resource.keys())
+                resource_keys[data_type].update(list(resource.keys()))
 
     _write_schemas(package_keys, resource_keys, package_field_mapping, resource_field_mapping)

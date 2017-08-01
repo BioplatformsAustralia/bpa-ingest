@@ -1,9 +1,9 @@
-import urlparse
+import urllib.parse
 import ckanapi
 import os
 
 from threading import Thread
-from Queue import Queue
+from queue import Queue
 from hashlib import md5, sha256
 from binascii import hexlify
 from .ops import ckan_method
@@ -44,7 +44,7 @@ def generate_hashes(fname):
 
 
 def localpath(mirror_path, legacy_url):
-    path = urlparse.urlparse(legacy_url).path
+    path = urllib.parse.urlparse(legacy_url).path
     if path.startswith('/bpa/'):
         path = path[5:]
     path = path.lstrip('/')

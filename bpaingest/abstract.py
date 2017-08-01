@@ -1,14 +1,12 @@
 import abc
 from .util import make_logger
-from urlparse import urlparse
+from urllib.parse import urlparse
 
 
 logger = make_logger(__name__)
 
 
-class ABCBaseMetadata(object):
-    __metaclass__ = abc.ABCMeta
-    # the package attribute we use to link resources to packages
+class ABCBaseMetadata(object, metaclass=abc.ABCMeta):
     resource_linkage = ('bpa_id',)
 
     @abc.abstractmethod

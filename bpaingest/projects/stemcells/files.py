@@ -167,7 +167,7 @@ pdf_filename_re = re.compile(r'^.*\.pdf')
 def parse_md5_file(md5_file, regexps):
     with open(md5_file) as f:
         for md5, path in md5lines(f):
-            matches = filter(None, (regexp.match(path.split('/')[-1]) for regexp in regexps))
+            matches = [_f for _f in (regexp.match(path.split('/')[-1]) for regexp in regexps) if _f]
             m = None
             if matches:
                 m = matches[0]

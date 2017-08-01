@@ -30,7 +30,7 @@ def bpa_id_to_ckan_name(bpa_id, suborg=None, postfix=None):
 def prune_dict(d, keys):
     if d is None:
         return None
-    return dict((k, v) for (k, v) in d.items() if k in keys)
+    return dict((k, v) for (k, v) in list(d.items()) if k in keys)
 
 
 def clean_tag_name(s):
@@ -76,9 +76,9 @@ CKAN_AUTH = {
 # http://stackoverflow.com/questions/38271351/download-resources-from-private-ckan-datasets
 def authenticated_ckan_session(ckan):
     s = requests.Session()
-    data = dict((k, os.environ.get(v)) for k, v in CKAN_AUTH.items())
-    if any(t is None for t in data.values()):
-        raise Exception('please set %s' % (', '.join(CKAN_AUTH.values())))
+    data = dict((k, os.environ.get(v)) for k, v in list(CKAN_AUTH.items()))
+    if any(t is None for t in list(data.values())):
+        raise Exception('please set %s' % (', '.join(list(CKAN_AUTH.values()))))
     url = ckan.address + '/login_generic'
     r = s.post(url, data=data)
     if 'field-login' in r.text:

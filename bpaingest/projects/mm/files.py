@@ -146,7 +146,7 @@ def test_metagenomics_v2():
 def parse_md5_file(md5_file, regexps):
     with open(md5_file) as f:
         for md5, path in md5lines(f):
-            matches = filter(None, [t.match(path) for t in regexps])
+            matches = [_f for _f in [t.match(path) for t in regexps] if _f]
             if matches:
                 yield path, md5, matches[0].groupdict()
             else:

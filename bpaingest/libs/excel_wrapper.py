@@ -25,7 +25,7 @@ logger = make_logger(__name__)
 def _stringify(s):
     if isinstance(s, str):
         return str(s.decode('utf8'))
-    elif isinstance(s, unicode):
+    elif isinstance(s, str):
         return str(s.encode('utf8'))
     else:
         return str(s)
@@ -99,7 +99,7 @@ class ExcelWrapper(object):
         ''' maps the named field to the actual column in the spreadsheet '''
 
         def coerce_header(s):
-            if type(s) is not str and type(s) is not unicode:
+            if type(s) is not str and type(s) is not str:
                 logger.error("header is not a string: %s `%s'" % (type(s), repr(s)))
                 return str(s)
             return strip_to_ascii(s)
@@ -183,13 +183,13 @@ class ExcelWrapper(object):
         for crange in self.sheet.merged_cells:
             rlo, rhi, clo, chi = crange
             source_coords = (rlo, clo)
-            for rowx in xrange(rlo, rhi):
-                for colx in xrange(clo, chi):
+            for rowx in range(rlo, rhi):
+                for colx in range(clo, chi):
                     if rowx == rlo and colx == clo:
                         continue
                     merge_redirect[(rowx, colx)] = source_coords
 
-        for row_idx in xrange(self.header_length, self.sheet.nrows):
+        for row_idx in range(self.header_length, self.sheet.nrows):
             row = self.sheet.row(row_idx)
             merged_row = []
             for colx, val in enumerate(row):
@@ -222,7 +222,7 @@ class ExcelWrapper(object):
         # row is added so we know where in the spreadsheet this came from
         typ_attrs = [n for n in self.field_names]
         if self.additional_context is not None:
-            typ_attrs += self.additional_context.keys()
+            typ_attrs += list(self.additional_context.keys())
         typ = namedtuple(typname, typ_attrs)
 
         for row in self._get_rows():
@@ -248,5 +248,5 @@ class ExcelWrapper(object):
                     val = func(val)
                 tpl.append(val)
             if self.additional_context:
-                tpl += self.additional_context.values()
+                tpl += list(self.additional_context.values())
             yield typ(*tpl)

@@ -1,4 +1,4 @@
-from __future__ import print_function
+
 
 from unipath import Path
 from collections import defaultdict
@@ -6,7 +6,7 @@ from collections import defaultdict
 from ...abstract import BaseMetadata
 
 from ...util import make_logger, bpa_id_to_ckan_name, common_values
-from urlparse import urljoin
+from urllib.parse import urljoin
 
 from glob import glob
 
@@ -492,7 +492,7 @@ class OMGGenomicsHiSeqMetadata(BaseMetadata):
                 obj.pop('file')
                 objs[obj['bpa_id']].append(obj)
 
-            for bpa_id, row_objs in objs.items():
+            for bpa_id, row_objs in list(objs.items()):
                 obj = common_values(row_objs)
                 track_meta = self.track_meta.get(obj['ticket'])
 

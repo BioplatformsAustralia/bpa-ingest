@@ -1,4 +1,4 @@
-from __future__ import print_function
+
 
 from unipath import Path
 
@@ -6,7 +6,7 @@ from ...abstract import BaseMetadata
 
 from ...util import make_logger, bpa_id_to_ckan_name, one, common_values
 from ...libs.md5lines import md5lines
-from urlparse import urljoin
+from urllib.parse import urljoin
 
 from glob import glob
 

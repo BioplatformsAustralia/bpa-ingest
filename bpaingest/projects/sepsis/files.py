@@ -287,7 +287,7 @@ def parse_md5_file(patterns, md5_file):
             if path.endswith('.xlsx'):
                 continue
             parsed_line = None
-            for data_type, pattern_list in patterns.items():
+            for data_type, pattern_list in list(patterns.items()):
                 for pattern in pattern_list:
                     try:
                         parsed_line = MD5ParsedLine(data_type, pattern, md5, path)

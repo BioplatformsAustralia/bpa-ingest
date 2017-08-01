@@ -1,7 +1,7 @@
-from __future__ import print_function
+
 
 from unipath import Path
-from urlparse import urljoin
+from urllib.parse import urljoin
 from glob import glob
 
 from ...util import make_logger, bpa_id_to_ckan_name

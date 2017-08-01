@@ -1,9 +1,9 @@
-from __future__ import print_function
+
 
 import os
 from unipath import Path
 from glob import glob
-from urlparse import urljoin
+from urllib.parse import urljoin
 
 from ...libs.excel_wrapper import ExcelWrapper
 from ...libs import ingest_utils

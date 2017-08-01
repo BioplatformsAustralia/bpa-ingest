@@ -1,7 +1,7 @@
-from __future__ import print_function
+
 
 from unipath import Path
-from urlparse import urljoin
+from urllib.parse import urljoin
 from collections import defaultdict
 from hashlib import md5 as md5_hash
 
@@ -744,7 +744,7 @@ class StemcellsProteomicsAnalysedMetadata(BaseMetadata):
             for row in self.parse_spreadsheet(fname, xlsx_info):
                 ticket_rows[ticket].append(row)
         packages = []
-        for ticket, rows in ticket_rows.items():
+        for ticket, rows in list(ticket_rows.items()):
             obj = common_values([t._asdict() for t in rows])
             track_meta = self.track_meta.get(ticket)
             name = bpa_id_to_ckan_name(track_meta.folder_name, self.ckan_data_type)
@@ -859,7 +859,7 @@ class StemcellsMetabolomicsAnalysedMetadata(BaseMetadata):
             for row in self.parse_spreadsheet(fname, xlsx_info):
                 folder_rows[(ticket, folder_name)].append(row)
         packages = []
-        for (ticket, folder_name), rows in folder_rows.items():
+        for (ticket, folder_name), rows in list(folder_rows.items()):
             obj = common_values([t._asdict() for t in rows])
             name = bpa_id_to_ckan_name(folder_name, self.ckan_data_type)
             track_meta = self.track_meta.get(ticket)

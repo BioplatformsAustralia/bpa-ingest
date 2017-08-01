@@ -1,5 +1,5 @@
 import os
-from util import make_logger, csv_to_named_tuple, one
+from .util import make_logger, csv_to_named_tuple, one
 from glob import glob
 
 

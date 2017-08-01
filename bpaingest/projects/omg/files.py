@@ -72,7 +72,7 @@ def parse_md5_file(md5_file, regexps):
             # skip AGRF checksum program
             if path == 'TestFiles.exe':
                 continue
-            matches = filter(None, (regexp.match(path.split('/')[-1]) for regexp in regexps))
+            matches = [_f for _f in (regexp.match(path.split('/')[-1]) for regexp in regexps) if _f]
             m = None
             if matches:
                 m = matches[0]

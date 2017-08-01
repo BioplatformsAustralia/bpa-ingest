@@ -1,4 +1,4 @@
-from __future__ import print_function
+
 
 import os
 import re
@@ -9,7 +9,7 @@ from unipath import Path
 from glob import glob
 from ...util import make_logger, bpa_id_to_ckan_name
 from ...libs import ingest_utils
-from urlparse import urljoin
+from urllib.parse import urljoin
 from ...abstract import BaseMetadata
 
 logger = make_logger(__name__)
