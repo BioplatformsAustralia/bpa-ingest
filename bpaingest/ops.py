@@ -45,7 +45,7 @@ def print_accounts():
 def diff_objects(obj1, obj2, desc, skip_differences=None):
     def sort_if_list(v):
         if type(v) is list:
-            return list(sorted(v))
+            return list(sorted(v, key=lambda v: repr(v)))
         return v
     differences = []
     for k in list(obj1.keys()):
