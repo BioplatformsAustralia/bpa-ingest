@@ -160,6 +160,7 @@ def test_smallrna():
     for filename in filenames:
         assert(smallrna_filename_re.match(filename) is not None)
 
+
 xlsx_filename_re = re.compile(r'^.*\.xlsx')
 pdf_filename_re = re.compile(r'^.*\.pdf')
 

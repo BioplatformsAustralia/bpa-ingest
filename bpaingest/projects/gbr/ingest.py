@@ -85,7 +85,6 @@ class GbrAmpliconsMetadata(BaseMetadata):
                     'tags': [{'name': 'Amplicon'}],
                     'type': GbrAmpliconsMetadata.ckan_data_type,
                     'private': True,
-                    'bpa_id': row.bpa_id,
                     'sample_extraction_id': row.sample_extraction_id,
                     'sequencing_facility': row.sequencing_facility,
                     'amplicon': amplicon,
@@ -104,7 +103,6 @@ class GbrAmpliconsMetadata(BaseMetadata):
                     'ticket': row.ticket,
                     'facility_code': row.facility_code,
                     'analysis_software_version': row.analysis_software_version,
-                    'notes': row.comments,
                 }
                 packages.append(obj)
         return packages

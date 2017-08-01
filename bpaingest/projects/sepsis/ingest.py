@@ -1,7 +1,5 @@
 # -*- coding: utf-8 -*-
 
-
-
 from unipath import Path
 from collections import defaultdict
 from urllib.parse import urljoin

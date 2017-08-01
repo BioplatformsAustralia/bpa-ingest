@@ -40,6 +40,7 @@ def test_exon():
     for filename in filenames:
         assert(exon_filename_re.match(filename) is not None)
 
+
 # For the short read data we should follow the new BPA file naming protocol that Mabel circulated fairly recently - I'm not sure if it reached you, but I've attached it here. Essentially it is:
 # <BPA sample ID>_<flowcell ID>_<index sequence>_<sample number>_<lane>_<read>_001.fastq.gz
 # If there is a missing field (eg if you have no index sequences), keep the field in the filename but use Ns instead.

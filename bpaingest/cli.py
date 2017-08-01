@@ -54,6 +54,7 @@ def sync(args):
         sync_metadata(ckan, dlmeta.meta, dlmeta.auth, args.uploads, not args.metadata_only, not args.skip_resource_checks)
         print_accounts()
 
+
 sync.setup = setup_sync
 bootstrap.setup = setup_ckan
 
@@ -73,6 +74,7 @@ def genhash(ckan, args):
     with DownloadMetadata(PROJECTS[args.project_name], path=args.download_path) as dlmeta:
         genhash_fn(ckan, dlmeta.meta, args.mirror_path, num_threads=4)
         print_accounts()
+
 
 genhash.setup = setup_hash
 

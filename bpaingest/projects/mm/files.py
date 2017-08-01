@@ -70,6 +70,7 @@ def test_transcriptome():
     for filename in filenames:
         assert(transcriptome_filename_re.match(filename) is not None)
 
+
 metatranscriptome_filename_re = re.compile("""
     (?P<id>\d{4,6})_
     (?P<extraction>\d+)_

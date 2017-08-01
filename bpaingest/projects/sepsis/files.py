@@ -53,6 +53,7 @@ def test_miseq():
     for filename in filenames:
         assert(miseq_filename_re.match(filename) is not None)
 
+
 HISEQ_FILENAME_PATTERN = """
     (?P<id>\d{4,6})_
     (?P<library>PE|MP)_
