@@ -20,7 +20,7 @@ register_command, command_fns = make_registration_decorator()
 
 
 @register_command
-def bootstrap(ckan, args):
+def bootstrap(args):
     "bootstrap basic organisation data"
     ckan = make_ckan_api(args)
     for organization in ORGANIZATIONS:
@@ -55,6 +55,7 @@ def sync(args):
         print_accounts()
 
 sync.setup = setup_sync
+bootstrap.setup = setup_ckan
 
 
 @register_command

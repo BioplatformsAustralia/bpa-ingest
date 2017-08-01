@@ -49,7 +49,7 @@ apply()
 
 bootstrap()
 {
-  bpa-ingest -k "$apikey" -u "$CKAN_URL" bootstrap
+  bpa-ingest bootstrap -k "$apikey" -u "$CKAN_URL"
 }
 
 base()
