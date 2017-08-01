@@ -18,8 +18,7 @@ sample_extraction_id_re = re.compile(r'^\d{4,6}_\d')
 
 def fix_pcr(pcr):
     """ Check pcr value """
-
-    val = pcr.encode('utf-8').strip()
+    val = pcr.strip()
     # header in the spreadsheet
     if val == 'i.e. P or F':
         return None

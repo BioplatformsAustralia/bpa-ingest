@@ -22,15 +22,6 @@ from ..util import make_logger, strip_to_ascii
 logger = make_logger(__name__)
 
 
-def _stringify(s):
-    if isinstance(s, str):
-        return str(s.decode('utf8'))
-    elif isinstance(s, str):
-        return str(s.encode('utf8'))
-    else:
-        return str(s)
-
-
 class ExcelWrapper(object):
     '''
     Parse a excel file and yields namedtuples.
