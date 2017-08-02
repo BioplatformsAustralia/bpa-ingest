@@ -237,5 +237,3 @@ def _get_date(dt):
 
     logger.error('Date `{}` is not in a supported format'.format(dt))
     return None
-
-

@@ -6,7 +6,7 @@ from queue import Queue
 from threading import Thread
 from .util import make_logger
 from .util import prune_dict
-from .genhash import S3_HASH_FIELD
+from .libs.multihash import S3_HASH_FIELD
 from collections import Counter
 
 logger = make_logger(__name__)
