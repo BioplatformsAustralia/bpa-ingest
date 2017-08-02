@@ -1,11 +1,7 @@
 from io import BytesIO
 
 from .ingest_utils import get_clean_number
-from ..util import make_logger
 from .multihash import _generate_hashes, S3_CHUNK_SIZE
-
-
-logger = make_logger(__name__)
 
 
 def test_get_clean_number():
@@ -31,7 +27,6 @@ def test_multihash_empty():
 
 def test_multihash_one_chunk():
     result = _generate_hashes(BytesIO(b'hello' * (S3_CHUNK_SIZE // 8)))
-    logger.debug(result)
     assert(result == {
         'md5': '22b0d6ae2d06788edab665b4bc2c1139',
         'sha256': '50c5711f72196fb29755b590d503d7772c8e7953b37f30ff5d7baf7445091490',
@@ -41,7 +36,6 @@ def test_multihash_one_chunk():
 
 def test_multihash_several_chunks():
     result = _generate_hashes(BytesIO(b'hello' * S3_CHUNK_SIZE))
-    logger.debug(result)
     assert(result == {
         's3etag_8388608': '75fb13365cb1a544f03c6558e0fe1497-5',
         'sha256': '38acde04302e7136c04eddde7b04b03084abd415a5d1e2433b17243153ef8d4a',
