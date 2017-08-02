@@ -1,6 +1,6 @@
 unipath==1.1
-xlrd==0.9.4
-xlwt==1.0.0
-beautifulsoup4==4.4.1
+xlrd==1.0.0
+xlwt==1.2.0
+beautifulsoup4==4.6.0
 git+https://github.com/muccg/ckanapi.git@streaming-uploads
-requests==2.10.0
+requests==2.18.2
