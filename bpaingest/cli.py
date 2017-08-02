@@ -8,6 +8,7 @@ from .util import make_registration_decorator, make_ckan_api
 from .sync import sync_metadata
 from .schema import generate_schemas
 from .ops import print_accounts, make_organization
+from .dump import dump_state
 from .util import make_logger
 from .genhash import genhash as genhash_fn
 from .projects import PROJECTS
@@ -46,6 +47,10 @@ def setup_hash(subparser):
     subparser.add_argument('mirror_path', help='path to locally mounted mirror', nargs='?', default=os.environ.get('MIRROR_PATH'))
 
 
+def setup_dump(subparser):
+    subparser.add_argument('filename', help='output target')
+
+
 @register_command
 def sync(args):
     """sync a project"""
@@ -55,13 +60,14 @@ def sync(args):
         print_accounts()
 
 
-sync.setup = setup_sync
-bootstrap.setup = setup_ckan
-
-
 @register_command
 def makeschema(args):
     generate_schemas(args)
+
+
+@register_command
+def dumpstate(args):
+    dump_state(args)
 
 
 @register_command
@@ -76,6 +82,9 @@ def genhash(args):
         print_accounts()
 
 
+sync.setup = setup_sync
+bootstrap.setup = setup_ckan
+dumpstate.setup = setup_dump
 genhash.setup = setup_hash
 
 
