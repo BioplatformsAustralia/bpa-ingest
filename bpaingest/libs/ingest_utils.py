@@ -1,4 +1,3 @@
-import unittest
 import json
 import re
 from .bpa_constants import BPA_PREFIX
@@ -240,32 +239,3 @@ def _get_date(dt):
     return None
 
 
-class TestGetCleanNumber(unittest.TestCase):
-    """
-    get_clean_number tester
-    """
-
-    def setUp(self):
-        self.floats = (12131.5345, 22.444, 33.0)
-        self.strings = (('3.1415926535', 3.1415926535), ('-2.71828', -2.71828), ('37.1 degrees', 37.1))
-
-    def test_get_clean_number(self):
-        for f in self.floats:
-            self.assertTrue(f == get_clean_number(f))
-
-    def test_empty_string(self):
-        self.assertIs(get_clean_number(''), None)
-
-    def test_string(self):
-        for s, f in self.strings:
-            self.assertEqual(get_clean_number(s), f)
-
-    def test_integer(self):
-        self.assertEqual(get_clean_number(123), 123)
-
-    def test_none(self):
-        self.assertIs(get_clean_number(None), None)
-
-
-if __name__ == '__main__':
-    unittest.main()
