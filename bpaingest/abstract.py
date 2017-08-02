@@ -67,6 +67,18 @@ class BaseMetadata(ABCBaseMetadata):
             elif extension in ('PNG', 'XLSX', 'XLS', 'PPTX', 'ZIP', 'TAR', 'GZ', 'DOC', 'DOCX', 'PDF', 'CSV', 'JPEG', 'XML', 'BZ2', 'EXE', 'EXF', 'FASTA', 'FASTQ', 'SCAN', 'WIFF'):
                 resource_obj['format'] = extension
 
+    @classmethod
+    def obj_round_floats_and_stringify(cls, objs):
+        """
+        CKAN will turn our floats into strings, and it'll round them in the process.
+        to avoid a bug in our sync code, trying to undo that forever, we round
+        and stringify ourselves. this mutates each object in-place.
+        """
+        for obj in objs:
+            for k, v in obj.items():
+                if type(v) is float:
+                    obj[k] = str(round(v, 10))
+
     def __init__(self):
         self._packages = self._resources = None
 
@@ -77,6 +89,8 @@ class BaseMetadata(ABCBaseMetadata):
             self._packages = self._get_packages()
             self._resources = self._get_resources()
             BaseMetadata.resources_add_format(self._resources)
+            BaseMetadata.obj_round_floats_and_stringify(self._packages)
+            BaseMetadata.obj_round_floats_and_stringify(t for _, _, t in self._resources)
         return self._packages, self._resources
 
     def get_packages(self):
