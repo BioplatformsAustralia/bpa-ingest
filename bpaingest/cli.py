@@ -65,7 +65,7 @@ def makeschema(args):
 
 
 @register_command
-def genhash(ckan, args):
+def genhash(args):
     ckan = make_ckan_api(args)
     """
     verify MD5 sums for a local (filesystem mounted) mirror of the BPA

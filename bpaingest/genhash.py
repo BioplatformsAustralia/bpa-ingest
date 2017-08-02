@@ -33,7 +33,7 @@ def generate_hashes(fname):
             md5_whole.update(data)
             sha256_whole.update(data)
     if len(md5_s3part) == 1:
-        s3_etag = hexlify(md5_s3part[0])
+        s3_etag = hexlify(md5_s3part[0]).decode('ascii')
     else:
         s3_etag = '%s-%d' % (md5(''.join(md5_s3part)).hexdigest(), len(md5_s3part))
     return {
