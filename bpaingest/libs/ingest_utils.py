@@ -38,7 +38,7 @@ def add_spatial_extra(package):
         "type": "Point",
         "coordinates": [lng, lat]
     }
-    package['spatial'] = json.dumps(geo)
+    package['spatial'] = json.dumps(geo, sort_keys=True)
 
 
 def fix_sample_extraction_id(val):
@@ -238,23 +238,6 @@ def _get_date(dt):
 
     logger.error('Date `{}` is not in a supported format'.format(dt))
     return None
-
-
-def pretty_print_namedtuple(named_tuple):
-    """
-    pretty prints the namedtuple
-    """
-
-    def json_serial(obj):
-        """
-        JSON serializer for objects not serializable by default json code
-        """
-
-        if isinstance(obj, datetime.date):
-            serial = obj.isoformat()
-            return serial
-
-    return json.dumps(named_tuple._asdict(), indent=4, default=json_serial)
 
 
 class TestGetCleanNumber(unittest.TestCase):
