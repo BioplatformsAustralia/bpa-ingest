@@ -33,4 +33,11 @@ RUN pip install --upgrade -r requirements.txt
 COPY . /app
 RUN pip install --upgrade -e .
 
+RUN addgroup -g 1000 bpa \
+    && adduser -D -h /data -H -S -u 1000 -G bpa bpa \
+    && mkdir /data \
+    && chown bpa:bpa /data
+
+USER bpa
+
 ENTRYPOINT ["/env/bin/bpa-ingest"]
