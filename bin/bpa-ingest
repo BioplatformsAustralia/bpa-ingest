@@ -1,0 +1,9 @@
+#!/bin/bash
+bpaingest="docker run --rm \
+                      --interactive \
+                      --tty \
+                      -v "$(pwd):$(pwd)" \
+                      -w $(pwd) \
+                      muccg/bpaingest"
+
+exec $bpaingest "$@"
