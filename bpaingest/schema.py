@@ -86,6 +86,10 @@ schema_template = {
             "label": "SHA256"
         },
         {
+            "field_name": "size",
+            "label": "File size (bytes)"
+        },
+        {
             "field_name": "s3etag_8388608",
             "label": "S3 E-Tag (8MB multipart)"
         },
