@@ -27,8 +27,9 @@ def genhash(ckan, meta, mirror_path, num_threads):
         try:
             ckan_resource = ckan_method(ckan, 'resource', 'show')(id=resource['id'])
         except ckanapi.errors.NotFound:
-            logger.error("resource `%s': not in CKAN, skipping" % (resource['id']))
+            logger.error("%s: not in CKAN, skipping" % (resource_path))
             return
+        resource_path = 'dataset/%s/resource/%s' % (ckan_resource['package_id'], ckan_resource['id'])
 
         size = ckan_resource.get('size', '')
         if size != '':
@@ -42,12 +43,12 @@ def genhash(ckan, meta, mirror_path, num_threads):
             patch_obj.update(hashes)
 
         if not patch_obj:
-            logger.info("resource `%s': already hashed, continuing" % (ckan_resource['id']))
+            logger.info("%s: already hashed, continuing" % (resource_path))
             return
 
         patch_obj['id'] = ckan_resource['id']
         ckan_method(ckan, 'resource', 'patch')(**patch_obj)
-        logger.info("resource `%s': hashes calculated and pushed" % (ckan_resource['id']))
+        logger.info("%s: hashes calculated and pushed" % (resource_path))
 
     def hash_worker():
         while True:
