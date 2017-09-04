@@ -1,5 +1,6 @@
 import urllib.parse
 import ckanapi
+import re
 import os
 
 from threading import Thread
@@ -19,6 +20,9 @@ def localpath(mirror_path, legacy_url):
     return os.path.join(mirror_path, path)
 
 
+size_re = re.compile(r'^[0-9]+$')
+
+
 def genhash(ckan, meta, mirror_path, num_threads):
     def calculate_hashes(bpa_id, legacy_url, resource):
         fpath = localpath(mirror_path, legacy_url)
@@ -32,7 +36,7 @@ def genhash(ckan, meta, mirror_path, num_threads):
         resource_path = 'dataset/%s/resource/%s' % (ckan_resource['package_id'], ckan_resource['id'])
 
         size = ckan_resource.get('size', '')
-        if size != '':
+        if size is None or not size_re.match(size):
             patch_obj['size'] = str(os.stat(fpath).st_size)
 
         if len(ckan_resource.get('sha256', '')) != 64:
