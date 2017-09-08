@@ -100,7 +100,7 @@ digit_words = {
 }
 
 
-def csv_to_named_tuple(typname, fname, mode='r', additional_context=None):
+def csv_to_named_tuple(typname, fname, mode='r', additional_context=None, cleanup=None):
     if fname is None:
         return [], []
 
@@ -125,6 +125,8 @@ def csv_to_named_tuple(typname, fname, mode='r', additional_context=None):
         typ = namedtuple(typname, header)
         rows = []
         for row in r:
+            if cleanup is not None:
+                row = [cleanup(t) for t in row]
             rows.append(typ(*(row + [additional_context[t] for t in additional_keys])))
         return header, rows
 

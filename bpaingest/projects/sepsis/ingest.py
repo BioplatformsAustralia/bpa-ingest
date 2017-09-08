@@ -883,7 +883,7 @@ class BaseSepsisAnalysedMetadata(BaseSepsisMetadata):
         return obj
 
     @classmethod
-    def google_drive_track_to_object(cls, trk):
+    def google_drive_track_to_object(cls, trk, exclude=[]):
         "copy over the relevant bits of a sepsis google drive track object, to a package object"
         obj = {
             'facility': trk.facility,
@@ -891,7 +891,10 @@ class BaseSepsisAnalysedMetadata(BaseSepsisMetadata):
             'ticket': trk.ccg_jira_ticket
         }
         for fld in ('date_of_transfer', 'taxon_or_organism', 'strain_or_isolate', 'growth_media', 'folder_name', 'date_of_transfer_to_archive', 'file_count'):
-            obj[fld] = getattr(trk, fld)
+            if fld in exclude:
+                    continue
+            if hasattr(trk, fld):
+                obj[fld] = getattr(trk, fld)
         return obj
 
 
@@ -1367,6 +1370,130 @@ class SepsisGenomicsAnalysedMetadata(BaseSepsisAnalysedMetadata):
             with open(md5_file) as fd:
                 for md5, filename in md5lines(fd):
                     resource = {}
+                    resource['md5'] = resource['id'] = md5
+                    resource['name'] = filename
+                    xlsx_info = self.metadata_info[os.path.basename(md5_file)]
+                    folder_name = self.google_track_meta.get(xlsx_info['ticket']).folder_name
+                    legacy_url = urljoin(xlsx_info['base_url'], filename)
+                    resources.append(((folder_name,), legacy_url, resource))
+        return resources
+
+
+class SepsisProteomicsProteinDatabaseMetadata(BaseSepsisAnalysedMetadata):
+    contextual_classes = []
+    metadata_urls = ['https://downloads-qcif.bioplatforms.com/bpa/sepsis/proteomics/proteindatabase/']
+    metadata_url_components = ('facility_code', 'ticket')
+    metadata_patterns = [r'^.*\.md5$', r'^.*_metadata\.xlsx$']
+    organization = 'bpa-sepsis'
+    auth = ('sepsis', 'sepsis')
+    ckan_data_type = 'arp-proteomics-database'
+    resource_linkage = ('folder_name',)
+    omics = 'proteomics'
+    technology = 'analysed'
+
+    def __init__(self, metadata_path, contextual_metadata=None, metadata_info=None):
+        super(SepsisProteomicsProteinDatabaseMetadata, self).__init__()
+        self.path = Path(metadata_path)
+        self.contextual_metadata = contextual_metadata
+        self.metadata_info = metadata_info
+        self.google_track_meta = SepsisGoogleTrackMetadata()
+        self.bpam_track_meta = []
+
+    @classmethod
+    def parse_spreadsheet(self, fname, additional_context):
+        field_spec = [
+            ('database_generation_date', 'database generation date (yyyy-mm-dd)', ingest_utils.get_date_isoformat),
+            ('bpa_id', 'sample name (5 digit bpa id)', ingest_utils.extract_bpa_id),
+            ('taxon_or_organism', 'taxon_or_organism'),
+            ('strain_or_isolate', 'strain_or_isolate'),
+            ('serovar', 'serovar'),
+            ('file_name', 'file name of database that is generated'),
+            ('bacterial_database_used', 'bacterial database used (ccg jira ticket)'),
+            ('version', 'version (bacterial genome or database)', ingest_utils.get_date_isoformat),
+            ('human_database_used', 'human database used (ccg jira ticket)'),
+            ('decription_of_how_the_database_is_generated', 'decription of how the database is generated'),
+            ('translation', 'translation (3 frame or 6 frame)'),
+            ('proteome_size', 'proteome size'),
+        ]
+
+        wrapper = ExcelWrapper(
+            field_spec,
+            fname,
+            sheet_name=None,
+            header_length=8,
+            column_name_row_index=7,
+            formatting_info=True,
+            additional_context=additional_context)
+        rows = list(wrapper.get_all())
+        return rows
+
+    def _get_packages(self):
+        logger.info("Ingesting Sepsis metadata from {0}".format(self.path))
+        # we have one package per Zip of analysed data, and we take the common
+        # meta-data for each bpa-id
+        folder_rows = defaultdict(list)
+        for fname in glob(self.path + '/*.xlsx'):
+            logger.info("Processing Sepsis metadata file {0}".format(fname))
+            xlsx_info = self.metadata_info[os.path.basename(fname)]
+            ticket = xlsx_info['ticket']
+            if not ticket:
+                continue
+            folder_name = self.google_track_meta.get(ticket).folder_name
+            for row in self.parse_spreadsheet(fname, xlsx_info):
+                folder_rows[(ticket, folder_name)].append(row)
+        packages = []
+        for (ticket, folder_name), rows in list(folder_rows.items()):
+            obj = common_values([t._asdict() for t in rows])
+            # we're hitting the 100-char limit, so we have to hash the folder name when
+            # generating the CKAN name
+            folder_name_md5 = md5hash(folder_name.encode('utf8')).hexdigest()
+            name = bpa_id_to_ckan_name(folder_name_md5, self.ckan_data_type)
+            track_meta = self.google_track_meta.get(ticket)
+            bpa_ids = list(sorted(set([t.bpa_id for t in rows if t.bpa_id])))
+            # strain or isolate etc are per-file in this data, so we don't import them at the package level
+            obj.update(self.google_drive_track_to_object(track_meta, exclude=('taxon_or_organism', 'strain_or_isolate', 'growth_media')))
+            obj.update({
+                'name': name,
+                'id': name,
+                'notes': '%s' % (folder_name),
+                'title': '%s' % (folder_name),
+                'omics': 'proteomics',
+                'bpa_ids': ', '.join(bpa_ids),
+                'data_generated': 'True',
+                'type': self.ckan_data_type,
+                'date_of_transfer': ingest_utils.get_date_isoformat(track_meta.date_of_transfer),
+                'data_type': track_meta.data_type,
+                'description': track_meta.description,
+                'folder_name': track_meta.folder_name,
+                'sample_submission_date': ingest_utils.get_date_isoformat(track_meta.date_of_transfer),
+                'archive_ingestion_date': ingest_utils.get_date_isoformat(track_meta.date_of_transfer_to_archive),
+                'dataset_url': track_meta.download,
+                'private': True,
+            })
+            tag_names = sepsis_contextual_tags(self, obj)
+            obj['tags'] = [{'name': t} for t in tag_names]
+            packages.append(obj)
+        return packages
+
+    def _get_resources(self):
+        rows = []
+        for fname in glob(self.path + '/*.xlsx'):
+            xlsx_info = self.metadata_info[os.path.basename(fname)]
+            rows += self.parse_spreadsheet(fname, xlsx_info)
+        by_filename = dict((t.file_name.strip(), t) for t in rows)
+        logger.info("Ingesting Sepsis md5 file information from {0}".format(self.path))
+        resources = []
+        # one MD5 file per 'folder_name', so we just take every file and upload
+        for md5_file in glob(self.path + '/*.md5'):
+            logger.info("Processing md5 file {0}".format(md5_file))
+            with open(md5_file) as fd:
+                for md5, filename in md5lines(fd):
+                    resource = {}
+                    extra_data = by_filename.get(filename)
+                    if extra_data:
+                        extra_data = extra_data._asdict()
+                        extra_data.pop('file_name')
+                        resource.update(extra_data)
                     resource['md5'] = resource['id'] = md5
                     resource['name'] = filename
                     xlsx_info = self.metadata_info[os.path.basename(md5_file)]
