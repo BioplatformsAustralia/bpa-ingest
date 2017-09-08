@@ -886,7 +886,7 @@ class BaseSepsisAnalysedMetadata(BaseSepsisMetadata):
     def google_drive_track_to_object(cls, trk):
         "copy over the relevant bits of a sepsis google drive track object, to a package object"
         obj = {
-            'facility': trk.omics_facility,
+            'facility': trk.facility,
             'data_type': trk.data_type_pre_pilot_pilot_or_main_dataset,
             'ticket': trk.ccg_jira_ticket
         }
