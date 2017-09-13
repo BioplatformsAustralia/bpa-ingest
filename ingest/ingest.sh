@@ -91,6 +91,7 @@ sepsis()
   apply sepsis-proteomics-swathms-combined-sample
   apply sepsis-proteomics-swathms
   apply sepsis-proteomics-swathms-pool
+  apply sepsis-proteomics-proteindatabase
   apply sepsis-genomics-miseq
   apply sepsis-genomics-pacbio
   apply sepsis-metabolomics-lcms
