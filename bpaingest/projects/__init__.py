@@ -41,6 +41,7 @@ from .wheat_pathogens_genomes.ingest import WheatPathogensGenomesMetadata
 from .omg.ingest import (
     OMG10XProcessedIlluminaMetadata,
     OMG10XRawIlluminaMetadata,
+    OMG10XRawMetadata,
     OMGExonCaptureMetadata,
     OMGGenomicsHiSeqMetadata)
 
@@ -86,7 +87,8 @@ PROJECTS = {
     'base-amplicons-control': BASEAmpliconsControlMetadata,
     'base-metagenomics': BASEMetagenomicsMetadata,
     'base-site-images': BASESiteImagesMetadata,
-    'omg-10xraw': OMG10XRawIlluminaMetadata,
+    'omg-10xraw-agrf': OMG10XRawIlluminaMetadata,
+    'omg-10xraw': OMG10XRawMetadata,
     'omg-10xprocessed': OMG10XProcessedIlluminaMetadata,
     'omg-exoncapture': OMGExonCaptureMetadata,
     'omg-genomics-hiseq': OMGGenomicsHiSeqMetadata,

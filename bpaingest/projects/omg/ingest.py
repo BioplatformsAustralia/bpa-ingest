@@ -23,13 +23,17 @@ logger = make_logger(__name__)
 
 
 class OMG10XRawIlluminaMetadata(BaseMetadata):
+    """
+    early run data, produced at AGRF. No future data will be produced in this way.
+    """
+
     auth = ('omg', 'omg')
     organization = 'bpa-omg'
     ckan_data_type = 'omg-10x-raw-illumina'
     contextual_classes = [OMGSampleContextual]
     metadata_patterns = [r'^.*\.md5$', r'^.*_metadata.*.*\.xlsx$']
     metadata_urls = [
-        'https://downloads-qcif.bioplatforms.com/bpa/omg_staging/10x_raw/',
+        'https://downloads-qcif.bioplatforms.com/bpa/omg_staging/10x_raw_agrf/',
     ]
     metadata_url_components = ('ticket',)
     resource_linkage = ('bpa_id', 'flow_id')
@@ -145,6 +149,137 @@ class OMG10XRawIlluminaMetadata(BaseMetadata):
                 resource['name'] = filename
                 resource['resource_type'] = self.ckan_data_type
                 xlsx_info = self.metadata_info[os.path.basename(md5_file)]
+                legacy_url = urljoin(xlsx_info['base_url'], filename)
+                resources.append(((bpa_id, flow_id), legacy_url, resource))
+        return resources
+
+
+class OMG10XRawMetadata(BaseMetadata):
+    """
+    this data conforms to the BPA 10X raw workflow. future data
+    will use this ingest class.
+    """
+    auth = ('omg', 'omg')
+    organization = 'bpa-omg'
+    ckan_data_type = 'omg-10x-raw'
+    contextual_classes = [OMGSampleContextual]
+    metadata_patterns = [r'^.*\.md5$', r'^.*_metadata.*.*\.xlsx$']
+    metadata_urls = [
+        'https://downloads-qcif.bioplatforms.com/bpa/omg_staging/10x_raw/',
+    ]
+    metadata_url_components = ('ticket',)
+    resource_linkage = ('bpa_id', 'flow_id')
+
+    def __init__(self, metadata_path, contextual_metadata=None, metadata_info=None):
+        super(OMG10XRawMetadata, self).__init__()
+        self.path = Path(metadata_path)
+        self.contextual_metadata = contextual_metadata
+        self.metadata_info = metadata_info
+        self.track_meta = OMGTrackMetadata()
+        self.flow_lookup = {}
+
+    @classmethod
+    def parse_spreadsheet(self, fname, metadata_info):
+        field_spec = [
+            ('bpa_id', 'bpa id', ingest_utils.extract_bpa_id),
+            ('facility', 'facility'),
+            ('file', 'file'),
+            ('library_preparation', 'library prep'),
+            ('platform', 'platform'),
+            ('software_version', 'software version'),
+        ]
+
+        try:
+            wrapper = ExcelWrapper(
+                field_spec,
+                fname,
+                sheet_name=None,
+                header_length=2,
+                column_name_row_index=1,
+                formatting_info=True,
+                additional_context=metadata_info[os.path.basename(fname)])
+            rows = list(wrapper.get_all())
+            return rows
+        except:
+            logger.error("Cannot parse: `%s'" % (fname))
+            return []
+
+    def _get_packages(self):
+        logger.info("Ingesting OMG metadata from {0}".format(self.path))
+        packages = []
+        for fname in glob(self.path + '/*.xlsx'):
+            logger.info("Processing OMG metadata file {0}".format(os.path.basename(fname)))
+
+            # for this tech, each spreadsheet will only have a single BPA ID and flow cell
+            # we grab the common values in the spreadsheet, then apply the flow cell ID
+            # from the filename
+            obj = common_values([t._asdict() for t in self.parse_spreadsheet(fname, self.metadata_info)])
+            file_info = files.tenx_raw_xlsx_filename_re.match(os.path.basename(fname)).groupdict()
+            obj['flow_id'] = file_info['flow_id']
+
+            bpa_id = obj['bpa_id']
+            flow_id = obj['flow_id']
+            self.flow_lookup[obj['ticket']] = flow_id
+
+            name = bpa_id_to_ckan_name(bpa_id, self.ckan_data_type, flow_id)
+            context = {}
+            for contextual_source in self.contextual_metadata:
+                context.update(contextual_source.get(bpa_id))
+
+            track_meta = self.track_meta.get(obj['ticket'])
+
+            def track_get(k):
+                if track_meta is None:
+                    return None
+                return getattr(track_meta, k)
+
+            obj.update({
+                'name': name,
+                'id': name,
+                'bpa_id': bpa_id,
+                'flow_id': flow_id,
+                'title': 'OMG 10x Raw %s %s' % (bpa_id, flow_id),
+                'notes': '%s. %s.' % (context.get('common_name', ''), context.get('institution_name', '')),
+                'date_of_transfer': ingest_utils.get_date_isoformat(track_get('date_of_transfer')),
+                'data_type': track_get('data_type'),
+                'description': track_get('description'),
+                'folder_name': track_get('folder_name'),
+                'sample_submission_date': ingest_utils.get_date_isoformat(track_get('date_of_transfer')),
+                'contextual_data_submission_date': None,
+                'data_generated': ingest_utils.get_date_isoformat(track_get('date_of_transfer_to_archive')),
+                'archive_ingestion_date': ingest_utils.get_date_isoformat(track_get('date_of_transfer_to_archive')),
+                'dataset_url': track_get('download'),
+                'type': self.ckan_data_type,
+                'private': True,
+            })
+            obj.update(context)
+            ingest_utils.add_spatial_extra(obj)
+            tag_names = ['10x-raw']
+            obj['tags'] = [{'name': t} for t in tag_names]
+            packages.append(obj)
+        return packages
+
+    def _get_resources(self):
+        logger.info("Ingesting OMG md5 file information from {0}".format(self.path))
+        resources = []
+        for md5_file in glob(self.path + '/*.md5'):
+            logger.info("Processing md5 file {}".format(md5_file))
+            for filename, md5, file_info in files.parse_md5_file(md5_file, [files.tenxfastq_filename_re]):
+                # FIXME: we should upload these somewhere centrally
+                if filename.endswith('_metadata.xlsx') or filename.find('SampleSheet') != -1:
+                    continue
+                if file_info is None:
+                    logger.debug("unable to parse filename: `%s'" % (filename))
+                    continue
+                xlsx_info = self.metadata_info[os.path.basename(md5_file)]
+                ticket = xlsx_info['ticket']
+                flow_id = self.flow_lookup[ticket]
+                bpa_id = ingest_utils.extract_bpa_id(file_info['bpa_id'])
+
+                resource = file_info.copy()
+                resource['md5'] = resource['id'] = md5
+                resource['name'] = filename
+                resource['resource_type'] = self.ckan_data_type
                 legacy_url = urljoin(xlsx_info['base_url'], filename)
                 resources.append(((bpa_id, flow_id), legacy_url, resource))
         return resources
