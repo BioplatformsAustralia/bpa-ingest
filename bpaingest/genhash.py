@@ -31,7 +31,7 @@ def genhash(ckan, meta, mirror_path, num_threads):
         try:
             ckan_resource = ckan_method(ckan, 'resource', 'show')(id=resource['id'])
         except ckanapi.errors.NotFound:
-            logger.error("%s: not in CKAN, skipping" % (resource_path))
+            logger.error("%s: not in CKAN, skipping" % (resource['id']))
             return
         resource_path = 'dataset/%s/resource/%s' % (ckan_resource['package_id'], ckan_resource['id'])
 

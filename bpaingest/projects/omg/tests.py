@@ -34,7 +34,6 @@ def test_fastq_filename_re():
         assert(tenxfastq_filename_re.match(filename) is not None)
 
 
-
 def test_exon():
     filenames = [
         '40109_BHLFLYBCXY_AAGGTCT_S41_L002_R1_001.fastq.gz',

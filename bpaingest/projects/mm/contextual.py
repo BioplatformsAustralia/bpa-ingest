@@ -3,6 +3,7 @@ from glob import glob
 from ...util import make_logger, one
 from ...libs import ingest_utils
 from ...libs.excel_wrapper import ExcelWrapper
+from ...ncbi import NCBISRAContextual
 
 
 logger = make_logger(__name__)
@@ -252,3 +253,12 @@ class MarineMicrobesSampleContextual(object):
                 additional_context={'sample_type': sheet_name})
             rows += wrapper.get_all()
         return rows
+
+    def filename_metadata(self, *args, **kwargs):
+        return {}
+
+
+class MarineMicrobesNCBIContextual(NCBISRAContextual):
+    metadata_urls = ['https://downloads-qcif.bioplatforms.com/bpa/marine_micrboes/metadata/ncbi/']
+    name = 'base-ncbi-contextual'
+    bioproject_accession = 'PRJNA385736'

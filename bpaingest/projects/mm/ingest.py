@@ -10,7 +10,7 @@ from ...abstract import BaseMetadata
 from ...libs.excel_wrapper import ExcelWrapper
 from . import files
 from . tracking import MarineMicrobesTrackMetadata
-from .contextual import MarineMicrobesSampleContextual
+from .contextual import (MarineMicrobesSampleContextual, MarineMicrobesNCBIContextual)
 
 import os
 import re
@@ -20,6 +20,8 @@ logger = make_logger(__name__)
 
 index_from_comment_re = re.compile(r'([G|A|T|C|-]{6,}_[G|A|T|C|-]{6,})')
 index_from_comment_pilot_re = re.compile(r'_([G|A|T|C|-]{6,})_')
+
+common_context = [MarineMicrobesSampleContextual, MarineMicrobesNCBIContextual]
 
 read_lengths = {
     '16S': '300bp',
@@ -72,7 +74,7 @@ class BaseMarineMicrobesAmpliconsMetadata(BaseMetadata):
     auth = ('marine', 'marine')
     organization = 'bpa-marine-microbes'
     ckan_data_type = 'mm-genomics-amplicon'
-    contextual_classes = [MarineMicrobesSampleContextual]
+    contextual_classes = common_context
     metadata_patterns = [r'^.*\.md5', r'^.*_metadata.*.*\.xlsx']
     resource_linkage = ('bpa_id', 'mm_amplicon_linkage')
 
@@ -340,7 +342,7 @@ class MarineMicrobesMetagenomicsMetadata(BaseMetadata):
     auth = ('marine', 'marine')
     organization = 'bpa-marine-microbes'
     ckan_data_type = 'mm-metagenomics'
-    contextual_classes = [MarineMicrobesSampleContextual]
+    contextual_classes = common_context
     metadata_patterns = [r'^.*\.md5', r'^.*_metadata.*\.xlsx']
     metadata_urls = [
         'https://downloads-qcif.bioplatforms.com/bpa/marine_microbes/raw/metagenomics/'
@@ -438,6 +440,8 @@ class MarineMicrobesMetagenomicsMetadata(BaseMetadata):
                 resource['md5'] = resource['id'] = md5
                 resource['name'] = filename
                 resource['resource_type'] = self.ckan_data_type
+                for contextual_source in self.contextual_metadata:
+                    resource.update(contextual_source.filename_metadata(filename))
                 bpa_id = ingest_utils.extract_bpa_id(file_info.get('id'))
                 xlsx_info = self.metadata_info[os.path.basename(md5_file)]
                 legacy_url = urljoin(xlsx_info['base_url'], filename)
@@ -449,7 +453,7 @@ class MarineMicrobesMetatranscriptomeMetadata(BaseMetadata):
     auth = ('marine', 'marine')
     organization = 'bpa-marine-microbes'
     ckan_data_type = 'mm-metatranscriptome'
-    contextual_classes = [MarineMicrobesSampleContextual]
+    contextual_classes = common_context
     metadata_patterns = [r'^.*\.md5', r'^.*_metadata.*\.xlsx']
     metadata_urls = [
         'https://downloads-qcif.bioplatforms.com/bpa/marine_microbes/raw/metatranscriptome/'
@@ -549,6 +553,8 @@ class MarineMicrobesMetatranscriptomeMetadata(BaseMetadata):
                 resource['md5'] = resource['id'] = md5
                 resource['name'] = filename
                 resource['resource_type'] = self.ckan_data_type
+                for contextual_source in self.contextual_metadata:
+                    resource.update(contextual_source.filename_metadata(filename))
                 bpa_id = ingest_utils.extract_bpa_id(file_info.get('id'))
                 xlsx_info = self.metadata_info[os.path.basename(md5_file)]
                 legacy_url = urljoin(xlsx_info['base_url'], filename)

@@ -17,8 +17,7 @@ from .tracking import (
     BASETrackMetadata)
 from .contextual import (
     BASESampleContextual,
-    BASENCBIContextual,
-    BASENCBIResourceContextual)
+    BASENCBIContextual)
 
 import os
 import re
@@ -26,7 +25,7 @@ import re
 logger = make_logger(__name__)
 
 
-common_context = [BASESampleContextual, BASENCBIContextual, BASENCBIResourceContextual]
+common_context = [BASESampleContextual, BASENCBIContextual]
 
 
 # fixed read lengths provided by AB at CSIRO

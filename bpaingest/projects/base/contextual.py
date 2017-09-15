@@ -1,9 +1,9 @@
 import datetime
-import os
 from glob import glob
 from ...libs import ingest_utils
 from ...libs.excel_wrapper import ExcelWrapper
-from ...util import make_logger, one, csv_to_named_tuple
+from ...util import make_logger, one
+from ...ncbi import NCBISRAContextual
 
 logger = make_logger(__name__)
 
@@ -138,53 +138,7 @@ class BASESampleContextual(ContextualBase):
         return wrapper.get_all()
 
 
-class BASENCBIContextual(ContextualBase):
-    metadata_urls = ['https://downloads-qcif.bioplatforms.com/bpa/base/metadata/ncbi/2016-04/']
-    metadata_patterns = [r'^.*accession.*\.csv$']
+class BASENCBIContextual(NCBISRAContextual):
+    metadata_urls = ['https://downloads-qcif.bioplatforms.com/bpa/base/metadata/ncbi/']
     name = 'base-ncbi-contextual'
-
-    def __init__(self, path):
-        self._read_metadata(path)
-
-    def get(self, bpa_id):
-        metadata = {}
-        if bpa_id in self.bpaid_bioproject:
-            metadata['ncbi_bioproject_accession'] = self.bpaid_bioproject[bpa_id]
-        if bpa_id in self.bpaid_biosample:
-            metadata['ncbi_biosample_accession'] = self.bpaid_biosample[bpa_id]
-        return metadata
-
-    def _read_metadata(self, path):
-        _, bioproject_rows = csv_to_named_tuple(
-            'BioProject',
-            os.path.join(path, 'bioproject_accession.csv'),
-            mode='rU')
-        _, biosample_rows = csv_to_named_tuple(
-            'BioSample',
-            os.path.join(path, 'Biosample_accessions.csv'),
-            mode='rU')
-        self.bpaid_bioproject = dict((ingest_utils.extract_bpa_id(t.sample_name), t.bioproject_accession.strip()) for t in bioproject_rows)
-        self.bpaid_biosample = dict((ingest_utils.extract_bpa_id(t.sample_name), t.accession.strip()) for t in biosample_rows)
-
-
-class BASENCBIResourceContextual(ContextualBase):
-    metadata_urls = ['https://downloads-qcif.bioplatforms.com/bpa/base/metadata/ncbi/2016-04/']
-    metadata_patterns = [r'^files_submitted.csv$']
-    name = 'base-ncbi-resource-contextual'
-
-    def __init__(self, path):
-        self._read_metadata(path)
-
-    def filename_metadata(self, filename):
-        return {
-            'ncbi_file_uploaded': filename in self.uploaded_files
-        }
-
-    def _read_metadata(self, path):
-        _, upload_rows = csv_to_named_tuple(
-            'BioProject',
-            os.path.join(path, 'files_submitted.csv'),
-            mode='rU')
-        self.uploaded_files = set()
-        for row in upload_rows:
-            self.uploaded_files.add(row.filename)
+    bioproject_accession = 'PRJNA317932'
