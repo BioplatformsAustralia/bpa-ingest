@@ -201,6 +201,8 @@ class BaseMarineMicrobesAmpliconsMetadata(BaseMetadata):
                 resource['md5'] = resource['id'] = md5
                 resource['name'] = filename
                 resource['resource_type'] = self.ckan_data_type
+                for contextual_source in self.contextual_metadata:
+                    resource.update(contextual_source.filename_metadata(filename))
                 bpa_id = ingest_utils.extract_bpa_id(file_info.get('id'))
                 xlsx_info = self.metadata_info[os.path.basename(md5_file)]
                 legacy_url = urljoin(xlsx_info['base_url'], filename)

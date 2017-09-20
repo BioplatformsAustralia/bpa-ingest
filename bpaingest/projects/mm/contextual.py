@@ -259,6 +259,6 @@ class MarineMicrobesSampleContextual(object):
 
 
 class MarineMicrobesNCBIContextual(NCBISRAContextual):
-    metadata_urls = ['https://downloads-qcif.bioplatforms.com/bpa/marine_micrboes/metadata/ncbi/']
+    metadata_urls = ['https://downloads-qcif.bioplatforms.com/bpa/marine_microbes/metadata/ncbi/']
     name = 'base-ncbi-contextual'
     bioproject_accession = 'PRJNA385736'
