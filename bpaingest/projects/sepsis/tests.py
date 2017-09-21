@@ -2,7 +2,7 @@ from .files import (
     pacbio_filename_re,
     miseq_filename_re,
     hiseq_filename_re,
-    metabolomics_lcms_filename_re,
+    metabolomics_lcms_gcms_filename_re,
     proteomics_ms1quantification_filename_re,
     proteomics_swathms_1d_ida_filename_re,
     proteomics_swathms_2d_ida_filename_re,
@@ -41,13 +41,15 @@ def test_hiseq():
         assert(hiseq_filename_re.match(filename) is not None)
 
 
-def test_metabolomics_lcms():
+def test_metabolomics_lcms_gcms():
     filenames = [
-        '25835_SEP_MA_LC-MS_SA2760-1-813-28029_Bio21-LC-QTOF-001.tar.gz'
+        '25835_SEP_MA_LC-MS_SA2760-1-813-28029_Bio21-LC-QTOF-001.tar.gz',
+        '50534_SEP_MA_LCMS_2900M-5-906-30612_Bio21-LC-QTOF-6545.tar.gz',
+        '50557_SEP_MA_GCMS_2986M-4-907-30689_Bio21-GC-QQQ-Shimadzu.qgd'
     ]
 
     for filename in filenames:
-        assert(metabolomics_lcms_filename_re.match(filename) is not None)
+        assert(metabolomics_lcms_gcms_filename_re.match(filename) is not None)
 
 
 def test_proteomics_ms1quantification():

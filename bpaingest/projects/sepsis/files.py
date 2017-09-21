@@ -49,16 +49,16 @@ HISEQ_FILENAME_PATTERN = """
 hiseq_filename_re = re.compile(HISEQ_FILENAME_PATTERN, re.VERBOSE)
 
 
-METABOLOMICS_LCMS_FILENAME_PATTERN = """
+METABOLOMICS_LCMS_GCMS_FILENAME_PATTERN = """
     (?P<id>\d{4,6})_
     SEP_
     (?P<vendor>MA)_
-    (?P<platform>LC-MS|GC-MS)_
+    (?P<platform>LC-MS|LCMS|GCMS|GC-MS)_
     (?P<mastr_ms_id>[A-Z0-9-]+)_
-    (?P<machine_data>[^\.]+).
-    tar.gz
+    (?P<machine_data>[^\.]+)\.
+    (tar\.gz|qgd)
 """
-metabolomics_lcms_filename_re = re.compile(METABOLOMICS_LCMS_FILENAME_PATTERN, re.VERBOSE)
+metabolomics_lcms_gcms_filename_re = re.compile(METABOLOMICS_LCMS_GCMS_FILENAME_PATTERN, re.VERBOSE)
 
 
 PROTEOMICS_MS1QUANTIFICATION_FILENAME_PATTERN = """

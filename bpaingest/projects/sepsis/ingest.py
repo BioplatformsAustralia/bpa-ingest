@@ -347,6 +347,108 @@ class SepsisTranscriptomicsHiseqMetadata(BaseSepsisMetadata):
         return resources
 
 
+class SepsisMetabolomicsGCMSMetadata(BaseSepsisMetadata):
+    contextual_classes = [SepsisBacterialContextual]
+    metadata_urls = ['https://downloads-qcif.bioplatforms.com/bpa/sepsis/metabolomics/raw/gcms/']
+    metadata_url_components = ('facility_code', 'ticket')
+    organization = 'bpa-sepsis'
+    auth = ('sepsis', 'sepsis')
+    ckan_data_type = 'arp-metabolomics-gcms'
+    omics = 'metabolomics'
+    technology = 'gcms'
+
+    def __init__(self, metadata_path, contextual_metadata=None, metadata_info=None):
+        super(SepsisMetabolomicsGCMSMetadata, self).__init__()
+        self.path = Path(metadata_path)
+        self.contextual_metadata = contextual_metadata
+        self.bpam_track_meta = SepsisTrackMetadata('MetabolomicsGCMS')
+        self.metadata_info = metadata_info
+
+    def read_track_csv(self, fname):
+        if fname is None:
+            return {}
+        header, rows = csv_to_named_tuple('SepsisMetabolomicsGCMSTrack', fname)
+        return dict((ingest_utils.extract_bpa_id(t.five_digit_bpa_id), t) for t in rows)
+
+    def parse_spreadsheet(self, fname):
+        field_spec = [
+            ('bpa_id', 'bacterial sample unique id', ingest_utils.extract_bpa_id),
+            ('sample_fractionation_extract_solvent', 'sample fractionation / extraction solvent'),
+            ('gc_column_type', 'gc/column type'),
+            ('gradient_time_min_flow', 'gradient time (min) / flow'),
+            ('mass_spectrometer', 'mass spectrometer'),
+            ('acquisition_mode', 'acquisition mode'),
+            ('raw_file_name', 'raw file name'),
+        ]
+
+        wrapper = ExcelWrapper(
+            field_spec,
+            fname,
+            sheet_name=None,
+            header_length=1,
+            column_name_row_index=1,
+            formatting_info=True,
+            additional_context=self.metadata_info[os.path.basename(fname)])
+        return wrapper.get_all()
+
+    def _get_packages(self):
+        packages = []
+        for fname in glob(self.path + '/*.xlsx'):
+            logger.info("Processing Sepsis Metabolomics GCMS metadata file {0}".format(fname))
+            rows = list(self.parse_spreadsheet(fname))
+            xlsx_info = self.metadata_info[os.path.basename(fname)]
+            ticket = xlsx_info['ticket']
+            google_track_meta = self.google_track_meta.get(ticket)
+            for row in rows:
+                bpa_id = row.bpa_id
+                if bpa_id is None:
+                    continue
+                track_meta = self.bpam_track_meta.get(bpa_id)
+                obj = track_meta.copy()
+                name = bpa_id_to_ckan_name(bpa_id.split('.')[-1], self.ckan_data_type)
+                obj.update({
+                    'name': name,
+                    'id': name,
+                    'bpa_id': bpa_id,
+                    'archive_ingestion_date': ingest_utils.get_date_isoformat(google_track_meta.date_of_transfer_to_archive),
+                    'title': 'ARP Metabolomics GCMS %s' % (bpa_id),
+                    'ticket': row.ticket,
+                    'facility': row.facility_code.upper(),
+                    'notes': 'ARP Metabolomics GCMS Data: %s %s' % (track_meta['taxon_or_organism'], track_meta['strain_or_isolate']),
+                    'sample_fractionation_extract_solvent': row.sample_fractionation_extract_solvent,
+                    'gc_column_type': row.gc_column_type,
+                    'gradient_time_min_flow': row.gradient_time_min_flow,
+                    'mass_spectrometer': row.mass_spectrometer,
+                    'acquisition_mode': row.acquisition_mode,
+                    'raw_file_name': row.raw_file_name,
+                    'type': self.ckan_data_type,
+                    'private': True,
+                    'data_generated': True,
+                })
+                for contextual_source in self.contextual_metadata:
+                    obj.update(contextual_source.get(bpa_id, track_meta))
+                tag_names = sepsis_contextual_tags(self, obj)
+                obj['tags'] = [{'name': t} for t in tag_names]
+                packages.append(obj)
+        return packages
+
+    def _get_resources(self):
+        logger.info("Ingesting Sepsis md5 file information from {0}".format(self.path))
+        resources = []
+        for md5_file in glob(self.path + '/*.md5'):
+            logger.info("Processing md5 file {0}".format(md5_file))
+            for file_info in files.parse_md5_file({'gcms': [files.metabolomics_lcms_gcms_filename_re]}, md5_file):
+                resource = dict((t, file_info.get(t)) for t in ('vendor', 'platform', 'mastr_ms_id', 'machine_data'))
+                resource['md5'] = resource['id'] = file_info.md5
+                resource['name'] = file_info.filename
+                resource['resource_type'] = self.ckan_data_type
+                bpa_id = ingest_utils.extract_bpa_id(file_info.get('id'))
+                xlsx_info = self.metadata_info[os.path.basename(md5_file)]
+                legacy_url = urljoin(xlsx_info['base_url'], file_info.filename)
+                resources.append(((bpa_id,), legacy_url, resource))
+        return resources
+
+
 class SepsisMetabolomicsLCMSMetadata(BaseSepsisMetadata):
     contextual_classes = [SepsisBacterialContextual, SepsisMetabolomicsLCMSContextual]
     metadata_urls = ['https://downloads-qcif.bioplatforms.com/bpa/sepsis/metabolomics/raw/lcms/']
@@ -436,7 +538,7 @@ class SepsisMetabolomicsLCMSMetadata(BaseSepsisMetadata):
         resources = []
         for md5_file in glob(self.path + '/*.md5'):
             logger.info("Processing md5 file {0}".format(md5_file))
-            for file_info in files.parse_md5_file({'lcms': [files.metabolomics_lcms_filename_re]}, md5_file):
+            for file_info in files.parse_md5_file({'lcms': [files.metabolomics_lcms_gcms_filename_re]}, md5_file):
                 resource = dict((t, file_info.get(t)) for t in ('vendor', 'platform', 'mastr_ms_id', 'machine_data'))
                 resource['md5'] = resource['id'] = file_info.md5
                 resource['name'] = file_info.filename
