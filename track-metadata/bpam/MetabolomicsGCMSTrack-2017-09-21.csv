@@ -1,0 +1,61 @@
+5 digit BPA ID,Data type,Taxon_OR_organism,Strain_OR_isolate,Serovar,Growth Media,Replicate,Omics,Analytical platform,Facility,Work order #,Contextual Data Submission Date,Sample submission date,Data generated,Archive Ingestion Date,Archive ID,id,curation_url,in_data_portal,last_modified
+102.100.100.50565,Main dataset,Staphylococcus aureus,BPH2986,,Pooled sera,6,Metabolomics,GC-MS,MA,,2017-07-31,2017-07-31,0,,,60,,0,2017-09-13 00:25:06
+102.100.100.50564,Main dataset,Staphylococcus aureus,BPH2986,,Pooled sera,5,Metabolomics,GC-MS,MA,,2017-07-31,2017-07-31,0,,,59,,0,2017-09-13 00:25:06
+102.100.100.50563,Main dataset,Staphylococcus aureus,BPH2986,,Pooled sera,4,Metabolomics,GC-MS,MA,,2017-07-31,2017-07-31,0,,,58,,0,2017-09-13 00:25:06
+102.100.100.50562,Main dataset,Staphylococcus aureus,BPH2986,,Pooled sera,3,Metabolomics,GC-MS,MA,,2017-07-31,2017-07-31,0,,,57,,0,2017-09-13 00:25:06
+102.100.100.50561,Main dataset,Staphylococcus aureus,BPH2986,,Pooled sera,2,Metabolomics,GC-MS,MA,,2017-07-31,2017-07-31,0,,,56,,0,2017-09-13 00:25:06
+102.100.100.50631,Main dataset,Staphylococcus aureus,BPH2986,,Pooled sera,1,Metabolomics,GC-MS,MA,,2017-07-31,2017-07-31,0,,,55,,0,2017-09-13 00:25:06
+102.100.100.50559,Main dataset,Staphylococcus aureus,BPH2986,,RPMI,6,Metabolomics,GC-MS,MA,,2017-07-31,2017-07-31,0,,,54,,0,2017-09-13 00:25:06
+102.100.100.50558,Main dataset,Staphylococcus aureus,BPH2986,,RPMI,5,Metabolomics,GC-MS,MA,,2017-07-31,2017-07-31,0,,,53,,0,2017-09-13 00:25:06
+102.100.100.50557,Main dataset,Staphylococcus aureus,BPH2986,,RPMI,4,Metabolomics,GC-MS,MA,,2017-07-31,2017-07-31,0,,,52,,0,2017-09-13 00:25:06
+102.100.100.50556,Main dataset,Staphylococcus aureus,BPH2986,,RPMI,3,Metabolomics,GC-MS,MA,,2017-07-31,2017-07-31,0,,,51,,0,2017-09-13 00:25:06
+102.100.100.50555,Main dataset,Staphylococcus aureus,BPH2986,,RPMI,2,Metabolomics,GC-MS,MA,,2017-07-31,2017-07-31,0,,,50,,0,2017-09-13 00:25:06
+102.100.100.50554,Main dataset,Staphylococcus aureus,BPH2986,,RPMI,1,Metabolomics,GC-MS,MA,,2017-07-31,2017-07-31,0,,,49,,0,2017-09-13 00:25:06
+102.100.100.50553,Main dataset,Staphylococcus aureus,BPH2947,,Pooled sera,6,Metabolomics,GC-MS,MA,,2017-07-31,2017-07-31,0,,,48,,0,2017-09-13 00:25:06
+102.100.100.50552,Main dataset,Staphylococcus aureus,BPH2947,,Pooled sera,5,Metabolomics,GC-MS,MA,,2017-07-31,2017-07-31,0,,,47,,0,2017-09-13 00:25:06
+102.100.100.50551,Main dataset,Staphylococcus aureus,BPH2947,,Pooled sera,4,Metabolomics,GC-MS,MA,,2017-07-31,2017-07-31,0,,,46,,0,2017-09-13 00:25:06
+102.100.100.50550,Main dataset,Staphylococcus aureus,BPH2947,,Pooled sera,3,Metabolomics,GC-MS,MA,,2017-07-31,2017-07-31,0,,,45,,0,2017-09-13 00:25:06
+102.100.100.50549,Main dataset,Staphylococcus aureus,BPH2947,,Pooled sera,2,Metabolomics,GC-MS,MA,,2017-07-31,2017-07-31,0,,,44,,0,2017-09-13 00:25:06
+102.100.100.50630,Main dataset,Staphylococcus aureus,BPH2947,,Pooled sera,1,Metabolomics,GC-MS,MA,,2017-07-31,2017-07-31,0,,,43,,0,2017-09-13 00:25:06
+102.100.100.50547,Main dataset,Staphylococcus aureus,BPH2947,,RPMI,6,Metabolomics,GC-MS,MA,,2017-07-31,2017-07-31,0,,,42,,0,2017-09-13 00:25:06
+102.100.100.50546,Main dataset,Staphylococcus aureus,BPH2947,,RPMI,5,Metabolomics,GC-MS,MA,,2017-07-31,2017-07-31,0,,,41,,0,2017-09-13 00:25:06
+102.100.100.50545,Main dataset,Staphylococcus aureus,BPH2947,,RPMI,4,Metabolomics,GC-MS,MA,,2017-07-31,2017-07-31,0,,,40,,0,2017-09-13 00:25:06
+102.100.100.50544,Main dataset,Staphylococcus aureus,BPH2947,,RPMI,3,Metabolomics,GC-MS,MA,,2017-07-31,2017-07-31,0,,,39,,0,2017-09-13 00:25:06
+102.100.100.50543,Main dataset,Staphylococcus aureus,BPH2947,,RPMI,2,Metabolomics,GC-MS,MA,,2017-07-31,2017-07-31,0,,,38,,0,2017-09-13 00:25:06
+102.100.100.50542,Main dataset,Staphylococcus aureus,BPH2947,,RPMI,1,Metabolomics,GC-MS,MA,,2017-07-31,2017-07-31,0,,,37,,0,2017-09-13 00:25:06
+102.100.100.50541,Main dataset,Staphylococcus aureus,BPH2900,,Pooled sera,6,Metabolomics,GC-MS,MA,,2017-07-31,2017-07-31,0,,,36,,0,2017-09-13 00:25:06
+102.100.100.50540,Main dataset,Staphylococcus aureus,BPH2900,,Pooled sera,5,Metabolomics,GC-MS,MA,,2017-07-31,2017-07-31,0,,,35,,0,2017-09-13 00:25:06
+102.100.100.50539,Main dataset,Staphylococcus aureus,BPH2900,,Pooled sera,4,Metabolomics,GC-MS,MA,,2017-07-31,2017-07-31,0,,,34,,0,2017-09-13 00:25:06
+102.100.100.50538,Main dataset,Staphylococcus aureus,BPH2900,,Pooled sera,3,Metabolomics,GC-MS,MA,,2017-07-31,2017-07-31,0,,,33,,0,2017-09-13 00:25:06
+102.100.100.50537,Main dataset,Staphylococcus aureus,BPH2900,,Pooled sera,2,Metabolomics,GC-MS,MA,,2017-07-31,2017-07-31,0,,,32,,0,2017-09-13 00:25:06
+102.100.100.50536,Main dataset,Staphylococcus aureus,BPH2900,,Pooled sera,1,Metabolomics,GC-MS,MA,,2017-07-31,2017-07-31,0,,,31,,0,2017-09-13 00:25:06
+102.100.100.50535,Main dataset,Staphylococcus aureus,BPH2900,,RPMI,6,Metabolomics,GC-MS,MA,,2017-07-31,2017-07-31,0,,,30,,0,2017-09-13 00:25:06
+102.100.100.50534,Main dataset,Staphylococcus aureus,BPH2900,,RPMI,5,Metabolomics,GC-MS,MA,,2017-07-31,2017-07-31,0,,,29,,0,2017-09-13 00:25:06
+102.100.100.50533,Main dataset,Staphylococcus aureus,BPH2900,,RPMI,4,Metabolomics,GC-MS,MA,,2017-07-31,2017-07-31,0,,,28,,0,2017-09-13 00:25:06
+102.100.100.50532,Main dataset,Staphylococcus aureus,BPH2900,,RPMI,3,Metabolomics,GC-MS,MA,,2017-07-31,2017-07-31,0,,,27,,0,2017-09-13 00:25:06
+102.100.100.50531,Main dataset,Staphylococcus aureus,BPH2900,,RPMI,2,Metabolomics,GC-MS,MA,,2017-07-31,2017-07-31,0,,,26,,0,2017-09-13 00:25:06
+102.100.100.50530,Main dataset,Staphylococcus aureus,BPH2900,,RPMI,1,Metabolomics,GC-MS,MA,,2017-07-31,2017-07-31,0,,,25,,0,2017-09-13 00:25:06
+102.100.100.50529,Main dataset,Staphylococcus aureus,BPH2819,,Pooled sera,6,Metabolomics,GC-MS,MA,,2017-07-31,2017-07-31,0,,,24,,0,2017-09-13 00:25:06
+102.100.100.50528,Main dataset,Staphylococcus aureus,BPH2819,,Pooled sera,5,Metabolomics,GC-MS,MA,,2017-07-31,2017-07-31,0,,,23,,0,2017-09-13 00:25:06
+102.100.100.50527,Main dataset,Staphylococcus aureus,BPH2819,,Pooled sera,4,Metabolomics,GC-MS,MA,,2017-07-31,2017-07-31,0,,,22,,0,2017-09-13 00:25:06
+102.100.100.50526,Main dataset,Staphylococcus aureus,BPH2819,,Pooled sera,3,Metabolomics,GC-MS,MA,,2017-07-31,2017-07-31,0,,,21,,0,2017-09-13 00:25:06
+102.100.100.50525,Main dataset,Staphylococcus aureus,BPH2819,,Pooled sera,2,Metabolomics,GC-MS,MA,,2017-07-31,2017-07-31,0,,,20,,0,2017-09-13 00:25:06
+102.100.100.50629,Main dataset,Staphylococcus aureus,BPH2819,,Pooled sera,1,Metabolomics,GC-MS,MA,,2017-07-31,2017-07-31,0,,,19,,0,2017-09-13 00:25:06
+102.100.100.50523,Main dataset,Staphylococcus aureus,BPH2819,,RPMI,6,Metabolomics,GC-MS,MA,,2017-07-31,2017-07-31,0,,,18,,0,2017-09-13 00:25:06
+102.100.100.50522,Main dataset,Staphylococcus aureus,BPH2819,,RPMI,5,Metabolomics,GC-MS,MA,,2017-07-31,2017-07-31,0,,,17,,0,2017-09-13 00:25:06
+102.100.100.50521,Main dataset,Staphylococcus aureus,BPH2819,,RPMI,4,Metabolomics,GC-MS,MA,,2017-07-31,2017-07-31,0,,,16,,0,2017-09-13 00:25:06
+102.100.100.50520,Main dataset,Staphylococcus aureus,BPH2819,,RPMI,3,Metabolomics,GC-MS,MA,,2017-07-31,2017-07-31,0,,,15,,0,2017-09-13 00:25:06
+102.100.100.50519,Main dataset,Staphylococcus aureus,BPH2819,,RPMI,2,Metabolomics,GC-MS,MA,,2017-07-31,2017-07-31,0,,,14,,0,2017-09-13 00:25:06
+102.100.100.50518,Main dataset,Staphylococcus aureus,BPH2819,,RPMI,1,Metabolomics,GC-MS,MA,,2017-07-31,2017-07-31,0,,,13,,0,2017-09-13 00:25:06
+102.100.100.50517,Main dataset,Staphylococcus aureus,BPH2760,,Pooled sera,6,Metabolomics,GC-MS,MA,,2017-07-31,2017-07-31,0,,,12,,0,2017-09-13 00:25:06
+102.100.100.50516,Main dataset,Staphylococcus aureus,BPH2760,,Pooled sera,5,Metabolomics,GC-MS,MA,,2017-07-31,2017-07-31,0,,,11,,0,2017-09-13 00:25:06
+102.100.100.50515,Main dataset,Staphylococcus aureus,BPH2760,,Pooled sera,4,Metabolomics,GC-MS,MA,,2017-07-31,2017-07-31,0,,,10,,0,2017-09-13 00:25:06
+102.100.100.50514,Main dataset,Staphylococcus aureus,BPH2760,,Pooled sera,3,Metabolomics,GC-MS,MA,,2017-07-31,2017-07-31,0,,,9,,0,2017-09-13 00:25:06
+102.100.100.50513,Main dataset,Staphylococcus aureus,BPH2760,,Pooled sera,2,Metabolomics,GC-MS,MA,,2017-07-31,2017-07-31,0,,,8,,0,2017-09-13 00:25:06
+102.100.100.50512,Main dataset,Staphylococcus aureus,BPH2760,,Pooled sera,1,Metabolomics,GC-MS,MA,,2017-07-31,2017-07-31,0,,,7,,0,2017-09-13 00:25:06
+102.100.100.50511,Main dataset,Staphylococcus aureus,BPH2760,,RPMI,6,Metabolomics,GC-MS,MA,,2017-07-31,2017-07-31,0,,,6,,0,2017-09-13 00:25:06
+102.100.100.50510,Main dataset,Staphylococcus aureus,BPH2760,,RPMI,5,Metabolomics,GC-MS,MA,,2017-07-31,2017-07-31,0,,,5,,0,2017-09-13 00:25:06
+102.100.100.50509,Main dataset,Staphylococcus aureus,BPH2760,,RPMI,4,Metabolomics,GC-MS,MA,,2017-07-31,2017-07-31,0,,,4,,0,2017-09-13 00:25:06
+102.100.100.50508,Main dataset,Staphylococcus aureus,BPH2760,,RPMI,3,Metabolomics,GC-MS,MA,,2017-07-31,2017-07-31,0,,,3,,0,2017-09-13 00:25:06
+102.100.100.50507,Main dataset,Staphylococcus aureus,BPH2760,,RPMI,2,Metabolomics,GC-MS,MA,,2017-07-31,2017-07-31,0,,,2,,0,2017-09-13 00:25:06
+102.100.100.50506,Main dataset,Staphylococcus aureus,BPH2760,,RPMI,1,Metabolomics,GC-MS,MA,,2017-07-31,2017-07-31,0,,,1,,0,2017-09-13 00:25:06
