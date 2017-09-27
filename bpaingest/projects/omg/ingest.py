@@ -11,7 +11,7 @@ from urllib.parse import urljoin
 from glob import glob
 
 from ...libs import ingest_utils
-from ...libs.excel_wrapper import ExcelWrapper
+from ...libs.excel_wrapper import ExcelWrapper, make_field_definition as fld
 from . import files
 from .tracking import OMGTrackMetadata
 from .contextual import OMGSampleContextual
@@ -50,10 +50,10 @@ class OMG10XRawIlluminaMetadata(BaseMetadata):
     @classmethod
     def parse_spreadsheet(self, fname, metadata_info):
         field_spec = [
-            ("bpa_id", "BPA ID", ingest_utils.extract_bpa_id),
-            ("file", "file", None),
-            ("library_preparation", "library prep", None),
-            ("analysis_software_version", "softwareverion", None),
+            fld("bpa_id", "BPA ID", coerce=ingest_utils.extract_bpa_id),
+            fld("file", "file"),
+            fld("library_preparation", "library prep"),
+            fld("analysis_software_version", "softwareverion"),
         ]
         try:
             wrapper = ExcelWrapper(
@@ -181,12 +181,12 @@ class OMG10XRawMetadata(BaseMetadata):
     @classmethod
     def parse_spreadsheet(self, fname, metadata_info):
         field_spec = [
-            ('bpa_id', 'bpa id', ingest_utils.extract_bpa_id),
-            ('facility', 'facility'),
-            ('file', 'file'),
-            ('library_preparation', 'library prep'),
-            ('platform', 'platform'),
-            ('software_version', 'software version'),
+            fld('bpa_id', 'bpa id', coerce=ingest_utils.extract_bpa_id),
+            fld('facility', 'facility'),
+            fld('file', 'file'),
+            fld('library_preparation', 'library prep'),
+            fld('platform', 'platform'),
+            fld('software_version', 'software version'),
         ]
 
         try:
@@ -309,10 +309,10 @@ class OMG10XProcessedIlluminaMetadata(BaseMetadata):
     @classmethod
     def parse_spreadsheet(self, fname, metadata_info):
         field_spec = [
-            ("bpa_id", "BPA ID", ingest_utils.extract_bpa_id),
-            ("file", "file", None),
-            ("library_preparation", "library prep", None),
-            ("analysis_software_version", "softwareverion", None),
+            fld("bpa_id", "BPA ID", coerce=ingest_utils.extract_bpa_id),
+            fld("file", "file"),
+            fld("library_preparation", "library prep"),
+            fld("analysis_software_version", "softwareverion"),
         ]
         try:
             wrapper = ExcelWrapper(
@@ -439,42 +439,42 @@ class OMGExonCaptureMetadata(BaseMetadata):
     @classmethod
     def parse_spreadsheet(self, fname, metadata_info):
         field_spec = [
-            ("bpa_id", "bpa_id", ingest_utils.extract_bpa_id),
-            ('voucher_id', 'voucher_id'),
-            ('dna_extraction_date', 'dna_extraction_date'),
-            ('dna_extracted_by', 'dna_extracted_by'),
-            ('dna_extraction_method', 'dna_extraction_method'),
-            ('sample_origin', 'sample_origin'),
-            ('dsdna_conc_ng_ul', 'dsdna__conc_ng_ul'),
-            ('experimental_design', 'experimental_design'),
-            ('library_construction_method', 'library_construction_method'),
-            ('n_samples_pooled', 'n_samples_pooled'),
-            ('capture_type', 'capture_type'),
-            ('exon_capture_pool', 'exon_capture_pool', ingest_utils.get_int),
-            ('index_used', 'index_used', ingest_utils.get_int),
-            ('brf_sample_id', 'brf_sample_id'),
-            ('oligo_id', 'oligo_id'),
-            ('oligo_sequence', 'oligo_sequence'),
-            ('index_sequence', 'index_sequence'),
-            ('index_pcr_rep1_cycles', 'index_pcr_rep1_cycles', ingest_utils.get_int),
-            ('index_pcr_rep2_cycles', 'index_pcr_rep2_cycles', ingest_utils.get_int),
-            ('indexpcr_conc_ng_ul', 'indexpcr_conc_ng_ul'),
-            ('bpa_work_order', 'bpa_work_order', ingest_utils.get_int),
-            ('sequencing_facility', 'sequencing_facility'),
-            ('sequencing_platform', 'sequencing_platform'),
-            ('sequence_length', 'sequence_length'),
-            ('flowcell_id', 'flowcell_id'),
-            ('pre_capture_conc_ng_ul', 'pre_capture_conc_ng_ul'),
-            ('hyb_duration_hours', 'hyb_duration_hours'),
-            ('post_capture_conc_ng_ul', 'post_capture_conc_ng_ul'),
-            ('qpcr_p1_meancp_pre', 'qpcr_p1_meancp_pre'),
-            ('qpcr_p1_meancp_post', 'qpcr_p1_meancp_post'),
-            ('qpcr_p2_meancp_pre', 'qpcr_p2_meancp_pre'),
-            ('qpcr_p2_meancp_post', 'qpcr_p2_meancp_post'),
-            ('qpcr_n1_meancp_pre', 'qpcr_n1_meancp_pre'),
-            ('qpcr_n1_meancp_post', 'qpcr_n1_meancp_post'),
-            ('qpcr_n2_meancp_pre', 'qpcr_n2_meancp_pre'),
-            ('qpcr_n2_meancp_post', 'qpcr_n2_meancp_post'),
+            fld("bpa_id", "bpa_id", coerce=ingest_utils.extract_bpa_id),
+            fld('voucher_id', 'voucher_id'),
+            fld('dna_extraction_date', 'dna_extraction_date'),
+            fld('dna_extracted_by', 'dna_extracted_by'),
+            fld('dna_extraction_method', 'dna_extraction_method'),
+            fld('sample_origin', 'sample_origin'),
+            fld('dsdna_conc_ng_ul', 'dsdna__conc_ng_ul'),
+            fld('experimental_design', 'experimental_design'),
+            fld('library_construction_method', 'library_construction_method'),
+            fld('n_samples_pooled', 'n_samples_pooled'),
+            fld('capture_type', 'capture_type'),
+            fld('exon_capture_pool', 'exon_capture_pool', coerce=ingest_utils.get_int),
+            fld('index_used', 'index_used', coerce=ingest_utils.get_int),
+            fld('brf_sample_id', 'brf_sample_id'),
+            fld('oligo_id', 'oligo_id'),
+            fld('oligo_sequence', 'oligo_sequence'),
+            fld('index_sequence', 'index_sequence'),
+            fld('index_pcr_rep1_cycles', 'index_pcr_rep1_cycles', coerce=ingest_utils.get_int),
+            fld('index_pcr_rep2_cycles', 'index_pcr_rep2_cycles', coerce=ingest_utils.get_int),
+            fld('indexpcr_conc_ng_ul', 'indexpcr_conc_ng_ul'),
+            fld('bpa_work_order', 'bpa_work_order', coerce=ingest_utils.get_int),
+            fld('sequencing_facility', 'sequencing_facility'),
+            fld('sequencing_platform', 'sequencing_platform'),
+            fld('sequence_length', 'sequence_length'),
+            fld('flowcell_id', 'flowcell_id'),
+            fld('pre_capture_conc_ng_ul', 'pre_capture_conc_ng_ul'),
+            fld('hyb_duration_hours', 'hyb_duration_hours'),
+            fld('post_capture_conc_ng_ul', 'post_capture_conc_ng_ul'),
+            fld('qpcr_p1_meancp_pre', 'qpcr_p1_meancp_pre'),
+            fld('qpcr_p1_meancp_post', 'qpcr_p1_meancp_post'),
+            fld('qpcr_p2_meancp_pre', 'qpcr_p2_meancp_pre'),
+            fld('qpcr_p2_meancp_post', 'qpcr_p2_meancp_post'),
+            fld('qpcr_n1_meancp_pre', 'qpcr_n1_meancp_pre'),
+            fld('qpcr_n1_meancp_post', 'qpcr_n1_meancp_post'),
+            fld('qpcr_n2_meancp_pre', 'qpcr_n2_meancp_pre'),
+            fld('qpcr_n2_meancp_post', 'qpcr_n2_meancp_post'),
         ]
 
         wrapper = ExcelWrapper(
@@ -579,17 +579,17 @@ class OMGGenomicsHiSeqMetadata(BaseMetadata):
     @classmethod
     def parse_spreadsheet(self, fname, metadata_info):
         field_spec = [
-            ('facility_sample_id', 'facility_sample_id'),
-            ('bpa_id', 'bpa_sample_id', ingest_utils.extract_bpa_id),
-            ('bpa_dataset_id', 'bpa_dataset_id'),
-            ('bpa_work_order', 'bpa_work_order'),
-            ('file', 'file'),
-            ('library_prep_method', 'library_prep_method'),
-            ('sequencing_facility', 'sequencing_facility'),
-            ('sequencing_platform', 'sequencing_platform'),
-            ('software_version', 'software_version'),
-            ('omg_project', 'omg_project'),
-            ('data_custodian', 'data_custodian'),
+            fld('facility_sample_id', 'facility_sample_id'),
+            fld('bpa_id', 'bpa_sample_id', coerce=ingest_utils.extract_bpa_id),
+            fld('bpa_dataset_id', 'bpa_dataset_id'),
+            fld('bpa_work_order', 'bpa_work_order'),
+            fld('file', 'file'),
+            fld('library_prep_method', 'library_prep_method'),
+            fld('sequencing_facility', 'sequencing_facility'),
+            fld('sequencing_platform', 'sequencing_platform'),
+            fld('software_version', 'software_version'),
+            fld('omg_project', 'omg_project'),
+            fld('data_custodian', 'data_custodian'),
         ]
         try:
             wrapper = ExcelWrapper(

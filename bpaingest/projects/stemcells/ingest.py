@@ -8,7 +8,7 @@ from hashlib import md5 as md5hash
 from ...libs import ingest_utils
 from ...util import make_logger, bpa_id_to_ckan_name, common_values, clean_tag_name
 from ...abstract import BaseMetadata
-from ...libs.excel_wrapper import ExcelWrapper
+from ...libs.excel_wrapper import ExcelWrapper, make_field_definition as fld
 from ...libs.md5lines import md5lines
 from .tracking import StemcellsTrackMetadata
 from .contextual import (
@@ -46,12 +46,12 @@ class StemcellsTranscriptomeMetadata(BaseMetadata):
     @classmethod
     def parse_spreadsheet(self, fname, additional_context):
         field_spec = [
-            ("bpa_id", re.compile(r'^.*sample unique id$'), ingest_utils.extract_bpa_id),
-            ("sample_extaction_id", "Sample extraction ID", None),
-            ("insert_size_range", "Insert size range", None),
-            ("library_construction_protocol", "Library construction protocol", None),
-            ("sequencer", "Sequencer", None),
-            ("analysis_software_version", "CASAVA version", None),
+            fld("bpa_id", re.compile(r'^.*sample unique id$'), coerce=ingest_utils.extract_bpa_id),
+            fld("sample_extaction_id", "Sample extraction ID"),
+            fld("insert_size_range", "Insert size range"),
+            fld("library_construction_protocol", "Library construction protocol"),
+            fld("sequencer", "Sequencer"),
+            fld("analysis_software_version", "CASAVA version"),
         ]
         wrapper = ExcelWrapper(
             field_spec,
@@ -148,12 +148,12 @@ class StemcellsSmallRNAMetadata(BaseMetadata):
     @classmethod
     def parse_spreadsheet(self, fname, additional_context):
         field_spec = [
-            ("bpa_id", re.compile(r'^.*sample unique id$'), ingest_utils.extract_bpa_id),
-            ("sample_extaction_id", "Sample extraction ID", None),
-            ("insert_size_range", "Insert size range", None),
-            ("library_construction_protocol", "Library construction protocol", None),
-            ("sequencer", "Sequencer", None),
-            ("analysis_software_version", "CASAVA version", None),
+            fld("bpa_id", re.compile(r'^.*sample unique id$'), coerce=ingest_utils.extract_bpa_id),
+            fld("sample_extaction_id", "Sample extraction ID"),
+            fld("insert_size_range", "Insert size range"),
+            fld("library_construction_protocol", "Library construction protocol"),
+            fld("sequencer", "Sequencer"),
+            fld("analysis_software_version", "CASAVA version"),
         ]
         wrapper = ExcelWrapper(
             field_spec,
@@ -254,12 +254,12 @@ class StemcellsSingleCellRNASeqMetadata(BaseMetadata):
             return s.strip().split('/')[-1]
 
         field_spec = [
-            ("bpa_id_range", re.compile(r'^.*sample unique id$'), parse_bpa_id_range),
-            ("sample_extaction_id", "Sample extraction ID", None),
-            ("insert_size_range", "Insert size range", None),
-            ("library_construction_protocol", "Library construction protocol", None),
-            ("sequencer", "Sequencer", None),
-            ("fastq_generation", "Fastq generation", None),
+            fld("bpa_id_range", re.compile(r'^.*sample unique id$'), coerce=parse_bpa_id_range),
+            fld("sample_extaction_id", "Sample extraction ID"),
+            fld("insert_size_range", "Insert size range"),
+            fld("library_construction_protocol", "Library construction protocol"),
+            fld("sequencer", "Sequencer"),
+            fld("fastq_generation", "Fastq generation"),
         ]
         wrapper = ExcelWrapper(
             field_spec,
@@ -367,13 +367,13 @@ class StemcellsMetabolomicsMetadata(BaseMetadata):
     @classmethod
     def parse_spreadsheet(self, fname, additional_context):
         field_spec = [
-            ("bpa_id", re.compile(r'^.*sample unique id$'), ingest_utils.extract_bpa_id),
-            ("sample_fractionation_extraction_solvent", "sample fractionation / extraction solvent", None),
-            ("analytical_platform", "platform", fix_analytical_platform),
-            ("instrument_column_type", "instrument/column type", None),
-            ("method", "Method", None),
-            ("mass_spectrometer", "Mass Spectrometer", None),
-            ("acquisition_mode", "acquisition mode", None),
+            fld("bpa_id", re.compile(r'^.*sample unique id$'), coerce=ingest_utils.extract_bpa_id),
+            fld("sample_fractionation_extraction_solvent", "sample fractionation / extraction solvent"),
+            fld("analytical_platform", "platform", coerce=fix_analytical_platform),
+            fld("instrument_column_type", "instrument/column type"),
+            fld("method", "Method"),
+            fld("mass_spectrometer", "Mass Spectrometer"),
+            fld("acquisition_mode", "acquisition mode"),
         ]
         wrapper = ExcelWrapper(
             field_spec,
@@ -485,25 +485,25 @@ class StemcellsProteomicsBaseMetadata(BaseMetadata):
     def parse_spreadsheet(self, fname, additional_context, mode):
         if mode == '1d':
             field_spec = [
-                ("bpa_id", re.compile(r'^.*sample unique id$'), ingest_utils.extract_bpa_id_silent),
+                fld("bpa_id", re.compile(r'^.*sample unique id$'), coerce=ingest_utils.extract_bpa_id_silent),
             ]
         elif mode == '2d':
             field_spec = [
-                ("pool_id", 'raw file name', files.proteomics_raw_extract_pool_id),
+                fld("pool_id", 'raw file name', coerce=files.proteomics_raw_extract_pool_id),
             ]
         field_spec += [
-            ("facility", 'facility', None),
-            ("sample_fractionation", 'sample fractionation (none/number)', None),
-            ("lc_column_type", 'lc/column type', None),
-            ("gradient_time", re.compile(r'gradient time \(min\).*'), None),
-            ("sample_on_column", 'sample on column (g)', None),
-            ("mass_spectrometer", 'mass spectrometer', None),
-            ("acquisition_mode", 'acquisition mode / fragmentation', None),
-            ("raw_filename", 'raw file name', None),
-            ("protein_result_filename", 'protein result filename', None),
-            ("peptide_result_filename", 'peptide result filename', None),
-            ("database", 'database', None),
-            ("database_size", 'database size', None),
+            fld("facility", 'facility'),
+            fld("sample_fractionation", 'sample fractionation (none/number)'),
+            fld("lc_column_type", 'lc/column type'),
+            fld("gradient_time", re.compile(r'gradient time \(min\).*')),
+            fld("sample_on_column", 'sample on column (g)'),
+            fld("mass_spectrometer", 'mass spectrometer'),
+            fld("acquisition_mode", 'acquisition mode / fragmentation'),
+            fld("raw_filename", 'raw file name'),
+            fld("protein_result_filename", 'protein result filename'),
+            fld("peptide_result_filename", 'peptide result filename'),
+            fld("database", 'database'),
+            fld("database_size", 'database size'),
         ]
         wrapper = ExcelWrapper(
             field_spec,
@@ -693,26 +693,26 @@ class StemcellsProteomicsAnalysedMetadata(BaseMetadata):
     @classmethod
     def parse_spreadsheet(self, fname, additional_context):
         field_spec = [
-            ('date_submission', 'date submission yy/mm/dd', ingest_utils.get_date_isoformat),
-            ('facility_project_code_experiment_code', 'facility project_code _facility experiment code'),
-            ('bpa_id', 'bpa unique  identifier', ingest_utils.extract_bpa_id),
-            ('sample_name', 'sample name'),
-            ('replicate_group_id', 'replicate group id'),
-            ('species', 'species'),
-            ('sample_description', 'sample_description'),
-            ('sample_type', 'sample type'),
-            ('tissue', 'tissue'),
-            ('cell_type', 'cell type'),
-            ('growth_protocol', 'growth protocol'),
-            ('extract_protocol', 'extract protocol'),
-            ('omics', 'omics'),
-            ('analytical_platform', 'analytical plaform', fix_analytical_platform),
-            ('facility', 'facility'),
-            ('date_type', 'data type'),
-            ('zip_file_name', 'file name of analysed data (folder or zip file)'),
-            ('version', 'version (genome or database)'),
-            ('translation', 'translation (3 frame or 6 frame)'),
-            ('proteome_size', 'proteome size'),
+            fld('date_submission', 'date submission yy/mm/dd', coerce=ingest_utils.get_date_isoformat),
+            fld('facility_project_code_experiment_code', 'facility project_code _facility experiment code'),
+            fld('bpa_id', 'bpa unique  identifier', coerce=ingest_utils.extract_bpa_id),
+            fld('sample_name', 'sample name'),
+            fld('replicate_group_id', 'replicate group id'),
+            fld('species', 'species'),
+            fld('sample_description', 'sample_description'),
+            fld('sample_type', 'sample type'),
+            fld('tissue', 'tissue'),
+            fld('cell_type', 'cell type'),
+            fld('growth_protocol', 'growth protocol'),
+            fld('extract_protocol', 'extract protocol'),
+            fld('omics', 'omics'),
+            fld('analytical_platform', 'analytical plaform', coerce=fix_analytical_platform),
+            fld('facility', 'facility'),
+            fld('date_type', 'data type'),
+            fld('zip_file_name', 'file name of analysed data (folder or zip file)'),
+            fld('version', 'version (genome or database)'),
+            fld('translation', 'translation (3 frame or 6 frame)'),
+            fld('proteome_size', 'proteome size'),
         ]
         wrapper = ExcelWrapper(
             field_spec,
@@ -809,23 +809,23 @@ class StemcellsMetabolomicsAnalysedMetadata(BaseMetadata):
     @classmethod
     def parse_spreadsheet(self, fname, additional_context):
         field_spec = [
-            ('data_analysis_date', 'data analysis date'),
-            ('bpa_id_range', 'bpa unique  identifier **'),
-            ('sample_name', 'sample name **'),
-            ('replicate_group_id', 'replicate group id**'),
-            ('species', 'species**'),
-            ('sample_description', 'sample_description**'),
-            ('tissue', 'tissue**'),
-            ('cell_type', 'cell type**'),
-            ('disease_state', 'disease state'),
-            ('growth_protocol', 'growth protocol'),
-            ('omics', 'omics'),
-            ('analytical_platform', 'analytical platform', fix_analytical_platform),
-            ('facility', 'facility'),
-            ('method_type', 'method type'),
-            ('data_type', 'data type'),
-            ('analysis_file_name', 'file name of analysed data (folder or zip file) file name'),
-            ('additional_comments', 'additional comments'),
+            fld('data_analysis_date', 'data analysis date'),
+            fld('bpa_id_range', 'bpa unique  identifier **'),
+            fld('sample_name', 'sample name **'),
+            fld('replicate_group_id', 'replicate group id**'),
+            fld('species', 'species**'),
+            fld('sample_description', 'sample_description**'),
+            fld('tissue', 'tissue**'),
+            fld('cell_type', 'cell type**'),
+            fld('disease_state', 'disease state'),
+            fld('growth_protocol', 'growth protocol'),
+            fld('omics', 'omics'),
+            fld('analytical_platform', 'analytical platform', coerce=fix_analytical_platform),
+            fld('facility', 'facility'),
+            fld('method_type', 'method type'),
+            fld('data_type', 'data type'),
+            fld('analysis_file_name', 'file name of analysed data (folder or zip file) file name'),
+            fld('additional_comments', 'additional comments'),
         ]
         wrapper = ExcelWrapper(
             field_spec,

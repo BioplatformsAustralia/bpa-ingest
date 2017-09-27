@@ -7,7 +7,7 @@ from glob import glob
 from ...util import make_logger, bpa_id_to_ckan_name
 from ...libs import ingest_utils
 from ...abstract import BaseMetadata
-from ...libs.excel_wrapper import ExcelWrapper
+from ...libs.excel_wrapper import ExcelWrapper, make_field_definition as fld
 from . import files
 from . tracking import MarineMicrobesTrackMetadata
 from .contextual import (MarineMicrobesSampleContextual, MarineMicrobesNCBIContextual)
@@ -88,19 +88,19 @@ class BaseMarineMicrobesAmpliconsMetadata(BaseMetadata):
     @classmethod
     def parse_spreadsheet(self, fname, metadata_info):
         field_spec = [
-            ("bpa_id", re.compile(r'^.*sample unique id$'), ingest_utils.extract_bpa_id),
-            ("sample_extraction_id", "Sample extraction ID"),
-            ("target", "Target"),
-            ("dilution_used", "Dilution used", ingest_utils.fix_date_interval),
-            ("reads", re.compile(r"^# of (raw )?reads$")),
-            ("analysis_software_version", "AnalysisSoftwareVersion"),
-            ("comments", "Comments"),
-            ("sample_name_on_sample_sheet", "Sample name on sample sheet"),
+            fld("bpa_id", re.compile(r'^.*sample unique id$'), coerce=ingest_utils.extract_bpa_id),
+            fld("sample_extraction_id", "Sample extraction ID"),
+            fld("target", "Target"),
+            fld("dilution_used", "Dilution used", coerce=ingest_utils.fix_date_interval),
+            fld("reads", re.compile(r"^# of (raw )?reads$")),
+            fld("analysis_software_version", "AnalysisSoftwareVersion"),
+            fld("comments", "Comments"),
+            fld("sample_name_on_sample_sheet", "Sample name on sample sheet"),
             # special case: we merge these together (and throw a hard error if more than one has data for a given row)
-            ("pass_fail", "P=pass, F=fail"),
-            ("pass_fail_neat", "1:10 PCR, P=pass, F=fail", None, True),
-            ("pass_fail_10", "1:100 PCR, P=pass, F=fail", None, True),
-            ("pass_fail_100", "neat PCR, P=pass, F=fail", None, True),
+            fld("pass_fail", "P=pass, F=fail"),
+            fld("pass_fail_neat", "1:10 PCR, P=pass, F=fail"),
+            fld("pass_fail_10", "1:100 PCR, P=pass, F=fail"),
+            fld("pass_fail_100", "neat PCR, P=pass, F=fail"),
         ]
         try:
             wrapper = ExcelWrapper(
@@ -361,12 +361,12 @@ class MarineMicrobesMetagenomicsMetadata(BaseMetadata):
     @classmethod
     def parse_spreadsheet(self, fname, metadata_info):
         field_spec = [
-            ("bpa_id", re.compile(r'^.*sample unique id$'), ingest_utils.extract_bpa_id),
-            ("sample_extraction_id", "Sample extraction ID", None, True),
-            ("insert_size_range", "Insert size range"),
-            ("library_construction_protocol", "Library construction protocol"),
-            ("sequencer", "Sequencer"),
-            ("analysis_software_version", ("casava version", "bcl2fastq2", re.compile(r'^software[ &]+version$'))),
+            fld("bpa_id", re.compile(r'^.*sample unique id$'), coerce=ingest_utils.extract_bpa_id),
+            fld("sample_extraction_id", "Sample extraction ID"),
+            fld("insert_size_range", "Insert size range"),
+            fld("library_construction_protocol", "Library construction protocol"),
+            fld("sequencer", "Sequencer"),
+            fld("analysis_software_version", ("casava version", "bcl2fastq2", re.compile(r'^software[ &]+version$'))),
         ]
         wrapper = ExcelWrapper(
             field_spec,
@@ -472,12 +472,12 @@ class MarineMicrobesMetatranscriptomeMetadata(BaseMetadata):
     @classmethod
     def parse_spreadsheet(self, fname, metadata_info):
         field_spec = [
-            ("bpa_id", re.compile(r'^.*sample unique id$'), ingest_utils.extract_bpa_id),
-            ("sample_extraction_id", "Sample extraction ID", None),
-            ("insert_size_range", "Insert size range", None),
-            ("library_construction_protocol", "Library construction protocol", None),
-            ("sequencer", "Sequencer", None),
-            ("analysis_software_version", "CASAVA version", None),
+            fld("bpa_id", re.compile(r'^.*sample unique id$'), coerce=ingest_utils.extract_bpa_id),
+            fld("sample_extraction_id", "Sample extraction ID"),
+            fld("insert_size_range", "Insert size range"),
+            fld("library_construction_protocol", "Library construction protocol"),
+            fld("sequencer", "Sequencer"),
+            fld("analysis_software_version", "CASAVA version"),
         ]
         wrapper = ExcelWrapper(
             field_spec,

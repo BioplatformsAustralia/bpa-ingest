@@ -22,13 +22,21 @@ from ..util import make_logger, strip_to_ascii
 logger = make_logger(__name__)
 
 
+FieldDefinition = namedtuple('FieldSpec', ['attribute', 'column_name', 'coerce', 'optional'])
+field_definition_default = FieldDefinition('<replace>', '<replace>', None, False)
+
+
+def make_field_definition(attribute, column_name, **kwargs):
+    return field_definition_default._replace(attribute=attribute, column_name=column_name, **kwargs)
+
+
 class ExcelWrapper(object):
     '''
     Parse a excel file and yields namedtuples.
     fieldspec specifies the columns  to be read in, and the name
     of the attribute to map them to on the new type
 
-    field_spec: list of (new_name, column_name, callable) tuples
+    field_spec: list of FieldSpec named tuples
     file_name: workbook name
     sheet_name: sheet in workbook
     header_length: first number of lines to ignore
@@ -49,7 +57,8 @@ class ExcelWrapper(object):
         self.file_name = file_name
         self.header_length = header_length
         self.column_name_row_index = column_name_row_index
-        self.field_spec = ExcelWrapper._pad_field_spec(field_spec)
+        self.field_spec = field_spec
+        assert(type(self.field_spec[0]) is FieldDefinition)
         self.additional_context = additional_context
 
         self.workbook = xlrd.open_workbook(file_name, formatting_info=False)  # not implemented
@@ -63,34 +72,21 @@ class ExcelWrapper(object):
         self.header, self.name_to_column_map = self.set_name_to_column_map()
         self.name_to_func_map = self.set_name_to_func_map()
 
-    @classmethod
-    def _pad_field_spec(cls, spec):
-        # attribute, column_name, func, is_optional
-        new_spec = []
-        for tpl in spec:
-            if len(tpl) == 2:
-                new_spec.append(tpl + (None, False))
-            elif len(tpl) == 3:
-                new_spec.append(tpl + (False,))
-            else:
-                new_spec.append(tpl)
-        return new_spec
-
     def _set_field_names(self):
         ''' sets field name list '''
 
         names = []
-        for attribute, _, _, _ in self.field_spec:
-            if attribute in names:
-                logger.error('Attribute {0} is listed more than once in the field specification'.format(attribute))
-            names.append(attribute)
+        for spec in self.field_spec:
+            if spec.attribute in names:
+                logger.error('Attribute {0} is listed more than once in the field specification'.format(spec.attribute))
+            names.append(spec.attribute)
         return names
 
     def set_name_to_column_map(self):
         ''' maps the named field to the actual column in the spreadsheet '''
 
         def coerce_header(s):
-            if type(s) is not str and type(s) is not str:
+            if type(s) is not str:
                 logger.error("header is not a string: %s `%s'" % (type(s), repr(s)))
                 return str(s)
             return strip_to_ascii(s)
@@ -116,32 +112,32 @@ class ExcelWrapper(object):
 
         cmap = {}
         missing_columns = False
-        for attribute, column_name, _, is_optional in self.field_spec:
+        for spec in self.field_spec:
             col_index = -1
-            col_descr = column_name
-            if hasattr(column_name, 'match'):
-                col_descr = column_name.pattern
-            if type(column_name) == tuple:
-                for c, _name in enumerate(column_name):
+            col_descr = spec.column_name
+            if hasattr(spec.column_name, 'match'):
+                col_descr = spec.column_name.pattern
+            if type(spec.column_name) == tuple:
+                for c, _name in enumerate(spec.column_name):
                     col_index = find_column(_name)
                     if col_index != -1:
                         break
             else:
-                col_index = find_column(column_name)
+                col_index = find_column(spec.column_name)
 
             if col_index != -1:
-                cmap[attribute] = col_index
+                cmap[spec.attribute] = col_index
             else:
-                self.missing_headers.append(column_name)
-                if not is_optional:
+                self.missing_headers.append(spec.column_name)
+                if not spec.optional:
                     logger.warning("Column `{}' not found in `{}' `{}'".format(col_descr, os.path.basename(self.file_name), self.sheet.name))
                     missing_columns = True
-                cmap[attribute] = None
+                cmap[spec.attribute] = None
 
         if missing_columns:
             template = ['[']
             for header in (str(t) for t in header):
-                template.append("    ('%s', '%s')," % (header.lower().replace(' ', '_'), header))
+                template.append("    fld('%s', '%s')," % (header.lower().replace(' ', '_'), header))
             template.append(']')
             logger.warning('Missing columns -- template for columns in spreadsheet is:\n%s' % ('\n'.join(template)))
 
@@ -150,10 +146,7 @@ class ExcelWrapper(object):
     def set_name_to_func_map(self):
         ''' Map the spec fields to their corresponding functions '''
 
-        function_map = {}
-        for attribute, _, func, _ in self.field_spec:
-            function_map[attribute] = func
-        return function_map
+        return dict((t.attribute, t.coerce) for t in self.field_spec)
 
     def get_date_mode(self):
         assert (self.workbook is not None)

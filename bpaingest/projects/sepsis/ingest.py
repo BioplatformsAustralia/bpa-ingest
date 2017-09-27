@@ -9,7 +9,7 @@ from ...libs import ingest_utils
 from ...libs.md5lines import md5lines
 from ...util import make_logger, bpa_id_to_ckan_name, csv_to_named_tuple, common_values, clean_tag_name
 from ...abstract import BaseMetadata
-from ...libs.excel_wrapper import ExcelWrapper
+from ...libs.excel_wrapper import ExcelWrapper, make_field_definition as fld
 from glob import glob
 from .tracking import (
     SepsisTrackMetadata,
@@ -74,11 +74,11 @@ class SepsisGenomicsMiseqMetadata(BaseSepsisMetadata):
 
     def parse_spreadsheet(self, fname):
         field_spec = [
-            ("bpa_id", "Bacterial sample unique ID", ingest_utils.extract_bpa_id),
-            ("insert_size_range", "Insert size range", None),
-            ("library_construction_protocol", "Library construction protocol", None),
-            ("sequencer", "Sequencer", None),
-            ("analysis_software_version", "AnalysisSoftwareVersion", None),
+            fld("bpa_id", "Bacterial sample unique ID", coerce=ingest_utils.extract_bpa_id),
+            fld("insert_size_range", "Insert size range"),
+            fld("library_construction_protocol", "Library construction protocol"),
+            fld("sequencer", "Sequencer"),
+            fld("analysis_software_version", "AnalysisSoftwareVersion"),
         ]
         wrapper = ExcelWrapper(
             field_spec,
@@ -169,14 +169,14 @@ class SepsisGenomicsPacbioMetadata(BaseSepsisMetadata):
 
     def parse_spreadsheet(self, fname):
         field_spec = [
-            ("bpa_id", "Bacterial sample unique ID", ingest_utils.extract_bpa_id),
-            ("insert_size_range", "Insert size range", None),
-            ("library_construction_protocol", "Library construction protocol", None),
-            ("sequencer", "Sequencer", None),
-            ("sequencer_run_id", "Run ID", None),
-            ("smrt_cell_id", "SMRT Cell ID", None),
-            ("cell_position", ("Cell Postion", "Cell Position"), None),
-            ("rs_version", "RS Version", None),
+            fld("bpa_id", "Bacterial sample unique ID", coerce=ingest_utils.extract_bpa_id),
+            fld("insert_size_range", "Insert size range"),
+            fld("library_construction_protocol", "Library construction protocol"),
+            fld("sequencer", "Sequencer"),
+            fld("sequencer_run_id", "Run ID"),
+            fld("smrt_cell_id", "SMRT Cell ID"),
+            fld("cell_position", ("Cell Postion", "Cell Position")),
+            fld("rs_version", "RS Version"),
         ]
         wrapper = ExcelWrapper(
             field_spec,
@@ -271,12 +271,12 @@ class SepsisTranscriptomicsHiseqMetadata(BaseSepsisMetadata):
 
     def parse_spreadsheet(self, fname):
         field_spec = [
-            ("bpa_id", "Antibiotic Resistant Pathogen sample unique ID", ingest_utils.extract_bpa_id),
-            ("sample", "Sample (MGR code)", None),
-            ("library_construction_protocol", "Library construction protocol", None),
-            ("barcode_tag", "Barcode tag", None),
-            ("sequencer", "Sequencer", None),
-            ("casava_version", "CASAVA version", None),
+            fld("bpa_id", "Antibiotic Resistant Pathogen sample unique ID", coerce=ingest_utils.extract_bpa_id),
+            fld("sample", "Sample (MGR code)"),
+            fld("library_construction_protocol", "Library construction protocol"),
+            fld("barcode_tag", "Barcode tag"),
+            fld("sequencer", "Sequencer"),
+            fld("casava_version", "CASAVA version"),
         ]
         wrapper = ExcelWrapper(
             field_spec,
@@ -372,13 +372,13 @@ class SepsisMetabolomicsGCMSMetadata(BaseSepsisMetadata):
 
     def parse_spreadsheet(self, fname):
         field_spec = [
-            ('bpa_id', 'bacterial sample unique id', ingest_utils.extract_bpa_id),
-            ('sample_fractionation_extract_solvent', 'sample fractionation / extraction solvent'),
-            ('gc_column_type', 'gc/column type'),
-            ('gradient_time_min_flow', 'gradient time (min) / flow'),
-            ('mass_spectrometer', 'mass spectrometer'),
-            ('acquisition_mode', 'acquisition mode'),
-            ('raw_file_name', 'raw file name'),
+            fld('bpa_id', 'bacterial sample unique id', coerce=ingest_utils.extract_bpa_id),
+            fld('sample_fractionation_extract_solvent', 'sample fractionation / extraction solvent'),
+            fld('gc_column_type', 'gc/column type'),
+            fld('gradient_time_min_flow', 'gradient time (min) / flow'),
+            fld('mass_spectrometer', 'mass spectrometer'),
+            fld('acquisition_mode', 'acquisition mode'),
+            fld('raw_file_name', 'raw file name'),
         ]
 
         wrapper = ExcelWrapper(
@@ -474,13 +474,13 @@ class SepsisMetabolomicsLCMSMetadata(BaseSepsisMetadata):
 
     def parse_spreadsheet(self, fname):
         field_spec = [
-            ("bpa_id", "Bacterial sample unique ID", ingest_utils.extract_bpa_id),
-            ("sample_fractionation_extract_solvent", "Sample fractionation / Extraction Solvent", None),
-            ("lc_column_type", "LC/column type", None),
-            ("gradient_time_min_flow", "Gradient time (min) / flow", None),
-            ("mass_spectrometer", "Mass Spectrometer", None),
-            ("acquisition_mode", "Acquisition Mode", None),
-            ("raw_file_name", "Raw file name", None),
+            fld("bpa_id", "Bacterial sample unique ID", coerce=ingest_utils.extract_bpa_id),
+            fld("sample_fractionation_extract_solvent", "Sample fractionation / Extraction Solvent"),
+            fld("lc_column_type", "LC/column type"),
+            fld("gradient_time_min_flow", "Gradient time (min) / flow"),
+            fld("mass_spectrometer", "Mass Spectrometer"),
+            fld("acquisition_mode", "Acquisition Mode"),
+            fld("raw_file_name", "Raw file name"),
         ]
         wrapper = ExcelWrapper(
             field_spec,
@@ -575,15 +575,15 @@ class SepsisProteomicsMS1QuantificationMetadata(BaseSepsisMetadata):
 
     def parse_spreadsheet(self, fname):
         field_spec = [
-            ("bpa_id", "Bacterial sample unique ID", ingest_utils.extract_bpa_id),
-            ("facility", "Facility", None),
-            ("sample_fractionation_none_number", "Sample fractionation (none/number)", None),
-            ("lc_column_type", "LC/column type", None),
-            ("gradient_time_per_acn", "Gradient time (min)  /  % ACN (start-finish main gradient) / flow", None),
-            ("sample_on_column", "sample on column (g)", None),  # Note: unicode micro stripped out
-            ("mass_spectrometer", "Mass Spectrometer", None),
-            ("acquisition_mode_fragmentation", "Acquisition Mode / fragmentation", None),
-            ("raw_file_name", "Raw file name", None),
+            fld("bpa_id", "Bacterial sample unique ID", coerce=ingest_utils.extract_bpa_id),
+            fld("facility", "Facility"),
+            fld("sample_fractionation_none_number", "Sample fractionation (none/number)"),
+            fld("lc_column_type", "LC/column type"),
+            fld("gradient_time_per_acn", "Gradient time (min)  /  % ACN (start-finish main gradient) / flow"),
+            fld("sample_on_column", "sample on column (g)"),  # Note: unicode micro stripped out
+            fld("mass_spectrometer", "Mass Spectrometer"),
+            fld("acquisition_mode_fragmentation", "Acquisition Mode / fragmentation"),
+            fld("raw_file_name", "Raw file name"),
         ]
         wrapper = ExcelWrapper(
             field_spec,
@@ -686,15 +686,15 @@ class SepsisProteomicsSwathMSBaseSepsisMetadata(BaseSepsisMetadata):
                 return ingest_utils.extract_bpa_id(s)
 
         field_spec = [
-            ("bpa_id", "Bacterial sample unique ID", parse_pooled_bpa_id),
-            ("facility", "Facility", None),
-            ("sample_fractionation_none_number", "Sample fractionation (none/number)", None),
-            ("lc_column_type", "LC/column type", None),
-            ("gradient_time_per_acn", "Gradient time (min)  /  % ACN (start-finish main gradient) / flow", None),
-            ("sample_on_column", "sample on column (g)", None),  # Note: unicode micro stripped out
-            ("mass_spectrometer", "Mass Spectrometer", None),
-            ("acquisition_mode_fragmentation", "Acquisition Mode / fragmentation", None),
-            ("raw_file_name", "Raw file name", None),
+            fld("bpa_id", "Bacterial sample unique ID", coerce=parse_pooled_bpa_id),
+            fld("facility", "Facility"),
+            fld("sample_fractionation_none_number", "Sample fractionation (none/number)"),
+            fld("lc_column_type", "LC/column type"),
+            fld("gradient_time_per_acn", "Gradient time (min)  /  % ACN (start-finish main gradient) / flow"),
+            fld("sample_on_column", "sample on column (g)"),  # Note: unicode micro stripped out
+            fld("mass_spectrometer", "Mass Spectrometer"),
+            fld("acquisition_mode_fragmentation", "Acquisition Mode / fragmentation"),
+            fld("raw_file_name", "Raw file name"),
         ]
         wrapper = ExcelWrapper(
             field_spec,
@@ -860,15 +860,15 @@ class SepsisProteomicsSwathMSCombinedSampleMetadata(BaseSepsisMetadata):
             return tuple([ingest_utils.extract_bpa_id(t.strip()) for t in s.split(',')])
 
         field_spec = [
-            ('bpa_id_list', 'bacterial sample unique id', make_bpa_id_list),
-            ('facility', 'facility'),
-            ('sample_fractionation_none_number', 'sample fractionation (none/number)'),
-            ('lc_column_type', 'lc/column type'),
-            ('gradient_time_min', 'gradient time (min)  /  % acn (start-finish main gradient) / flow'),
-            ('sample_on_column_ug', 'sample on column (g)'),
-            ('mass_spectrometer', 'mass spectrometer'),
-            ('acquisition_mode_fragmentation', 'acquisition mode / fragmentation'),
-            ('raw_file_name', 'raw file name'),
+            fld('bpa_id_list', 'bacterial sample unique id', coerce=make_bpa_id_list),
+            fld('facility', 'facility'),
+            fld('sample_fractionation_none_number', 'sample fractionation (none/number)'),
+            fld('lc_column_type', 'lc/column type'),
+            fld('gradient_time_min', 'gradient time (min)  /  % acn (start-finish main gradient) / flow'),
+            fld('sample_on_column_ug', 'sample on column (g)'),
+            fld('mass_spectrometer', 'mass spectrometer'),
+            fld('acquisition_mode_fragmentation', 'acquisition mode / fragmentation'),
+            fld('raw_file_name', 'raw file name'),
         ]
         wrapper = ExcelWrapper(
             field_spec,
@@ -992,11 +992,11 @@ class BaseSepsisAnalysedMetadata(BaseSepsisMetadata):
             'data_type': trk.data_type_pre_pilot_pilot_or_main_dataset,
             'ticket': trk.ccg_jira_ticket
         }
-        for fld in ('date_of_transfer', 'taxon_or_organism', 'strain_or_isolate', 'growth_media', 'folder_name', 'date_of_transfer_to_archive', 'file_count'):
-            if fld in exclude:
+        for field in ('date_of_transfer', 'taxon_or_organism', 'strain_or_isolate', 'growth_media', 'folder_name', 'date_of_transfer_to_archive', 'file_count'):
+            if field in exclude:
                     continue
-            if hasattr(trk, fld):
-                obj[fld] = getattr(trk, fld)
+            if hasattr(trk, field):
+                obj[field] = getattr(trk, field)
         return obj
 
 
@@ -1023,29 +1023,29 @@ class SepsisProteomicsAnalysedMetadata(BaseSepsisAnalysedMetadata):
     @classmethod
     def parse_spreadsheet(self, fname, additional_context):
         field_spec = [
-            ('data_analysis_date', 'data analysis date (yyyy-mm-dd)', ingest_utils.get_date_isoformat),
-            ('facility_project_code_experiment_code', 'facility project code_facility experiment code'),
-            ('bpa_id', 'sample name (5 digit bpa id)', ingest_utils.extract_bpa_id),
-            ('taxon_or_organism', 'taxon_or_organism'),
-            ('strain_or_isolate', 'strain_or_isolate'),
-            ('serovar', 'serovar'),
-            ('growth_media', 'growth media'),
-            ('replicate', 'replicate', ingest_utils.get_int),
-            ('growth_condition_time', 'growth_condition_time'),
-            ('growth_condition_growth', 'growth_condition_growth phase'),
-            ('growth_condition_od600', 'growth_condition_od600 reading'),
-            ('growth_condition_temperature', 'growth_condition_temperature'),
-            ('growth_condition_media', 'growth_condition_media'),
-            ('omics', 'omics'),
-            ('analytical_platform', 'analytical platform'),
-            ('facility', 'facility'),
-            ('data_type', 'data type'),
-            ('zip_file_name', 'file name of analysed data (folder or zip file)'),
-            ('genome_used', 'genome used (file name if used annoted bpa genome)'),
-            ('database', 'database (if used publicly available genome)'),
-            ('version', 'version (genome or database)'),
-            ('translation', 'translation (3 frame or 6 frame)'),
-            ('proteome_size', 'proteome size'),
+            fld('data_analysis_date', 'data analysis date (yyyy-mm-dd)', coerce=ingest_utils.get_date_isoformat),
+            fld('facility_project_code_experiment_code', 'facility project code_facility experiment code'),
+            fld('bpa_id', 'sample name (5 digit bpa id)', coerce=ingest_utils.extract_bpa_id),
+            fld('taxon_or_organism', 'taxon_or_organism'),
+            fld('strain_or_isolate', 'strain_or_isolate'),
+            fld('serovar', 'serovar'),
+            fld('growth_media', 'growth media'),
+            fld('replicate', 'replicate', coerce=ingest_utils.get_int),
+            fld('growth_condition_time', 'growth_condition_time'),
+            fld('growth_condition_growth', 'growth_condition_growth phase'),
+            fld('growth_condition_od600', 'growth_condition_od600 reading'),
+            fld('growth_condition_temperature', 'growth_condition_temperature'),
+            fld('growth_condition_media', 'growth_condition_media'),
+            fld('omics', 'omics'),
+            fld('analytical_platform', 'analytical platform'),
+            fld('facility', 'facility'),
+            fld('data_type', 'data type'),
+            fld('zip_file_name', 'file name of analysed data (folder or zip file)'),
+            fld('genome_used', 'genome used (file name if used annoted bpa genome)'),
+            fld('database', 'database (if used publicly available genome)'),
+            fld('version', 'version (genome or database)'),
+            fld('translation', 'translation (3 frame or 6 frame)'),
+            fld('proteome_size', 'proteome size'),
         ]
         wrapper = ExcelWrapper(
             field_spec,
@@ -1147,27 +1147,27 @@ class SepsisTranscriptomicsAnalysedMetadata(BaseSepsisAnalysedMetadata):
     @classmethod
     def parse_spreadsheet(self, fname, additional_context):
         field_spec = [
-            ('data_analysis_date', 'data analysis date (yyyy-mm-dd)', ingest_utils.get_date_isoformat),
-            ('bpa_id', 'sample name (5 digit bpa id)', ingest_utils.extract_bpa_id),
-            ('taxon_or_organism', 'taxon_or_organism'),
-            ('strain_or_isolate', 'strain_or_isolate'),
-            ('serovar', 'serovar'),
-            ('growth_media', 'growth media'),
-            ('replicate', 'replicate', ingest_utils.get_int),
-            ('growth_condition_time', 'growth_condition_time'),
-            ('growth_condition_growth_phase', 'growth_condition_growth phase'),
-            ('growth_condition_od600_reading', 'growth_condition_od600 reading'),
-            ('growth_condition_temperature', 'growth_condition_temperature'),
-            ('growth_condition_media', 'growth_condition_media'),
-            ('omics', 'omics'),
-            ('analytical_platform', 'analytical platform'),
-            ('facility', 'facility'),
-            ('alignment_file_name', 'alignment file name'),
-            ('file_name_of_gene_list', 'file name of gene list (raw counts)'),
-            ('file_name_of_annotated_rna', 'file name of annotated rna'),
-            ('file_name_of_assembled_genome', 'file name of assembled genome used for analysis'),
-            ('file_name_of_annotated_genes', 'file name of annotated genes used for analysis'),
-            ('approach_used', 'approach used'),
+            fld('data_analysis_date', 'data analysis date (yyyy-mm-dd)', coerce=ingest_utils.get_date_isoformat),
+            fld('bpa_id', 'sample name (5 digit bpa id)', coerce=ingest_utils.extract_bpa_id),
+            fld('taxon_or_organism', 'taxon_or_organism'),
+            fld('strain_or_isolate', 'strain_or_isolate'),
+            fld('serovar', 'serovar'),
+            fld('growth_media', 'growth media'),
+            fld('replicate', 'replicate', coerce=ingest_utils.get_int),
+            fld('growth_condition_time', 'growth_condition_time'),
+            fld('growth_condition_growth_phase', 'growth_condition_growth phase'),
+            fld('growth_condition_od600_reading', 'growth_condition_od600 reading'),
+            fld('growth_condition_temperature', 'growth_condition_temperature'),
+            fld('growth_condition_media', 'growth_condition_media'),
+            fld('omics', 'omics'),
+            fld('analytical_platform', 'analytical platform'),
+            fld('facility', 'facility'),
+            fld('alignment_file_name', 'alignment file name'),
+            fld('file_name_of_gene_list', 'file name of gene list (raw counts)'),
+            fld('file_name_of_annotated_rna', 'file name of annotated rna'),
+            fld('file_name_of_assembled_genome', 'file name of assembled genome used for analysis'),
+            fld('file_name_of_annotated_genes', 'file name of annotated genes used for analysis'),
+            fld('approach_used', 'approach used'),
         ]
         wrapper = ExcelWrapper(
             field_spec,
@@ -1269,24 +1269,24 @@ class SepsisMetabolomicsAnalysedMetadata(BaseSepsisAnalysedMetadata):
     @classmethod
     def parse_spreadsheet(self, fname, additional_context):
         field_spec = [
-            ('data_analysis_date', 'data analysis date (yyyy-mm-dd)', ingest_utils.get_date_isoformat),
-            ('bpa_id', 'sample name (5 digit bpa id)', ingest_utils.extract_bpa_id),
-            ('taxon_or_organism', 'taxon_or_organism'),
-            ('strain_or_isolate', 'strain_or_isolate'),
-            ('serovar', 'serovar'),
-            ('growth_media', 'growth media'),
-            ('replicate', 'replicate', ingest_utils.get_int),
-            ('growth_condition_time', 'growth_condition_time'),
-            ('growth_condition_growth_phase', 'growth_condition_growth phase'),
-            ('growth_condition_od600_reading', 'growth_condition_od600 reading'),
-            ('growth_condition_temperature', 'growth_condition_temperature'),
-            ('growth_condition_media', 'growth_condition_media'),
-            ('omics', 'omics'),
-            ('analytical_platform', 'analytical platform'),
-            ('facility', 'facility'),
-            ('data_type', 'data type'),
-            ('file_name_of_analysed_data', 'file name of analysed data'),
-            ('approach_used', 'approach used'),
+            fld('data_analysis_date', 'data analysis date (yyyy-mm-dd)', coerce=ingest_utils.get_date_isoformat),
+            fld('bpa_id', 'sample name (5 digit bpa id)', coerce=ingest_utils.extract_bpa_id),
+            fld('taxon_or_organism', 'taxon_or_organism'),
+            fld('strain_or_isolate', 'strain_or_isolate'),
+            fld('serovar', 'serovar'),
+            fld('growth_media', 'growth media'),
+            fld('replicate', 'replicate', coerce=ingest_utils.get_int),
+            fld('growth_condition_time', 'growth_condition_time'),
+            fld('growth_condition_growth_phase', 'growth_condition_growth phase'),
+            fld('growth_condition_od600_reading', 'growth_condition_od600 reading'),
+            fld('growth_condition_temperature', 'growth_condition_temperature'),
+            fld('growth_condition_media', 'growth_condition_media'),
+            fld('omics', 'omics'),
+            fld('analytical_platform', 'analytical platform'),
+            fld('facility', 'facility'),
+            fld('data_type', 'data type'),
+            fld('file_name_of_analysed_data', 'file name of analysed data'),
+            fld('approach_used', 'approach used'),
         ]
         wrapper = ExcelWrapper(
             field_spec,
@@ -1388,21 +1388,21 @@ class SepsisGenomicsAnalysedMetadata(BaseSepsisAnalysedMetadata):
     @classmethod
     def parse_spreadsheet(self, fname, additional_context):
         field_spec = [
-            ('data_analysis_date', 'data analysis date (yyyy-mm-dd)', ingest_utils.get_date_isoformat),
-            ('bpa_id', 'sample name (5 digit bpa id)', ingest_utils.extract_bpa_id),
-            ('taxon_or_organism', 'taxon_or_organism'),
-            ('strain_or_isolate', 'strain_or_isolate'),
-            ('serovar', 'serovar'),
-            ('growth_condition_time', 'growth_condition_time'),
-            ('growth_condition_temperature', 'growth_condition_temperature'),
-            ('growth_condition_media', 'growth_condition_media'),
-            ('growth_condition_notes', 'growth_condition_notes'),
-            ('experimental_replicate', 'experimental_replicate', ingest_utils.get_int),
-            ('analytical_platform', 'analytical_platform'),
-            ('analytical_facility', 'analytical_facility'),
-            ('experimental_sample_preparation_method', 'experimental_sample_preparation_method'),
-            ('data_type', 'data type'),
-            ('sample_folder', 'folder for each sample (individual files are listed on the next sheet)'),
+            fld('data_analysis_date', 'data analysis date (yyyy-mm-dd)', coerce=ingest_utils.get_date_isoformat),
+            fld('bpa_id', 'sample name (5 digit bpa id)', coerce=ingest_utils.extract_bpa_id),
+            fld('taxon_or_organism', 'taxon_or_organism'),
+            fld('strain_or_isolate', 'strain_or_isolate'),
+            fld('serovar', 'serovar'),
+            fld('growth_condition_time', 'growth_condition_time'),
+            fld('growth_condition_temperature', 'growth_condition_temperature'),
+            fld('growth_condition_media', 'growth_condition_media'),
+            fld('growth_condition_notes', 'growth_condition_notes'),
+            fld('experimental_replicate', 'experimental_replicate', coerce=ingest_utils.get_int),
+            fld('analytical_platform', 'analytical_platform'),
+            fld('analytical_facility', 'analytical_facility'),
+            fld('experimental_sample_preparation_method', 'experimental_sample_preparation_method'),
+            fld('data_type', 'data type'),
+            fld('sample_folder', 'folder for each sample (individual files are listed on the next sheet)'),
         ]
         wrapper = ExcelWrapper(
             field_spec,
@@ -1504,18 +1504,18 @@ class SepsisProteomicsProteinDatabaseMetadata(BaseSepsisAnalysedMetadata):
     @classmethod
     def parse_spreadsheet(self, fname, additional_context):
         field_spec = [
-            ('database_generation_date', 'database generation date (yyyy-mm-dd)', ingest_utils.get_date_isoformat),
-            ('bpa_id', 'sample name (5 digit bpa id)', ingest_utils.extract_bpa_id),
-            ('taxon_or_organism', 'taxon_or_organism'),
-            ('strain_or_isolate', 'strain_or_isolate'),
-            ('serovar', 'serovar'),
-            ('file_name', 'file name of database that is generated'),
-            ('bacterial_database_used', 'bacterial database used (ccg jira ticket)'),
-            ('version', 'version (bacterial genome or database)', ingest_utils.get_date_isoformat),
-            ('human_database_used', 'human database used (ccg jira ticket)'),
-            ('decription_of_how_the_database_is_generated', 'decription of how the database is generated'),
-            ('translation', 'translation (3 frame or 6 frame)'),
-            ('proteome_size', 'proteome size'),
+            fld('database_generation_date', 'database generation date (yyyy-mm-dd)', coerce=ingest_utils.get_date_isoformat),
+            fld('bpa_id', 'sample name (5 digit bpa id)', coerce=ingest_utils.extract_bpa_id),
+            fld('taxon_or_organism', 'taxon_or_organism'),
+            fld('strain_or_isolate', 'strain_or_isolate'),
+            fld('serovar', 'serovar'),
+            fld('file_name', 'file name of database that is generated'),
+            fld('bacterial_database_used', 'bacterial database used (ccg jira ticket)'),
+            fld('version', 'version (bacterial genome or database)', coerce=ingest_utils.get_date_isoformat),
+            fld('human_database_used', 'human database used (ccg jira ticket)'),
+            fld('decription_of_how_the_database_is_generated', 'decription of how the database is generated'),
+            fld('translation', 'translation (3 frame or 6 frame)'),
+            fld('proteome_size', 'proteome size'),
         ]
 
         wrapper = ExcelWrapper(

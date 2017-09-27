@@ -7,7 +7,7 @@ from unipath import Path
 from urllib.parse import urljoin
 from collections import defaultdict
 from glob import glob
-from ...libs.excel_wrapper import ExcelWrapper
+from ...libs.excel_wrapper import ExcelWrapper, make_field_definition as fld
 from ...libs import ingest_utils
 
 from ...util import make_logger, bpa_id_to_ckan_name, common_values
@@ -32,39 +32,40 @@ class WheatPathogensGenomesMetadata(BaseMetadata):
         This is the data from the Characteristics Sheet
         """
         field_spec = [
-            ("bpa_id", "BPA ID", ingest_utils.extract_bpa_id),
-            ("official_variety", "Isolate name", None),
-            ("kingdom", "Kingdom", None),
-            ("phylum", "Phylum", None),
-            ("species", "Species", None),
-            ("sample_id", "Researcher Sample ID", None),
-            ("other_id", "Other IDs", None),
-            ("original_source_host_species", "Original source host species", None),
-            ("collection_date", "Isolate collection date", None),
-            ("collection_location", "Isolate collection location", None),
-            ("wheat_pathogenicity", "Pathogenicity towards wheat", None),
-            ("contact_scientist", "Contact scientist", None),
-            ("sample_dna_source", "DNA Source", None),
-            ("dna_extraction_protocol", "DNA extraction protocol", None),
-            ("library", "Library ", None),
-            ("library_construction", "Library Construction", None),
-            ("library_construction_protocol", "Library construction protocol", None),
-            ("sequencer", "Sequencer", None),
-            ("sample_label", "Sample (AGRF Labelling)", None),
-            ("library_id", "Library ID", None),
-            ("index_number", "Index #", None),
-            ("index_sequence", "Index", None),
-            ("run_number", "Run number", None),
-            ("flow_cell_id", "Run #:Flow Cell ID", None),
-            ("lane_number", re.compile(r'lane.*number'), None),
-            ("sequence_filename", "FILE NAME", None),
-            ("md5_checksum", "MD5 checksum", None),
-            ("file_size", "Size", None),
-            ("analysis_performed", "analysis performed (to date)", None),
-            ("genbank_project", "GenBank Project", None),
-            ("locus_tag", "Locus tag", None),
-            ("genome_analysis", "Genome-Analysis", None),
-            ("metadata_file", "Metadata file", None)]
+            fld("bpa_id", "BPA ID", coerce=ingest_utils.extract_bpa_id),
+            fld("official_variety", "Isolate name"),
+            fld("kingdom", "Kingdom"),
+            fld("phylum", "Phylum"),
+            fld("species", "Species"),
+            fld("sample_id", "Researcher Sample ID"),
+            fld("other_id", "Other IDs"),
+            fld("original_source_host_species", "Original source host species"),
+            fld("collection_date", "Isolate collection date"),
+            fld("collection_location", "Isolate collection location"),
+            fld("wheat_pathogenicity", "Pathogenicity towards wheat"),
+            fld("contact_scientist", "Contact scientist"),
+            fld("sample_dna_source", "DNA Source"),
+            fld("dna_extraction_protocol", "DNA extraction protocol"),
+            fld("library", "Library "),
+            fld("library_construction", "Library Construction"),
+            fld("library_construction_protocol", "Library construction protocol"),
+            fld("sequencer", "Sequencer"),
+            fld("sample_label", "Sample (AGRF Labelling)"),
+            fld("library_id", "Library ID"),
+            fld("index_number", "Index #"),
+            fld("index_sequence", "Index"),
+            fld("run_number", "Run number"),
+            fld("flow_cell_id", "Run #:Flow Cell ID"),
+            fld("lane_number", re.compile(r'lane.*number')),
+            fld("sequence_filename", "FILE NAME"),
+            fld("md5_checksum", "MD5 checksum"),
+            fld("file_size", "Size"),
+            fld("analysis_performed", "analysis performed (to date)"),
+            fld("genbank_project", "GenBank Project"),
+            fld("locus_tag", "Locus tag"),
+            fld("genome_analysis", "Genome-Analysis"),
+            fld("metadata_file", "Metadata file"),
+        ]
 
         wrapper = ExcelWrapper(field_spec, file_name, sheet_name="Metadata", header_length=1, column_name_row_index=0, additional_context=additional_context)
         return wrapper.get_all()

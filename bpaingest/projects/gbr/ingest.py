@@ -4,7 +4,7 @@ import os
 import re
 from . import files
 
-from ...libs.excel_wrapper import ExcelWrapper
+from ...libs.excel_wrapper import ExcelWrapper, make_field_definition as fld
 from unipath import Path
 from glob import glob
 from ...util import make_logger, bpa_id_to_ckan_name
@@ -32,25 +32,25 @@ class GbrAmpliconsMetadata(BaseMetadata):
     @classmethod
     def parse_spreadsheet(cls, file_name, additional_context):
         field_spec = [
-            ('bpa_id', 'Sample unique ID', ingest_utils.extract_bpa_id),
-            ('sample_extraction_id', 'Sample extraction ID', ingest_utils.fix_sample_extraction_id),
-            ('sequencing_facility', 'Sequencing facility'),
-            ('target_range', 'Target Range'),
-            ('amplicon', 'Target', lambda s: s.upper().strip().lower()),
-            ('i7_index', 'I7_Index_ID'),
-            ('i5_index', 'I5_Index_ID'),
-            ('index1', 'index'),
-            ('index2', 'index2'),
-            ('pcr_1_to_10', '1:10 PCR, P=pass, F=fail', ingest_utils.fix_pcr),
-            ('pcr_1_to_100', '1:100 PCR, P=pass, F=fail', ingest_utils.fix_pcr),
-            ('pcr_neat', 'neat PCR, P=pass, F=fail', ingest_utils.fix_pcr),
-            ('dilution', 'Dilution used', ingest_utils.fix_date_interval),
-            ('sequencing_run_number', 'Sequencing run number'),
-            ('flow_cell_id', 'Flowcell'),
-            ('reads', '# of reads', ingest_utils.get_int),
-            ('name', 'Sample name on sample sheet'),
-            ('analysis_software_version', 'AnalysisSoftwareVersion'),
-            ('comments', 'Comments',),
+            fld('bpa_id', 'Sample unique ID', coerce=ingest_utils.extract_bpa_id),
+            fld('sample_extraction_id', 'Sample extraction ID', coerce=ingest_utils.fix_sample_extraction_id),
+            fld('sequencing_facility', 'Sequencing facility'),
+            fld('target_range', 'Target Range'),
+            fld('amplicon', 'Target', coerce=lambda s: s.upper().strip().lower()),
+            fld('i7_index', 'I7_Index_ID'),
+            fld('i5_index', 'I5_Index_ID'),
+            fld('index1', 'index'),
+            fld('index2', 'index2'),
+            fld('pcr_1_to_10', '1:10 PCR, P=pass, F=fail', coerce=ingest_utils.fix_pcr),
+            fld('pcr_1_to_100', '1:100 PCR, P=pass, F=fail', coerce=ingest_utils.fix_pcr),
+            fld('pcr_neat', 'neat PCR, P=pass, F=fail', coerce=ingest_utils.fix_pcr),
+            fld('dilution', 'Dilution used', coerce=ingest_utils.fix_date_interval),
+            fld('sequencing_run_number', 'Sequencing run number'),
+            fld('flow_cell_id', 'Flowcell'),
+            fld('reads', '# of reads', coerce=ingest_utils.get_int),
+            fld('name', 'Sample name on sample sheet'),
+            fld('analysis_software_version', 'AnalysisSoftwareVersion'),
+            fld('comments', 'Comments',),
         ]
 
         wrapper = ExcelWrapper(

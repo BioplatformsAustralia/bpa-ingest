@@ -1,4 +1,4 @@
-from ...libs.excel_wrapper import ExcelWrapper
+from ...libs.excel_wrapper import ExcelWrapper, make_field_definition as fld
 from ...libs import ingest_utils
 from ...util import make_logger
 
@@ -18,18 +18,18 @@ def get_run_data(file_name):
     The run metadata for this set
     """
 
-    field_spec = [('bpa_id', 'Soil sample unique ID', lambda s: s.replace('/', '.')),
-                  ('variety', 'Variety', None),
-                  ('cultivar_code', 'Code', None),
-                  ('library', 'Library code', None),
-                  ('library_construction', 'Library Construction - average insert size', None),
-                  ('library_range', 'Range', None),
-                  ('library_construction_protocol', 'Library construction protocol', None),
-                  ('sequencer', 'Sequencer', None),
-                  ('run_number', 'Run number', ingest_utils.get_clean_number),
-                  ('flowcell', 'Flow Cell ID', None),
-                  ('index', 'Index', None),
-                  ('casava_version', 'CASAVA version', None), ]
+    field_spec = [fld('bpa_id', 'Soil sample unique ID', coerce=lambda s: s.replace('/', '.')),
+                  fld('variety', 'Variety'),
+                  fld('cultivar_code', 'Code'),
+                  fld('library', 'Library code'),
+                  fld('library_construction', 'Library Construction - average insert size'),
+                  fld('library_range', 'Range'),
+                  fld('library_construction_protocol', 'Library construction protocol'),
+                  fld('sequencer', 'Sequencer'),
+                  fld('run_number', 'Run number', coerce=ingest_utils.get_clean_number),
+                  fld('flowcell', 'Flow Cell ID'),
+                  fld('index', 'Index'),
+                  fld('casava_version', 'CASAVA version'), ]
 
     wrapper = ExcelWrapper(field_spec, file_name, sheet_name='Metadata', header_length=1)
     return wrapper.get_all()

@@ -5,7 +5,7 @@ from unipath import Path
 from glob import glob
 from urllib.parse import urljoin
 
-from ...libs.excel_wrapper import ExcelWrapper
+from ...libs.excel_wrapper import ExcelWrapper, make_field_definition as fld
 from ...libs import ingest_utils
 from ...util import make_logger, bpa_id_to_ckan_name
 from ...abstract import BaseMetadata
@@ -34,23 +34,23 @@ class WheatCultivarsMetadata(BaseMetadata):
         """
 
         field_spec = [
-            ("source_name", "BPA ID", None),
-            ("code", "CODE", None),
-            ("bpa_id", "BPA ID", lambda s: s.replace("/", ".")),
-            ("characteristics", "Characteristics", None),
-            ("organism", "Organism", None),
-            ("variety", "Variety", None),
-            ("organism_part", "Organism part", None),
-            ("pedigree", "Pedigree", None),
-            ("dev_stage", "Developmental stage", None),
-            ("yield_properties", "Yield properties", None),
-            ("morphology", "Morphology", None),
-            ("maturity", "Maturity", None),
-            ("pathogen_tolerance", "Pathogen tolerance", None),
-            ("drought_tolerance", "Drought tolerance", None),
-            ("soil_tolerance", "Soil tolerance", None),
-            ("classification", "International classification", None),
-            ("url", "Link", None),
+            fld("source_name", "BPA ID"),
+            fld("code", "CODE"),
+            fld("bpa_id", "BPA ID", coerce=lambda s: s.replace("/", ".")),
+            fld("characteristics", "Characteristics"),
+            fld("organism", "Organism"),
+            fld("variety", "Variety"),
+            fld("organism_part", "Organism part"),
+            fld("pedigree", "Pedigree"),
+            fld("dev_stage", "Developmental stage"),
+            fld("yield_properties", "Yield properties"),
+            fld("morphology", "Morphology"),
+            fld("maturity", "Maturity"),
+            fld("pathogen_tolerance", "Pathogen tolerance"),
+            fld("drought_tolerance", "Drought tolerance"),
+            fld("soil_tolerance", "Soil tolerance"),
+            fld("classification", "International classification"),
+            fld("url", "Link"),
         ]
 
         wrapper = ExcelWrapper(field_spec, file_name, sheet_name="Characteristics", header_length=1)

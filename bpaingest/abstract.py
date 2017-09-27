@@ -1,4 +1,3 @@
-import abc
 from .util import make_logger
 from urllib.parse import urlparse
 
@@ -6,22 +5,16 @@ from urllib.parse import urlparse
 logger = make_logger(__name__)
 
 
-class ABCBaseMetadata(object, metaclass=abc.ABCMeta):
+class BaseMetadata:
     resource_linkage = ('bpa_id',)
 
-    @abc.abstractmethod
-    def __init__(self, metadata_path):
-        pass
-
-    @abc.abstractmethod
     def _get_packages(self):
         """
         return a list of dictionaries representing CKAN packages
         private method, do not call directly.
         """
-        pass
+        raise NotImplementedError("implement _get_packages()")
 
-    @abc.abstractmethod
     def _get_resources(self):
         """
         return a list of tuples:
@@ -34,10 +27,7 @@ class ABCBaseMetadata(object, metaclass=abc.ABCMeta):
         legacy_url: link to download asset from legacy archive
         resource: dictionary representing CKAN resource
         """
-        pass
-
-
-class BaseMetadata(ABCBaseMetadata):
+        raise NotImplementedError("implement _get_resources()")
 
     @classmethod
     def resources_add_format(cls, resources):

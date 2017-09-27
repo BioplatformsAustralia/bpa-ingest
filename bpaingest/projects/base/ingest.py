@@ -11,7 +11,7 @@ from urllib.parse import urljoin
 from glob import glob
 
 from ...libs import ingest_utils
-from ...libs.excel_wrapper import ExcelWrapper
+from ...libs.excel_wrapper import ExcelWrapper, make_field_definition as fld
 from . import files
 from .tracking import (
     BASETrackMetadata)
@@ -75,23 +75,23 @@ class BASEAmpliconsMetadata(BaseMetadata):
     @classmethod
     def parse_spreadsheet(self, fname, metadata_info):
         field_spec = [
-            ("bpa_id", "Soil sample unique ID", ingest_utils.extract_bpa_id),
-            ("sample_extraction_id", "Sample extraction ID", ingest_utils.fix_sample_extraction_id),
-            ("sequencing_facility", "Sequencing facility", None),
-            ("target", "Target", lambda s: s.upper().strip()),
-            ("index", "Index", lambda s: s[:12]),
-            ("index1", "Index 1", lambda s: s[:12]),
-            ("index2", "Index2", lambda s: s[:12]),
-            ("pcr_1_to_10", "1:10 PCR, P=pass, F=fail", ingest_utils.fix_pcr),
-            ("pcr_1_to_100", "1:100 PCR, P=pass, F=fail", ingest_utils.fix_pcr),
-            ("pcr_neat", "neat PCR, P=pass, F=fail", ingest_utils.fix_pcr),
-            ("dilution", "Dilution used", ingest_utils.fix_date_interval),
-            ("sequencing_run_number", "Sequencing run number", None),
-            ("flow_cell_id", "Flowcell", None),
-            ("reads", ("# of RAW reads", "# of reads"), ingest_utils.get_int),
-            ("sample_name", "Sample name on sample sheet", None),
-            ("analysis_software_version", "AnalysisSoftwareVersion", None),
-            ("comments", "Comments", None),
+            fld("bpa_id", "Soil sample unique ID", coerce=ingest_utils.extract_bpa_id),
+            fld("sample_extraction_id", "Sample extraction ID", coerce=ingest_utils.fix_sample_extraction_id),
+            fld("sequencing_facility", "Sequencing facility"),
+            fld("target", "Target", coerce=lambda s: s.upper().strip()),
+            fld("index", "Index", coerce=lambda s: s[:12]),
+            fld("index1", "Index 1", coerce=lambda s: s[:12]),
+            fld("index2", "Index2", coerce=lambda s: s[:12]),
+            fld("pcr_1_to_10", "1:10 PCR, P=pass, F=fail", coerce=ingest_utils.fix_pcr),
+            fld("pcr_1_to_100", "1:100 PCR, P=pass, F=fail", coerce=ingest_utils.fix_pcr),
+            fld("pcr_neat", "neat PCR, P=pass, F=fail", coerce=ingest_utils.fix_pcr),
+            fld("dilution", "Dilution used", coerce=ingest_utils.fix_date_interval),
+            fld("sequencing_run_number", "Sequencing run number"),
+            fld("flow_cell_id", "Flowcell"),
+            fld("reads", ("# of RAW reads", "# of reads"), coerce=ingest_utils.get_int),
+            fld("sample_name", "Sample name on sample sheet"),
+            fld("analysis_software_version", "AnalysisSoftwareVersion"),
+            fld("comments", "Comments"),
         ]
         try:
             wrapper = ExcelWrapper(
@@ -105,6 +105,7 @@ class BASEAmpliconsMetadata(BaseMetadata):
             rows = list(wrapper.get_all())
             return rows
         except:
+            raise
             logger.critical("Cannot parse: `%s'" % (fname))
             return []
 
@@ -356,13 +357,13 @@ class BASEMetagenomicsMetadata(BaseMetadata):
     @classmethod
     def parse_spreadsheet(self, fname, metadata_info):
         field_spec = [
-            ('bpa_id', 'Soil sample unique ID', ingest_utils.extract_bpa_id),
-            ('sample_extraction_id', 'Sample extraction ID', ingest_utils.fix_sample_extraction_id),
-            ('insert_size_range', 'Insert size range', None),
-            ('library_construction_protocol', 'Library construction protocol', None),
-            ('sequencer', 'Sequencer', None),
-            ('casava_version', 'CASAVA version', None),
-            ('flow_cell_id', 'Run #:Flow Cell ID', None)
+            fld('bpa_id', 'Soil sample unique ID', coerce=ingest_utils.extract_bpa_id),
+            fld('sample_extraction_id', 'Sample extraction ID', coerce=ingest_utils.fix_sample_extraction_id),
+            fld('insert_size_range', 'Insert size range'),
+            fld('library_construction_protocol', 'Library construction protocol'),
+            fld('sequencer', 'Sequencer'),
+            fld('casava_version', 'CASAVA version'),
+            fld('flow_cell_id', 'Run #:Flow Cell ID'),
         ]
         try:
             wrapper = ExcelWrapper(
