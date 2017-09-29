@@ -955,6 +955,7 @@ class SepsisProteomicsSwathMSMetadata(SepsisProteomicsSwathMSBaseSepsisMetadata)
 
 class SepsisProteomicsSwathMSPoolMetadata(SepsisProteomicsSwathMSBaseSepsisMetadata):
     ckan_data_type = 'arp-proteomics-swathms-pool'
+    pool = True
     resource_linkage = ('pool_bpa_ids',)
 
     def _get_packages(self):
@@ -1491,7 +1492,8 @@ class SepsisProteomicsProteinDatabaseMetadata(BaseSepsisAnalysedMetadata):
     ckan_data_type = 'arp-proteomics-database'
     resource_linkage = ('folder_name',)
     omics = 'proteomics'
-    technology = 'analysed'
+    technology = 'proteindatabase'
+    analysed = True
 
     def __init__(self, metadata_path, contextual_metadata=None, metadata_info=None):
         super(SepsisProteomicsProteinDatabaseMetadata, self).__init__()

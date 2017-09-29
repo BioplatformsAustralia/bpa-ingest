@@ -74,6 +74,7 @@ class BaseMarineMicrobesAmpliconsMetadata(BaseMetadata):
     auth = ('marine', 'marine')
     organization = 'bpa-marine-microbes'
     ckan_data_type = 'mm-genomics-amplicon'
+    omics = 'genomics'
     contextual_classes = common_context
     metadata_patterns = [r'^.*\.md5', r'^.*_metadata.*.*\.xlsx']
     resource_linkage = ('bpa_id', 'mm_amplicon_linkage')
@@ -212,6 +213,7 @@ class BaseMarineMicrobesAmpliconsMetadata(BaseMetadata):
 
 class MarineMicrobesGenomicsAmplicons16SMetadata(BaseMarineMicrobesAmpliconsMetadata):
     amplicon = '16s'
+    technology = 'amplicons-16s'
     index_linkage_spreadsheets = ('MM_Pilot_1_16S_UNSW_AFGB7_metadata.xlsx',)
     index_linkage_md5s = ('MM_1_16S_UNSW_AFGB7_checksums.md5',)
     metadata_urls = [
@@ -222,6 +224,7 @@ class MarineMicrobesGenomicsAmplicons16SMetadata(BaseMarineMicrobesAmpliconsMeta
 
 class MarineMicrobesGenomicsAmpliconsA16SMetadata(BaseMarineMicrobesAmpliconsMetadata):
     amplicon = 'a16s'
+    technology = 'amplicons-a16s'
     index_linkage_spreadsheets = ('MM-Pilot_A16S_UNSW_AG27L_metadata_UPDATE.xlsx',)
     index_linkage_md5s = ('MM_Pilot_A16S_UNSW_AG27L_checksums.md5',)
     metadata_urls = [
@@ -232,6 +235,7 @@ class MarineMicrobesGenomicsAmpliconsA16SMetadata(BaseMarineMicrobesAmpliconsMet
 
 class MarineMicrobesGenomicsAmplicons18SMetadata(BaseMarineMicrobesAmpliconsMetadata):
     amplicon = '18s'
+    technology = 'amplicons-18s'
     index_linkage_spreadsheets = ('MM_Pilot_18S_UNSW_AGGNB_metadata.xlsx',)
     index_linkage_md5s = ('MM_18S_UNSW_AGGNB_checksums.md5',)
     metadata_urls = [
@@ -244,6 +248,7 @@ class BaseMarineMicrobesAmpliconsControlMetadata(BaseMetadata):
     auth = ('marine', 'marine')
     organization = 'bpa-marine-microbes'
     ckan_data_type = 'mm-genomics-amplicon-control'
+    omics = 'genomics'
     contextual_classes = []
     metadata_patterns = [r'^.*\.md5']
     resource_linkage = ('amplicon', 'flow_id')
@@ -318,6 +323,7 @@ class BaseMarineMicrobesAmpliconsControlMetadata(BaseMetadata):
 
 class MarineMicrobesGenomicsAmplicons16SControlMetadata(BaseMarineMicrobesAmpliconsControlMetadata):
     amplicon = '16s'
+    technology = 'amplicons-control-16s'
     metadata_urls = [
         'https://downloads-qcif.bioplatforms.com/bpa/marine_microbes/raw/amplicons/16s/'
     ]
@@ -326,6 +332,7 @@ class MarineMicrobesGenomicsAmplicons16SControlMetadata(BaseMarineMicrobesAmplic
 
 class MarineMicrobesGenomicsAmpliconsA16SControlMetadata(BaseMarineMicrobesAmpliconsControlMetadata):
     amplicon = 'a16s'
+    technology = 'amplicons-control-a16s'
     metadata_urls = [
         'https://downloads-qcif.bioplatforms.com/bpa/marine_microbes/raw/amplicons/a16s/'
     ]
@@ -334,6 +341,7 @@ class MarineMicrobesGenomicsAmpliconsA16SControlMetadata(BaseMarineMicrobesAmpli
 
 class MarineMicrobesGenomicsAmplicons18SControlMetadata(BaseMarineMicrobesAmpliconsControlMetadata):
     amplicon = '18s'
+    technology = 'amplicons-control-18s'
     metadata_urls = [
         'https://downloads-qcif.bioplatforms.com/bpa/marine_microbes/raw/amplicons/18s/'
     ]
@@ -344,6 +352,7 @@ class MarineMicrobesMetagenomicsMetadata(BaseMetadata):
     auth = ('marine', 'marine')
     organization = 'bpa-marine-microbes'
     ckan_data_type = 'mm-metagenomics'
+    omics = 'metagenomics'
     contextual_classes = common_context
     metadata_patterns = [r'^.*\.md5', r'^.*_metadata.*\.xlsx']
     metadata_urls = [
@@ -456,6 +465,7 @@ class MarineMicrobesMetatranscriptomeMetadata(BaseMetadata):
     organization = 'bpa-marine-microbes'
     ckan_data_type = 'mm-metatranscriptome'
     contextual_classes = common_context
+    omics = 'metatranscriptomics'
     metadata_patterns = [r'^.*\.md5', r'^.*_metadata.*\.xlsx']
     metadata_urls = [
         'https://downloads-qcif.bioplatforms.com/bpa/marine_microbes/raw/metatranscriptome/'

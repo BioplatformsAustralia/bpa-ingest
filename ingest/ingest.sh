@@ -54,10 +54,10 @@ bootstrap()
 
 base()
 {
-  apply base-amplicons-control
-  apply base-amplicons
-  apply base-metagenomics
-  apply base-site-images
+    apply base-genomics-amplicons
+    apply base-genomics-amplicons-control
+    apply base-metagenomics
+    apply base-site-images
 }
 
 gbr() {
@@ -66,57 +66,58 @@ gbr() {
 
 marine_microbes()
 {
-  apply mm-genomics-amplicons-16s
-  apply mm-genomics-amplicons-a16s
-  apply mm-genomics-amplicons-18s
-  apply mm-genomics-amplicons-16s-control
-  apply mm-genomics-amplicons-a16s-control
-  apply mm-genomics-amplicons-18s-control
-  apply mm-metagenomics
-  apply mm-metatranscriptome
+  apply marine-microbes-genomics-amplicons-16s
+  apply marine-microbes-genomics-amplicons-18s
+  apply marine-microbes-genomics-amplicons-a16s
+  apply marine-microbes-genomics-amplicons-control-16s
+  apply marine-microbes-genomics-amplicons-control-18s
+  apply marine-microbes-genomics-amplicons-control-a16s
+  apply marine-microbes-metagenomics
+  apply marine-microbes-metatranscriptomics
 }
 
 omg()
 {
-  apply omg-exoncapture
-  apply omg-10xraw
-  apply omg-10xraw-agrf
+  apply omg-10x-raw-agrf
   apply omg-10xprocessed
+  apply omg-10xraw
+  apply omg-exoncapture
   apply omg-genomics-hiseq
 }
 
 sepsis()
 {
-  apply sepsis-proteomics-ms1quantification
-  apply sepsis-proteomics-analysed
-  apply sepsis-proteomics-swathms-combined-sample
-  apply sepsis-proteomics-swathms
-  apply sepsis-proteomics-swathms-pool
-  apply sepsis-proteomics-proteindatabase
+  apply sepsis-genomics-analysed
   apply sepsis-genomics-miseq
   apply sepsis-genomics-pacbio
-  apply sepsis-metabolomics-lcms
-  apply sepsis-transcriptomics-hiseq
-  apply sepsis-genomics-analysed
   apply sepsis-metabolomics-analysed
+  apply sepsis-metabolomics-gcms
+  apply sepsis-metabolomics-lcms
+  apply sepsis-proteomics-analysed
+  apply sepsis-proteomics-ms1quantification
+  apply sepsis-proteomics-proteindatabase-analysed
+  apply sepsis-proteomics-swathms
+  apply sepsis-proteomics-swathms-combined-sample
+  apply sepsis-proteomics-swathms-pool
   apply sepsis-transcriptomics-analysed
+  apply sepsis-transcriptomics-hiseq
 }
 
 stemcell()
 {
-  apply stemcells-transcriptome
-  apply stemcells-smallrna
-  apply stemcells-singlecellrnaseq
-  apply stemcells-proteomics
   apply stemcells-metabolomics
-  apply stemcells-proteomics-pool
-  apply stemcells-proteomics-analysed
   apply stemcells-metabolomics-analysed
+  apply stemcells-proteomics
+  apply stemcells-proteomics-analysed
+  apply stemcells-proteomics-pool
+  apply stemcells-singlecellrna
+  apply stemcells-smallrna
+  apply stemcells-transcriptomics
 }
 
 wheat() {
   apply wheat-cultivars
-  apply wheat-pathogens-genomes
+  apply wheat-pathogens-genomics
 }
 
 run() {

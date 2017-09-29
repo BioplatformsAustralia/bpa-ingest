@@ -32,6 +32,7 @@ class StemcellsTranscriptomeMetadata(BaseMetadata):
     metadata_urls = ['https://downloads-qcif.bioplatforms.com/bpa/stemcell/raw/transcriptome/']
     metadata_url_components = ('facility_code', 'ticket')
     metadata_patterns = [r'^.*\.md5', r'^.*_metadata\.xlsx']
+    omics = 'transcriptomics'
     organization = 'bpa-stemcells'
     auth = ('stemcell', 'stemcell')
     ckan_data_type = 'stemcells-transcriptomics'
@@ -135,6 +136,7 @@ class StemcellsSmallRNAMetadata(BaseMetadata):
     metadata_url_components = ('facility_code', 'ticket')
     metadata_patterns = [r'^.*\.md5', r'^.*_metadata\.xlsx']
     organization = 'bpa-stemcells'
+    technology = 'smallrna'
     auth = ('stemcell', 'stemcell')
     ckan_data_type = 'stemcells-smallrna'
 
@@ -237,6 +239,7 @@ class StemcellsSingleCellRNASeqMetadata(BaseMetadata):
     metadata_url_components = ('facility_code', 'ticket')
     metadata_patterns = [r'^.*\.md5', r'^.*_metadata\.xlsx']
     organization = 'bpa-stemcells'
+    technology = 'singlecellrna'
     auth = ('stemcell', 'stemcell')
     ckan_data_type = 'stemcells-singlecellrnaseq'
     resource_linkage = ('bpa_id_range',)
@@ -353,6 +356,7 @@ class StemcellsMetabolomicsMetadata(BaseMetadata):
     metadata_url_components = ('facility_code', 'ticket')
     metadata_patterns = [r'^.*\.md5', r'^.*_metadata.*\.xlsx']
     organization = 'bpa-stemcells'
+    omics = 'metabolomics'
     auth = ('stemcell', 'stemcell')
     resource_linkage = ('bpa_id', 'analytical_platform')
     ckan_data_type = 'stemcells-metabolomic'
@@ -460,6 +464,7 @@ class StemcellsProteomicsBaseMetadata(BaseMetadata):
     metadata_urls = ['https://downloads-qcif.bioplatforms.com/bpa/stemcell/raw/proteomic/']
     metadata_url_components = ('facility_code', 'ticket')
     metadata_patterns = [r'^.*\.md5', r'^.*_metadata\.xlsx']
+    omics = 'proteomics'
     organization = 'bpa-stemcells'
     auth = ('stemcell', 'stemcell')
 
@@ -595,6 +600,7 @@ class StemcellsProteomicsMetadata(StemcellsProteomicsBaseMetadata):
 class StemcellsProteomicsPoolMetadata(StemcellsProteomicsBaseMetadata):
     ckan_data_type = 'stemcells-proteomic-pool'
     resource_linkage = ('pool_id',)
+    pool = True
 
     def __init__(self, metadata_path, contextual_metadata=None, metadata_info=None):
         super(StemcellsProteomicsPoolMetadata, self).__init__()
@@ -679,6 +685,8 @@ class StemcellsProteomicsAnalysedMetadata(BaseMetadata):
     metadata_url_components = ('facility_code', 'ticket')
     metadata_patterns = [r'^.*\.md5', r'^.*_metadata\.xlsx$']
     organization = 'bpa-stemcells'
+    omics = 'proteomics'
+    analysed = True
     auth = ('stemcell', 'stemcell')
     ckan_data_type = 'stemcells-proteomics-analysed'
     resource_linkage = ('ticket',)
@@ -797,6 +805,8 @@ class StemcellsMetabolomicsAnalysedMetadata(BaseMetadata):
     organization = 'bpa-stemcells'
     auth = ('stemcell', 'stemcell')
     ckan_data_type = 'stemcells-metabolomics-analysed'
+    omics = 'metabolomics'
+    analysed = True
     resource_linkage = ('folder_name',)
 
     def __init__(self, metadata_path, contextual_metadata=None, metadata_info=None):

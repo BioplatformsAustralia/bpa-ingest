@@ -2,7 +2,7 @@
 import json
 import os
 from collections import defaultdict
-from .projects import PROJECTS
+from .projects import ProjectInfo
 from .metadata import DownloadMetadata
 from .util import make_logger
 from copy import deepcopy
@@ -143,9 +143,11 @@ def generate_schemas(args):
     resource_field_mapping = defaultdict(dict)
 
     # download metadata for all project types and aggregate metadata keys
-    for project_name, project_cls in sorted(PROJECTS.items()):
-        logger.info("Schema generation: %s / %s" % (project_name, project_cls.__name__))
-        dlpath = os.path.join(args.download_path, project_cls.__name__)
+    project_info = ProjectInfo()
+    for class_info in sorted(project_info.metadata_info, key=lambda t: t['slug']):
+        project_cls = class_info['cls']
+        logger.info("Schema generation: %s / %s" % (class_info['project'], class_info['slug']))
+        dlpath = os.path.join(args.download_path, class_info['slug'])
         with DownloadMetadata(project_cls, path=dlpath) as dlmeta:
             meta = dlmeta.meta
             data_type = meta.ckan_data_type

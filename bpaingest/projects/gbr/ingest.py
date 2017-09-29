@@ -20,6 +20,8 @@ class GbrAmpliconsMetadata(BaseMetadata):
     metadata_url_components = ('amplicon_', 'facility_code', 'ticket')
     organization = 'bpa-great-barrier-reef'
     ckan_data_type = 'great-barrier-reef-amplicon'
+    omics = 'genomics'
+    technology = 'amplicons'
     auth = ("bpa", "gbr")
     resource_linkage = ('bpa_id', 'amplicon', 'index')
     extract_index_re = re.compile('^.*_([GATC]{8}_[GATC]{8})$')

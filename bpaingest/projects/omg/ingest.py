@@ -30,6 +30,7 @@ class OMG10XRawIlluminaMetadata(BaseMetadata):
     auth = ('omg', 'omg')
     organization = 'bpa-omg'
     ckan_data_type = 'omg-10x-raw-illumina'
+    technology = '10x-raw-agrf'
     contextual_classes = [OMGSampleContextual]
     metadata_patterns = [r'^.*\.md5$', r'^.*_metadata.*.*\.xlsx$']
     metadata_urls = [
@@ -162,6 +163,7 @@ class OMG10XRawMetadata(BaseMetadata):
     auth = ('omg', 'omg')
     organization = 'bpa-omg'
     ckan_data_type = 'omg-10x-raw'
+    technology = '10xraw'
     contextual_classes = [OMGSampleContextual]
     metadata_patterns = [r'^.*\.md5$', r'^.*_metadata.*.*\.xlsx$']
     metadata_urls = [
@@ -289,6 +291,7 @@ class OMG10XProcessedIlluminaMetadata(BaseMetadata):
     auth = ('omg', 'omg')
     organization = 'bpa-omg'
     ckan_data_type = 'omg-10x-processed-illumina'
+    technology = '10xprocessed'
     contextual_classes = [OMGSampleContextual]
     metadata_patterns = [r'^.*\.md5$', r'^.*_metadata.*.*\.xlsx$']
     metadata_urls = [
@@ -417,6 +420,7 @@ class OMGExonCaptureMetadata(BaseMetadata):
     auth = ('omg', 'omg')
     organization = 'bpa-omg'
     ckan_data_type = 'omg-exon-capture'
+    technology = 'exoncapture'
     contextual_classes = [OMGSampleContextual]
     metadata_patterns = [r'^.*\.md5$', r'^.*_metadata.*.*\.xlsx$']
     metadata_urls = [
@@ -561,6 +565,8 @@ class OMGGenomicsHiSeqMetadata(BaseMetadata):
     auth = ('omg', 'omg')
     organization = 'bpa-omg'
     ckan_data_type = 'omg-genomics-hiseq'
+    omics = 'genomics'
+    technology = 'hiseq'
     contextual_classes = [OMGSampleContextual]
     metadata_patterns = [r'^.*\.md5$', r'^.*_metadata.*.*\.xlsx$']
     metadata_urls = [

@@ -11,13 +11,15 @@ from .ops import print_accounts, make_organization
 from .dump import dump_state
 from .util import make_logger
 from .genhash import genhash as genhash_fn
-from .projects import PROJECTS
+from .projects import ProjectInfo
 from .organizations import ORGANIZATIONS
 from .metadata import DownloadMetadata
 
 
 logger = make_logger(__name__)
 register_command, command_fns = make_registration_decorator()
+project_info = ProjectInfo()
+project_cli_options = project_info.cli_options()
 
 
 @register_command
@@ -35,7 +37,7 @@ def setup_ckan(subparser):
 
 def setup_sync(subparser):
     setup_ckan(subparser)
-    subparser.add_argument('project_name', choices=sorted(PROJECTS.keys()), help='path to metadata')
+    subparser.add_argument('project_name', choices=sorted(project_cli_options.keys()), help='path to metadata')
     subparser.add_argument('--uploads', type=int, default=4, help='number of parallel uploads')
     subparser.add_argument('--metadata-only', '-m', action='store_const', const=True, default=False, help='set metadata only, no data uploads')
     subparser.add_argument('--skip-resource-checks', action='store_const', const=True, default=False, help='skip resource checks')
@@ -43,7 +45,7 @@ def setup_sync(subparser):
 
 def setup_hash(subparser):
     setup_ckan(subparser)
-    subparser.add_argument('project_name', choices=sorted(PROJECTS.keys()), help='path to metadata')
+    subparser.add_argument('project_name', choices=sorted(project_cli_options.keys()), help='path to metadata')
     subparser.add_argument('mirror_path', help='path to locally mounted mirror', nargs='?', default=os.environ.get('MIRROR_PATH'))
 
 
@@ -55,7 +57,7 @@ def setup_dump(subparser):
 def sync(args):
     """sync a project"""
     ckan = make_ckan_api(args)
-    with DownloadMetadata(PROJECTS[args.project_name], path=args.download_path) as dlmeta:
+    with DownloadMetadata(project_cli_options[args.project_name], path=args.download_path) as dlmeta:
         sync_metadata(ckan, dlmeta.meta, dlmeta.auth, args.uploads, not args.metadata_only, not args.skip_resource_checks)
         print_accounts()
 
@@ -77,7 +79,7 @@ def genhash(args):
     verify MD5 sums for a local (filesystem mounted) mirror of the BPA
     data, and generate expected E-Tag and SHA256 values.
     """
-    with DownloadMetadata(PROJECTS[args.project_name], path=args.download_path) as dlmeta:
+    with DownloadMetadata(project_cli_options[args.project_name], path=args.download_path) as dlmeta:
         genhash_fn(ckan, dlmeta.meta, args.mirror_path, num_threads=4)
         print_accounts()
 

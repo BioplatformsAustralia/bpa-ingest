@@ -54,6 +54,8 @@ class BASEAmpliconsMetadata(BaseMetadata):
     auth = ('base', 'base')
     organization = 'bpa-base'
     ckan_data_type = 'base-genomics-amplicon'
+    omics = 'genomics'
+    technology = 'amplicons'
     contextual_classes = common_context
     metadata_patterns = [r'^.*\.md5$', r'^.*_metadata.*.*\.xlsx$']
     metadata_urls = [
@@ -230,6 +232,8 @@ class BASEAmpliconsControlMetadata(BaseMetadata):
     auth = ('base', 'base')
     organization = 'bpa-base'
     ckan_data_type = 'base-genomics-amplicon-control'
+    omics = 'genomics'
+    technology = 'amplicons-control'
     contextual_classes = common_context
     metadata_patterns = [r'^.*\.md5$', r'^.*_metadata.*.*\.xlsx$']
     metadata_urls = [
@@ -323,6 +327,7 @@ class BASEMetagenomicsMetadata(BaseMetadata):
     auth = ('base', 'base')
     organization = 'bpa-base'
     ckan_data_type = 'base-metagenomics'
+    omics = 'metagenomics'
     contextual_classes = common_context
     metadata_patterns = [r'^.*\.md5$', r'^.*_metadata.*.*\.xlsx$']
     metadata_urls = [
@@ -513,6 +518,8 @@ class BASESiteImagesMetadata(BaseMetadata):
     ckan_data_type = 'base-site-image'
     contextual_classes = common_context
     metadata_patterns = [r'^.*\.md5$']
+    omics = None
+    technology = 'site-images'
     metadata_urls = [
         'https://downloads-qcif.bioplatforms.com/bpa/base/site-images/',
     ]

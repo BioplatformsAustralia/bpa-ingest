@@ -20,6 +20,7 @@ class WheatPathogensGenomesMetadata(BaseMetadata):
     metadata_urls = ['https://downloads-qcif.bioplatforms.com/bpa/wheat_pathogens/metadata/2017-07-07/']
     organization = 'bpa-wheat-pathogens-genomes'
     ckan_data_type = 'wheat-pathogens'
+    omics = 'genomics'
 
     def __init__(self, metadata_path, metadata_info=None):
         super(WheatPathogensGenomesMetadata, self).__init__()

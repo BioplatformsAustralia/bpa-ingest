@@ -46,56 +46,95 @@ from .omg.ingest import (
     OMGExonCaptureMetadata,
     OMGGenomicsHiSeqMetadata)
 
-# from .barcode.ingest import BarcodeMetadata
-# from .melanoma.ingest import MelanomaMetadata
-# from .wheat_pathogens_transcript.ingest import WheatPathogensTranscriptMetadata
 
+class ProjectInfo:
+    projects = {
+        'base': [
+            BASEAmpliconsMetadata,
+            BASEAmpliconsControlMetadata,
+            BASEMetagenomicsMetadata,
+            BASESiteImagesMetadata,
+        ],
+        'gbr': [
+            GbrAmpliconsMetadata,
+        ],
+        'marine-microbes': [
+            MarineMicrobesGenomicsAmplicons16SMetadata,
+            MarineMicrobesGenomicsAmpliconsA16SMetadata,
+            MarineMicrobesGenomicsAmplicons18SMetadata,
+            MarineMicrobesGenomicsAmplicons16SControlMetadata,
+            MarineMicrobesGenomicsAmpliconsA16SControlMetadata,
+            MarineMicrobesGenomicsAmplicons18SControlMetadata,
+            MarineMicrobesMetagenomicsMetadata,
+            MarineMicrobesMetatranscriptomeMetadata,
+        ],
+        'omg': [
+            OMG10XRawIlluminaMetadata,
+            OMG10XRawMetadata,
+            OMG10XProcessedIlluminaMetadata,
+            OMGExonCaptureMetadata,
+            OMGGenomicsHiSeqMetadata,
+        ],
+        'sepsis': [
+            SepsisGenomicsMiseqMetadata,
+            SepsisGenomicsPacbioMetadata,
+            SepsisGenomicsAnalysedMetadata,
+            SepsisTranscriptomicsAnalysedMetadata,
+            SepsisTranscriptomicsHiseqMetadata,
+            SepsisMetabolomicsLCMSMetadata,
+            SepsisMetabolomicsGCMSMetadata,
+            SepsisMetabolomicsAnalysedMetadata,
+            SepsisProteomicsMS1QuantificationMetadata,
+            SepsisProteomicsSwathMSMetadata,
+            SepsisProteomicsSwathMSCombinedSampleMetadata,
+            SepsisProteomicsSwathMSPoolMetadata,
+            SepsisProteomicsAnalysedMetadata,
+            SepsisProteomicsProteinDatabaseMetadata,
+        ],
+        'stemcells': [
+            StemcellsTranscriptomeMetadata,
+            StemcellsSmallRNAMetadata,
+            StemcellsSingleCellRNASeqMetadata,
+            StemcellsMetabolomicsMetadata,
+            StemcellsProteomicsMetadata,
+            StemcellsProteomicsPoolMetadata,
+            StemcellsProteomicsAnalysedMetadata,
+            StemcellsMetabolomicsAnalysedMetadata,
+        ],
+        'wheat-cultivars': [
+            WheatCultivarsMetadata,
+        ],
+        'wheat-pathogens': [
+            WheatPathogensGenomesMetadata,  # the first half of wheat pathogens
+        ],
+    }
 
-PROJECTS = {
-    'gbr-genomics-amplicons': GbrAmpliconsMetadata,
-    'sepsis-genomics-miseq': SepsisGenomicsMiseqMetadata,
-    'sepsis-genomics-pacbio': SepsisGenomicsPacbioMetadata,
-    'sepsis-genomics-analysed': SepsisGenomicsAnalysedMetadata,
-    'sepsis-transcriptomics-analysed': SepsisTranscriptomicsAnalysedMetadata,
-    'sepsis-transcriptomics-hiseq': SepsisTranscriptomicsHiseqMetadata,
-    'sepsis-metabolomics-lcms': SepsisMetabolomicsLCMSMetadata,
-    'sepsis-metabolomics-gcms': SepsisMetabolomicsGCMSMetadata,
-    'sepsis-metabolomics-analysed': SepsisMetabolomicsAnalysedMetadata,
-    'sepsis-proteomics-ms1quantification': SepsisProteomicsMS1QuantificationMetadata,
-    'sepsis-proteomics-swathms': SepsisProteomicsSwathMSMetadata,
-    'sepsis-proteomics-swathms-combined-sample': SepsisProteomicsSwathMSCombinedSampleMetadata,
-    'sepsis-proteomics-swathms-pool': SepsisProteomicsSwathMSPoolMetadata,
-    'sepsis-proteomics-analysed': SepsisProteomicsAnalysedMetadata,
-    'sepsis-proteomics-proteindatabase': SepsisProteomicsProteinDatabaseMetadata,
-    'wheat-cultivars': WheatCultivarsMetadata,  # the entire wheat cultivars project
-    'wheat-pathogens-genomes': WheatPathogensGenomesMetadata,  # the first half of wheat pathogens
-    'stemcells-transcriptome': StemcellsTranscriptomeMetadata,
-    'stemcells-smallrna': StemcellsSmallRNAMetadata,
-    'stemcells-singlecellrnaseq': StemcellsSingleCellRNASeqMetadata,
-    'stemcells-metabolomics': StemcellsMetabolomicsMetadata,
-    'stemcells-proteomics': StemcellsProteomicsMetadata,
-    'stemcells-proteomics-pool': StemcellsProteomicsPoolMetadata,
-    'stemcells-proteomics-analysed': StemcellsProteomicsAnalysedMetadata,
-    'stemcells-metabolomics-analysed': StemcellsMetabolomicsAnalysedMetadata,
-    'mm-genomics-amplicons-16s': MarineMicrobesGenomicsAmplicons16SMetadata,
-    'mm-genomics-amplicons-a16s': MarineMicrobesGenomicsAmpliconsA16SMetadata,
-    'mm-genomics-amplicons-18s': MarineMicrobesGenomicsAmplicons18SMetadata,
-    'mm-genomics-amplicons-16s-control': MarineMicrobesGenomicsAmplicons16SControlMetadata,
-    'mm-genomics-amplicons-a16s-control': MarineMicrobesGenomicsAmpliconsA16SControlMetadata,
-    'mm-genomics-amplicons-18s-control': MarineMicrobesGenomicsAmplicons18SControlMetadata,
-    'mm-metagenomics': MarineMicrobesMetagenomicsMetadata,
-    'mm-metatranscriptome': MarineMicrobesMetatranscriptomeMetadata,
-    'base-amplicons': BASEAmpliconsMetadata,
-    'base-amplicons-control': BASEAmpliconsControlMetadata,
-    'base-metagenomics': BASEMetagenomicsMetadata,
-    'base-site-images': BASESiteImagesMetadata,
-    'omg-10xraw-agrf': OMG10XRawIlluminaMetadata,
-    'omg-10xraw': OMG10XRawMetadata,
-    'omg-10xprocessed': OMG10XProcessedIlluminaMetadata,
-    'omg-exoncapture': OMGExonCaptureMetadata,
-    'omg-genomics-hiseq': OMGGenomicsHiSeqMetadata,
-    # stubs
-    # 'barcode': BarcodeMetadata,
-    # 'melanoma': MelanomaMetadata,
-    # 'wheat-pathogens-transcript': WheatPathogensTranscriptMetadata,
-}
+    def __init__(self):
+        self.metadata_info = self._build_metadata_info()
+
+    def _build_metadata_info(self):
+        info = []
+        slugs = set()
+        for project_name, classes in ProjectInfo.projects.items():
+            for cls in classes:
+                class_info = dict((t, getattr(cls, t, None)) for t in ('omics', 'technology'))
+                class_info.update(dict((t, getattr(cls, t, False)) for t in ('analysed', 'pool')))
+                class_info['project'] = project_name
+                class_info['cls'] = cls
+                class_info['slug'] = slug = self._make_slug(class_info)
+                # ensure that 'slug' is unique
+                assert(slug not in slugs)
+                slugs.add(slug)
+                info.append(class_info)
+        return info
+
+    def _make_slug(self, class_info):
+        nm_parts = [class_info[t] for t in ('project', 'omics', 'technology')]
+        if class_info['analysed']:
+            nm_parts.append('analysed')
+        if class_info['pool']:
+            nm_parts.append('pool')
+        return '-'.join(filter(None, nm_parts))
+
+    def cli_options(self):
+        return dict((t['slug'], t['cls']) for t in self.metadata_info)
