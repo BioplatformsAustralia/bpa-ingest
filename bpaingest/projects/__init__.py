@@ -39,6 +39,7 @@ from .stemcells.ingest import (
     StemcellsMetabolomicsAnalysedMetadata)
 from .wheat_cultivars.ingest import WheatCultivarsMetadata
 from .wheat_pathogens_genomes.ingest import WheatPathogensGenomesMetadata
+from ..organizations import ORGANIZATIONS
 from .omg.ingest import (
     OMG10XProcessedIlluminaMetadata,
     OMG10XRawIlluminaMetadata,
@@ -117,7 +118,7 @@ class ProjectInfo:
         slugs = set()
         for project_name, classes in ProjectInfo.projects.items():
             for cls in classes:
-                class_info = dict((t, getattr(cls, t, None)) for t in ('omics', 'technology'))
+                class_info = dict((t, getattr(cls, t, None)) for t in ('omics', 'technology', 'organization'))
                 class_info.update(dict((t, getattr(cls, t, False)) for t in ('analysed', 'pool')))
                 class_info['project'] = project_name
                 class_info['cls'] = cls
