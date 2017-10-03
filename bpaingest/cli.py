@@ -1,41 +1,98 @@
-from __future__ import print_function
+
 
 import argparse
-import ckanapi
 import sys
-from .util import make_registration_decorator
-from .bpa import create_bpa
-from .wheatcultivars import ingest as ingest_wheatcultivars
+import os
+
+from .util import make_registration_decorator, make_ckan_api
+from .sync import sync_metadata
+from .schema import generate_schemas
+from .ops import print_accounts, make_organization
+from .dump import dump_state
+from .util import make_logger
+from .genhash import genhash as genhash_fn
+from .projects import ProjectInfo
+from .organizations import ORGANIZATIONS
+from .metadata import DownloadMetadata
 
 
+logger = make_logger(__name__)
 register_command, command_fns = make_registration_decorator()
+project_info = ProjectInfo()
+project_cli_options = project_info.cli_options()
 
 
 @register_command
-def bootstrap(ckan, args):
+def bootstrap(args):
     "bootstrap basic organisation data"
-    create_bpa(ckan)
+    ckan = make_ckan_api(args)
+    for organization in ORGANIZATIONS:
+        make_organization(ckan, organization)
+
+
+def setup_ckan(subparser):
+    subparser.add_argument('-k', '--api-key', required=True, help='CKAN API Key')
+    subparser.add_argument('-u', '--ckan-url', required=True, help='CKAN base url')
+
+
+def setup_sync(subparser):
+    setup_ckan(subparser)
+    subparser.add_argument('project_name', choices=sorted(project_cli_options.keys()), help='path to metadata')
+    subparser.add_argument('--uploads', type=int, default=4, help='number of parallel uploads')
+    subparser.add_argument('--metadata-only', '-m', action='store_const', const=True, default=False, help='set metadata only, no data uploads')
+    subparser.add_argument('--skip-resource-checks', action='store_const', const=True, default=False, help='skip resource checks')
+
+
+def setup_hash(subparser):
+    setup_ckan(subparser)
+    subparser.add_argument('project_name', choices=sorted(project_cli_options.keys()), help='path to metadata')
+    subparser.add_argument('mirror_path', help='path to locally mounted mirror', nargs='?', default=os.environ.get('MIRROR_PATH'))
+
+
+def setup_dump(subparser):
+    subparser.add_argument('filename', help='output target')
 
 
 @register_command
-def wheat_cultivars(ckan, args):
-    "download and ingest wheat7a metadata"
-    ingest_wheatcultivars(ckan, args.path)
+def sync(args):
+    """sync a project"""
+    ckan = make_ckan_api(args)
+    with DownloadMetadata(project_cli_options[args.project_name], path=args.download_path) as dlmeta:
+        sync_metadata(ckan, dlmeta.meta, dlmeta.auth, args.uploads, not args.metadata_only, not args.skip_resource_checks)
+        print_accounts()
 
 
-def setup_metadata_path(subparser):
-    subparser.add_argument('path', help='path to metadata')
-wheat_cultivars.setup = setup_metadata_path
+@register_command
+def makeschema(args):
+    generate_schemas(args)
 
 
-def make_ckan_api(args):
-    ckan = ckanapi.RemoteCKAN(args.ckan_url, apikey=args.api_key)
-    return ckan
+@register_command
+def dumpstate(args):
+    dump_state(args)
+
+
+@register_command
+def genhash(args):
+    ckan = make_ckan_api(args)
+    """
+    verify MD5 sums for a local (filesystem mounted) mirror of the BPA
+    data, and generate expected E-Tag and SHA256 values.
+    """
+    with DownloadMetadata(project_cli_options[args.project_name], path=args.download_path) as dlmeta:
+        genhash_fn(ckan, dlmeta.meta, args.mirror_path, num_threads=4)
+        print_accounts()
+
+
+sync.setup = setup_sync
+bootstrap.setup = setup_ckan
+dumpstate.setup = setup_dump
+genhash.setup = setup_hash
 
 
 def version():
     import pkg_resources
-    version = pkg_resources.require("wrfy")[0].version
+    version = pkg_resources.require("bpaingest")[0].version
     print('''\
 bpa-ingest, version %s
 
@@ -59,15 +116,8 @@ def commands():
 
 def main():
     parser = argparse.ArgumentParser()
-    parser.add_argument(
-        '--version', action='store_true',
-        help='print version and exit')
-    parser.add_argument(
-        '-k', '--api-key', required=True,
-        help='CKAN API Key')
-    parser.add_argument(
-        '-u', '--ckan-url', required=True,
-        help='CKAN base url')
+    parser.add_argument('--version', action='store_true', help='print version and exit')
+    parser.add_argument('-p', '--download-path', required=False, default=None, help='CKAN base url')
 
     subparsers = parser.add_subparsers(dest='name')
     for name, fn, setup_fn, help_text in sorted(commands()):
@@ -80,5 +130,4 @@ def main():
         version()
     if 'func' not in args:
         usage(parser)
-    ckan = make_ckan_api(args)
-    args.func(ckan, args)
+    args.func(args)

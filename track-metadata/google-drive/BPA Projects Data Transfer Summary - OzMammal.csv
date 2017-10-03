@@ -1,0 +1,11 @@
+Sequencing facility,Date of transfer,Description,Folder name,Data type,Date of transfer to archive,File Count,CCG JIRA Ticket,Download
+AGRF,29/03/2017,10X Genomics- 102.100.100/40065 ,170314_D00626_0269_AHFMKJBCXY,Raw Illumina Run Folder,28/04/2017,1,BPAOPS-119,https://data.bioplatforms.com/dataset/bpa-omg-10x-raw-illumina-102_100_100_40065-hfmkjbcxy
+AGRF,29/03/2017,10X Genomics- 102.100.100/40065 ,170314_D00626_0270_BHCGFNBCXY,Raw Illumina Run Folder,28/04/2017,1,BPAOPS-120,https://data.bioplatforms.com/dataset/bpa-omg-10x-raw-illumina-102_100_100_40065-hcgfnbcxy
+AGRF,29/03/2017,10X Genomics- 102.100.100/40065 ,HCGFNBCXY,Illumina FASTQ,28/04/2017,1,BPAOPS-121,https://data.bioplatforms.com/dataset/bpa-omg-10x-processed-illumina-102_100_100_40065-hcgfnbcxy
+AGRF,29/03/2017,10X Genomics- 102.100.100/40065 ,HFMKJBCXY,Illumina FASTQ,28/04/2017,1,BPAOPS-122,https://data.bioplatforms.com/dataset/bpa-omg-10x-processed-illumina-102_100_100_40065-hfmkjbcxy
+BRF,05/05/2017,HiSeq 2500 100bp PE - exon capture pool 102.100.100/40067 (samples 102.100.100/40069-40124),SN877_0482_AMacDonald_JCSMR_Marsupial_gDNA_exon_capture,Illumina FASTQ,15/05/2017,113,BPAOPS-135,https://data.bioplatforms.com/organization/bpa-omg?q=%22BPAOPS-135%22&sort=score+desc%2C+metadata_modified+desc
+UNSW,29/6/17,HiSeq XTen 150bp PE 102.100.100/40066,20170629_UNSW_BPA_OMG_HGTV5ALXX,Illumina FASTQ,06/07/2017,2,BPAOPS-214,https://data.bioplatforms.com/dataset/bpa-omg-genomics-hiseq-102_100_100_40066-hgtv5alxx
+UNSW,20/7/17,HiSeq XTen 150bp PE 102.100.100/40128,20170719_UNSW_BPA_OMG_H5HHCALXX,Illumina FASTQ,06/07/2017,2,BPAOPS-213,https://data.bioplatforms.com/dataset/bpa-omg-genomics-hiseq-102_100_100_40066-hhfc5alxx
+UNSW,20/7/17,HiSeq XTen 150bp PE 102.100.100/40129,20170719_UNSW_BPA_OMG_H5HHCALXX,Illumina FASTQ,21/07/2017,8,BPAOPS-260,"https://data.bioplatforms.com/dataset/bpa-omg-genomics-hiseq-102_100_100_40129-h5hhcalxx
+https://data.bioplatforms.com/dataset/bpa-omg-genomics-hiseq-102_100_100_40129-h5hhcalxx"
+UNSW,07/08/2017,10X Genomics- 102.100.100/40066,40066_OMG_UNSW_10X_HJJCWALXX,Illumina FASTQ and SuperNova Run Files,17/08/2017,4,BPAOPS-283,

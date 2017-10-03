@@ -1,0 +1,54 @@
+Sequencing facility,Date of transfer,Description,Data type,Folder name,Date of transfer to archive,Notes,CCG JIRA Ticket,Download
+AGRF,02/07/2015,MM,fastQ,20150702_AGRF_BPA_MM_H3VJJBCXX,02/07/2015,24 files,BRLOPS-663,https://downloads-qcif.bioplatforms.com/bpa/marine_microbes/raw/metagenomics/agrf/BRLOPS-663/
+UNSW,22/07/2015,MM-Pilot,MiSeq 16S,2015_UNSW_BPA_MM_16S_AFGB7,23/07/2015,,BRLOPS-681,https://downloads-qcif.bioplatforms.com/bpa/marine_microbes/raw/amplicons/16s/ramaciotti/BRLOPS-681/
+UNSW,22/07/2015,MM-Pilot,MiSeq 18S,2015_UNSW_BPA_MM_18S_AGGNB,23/07/2015,,BRLOPS-682,https://downloads-qcif.bioplatforms.com/bpa/marine_microbes/raw/amplicons/18s/ramaciotti/BRLOPS-682/
+UNSW,05/08/2015,MM-Pilot,MiSeq A16S,20150805_UNSW_BPA_MM_A16S_AG27L,05/08/2015,,BRLOPS-690,https://downloads-qcif.bioplatforms.com/bpa/marine_microbes/raw/amplicons/a16s/ramaciotti/BRLOPS-690/
+UNSW,15/02/2016,MM,16S,20160215_UNSW_BPA_MM_AL1HY,15/02/2016,,BRLOPS-768,https://downloads-qcif.bioplatforms.com/bpa/marine_microbes/raw/amplicons/16s/ramaciotti/BRLOPS-768/
+UNSW,15/02/2016,MM,16S,20160215_UNSW_BPA_MM_AL0YY,15/02/2016,,BRLOPS-767,https://downloads-qcif.bioplatforms.com/bpa/marine_microbes/raw/amplicons/16s/ramaciotti/BRLOPS-767/
+UNSW,15/02/2016,MM,A16S,20160215_UNSW_BPA_MM_ALEKG,16/02/2016,,BRLOPS-770,https://downloads-qcif.bioplatforms.com/bpa/marine_microbes/raw/amplicons/a16s/ramaciotti/BRLOPS-770/
+UNSW,15/02/2016,MM,A16S,20160215_UNSW_BPA_MM_ALEKW,15/02/2016,,BRLOPS-769,https://downloads-qcif.bioplatforms.com/bpa/marine_microbes/raw/amplicons/a16s/ramaciotti/BRLOPS-769/
+UNSW,14/04/2016,MM,metagenome,20160314_UNSW_BPA_MM_HKL5CBCXX,15/04/2016,,BRLOPS-792,https://downloads-qcif.bioplatforms.com/bpa/marine_microbes/raw/metagenomics/ramaciotti/BRLOPS-792/
+UNSW,14/04/2016,MM,metagenome,20160321_UNSW_BPA_MM_HL7NGBCXX,18/04/2016,,BRLOPS-793,https://downloads-qcif.bioplatforms.com/bpa/marine_microbes/raw/metagenomics/ramaciotti/BRLOPS-793/
+UNSW,14/04/2016,MM,metagenome,20160324_UNSW_BPA_MM_HMJH2BCXX,18/04/2016,,BRLOPS-795,https://downloads-qcif.bioplatforms.com/bpa/marine_microbes/raw/metagenomics/ramaciotti/BRLOPS-795/
+UNSW,12/05/2016,MM,metagenome,20160412_UNSW_BPA_MM_HM7K2BCXX,02/06/2016,,BRLOPS-816,https://downloads-qcif.bioplatforms.com/bpa/marine_microbes/raw/metagenomics/ramaciotti/BRLOPS-816/
+UNSW,12/05/2016,MM,metagenome,20160421_UNSW_BPA_MM_HMTW3BCXX,02/06/2016,,BRLOPS-817,https://downloads-qcif.bioplatforms.com/bpa/marine_microbes/raw/metagenomics/ramaciotti/BRLOPS-817/
+UNSW,12/05/2016,MM,metagenome,20160421_UNSW_BPA_MM_HMTKGBCXX,02/06/2016,,BRLOPS-818,https://downloads-qcif.bioplatforms.com/bpa/marine_microbes/raw/metagenomics/ramaciotti/BRLOPS-818/
+UNSW,27/05/2016,MM,16S,20160527_UNSW_BPA_MM_APE54,30/05/2016,,BRLOPS-813,https://downloads-qcif.bioplatforms.com/bpa/marine_microbes/raw/amplicons/16s/ramaciotti/BRLOPS-813/
+UNSW,27/05/2016,MM,A16S,20160527_UNSW_BPA_MM_AP3JE,30/05/2016,,BRLOPS-814,https://downloads-qcif.bioplatforms.com/bpa/marine_microbes/raw/amplicons/a16s/ramaciotti/BRLOPS-814/
+UNSW,17/06/2016,MM,A16S,20160617_UNSW_BPA_MM_ARVTL,18/06/2016,,BRLOPS-827,https://downloads-qcif.bioplatforms.com/bpa/marine_microbes/raw/amplicons/a16s/ramaciotti/BRLOPS-827/
+UNSW,17/06/2016,MM,18S,20160617_UNSW_BPA_MM_APK6N,18/06/2016,,BRLOPS-828,https://downloads-qcif.bioplatforms.com/bpa/marine_microbes/raw/amplicons/18s/ramaciotti/BRLOPS-828/
+UNSW,17/06/2016,MM,18S,20160617_UNSW_BPA_MM_APG8A,18/06/2016,,BRLOPS-829,https://downloads-qcif.bioplatforms.com/bpa/marine_microbes/raw/amplicons/18s/ramaciotti/BRLOPS-829/
+UNSW,12/07/2016,MM,18S,20160712_UNSW_BPA_MM_APDWL,12/07/2016,,BRLOPS-834,https://downloads-qcif.bioplatforms.com/bpa/marine_microbes/raw/amplicons/18s/ramaciotti/BRLOPS-834/
+UNSW,12/07/2016,MM,16S,20160712_UNSW_BPA_MM_AT785,12/07/2016,,BRLOPS-835,https://downloads-qcif.bioplatforms.com/bpa/marine_microbes/raw/amplicons/16s/ramaciotti/BRLOPS-835/
+UNSW,20/07/2016,MM,A16S,20160720_UNSW_BPA_MM_AT119,26/07/2016,,BRLOPS-837,https://downloads-qcif.bioplatforms.com/bpa/marine_microbes/raw/amplicons/a16s/ramaciotti/BRLOPS-837/
+UNSW,25/08/2016,MM,A16S,20160825_UNSW_BPA_MM_ATN3N,30/08/2016,,BRLOPS-851,https://downloads-qcif.bioplatforms.com/bpa/marine_microbes/raw/amplicons/a16s/ramaciotti/BRLOPS-851/
+UNSW,25/08/2016,MM,A16S,20160825_UNSW_BPA_MM_AW0LC,09/09/2016,,BRLOPS-853,https://downloads-qcif.bioplatforms.com/bpa/marine_microbes/raw/amplicons/a16s/ramaciotti/BRLOPS-853/
+UNSW,25/08/2016,MM,16S,20160825_UNSW_BPA_MM_ATNUK,14/09/2016,,BPAOPS-7,https://downloads-qcif.bioplatforms.com/bpa/marine_microbes/raw/amplicons/16s/ramaciotti/BPAOPS-7/
+UNSW,25/08/2016,MM,16S,20160825_UNSW_BPA_MM_AW0LM,15/09/2016,,BPAOPS-8,https://downloads-qcif.bioplatforms.com/bpa/marine_microbes/raw/amplicons/16s/ramaciotti/BPAOPS-8/
+UNSW,25/08/2016,MM,18S,20160825_UNSW_BPA_MM_ATNVT,15/09/2016,,BPAOPS-9,https://downloads-qcif.bioplatforms.com/bpa/marine_microbes/raw/amplicons/18s/ramaciotti/BPAOPS-9/
+UNSW,25/08/2016,MM,18S,20160825_UNSW_BPA_MM_AUGKE,15/09/2016,,BPAOPS-10,https://downloads-qcif.bioplatforms.com/bpa/marine_microbes/raw/amplicons/18s/ramaciotti/BPAOPS-10/
+UNSW,27/09/2016,MM,16S,20160927_UNSW_BPA_MM_AUWLK,27/09/2016,,BPAOPS-18,https://downloads-qcif.bioplatforms.com/bpa/marine_microbes/raw/amplicons/16s/ramaciotti/BPAOPS-18/
+UNSW,17/10/2016,MM,18S,20161017_UNSW_BPA_MM_AWMVL,18/10/2016,,BPAOPS-33,https://downloads-qcif.bioplatforms.com/bpa/marine_microbes/raw/amplicons/18s/ramaciotti/BPAOPS-33/
+AGRF,20/10/2016,MM,fastQ,20161020_AGRF_BPA_MM_H3J7YBCXY,20/10/2016,,BPAOPS-40,https://downloads-qcif.bioplatforms.com/bpa/marine_microbes/raw/metagenomics/agrf/BPAOPS-40/
+AGRF,20/10/2016,MM,fastQ,20161020_AGRF_BPA_MM_H3KWTBCXY,20/10/2016,,BPAOPS-40,https://downloads-qcif.bioplatforms.com/bpa/marine_microbes/raw/metagenomics/agrf/BPAOPS-40/
+AGRF,20/10/2016,MM,fastQ,20161020_AGRF_BPA_MM_H3KWWBCXY,20/10/2016,,BPAOPS-40,https://downloads-qcif.bioplatforms.com/bpa/marine_microbes/raw/metagenomics/agrf/BPAOPS-40/
+AGRF,20/10/2016,MM,fastQ,20161020_AGRF_BPA_MM_H3L2JBCXY,20/10/2016,,BPAOPS-40,https://downloads-qcif.bioplatforms.com/bpa/marine_microbes/raw/metagenomics/agrf/BPAOPS-40/
+AGRF,21/10/2016,MM,fastQ,20161021_AGRF_BPA_MM_CA5YNANXX,21/10/2016,,BPAOPS-38,https://downloads-qcif.bioplatforms.com/bpa/marine_microbes/raw/metatranscriptome/agrf/BPAOPS-38/
+UNSW,01/12/2016,MM,16S,20161201_UNSW_BPA_MM_AW0AY,1/12/2016,,BPAOPS-64,https://downloads-qcif.bioplatforms.com/bpa/marine_microbes/raw/amplicons/16s/ramaciotti/BPAOPS-64/
+UNSW,01/12/2016,MM,16S,20161201_UNSW_BPA_MM_AYBVB,1/12/2016,,BPAOPS-65,https://downloads-qcif.bioplatforms.com/bpa/marine_microbes/raw/amplicons/16s/ramaciotti/BPAOPS-65/
+UNSW,19/12/2016,MM,16S,20161219_UNSW_BPA_MM_AYP3F,19/12/2016,,BPAOPS-70,https://downloads-qcif.bioplatforms.com/bpa/marine_microbes/raw/amplicons/16s/ramaciotti/BPAOPS-70/
+UNSW,12/04/2017,MM,A16S,20170412_UNSW_BPA_MM_B862T,12/04/2017,,BPAOPS-113,https://downloads-qcif.bioplatforms.com/bpa/marine_microbes/raw/amplicons/a16s/ramaciotti/BPAOPS-113/
+UNSW,12/04/2017,MM,18S,20170412_UNSW_BPA_MM_B54D6,12/04/2017,,BPAOPS-114,https://downloads-qcif.bioplatforms.com/bpa/marine_microbes/raw/amplicons/18s/ramaciotti/BPAOPS-114/
+UNSW,10/05/2017,MM,16S,20170510_UNSW_BPA_MM_B8R63,10/05/2017,,BPAOPS-155,https://downloads-qcif.bioplatforms.com/bpa/marine_microbes/raw/amplicons/16s/ramaciotti/BPAOPS-155/
+UNSW,08/06/2017,MM,16S,20170608_UNSW_BPA_MM_B9YMG,09/06/2017,,BPAOPS-200,https://downloads-qcif.bioplatforms.com/bpa/marine_microbes/raw/amplicons/16s/ramaciotti/BPAOPS-200/
+UNSW,08/06/2017,MM,16S,20170608_UNSW_BPA_MM_BB2NF,09/06/2017,,BPAOPS-201,https://downloads-qcif.bioplatforms.com/bpa/marine_microbes/raw/amplicons/16s/ramaciotti/BPAOPS-201/
+UNSW,04/07/2017,MM,A16S,20170704_UNSW_BPA_MM_B9YMF,05/07/2015,,BPAOPS-215,https://downloads-qcif.bioplatforms.com/bpa/marine_microbes/raw/amplicons/a16s/ramaciotti/BPAOPS-215/
+UNSW,04/07/2017,MM,A16S,20170704_UNSW_BPA_MM_BBM5C,05/07/2015,,BPAOPS-216,https://downloads-qcif.bioplatforms.com/bpa/marine_microbes/raw/amplicons/a16s/ramaciotti/BPAOPS-216/
+UNSW,04/07/2017,MM,18S,20170704_UNSW_BPA_MM_B9JCN,05/07/2015,,BPAOPS-219,https://downloads-qcif.bioplatforms.com/bpa/marine_microbes/raw/amplicons/18s/ramaciotti/BPAOPS-219/
+UNSW,04/07/2017,MM,18S,20170704_UNSW_BPA_MM_B87L6,05/07/2015,,BPAOPS-220,https://downloads-qcif.bioplatforms.com/bpa/marine_microbes/raw/amplicons/18s/ramaciotti/BPAOPS-220/
+UNSW,12/07/2017,MM,metagenome,20170608_UNSW_BPA_MM_HMMJFBCXY,17/07/2017,,BPAOPS-227,https://downloads-qcif.bioplatforms.com/bpa/marine_microbes/raw/metagenomics/ramaciotti/BPAOPS-227/
+UNSW,12/07/2017,MM,metagenome,20170608_UNSW_BPA_MM_HNFW3BCXY,17/07/2017,,BPAOPS-228,https://downloads-qcif.bioplatforms.com/bpa/marine_microbes/raw/metagenomics/ramaciotti/BPAOPS-228/
+UNSW,12/07/2017,MM,metagenome,20170630_UNSW_BPA_MM_HTCGWBCXY,17/07/2017,,BPAOPS-229,https://downloads-qcif.bioplatforms.com/bpa/marine_microbes/raw/metagenomics/ramaciotti/BPAOPS-229/
+UNSW,12/07/2017,MM,metagenome,20170630_UNSW_BPA_MM_HTNFCBCXY,17/07/2017,,BPAOPS-230,https://downloads-qcif.bioplatforms.com/bpa/marine_microbes/raw/metagenomics/ramaciotti/BPAOPS-230/
+UNSW,12/07/2017,MM,metagenome,20170530_UNSW_BPA_MM_HKGL3BCXY,17/07/2017,,BPAOPS-231,https://downloads-qcif.bioplatforms.com/bpa/marine_microbes/raw/metagenomics/ramaciotti/BPAOPS-231/
+UNSW,14/07/2017,MM,metagenome,20170530_UNSW_BPA_MM_HM35MBCXY,17/07/2017,,BPAOPS-233,https://downloads-qcif.bioplatforms.com/bpa/marine_microbes/raw/metagenomics/ramaciotti/BPAOPS-233/

@@ -1,0 +1,141 @@
+5 digit BPA ID,Data type,Taxon_OR_organism,Strain_OR_isolate,Serovar,Growth Media,Replicate,Omics,Analytical platform,Facility,Work order #,Contextual Data Submission Date,Sample submission date,Data generated,Archive Ingestion Date,Archive ID,id,curation_url,in_data_portal,last_modified
+102.100.100.50625,Main dataset,Staphylococcus aureus,BPH2986,,Pooled sera,6,Proteomics,SWATH-MS,APAF,,2017-07-31,2017-07-31,0,,,142,,0,2017-08-25 03:12:12
+102.100.100.50624,Main dataset,Staphylococcus aureus,BPH2986,,Pooled sera,5,Proteomics,SWATH-MS,APAF,,2017-07-31,2017-07-31,0,,,141,,0,2017-08-25 03:12:12
+102.100.100.50623,Main dataset,Staphylococcus aureus,BPH2986,,Pooled sera,4,Proteomics,SWATH-MS,APAF,,2017-07-31,2017-07-31,0,,,140,,0,2017-08-25 03:12:12
+102.100.100.50622,Main dataset,Staphylococcus aureus,BPH2986,,Pooled sera,3,Proteomics,SWATH-MS,APAF,,2017-07-31,2017-07-31,0,,,139,,0,2017-08-25 03:12:12
+102.100.100.50621,Main dataset,Staphylococcus aureus,BPH2986,,Pooled sera,2,Proteomics,SWATH-MS,APAF,,2017-07-31,2017-07-31,0,,,138,,0,2017-08-25 03:12:12
+102.100.100.50634,Main dataset,Staphylococcus aureus,BPH2986,,Pooled sera,1,Proteomics,SWATH-MS,APAF,,2017-07-31,2017-07-31,0,,,137,,0,2017-08-25 03:12:12
+102.100.100.50619,Main dataset,Staphylococcus aureus,BPH2986,,RPMI,6,Proteomics,SWATH-MS,APAF,,2017-07-31,2017-07-31,0,,,136,,0,2017-08-25 03:12:12
+102.100.100.50618,Main dataset,Staphylococcus aureus,BPH2986,,RPMI,5,Proteomics,SWATH-MS,APAF,,2017-07-31,2017-07-31,0,,,135,,0,2017-08-25 03:12:12
+102.100.100.50617,Main dataset,Staphylococcus aureus,BPH2986,,RPMI,4,Proteomics,SWATH-MS,APAF,,2017-07-31,2017-07-31,0,,,134,,0,2017-08-25 03:12:12
+102.100.100.50616,Main dataset,Staphylococcus aureus,BPH2986,,RPMI,3,Proteomics,SWATH-MS,APAF,,2017-07-31,2017-07-31,0,,,133,,0,2017-08-25 03:12:12
+102.100.100.50615,Main dataset,Staphylococcus aureus,BPH2986,,RPMI,2,Proteomics,SWATH-MS,APAF,,2017-07-31,2017-07-31,0,,,132,,0,2017-08-25 03:12:12
+102.100.100.50614,Main dataset,Staphylococcus aureus,BPH2986,,RPMI,1,Proteomics,SWATH-MS,APAF,,2017-07-31,2017-07-31,0,,,131,,0,2017-08-25 03:12:12
+102.100.100.50613,Main dataset,Staphylococcus aureus,BPH2947,,Pooled sera,6,Proteomics,SWATH-MS,APAF,,2017-07-31,2017-07-31,0,,,130,,0,2017-08-25 03:12:12
+102.100.100.50612,Main dataset,Staphylococcus aureus,BPH2947,,Pooled sera,5,Proteomics,SWATH-MS,APAF,,2017-07-31,2017-07-31,0,,,129,,0,2017-08-25 03:12:12
+102.100.100.50611,Main dataset,Staphylococcus aureus,BPH2947,,Pooled sera,4,Proteomics,SWATH-MS,APAF,,2017-07-31,2017-07-31,0,,,128,,0,2017-08-25 03:12:12
+102.100.100.50610,Main dataset,Staphylococcus aureus,BPH2947,,Pooled sera,3,Proteomics,SWATH-MS,APAF,,2017-07-31,2017-07-31,0,,,127,,0,2017-08-25 03:12:12
+102.100.100.50609,Main dataset,Staphylococcus aureus,BPH2947,,Pooled sera,2,Proteomics,SWATH-MS,APAF,,2017-07-31,2017-07-31,0,,,126,,0,2017-08-25 03:12:12
+102.100.100.50633,Main dataset,Staphylococcus aureus,BPH2947,,Pooled sera,1,Proteomics,SWATH-MS,APAF,,2017-07-31,2017-07-31,0,,,125,,0,2017-08-25 03:12:12
+102.100.100.50607,Main dataset,Staphylococcus aureus,BPH2947,,RPMI,6,Proteomics,SWATH-MS,APAF,,2017-07-31,2017-07-31,0,,,124,,0,2017-08-25 03:12:12
+102.100.100.50606,Main dataset,Staphylococcus aureus,BPH2947,,RPMI,5,Proteomics,SWATH-MS,APAF,,2017-07-31,2017-07-31,0,,,123,,0,2017-08-25 03:12:12
+102.100.100.50605,Main dataset,Staphylococcus aureus,BPH2947,,RPMI,4,Proteomics,SWATH-MS,APAF,,2017-07-31,2017-07-31,0,,,122,,0,2017-08-25 03:12:12
+102.100.100.50604,Main dataset,Staphylococcus aureus,BPH2947,,RPMI,3,Proteomics,SWATH-MS,APAF,,2017-07-31,2017-07-31,0,,,121,,0,2017-08-25 03:12:12
+102.100.100.50603,Main dataset,Staphylococcus aureus,BPH2947,,RPMI,2,Proteomics,SWATH-MS,APAF,,2017-07-31,2017-07-31,0,,,120,,0,2017-08-25 03:12:12
+102.100.100.50602,Main dataset,Staphylococcus aureus,BPH2947,,RPMI,1,Proteomics,SWATH-MS,APAF,,2017-07-31,2017-07-31,0,,,119,,0,2017-08-25 03:12:12
+102.100.100.50601,Main dataset,Staphylococcus aureus,BPH2900,,Pooled sera,6,Proteomics,SWATH-MS,APAF,,2017-07-31,2017-07-31,0,,,118,,0,2017-08-25 03:12:12
+102.100.100.50600,Main dataset,Staphylococcus aureus,BPH2900,,Pooled sera,5,Proteomics,SWATH-MS,APAF,,2017-07-31,2017-07-31,0,,,117,,0,2017-08-25 03:12:12
+102.100.100.50599,Main dataset,Staphylococcus aureus,BPH2900,,Pooled sera,4,Proteomics,SWATH-MS,APAF,,2017-07-31,2017-07-31,0,,,116,,0,2017-08-25 03:12:12
+102.100.100.50598,Main dataset,Staphylococcus aureus,BPH2900,,Pooled sera,3,Proteomics,SWATH-MS,APAF,,2017-07-31,2017-07-31,0,,,115,,0,2017-08-25 03:12:12
+102.100.100.50597,Main dataset,Staphylococcus aureus,BPH2900,,Pooled sera,2,Proteomics,SWATH-MS,APAF,,2017-07-31,2017-07-31,0,,,114,,0,2017-08-25 03:12:12
+102.100.100.50596,Main dataset,Staphylococcus aureus,BPH2900,,Pooled sera,1,Proteomics,SWATH-MS,APAF,,2017-07-31,2017-07-31,0,,,113,,0,2017-08-25 03:12:12
+102.100.100.50595,Main dataset,Staphylococcus aureus,BPH2900,,RPMI,6,Proteomics,SWATH-MS,APAF,,2017-07-31,2017-07-31,0,,,112,,0,2017-08-25 03:12:12
+102.100.100.50594,Main dataset,Staphylococcus aureus,BPH2900,,RPMI,5,Proteomics,SWATH-MS,APAF,,2017-07-31,2017-07-31,0,,,111,,0,2017-08-25 03:12:12
+102.100.100.50593,Main dataset,Staphylococcus aureus,BPH2900,,RPMI,4,Proteomics,SWATH-MS,APAF,,2017-07-31,2017-07-31,0,,,110,,0,2017-08-25 03:12:12
+102.100.100.50592,Main dataset,Staphylococcus aureus,BPH2900,,RPMI,3,Proteomics,SWATH-MS,APAF,,2017-07-31,2017-07-31,0,,,109,,0,2017-08-25 03:12:12
+102.100.100.50591,Main dataset,Staphylococcus aureus,BPH2900,,RPMI,2,Proteomics,SWATH-MS,APAF,,2017-07-31,2017-07-31,0,,,108,,0,2017-08-25 03:12:12
+102.100.100.50590,Main dataset,Staphylococcus aureus,BPH2900,,RPMI,1,Proteomics,SWATH-MS,APAF,,2017-07-31,2017-07-31,0,,,107,,0,2017-08-25 03:12:12
+102.100.100.50589,Main dataset,Staphylococcus aureus,BPH2819,,Pooled sera,6,Proteomics,SWATH-MS,APAF,,2017-07-31,2017-07-31,0,,,106,,0,2017-08-25 03:12:12
+102.100.100.50588,Main dataset,Staphylococcus aureus,BPH2819,,Pooled sera,5,Proteomics,SWATH-MS,APAF,,2017-07-31,2017-07-31,0,,,105,,0,2017-08-25 03:12:12
+102.100.100.50587,Main dataset,Staphylococcus aureus,BPH2819,,Pooled sera,4,Proteomics,SWATH-MS,APAF,,2017-07-31,2017-07-31,0,,,104,,0,2017-08-25 03:12:12
+102.100.100.50586,Main dataset,Staphylococcus aureus,BPH2819,,Pooled sera,3,Proteomics,SWATH-MS,APAF,,2017-07-31,2017-07-31,0,,,103,,0,2017-08-25 03:12:12
+102.100.100.50585,Main dataset,Staphylococcus aureus,BPH2819,,Pooled sera,2,Proteomics,SWATH-MS,APAF,,2017-07-31,2017-07-31,0,,,102,,0,2017-08-25 03:12:12
+102.100.100.50632,Main dataset,Staphylococcus aureus,BPH2819,,Pooled sera,1,Proteomics,SWATH-MS,APAF,,2017-07-31,2017-07-31,0,,,101,,0,2017-08-25 03:12:12
+102.100.100.50583,Main dataset,Staphylococcus aureus,BPH2819,,RPMI,6,Proteomics,SWATH-MS,APAF,,2017-07-31,2017-07-31,0,,,100,,0,2017-08-25 03:12:12
+102.100.100.50582,Main dataset,Staphylococcus aureus,BPH2819,,RPMI,5,Proteomics,SWATH-MS,APAF,,2017-07-31,2017-07-31,0,,,99,,0,2017-08-25 03:12:12
+102.100.100.50581,Main dataset,Staphylococcus aureus,BPH2819,,RPMI,4,Proteomics,SWATH-MS,APAF,,2017-07-31,2017-07-31,0,,,98,,0,2017-08-25 03:12:12
+102.100.100.50580,Main dataset,Staphylococcus aureus,BPH2819,,RPMI,3,Proteomics,SWATH-MS,APAF,,2017-07-31,2017-07-31,0,,,97,,0,2017-08-25 03:12:12
+102.100.100.50579,Main dataset,Staphylococcus aureus,BPH2819,,RPMI,2,Proteomics,SWATH-MS,APAF,,2017-07-31,2017-07-31,0,,,96,,0,2017-08-25 03:12:12
+102.100.100.50578,Main dataset,Staphylococcus aureus,BPH2819,,RPMI,1,Proteomics,SWATH-MS,APAF,,2017-07-31,2017-07-31,0,,,95,,0,2017-08-25 03:12:12
+102.100.100.50577,Main dataset,Staphylococcus aureus,BPH2760,,Pooled sera,6,Proteomics,SWATH-MS,APAF,,2017-07-31,2017-07-31,0,,,94,,0,2017-08-25 03:12:12
+102.100.100.50576,Main dataset,Staphylococcus aureus,BPH2760,,Pooled sera,5,Proteomics,SWATH-MS,APAF,,2017-07-31,2017-07-31,0,,,93,,0,2017-08-25 03:12:12
+102.100.100.50575,Main dataset,Staphylococcus aureus,BPH2760,,Pooled sera,4,Proteomics,SWATH-MS,APAF,,2017-07-31,2017-07-31,0,,,92,,0,2017-08-25 03:12:12
+102.100.100.50574,Main dataset,Staphylococcus aureus,BPH2760,,Pooled sera,3,Proteomics,SWATH-MS,APAF,,2017-07-31,2017-07-31,0,,,91,,0,2017-08-25 03:12:12
+102.100.100.50573,Main dataset,Staphylococcus aureus,BPH2760,,Pooled sera,2,Proteomics,SWATH-MS,APAF,,2017-07-31,2017-07-31,0,,,90,,0,2017-08-25 03:12:12
+102.100.100.50572,Main dataset,Staphylococcus aureus,BPH2760,,Pooled sera,1,Proteomics,SWATH-MS,APAF,,2017-07-31,2017-07-31,0,,,89,,0,2017-08-25 03:12:12
+102.100.100.50571,Main dataset,Staphylococcus aureus,BPH2760,,RPMI,6,Proteomics,SWATH-MS,APAF,,2017-07-31,2017-07-31,0,,,88,,0,2017-08-25 03:12:12
+102.100.100.50570,Main dataset,Staphylococcus aureus,BPH2760,,RPMI,5,Proteomics,SWATH-MS,APAF,,2017-07-31,2017-07-31,0,,,87,,0,2017-08-25 03:12:12
+102.100.100.50569,Main dataset,Staphylococcus aureus,BPH2760,,RPMI,4,Proteomics,SWATH-MS,APAF,,2017-07-31,2017-07-31,0,,,86,,0,2017-08-25 03:12:12
+102.100.100.50568,Main dataset,Staphylococcus aureus,BPH2760,,RPMI,3,Proteomics,SWATH-MS,APAF,,2017-07-31,2017-07-31,0,,,85,,0,2017-08-25 03:12:12
+102.100.100.50567,Main dataset,Staphylococcus aureus,BPH2760,,RPMI,2,Proteomics,SWATH-MS,APAF,,2017-07-31,2017-07-31,0,,,84,,0,2017-08-25 03:12:12
+102.100.100.50566,Main dataset,Staphylococcus aureus,BPH2760,,RPMI,1,Proteomics,SWATH-MS,APAF,,2017-07-31,2017-07-31,0,,,83,,0,2017-08-25 03:12:12
+102.100.100.25980,Pilot,Klebsiella pneumoniae,AJ218,,Pooled sera,6,Proteomics,SWATH-MS,APAF,,2017-03-22,2017-03-22,0,,,81,,0,2017-03-30 09:44:28
+102.100.100.25979,Pilot,Klebsiella pneumoniae,AJ218,,Pooled sera,5,Proteomics,SWATH-MS,APAF,,2017-03-22,2017-03-22,0,,,80,,0,2017-03-30 09:44:28
+102.100.100.25978,Pilot,Klebsiella pneumoniae,AJ218,,Pooled sera,4,Proteomics,SWATH-MS,APAF,,2017-03-22,2017-03-22,0,,,79,,0,2017-03-30 09:44:28
+102.100.100.25977,Pilot,Klebsiella pneumoniae,AJ218,,Pooled sera,3,Proteomics,SWATH-MS,APAF,,2017-03-22,2017-03-22,0,,,78,,0,2017-03-30 09:44:28
+102.100.100.25976,Pilot,Klebsiella pneumoniae,AJ218,,Pooled sera,2,Proteomics,SWATH-MS,APAF,,2017-03-22,2017-03-22,0,,,77,,0,2017-03-30 09:44:28
+102.100.100.25975,Pilot,Klebsiella pneumoniae,AJ218,,Pooled sera,1,Proteomics,SWATH-MS,APAF,,2017-03-22,2017-03-22,0,,,76,,0,2017-03-30 09:44:28
+102.100.100.25974,Pilot,Klebsiella pneumoniae,AJ218,,RPMI,6,Proteomics,SWATH-MS,APAF,,2017-03-22,2017-03-22,0,,,75,,0,2017-03-30 09:44:28
+102.100.100.25973,Pilot,Klebsiella pneumoniae,AJ218,,RPMI,5,Proteomics,SWATH-MS,APAF,,2017-03-22,2017-03-22,0,,,74,,0,2017-03-30 09:44:28
+102.100.100.25972,Pilot,Klebsiella pneumoniae,AJ218,,RPMI,4,Proteomics,SWATH-MS,APAF,,2017-03-22,2017-03-22,0,,,73,,0,2017-03-30 09:44:28
+102.100.100.25971,Pilot,Klebsiella pneumoniae,AJ218,,RPMI,3,Proteomics,SWATH-MS,APAF,,2017-03-22,2017-03-22,0,,,72,,0,2017-03-30 09:44:28
+102.100.100.25970,Pilot,Klebsiella pneumoniae,AJ218,,RPMI,2,Proteomics,SWATH-MS,APAF,,2017-03-22,2017-03-22,0,,,71,,0,2017-03-30 09:44:28
+102.100.100.25969,Pilot,Klebsiella pneumoniae,AJ218,,RPMI,1,Proteomics,SWATH-MS,APAF,,2017-03-22,2017-03-22,0,,,70,,0,2017-03-30 09:44:28
+102.100.100.25968,Pilot,Klebsiella pneumoniae,KPC2,,Pooled sera,6,Proteomics,SWATH-MS,APAF,,2017-03-22,2017-03-22,0,,,69,,0,2017-03-30 09:44:28
+102.100.100.25967,Pilot,Klebsiella pneumoniae,KPC2,,Pooled sera,5,Proteomics,SWATH-MS,APAF,,2017-03-22,2017-03-22,0,,,68,,0,2017-03-30 09:44:28
+102.100.100.25966,Pilot,Klebsiella pneumoniae,KPC2,,Pooled sera,4,Proteomics,SWATH-MS,APAF,,2017-03-22,2017-03-22,0,,,67,,0,2017-03-30 09:44:28
+102.100.100.25965,Pilot,Klebsiella pneumoniae,KPC2,,Pooled sera,3,Proteomics,SWATH-MS,APAF,,2017-03-22,2017-03-22,0,,,66,,0,2017-03-30 09:44:28
+102.100.100.25964,Pilot,Klebsiella pneumoniae,KPC2,,Pooled sera,2,Proteomics,SWATH-MS,APAF,,2017-03-22,2017-03-22,0,,,65,,0,2017-03-30 09:44:27
+102.100.100.25963,Pilot,Klebsiella pneumoniae,KPC2,,Pooled sera,1,Proteomics,SWATH-MS,APAF,,2017-03-22,2017-03-22,0,,,64,,0,2017-03-30 09:44:27
+102.100.100.25962,Pilot,Klebsiella pneumoniae,KPC2,,RPMI,6,Proteomics,SWATH-MS,APAF,,2017-03-22,2017-03-22,0,,,63,,0,2017-03-30 09:44:27
+102.100.100.25961,Pilot,Klebsiella pneumoniae,KPC2,,RPMI,5,Proteomics,SWATH-MS,APAF,,2017-03-22,2017-03-22,0,,,62,,0,2017-03-30 09:44:27
+102.100.100.25960,Pilot,Klebsiella pneumoniae,KPC2,,RPMI,4,Proteomics,SWATH-MS,APAF,,2017-03-22,2017-03-22,0,,,61,,0,2017-03-30 09:44:27
+102.100.100.25959,Pilot,Klebsiella pneumoniae,KPC2,,RPMI,3,Proteomics,SWATH-MS,APAF,,2017-03-22,2017-03-22,0,,,60,,0,2017-03-30 09:44:27
+102.100.100.25958,Pilot,Klebsiella pneumoniae,KPC2,,RPMI,2,Proteomics,SWATH-MS,APAF,,2017-03-22,2017-03-22,0,,,59,,0,2017-03-30 09:44:27
+102.100.100.25957,Pilot,Klebsiella pneumoniae,KPC2,,RPMI,1,Proteomics,SWATH-MS,APAF,,2017-03-22,2017-03-22,0,,,58,,0,2017-03-30 09:44:27
+102.100.100.25956,Pilot,Staphylococcus aureus,BPH2760,,Pooled sera,6,Proteomics,SWATH-MS,APAF,,2017-03-22,2017-03-22,0,,,57,,0,2017-03-30 09:44:27
+102.100.100.25955,Pilot,Staphylococcus aureus,BPH2760,,Pooled sera,5,Proteomics,SWATH-MS,APAF,,2017-03-22,2017-03-22,0,,,56,,0,2017-03-30 09:44:27
+102.100.100.25954,Pilot,Staphylococcus aureus,BPH2760,,Pooled sera,4,Proteomics,SWATH-MS,APAF,,2017-03-22,2017-03-22,0,,,55,,1,2017-07-28 02:09:35
+102.100.100.25953,Pilot,Staphylococcus aureus,BPH2760,,Pooled sera,3,Proteomics,SWATH-MS,APAF,,2017-03-22,2017-03-22,0,,,54,,0,2017-03-30 09:44:27
+102.100.100.25952,Pilot,Staphylococcus aureus,BPH2760,,Pooled sera,2,Proteomics,SWATH-MS,APAF,,2017-03-22,2017-03-22,0,,,53,,0,2017-03-30 09:44:27
+102.100.100.25951,Pilot,Staphylococcus aureus,BPH2760,,Pooled sera,1,Proteomics,SWATH-MS,APAF,,2017-03-22,2017-03-22,0,,,52,,1,2017-07-28 02:09:35
+102.100.100.25950,Pilot,Staphylococcus aureus,BPH2760,,RPMI,6,Proteomics,SWATH-MS,APAF,,2017-03-22,2017-03-22,0,,,51,,0,2017-03-30 09:44:27
+102.100.100.25949,Pilot,Staphylococcus aureus,BPH2760,,RPMI,5,Proteomics,SWATH-MS,APAF,,2017-03-22,2017-03-22,0,,,50,,0,2017-03-30 09:44:27
+102.100.100.25948,Pilot,Staphylococcus aureus,BPH2760,,RPMI,4,Proteomics,SWATH-MS,APAF,,2017-03-22,2017-03-22,0,,,49,,1,2017-07-28 02:09:35
+102.100.100.25947,Pilot,Staphylococcus aureus,BPH2760,,RPMI,3,Proteomics,SWATH-MS,APAF,,2017-03-22,2017-03-22,0,,,48,,0,2017-03-30 09:44:27
+102.100.100.25946,Pilot,Staphylococcus aureus,BPH2760,,RPMI,2,Proteomics,SWATH-MS,APAF,,2017-03-22,2017-03-22,0,,,47,,0,2017-03-30 09:44:27
+102.100.100.25945,Pilot,Staphylococcus aureus,BPH2760,,RPMI,1,Proteomics,SWATH-MS,APAF,,2017-03-22,2017-03-22,0,,,46,,1,2017-07-28 02:09:35
+102.100.100.25944,Pilot,Staphylococcus aureus,BPH2900,,Pooled sera,6,Proteomics,SWATH-MS,APAF,,2017-03-22,2017-03-22,0,,,45,,0,2017-03-30 09:44:27
+102.100.100.25943,Pilot,Staphylococcus aureus,BPH2900,,Pooled sera,5,Proteomics,SWATH-MS,APAF,,2017-03-22,2017-03-22,0,,,44,,0,2017-03-30 09:44:27
+102.100.100.25942,Pilot,Staphylococcus aureus,BPH2900,,Pooled sera,4,Proteomics,SWATH-MS,APAF,,2017-03-22,2017-03-22,0,,,43,,1,2017-07-28 02:09:35
+102.100.100.25941,Pilot,Staphylococcus aureus,BPH2900,,Pooled sera,3,Proteomics,SWATH-MS,APAF,,2017-03-22,2017-03-22,0,,,42,,0,2017-03-30 09:44:27
+102.100.100.25940,Pilot,Staphylococcus aureus,BPH2900,,Pooled sera,2,Proteomics,SWATH-MS,APAF,,2017-03-22,2017-03-22,0,,,41,,0,2017-03-30 09:44:27
+102.100.100.25939,Pilot,Staphylococcus aureus,BPH2900,,Pooled sera,1,Proteomics,SWATH-MS,APAF,,2017-03-22,2017-03-22,0,,,40,,1,2017-07-28 02:09:35
+102.100.100.25938,Pilot,Staphylococcus aureus,BPH2900,,RPMI,6,Proteomics,SWATH-MS,APAF,,2017-03-22,2017-03-22,0,,,39,,0,2017-03-30 09:44:27
+102.100.100.25937,Pilot,Staphylococcus aureus,BPH2900,,RPMI,5,Proteomics,SWATH-MS,APAF,,2017-03-22,2017-03-22,0,,,38,,0,2017-03-30 09:44:27
+102.100.100.25936,Pilot,Staphylococcus aureus,BPH2900,,RPMI,4,Proteomics,SWATH-MS,APAF,,2017-03-22,2017-03-22,0,,,37,,1,2017-07-28 02:09:35
+102.100.100.25935,Pilot,Staphylococcus aureus,BPH2900,,RPMI,3,Proteomics,SWATH-MS,APAF,,2017-03-22,2017-03-22,0,,,36,,0,2017-03-30 09:44:27
+102.100.100.25934,Pilot,Staphylococcus aureus,BPH2900,,RPMI,2,Proteomics,SWATH-MS,APAF,,2017-03-22,2017-03-22,0,,,35,,0,2017-03-30 09:44:27
+102.100.100.25933,Pilot,Staphylococcus aureus,BPH2900,,RPMI,1,Proteomics,SWATH-MS,APAF,,2017-03-22,2017-03-22,0,,,34,,1,2017-07-28 02:09:35
+102.100.100.25908,Pilot,Staphylococcus aureus,BPH2760,,RPMI,6,Proteomics,SWATH-MS,APAF,,2016-10-19,2016-10-19,0,,,32,,1,2017-05-24 08:56:05
+102.100.100.25907,Pilot,Staphylococcus aureus,BPH2760,,RPMI,5,Proteomics,SWATH-MS,APAF,,2016-10-19,2016-10-19,0,,,31,,1,2017-05-24 08:56:05
+102.100.100.25906,Pilot,Staphylococcus aureus,BPH2760,,RPMI,4,Proteomics,SWATH-MS,APAF,,2016-10-19,2016-10-19,0,,,30,,1,2017-05-24 08:56:05
+102.100.100.25905,Pilot,Staphylococcus aureus,BPH2760,,RPMI,3,Proteomics,SWATH-MS,APAF,,2016-10-19,2016-10-19,0,,,29,,1,2017-05-24 08:56:05
+102.100.100.25904,Pilot,Staphylococcus aureus,BPH2760,,RPMI,2,Proteomics,SWATH-MS,APAF,,2016-10-19,2016-10-19,0,,,28,,1,2017-05-24 08:56:05
+102.100.100.25903,Pilot,Staphylococcus aureus,BPH2760,,RPMI,1,Proteomics,SWATH-MS,APAF,,2016-10-19,2016-10-19,0,,,27,,1,2017-05-24 08:56:06
+102.100.100.25902,Pilot,Staphylococcus aureus,BPH2900,,RPMI,6,Proteomics,SWATH-MS,APAF,,2016-10-19,2016-10-19,0,,,26,,1,2017-05-24 08:56:06
+102.100.100.25901,Pilot,Staphylococcus aureus,BPH2900,,RPMI,5,Proteomics,SWATH-MS,APAF,,2016-10-19,2016-10-19,0,,,25,,1,2017-05-24 08:56:06
+102.100.100.25900,Pilot,Staphylococcus aureus,BPH2900,,RPMI,4,Proteomics,SWATH-MS,APAF,,2016-10-19,2016-10-19,0,,,24,,1,2017-05-24 08:56:06
+102.100.100.25899,Pilot,Staphylococcus aureus,BPH2900,,RPMI,3,Proteomics,SWATH-MS,APAF,,2016-10-19,2016-10-19,0,,,23,,1,2017-05-24 08:56:06
+102.100.100.25898,Pilot,Staphylococcus aureus,BPH2900,,RPMI,2,Proteomics,SWATH-MS,APAF,,2016-10-19,2016-10-19,0,,,22,,1,2017-05-24 08:56:06
+102.100.100.25897,Pilot,Staphylococcus aureus,BPH2900,,RPMI,1,Proteomics,SWATH-MS,APAF,,2016-10-19,2016-10-19,0,,,21,,1,2017-05-24 08:56:06
+102.100.100.25896,Pilot,Klebsiella pneumoniae,KPC2,,RPMI,6,Proteomics,SWATH-MS,APAF,,2016-10-19,2016-10-19,0,,,20,,1,2017-05-24 08:56:06
+102.100.100.25895,Pilot,Klebsiella pneumoniae,KPC2,,RPMI,5,Proteomics,SWATH-MS,APAF,,2016-10-19,2016-10-19,0,,,19,,1,2017-05-24 08:56:06
+102.100.100.25894,Pilot,Klebsiella pneumoniae,KPC2,,RPMI,4,Proteomics,SWATH-MS,APAF,,2016-10-19,2016-10-19,0,,,18,,1,2017-05-24 08:56:06
+102.100.100.25893,Pilot,Klebsiella pneumoniae,KPC2,,RPMI,3,Proteomics,SWATH-MS,APAF,,2016-10-19,2016-10-19,0,,,17,,1,2017-05-24 08:56:06
+102.100.100.25892,Pilot,Klebsiella pneumoniae,KPC2,,RPMI,2,Proteomics,SWATH-MS,APAF,,2016-10-19,2016-10-19,0,,,16,,1,2017-05-24 08:56:06
+102.100.100.25891,Pilot,Klebsiella pneumoniae,KPC2,,RPMI,1,Proteomics,SWATH-MS,APAF,,2016-10-19,2016-10-19,0,,,15,,1,2017-05-24 08:56:06
+102.100.100.25890,Pilot,Klebsiella pneumoniae,AJ218,,RPMI,6,Proteomics,SWATH-MS,APAF,,2016-10-19,2016-10-19,0,,,14,,1,2017-05-24 08:56:06
+102.100.100.25889,Pilot,Klebsiella pneumoniae,AJ218,,RPMI,5,Proteomics,SWATH-MS,APAF,,2016-10-19,2016-10-19,0,,,13,,1,2017-05-24 08:56:06
+102.100.100.25888,Pilot,Klebsiella pneumoniae,AJ218,,RPMI,4,Proteomics,SWATH-MS,APAF,,2016-10-19,2016-10-19,0,,,12,,1,2017-05-24 08:56:06
+102.100.100.25887,Pilot,Klebsiella pneumoniae,AJ218,,RPMI,3,Proteomics,SWATH-MS,APAF,,2016-10-19,2016-10-19,0,,,11,,1,2017-05-24 08:56:06
+102.100.100.25886,Pilot,Klebsiella pneumoniae,AJ218,,RPMI,2,Proteomics,SWATH-MS,APAF,,2016-10-19,2016-10-19,0,,,10,,1,2017-05-24 08:56:06
+102.100.100.25885,Pilot,Klebsiella pneumoniae,AJ218,,RPMI,1,Proteomics,SWATH-MS,APAF,,2016-10-19,2016-10-19,0,,,9,,1,2017-05-24 08:56:06
+102.100.100.25812,Pre-pilot,Staphylococcus aureus,NRSA384,,RPMI,4,Proteomics,SWATH-MS,APAF,,2016-09-08,2016-09-08,1,2016-11-03,BPAOPS-50,8,,1,2017-05-24 08:56:06
+102.100.100.25811,Pre-pilot,Staphylococcus aureus,NRSA384,,RPMI,3,Proteomics,SWATH-MS,APAF,,2016-09-08,2016-09-08,1,2016-11-03,BPAOPS-50,7,,1,2017-05-24 08:56:06
+102.100.100.25810,Pre-pilot,Staphylococcus aureus,NRSA384,,RPMI,2,Proteomics,SWATH-MS,APAF,,2016-09-08,2016-09-08,1,2016-11-03,BPAOPS-50,6,,1,2017-05-24 08:56:06
+102.100.100.25809,Pre-pilot,Staphylococcus aureus,NRSA384,,RPMI,1,Proteomics,SWATH-MS,APAF,,2016-09-08,2016-09-08,1,2016-11-03,BPAOPS-50,5,,1,2017-05-24 08:56:06
+102.100.100.25808,Pre-pilot,Klebsiella pneumoniae,AJ218,,RPMI,4,Proteomics,SWATH-MS,APAF,,2016-09-08,2016-09-08,1,2016-11-03,BPAOPS-50,4,,1,2017-05-24 08:56:06
+102.100.100.25807,Pre-pilot,Klebsiella pneumoniae,AJ218,,RPMI,3,Proteomics,SWATH-MS,APAF,,2016-09-08,2016-09-08,1,2016-11-03,BPAOPS-50,3,,1,2017-05-24 08:56:06
+102.100.100.25806,Pre-pilot,Klebsiella pneumoniae,AJ218,,RPMI,2,Proteomics,SWATH-MS,APAF,,2016-09-08,2016-09-08,1,2016-11-03,BPAOPS-50,2,,1,2017-05-24 08:56:06
+102.100.100.25805,Pre-pilot,Klebsiella pneumoniae,AJ218,,RPMI,1,Proteomics,SWATH-MS,APAF,,2016-09-08,2016-09-08,1,2016-11-03,BPAOPS-50,1,,1,2017-05-24 08:56:06
