@@ -9,7 +9,7 @@ from ...libs import ingest_utils
 from ...libs.md5lines import md5lines
 from ...util import make_logger, bpa_id_to_ckan_name, csv_to_named_tuple, common_values, clean_tag_name
 from ...abstract import BaseMetadata
-from ...libs.excel_wrapper import ExcelWrapper, make_field_definition as fld
+from ...libs.excel_wrapper import make_field_definition as fld
 from glob import glob
 from .tracking import (
     SepsisTrackMetadata,
@@ -26,6 +26,17 @@ from . import files
 import os
 
 logger = make_logger(__name__)
+
+
+def parse_pooled_bpa_id(s):
+    if isinstance(s, str) and ',' in s:
+        return tuple([ingest_utils.extract_bpa_id(t.strip()) for t in s.split(',')])
+    else:
+        return ingest_utils.extract_bpa_id(s)
+
+
+def make_bpa_id_list(s):
+    return tuple([ingest_utils.extract_bpa_id(t.strip()) for t in s.split(',')])
 
 
 def sepsis_contextual_tags(cls, obj):
@@ -64,6 +75,21 @@ class SepsisGenomicsMiseqMetadata(BaseSepsisMetadata):
     ckan_data_type = 'arp-genomics-miseq'
     omics = 'genomics'
     technology = 'miseq'
+    spreadsheet = {
+        'fields': [
+            fld("bpa_id", "Bacterial sample unique ID", coerce=ingest_utils.extract_bpa_id),
+            fld("insert_size_range", "Insert size range"),
+            fld("library_construction_protocol", "Library construction protocol"),
+            fld("sequencer", "Sequencer"),
+            fld("analysis_software_version", "AnalysisSoftwareVersion"),
+        ],
+        'options': {
+            'sheet_name': None,
+            'header_length': 2,
+            'column_name_row_index': 1,
+            'formatting_info': True,
+        }
+    }
 
     def __init__(self, metadata_path, contextual_metadata=None, metadata_info=None):
         super(SepsisGenomicsMiseqMetadata, self).__init__()
@@ -71,24 +97,6 @@ class SepsisGenomicsMiseqMetadata(BaseSepsisMetadata):
         self.contextual_metadata = contextual_metadata
         self.bpam_track_meta = SepsisGenomicsTrackMetadata('GenomicsMiSeq')
         self.metadata_info = metadata_info
-
-    def parse_spreadsheet(self, fname):
-        field_spec = [
-            fld("bpa_id", "Bacterial sample unique ID", coerce=ingest_utils.extract_bpa_id),
-            fld("insert_size_range", "Insert size range"),
-            fld("library_construction_protocol", "Library construction protocol"),
-            fld("sequencer", "Sequencer"),
-            fld("analysis_software_version", "AnalysisSoftwareVersion"),
-        ]
-        wrapper = ExcelWrapper(
-            field_spec,
-            fname,
-            sheet_name=None,
-            header_length=2,
-            column_name_row_index=1,
-            formatting_info=True,
-            additional_context=self.metadata_info[os.path.basename(fname)])
-        return wrapper.get_all()
 
     def _get_packages(self):
         logger.info("Ingesting Sepsis Genomics Miseq metadata from {0}".format(self.path))
@@ -155,6 +163,24 @@ class SepsisGenomicsPacbioMetadata(BaseSepsisMetadata):
     ckan_data_type = 'arp-genomics-pacbio'
     omics = 'genomics'
     technology = 'pacbio'
+    spreadsheet = {
+        'fields': [
+            fld("bpa_id", "Bacterial sample unique ID", coerce=ingest_utils.extract_bpa_id),
+            fld("insert_size_range", "Insert size range"),
+            fld("library_construction_protocol", "Library construction protocol"),
+            fld("sequencer", "Sequencer"),
+            fld("sequencer_run_id", "Run ID"),
+            fld("smrt_cell_id", "SMRT Cell ID"),
+            fld("cell_position", ("Cell Postion", "Cell Position")),
+            fld("rs_version", "RS Version"),
+        ],
+        'options': {
+            'sheet_name': None,
+            'header_length': 2,
+            'column_name_row_index': 1,
+            'formatting_info': True,
+        }
+    }
 
     def __init__(self, metadata_path, contextual_metadata=None, metadata_info=None):
         super(SepsisGenomicsPacbioMetadata, self).__init__()
@@ -166,27 +192,6 @@ class SepsisGenomicsPacbioMetadata(BaseSepsisMetadata):
     def read_track_csv(self, fname):
         header, rows = csv_to_named_tuple('SepsisGenomicsPacbioTrack', fname)
         return dict((ingest_utils.extract_bpa_id(t.five_digit_bpa_id), t) for t in rows)
-
-    def parse_spreadsheet(self, fname):
-        field_spec = [
-            fld("bpa_id", "Bacterial sample unique ID", coerce=ingest_utils.extract_bpa_id),
-            fld("insert_size_range", "Insert size range"),
-            fld("library_construction_protocol", "Library construction protocol"),
-            fld("sequencer", "Sequencer"),
-            fld("sequencer_run_id", "Run ID"),
-            fld("smrt_cell_id", "SMRT Cell ID"),
-            fld("cell_position", ("Cell Postion", "Cell Position")),
-            fld("rs_version", "RS Version"),
-        ]
-        wrapper = ExcelWrapper(
-            field_spec,
-            fname,
-            sheet_name=None,
-            header_length=2,
-            column_name_row_index=1,
-            formatting_info=True,
-            additional_context=self.metadata_info[os.path.basename(fname)])
-        return wrapper.get_all()
 
     def _get_packages(self):
         logger.info("Ingesting Sepsis Genomics Pacbio metadata from {0}".format(self.path))
@@ -255,6 +260,22 @@ class SepsisTranscriptomicsHiseqMetadata(BaseSepsisMetadata):
     ckan_data_type = 'arp-transcriptomics-hiseq'
     omics = 'transcriptomics'
     technology = 'hiseq'
+    spreadsheet = {
+        'fields': [
+            fld("bpa_id", "Antibiotic Resistant Pathogen sample unique ID", coerce=ingest_utils.extract_bpa_id),
+            fld("sample", "Sample (MGR code)"),
+            fld("library_construction_protocol", "Library construction protocol"),
+            fld("barcode_tag", "Barcode tag"),
+            fld("sequencer", "Sequencer"),
+            fld("casava_version", "CASAVA version"),
+        ],
+        'options': {
+            'sheet_name': None,
+            'header_length': 2,
+            'column_name_row_index': 1,
+            'formatting_info': True,
+        }
+    }
 
     def __init__(self, metadata_path, contextual_metadata=None, metadata_info=None):
         super(SepsisTranscriptomicsHiseqMetadata, self).__init__()
@@ -268,25 +289,6 @@ class SepsisTranscriptomicsHiseqMetadata(BaseSepsisMetadata):
             return {}
         header, rows = csv_to_named_tuple('SepsisGenomicsHiseqTrack', fname)
         return dict((ingest_utils.extract_bpa_id(t.five_digit_bpa_id), t) for t in rows)
-
-    def parse_spreadsheet(self, fname):
-        field_spec = [
-            fld("bpa_id", "Antibiotic Resistant Pathogen sample unique ID", coerce=ingest_utils.extract_bpa_id),
-            fld("sample", "Sample (MGR code)"),
-            fld("library_construction_protocol", "Library construction protocol"),
-            fld("barcode_tag", "Barcode tag"),
-            fld("sequencer", "Sequencer"),
-            fld("casava_version", "CASAVA version"),
-        ]
-        wrapper = ExcelWrapper(
-            field_spec,
-            fname,
-            sheet_name=None,
-            header_length=2,
-            column_name_row_index=1,
-            formatting_info=True,
-            additional_context=self.metadata_info[os.path.basename(fname)])
-        return wrapper.get_all()
 
     def _get_packages(self):
         logger.info("Ingesting Sepsis Transcriptomics Hiseq metadata from {0}".format(self.path))
@@ -356,6 +358,23 @@ class SepsisMetabolomicsGCMSMetadata(BaseSepsisMetadata):
     ckan_data_type = 'arp-metabolomics-gcms'
     omics = 'metabolomics'
     technology = 'gcms'
+    spreadsheet = {
+        'fields': [
+            fld('bpa_id', 'bacterial sample unique id', coerce=ingest_utils.extract_bpa_id),
+            fld('sample_fractionation_extract_solvent', 'sample fractionation / extraction solvent'),
+            fld('gc_column_type', 'gc/column type'),
+            fld('gradient_time_min_flow', 'gradient time (min) / flow'),
+            fld('mass_spectrometer', 'mass spectrometer'),
+            fld('acquisition_mode', 'acquisition mode'),
+            fld('raw_file_name', 'raw file name'),
+        ],
+        'options': {
+            'sheet_name': None,
+            'header_length': 1,
+            'column_name_row_index': 1,
+            'formatting_info': True,
+        }
+    }
 
     def __init__(self, metadata_path, contextual_metadata=None, metadata_info=None):
         super(SepsisMetabolomicsGCMSMetadata, self).__init__()
@@ -369,27 +388,6 @@ class SepsisMetabolomicsGCMSMetadata(BaseSepsisMetadata):
             return {}
         header, rows = csv_to_named_tuple('SepsisMetabolomicsGCMSTrack', fname)
         return dict((ingest_utils.extract_bpa_id(t.five_digit_bpa_id), t) for t in rows)
-
-    def parse_spreadsheet(self, fname):
-        field_spec = [
-            fld('bpa_id', 'bacterial sample unique id', coerce=ingest_utils.extract_bpa_id),
-            fld('sample_fractionation_extract_solvent', 'sample fractionation / extraction solvent'),
-            fld('gc_column_type', 'gc/column type'),
-            fld('gradient_time_min_flow', 'gradient time (min) / flow'),
-            fld('mass_spectrometer', 'mass spectrometer'),
-            fld('acquisition_mode', 'acquisition mode'),
-            fld('raw_file_name', 'raw file name'),
-        ]
-
-        wrapper = ExcelWrapper(
-            field_spec,
-            fname,
-            sheet_name=None,
-            header_length=1,
-            column_name_row_index=1,
-            formatting_info=True,
-            additional_context=self.metadata_info[os.path.basename(fname)])
-        return wrapper.get_all()
 
     def _get_packages(self):
         packages = []
@@ -458,6 +456,23 @@ class SepsisMetabolomicsLCMSMetadata(BaseSepsisMetadata):
     ckan_data_type = 'arp-metabolomics-lcms'
     omics = 'metabolomics'
     technology = 'lcms'
+    spreadsheet = {
+        'fields': [
+            fld("bpa_id", "Bacterial sample unique ID", coerce=ingest_utils.extract_bpa_id),
+            fld("sample_fractionation_extract_solvent", "Sample fractionation / Extraction Solvent"),
+            fld("lc_column_type", "LC/column type"),
+            fld("gradient_time_min_flow", "Gradient time (min) / flow"),
+            fld("mass_spectrometer", "Mass Spectrometer"),
+            fld("acquisition_mode", "Acquisition Mode"),
+            fld("raw_file_name", "Raw file name"),
+        ],
+        'options': {
+            'sheet_name': None,
+            'header_length': 1,
+            'column_name_row_index': 1,
+            'formatting_info': True,
+        }
+    }
 
     def __init__(self, metadata_path, contextual_metadata=None, metadata_info=None):
         super(SepsisMetabolomicsLCMSMetadata, self).__init__()
@@ -471,26 +486,6 @@ class SepsisMetabolomicsLCMSMetadata(BaseSepsisMetadata):
             return {}
         header, rows = csv_to_named_tuple('SepsisMetabolomicsLCMSTrack', fname)
         return dict((ingest_utils.extract_bpa_id(t.five_digit_bpa_id), t) for t in rows)
-
-    def parse_spreadsheet(self, fname):
-        field_spec = [
-            fld("bpa_id", "Bacterial sample unique ID", coerce=ingest_utils.extract_bpa_id),
-            fld("sample_fractionation_extract_solvent", "Sample fractionation / Extraction Solvent"),
-            fld("lc_column_type", "LC/column type"),
-            fld("gradient_time_min_flow", "Gradient time (min) / flow"),
-            fld("mass_spectrometer", "Mass Spectrometer"),
-            fld("acquisition_mode", "Acquisition Mode"),
-            fld("raw_file_name", "Raw file name"),
-        ]
-        wrapper = ExcelWrapper(
-            field_spec,
-            fname,
-            sheet_name=None,
-            header_length=1,
-            column_name_row_index=1,
-            formatting_info=True,
-            additional_context=self.metadata_info[os.path.basename(fname)])
-        return wrapper.get_all()
 
     def _get_packages(self):
         packages = []
@@ -559,6 +554,25 @@ class SepsisProteomicsMS1QuantificationMetadata(BaseSepsisMetadata):
     ckan_data_type = 'arp-proteomics-ms1quantification'
     omics = 'proteomics'
     technology = 'ms1quantification'
+    spreadsheet = {
+        'fields': [
+            fld("bpa_id", "Bacterial sample unique ID", coerce=ingest_utils.extract_bpa_id),
+            fld("facility", "Facility"),
+            fld("sample_fractionation_none_number", "Sample fractionation (none/number)"),
+            fld("lc_column_type", "LC/column type"),
+            fld("gradient_time_per_acn", "Gradient time (min)  /  % ACN (start-finish main gradient) / flow"),
+            fld("sample_on_column", "sample on column (g)"),  # Note: unicode micro stripped out
+            fld("mass_spectrometer", "Mass Spectrometer"),
+            fld("acquisition_mode_fragmentation", "Acquisition Mode / fragmentation"),
+            fld("raw_file_name", "Raw file name"),
+        ],
+        'options': {
+            'sheet_name': None,
+            'header_length': 1,
+            'column_name_row_index': 1,
+            'formatting_info': True,
+        }
+    }
 
     def __init__(self, metadata_path, contextual_metadata=None, metadata_info=None):
         super(SepsisProteomicsMS1QuantificationMetadata, self).__init__()
@@ -572,28 +586,6 @@ class SepsisProteomicsMS1QuantificationMetadata(BaseSepsisMetadata):
             return {}
         header, rows = csv_to_named_tuple('SepsisProteomicsMS1QuantificationTrack', fname)
         return dict((ingest_utils.extract_bpa_id(t.five_digit_bpa_id), t) for t in rows)
-
-    def parse_spreadsheet(self, fname):
-        field_spec = [
-            fld("bpa_id", "Bacterial sample unique ID", coerce=ingest_utils.extract_bpa_id),
-            fld("facility", "Facility"),
-            fld("sample_fractionation_none_number", "Sample fractionation (none/number)"),
-            fld("lc_column_type", "LC/column type"),
-            fld("gradient_time_per_acn", "Gradient time (min)  /  % ACN (start-finish main gradient) / flow"),
-            fld("sample_on_column", "sample on column (g)"),  # Note: unicode micro stripped out
-            fld("mass_spectrometer", "Mass Spectrometer"),
-            fld("acquisition_mode_fragmentation", "Acquisition Mode / fragmentation"),
-            fld("raw_file_name", "Raw file name"),
-        ]
-        wrapper = ExcelWrapper(
-            field_spec,
-            fname,
-            sheet_name=None,
-            header_length=1,
-            column_name_row_index=1,
-            formatting_info=True,
-            additional_context=self.metadata_info[os.path.basename(fname)])
-        return wrapper.get_all()
 
     def _get_packages(self):
         packages = []
@@ -663,6 +655,25 @@ class SepsisProteomicsSwathMSBaseSepsisMetadata(BaseSepsisMetadata):
     auth = ('sepsis', 'sepsis')
     omics = 'proteomics'
     technology = 'swathms'
+    spreadsheet = {
+        'fields': [
+            fld("bpa_id", "Bacterial sample unique ID", coerce=parse_pooled_bpa_id),
+            fld("facility", "Facility"),
+            fld("sample_fractionation_none_number", "Sample fractionation (none/number)"),
+            fld("lc_column_type", "LC/column type"),
+            fld("gradient_time_per_acn", "Gradient time (min)  /  % ACN (start-finish main gradient) / flow"),
+            fld("sample_on_column", "sample on column (g)"),  # Note: unicode micro stripped out
+            fld("mass_spectrometer", "Mass Spectrometer"),
+            fld("acquisition_mode_fragmentation", "Acquisition Mode / fragmentation"),
+            fld("raw_file_name", "Raw file name"),
+        ],
+        'options': {
+            'sheet_name': None,
+            'header_length': 1,
+            'column_name_row_index': 1,
+            'formatting_info': True,
+        }
+    }
 
     def __init__(self, metadata_path, contextual_metadata=None, metadata_info=None):
         super(SepsisProteomicsSwathMSBaseSepsisMetadata, self).__init__()
@@ -677,34 +688,6 @@ class SepsisProteomicsSwathMSBaseSepsisMetadata(BaseSepsisMetadata):
             return {}
         header, rows = csv_to_named_tuple('SepsisProteomicsSwathMSTrack', fname)
         return dict((ingest_utils.extract_bpa_id(t.five_digit_bpa_id), t) for t in rows)
-
-    def parse_spreadsheet(self, fname):
-        def parse_pooled_bpa_id(s):
-            if isinstance(s, str) and ',' in s:
-                return tuple([ingest_utils.extract_bpa_id(t.strip()) for t in s.split(',')])
-            else:
-                return ingest_utils.extract_bpa_id(s)
-
-        field_spec = [
-            fld("bpa_id", "Bacterial sample unique ID", coerce=parse_pooled_bpa_id),
-            fld("facility", "Facility"),
-            fld("sample_fractionation_none_number", "Sample fractionation (none/number)"),
-            fld("lc_column_type", "LC/column type"),
-            fld("gradient_time_per_acn", "Gradient time (min)  /  % ACN (start-finish main gradient) / flow"),
-            fld("sample_on_column", "sample on column (g)"),  # Note: unicode micro stripped out
-            fld("mass_spectrometer", "Mass Spectrometer"),
-            fld("acquisition_mode_fragmentation", "Acquisition Mode / fragmentation"),
-            fld("raw_file_name", "Raw file name"),
-        ]
-        wrapper = ExcelWrapper(
-            field_spec,
-            fname,
-            sheet_name=None,
-            header_length=1,
-            column_name_row_index=1,
-            formatting_info=True,
-            additional_context=self.metadata_info[os.path.basename(fname)])
-        return wrapper.get_all()
 
     def get_spreadsheet_data(self):
         """
@@ -846,20 +829,8 @@ class SepsisProteomicsSwathMSCombinedSampleMetadata(BaseSepsisMetadata):
     resource_linkage = ('folder_name',)
     omics = 'proteomics'
     technology = 'swathms-combined-sample'
-
-    def __init__(self, metadata_path, contextual_metadata=None, metadata_info=None):
-        super(SepsisProteomicsSwathMSCombinedSampleMetadata, self).__init__()
-        self.path = Path(metadata_path)
-        self.contextual_metadata = contextual_metadata
-        self.metadata_info = metadata_info
-        self.google_track_meta = SepsisGoogleTrackMetadata()
-
-    @classmethod
-    def parse_spreadsheet(self, fname, additional_context):
-        def make_bpa_id_list(s):
-            return tuple([ingest_utils.extract_bpa_id(t.strip()) for t in s.split(',')])
-
-        field_spec = [
+    spreadsheet = {
+        'fields': [
             fld('bpa_id_list', 'bacterial sample unique id', coerce=make_bpa_id_list),
             fld('facility', 'facility'),
             fld('sample_fractionation_none_number', 'sample fractionation (none/number)'),
@@ -869,17 +840,21 @@ class SepsisProteomicsSwathMSCombinedSampleMetadata(BaseSepsisMetadata):
             fld('mass_spectrometer', 'mass spectrometer'),
             fld('acquisition_mode_fragmentation', 'acquisition mode / fragmentation'),
             fld('raw_file_name', 'raw file name'),
-        ]
-        wrapper = ExcelWrapper(
-            field_spec,
-            fname,
-            sheet_name=None,
-            header_length=2,
-            column_name_row_index=1,
-            formatting_info=True,
-            additional_context=additional_context)
-        rows = list(wrapper.get_all())
-        return rows
+        ],
+        'options': {
+            'sheet_name': None,
+            'header_length': 2,
+            'column_name_row_index': 1,
+            'formatting_info': True,
+        }
+    }
+
+    def __init__(self, metadata_path, contextual_metadata=None, metadata_info=None):
+        super(SepsisProteomicsSwathMSCombinedSampleMetadata, self).__init__()
+        self.path = Path(metadata_path)
+        self.contextual_metadata = contextual_metadata
+        self.metadata_info = metadata_info
+        self.google_track_meta = SepsisGoogleTrackMetadata()
 
     def _get_packages(self):
         logger.info("Ingesting Sepsis metadata from {0}".format(self.path))
@@ -1012,18 +987,8 @@ class SepsisProteomicsAnalysedMetadata(BaseSepsisAnalysedMetadata):
     resource_linkage = ('folder_name',)
     omics = 'proteomics'
     technology = 'analysed'
-
-    def __init__(self, metadata_path, contextual_metadata=None, metadata_info=None):
-        super(SepsisProteomicsAnalysedMetadata, self).__init__()
-        self.path = Path(metadata_path)
-        self.contextual_metadata = contextual_metadata
-        self.metadata_info = metadata_info
-        self.google_track_meta = SepsisGoogleTrackMetadata()
-        self.bpam_track_meta = [SepsisTrackMetadata('ProteomicsMS1Quantification'), SepsisTrackMetadata('ProteomicsSwathMS')]
-
-    @classmethod
-    def parse_spreadsheet(self, fname, additional_context):
-        field_spec = [
+    spreadsheet = {
+        'fields': [
             fld('data_analysis_date', 'data analysis date (yyyy-mm-dd)', coerce=ingest_utils.get_date_isoformat),
             fld('facility_project_code_experiment_code', 'facility project code_facility experiment code'),
             fld('bpa_id', 'sample name (5 digit bpa id)', coerce=ingest_utils.extract_bpa_id),
@@ -1047,17 +1012,22 @@ class SepsisProteomicsAnalysedMetadata(BaseSepsisAnalysedMetadata):
             fld('version', 'version (genome or database)'),
             fld('translation', 'translation (3 frame or 6 frame)'),
             fld('proteome_size', 'proteome size'),
-        ]
-        wrapper = ExcelWrapper(
-            field_spec,
-            fname,
-            sheet_name=None,
-            header_length=8,
-            column_name_row_index=7,
-            formatting_info=True,
-            additional_context=additional_context)
-        rows = list(wrapper.get_all())
-        return rows
+        ],
+        'options': {
+            'sheet_name': None,
+            'header_length': 8,
+            'column_name_row_index': 7,
+            'formatting_info': True,
+        }
+    }
+
+    def __init__(self, metadata_path, contextual_metadata=None, metadata_info=None):
+        super(SepsisProteomicsAnalysedMetadata, self).__init__()
+        self.path = Path(metadata_path)
+        self.contextual_metadata = contextual_metadata
+        self.metadata_info = metadata_info
+        self.google_track_meta = SepsisGoogleTrackMetadata()
+        self.bpam_track_meta = [SepsisTrackMetadata('ProteomicsMS1Quantification'), SepsisTrackMetadata('ProteomicsSwathMS')]
 
     def _get_packages(self):
         logger.info("Ingesting Sepsis metadata from {0}".format(self.path))
@@ -1136,18 +1106,8 @@ class SepsisTranscriptomicsAnalysedMetadata(BaseSepsisAnalysedMetadata):
     resource_linkage = ('folder_name',)
     omics = 'transcriptomics'
     technology = 'analysed'
-
-    def __init__(self, metadata_path, contextual_metadata=None, metadata_info=None):
-        super(SepsisTranscriptomicsAnalysedMetadata, self).__init__()
-        self.path = Path(metadata_path)
-        self.contextual_metadata = contextual_metadata
-        self.metadata_info = metadata_info
-        self.google_track_meta = SepsisGoogleTrackMetadata()
-        self.bpam_track_meta = [SepsisTrackMetadata('TranscriptomicsHiSeq')]
-
-    @classmethod
-    def parse_spreadsheet(self, fname, additional_context):
-        field_spec = [
+    spreadsheet = {
+        'fields': [
             fld('data_analysis_date', 'data analysis date (yyyy-mm-dd)', coerce=ingest_utils.get_date_isoformat),
             fld('bpa_id', 'sample name (5 digit bpa id)', coerce=ingest_utils.extract_bpa_id),
             fld('taxon_or_organism', 'taxon_or_organism'),
@@ -1169,17 +1129,22 @@ class SepsisTranscriptomicsAnalysedMetadata(BaseSepsisAnalysedMetadata):
             fld('file_name_of_assembled_genome', 'file name of assembled genome used for analysis'),
             fld('file_name_of_annotated_genes', 'file name of annotated genes used for analysis'),
             fld('approach_used', 'approach used'),
-        ]
-        wrapper = ExcelWrapper(
-            field_spec,
-            fname,
-            sheet_name=None,
-            header_length=8,
-            column_name_row_index=7,
-            formatting_info=True,
-            additional_context=additional_context)
-        rows = list(wrapper.get_all())
-        return rows
+        ],
+        'options': {
+            'sheet_name': None,
+            'header_length': 8,
+            'column_name_row_index': 7,
+            'formatting_info': True,
+        }
+    }
+
+    def __init__(self, metadata_path, contextual_metadata=None, metadata_info=None):
+        super(SepsisTranscriptomicsAnalysedMetadata, self).__init__()
+        self.path = Path(metadata_path)
+        self.contextual_metadata = contextual_metadata
+        self.metadata_info = metadata_info
+        self.google_track_meta = SepsisGoogleTrackMetadata()
+        self.bpam_track_meta = [SepsisTrackMetadata('TranscriptomicsHiSeq')]
 
     def _get_packages(self):
         logger.info("Ingesting Sepsis metadata from {0}".format(self.path))
@@ -1258,18 +1223,8 @@ class SepsisMetabolomicsAnalysedMetadata(BaseSepsisAnalysedMetadata):
     resource_linkage = ('folder_name',)
     omics = 'metabolomics'
     technology = 'analysed'
-
-    def __init__(self, metadata_path, contextual_metadata=None, metadata_info=None):
-        super(SepsisMetabolomicsAnalysedMetadata, self).__init__()
-        self.path = Path(metadata_path)
-        self.contextual_metadata = contextual_metadata
-        self.metadata_info = metadata_info
-        self.google_track_meta = SepsisGoogleTrackMetadata()
-        self.bpam_track_meta = [SepsisTrackMetadata('MetabolomicsLCMS')]
-
-    @classmethod
-    def parse_spreadsheet(self, fname, additional_context):
-        field_spec = [
+    spreadsheet = {
+        'fields': [
             fld('data_analysis_date', 'data analysis date (yyyy-mm-dd)', coerce=ingest_utils.get_date_isoformat),
             fld('bpa_id', 'sample name (5 digit bpa id)', coerce=ingest_utils.extract_bpa_id),
             fld('taxon_or_organism', 'taxon_or_organism'),
@@ -1288,17 +1243,22 @@ class SepsisMetabolomicsAnalysedMetadata(BaseSepsisAnalysedMetadata):
             fld('data_type', 'data type'),
             fld('file_name_of_analysed_data', 'file name of analysed data'),
             fld('approach_used', 'approach used'),
-        ]
-        wrapper = ExcelWrapper(
-            field_spec,
-            fname,
-            sheet_name=None,
-            header_length=8,
-            column_name_row_index=7,
-            formatting_info=True,
-            additional_context=additional_context)
-        rows = list(wrapper.get_all())
-        return rows
+        ],
+        'options': {
+            'sheet_name': None,
+            'header_length': 8,
+            'column_name_row_index': 7,
+            'formatting_info': True,
+        }
+    }
+
+    def __init__(self, metadata_path, contextual_metadata=None, metadata_info=None):
+        super(SepsisMetabolomicsAnalysedMetadata, self).__init__()
+        self.path = Path(metadata_path)
+        self.contextual_metadata = contextual_metadata
+        self.metadata_info = metadata_info
+        self.google_track_meta = SepsisGoogleTrackMetadata()
+        self.bpam_track_meta = [SepsisTrackMetadata('MetabolomicsLCMS')]
 
     def _get_packages(self):
         logger.info("Ingesting Sepsis metadata from {0}".format(self.path))
@@ -1377,18 +1337,8 @@ class SepsisGenomicsAnalysedMetadata(BaseSepsisAnalysedMetadata):
     resource_linkage = ('folder_name',)
     omics = 'genomics'
     technology = 'analysed'
-
-    def __init__(self, metadata_path, contextual_metadata=None, metadata_info=None):
-        super(SepsisGenomicsAnalysedMetadata, self).__init__()
-        self.path = Path(metadata_path)
-        self.contextual_metadata = contextual_metadata
-        self.metadata_info = metadata_info
-        self.google_track_meta = SepsisGoogleTrackMetadata()
-        self.bpam_track_meta = [SepsisGenomicsTrackMetadata('MetabolomicsLCMS')]
-
-    @classmethod
-    def parse_spreadsheet(self, fname, additional_context):
-        field_spec = [
+    spreadsheet = {
+        'fields': [
             fld('data_analysis_date', 'data analysis date (yyyy-mm-dd)', coerce=ingest_utils.get_date_isoformat),
             fld('bpa_id', 'sample name (5 digit bpa id)', coerce=ingest_utils.extract_bpa_id),
             fld('taxon_or_organism', 'taxon_or_organism'),
@@ -1404,17 +1354,22 @@ class SepsisGenomicsAnalysedMetadata(BaseSepsisAnalysedMetadata):
             fld('experimental_sample_preparation_method', 'experimental_sample_preparation_method'),
             fld('data_type', 'data type'),
             fld('sample_folder', 'folder for each sample (individual files are listed on the next sheet)'),
-        ]
-        wrapper = ExcelWrapper(
-            field_spec,
-            fname,
-            sheet_name=None,
-            header_length=8,
-            column_name_row_index=7,
-            formatting_info=True,
-            additional_context=additional_context)
-        rows = list(wrapper.get_all())
-        return rows
+        ],
+        'options': {
+            'sheet_name': None,
+            'header_length': 8,
+            'column_name_row_index': 7,
+            'formatting_info': True,
+        }
+    }
+
+    def __init__(self, metadata_path, contextual_metadata=None, metadata_info=None):
+        super(SepsisGenomicsAnalysedMetadata, self).__init__()
+        self.path = Path(metadata_path)
+        self.contextual_metadata = contextual_metadata
+        self.metadata_info = metadata_info
+        self.google_track_meta = SepsisGoogleTrackMetadata()
+        self.bpam_track_meta = [SepsisGenomicsTrackMetadata('MetabolomicsLCMS')]
 
     def _get_packages(self):
         logger.info("Ingesting Sepsis metadata from {0}".format(self.path))
@@ -1494,18 +1449,8 @@ class SepsisProteomicsProteinDatabaseMetadata(BaseSepsisAnalysedMetadata):
     omics = 'proteomics'
     technology = 'proteindatabase'
     analysed = True
-
-    def __init__(self, metadata_path, contextual_metadata=None, metadata_info=None):
-        super(SepsisProteomicsProteinDatabaseMetadata, self).__init__()
-        self.path = Path(metadata_path)
-        self.contextual_metadata = contextual_metadata
-        self.metadata_info = metadata_info
-        self.google_track_meta = SepsisGoogleTrackMetadata()
-        self.bpam_track_meta = []
-
-    @classmethod
-    def parse_spreadsheet(self, fname, additional_context):
-        field_spec = [
+    spreadsheet = {
+        'fields': [
             fld('database_generation_date', 'database generation date (yyyy-mm-dd)', coerce=ingest_utils.get_date_isoformat),
             fld('bpa_id', 'sample name (5 digit bpa id)', coerce=ingest_utils.extract_bpa_id),
             fld('taxon_or_organism', 'taxon_or_organism'),
@@ -1518,18 +1463,22 @@ class SepsisProteomicsProteinDatabaseMetadata(BaseSepsisAnalysedMetadata):
             fld('decription_of_how_the_database_is_generated', 'decription of how the database is generated'),
             fld('translation', 'translation (3 frame or 6 frame)'),
             fld('proteome_size', 'proteome size'),
-        ]
+        ],
+        'options': {
+            'sheet_name': None,
+            'header_length': 8,
+            'column_name_row_index': 7,
+            'formatting_info': True,
+        }
+    }
 
-        wrapper = ExcelWrapper(
-            field_spec,
-            fname,
-            sheet_name=None,
-            header_length=8,
-            column_name_row_index=7,
-            formatting_info=True,
-            additional_context=additional_context)
-        rows = list(wrapper.get_all())
-        return rows
+    def __init__(self, metadata_path, contextual_metadata=None, metadata_info=None):
+        super(SepsisProteomicsProteinDatabaseMetadata, self).__init__()
+        self.path = Path(metadata_path)
+        self.contextual_metadata = contextual_metadata
+        self.metadata_info = metadata_info
+        self.google_track_meta = SepsisGoogleTrackMetadata()
+        self.bpam_track_meta = []
 
     def _get_packages(self):
         logger.info("Ingesting Sepsis metadata from {0}".format(self.path))

@@ -7,7 +7,7 @@ from unipath import Path
 from urllib.parse import urljoin
 from collections import defaultdict
 from glob import glob
-from ...libs.excel_wrapper import ExcelWrapper, make_field_definition as fld
+from ...libs.excel_wrapper import make_field_definition as fld
 from ...libs import ingest_utils
 
 from ...util import make_logger, bpa_id_to_ckan_name, common_values
@@ -21,18 +21,8 @@ class WheatPathogensGenomesMetadata(BaseMetadata):
     organization = 'bpa-wheat-pathogens-genomes'
     ckan_data_type = 'wheat-pathogens'
     omics = 'genomics'
-
-    def __init__(self, metadata_path, metadata_info=None):
-        super(WheatPathogensGenomesMetadata, self).__init__()
-        self.path = Path(metadata_path)
-        self.metadata_info = metadata_info
-
-    @classmethod
-    def parse_spreadsheet(cls, file_name, additional_context):
-        """
-        This is the data from the Characteristics Sheet
-        """
-        field_spec = [
+    spreadsheet = {
+        'fields': [
             fld("bpa_id", "BPA ID", coerce=ingest_utils.extract_bpa_id),
             fld("official_variety", "Isolate name"),
             fld("kingdom", "Kingdom"),
@@ -66,10 +56,18 @@ class WheatPathogensGenomesMetadata(BaseMetadata):
             fld("locus_tag", "Locus tag"),
             fld("genome_analysis", "Genome-Analysis"),
             fld("metadata_file", "Metadata file"),
-        ]
+        ],
+        'options': {
+            'sheet_name': "Metadata",
+            'header_length': 1,
+            'column_name_row_index': 0,
+        }
+    }
 
-        wrapper = ExcelWrapper(field_spec, file_name, sheet_name="Metadata", header_length=1, column_name_row_index=0, additional_context=additional_context)
-        return wrapper.get_all()
+    def __init__(self, metadata_path, metadata_info=None):
+        super(WheatPathogensGenomesMetadata, self).__init__()
+        self.path = Path(metadata_path)
+        self.metadata_info = metadata_info
 
     def _get_packages(self):
         packages = []

@@ -21,7 +21,6 @@ class BaseMetadata:
         rows = list(wrapper.get_all())
         return rows
 
-
     def _get_packages(self):
         """
         return a list of dictionaries representing CKAN packages

@@ -11,7 +11,7 @@ from urllib.parse import urljoin
 from glob import glob
 
 from ...libs import ingest_utils
-from ...libs.excel_wrapper import ExcelWrapper, make_field_definition as fld
+from ...libs.excel_wrapper import make_field_definition as fld
 from . import files
 from .tracking import (
     BASETrackMetadata)

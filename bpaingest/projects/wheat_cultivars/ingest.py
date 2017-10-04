@@ -5,7 +5,7 @@ from unipath import Path
 from glob import glob
 from urllib.parse import urljoin
 
-from ...libs.excel_wrapper import ExcelWrapper, make_field_definition as fld
+from ...libs.excel_wrapper import make_field_definition as fld
 from ...libs import ingest_utils
 from ...util import make_logger, bpa_id_to_ckan_name
 from ...abstract import BaseMetadata
@@ -20,20 +20,8 @@ class WheatCultivarsMetadata(BaseMetadata):
     metadata_urls = ['https://downloads-qcif.bioplatforms.com/bpa/wheat_cultivars/tracking/']
     organization = 'bpa-wheat-cultivars'
     ckan_data_type = 'wheat-cultivars'
-
-    def __init__(self, metadata_path, metadata_info=None):
-        super(WheatCultivarsMetadata, self).__init__()
-        self.metadata_info = metadata_info
-        self.path = Path(metadata_path)
-        self.runs = parse_run_data(self.path)
-
-    @classmethod
-    def parse_spreadsheet(cls, file_name, additional_context):
-        """
-        This is the data from the Characteristics Sheet
-        """
-
-        field_spec = [
+    spreadsheet = {
+        'fields': [
             fld("source_name", "BPA ID"),
             fld("code", "CODE"),
             fld("bpa_id", "BPA ID", coerce=lambda s: s.replace("/", ".")),
@@ -51,10 +39,18 @@ class WheatCultivarsMetadata(BaseMetadata):
             fld("soil_tolerance", "Soil tolerance"),
             fld("classification", "International classification"),
             fld("url", "Link"),
-        ]
+        ],
+        'options': {
+            'sheet_name': 'Characteristics',
+            'header_length': 1
+        }
+    }
 
-        wrapper = ExcelWrapper(field_spec, file_name, sheet_name="Characteristics", header_length=1)
-        return wrapper.get_all()
+    def __init__(self, metadata_path, metadata_info=None):
+        super(WheatCultivarsMetadata, self).__init__()
+        self.metadata_info = metadata_info
+        self.path = Path(metadata_path)
+        self.runs = parse_run_data(self.path)
 
     def _get_packages(self):
         packages = []

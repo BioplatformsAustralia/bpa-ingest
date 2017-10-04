@@ -27,6 +27,10 @@ import re
 logger = make_logger(__name__)
 
 
+def parse_bpa_id_range(s):
+    return s.strip().split('/')[-1]
+
+
 class StemcellsTranscriptomeMetadata(BaseMetadata):
     contextual_classes = [StemcellsTranscriptomeContextual]
     metadata_urls = ['https://downloads-qcif.bioplatforms.com/bpa/stemcell/raw/transcriptome/']
@@ -36,6 +40,22 @@ class StemcellsTranscriptomeMetadata(BaseMetadata):
     organization = 'bpa-stemcells'
     auth = ('stemcell', 'stemcell')
     ckan_data_type = 'stemcells-transcriptomics'
+    spreadsheet = {
+        'fields': [
+            fld("bpa_id", re.compile(r'^.*sample unique id$'), coerce=ingest_utils.extract_bpa_id),
+            fld("sample_extaction_id", "Sample extraction ID"),
+            fld("insert_size_range", "Insert size range"),
+            fld("library_construction_protocol", "Library construction protocol"),
+            fld("sequencer", "Sequencer"),
+            fld("analysis_software_version", "CASAVA version"),
+        ],
+        'options': {
+            'sheet_name': None,
+            'header_length': 2,
+            'column_name_row_index': 1,
+            'formatting_info': True,
+        }
+    }
 
     def __init__(self, metadata_path, contextual_metadata=None, metadata_info=None):
         super(StemcellsTranscriptomeMetadata, self).__init__()
@@ -43,27 +63,6 @@ class StemcellsTranscriptomeMetadata(BaseMetadata):
         self.contextual_metadata = contextual_metadata
         self.metadata_info = metadata_info
         self.track_meta = StemcellsTrackMetadata()
-
-    @classmethod
-    def parse_spreadsheet(self, fname, additional_context):
-        field_spec = [
-            fld("bpa_id", re.compile(r'^.*sample unique id$'), coerce=ingest_utils.extract_bpa_id),
-            fld("sample_extaction_id", "Sample extraction ID"),
-            fld("insert_size_range", "Insert size range"),
-            fld("library_construction_protocol", "Library construction protocol"),
-            fld("sequencer", "Sequencer"),
-            fld("analysis_software_version", "CASAVA version"),
-        ]
-        wrapper = ExcelWrapper(
-            field_spec,
-            fname,
-            sheet_name=None,
-            header_length=2,
-            column_name_row_index=1,
-            formatting_info=True,
-            additional_context=additional_context)
-        rows = list(wrapper.get_all())
-        return rows
 
     def _get_packages(self):
         logger.info("Ingesting Stemcells Transcriptomics metadata from {0}".format(self.path))
@@ -139,6 +138,22 @@ class StemcellsSmallRNAMetadata(BaseMetadata):
     technology = 'smallrna'
     auth = ('stemcell', 'stemcell')
     ckan_data_type = 'stemcells-smallrna'
+    spreadsheet = {
+        'fields': [
+            fld("bpa_id", re.compile(r'^.*sample unique id$'), coerce=ingest_utils.extract_bpa_id),
+            fld("sample_extaction_id", "Sample extraction ID"),
+            fld("insert_size_range", "Insert size range"),
+            fld("library_construction_protocol", "Library construction protocol"),
+            fld("sequencer", "Sequencer"),
+            fld("analysis_software_version", "CASAVA version"),
+        ],
+        'options': {
+            'sheet_name': None,
+            'header_length': 2,
+            'column_name_row_index': 1,
+            'formatting_info': True,
+        }
+    }
 
     def __init__(self, metadata_path, contextual_metadata=None, metadata_info=None):
         super(StemcellsSmallRNAMetadata, self).__init__()
@@ -146,27 +161,6 @@ class StemcellsSmallRNAMetadata(BaseMetadata):
         self.contextual_metadata = contextual_metadata
         self.metadata_info = metadata_info
         self.track_meta = StemcellsTrackMetadata()
-
-    @classmethod
-    def parse_spreadsheet(self, fname, additional_context):
-        field_spec = [
-            fld("bpa_id", re.compile(r'^.*sample unique id$'), coerce=ingest_utils.extract_bpa_id),
-            fld("sample_extaction_id", "Sample extraction ID"),
-            fld("insert_size_range", "Insert size range"),
-            fld("library_construction_protocol", "Library construction protocol"),
-            fld("sequencer", "Sequencer"),
-            fld("analysis_software_version", "CASAVA version"),
-        ]
-        wrapper = ExcelWrapper(
-            field_spec,
-            fname,
-            sheet_name=None,
-            header_length=2,
-            column_name_row_index=1,
-            formatting_info=True,
-            additional_context=additional_context)
-        rows = list(wrapper.get_all())
-        return rows
 
     def _get_packages(self):
         logger.info("Ingesting Stemcells SmallRNA metadata from {0}".format(self.path))
@@ -243,6 +237,22 @@ class StemcellsSingleCellRNASeqMetadata(BaseMetadata):
     auth = ('stemcell', 'stemcell')
     ckan_data_type = 'stemcells-singlecellrnaseq'
     resource_linkage = ('bpa_id_range',)
+    spreadsheet = {
+        'fields': [
+            fld("bpa_id_range", re.compile(r'^.*sample unique id$'), coerce=parse_bpa_id_range),
+            fld("sample_extaction_id", "Sample extraction ID"),
+            fld("insert_size_range", "Insert size range"),
+            fld("library_construction_protocol", "Library construction protocol"),
+            fld("sequencer", "Sequencer"),
+            fld("fastq_generation", "Fastq generation"),
+        ],
+        'options': {
+            'sheet_name': None,
+            'header_length': 2,
+            'column_name_row_index': 1,
+            'formatting_info': True,
+        }
+    }
 
     def __init__(self, metadata_path, contextual_metadata=None, metadata_info=None):
         super(StemcellsSingleCellRNASeqMetadata, self).__init__()
@@ -250,30 +260,6 @@ class StemcellsSingleCellRNASeqMetadata(BaseMetadata):
         self.contextual_metadata = contextual_metadata
         self.metadata_info = metadata_info
         self.track_meta = StemcellsTrackMetadata()
-
-    @classmethod
-    def parse_spreadsheet(self, fname, additional_context):
-        def parse_bpa_id_range(s):
-            return s.strip().split('/')[-1]
-
-        field_spec = [
-            fld("bpa_id_range", re.compile(r'^.*sample unique id$'), coerce=parse_bpa_id_range),
-            fld("sample_extaction_id", "Sample extraction ID"),
-            fld("insert_size_range", "Insert size range"),
-            fld("library_construction_protocol", "Library construction protocol"),
-            fld("sequencer", "Sequencer"),
-            fld("fastq_generation", "Fastq generation"),
-        ]
-        wrapper = ExcelWrapper(
-            field_spec,
-            fname,
-            sheet_name=None,
-            header_length=2,
-            column_name_row_index=1,
-            formatting_info=True,
-            additional_context=additional_context)
-        rows = list(wrapper.get_all())
-        return rows
 
     def _get_packages(self):
         logger.info("Ingesting Stemcells SingleCellRNASeq metadata from {0}".format(self.path))
@@ -360,17 +346,8 @@ class StemcellsMetabolomicsMetadata(BaseMetadata):
     auth = ('stemcell', 'stemcell')
     resource_linkage = ('bpa_id', 'analytical_platform')
     ckan_data_type = 'stemcells-metabolomic'
-
-    def __init__(self, metadata_path, contextual_metadata=None, metadata_info=None):
-        super(StemcellsMetabolomicsMetadata, self).__init__()
-        self.path = Path(metadata_path)
-        self.contextual_metadata = contextual_metadata
-        self.metadata_info = metadata_info
-        self.track_meta = StemcellsTrackMetadata()
-
-    @classmethod
-    def parse_spreadsheet(self, fname, additional_context):
-        field_spec = [
+    spreadsheet = {
+        'fields': [
             fld("bpa_id", re.compile(r'^.*sample unique id$'), coerce=ingest_utils.extract_bpa_id),
             fld("sample_fractionation_extraction_solvent", "sample fractionation / extraction solvent"),
             fld("analytical_platform", "platform", coerce=fix_analytical_platform),
@@ -378,17 +355,21 @@ class StemcellsMetabolomicsMetadata(BaseMetadata):
             fld("method", "Method"),
             fld("mass_spectrometer", "Mass Spectrometer"),
             fld("acquisition_mode", "acquisition mode"),
-        ]
-        wrapper = ExcelWrapper(
-            field_spec,
-            fname,
-            sheet_name=None,
-            header_length=2,
-            column_name_row_index=1,
-            formatting_info=True,
-            additional_context=additional_context)
-        rows = list(wrapper.get_all())
-        return rows
+        ],
+        'options': {
+            'sheet_name': None,
+            'header_length': 2,
+            'column_name_row_index': 1,
+            'formatting_info': True,
+        }
+    }
+
+    def __init__(self, metadata_path, contextual_metadata=None, metadata_info=None):
+        super(StemcellsMetabolomicsMetadata, self).__init__()
+        self.path = Path(metadata_path)
+        self.contextual_metadata = contextual_metadata
+        self.metadata_info = metadata_info
+        self.track_meta = StemcellsTrackMetadata()
 
     def _get_packages(self):
         logger.info("Ingesting Stemcells Metabolomics metadata from {0}".format(self.path))
@@ -690,17 +671,8 @@ class StemcellsProteomicsAnalysedMetadata(BaseMetadata):
     auth = ('stemcell', 'stemcell')
     ckan_data_type = 'stemcells-proteomics-analysed'
     resource_linkage = ('ticket',)
-
-    def __init__(self, metadata_path, contextual_metadata=None, metadata_info=None):
-        super(StemcellsProteomicsAnalysedMetadata, self).__init__()
-        self.path = Path(metadata_path)
-        self.contextual_metadata = contextual_metadata
-        self.metadata_info = metadata_info
-        self.track_meta = StemcellsTrackMetadata()
-
-    @classmethod
-    def parse_spreadsheet(self, fname, additional_context):
-        field_spec = [
+    spreadsheet = {
+        'fields': [
             fld('date_submission', 'date submission yy/mm/dd', coerce=ingest_utils.get_date_isoformat),
             fld('facility_project_code_experiment_code', 'facility project_code _facility experiment code'),
             fld('bpa_id', 'bpa unique  identifier', coerce=ingest_utils.extract_bpa_id),
@@ -721,17 +693,21 @@ class StemcellsProteomicsAnalysedMetadata(BaseMetadata):
             fld('version', 'version (genome or database)'),
             fld('translation', 'translation (3 frame or 6 frame)'),
             fld('proteome_size', 'proteome size'),
-        ]
-        wrapper = ExcelWrapper(
-            field_spec,
-            fname,
-            sheet_name=None,
-            header_length=8,
-            column_name_row_index=7,
-            formatting_info=True,
-            additional_context=additional_context)
-        rows = list(wrapper.get_all())
-        return rows
+        ],
+        'options': {
+            'sheet_name': None,
+            'header_length': 8,
+            'column_name_row_index': 7,
+            'formatting_info': True,
+        }
+    }
+
+    def __init__(self, metadata_path, contextual_metadata=None, metadata_info=None):
+        super(StemcellsProteomicsAnalysedMetadata, self).__init__()
+        self.path = Path(metadata_path)
+        self.contextual_metadata = contextual_metadata
+        self.metadata_info = metadata_info
+        self.track_meta = StemcellsTrackMetadata()
 
     def _get_packages(self):
         logger.info("Ingesting Stemcells metadata from {0}".format(self.path))
@@ -808,17 +784,8 @@ class StemcellsMetabolomicsAnalysedMetadata(BaseMetadata):
     omics = 'metabolomics'
     analysed = True
     resource_linkage = ('folder_name',)
-
-    def __init__(self, metadata_path, contextual_metadata=None, metadata_info=None):
-        super(StemcellsMetabolomicsAnalysedMetadata, self).__init__()
-        self.path = Path(metadata_path)
-        self.contextual_metadata = contextual_metadata
-        self.metadata_info = metadata_info
-        self.track_meta = StemcellsTrackMetadata()
-
-    @classmethod
-    def parse_spreadsheet(self, fname, additional_context):
-        field_spec = [
+    spreadsheet = {
+        'fields': [
             fld('data_analysis_date', 'data analysis date'),
             fld('bpa_id_range', 'bpa unique  identifier **'),
             fld('sample_name', 'sample name **'),
@@ -836,17 +803,21 @@ class StemcellsMetabolomicsAnalysedMetadata(BaseMetadata):
             fld('data_type', 'data type'),
             fld('analysis_file_name', 'file name of analysed data (folder or zip file) file name'),
             fld('additional_comments', 'additional comments'),
-        ]
-        wrapper = ExcelWrapper(
-            field_spec,
-            fname,
-            sheet_name=None,
-            header_length=8,
-            column_name_row_index=7,
-            formatting_info=True,
-            additional_context=additional_context)
-        rows = list(wrapper.get_all())
-        return rows
+        ],
+        'options': {
+            'sheet_name': None,
+            'header_length': 8,
+            'column_name_row_index': 7,
+            'formatting_info': True,
+        }
+    }
+
+    def __init__(self, metadata_path, contextual_metadata=None, metadata_info=None):
+        super(StemcellsMetabolomicsAnalysedMetadata, self).__init__()
+        self.path = Path(metadata_path)
+        self.contextual_metadata = contextual_metadata
+        self.metadata_info = metadata_info
+        self.track_meta = StemcellsTrackMetadata()
 
     def _get_packages(self):
         logger.info("Ingesting Stemcells metadata from {0}".format(self.path))

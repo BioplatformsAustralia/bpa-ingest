@@ -11,7 +11,7 @@ from urllib.parse import urljoin
 from glob import glob
 
 from ...libs import ingest_utils
-from ...libs.excel_wrapper import ExcelWrapper, make_field_definition as fld
+from ...libs.excel_wrapper import make_field_definition as fld
 from . import files
 from .tracking import OMGTrackMetadata
 from .contextual import OMGSampleContextual
@@ -38,6 +38,20 @@ class OMG10XRawIlluminaMetadata(BaseMetadata):
     ]
     metadata_url_components = ('ticket',)
     resource_linkage = ('bpa_id', 'flow_id')
+    spreadsheet = {
+        'fields': [
+            fld("bpa_id", "BPA ID", coerce=ingest_utils.extract_bpa_id),
+            fld("file", "file"),
+            fld("library_preparation", "library prep"),
+            fld("analysis_software_version", "softwareverion"),
+        ],
+        'options': {
+            'sheet_name': None,
+            'header_length': 2,
+            'column_name_row_index': 1,
+            'formatting_info': True,
+        }
+    }
 
     def __init__(self, metadata_path, contextual_metadata=None, metadata_info=None):
         super(OMG10XRawIlluminaMetadata, self).__init__()
@@ -47,25 +61,6 @@ class OMG10XRawIlluminaMetadata(BaseMetadata):
         self.track_meta = OMGTrackMetadata()
         # each row in the spreadsheet maps through to a single tar file
         self.file_package = {}
-
-    @classmethod
-    def parse_spreadsheet(self, fname, metadata_info):
-        field_spec = [
-            fld("bpa_id", "BPA ID", coerce=ingest_utils.extract_bpa_id),
-            fld("file", "file"),
-            fld("library_preparation", "library prep"),
-            fld("analysis_software_version", "softwareverion"),
-        ]
-        wrapper = ExcelWrapper(
-            field_spec,
-            fname,
-            sheet_name=None,
-            header_length=2,
-            column_name_row_index=1,
-            formatting_info=True,
-            additional_context=metadata_info[os.path.basename(fname)])
-        rows = list(wrapper.get_all())
-        return rows
 
     def _get_packages(self):
         xlsx_re = re.compile(r'^.*_(\w+)_metadata.*\.xlsx$')
@@ -167,6 +162,22 @@ class OMG10XRawMetadata(BaseMetadata):
     ]
     metadata_url_components = ('ticket',)
     resource_linkage = ('bpa_id', 'flow_id')
+    spreadsheet = {
+        'fields': [
+            fld('bpa_id', 'bpa id', coerce=ingest_utils.extract_bpa_id),
+            fld('facility', 'facility'),
+            fld('file', 'file'),
+            fld('library_preparation', 'library prep'),
+            fld('platform', 'platform'),
+            fld('software_version', 'software version'),
+        ],
+        'options': {
+            'sheet_name': None,
+            'header_length': 2,
+            'column_name_row_index': 1,
+            'formatting_info': True,
+        }
+    }
 
     def __init__(self, metadata_path, contextual_metadata=None, metadata_info=None):
         super(OMG10XRawMetadata, self).__init__()
@@ -175,28 +186,6 @@ class OMG10XRawMetadata(BaseMetadata):
         self.metadata_info = metadata_info
         self.track_meta = OMGTrackMetadata()
         self.flow_lookup = {}
-
-    @classmethod
-    def parse_spreadsheet(self, fname, metadata_info):
-        field_spec = [
-            fld('bpa_id', 'bpa id', coerce=ingest_utils.extract_bpa_id),
-            fld('facility', 'facility'),
-            fld('file', 'file'),
-            fld('library_preparation', 'library prep'),
-            fld('platform', 'platform'),
-            fld('software_version', 'software version'),
-        ]
-
-        wrapper = ExcelWrapper(
-            field_spec,
-            fname,
-            sheet_name=None,
-            header_length=2,
-            column_name_row_index=1,
-            formatting_info=True,
-            additional_context=metadata_info[os.path.basename(fname)])
-        rows = list(wrapper.get_all())
-        return rows
 
     def _get_packages(self):
         logger.info("Ingesting OMG metadata from {0}".format(self.path))
@@ -291,6 +280,20 @@ class OMG10XProcessedIlluminaMetadata(BaseMetadata):
     ]
     metadata_url_components = ('ticket',)
     resource_linkage = ('bpa_id', 'flow_id')
+    spreadsheet = {
+        'fields': [
+            fld("bpa_id", "BPA ID", coerce=ingest_utils.extract_bpa_id),
+            fld("file", "file"),
+            fld("library_preparation", "library prep"),
+            fld("analysis_software_version", "softwareverion"),
+        ],
+        'options': {
+            'sheet_name': None,
+            'header_length': 2,
+            'column_name_row_index': 1,
+            'formatting_info': True,
+        }
+    }
 
     def __init__(self, metadata_path, contextual_metadata=None, metadata_info=None):
         super(OMG10XProcessedIlluminaMetadata, self).__init__()
@@ -300,25 +303,6 @@ class OMG10XProcessedIlluminaMetadata(BaseMetadata):
         self.track_meta = OMGTrackMetadata()
         # each row in the spreadsheet maps through to a single tar file
         self.file_package = {}
-
-    @classmethod
-    def parse_spreadsheet(self, fname, metadata_info):
-        field_spec = [
-            fld("bpa_id", "BPA ID", coerce=ingest_utils.extract_bpa_id),
-            fld("file", "file"),
-            fld("library_preparation", "library prep"),
-            fld("analysis_software_version", "softwareverion"),
-        ]
-        wrapper = ExcelWrapper(
-            field_spec,
-            fname,
-            sheet_name=None,
-            header_length=2,
-            column_name_row_index=1,
-            formatting_info=True,
-            additional_context=metadata_info[os.path.basename(fname)])
-        rows = list(wrapper.get_all())
-        return rows
 
     def _get_packages(self):
         xlsx_re = re.compile(r'^.*_(\w+)_metadata.*\.xlsx$')
@@ -416,21 +400,8 @@ class OMGExonCaptureMetadata(BaseMetadata):
     ]
     metadata_url_components = ('ticket',)
     resource_linkage = ('bpa_id', 'flowcell_id', 'index_sequence')
-
-    def __init__(self, metadata_path, contextual_metadata=None, metadata_info=None):
-        super(OMGExonCaptureMetadata, self).__init__()
-        self.path = Path(metadata_path)
-        self.contextual_metadata = contextual_metadata
-        self.metadata_info = metadata_info
-        self.track_meta = OMGTrackMetadata()
-
-    @classmethod
-    def flow_cell_index_linkage(cls, flow_id, index):
-        return flow_id + '_' + index.replace('-', '').replace('_', '')
-
-    @classmethod
-    def parse_spreadsheet(self, fname, metadata_info):
-        field_spec = [
+    spreadsheet = {
+        'fields': [
             fld("bpa_id", "bpa_id", coerce=ingest_utils.extract_bpa_id),
             fld('voucher_id', 'voucher_id'),
             fld('dna_extraction_date', 'dna_extraction_date'),
@@ -467,18 +438,25 @@ class OMGExonCaptureMetadata(BaseMetadata):
             fld('qpcr_n1_meancp_post', 'qpcr_n1_meancp_post'),
             fld('qpcr_n2_meancp_pre', 'qpcr_n2_meancp_pre'),
             fld('qpcr_n2_meancp_post', 'qpcr_n2_meancp_post'),
-        ]
+        ],
+        'options': {
+            'sheet_name': None,
+            'header_length': 1,
+            'column_name_row_index': 0,
+            'formatting_info': True,
+        }
+    }
 
-        wrapper = ExcelWrapper(
-            field_spec,
-            fname,
-            sheet_name=None,
-            header_length=1,
-            column_name_row_index=0,
-            formatting_info=True,
-            additional_context=metadata_info[os.path.basename(fname)])
-        rows = list(wrapper.get_all())
-        return rows
+    def __init__(self, metadata_path, contextual_metadata=None, metadata_info=None):
+        super(OMGExonCaptureMetadata, self).__init__()
+        self.path = Path(metadata_path)
+        self.contextual_metadata = contextual_metadata
+        self.metadata_info = metadata_info
+        self.track_meta = OMGTrackMetadata()
+
+    @classmethod
+    def flow_cell_index_linkage(cls, flow_id, index):
+        return flow_id + '_' + index.replace('-', '').replace('_', '')
 
     def _get_packages(self):
         logger.info("Ingesting OMG metadata from {0}".format(self.path))
@@ -562,17 +540,8 @@ class OMGGenomicsHiSeqMetadata(BaseMetadata):
     ]
     metadata_url_components = ('ticket',)
     resource_linkage = ('bpa_id', 'flow_id')
-
-    def __init__(self, metadata_path, contextual_metadata=None, metadata_info=None):
-        super(OMGGenomicsHiSeqMetadata, self).__init__()
-        self.path = Path(metadata_path)
-        self.contextual_metadata = contextual_metadata
-        self.metadata_info = metadata_info
-        self.track_meta = OMGTrackMetadata()
-
-    @classmethod
-    def parse_spreadsheet(self, fname, metadata_info):
-        field_spec = [
+    spreadsheet = {
+        'fields': {
             fld('facility_sample_id', 'facility_sample_id'),
             fld('bpa_id', 'bpa_sample_id', coerce=ingest_utils.extract_bpa_id),
             fld('bpa_dataset_id', 'bpa_dataset_id'),
@@ -584,17 +553,21 @@ class OMGGenomicsHiSeqMetadata(BaseMetadata):
             fld('software_version', 'software_version'),
             fld('omg_project', 'omg_project'),
             fld('data_custodian', 'data_custodian'),
-        ]
-        wrapper = ExcelWrapper(
-            field_spec,
-            fname,
-            sheet_name=None,
-            header_length=1,
-            column_name_row_index=0,
-            formatting_info=True,
-            additional_context=metadata_info[os.path.basename(fname)])
-        rows = list(wrapper.get_all())
-        return rows
+        },
+        'options': {
+            'sheet_name': None,
+            'header_length': 1,
+            'column_name_row_index': 0,
+            'formatting_info': True,
+        }
+    }
+
+    def __init__(self, metadata_path, contextual_metadata=None, metadata_info=None):
+        super(OMGGenomicsHiSeqMetadata, self).__init__()
+        self.path = Path(metadata_path)
+        self.contextual_metadata = contextual_metadata
+        self.metadata_info = metadata_info
+        self.track_meta = OMGTrackMetadata()
 
     def _get_packages(self):
         xlsx_re = re.compile(r'^.*_(\w+)_metadata.*\.xlsx$')

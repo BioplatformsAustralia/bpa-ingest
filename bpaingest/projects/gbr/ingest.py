@@ -4,7 +4,7 @@ import os
 import re
 from . import files
 
-from ...libs.excel_wrapper import ExcelWrapper, make_field_definition as fld
+from ...libs.excel_wrapper import make_field_definition as fld
 from unipath import Path
 from glob import glob
 from ...util import make_logger, bpa_id_to_ckan_name
@@ -25,15 +25,8 @@ class GbrAmpliconsMetadata(BaseMetadata):
     auth = ("bpa", "gbr")
     resource_linkage = ('bpa_id', 'amplicon', 'index')
     extract_index_re = re.compile('^.*_([GATC]{8}_[GATC]{8})$')
-
-    def __init__(self, metadata_path, metadata_info=None):
-        super(GbrAmpliconsMetadata, self).__init__()
-        self.path = Path(metadata_path)
-        self.metadata_info = metadata_info
-
-    @classmethod
-    def parse_spreadsheet(cls, file_name, additional_context):
-        field_spec = [
+    spreadsheet = {
+        'fields': [
             fld('bpa_id', 'Sample unique ID', coerce=ingest_utils.extract_bpa_id),
             fld('sample_extraction_id', 'Sample extraction ID', coerce=ingest_utils.fix_sample_extraction_id),
             fld('sequencing_facility', 'Sequencing facility'),
@@ -53,18 +46,19 @@ class GbrAmpliconsMetadata(BaseMetadata):
             fld('name', 'Sample name on sample sheet'),
             fld('analysis_software_version', 'AnalysisSoftwareVersion'),
             fld('comments', 'Comments',),
-        ]
+        ],
+        'options': {
+            'sheet_name': None,
+            'header_length': 3,
+            'column_name_row_index': 1,
+            'formatting_info': True,
+        }
+    }
 
-        wrapper = ExcelWrapper(
-            field_spec,
-            file_name,
-            sheet_name=None,
-            header_length=3,
-            column_name_row_index=1,
-            formatting_info=True,
-            additional_context=additional_context)
-
-        return wrapper.get_all()
+    def __init__(self, metadata_path, metadata_info=None):
+        super(GbrAmpliconsMetadata, self).__init__()
+        self.path = Path(metadata_path)
+        self.metadata_info = metadata_info
 
     def _get_packages(self):
         packages = []

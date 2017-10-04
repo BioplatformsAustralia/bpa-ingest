@@ -39,7 +39,6 @@ from .stemcells.ingest import (
     StemcellsMetabolomicsAnalysedMetadata)
 from .wheat_cultivars.ingest import WheatCultivarsMetadata
 from .wheat_pathogens_genomes.ingest import WheatPathogensGenomesMetadata
-from ..organizations import ORGANIZATIONS
 from .omg.ingest import (
     OMG10XProcessedIlluminaMetadata,
     OMG10XRawIlluminaMetadata,

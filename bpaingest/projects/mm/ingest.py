@@ -7,7 +7,7 @@ from glob import glob
 from ...util import make_logger, bpa_id_to_ckan_name
 from ...libs import ingest_utils
 from ...abstract import BaseMetadata
-from ...libs.excel_wrapper import ExcelWrapper, make_field_definition as fld
+from ...libs.excel_wrapper import make_field_definition as fld
 from . import files
 from . tracking import MarineMicrobesTrackMetadata
 from .contextual import (MarineMicrobesSampleContextual, MarineMicrobesNCBIContextual)
@@ -78,17 +78,8 @@ class BaseMarineMicrobesAmpliconsMetadata(BaseMetadata):
     contextual_classes = common_context
     metadata_patterns = [r'^.*\.md5', r'^.*_metadata.*.*\.xlsx']
     resource_linkage = ('bpa_id', 'mm_amplicon_linkage')
-
-    def __init__(self, metadata_path, contextual_metadata=None, metadata_info=None):
-        super(BaseMarineMicrobesAmpliconsMetadata, self).__init__()
-        self.path = Path(metadata_path)
-        self.contextual_metadata = contextual_metadata
-        self.metadata_info = metadata_info
-        self.track_meta = MarineMicrobesTrackMetadata()
-
-    @classmethod
-    def parse_spreadsheet(self, fname, metadata_info):
-        field_spec = [
+    spreadsheet = {
+        'fields': [
             fld("bpa_id", re.compile(r'^.*sample unique id$'), coerce=ingest_utils.extract_bpa_id),
             fld("sample_extraction_id", "Sample extraction ID"),
             fld("target", "Target"),
@@ -102,17 +93,21 @@ class BaseMarineMicrobesAmpliconsMetadata(BaseMetadata):
             fld("pass_fail_neat", "1:10 PCR, P=pass, F=fail"),
             fld("pass_fail_10", "1:100 PCR, P=pass, F=fail"),
             fld("pass_fail_100", "neat PCR, P=pass, F=fail"),
-        ]
-        wrapper = ExcelWrapper(
-            field_spec,
-            fname,
-            sheet_name=None,
-            header_length=2,
-            column_name_row_index=1,
-            formatting_info=True,
-            additional_context=metadata_info[os.path.basename(fname)])
-        rows = list(wrapper.get_all())
-        return rows
+        ],
+        'options': {
+            'sheet_name': None,
+            'header_length': 2,
+            'column_name_row_index': 1,
+            'formatting_info': True,
+        }
+    }
+
+    def __init__(self, metadata_path, contextual_metadata=None, metadata_info=None):
+        super(BaseMarineMicrobesAmpliconsMetadata, self).__init__()
+        self.path = Path(metadata_path)
+        self.contextual_metadata = contextual_metadata
+        self.metadata_info = metadata_info
+        self.track_meta = MarineMicrobesTrackMetadata()
 
     def _get_packages(self):
         xlsx_re = re.compile(r'^.*_(\w+)_metadata.*\.xlsx$')
@@ -355,6 +350,22 @@ class MarineMicrobesMetagenomicsMetadata(BaseMetadata):
         'https://downloads-qcif.bioplatforms.com/bpa/marine_microbes/raw/metagenomics/'
     ]
     metadata_url_components = ('facility_code', 'ticket')
+    spreadsheet = {
+        'fields': [
+            fld("bpa_id", re.compile(r'^.*sample unique id$'), coerce=ingest_utils.extract_bpa_id),
+            fld("sample_extraction_id", "Sample extraction ID"),
+            fld("insert_size_range", "Insert size range"),
+            fld("library_construction_protocol", "Library construction protocol"),
+            fld("sequencer", "Sequencer"),
+            fld("analysis_software_version", ("casava version", "bcl2fastq2", re.compile(r'^software[ &]+version$'))),
+        ],
+        'options': {
+            'sheet_name': None,
+            'header_length': 2,
+            'column_name_row_index': 1,
+            'formatting_info': True,
+        }
+    }
 
     def __init__(self, metadata_path, contextual_metadata=None, metadata_info=None):
         super(MarineMicrobesMetagenomicsMetadata, self).__init__()
@@ -362,27 +373,6 @@ class MarineMicrobesMetagenomicsMetadata(BaseMetadata):
         self.contextual_metadata = contextual_metadata
         self.metadata_info = metadata_info
         self.track_meta = MarineMicrobesTrackMetadata()
-
-    @classmethod
-    def parse_spreadsheet(self, fname, metadata_info):
-        field_spec = [
-            fld("bpa_id", re.compile(r'^.*sample unique id$'), coerce=ingest_utils.extract_bpa_id),
-            fld("sample_extraction_id", "Sample extraction ID"),
-            fld("insert_size_range", "Insert size range"),
-            fld("library_construction_protocol", "Library construction protocol"),
-            fld("sequencer", "Sequencer"),
-            fld("analysis_software_version", ("casava version", "bcl2fastq2", re.compile(r'^software[ &]+version$'))),
-        ]
-        wrapper = ExcelWrapper(
-            field_spec,
-            fname,
-            sheet_name=None,
-            header_length=2,
-            column_name_row_index=1,
-            formatting_info=True,
-            additional_context=metadata_info[os.path.basename(fname)])
-        rows = list(wrapper.get_all())
-        return rows
 
     def _get_packages(self):
         logger.info("Ingesting Marine Microbes metadata from {0}".format(self.path))
@@ -467,6 +457,22 @@ class MarineMicrobesMetatranscriptomeMetadata(BaseMetadata):
         'https://downloads-qcif.bioplatforms.com/bpa/marine_microbes/raw/metatranscriptome/'
     ]
     metadata_url_components = ('facility_code', 'ticket')
+    spreadsheet = {
+        'fields': [
+            fld("bpa_id", re.compile(r'^.*sample unique id$'), coerce=ingest_utils.extract_bpa_id),
+            fld("sample_extraction_id", "Sample extraction ID"),
+            fld("insert_size_range", "Insert size range"),
+            fld("library_construction_protocol", "Library construction protocol"),
+            fld("sequencer", "Sequencer"),
+            fld("analysis_software_version", "CASAVA version"),
+        ],
+        'options': {
+            'sheet_name': None,
+            'header_length': 2,
+            'column_name_row_index': 1,
+            'formatting_info': True,
+        }
+    }
 
     def __init__(self, metadata_path, contextual_metadata=None, metadata_info=None):
         super(MarineMicrobesMetatranscriptomeMetadata, self).__init__()
@@ -474,27 +480,6 @@ class MarineMicrobesMetatranscriptomeMetadata(BaseMetadata):
         self.contextual_metadata = contextual_metadata
         self.metadata_info = metadata_info
         self.track_meta = MarineMicrobesTrackMetadata()
-
-    @classmethod
-    def parse_spreadsheet(self, fname, metadata_info):
-        field_spec = [
-            fld("bpa_id", re.compile(r'^.*sample unique id$'), coerce=ingest_utils.extract_bpa_id),
-            fld("sample_extraction_id", "Sample extraction ID"),
-            fld("insert_size_range", "Insert size range"),
-            fld("library_construction_protocol", "Library construction protocol"),
-            fld("sequencer", "Sequencer"),
-            fld("analysis_software_version", "CASAVA version"),
-        ]
-        wrapper = ExcelWrapper(
-            field_spec,
-            fname,
-            sheet_name=None,
-            header_length=2,
-            column_name_row_index=1,
-            formatting_info=True,
-            additional_context=metadata_info[os.path.basename(fname)])
-        rows = list(wrapper.get_all())
-        return rows
 
     def _get_packages(self):
         logger.info("Ingesting Marine Microbes Transcriptomics metadata from {0}".format(self.path))
