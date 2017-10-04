@@ -11,7 +11,6 @@ logger = make_logger(__name__)
 
 class DownloadMetadata(object):
     def __init__(self, project_class, path=None, force_fetch=False, metadata_info={}):
-        logger.critical('blah!')
         self.cleanup = True
         self.fetch = True
         self._set_path(path)

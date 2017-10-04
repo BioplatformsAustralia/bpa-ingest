@@ -326,6 +326,23 @@ class BASEMetagenomicsMetadata(BaseMetadata):
     ]
     metadata_url_components = ('facility_code', 'ticket')
     resource_linkage = ('sample_extraction_id', 'flow_id')
+    spreadsheet = {
+        'fields': [
+            fld('bpa_id', 'Soil sample unique ID', coerce=ingest_utils.extract_bpa_id),
+            fld('sample_extraction_id', 'Sample extraction ID', coerce=ingest_utils.fix_sample_extraction_id),
+            fld('insert_size_range', 'Insert size range'),
+            fld('library_construction_protocol', 'Library construction protocol'),
+            fld('sequencer', 'Sequencer'),
+            fld('casava_version', 'CASAVA version'),
+            fld('flow_cell_id', 'Run #:Flow Cell ID'),
+        ],
+        'options': {
+            'sheet_name': None,
+            'header_length': 2,
+            'column_name_row_index': 1,
+            'formatting_info': True,
+        }
+    }
     # these are packages from the pilot, which have missing metadata
     # we synthethise minimal packages for this data - see
     # https://github.com/muccg/bpa-archive-ops/issues/140
@@ -349,28 +366,6 @@ class BASEMetagenomicsMetadata(BaseMetadata):
         self.contextual_metadata = contextual_metadata
         self.metadata_info = metadata_info
         self.track_meta = BASETrackMetadata()
-
-    @classmethod
-    def parse_spreadsheet(self, fname, metadata_info):
-        field_spec = [
-            fld('bpa_id', 'Soil sample unique ID', coerce=ingest_utils.extract_bpa_id),
-            fld('sample_extraction_id', 'Sample extraction ID', coerce=ingest_utils.fix_sample_extraction_id),
-            fld('insert_size_range', 'Insert size range'),
-            fld('library_construction_protocol', 'Library construction protocol'),
-            fld('sequencer', 'Sequencer'),
-            fld('casava_version', 'CASAVA version'),
-            fld('flow_cell_id', 'Run #:Flow Cell ID'),
-        ]
-        wrapper = ExcelWrapper(
-            field_spec,
-            fname,
-            sheet_name=None,
-            header_length=2,
-            column_name_row_index=1,
-            formatting_info=True,
-            additional_context=metadata_info[os.path.basename(fname)])
-        rows = list(wrapper.get_all())
-        return rows
 
     def assemble_obj(self, bpa_id, sample_extraction_id, flow_id, row, track_meta):
         def track_get(k):
