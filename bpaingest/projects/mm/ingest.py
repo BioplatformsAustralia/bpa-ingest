@@ -103,20 +103,16 @@ class BaseMarineMicrobesAmpliconsMetadata(BaseMetadata):
             fld("pass_fail_10", "1:100 PCR, P=pass, F=fail"),
             fld("pass_fail_100", "neat PCR, P=pass, F=fail"),
         ]
-        try:
-            wrapper = ExcelWrapper(
-                field_spec,
-                fname,
-                sheet_name=None,
-                header_length=2,
-                column_name_row_index=1,
-                formatting_info=True,
-                additional_context=metadata_info[os.path.basename(fname)])
-            rows = list(wrapper.get_all())
-            return rows
-        except:
-            logger.error("Cannot parse: `%s'" % (fname))
-            return []
+        wrapper = ExcelWrapper(
+            field_spec,
+            fname,
+            sheet_name=None,
+            header_length=2,
+            column_name_row_index=1,
+            formatting_info=True,
+            additional_context=metadata_info[os.path.basename(fname)])
+        rows = list(wrapper.get_all())
+        return rows
 
     def _get_packages(self):
         xlsx_re = re.compile(r'^.*_(\w+)_metadata.*\.xlsx$')

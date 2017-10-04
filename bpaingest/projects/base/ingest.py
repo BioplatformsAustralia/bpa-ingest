@@ -95,22 +95,16 @@ class BASEAmpliconsMetadata(BaseMetadata):
             fld("analysis_software_version", "AnalysisSoftwareVersion"),
             fld("comments", "Comments"),
         ]
-        try:
-            wrapper = ExcelWrapper(
-                field_spec,
-                fname,
-                sheet_name=None,
-                header_length=2,
-                column_name_row_index=1,
-                formatting_info=True,
-                additional_context=metadata_info[os.path.basename(fname)])
-            rows = list(wrapper.get_all())
-            return rows
-        except:
-            raise
-            logger.critical("Cannot parse: `%s'" % (fname))
-            return []
-
+        wrapper = ExcelWrapper(
+            field_spec,
+            fname,
+            sheet_name=None,
+            header_length=2,
+            column_name_row_index=1,
+            formatting_info=True,
+            additional_context=metadata_info[os.path.basename(fname)])
+        rows = list(wrapper.get_all())
+        return rows
     def _get_packages(self):
         xlsx_re = re.compile(r'^.*_(\w+)_metadata.*\.xlsx$')
 
@@ -370,20 +364,16 @@ class BASEMetagenomicsMetadata(BaseMetadata):
             fld('casava_version', 'CASAVA version'),
             fld('flow_cell_id', 'Run #:Flow Cell ID'),
         ]
-        try:
-            wrapper = ExcelWrapper(
-                field_spec,
-                fname,
-                sheet_name=None,
-                header_length=2,
-                column_name_row_index=1,
-                formatting_info=True,
-                additional_context=metadata_info[os.path.basename(fname)])
-            rows = list(wrapper.get_all())
-            return rows
-        except:
-            logger.critical("Cannot parse: `%s'" % (fname))
-            return []
+        wrapper = ExcelWrapper(
+            field_spec,
+            fname,
+            sheet_name=None,
+            header_length=2,
+            column_name_row_index=1,
+            formatting_info=True,
+            additional_context=metadata_info[os.path.basename(fname)])
+        rows = list(wrapper.get_all())
+        return rows
 
     def assemble_obj(self, bpa_id, sample_extraction_id, flow_id, row, track_meta):
         def track_get(k):

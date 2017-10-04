@@ -56,20 +56,16 @@ class OMG10XRawIlluminaMetadata(BaseMetadata):
             fld("library_preparation", "library prep"),
             fld("analysis_software_version", "softwareverion"),
         ]
-        try:
-            wrapper = ExcelWrapper(
-                field_spec,
-                fname,
-                sheet_name=None,
-                header_length=2,
-                column_name_row_index=1,
-                formatting_info=True,
-                additional_context=metadata_info[os.path.basename(fname)])
-            rows = list(wrapper.get_all())
-            return rows
-        except:
-            logger.error("Cannot parse: `%s'" % (fname))
-            return []
+        wrapper = ExcelWrapper(
+            field_spec,
+            fname,
+            sheet_name=None,
+            header_length=2,
+            column_name_row_index=1,
+            formatting_info=True,
+            additional_context=metadata_info[os.path.basename(fname)])
+        rows = list(wrapper.get_all())
+        return rows
 
     def _get_packages(self):
         xlsx_re = re.compile(r'^.*_(\w+)_metadata.*\.xlsx$')
@@ -191,20 +187,16 @@ class OMG10XRawMetadata(BaseMetadata):
             fld('software_version', 'software version'),
         ]
 
-        try:
-            wrapper = ExcelWrapper(
-                field_spec,
-                fname,
-                sheet_name=None,
-                header_length=2,
-                column_name_row_index=1,
-                formatting_info=True,
-                additional_context=metadata_info[os.path.basename(fname)])
-            rows = list(wrapper.get_all())
-            return rows
-        except:
-            logger.error("Cannot parse: `%s'" % (fname))
-            return []
+        wrapper = ExcelWrapper(
+            field_spec,
+            fname,
+            sheet_name=None,
+            header_length=2,
+            column_name_row_index=1,
+            formatting_info=True,
+            additional_context=metadata_info[os.path.basename(fname)])
+        rows = list(wrapper.get_all())
+        return rows
 
     def _get_packages(self):
         logger.info("Ingesting OMG metadata from {0}".format(self.path))
@@ -317,20 +309,16 @@ class OMG10XProcessedIlluminaMetadata(BaseMetadata):
             fld("library_preparation", "library prep"),
             fld("analysis_software_version", "softwareverion"),
         ]
-        try:
-            wrapper = ExcelWrapper(
-                field_spec,
-                fname,
-                sheet_name=None,
-                header_length=2,
-                column_name_row_index=1,
-                formatting_info=True,
-                additional_context=metadata_info[os.path.basename(fname)])
-            rows = list(wrapper.get_all())
-            return rows
-        except:
-            logger.error("Cannot parse: `%s'" % (fname))
-            return []
+        wrapper = ExcelWrapper(
+            field_spec,
+            fname,
+            sheet_name=None,
+            header_length=2,
+            column_name_row_index=1,
+            formatting_info=True,
+            additional_context=metadata_info[os.path.basename(fname)])
+        rows = list(wrapper.get_all())
+        return rows
 
     def _get_packages(self):
         xlsx_re = re.compile(r'^.*_(\w+)_metadata.*\.xlsx$')
@@ -597,20 +585,16 @@ class OMGGenomicsHiSeqMetadata(BaseMetadata):
             fld('omg_project', 'omg_project'),
             fld('data_custodian', 'data_custodian'),
         ]
-        try:
-            wrapper = ExcelWrapper(
-                field_spec,
-                fname,
-                sheet_name=None,
-                header_length=1,
-                column_name_row_index=0,
-                formatting_info=True,
-                additional_context=metadata_info[os.path.basename(fname)])
-            rows = list(wrapper.get_all())
-            return rows
-        except:
-            logger.error("Cannot parse: `%s'" % (fname))
-            return []
+        wrapper = ExcelWrapper(
+            field_spec,
+            fname,
+            sheet_name=None,
+            header_length=1,
+            column_name_row_index=0,
+            formatting_info=True,
+            additional_context=metadata_info[os.path.basename(fname)])
+        rows = list(wrapper.get_all())
+        return rows
 
     def _get_packages(self):
         xlsx_re = re.compile(r'^.*_(\w+)_metadata.*\.xlsx$')
