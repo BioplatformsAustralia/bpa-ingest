@@ -66,17 +66,9 @@ class BASEAmpliconsMetadata(BaseMetadata):
     # pilot data
     index_linkage_spreadsheets = ('BASE_18S_UNSW_A6BRJ_metadata.xlsx',)
     index_linkage_md5s = ('BASE_18S_UNSW_A6BRJ_checksums.md5',)
-
-    def __init__(self, metadata_path, contextual_metadata=None, metadata_info=None):
-        super(BASEAmpliconsMetadata, self).__init__()
-        self.path = Path(metadata_path)
-        self.contextual_metadata = contextual_metadata
-        self.metadata_info = metadata_info
-        self.track_meta = BASETrackMetadata()
-
-    @classmethod
-    def parse_spreadsheet(self, fname, metadata_info):
-        field_spec = [
+    # spreadsheet
+    spreadsheet = {
+        'fields': [
             fld("bpa_id", "Soil sample unique ID", coerce=ingest_utils.extract_bpa_id),
             fld("sample_extraction_id", "Sample extraction ID", coerce=ingest_utils.fix_sample_extraction_id),
             fld("sequencing_facility", "Sequencing facility"),
@@ -94,17 +86,22 @@ class BASEAmpliconsMetadata(BaseMetadata):
             fld("sample_name", "Sample name on sample sheet"),
             fld("analysis_software_version", "AnalysisSoftwareVersion"),
             fld("comments", "Comments"),
-        ]
-        wrapper = ExcelWrapper(
-            field_spec,
-            fname,
-            sheet_name=None,
-            header_length=2,
-            column_name_row_index=1,
-            formatting_info=True,
-            additional_context=metadata_info[os.path.basename(fname)])
-        rows = list(wrapper.get_all())
-        return rows
+        ],
+        'options': {
+            'sheet_name': None,
+            'header_length': 2,
+            'column_name_row_index': 1,
+            'formatting_info': True,
+        }
+    }
+
+    def __init__(self, metadata_path, contextual_metadata=None, metadata_info=None):
+        super(BASEAmpliconsMetadata, self).__init__()
+        self.path = Path(metadata_path)
+        self.contextual_metadata = contextual_metadata
+        self.metadata_info = metadata_info
+        self.track_meta = BASETrackMetadata()
+
     def _get_packages(self):
         xlsx_re = re.compile(r'^.*_(\w+)_metadata.*\.xlsx$')
 

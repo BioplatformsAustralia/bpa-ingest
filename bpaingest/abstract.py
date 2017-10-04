@@ -1,5 +1,7 @@
+import os
 from .util import make_logger
 from urllib.parse import urlparse
+from .libs.excel_wrapper import ExcelWrapper
 
 
 logger = make_logger(__name__)
@@ -7,6 +9,18 @@ logger = make_logger(__name__)
 
 class BaseMetadata:
     resource_linkage = ('bpa_id',)
+
+    @classmethod
+    def parse_spreadsheet(cls, fname, metadata_info):
+        kwargs = cls.spreadsheet['options']
+        wrapper = ExcelWrapper(
+            cls.spreadsheet['fields'],
+            fname,
+            additional_context=metadata_info[os.path.basename(fname)],
+            **kwargs)
+        rows = list(wrapper.get_all())
+        return rows
+
 
     def _get_packages(self):
         """
