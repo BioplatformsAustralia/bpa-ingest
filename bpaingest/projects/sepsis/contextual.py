@@ -94,8 +94,7 @@ class SepsisBacterialContextual(object):
             metadata_path,
             sheet_name=None,
             header_length=5,
-            column_name_row_index=4,
-            formatting_info=True)
+            column_name_row_index=4)
         return wrapper.get_all()
 
 
@@ -150,8 +149,7 @@ class SepsisGenomicsContextual(object):
             metadata_path,
             sheet_name='Genomics',
             header_length=4,
-            column_name_row_index=3,
-            formatting_info=True)
+            column_name_row_index=3)
         return wrapper.get_all()
 
 
@@ -218,8 +216,7 @@ class SepsisTranscriptomicsHiseqContextual(object):
             metadata_path,
             sheet_name='RNA HiSeq',
             header_length=4,
-            column_name_row_index=3,
-            formatting_info=True)
+            column_name_row_index=3)
         return wrapper.get_all()
 
 
@@ -281,8 +278,7 @@ class SepsisMetabolomicsLCMSContextual(object):
             metadata_path,
             sheet_name='Metabolomics',
             header_length=4,
-            column_name_row_index=3,
-            formatting_info=True)
+            column_name_row_index=3)
         return wrapper.get_all()
 
 
@@ -349,8 +345,7 @@ class SepsisProteomicsBaseContextual(object):
             metadata_path,
             sheet_name='Proteomics',
             header_length=4,
-            column_name_row_index=3,
-            formatting_info=True)
+            column_name_row_index=3)
         return wrapper.get_all()
 
 

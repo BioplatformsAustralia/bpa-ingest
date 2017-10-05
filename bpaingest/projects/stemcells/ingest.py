@@ -50,10 +50,8 @@ class StemcellsTranscriptomeMetadata(BaseMetadata):
             fld("analysis_software_version", "CASAVA version"),
         ],
         'options': {
-            'sheet_name': None,
             'header_length': 2,
             'column_name_row_index': 1,
-            'formatting_info': True,
         }
     }
 
@@ -148,10 +146,8 @@ class StemcellsSmallRNAMetadata(BaseMetadata):
             fld("analysis_software_version", "CASAVA version"),
         ],
         'options': {
-            'sheet_name': None,
             'header_length': 2,
             'column_name_row_index': 1,
-            'formatting_info': True,
         }
     }
 
@@ -247,10 +243,8 @@ class StemcellsSingleCellRNASeqMetadata(BaseMetadata):
             fld("fastq_generation", "Fastq generation"),
         ],
         'options': {
-            'sheet_name': None,
             'header_length': 2,
             'column_name_row_index': 1,
-            'formatting_info': True,
         }
     }
 
@@ -357,10 +351,8 @@ class StemcellsMetabolomicsMetadata(BaseMetadata):
             fld("acquisition_mode", "acquisition mode"),
         ],
         'options': {
-            'sheet_name': None,
             'header_length': 2,
             'column_name_row_index': 1,
-            'formatting_info': True,
         }
     }
 
@@ -494,10 +486,8 @@ class StemcellsProteomicsBaseMetadata(BaseMetadata):
         wrapper = ExcelWrapper(
             field_spec,
             fname,
-            sheet_name=None,
             header_length=2,
             column_name_row_index=1,
-            formatting_info=True,
             additional_context=additional_context)
         rows = list(wrapper.get_all())
         return rows
@@ -695,10 +685,8 @@ class StemcellsProteomicsAnalysedMetadata(BaseMetadata):
             fld('proteome_size', 'proteome size'),
         ],
         'options': {
-            'sheet_name': None,
             'header_length': 8,
             'column_name_row_index': 7,
-            'formatting_info': True,
         }
     }
 
@@ -805,10 +793,8 @@ class StemcellsMetabolomicsAnalysedMetadata(BaseMetadata):
             fld('additional_comments', 'additional comments'),
         ],
         'options': {
-            'sheet_name': None,
             'header_length': 8,
             'column_name_row_index': 7,
-            'formatting_info': True,
         }
     }
 

@@ -19,8 +19,6 @@ import xlrd
 
 from ..util import make_logger, strip_to_ascii
 
-logger = make_logger(__name__)
-
 
 FieldDefinition = namedtuple('FieldSpec', ['attribute', 'column_name', 'coerce', 'optional'])
 field_definition_default = FieldDefinition('<replace>', '<replace>', None, False)
@@ -46,22 +44,22 @@ class ExcelWrapper(object):
     def __init__(self,
                  field_spec,
                  file_name,
-                 sheet_name,
-                 header_length,
+                 sheet_name=None,
+                 header_length=0,
                  column_name_row_index=0,
-                 ignore_date=False,
-                 formatting_info=False,
+                 suggest_template=False,
                  additional_context=None):
 
-        self.ignore_date = ignore_date  # ignore xlrd's attempt at date conversion
+        self._log = []
         self.file_name = file_name
         self.header_length = header_length
         self.column_name_row_index = column_name_row_index
         self.field_spec = field_spec
         assert(type(self.field_spec[0]) is FieldDefinition)
         self.additional_context = additional_context
+        self.suggest_template = suggest_template
 
-        self.workbook = xlrd.open_workbook(file_name, formatting_info=False)  # not implemented
+        self.workbook = xlrd.open_workbook(file_name)
         if sheet_name is None:
             self.sheet = self.workbook.sheet_by_index(0)
         else:
@@ -72,14 +70,18 @@ class ExcelWrapper(object):
         self.header, self.name_to_column_map = self.set_name_to_column_map()
         self.name_to_func_map = self.set_name_to_func_map()
 
-    def _set_field_names(self):
-        ''' sets field name list '''
+    def _error(self, s):
+        self._log.append(s)
 
-        names = []
-        for spec in self.field_spec:
-            if spec.attribute in names:
-                logger.error('Attribute {0} is listed more than once in the field specification'.format(spec.attribute))
-            names.append(spec.attribute)
+    def get_errors(self):
+        return self._log.copy()
+
+    def _set_field_names(self):
+        names = [spec.attribute for spec in self.field_spec]
+        if len(set(names)) != len(self.field_spec):
+            # this is a problem in the bpa-ingest code, not in the passed-in spreadsheet,
+            # so we can fail hard here
+            raise Exception("duplicate `attribute` in field definition")
         return names
 
     def set_name_to_column_map(self):
@@ -87,7 +89,7 @@ class ExcelWrapper(object):
 
         def coerce_header(s):
             if type(s) is not str:
-                logger.error("header is not a string: %s `%s'" % (type(s), repr(s)))
+                self._error("header is not a string: %s `%s'" % (type(s), repr(s)))
                 return str(s)
             return strip_to_ascii(s)
 
@@ -130,16 +132,16 @@ class ExcelWrapper(object):
             else:
                 self.missing_headers.append(spec.column_name)
                 if not spec.optional:
-                    logger.warning("Column `{}' not found in `{}' `{}'".format(col_descr, os.path.basename(self.file_name), self.sheet.name))
+                    self._error("Column `{}' not found in `{}' `{}'".format(col_descr, os.path.basename(self.file_name), self.sheet.name))
                     missing_columns = True
                 cmap[spec.attribute] = None
 
-        if missing_columns:
+        if missing_columns and self.suggest_template:
             template = ['[']
             for header in (str(t) for t in header):
                 template.append("    fld('%s', '%s')," % (header.lower().replace(' ', '_'), header))
             template.append(']')
-            logger.warning('Missing columns -- template for columns in spreadsheet is:\n%s' % ('\n'.join(template)))
+            self._error('Missing columns -- template for columns in spreadsheet is:\n%s' % ('\n'.join(template)))
 
         return header, cmap
 
@@ -197,7 +199,7 @@ class ExcelWrapper(object):
             else:
                 val = datetime.datetime(*date_time_tup)
         except ValueError:
-            logger.warning('column: `%s\' -- value `%s\' cannot be converted to a date' % (i, val))
+            self._error('column: `%s\' -- value `%s\' cannot be converted to a date' % (i, val))
         return val
 
     def get_all(self, typname='DataRow'):
@@ -223,7 +225,7 @@ class ExcelWrapper(object):
                 ctype = cell.ctype
                 val = cell.value
                 # convert dates to python dates
-                if not self.ignore_date and ctype == xlrd.XL_CELL_DATE:
+                if ctype == xlrd.XL_CELL_DATE:
                     val = self.get_date_time(i, cell)
                 if ctype == xlrd.XL_CELL_TEXT:
                     val = val.strip()

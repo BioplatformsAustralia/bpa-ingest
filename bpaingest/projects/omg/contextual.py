@@ -84,8 +84,7 @@ class OMGSampleContextual(object):
             fname,
             sheet_name=None,
             header_length=1,
-            column_name_row_index=0,
-            formatting_info=True)
+            column_name_row_index=0)
         name_mapping = {
             'decimal_longitude': 'longitude',
             'decimal_latitude': 'latitude',

@@ -76,8 +76,7 @@ class StemcellsTranscriptomeContextual(object):
             metadata_path,
             sheet_name=self.sheet_name,
             header_length=3,
-            column_name_row_index=2,
-            formatting_info=True)
+            column_name_row_index=2)
         return wrapper.get_all()
 
 
@@ -145,8 +144,7 @@ class StemcellsSmallRNAContextual(object):
             metadata_path,
             sheet_name=self.sheet_name,
             header_length=3,
-            column_name_row_index=2,
-            formatting_info=True)
+            column_name_row_index=2)
         return wrapper.get_all()
 
 
@@ -214,8 +212,7 @@ class StemcellsSingleCellRNASeq(object):
             metadata_path,
             sheet_name=self.sheet_name,
             header_length=3,
-            column_name_row_index=2,
-            formatting_info=True)
+            column_name_row_index=2)
         return wrapper.get_all()
 
 
@@ -283,8 +280,7 @@ class StemcellsMetabolomicsContextual(object):
             metadata_path,
             sheet_name=self.sheet_name,
             header_length=3,
-            column_name_row_index=2,
-            formatting_info=True)
+            column_name_row_index=2)
         return wrapper.get_all()
 
 
@@ -356,8 +352,7 @@ class StemcellsProteomicsContextual(object):
                 metadata_path,
                 sheet_name=sheet_name,
                 header_length=3,
-                column_name_row_index=2,
-                formatting_info=True)
+                column_name_row_index=2)
             rows += list(wrapper.get_all())
         # there are a bunch of duplicate rows, because per-file metadata is included
         # in the source spreadsheet

@@ -88,10 +88,8 @@ class BASEAmpliconsMetadata(BaseMetadata):
             fld("comments", "Comments"),
         ],
         'options': {
-            'sheet_name': None,
             'header_length': 2,
             'column_name_row_index': 1,
-            'formatting_info': True,
         }
     }
 
@@ -337,10 +335,8 @@ class BASEMetagenomicsMetadata(BaseMetadata):
             fld('flow_cell_id', 'Run #:Flow Cell ID'),
         ],
         'options': {
-            'sheet_name': None,
             'header_length': 2,
             'column_name_row_index': 1,
-            'formatting_info': True,
         }
     }
     # these are packages from the pilot, which have missing metadata

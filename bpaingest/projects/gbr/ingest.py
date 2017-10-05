@@ -48,10 +48,8 @@ class GbrAmpliconsMetadata(BaseMetadata):
             fld('comments', 'Comments',),
         ],
         'options': {
-            'sheet_name': None,
             'header_length': 3,
             'column_name_row_index': 1,
-            'formatting_info': True,
         }
     }
 

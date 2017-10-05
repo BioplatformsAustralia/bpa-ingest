@@ -95,10 +95,8 @@ class BaseMarineMicrobesAmpliconsMetadata(BaseMetadata):
             fld("pass_fail_100", "neat PCR, P=pass, F=fail"),
         ],
         'options': {
-            'sheet_name': None,
             'header_length': 2,
             'column_name_row_index': 1,
-            'formatting_info': True,
         }
     }
 
@@ -360,10 +358,8 @@ class MarineMicrobesMetagenomicsMetadata(BaseMetadata):
             fld("analysis_software_version", ("casava version", "bcl2fastq2", re.compile(r'^software[ &]+version$'))),
         ],
         'options': {
-            'sheet_name': None,
             'header_length': 2,
             'column_name_row_index': 1,
-            'formatting_info': True,
         }
     }
 
@@ -467,10 +463,8 @@ class MarineMicrobesMetatranscriptomeMetadata(BaseMetadata):
             fld("analysis_software_version", "CASAVA version"),
         ],
         'options': {
-            'sheet_name': None,
             'header_length': 2,
             'column_name_row_index': 1,
-            'formatting_info': True,
         }
     }
 

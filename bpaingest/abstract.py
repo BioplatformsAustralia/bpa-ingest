@@ -17,6 +17,7 @@ class BaseMetadata:
             cls.spreadsheet['fields'],
             fname,
             additional_context=metadata_info[os.path.basename(fname)],
+            suggest_template=True,
             **kwargs)
         rows = list(wrapper.get_all())
         return rows

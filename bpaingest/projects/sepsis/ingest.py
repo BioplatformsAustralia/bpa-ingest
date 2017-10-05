@@ -84,10 +84,8 @@ class SepsisGenomicsMiseqMetadata(BaseSepsisMetadata):
             fld("analysis_software_version", "AnalysisSoftwareVersion"),
         ],
         'options': {
-            'sheet_name': None,
             'header_length': 2,
             'column_name_row_index': 1,
-            'formatting_info': True,
         }
     }
 
@@ -175,10 +173,8 @@ class SepsisGenomicsPacbioMetadata(BaseSepsisMetadata):
             fld("rs_version", "RS Version"),
         ],
         'options': {
-            'sheet_name': None,
             'header_length': 2,
             'column_name_row_index': 1,
-            'formatting_info': True,
         }
     }
 
@@ -270,10 +266,8 @@ class SepsisTranscriptomicsHiseqMetadata(BaseSepsisMetadata):
             fld("casava_version", "CASAVA version"),
         ],
         'options': {
-            'sheet_name': None,
             'header_length': 2,
             'column_name_row_index': 1,
-            'formatting_info': True,
         }
     }
 
@@ -369,10 +363,8 @@ class SepsisMetabolomicsGCMSMetadata(BaseSepsisMetadata):
             fld('raw_file_name', 'raw file name'),
         ],
         'options': {
-            'sheet_name': None,
             'header_length': 1,
             'column_name_row_index': 1,
-            'formatting_info': True,
         }
     }
 
@@ -467,10 +459,8 @@ class SepsisMetabolomicsLCMSMetadata(BaseSepsisMetadata):
             fld("raw_file_name", "Raw file name"),
         ],
         'options': {
-            'sheet_name': None,
             'header_length': 1,
             'column_name_row_index': 1,
-            'formatting_info': True,
         }
     }
 
@@ -567,10 +557,8 @@ class SepsisProteomicsMS1QuantificationMetadata(BaseSepsisMetadata):
             fld("raw_file_name", "Raw file name"),
         ],
         'options': {
-            'sheet_name': None,
             'header_length': 1,
             'column_name_row_index': 1,
-            'formatting_info': True,
         }
     }
 
@@ -668,10 +656,8 @@ class SepsisProteomicsSwathMSBaseSepsisMetadata(BaseSepsisMetadata):
             fld("raw_file_name", "Raw file name"),
         ],
         'options': {
-            'sheet_name': None,
             'header_length': 1,
             'column_name_row_index': 1,
-            'formatting_info': True,
         }
     }
 
@@ -842,10 +828,8 @@ class SepsisProteomicsSwathMSCombinedSampleMetadata(BaseSepsisMetadata):
             fld('raw_file_name', 'raw file name'),
         ],
         'options': {
-            'sheet_name': None,
             'header_length': 2,
             'column_name_row_index': 1,
-            'formatting_info': True,
         }
     }
 
@@ -1014,10 +998,8 @@ class SepsisProteomicsAnalysedMetadata(BaseSepsisAnalysedMetadata):
             fld('proteome_size', 'proteome size'),
         ],
         'options': {
-            'sheet_name': None,
             'header_length': 8,
             'column_name_row_index': 7,
-            'formatting_info': True,
         }
     }
 
@@ -1131,10 +1113,8 @@ class SepsisTranscriptomicsAnalysedMetadata(BaseSepsisAnalysedMetadata):
             fld('approach_used', 'approach used'),
         ],
         'options': {
-            'sheet_name': None,
             'header_length': 8,
             'column_name_row_index': 7,
-            'formatting_info': True,
         }
     }
 
@@ -1245,10 +1225,8 @@ class SepsisMetabolomicsAnalysedMetadata(BaseSepsisAnalysedMetadata):
             fld('approach_used', 'approach used'),
         ],
         'options': {
-            'sheet_name': None,
             'header_length': 8,
             'column_name_row_index': 7,
-            'formatting_info': True,
         }
     }
 
@@ -1356,10 +1334,8 @@ class SepsisGenomicsAnalysedMetadata(BaseSepsisAnalysedMetadata):
             fld('sample_folder', 'folder for each sample (individual files are listed on the next sheet)'),
         ],
         'options': {
-            'sheet_name': None,
             'header_length': 8,
             'column_name_row_index': 7,
-            'formatting_info': True,
         }
     }
 
@@ -1465,10 +1441,8 @@ class SepsisProteomicsProteinDatabaseMetadata(BaseSepsisAnalysedMetadata):
             fld('proteome_size', 'proteome size'),
         ],
         'options': {
-            'sheet_name': None,
             'header_length': 8,
             'column_name_row_index': 7,
-            'formatting_info': True,
         }
     }
 

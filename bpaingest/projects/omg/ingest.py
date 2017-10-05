@@ -46,10 +46,8 @@ class OMG10XRawIlluminaMetadata(BaseMetadata):
             fld("analysis_software_version", "softwareverion"),
         ],
         'options': {
-            'sheet_name': None,
             'header_length': 2,
             'column_name_row_index': 1,
-            'formatting_info': True,
         }
     }
 
@@ -172,10 +170,8 @@ class OMG10XRawMetadata(BaseMetadata):
             fld('software_version', 'software version'),
         ],
         'options': {
-            'sheet_name': None,
             'header_length': 2,
             'column_name_row_index': 1,
-            'formatting_info': True,
         }
     }
 
@@ -288,10 +284,8 @@ class OMG10XProcessedIlluminaMetadata(BaseMetadata):
             fld("analysis_software_version", "softwareverion"),
         ],
         'options': {
-            'sheet_name': None,
             'header_length': 2,
             'column_name_row_index': 1,
-            'formatting_info': True,
         }
     }
 
@@ -440,10 +434,8 @@ class OMGExonCaptureMetadata(BaseMetadata):
             fld('qpcr_n2_meancp_post', 'qpcr_n2_meancp_post'),
         ],
         'options': {
-            'sheet_name': None,
             'header_length': 1,
             'column_name_row_index': 0,
-            'formatting_info': True,
         }
     }
 
@@ -555,10 +547,8 @@ class OMGGenomicsHiSeqMetadata(BaseMetadata):
             fld('data_custodian', 'data_custodian'),
         ],
         'options': {
-            'sheet_name': None,
             'header_length': 1,
             'column_name_row_index': 0,
-            'formatting_info': True,
         }
     }
 
