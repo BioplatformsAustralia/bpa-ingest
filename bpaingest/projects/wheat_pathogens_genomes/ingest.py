@@ -77,7 +77,7 @@ class WheatPathogensGenomesMetadata(BaseMetadata):
             # there are duplicates by BPA ID -- the spreadsheet is per-file data
             # including MD5s. Common values per BPA ID extracted to be package metadata
             by_bpaid = defaultdict(list)
-            for row in self.parse_spreadsheet(fname, xlsx_info):
+            for row in self.parse_spreadsheet(fname, self.metadata_info):
                 by_bpaid[row.bpa_id].append(row)
             for bpa_id, rows in list(by_bpaid.items()):
                 data = common_values([t._asdict() for t in rows])
@@ -121,7 +121,7 @@ class WheatPathogensGenomesMetadata(BaseMetadata):
         resources = []
         for fname in glob(self.path + '/Wheat_pathogens_genomic_metadata.xlsx'):
             xlsx_info = self.metadata_info[os.path.basename(fname)]
-            for row in self.parse_spreadsheet(fname, xlsx_info):
+            for row in self.parse_spreadsheet(fname, self.metadata_info):
                 bpa_id = row.bpa_id
                 resource = {
                     'flowcell': row.flow_cell_id,

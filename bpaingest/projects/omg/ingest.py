@@ -541,7 +541,7 @@ class OMGGenomicsHiSeqMetadata(BaseMetadata):
     metadata_url_components = ('ticket',)
     resource_linkage = ('bpa_id', 'flow_id')
     spreadsheet = {
-        'fields': {
+        'fields': [
             fld('facility_sample_id', 'facility_sample_id'),
             fld('bpa_id', 'bpa_sample_id', coerce=ingest_utils.extract_bpa_id),
             fld('bpa_dataset_id', 'bpa_dataset_id'),
@@ -553,7 +553,7 @@ class OMGGenomicsHiSeqMetadata(BaseMetadata):
             fld('software_version', 'software_version'),
             fld('omg_project', 'omg_project'),
             fld('data_custodian', 'data_custodian'),
-        },
+        ],
         'options': {
             'sheet_name': None,
             'header_length': 1,

@@ -103,7 +103,7 @@ class SepsisGenomicsMiseqMetadata(BaseSepsisMetadata):
         packages = []
         for fname in glob(self.path + '/*.xlsx'):
             logger.info("Processing Sepsis Genomics metadata file {0}".format(fname))
-            rows = list(self.parse_spreadsheet(fname))
+            rows = self.parse_spreadsheet(fname, self.metadata_info)
             xlsx_info = self.metadata_info[os.path.basename(fname)]
             ticket = xlsx_info['ticket']
             google_track_meta = self.google_track_meta.get(ticket)
@@ -198,7 +198,7 @@ class SepsisGenomicsPacbioMetadata(BaseSepsisMetadata):
         packages = []
         for fname in glob(self.path + '/*.xlsx'):
             logger.info("Processing Sepsis Genomics metadata file {0}".format(fname))
-            rows = list(self.parse_spreadsheet(fname))
+            rows = self.parse_spreadsheet(fname, self.metadata_info)
             xlsx_info = self.metadata_info[os.path.basename(fname)]
             ticket = xlsx_info['ticket']
             google_track_meta = self.google_track_meta.get(ticket)
@@ -295,7 +295,7 @@ class SepsisTranscriptomicsHiseqMetadata(BaseSepsisMetadata):
         packages = []
         for fname in glob(self.path + '/*.xlsx'):
             logger.info("Processing Sepsis Transcriptomics metadata file {0}".format(fname))
-            rows = list(self.parse_spreadsheet(fname))
+            rows = self.parse_spreadsheet(fname, self.metadata_info)
             xlsx_info = self.metadata_info[os.path.basename(fname)]
             ticket = xlsx_info['ticket']
             google_track_meta = self.google_track_meta.get(ticket)
@@ -393,7 +393,7 @@ class SepsisMetabolomicsGCMSMetadata(BaseSepsisMetadata):
         packages = []
         for fname in glob(self.path + '/*.xlsx'):
             logger.info("Processing Sepsis Metabolomics GCMS metadata file {0}".format(fname))
-            rows = list(self.parse_spreadsheet(fname))
+            rows = self.parse_spreadsheet(fname, self.metadata_info)
             xlsx_info = self.metadata_info[os.path.basename(fname)]
             ticket = xlsx_info['ticket']
             google_track_meta = self.google_track_meta.get(ticket)
@@ -491,7 +491,7 @@ class SepsisMetabolomicsLCMSMetadata(BaseSepsisMetadata):
         packages = []
         for fname in glob(self.path + '/*.xlsx'):
             logger.info("Processing Sepsis Metabolomics LCMS metadata file {0}".format(fname))
-            rows = list(self.parse_spreadsheet(fname))
+            rows = self.parse_spreadsheet(fname, self.metadata_info)
             xlsx_info = self.metadata_info[os.path.basename(fname)]
             ticket = xlsx_info['ticket']
             google_track_meta = self.google_track_meta.get(ticket)
@@ -591,7 +591,7 @@ class SepsisProteomicsMS1QuantificationMetadata(BaseSepsisMetadata):
         packages = []
         for fname in glob(self.path + '/*.xlsx'):
             logger.info("Processing Sepsis Proteomics MS1Quantification metadata file {0}".format(fname))
-            rows = list(self.parse_spreadsheet(fname))
+            rows = self.parse_spreadsheet(fname, self.metadata_info)
             xlsx_info = self.metadata_info[os.path.basename(fname)]
             ticket = xlsx_info['ticket']
             google_track_meta = self.google_track_meta.get(ticket)
@@ -700,7 +700,7 @@ class SepsisProteomicsSwathMSBaseSepsisMetadata(BaseSepsisMetadata):
         file_data = {}
         for fname in glob(self.path + '/*_metadata.xlsx'):
             logger.info("Processing Sepsis Proteomics SwathMS metadata file {0}".format(fname))
-            rows = list(self.parse_spreadsheet(fname))
+            rows = self.parse_spreadsheet(fname, self.metadata_info)
             xlsx_info = self.metadata_info[os.path.basename(fname)]
             ticket = xlsx_info['ticket']
             google_track_meta = self.google_track_meta.get(ticket)
@@ -868,7 +868,7 @@ class SepsisProteomicsSwathMSCombinedSampleMetadata(BaseSepsisMetadata):
             if not ticket:
                 continue
             folder_name = self.google_track_meta.get(ticket).folder_name
-            for row in self.parse_spreadsheet(fname, xlsx_info):
+            for row in self.parse_spreadsheet(fname, self.metadata_info):
                 folder_rows[(ticket, folder_name)].append(row)
         packages = []
         for (ticket, folder_name), rows in list(folder_rows.items()):
@@ -1041,7 +1041,7 @@ class SepsisProteomicsAnalysedMetadata(BaseSepsisAnalysedMetadata):
             if not ticket:
                 continue
             folder_name = self.google_track_meta.get(ticket).folder_name
-            for row in self.parse_spreadsheet(fname, xlsx_info):
+            for row in self.parse_spreadsheet(fname, self.metadata_info):
                 folder_rows[(ticket, folder_name)].append(row)
         packages = []
         for (ticket, folder_name), rows in list(folder_rows.items()):
@@ -1158,7 +1158,7 @@ class SepsisTranscriptomicsAnalysedMetadata(BaseSepsisAnalysedMetadata):
             if not ticket:
                 continue
             folder_name = self.google_track_meta.get(ticket).folder_name
-            for row in self.parse_spreadsheet(fname, xlsx_info):
+            for row in self.parse_spreadsheet(fname, self.metadata_info):
                 folder_rows[(ticket, folder_name)].append(row)
         packages = []
         for (ticket, folder_name), rows in list(folder_rows.items()):
@@ -1272,7 +1272,7 @@ class SepsisMetabolomicsAnalysedMetadata(BaseSepsisAnalysedMetadata):
             if not ticket:
                 continue
             folder_name = self.google_track_meta.get(ticket).folder_name
-            for row in self.parse_spreadsheet(fname, xlsx_info):
+            for row in self.parse_spreadsheet(fname, self.metadata_info):
                 folder_rows[(ticket, folder_name)].append(row)
         packages = []
         for (ticket, folder_name), rows in list(folder_rows.items()):
@@ -1383,7 +1383,7 @@ class SepsisGenomicsAnalysedMetadata(BaseSepsisAnalysedMetadata):
             if not ticket:
                 continue
             folder_name = self.google_track_meta.get(ticket).folder_name
-            for row in self.parse_spreadsheet(fname, xlsx_info):
+            for row in self.parse_spreadsheet(fname, self.metadata_info):
                 folder_rows[(ticket, folder_name)].append(row)
         packages = []
         for (ticket, folder_name), rows in list(folder_rows.items()):
@@ -1492,7 +1492,7 @@ class SepsisProteomicsProteinDatabaseMetadata(BaseSepsisAnalysedMetadata):
             if not ticket:
                 continue
             folder_name = self.google_track_meta.get(ticket).folder_name
-            for row in self.parse_spreadsheet(fname, xlsx_info):
+            for row in self.parse_spreadsheet(fname, self.metadata_info):
                 folder_rows[(ticket, folder_name)].append(row)
         packages = []
         for (ticket, folder_name), rows in list(folder_rows.items()):
@@ -1532,7 +1532,7 @@ class SepsisProteomicsProteinDatabaseMetadata(BaseSepsisAnalysedMetadata):
         rows = []
         for fname in glob(self.path + '/*.xlsx'):
             xlsx_info = self.metadata_info[os.path.basename(fname)]
-            rows += self.parse_spreadsheet(fname, xlsx_info)
+            rows += self.parse_spreadsheet(fname, self.metadata_info)
         by_filename = dict((t.file_name.strip(), t) for t in rows)
         logger.info("Ingesting Sepsis md5 file information from {0}".format(self.path))
         resources = []

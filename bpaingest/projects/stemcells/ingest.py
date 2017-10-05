@@ -73,7 +73,7 @@ class StemcellsTranscriptomeMetadata(BaseMetadata):
         for fname in glob(self.path + '/*.xlsx'):
             logger.info("Processing Stemcells Transcriptomics metadata file {0}".format(fname))
             xlsx_info = self.metadata_info[os.path.basename(fname)]
-            all_rows.update(StemcellsTranscriptomeMetadata.parse_spreadsheet(fname, xlsx_info))
+            all_rows.update(StemcellsTranscriptomeMetadata.parse_spreadsheet(fname, self.metadata_info))
         for row in all_rows:
             bpa_id = row.bpa_id
             if bpa_id is None:
@@ -171,7 +171,7 @@ class StemcellsSmallRNAMetadata(BaseMetadata):
         for fname in glob(self.path + '/*.xlsx'):
             logger.info("Processing Stemcells SmallRNA metadata file {0}".format(fname))
             xlsx_info = self.metadata_info[os.path.basename(fname)]
-            all_rows.update(StemcellsSmallRNAMetadata.parse_spreadsheet(fname, xlsx_info))
+            all_rows.update(StemcellsSmallRNAMetadata.parse_spreadsheet(fname, self.metadata_info))
         for row in all_rows:
             bpa_id = row.bpa_id
             if bpa_id is None:
@@ -270,7 +270,7 @@ class StemcellsSingleCellRNASeqMetadata(BaseMetadata):
         for fname in glob(self.path + '/*.xlsx'):
             logger.info("Processing Stemcells SingleCellRNASeq metadata file {0}".format(fname))
             xlsx_info = self.metadata_info[os.path.basename(fname)]
-            all_rows.update(StemcellsSingleCellRNASeqMetadata.parse_spreadsheet(fname, xlsx_info))
+            all_rows.update(StemcellsSingleCellRNASeqMetadata.parse_spreadsheet(fname, self.metadata_info))
         for row in all_rows:
             bpa_id_range = row.bpa_id_range
             if bpa_id_range is None:
@@ -380,7 +380,7 @@ class StemcellsMetabolomicsMetadata(BaseMetadata):
         for fname in glob(self.path + '/*.xlsx'):
             logger.info("Processing Stemcells Metabolomics metadata file {0}".format(fname))
             xlsx_info = self.metadata_info[os.path.basename(fname)]
-            all_rows.update(StemcellsMetabolomicsMetadata.parse_spreadsheet(fname, xlsx_info))
+            all_rows.update(StemcellsMetabolomicsMetadata.parse_spreadsheet(fname, self.metadata_info))
         for row in all_rows:
             bpa_id = row.bpa_id
             if bpa_id is None:
@@ -720,7 +720,7 @@ class StemcellsProteomicsAnalysedMetadata(BaseMetadata):
             ticket = xlsx_info['ticket']
             if not ticket:
                 continue
-            for row in self.parse_spreadsheet(fname, xlsx_info):
+            for row in self.parse_spreadsheet(fname, self.metadata_info):
                 ticket_rows[ticket].append(row)
         packages = []
         for ticket, rows in list(ticket_rows.items()):
@@ -831,7 +831,7 @@ class StemcellsMetabolomicsAnalysedMetadata(BaseMetadata):
             if not ticket:
                 continue
             folder_name = self.track_meta.get(ticket).folder_name
-            for row in self.parse_spreadsheet(fname, xlsx_info):
+            for row in self.parse_spreadsheet(fname, self.metadata_info):
                 folder_rows[(ticket, folder_name)].append(row)
         packages = []
         for (ticket, folder_name), rows in list(folder_rows.items()):

@@ -10,11 +10,14 @@ logger = make_logger(__name__)
 
 
 class DownloadMetadata(object):
-    def __init__(self, project_class, path=None, force_fetch=False, metadata_info={}):
+    def __init__(self, project_class, path=None, force_fetch=False, metadata_info=None):
         self.cleanup = True
         self.fetch = True
         self._set_path(path)
         self._set_auth(project_class)
+
+        if metadata_info is None:
+            metadata_info = {}
 
         contextual_classes = getattr(project_class, 'contextual_classes', [])
         contextual = [(os.path.join(self.path, c.name), c) for c in contextual_classes]
