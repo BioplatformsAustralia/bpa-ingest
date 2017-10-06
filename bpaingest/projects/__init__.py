@@ -49,15 +49,15 @@ from .omg.ingest import (
 
 class ProjectInfo:
     projects = {
-        'base': [
-            BASEAmpliconsMetadata,
-            BASEAmpliconsControlMetadata,
-            BASEMetagenomicsMetadata,
-            BASESiteImagesMetadata,
-        ],
-        'gbr': [
-            GbrAmpliconsMetadata,
-        ],
+#        'base': [
+#            BASEAmpliconsMetadata,
+#            BASEAmpliconsControlMetadata,
+#            BASEMetagenomicsMetadata,
+#            BASESiteImagesMetadata,
+#        ],
+#        'gbr': [
+#            GbrAmpliconsMetadata,
+#        ],
         'marine-microbes': [
             MarineMicrobesGenomicsAmplicons16SMetadata,
             MarineMicrobesGenomicsAmpliconsA16SMetadata,
@@ -68,45 +68,45 @@ class ProjectInfo:
             MarineMicrobesMetagenomicsMetadata,
             MarineMicrobesMetatranscriptomeMetadata,
         ],
-        'omg': [
-            OMG10XRawIlluminaMetadata,
-            OMG10XRawMetadata,
-            OMG10XProcessedIlluminaMetadata,
-            OMGExonCaptureMetadata,
-            OMGGenomicsHiSeqMetadata,
-        ],
-        'sepsis': [
-            SepsisGenomicsMiseqMetadata,
-            SepsisGenomicsPacbioMetadata,
-            SepsisGenomicsAnalysedMetadata,
-            SepsisTranscriptomicsAnalysedMetadata,
-            SepsisTranscriptomicsHiseqMetadata,
-            SepsisMetabolomicsLCMSMetadata,
-            SepsisMetabolomicsGCMSMetadata,
-            SepsisMetabolomicsAnalysedMetadata,
-            SepsisProteomicsMS1QuantificationMetadata,
-            SepsisProteomicsSwathMSMetadata,
-            SepsisProteomicsSwathMSCombinedSampleMetadata,
-            SepsisProteomicsSwathMSPoolMetadata,
-            SepsisProteomicsAnalysedMetadata,
-            SepsisProteomicsProteinDatabaseMetadata,
-        ],
-        'stemcells': [
-            StemcellsTranscriptomeMetadata,
-            StemcellsSmallRNAMetadata,
-            StemcellsSingleCellRNASeqMetadata,
-            StemcellsMetabolomicsMetadata,
-            StemcellsProteomicsMetadata,
-            StemcellsProteomicsPoolMetadata,
-            StemcellsProteomicsAnalysedMetadata,
-            StemcellsMetabolomicsAnalysedMetadata,
-        ],
-        'wheat-cultivars': [
-            WheatCultivarsMetadata,
-        ],
-        'wheat-pathogens': [
-            WheatPathogensGenomesMetadata,  # the first half of wheat pathogens
-        ],
+#        'omg': [
+#            OMG10XRawIlluminaMetadata,
+#            OMG10XRawMetadata,
+#            OMG10XProcessedIlluminaMetadata,
+#            OMGExonCaptureMetadata,
+#            OMGGenomicsHiSeqMetadata,
+#        ],
+#        'sepsis': [
+#            SepsisGenomicsMiseqMetadata,
+#            SepsisGenomicsPacbioMetadata,
+#            SepsisGenomicsAnalysedMetadata,
+#            SepsisTranscriptomicsAnalysedMetadata,
+#            SepsisTranscriptomicsHiseqMetadata,
+#            SepsisMetabolomicsLCMSMetadata,
+#            SepsisMetabolomicsGCMSMetadata,
+#            SepsisMetabolomicsAnalysedMetadata,
+#            SepsisProteomicsMS1QuantificationMetadata,
+#            SepsisProteomicsSwathMSMetadata,
+#            SepsisProteomicsSwathMSCombinedSampleMetadata,
+#            SepsisProteomicsSwathMSPoolMetadata,
+#            SepsisProteomicsAnalysedMetadata,
+#            SepsisProteomicsProteinDatabaseMetadata,
+#        ],
+#        'stemcells': [
+#            StemcellsTranscriptomeMetadata,
+#            StemcellsSmallRNAMetadata,
+#            StemcellsSingleCellRNASeqMetadata,
+#            StemcellsMetabolomicsMetadata,
+#            StemcellsProteomicsMetadata,
+#            StemcellsProteomicsPoolMetadata,
+#            StemcellsProteomicsAnalysedMetadata,
+#            StemcellsMetabolomicsAnalysedMetadata,
+#        ],
+#        'wheat-cultivars': [
+#            WheatCultivarsMetadata,
+#        ],
+#        'wheat-pathogens': [
+#            WheatPathogensGenomesMetadata,  # the first half of wheat pathogens
+#        ],
     }
 
     def __init__(self):
