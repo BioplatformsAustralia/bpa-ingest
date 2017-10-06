@@ -23,10 +23,15 @@ class BaseMetadata:
         rows = list(wrapper.get_all())
         return rows
 
-    def parse_md5file(cls, fname):
+    @classmethod
+    def parse_md5file_unwrapped(cls, fname):
         match = cls.md5['match']
         skip = cls.md5['skip']
-        p = MD5Parser(fname, match, skip)
+        return MD5Parser(fname, match, skip)
+
+    @classmethod
+    def parse_md5file(cls, fname):
+        p = cls.parse_md5file_unwrapped(fname)
         for tpl in p.matches:
             yield tpl
         for tpl in p.no_match:

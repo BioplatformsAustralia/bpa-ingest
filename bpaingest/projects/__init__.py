@@ -49,48 +49,48 @@ from .omg.ingest import (
 
 class ProjectInfo:
     projects = {
-#        'base': [
-#            BASEAmpliconsMetadata,
-#            BASEAmpliconsControlMetadata,
-#            BASEMetagenomicsMetadata,
-#            BASESiteImagesMetadata,
-#        ],
-#        'gbr': [
-#            GbrAmpliconsMetadata,
-#        ],
-#        'marine-microbes': [
-#            MarineMicrobesGenomicsAmplicons16SMetadata,
-#            MarineMicrobesGenomicsAmpliconsA16SMetadata,
-#            MarineMicrobesGenomicsAmplicons18SMetadata,
-#            MarineMicrobesGenomicsAmplicons16SControlMetadata,
-#            MarineMicrobesGenomicsAmpliconsA16SControlMetadata,
-#            MarineMicrobesGenomicsAmplicons18SControlMetadata,
-#            MarineMicrobesMetagenomicsMetadata,
-#            MarineMicrobesMetatranscriptomeMetadata,
-#        ],
-#        'omg': [
-#            OMG10XRawIlluminaMetadata,
-#            OMG10XRawMetadata,
-#            OMG10XProcessedIlluminaMetadata,
-#            OMGExonCaptureMetadata,
-#            OMGGenomicsHiSeqMetadata,
-#        ],
-#        'sepsis': [
-#            SepsisGenomicsMiseqMetadata,
-#            SepsisGenomicsPacbioMetadata,
-#            SepsisGenomicsAnalysedMetadata,
-#            SepsisTranscriptomicsAnalysedMetadata,
-#            SepsisTranscriptomicsHiseqMetadata,
-#            SepsisMetabolomicsLCMSMetadata,
-#            SepsisMetabolomicsGCMSMetadata,
-#            SepsisMetabolomicsAnalysedMetadata,
-#            SepsisProteomicsMS1QuantificationMetadata,
-#            SepsisProteomicsSwathMSMetadata,
-#            SepsisProteomicsSwathMSCombinedSampleMetadata,
-#            SepsisProteomicsSwathMSPoolMetadata,
-#            SepsisProteomicsAnalysedMetadata,
-#            SepsisProteomicsProteinDatabaseMetadata,
-#        ],
+        'base': [
+            BASEAmpliconsMetadata,
+            BASEAmpliconsControlMetadata,
+            BASEMetagenomicsMetadata,
+            BASESiteImagesMetadata,
+        ],
+        'gbr': [
+            GbrAmpliconsMetadata,
+        ],
+        'marine-microbes': [
+            MarineMicrobesGenomicsAmplicons16SMetadata,
+            MarineMicrobesGenomicsAmpliconsA16SMetadata,
+            MarineMicrobesGenomicsAmplicons18SMetadata,
+            MarineMicrobesGenomicsAmplicons16SControlMetadata,
+            MarineMicrobesGenomicsAmpliconsA16SControlMetadata,
+            MarineMicrobesGenomicsAmplicons18SControlMetadata,
+            MarineMicrobesMetagenomicsMetadata,
+            MarineMicrobesMetatranscriptomeMetadata,
+        ],
+        'omg': [
+            OMG10XRawIlluminaMetadata,
+            OMG10XRawMetadata,
+            OMG10XProcessedIlluminaMetadata,
+            OMGExonCaptureMetadata,
+            OMGGenomicsHiSeqMetadata,
+        ],
+        'sepsis': [
+            SepsisGenomicsMiseqMetadata,
+            SepsisGenomicsPacbioMetadata,
+            SepsisGenomicsAnalysedMetadata,
+            SepsisTranscriptomicsAnalysedMetadata,
+            SepsisTranscriptomicsHiseqMetadata,
+            SepsisMetabolomicsLCMSMetadata,
+            SepsisMetabolomicsGCMSMetadata,
+            SepsisMetabolomicsAnalysedMetadata,
+            SepsisProteomicsMS1QuantificationMetadata,
+            SepsisProteomicsSwathMSMetadata,
+            SepsisProteomicsSwathMSCombinedSampleMetadata,
+            SepsisProteomicsSwathMSPoolMetadata,
+            SepsisProteomicsAnalysedMetadata,
+            SepsisProteomicsProteinDatabaseMetadata,
+        ],
         'stemcells': [
             StemcellsTranscriptomeMetadata,
             StemcellsSmallRNAMetadata,
@@ -101,12 +101,12 @@ class ProjectInfo:
             StemcellsProteomicsAnalysedMetadata,
             StemcellsMetabolomicsAnalysedMetadata,
         ],
-#        'wheat-cultivars': [
-#            WheatCultivarsMetadata,
-#        ],
-#        'wheat-pathogens': [
-#            WheatPathogensGenomesMetadata,  # the first half of wheat pathogens
-#        ],
+        'wheat-cultivars': [
+            WheatCultivarsMetadata,
+        ],
+        'wheat-pathogens': [
+            WheatPathogensGenomesMetadata,  # the first half of wheat pathogens
+        ],
     }
 
     def __init__(self):
@@ -117,7 +117,7 @@ class ProjectInfo:
         slugs = set()
         for project_name, classes in ProjectInfo.projects.items():
             for cls in classes:
-                if not getattr(cls, 'parse_spreadsheet', None):
+                if not getattr(cls, 'spreadsheet', None) or not getattr(cls, 'md5', None):
                     continue
                 class_info = dict((t, getattr(cls, t, None)) for t in ('omics', 'technology', 'organization'))
                 class_info.update(dict((t, getattr(cls, t, False)) for t in ('analysed', 'pool')))
