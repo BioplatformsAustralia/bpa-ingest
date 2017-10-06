@@ -139,7 +139,3 @@ PROTEOMICS_SWATHMS_MSRESULT_FILENAME_PATTERN = """
     (?P<type>.*)
 """
 proteomics_swathms_msresult_filename_re = re.compile(PROTEOMICS_SWATHMS_MSRESULT_FILENAME_PATTERN, re.VERBOSE)
-
-
-class MatchException(Exception):
-    pass

@@ -27,6 +27,12 @@ import re
 logger = make_logger(__name__)
 
 
+common_skip = [
+    re.compile(r'^._metadata\.xlsx$'),
+    re.compile(r'^.*_Report\.pdf'),
+]
+
+
 def parse_bpa_id_range(s):
     return s.strip().split('/')[-1]
 
@@ -53,6 +59,12 @@ class StemcellsTranscriptomeMetadata(BaseMetadata):
             'header_length': 2,
             'column_name_row_index': 1,
         }
+    }
+    md5 = {
+        'match': [
+            files.transcriptome_filename_re
+        ],
+        'skip': common_skip
     }
 
     def __init__(self, metadata_path, contextual_metadata=None, metadata_info=None):
@@ -116,7 +128,7 @@ class StemcellsTranscriptomeMetadata(BaseMetadata):
         resources = []
         for md5_file in glob(self.path + '/*.md5'):
             logger.info("Processing md5 file {0}".format(md5_file))
-            for filename, md5, file_info in files.parse_md5_file(md5_file, [files.transcriptome_filename_re]):
+            for filename, md5, file_info in self.parse_md5file(md5_file):
                 resource = file_info.copy()
                 resource['md5'] = resource['id'] = md5
                 resource['name'] = filename
@@ -149,6 +161,12 @@ class StemcellsSmallRNAMetadata(BaseMetadata):
             'header_length': 2,
             'column_name_row_index': 1,
         }
+    }
+    md5 = {
+        'match': [
+            files.smallrna_filename_re
+        ],
+        'skip': common_skip
     }
 
     def __init__(self, metadata_path, contextual_metadata=None, metadata_info=None):
@@ -212,7 +230,7 @@ class StemcellsSmallRNAMetadata(BaseMetadata):
         resources = []
         for md5_file in glob(self.path + '/*.md5'):
             logger.info("Processing md5 file {0}".format(md5_file))
-            for filename, md5, file_info in files.parse_md5_file(md5_file, [files.smallrna_filename_re]):
+            for filename, md5, file_info in self.parse_md5file(md5_file):
                 resource = file_info.copy()
                 resource['md5'] = resource['id'] = md5
                 resource['name'] = filename
@@ -246,6 +264,13 @@ class StemcellsSingleCellRNASeqMetadata(BaseMetadata):
             'header_length': 2,
             'column_name_row_index': 1,
         }
+    }
+    md5 = {
+        'match': [
+            files.singlecell_filename_re,
+            files.singlecell_index_info_filename_re,
+        ],
+        'skip': common_skip
     }
 
     def __init__(self, metadata_path, contextual_metadata=None, metadata_info=None):
@@ -317,7 +342,7 @@ class StemcellsSingleCellRNASeqMetadata(BaseMetadata):
         resources = []
         for md5_file in glob(self.path + '/*.md5'):
             logger.info("Processing md5 file {0}".format(md5_file))
-            for filename, md5, file_info in files.parse_md5_file(md5_file, [files.singlecell_filename_re, files.singlecell_index_info_filename_re]):
+            for filename, md5, file_info in self.parse_md5file(md5_file):
                 if file_info is None:
                     raise Exception("cannot parse filename: %s" % filename)
                 resource = file_info.copy()
@@ -354,6 +379,12 @@ class StemcellsMetabolomicsMetadata(BaseMetadata):
             'header_length': 2,
             'column_name_row_index': 1,
         }
+    }
+    md5 = {
+        'match': [
+            files.metabolomics_filename_re
+        ],
+        'skip': common_skip
     }
 
     def __init__(self, metadata_path, contextual_metadata=None, metadata_info=None):
@@ -420,7 +451,7 @@ class StemcellsMetabolomicsMetadata(BaseMetadata):
         resources = []
         for md5_file in glob(self.path + '/*.md5'):
             logger.info("Processing md5 file {0}".format(md5_file))
-            for filename, md5, file_info in files.parse_md5_file(md5_file, [files.metabolomics_filename_re]):
+            for filename, md5, file_info in self.parse_md5file(md5_file):
                 resource = file_info.copy()
                 resource['md5'] = resource['id'] = md5
                 resource['name'] = filename
@@ -495,6 +526,12 @@ class StemcellsProteomicsBaseMetadata(BaseMetadata):
 
 class StemcellsProteomicsMetadata(StemcellsProteomicsBaseMetadata):
     ckan_data_type = 'stemcells-proteomic'
+    md5 = {
+        'match': [
+            files.proteomics_filename_re
+        ],
+        'skip': common_skip
+    }
 
     def __init__(self, metadata_path, contextual_metadata=None, metadata_info=None):
         super(StemcellsProteomicsMetadata, self).__init__()
@@ -550,7 +587,7 @@ class StemcellsProteomicsMetadata(StemcellsProteomicsBaseMetadata):
         resources = []
         for md5_file in glob(self.path + '/*.md5'):
             logger.info("Processing md5 file {0}".format(md5_file))
-            for filename, md5, file_info in files.parse_md5_file(md5_file, [files.proteomics_filename_re]):
+            for filename, md5, file_info in self.parse_md5file(md5_file):
                 if file_info is None:
                     if not files.proteomics_pool_filename_re.match(filename):
                         raise Exception("unhandled file: %s" % (filename))
@@ -572,6 +609,12 @@ class StemcellsProteomicsPoolMetadata(StemcellsProteomicsBaseMetadata):
     ckan_data_type = 'stemcells-proteomic-pool'
     resource_linkage = ('pool_id',)
     pool = True
+    md5 = {
+        'match': [
+            files.proteomics_pool_filename_re
+        ],
+        'skip': common_skip
+    }
 
     def __init__(self, metadata_path, contextual_metadata=None, metadata_info=None):
         super(StemcellsProteomicsPoolMetadata, self).__init__()
@@ -627,7 +670,7 @@ class StemcellsProteomicsPoolMetadata(StemcellsProteomicsBaseMetadata):
         resources = []
         for md5_file in glob(self.path + '/*.md5'):
             logger.info("Processing md5 file {0}".format(md5_file))
-            for filename, md5, file_info in files.parse_md5_file(md5_file, [files.proteomics_pool_filename_re]):
+            for filename, md5, file_info in self.parse_md5file(md5_file):
                 if file_info is None:
                     if not files.proteomics_filename_re.match(filename):
                         raise Exception("unhandled file: %s" % (filename))
@@ -689,6 +732,14 @@ class StemcellsProteomicsAnalysedMetadata(BaseMetadata):
             'column_name_row_index': 7,
         }
     }
+    md5 = {
+        'match': [
+            files.proteomics_analysed_filename_re,
+            files.xlsx_filename_re,
+            files.pdf_filename_re,
+        ],
+        'skip': common_skip
+    }
 
     def __init__(self, metadata_path, contextual_metadata=None, metadata_info=None):
         super(StemcellsProteomicsAnalysedMetadata, self).__init__()
@@ -749,7 +800,7 @@ class StemcellsProteomicsAnalysedMetadata(BaseMetadata):
         resources = []
         for md5_file in glob(self.path + '/*.md5'):
             logger.info("Processing md5 file {0}".format(md5_file))
-            for filename, md5, file_info in files.parse_md5_file(md5_file, [files.proteomics_analysed_filename_re, files.xlsx_filename_re, files.pdf_filename_re]):
+            for filename, md5, file_info in self.parse_md5file(md5_file):
                 resource = {}
                 resource['md5'] = md5
                 xlsx_info = self.metadata_info[os.path.basename(md5_file)]
@@ -796,6 +847,12 @@ class StemcellsMetabolomicsAnalysedMetadata(BaseMetadata):
             'header_length': 8,
             'column_name_row_index': 7,
         }
+    }
+    md5 = {
+        'match': [
+            re.compile(r'^.*$'),
+        ],
+        'skip': common_skip
     }
 
     def __init__(self, metadata_path, contextual_metadata=None, metadata_info=None):
@@ -857,15 +914,15 @@ class StemcellsMetabolomicsAnalysedMetadata(BaseMetadata):
         # one MD5 file per 'folder_name', so we just take every file and upload
         for md5_file in glob(self.path + '/*.md5'):
             logger.info("Processing md5 file {0}".format(md5_file))
-            with open(md5_file) as fd:
-                for md5, filename in md5lines(fd):
-                    resource = {}
-                    resource['md5'] = md5
-                    xlsx_info = self.metadata_info[os.path.basename(md5_file)]
-                    # analysed data has duplicate PNG images in it - we need to keep the id unique
-                    resource['id'] = 'u-' + md5hash((self.ckan_data_type + xlsx_info['base_url'] + md5).encode('utf8')).hexdigest()
-                    resource['name'] = filename
-                    folder_name = self.track_meta.get(xlsx_info['ticket']).folder_name
-                    legacy_url = urljoin(xlsx_info['base_url'], filename)
-                    resources.append(((folder_name,), legacy_url, resource))
+            for filename, md5, file_info in self.parse_md5file(md5_file):
+                resource = file_info.copy()
+                resource = {}
+                resource['md5'] = md5
+                xlsx_info = self.metadata_info[os.path.basename(md5_file)]
+                # analysed data has duplicate PNG images in it - we need to keep the id unique
+                resource['id'] = 'u-' + md5hash((self.ckan_data_type + xlsx_info['base_url'] + md5).encode('utf8')).hexdigest()
+                resource['name'] = filename
+                folder_name = self.track_meta.get(xlsx_info['ticket']).folder_name
+                legacy_url = urljoin(xlsx_info['base_url'], filename)
+                resources.append(((folder_name,), legacy_url, resource))
         return resources
