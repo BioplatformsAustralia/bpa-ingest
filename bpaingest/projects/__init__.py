@@ -117,7 +117,7 @@ class ProjectInfo:
         slugs = set()
         for project_name, classes in ProjectInfo.projects.items():
             for cls in classes:
-                if not getattr(cls, 'parse_spreadsheet', None):
+                if not getattr(cls, 'spreadsheet', None) or not getattr(cls, 'md5', None):
                     continue
                 class_info = dict((t, getattr(cls, t, None)) for t in ('omics', 'technology', 'organization'))
                 class_info.update(dict((t, getattr(cls, t, False)) for t in ('analysed', 'pool')))

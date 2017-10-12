@@ -52,6 +52,10 @@ class GbrAmpliconsMetadata(BaseMetadata):
             'column_name_row_index': 1,
         }
     }
+    md5 = {
+        'match': files.amplicon_filename_re,
+        'skip': None,
+    }
 
     def __init__(self, metadata_path, metadata_info=None):
         super(GbrAmpliconsMetadata, self).__init__()
@@ -62,7 +66,6 @@ class GbrAmpliconsMetadata(BaseMetadata):
         packages = []
         for fname in glob(self.path + '/*.xlsx'):
             logger.info("Processing Stemcells Transcriptomics metadata file {0}".format(fname))
-            xlsx_info = self.metadata_info[os.path.basename(fname)]
             for row in self.parse_spreadsheet(fname, self.metadata_info):
                 bpa_id = row.bpa_id
                 if bpa_id is None:
@@ -106,7 +109,7 @@ class GbrAmpliconsMetadata(BaseMetadata):
         resources = []
         for md5_file in glob(self.path + '/*.md5'):
             logger.info("Processing md5 file {0}".format(md5_file))
-            for filename, md5, file_info in files.parse_md5_file(md5_file, files.amplicon_filename_re):
+            for filename, md5, file_info in files.parse_md5file(md5_file):
                 resource = file_info.copy()
                 resource['md5'] = resource['id'] = md5
                 resource['name'] = filename

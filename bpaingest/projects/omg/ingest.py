@@ -50,6 +50,16 @@ class OMG10XRawIlluminaMetadata(BaseMetadata):
             'column_name_row_index': 1,
         }
     }
+    md5 = {
+        'match': [
+            files.tenxtar_filename_re
+        ],
+        'skip': [
+            re.compile(r'^.*_metadata\.xlsx$'),
+            re.compile(r'^.*SampleSheet.*'),
+            re.compile(r'^.*TestFiles\.exe.*'),
+        ]
+    }
 
     def __init__(self, metadata_path, contextual_metadata=None, metadata_info=None):
         super(OMG10XRawIlluminaMetadata, self).__init__()
@@ -123,14 +133,7 @@ class OMG10XRawIlluminaMetadata(BaseMetadata):
         logger.info("Ingesting OMG md5 file information from {0}".format(self.path))
         resources = []
         for md5_file in glob(self.path + '/*.md5'):
-            logger.info("Processing md5 file {}".format(md5_file))
-            for filename, md5, file_info in files.parse_md5_file(md5_file, [files.tenxtar_filename_re]):
-                # FIXME: we should upload these somewhere centrally
-                if filename.endswith('_metadata.xlsx') or filename.find('SampleSheet') != -1:
-                    continue
-                if file_info is None:
-                    logger.debug("unable to parse filename: `%s'" % (filename))
-                    continue
+            for filename, md5, file_info in self.parse_md5file(md5_file):
                 bpa_id, flow_id = self.file_package[filename]
                 resource = file_info.copy()
                 # waiting on filename convention from AGRF
@@ -173,6 +176,16 @@ class OMG10XRawMetadata(BaseMetadata):
             'header_length': 2,
             'column_name_row_index': 1,
         }
+    }
+    md5 = {
+        'match': [
+            files.tenxfastq_filename_re
+        ],
+        'skip': [
+            re.compile(r'^.*_metadata\.xlsx$'),
+            re.compile(r'^.*SampleSheet.*'),
+            re.compile(r'^.*TestFiles\.exe.*'),
+        ]
     }
 
     def __init__(self, metadata_path, contextual_metadata=None, metadata_info=None):
@@ -243,13 +256,7 @@ class OMG10XRawMetadata(BaseMetadata):
         resources = []
         for md5_file in glob(self.path + '/*.md5'):
             logger.info("Processing md5 file {}".format(md5_file))
-            for filename, md5, file_info in files.parse_md5_file(md5_file, [files.tenxfastq_filename_re]):
-                # FIXME: we should upload these somewhere centrally
-                if filename.endswith('_metadata.xlsx') or filename.find('SampleSheet') != -1:
-                    continue
-                if file_info is None:
-                    logger.debug("unable to parse filename: `%s'" % (filename))
-                    continue
+            for filename, md5, file_info in self.parse_md5file(md5_file):
                 xlsx_info = self.metadata_info[os.path.basename(md5_file)]
                 ticket = xlsx_info['ticket']
                 flow_id = self.flow_lookup[ticket]
@@ -287,6 +294,16 @@ class OMG10XProcessedIlluminaMetadata(BaseMetadata):
             'header_length': 2,
             'column_name_row_index': 1,
         }
+    }
+    md5 = {
+        'match': [
+            files.tenxtar_filename_re
+        ],
+        'skip': [
+            re.compile(r'^.*_metadata\.xlsx$'),
+            re.compile(r'^.*SampleSheet.*'),
+            re.compile(r'^.*TestFiles\.exe.*'),
+        ]
     }
 
     def __init__(self, metadata_path, contextual_metadata=None, metadata_info=None):
@@ -362,13 +379,7 @@ class OMG10XProcessedIlluminaMetadata(BaseMetadata):
         resources = []
         for md5_file in glob(self.path + '/*.md5'):
             logger.info("Processing md5 file {}".format(md5_file))
-            for filename, md5, file_info in files.parse_md5_file(md5_file, [files.tenxtar_filename_re]):
-                # FIXME: we should upload these somewhere centrally
-                if filename.endswith('_metadata.xlsx') or filename.find('SampleSheet') != -1:
-                    continue
-                if file_info is None:
-                    logger.debug("unable to parse filename: `%s'" % (filename))
-                    continue
+            for filename, md5, file_info in self.parse_md5file(md5_file):
                 bpa_id, flow_id = self.file_package[filename]
                 resource = file_info.copy()
                 # waiting on filename convention from AGRF
@@ -438,6 +449,16 @@ class OMGExonCaptureMetadata(BaseMetadata):
             'column_name_row_index': 0,
         }
     }
+    md5 = {
+        'match': [
+            files.exon_filename_re
+        ],
+        'skip': [
+            re.compile(r'^.*_metadata\.xlsx$'),
+            re.compile(r'^.*SampleSheet.*'),
+            re.compile(r'^.*TestFiles\.exe.*'),
+        ]
+    }
 
     def __init__(self, metadata_path, contextual_metadata=None, metadata_info=None):
         super(OMGExonCaptureMetadata, self).__init__()
@@ -501,13 +522,7 @@ class OMGExonCaptureMetadata(BaseMetadata):
         resources = []
         for md5_file in glob(self.path + '/*.md5'):
             logger.info("Processing md5 file {}".format(md5_file))
-            for filename, md5, file_info in files.parse_md5_file(md5_file, [files.exon_filename_re]):
-                # FIXME: we should upload these somewhere centrally
-                if filename.endswith('_metadata.csv') or filename.find('SampleSheet') != -1:
-                    continue
-                if file_info is None:
-                    logger.debug("unable to parse filename: `%s'" % (filename))
-                    continue
+            for filename, md5, file_info in self.parse_md5file(md5_file):
                 resource = file_info.copy()
                 resource['md5'] = resource['id'] = md5
                 resource['name'] = filename
@@ -550,6 +565,16 @@ class OMGGenomicsHiSeqMetadata(BaseMetadata):
             'header_length': 1,
             'column_name_row_index': 0,
         }
+    }
+    md5 = {
+        'match': [
+            files.hiseq_filename_re
+        ],
+        'skip': [
+            re.compile(r'^.*_metadata\.xlsx$'),
+            re.compile(r'^.*SampleSheet.*'),
+            re.compile(r'^.*TestFiles\.exe.*'),
+        ]
     }
 
     def __init__(self, metadata_path, contextual_metadata=None, metadata_info=None):
@@ -625,13 +650,7 @@ class OMGGenomicsHiSeqMetadata(BaseMetadata):
         resources = []
         for md5_file in glob(self.path + '/*.md5'):
             logger.info("Processing md5 file {}".format(md5_file))
-            for filename, md5, file_info in files.parse_md5_file(md5_file, [files.hiseq_filename_re]):
-                # FIXME: we should upload these somewhere centrally
-                if filename.endswith('_metadata.xlsx'):
-                    continue
-                if file_info is None:
-                    logger.debug("unable to parse filename: `%s'" % (filename))
-                    continue
+            for filename, md5, file_info in self.parse_md5file(md5_file):
                 resource = file_info.copy()
                 resource['md5'] = resource['id'] = md5
                 resource['name'] = filename
