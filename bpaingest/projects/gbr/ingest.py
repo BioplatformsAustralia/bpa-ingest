@@ -53,7 +53,7 @@ class GbrAmpliconsMetadata(BaseMetadata):
         }
     }
     md5 = {
-        'match': files.amplicon_filename_re,
+        'match': [files.amplicon_filename_re],
         'skip': None,
     }
 
@@ -109,7 +109,7 @@ class GbrAmpliconsMetadata(BaseMetadata):
         resources = []
         for md5_file in glob(self.path + '/*.md5'):
             logger.info("Processing md5 file {0}".format(md5_file))
-            for filename, md5, file_info in files.parse_md5file(md5_file):
+            for filename, md5, file_info in self.parse_md5file(md5_file):
                 resource = file_info.copy()
                 resource['md5'] = resource['id'] = md5
                 resource['name'] = filename
