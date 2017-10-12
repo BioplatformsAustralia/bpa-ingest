@@ -35,6 +35,11 @@ amplicon_read_length = {
     'ITS': '300bp',
     '18S': '150bp',
 }
+common_skip = [
+    re.compile(r'^.*_metadata\.xlsx$'),
+    re.compile(r'^.*SampleSheet.*'),
+    re.compile(r'^.*TestFiles\.exe.*'),
+]
 
 
 def base_amplicon_read_length(amplicon):
@@ -91,6 +96,10 @@ class BASEAmpliconsMetadata(BaseMetadata):
             'header_length': 2,
             'column_name_row_index': 1,
         }
+    }
+    md5 = {
+        'match': files.amplicon_regexps,
+        'skip': common_skip + files.amplicon_control_regexps,
     }
 
     def __init__(self, metadata_path, contextual_metadata=None, metadata_info=None):
@@ -187,22 +196,10 @@ class BASEAmpliconsMetadata(BaseMetadata):
         logger.info("Ingesting BASE Amplicon md5 file information from {0}".format(self.path))
         resources = []
 
-        control_files = set()
-        for md5_file in glob(self.path + '/*.md5'):
-            for filename, md5, file_info in files.parse_md5_file(md5_file, files.amplicon_control_regexps):
-                if file_info is not None:
-                    control_files.add(filename)
-
         for md5_file in glob(self.path + '/*.md5'):
             index_linkage = os.path.basename(md5_file) in self.index_linkage_md5s
             logger.info("Processing md5 file {}".format(md5_file))
-            for filename, md5, file_info in files.parse_md5_file(md5_file, files.amplicon_regexps):
-                if filename.endswith('_metadata.xlsx') or filename.find('SampleSheet') != -1:
-                    continue
-                if file_info is None:
-                    if filename not in control_files:
-                        logger.debug("unable to parse filename: `%s'" % (filename))
-                    continue
+            for filename, md5, file_info in self.parse_md5file(md5_file):
                 bpa_id = ingest_utils.extract_bpa_id(file_info.get('id'))
                 resource = file_info.copy()
                 resource['md5'] = resource['id'] = md5
@@ -230,6 +227,10 @@ class BASEAmpliconsControlMetadata(BaseMetadata):
     ]
     metadata_url_components = ('amplicon', 'facility_code', 'ticket')
     resource_linkage = ('amplicon', 'flow_id')
+    md5 = {
+        'match': files.amplicon_control_regexps,
+        'skip': common_skip + files.amplicon_regexps,
+    }
 
     def __init__(self, metadata_path, contextual_metadata=None, metadata_info=None):
         super(BASEAmpliconsControlMetadata, self).__init__()
@@ -239,19 +240,9 @@ class BASEAmpliconsControlMetadata(BaseMetadata):
         self.track_meta = BASETrackMetadata()
 
     def md5_lines(self):
-        amplicon_files = set()
         for md5_file in glob(self.path + '/*.md5'):
-            for filename, md5, file_info in files.parse_md5_file(md5_file, files.amplicon_regexps):
-                if file_info is not None:
-                    amplicon_files.add(filename)
-
             logger.info("Processing md5 file {}".format(md5_file))
-            for filename, md5, file_info in files.parse_md5_file(md5_file, files.amplicon_control_regexps):
-                if file_info is None:
-                    if filename not in amplicon_files:
-                        logger.debug("unable to parse filename: `%s'" % (filename))
-                    continue
-
+            for filename, md5, file_info in self.parse_md5file(md5_file):
                 yield filename, md5, md5_file, file_info
 
     def _get_packages(self):
@@ -338,6 +329,10 @@ class BASEMetagenomicsMetadata(BaseMetadata):
             'header_length': 2,
             'column_name_row_index': 1,
         }
+    }
+    md5 = {
+        'match': files.metagenomics_regexps,
+        'skip': common_skip,
     }
     # these are packages from the pilot, which have missing metadata
     # we synthethise minimal packages for this data - see
@@ -470,12 +465,7 @@ class BASEMetagenomicsMetadata(BaseMetadata):
         resources = []
         for md5_file in glob(self.path + '/*.md5'):
             logger.info("Processing md5 file {}".format(md5_file))
-            for filename, md5, file_info in files.parse_md5_file(md5_file, files.metagenomics_regexps):
-                if filename.endswith('_metadata.xlsx') or filename.find('SampleSheet') != -1:
-                    continue
-                if file_info is None:
-                    logger.debug("unable to parse filename: `%s'" % (filename))
-                    continue
+            for filename, md5, file_info in self.parse_md5file(md5_file):
                 bpa_id = ingest_utils.extract_bpa_id(file_info.get('id'))
                 resource = file_info.copy()
                 resource['md5'] = resource['id'] = md5
@@ -503,6 +493,12 @@ class BASESiteImagesMetadata(BaseMetadata):
     ]
     metadata_url_components = ('ticket',)
     resource_linkage = ('site_ids',)
+    md5 = {
+        'match': [
+            files.site_image_filename_re
+        ],
+        'skip': None,
+    }
 
     def __init__(self, metadata_path, contextual_metadata=None, metadata_info=None):
         super(BASESiteImagesMetadata, self).__init__()
@@ -516,19 +512,15 @@ class BASESiteImagesMetadata(BaseMetadata):
         for fname in glob(self.path + '/*.md5'):
             logger.info("Processing MD5 file %s" % (fname))
             xlsx_info = self.metadata_info[os.path.basename(fname)]
-            with open(fname) as fd:
-                for md5, filename in md5lines(fd):
-                    m = files.site_image_filename_re.match(filename)
-                    if not m:
-                        raise AssertionError("filename not matched: %s" % filename)
-                    id_tpl = m.groups()
-                    assert(id_tpl not in id_to_resources)
-                    obj = {
-                        'md5': md5,
-                        'filename': filename
-                    }
-                    obj.update(xlsx_info)
-                    id_to_resources[id_tpl] = obj
+            for filename, md5, file_info in self.parse_md5file(fname):
+                id_tpl = (file_info['id1'], file_info['id2'])
+                assert(id_tpl not in id_to_resources)
+                obj = {
+                    'md5': md5,
+                    'filename': filename
+                }
+                obj.update(xlsx_info)
+                id_to_resources[id_tpl] = obj
         return id_to_resources
 
     @classmethod

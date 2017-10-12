@@ -99,6 +99,10 @@ class BaseMarineMicrobesAmpliconsMetadata(BaseMetadata):
             'column_name_row_index': 1,
         }
     }
+    md5 = {
+        'match': [files.amplicon_filename_re],
+        'skip': [files.amplicon_control_filename_re],
+    }
 
     def __init__(self, metadata_path, contextual_metadata=None, metadata_info=None):
         super(BaseMarineMicrobesAmpliconsMetadata, self).__init__()
@@ -182,11 +186,7 @@ class BaseMarineMicrobesAmpliconsMetadata(BaseMetadata):
         for md5_file in glob(self.path + '/*.md5'):
             index_linkage = os.path.basename(md5_file) in self.index_linkage_md5s
             logger.info("Processing md5 file {} {}".format(md5_file, index_linkage))
-            for filename, md5, file_info in files.parse_md5_file(md5_file, [files.amplicon_filename_re]):
-                if file_info is None:
-                    if not files.amplicon_control_filename_re.match(filename):
-                        logger.debug("unable to parse filename: `%s'" % (filename))
-                    continue
+            for filename, md5, file_info in self.parse_md5file(md5_file):
                 resource = file_info.copy()
                 resource['md5'] = resource['id'] = md5
                 resource['name'] = filename
@@ -241,6 +241,10 @@ class BaseMarineMicrobesAmpliconsControlMetadata(BaseMetadata):
     contextual_classes = []
     metadata_patterns = [r'^.*\.md5']
     resource_linkage = ('amplicon', 'flow_id')
+    md5 = {
+        'match': [files.amplicon_control_filename_re],
+        'skip': [files.amplicon_filename_re],
+    }
 
     def __init__(self, metadata_path, contextual_metadata=None, metadata_info=None):
         super(BaseMarineMicrobesAmpliconsControlMetadata, self).__init__()
@@ -252,12 +256,7 @@ class BaseMarineMicrobesAmpliconsControlMetadata(BaseMetadata):
         logger.info("Ingesting MM md5 file information from {0}".format(self.path))
         for md5_file in glob(self.path + '/*.md5'):
             logger.info("Processing md5 file {}".format(md5_file))
-            for filename, md5, file_info in files.parse_md5_file(md5_file, [files.amplicon_control_filename_re]):
-                if file_info is None:
-                    if not files.amplicon_filename_re.match(filename):
-                        logger.debug("unable to parse filename: `%s'" % (filename))
-                    continue
-
+            for filename, md5, file_info in self.parse_md5file(md5_file):
                 yield filename, md5, md5_file, file_info
 
     def _get_packages(self):
@@ -362,6 +361,10 @@ class MarineMicrobesMetagenomicsMetadata(BaseMetadata):
             'column_name_row_index': 1,
         }
     }
+    md5 = {
+        'match': [files.metagenomics_filename_re, files.metagenomics_filename_v2_re],
+        'skip': None,
+    }
 
     def __init__(self, metadata_path, contextual_metadata=None, metadata_info=None):
         super(MarineMicrobesMetagenomicsMetadata, self).__init__()
@@ -425,10 +428,7 @@ class MarineMicrobesMetagenomicsMetadata(BaseMetadata):
         resources = []
         for md5_file in glob(self.path + '/*.md5'):
             logger.info("Processing md5 file {0}".format(md5_file))
-            for filename, md5, file_info in files.parse_md5_file(md5_file, [files.metagenomics_filename_re, files.metagenomics_filename_v2_re]):
-                if file_info is None:
-                    logger.warning("unable to parse filename: `%s'" % (filename))
-                    continue
+            for filename, md5, file_info in self.parse_md5file(md5_file):
                 resource = file_info.copy()
                 resource['md5'] = resource['id'] = md5
                 resource['name'] = filename
@@ -466,6 +466,10 @@ class MarineMicrobesMetatranscriptomeMetadata(BaseMetadata):
             'header_length': 2,
             'column_name_row_index': 1,
         }
+    }
+    md5 = {
+        'match': [files.metatranscriptome_filename_re],
+        'skip': None,
     }
 
     def __init__(self, metadata_path, contextual_metadata=None, metadata_info=None):
@@ -535,7 +539,7 @@ class MarineMicrobesMetatranscriptomeMetadata(BaseMetadata):
         resources = []
         for md5_file in glob(self.path + '/*.md5'):
             logger.info("Processing md5 file {0}".format(md5_file))
-            for filename, md5, file_info in files.parse_md5_file(md5_file, [files.metatranscriptome_filename_re]):
+            for filename, md5, file_info in self.parse_md5file(md5_file):
                 resource = file_info.copy()
                 resource['md5'] = resource['id'] = md5
                 resource['name'] = filename

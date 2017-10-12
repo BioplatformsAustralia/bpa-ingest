@@ -88,23 +88,6 @@ xlsx_filename_re = re.compile(r'^.*\.xlsx')
 pdf_filename_re = re.compile(r'^.*\.pdf')
 
 
-def parse_md5_file(md5_file, regexps):
-    with open(md5_file) as f:
-        for md5, path in md5lines(f):
-            matches = [_f for _f in (regexp.match(path.split('/')[-1]) for regexp in regexps) if _f]
-            m = None
-            if matches:
-                m = matches[0]
-            if m:
-                yield path, md5, m.groupdict()
-            else:
-                if path.endswith('_metadata.xlsx'):
-                    continue
-                if path.endswith('_Report.pdf'):
-                    continue
-                yield path, md5, None
-
-
 def proteomics_raw_extract_pool_id(v):
     if v is None:
         return

@@ -1,6 +1,7 @@
 import os
 from .util import make_logger
 from urllib.parse import urlparse
+from .libs.md5lines import MD5Parser
 from .libs.excel_wrapper import ExcelWrapper
 
 
@@ -21,6 +22,20 @@ class BaseMetadata:
             **kwargs)
         rows = list(wrapper.get_all())
         return rows
+
+    @classmethod
+    def parse_md5file_unwrapped(cls, fname):
+        match = cls.md5['match']
+        skip = cls.md5['skip']
+        return MD5Parser(fname, match, skip)
+
+    @classmethod
+    def parse_md5file(cls, fname):
+        p = cls.parse_md5file_unwrapped(fname)
+        for tpl in p.matches:
+            yield tpl
+        for tpl in p.no_match:
+            logger.error("No match for filename: `%s'" % tpl)
 
     def _get_packages(self):
         """

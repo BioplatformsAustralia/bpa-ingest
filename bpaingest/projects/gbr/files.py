@@ -57,12 +57,3 @@ def files_from_md5(path):
     for line in lines:
         files.append(_file_from_line(line))
     return files
-
-
-def parse_md5_file(md5_file, regexp):
-    with open(md5_file) as f:
-        for md5, path in md5lines(f):
-            m = regexp.match(path)
-            if not m:
-                raise Exception("no match for {}".format(path))
-            yield path, md5, m.groupdict()

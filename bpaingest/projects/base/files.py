@@ -119,19 +119,3 @@ site_image_filename_re = re.compile("""
     (?P<id1>\d{4,6})-
     (?P<id2>\d{4,6}).jpg
 """, re.VERBOSE)
-
-
-def parse_md5_file(md5_file, regexps):
-    with open(md5_file) as f:
-        for md5, path in md5lines(f):
-            # skip AGRF checksum program
-            if path == 'TestFiles.exe':
-                continue
-            matches = [_f for _f in (regexp.match(path.split('/')[-1]) for regexp in regexps) if _f]
-            m = None
-            if matches:
-                m = matches[0]
-            if m:
-                yield path, md5, m.groupdict()
-            else:
-                yield path, md5, None
