@@ -19,6 +19,8 @@ class BaseMetadata:
             additional_context=metadata_info[os.path.basename(fname)],
             suggest_template=True,
             **kwargs)
+        for error in wrapper.get_errors():
+            logger.error(error)
         rows = list(wrapper.get_all())
         return rows
 
