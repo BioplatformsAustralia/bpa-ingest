@@ -1,4 +1,3 @@
-from ...libs.md5lines import md5lines
 from ...util import make_logger
 import re
 

@@ -56,7 +56,6 @@ class WheatCultivarsMetadata(BaseMetadata):
         packages = []
         for fname in glob(self.path + '/*.xlsx'):
             logger.info("Processing Stemcells Transcriptomics metadata file {0}".format(fname))
-            xlsx_info = self.metadata_info[os.path.basename(fname)]
             for row in self.parse_spreadsheet(fname, self.metadata_info):
                 bpa_id = row.bpa_id
                 if bpa_id is None:

@@ -9,7 +9,6 @@ from ...libs import ingest_utils
 from ...util import make_logger, bpa_id_to_ckan_name, common_values, clean_tag_name
 from ...abstract import BaseMetadata
 from ...libs.excel_wrapper import ExcelWrapper, make_field_definition as fld
-from ...libs.md5lines import md5lines
 from .tracking import StemcellsTrackMetadata
 from .contextual import (
     StemcellsTranscriptomeContextual,
@@ -82,7 +81,6 @@ class StemcellsTranscriptomeMetadata(BaseMetadata):
         all_rows = set()
         for fname in glob(self.path + '/*.xlsx'):
             logger.info("Processing Stemcells Transcriptomics metadata file {0}".format(fname))
-            xlsx_info = self.metadata_info[os.path.basename(fname)]
             all_rows.update(StemcellsTranscriptomeMetadata.parse_spreadsheet(fname, self.metadata_info))
         for row in all_rows:
             bpa_id = row.bpa_id
@@ -184,7 +182,6 @@ class StemcellsSmallRNAMetadata(BaseMetadata):
         all_rows = set()
         for fname in glob(self.path + '/*.xlsx'):
             logger.info("Processing Stemcells SmallRNA metadata file {0}".format(fname))
-            xlsx_info = self.metadata_info[os.path.basename(fname)]
             all_rows.update(StemcellsSmallRNAMetadata.parse_spreadsheet(fname, self.metadata_info))
         for row in all_rows:
             bpa_id = row.bpa_id
@@ -288,7 +285,6 @@ class StemcellsSingleCellRNASeqMetadata(BaseMetadata):
         all_rows = set()
         for fname in glob(self.path + '/*.xlsx'):
             logger.info("Processing Stemcells SingleCellRNASeq metadata file {0}".format(fname))
-            xlsx_info = self.metadata_info[os.path.basename(fname)]
             all_rows.update(StemcellsSingleCellRNASeqMetadata.parse_spreadsheet(fname, self.metadata_info))
         for row in all_rows:
             bpa_id_range = row.bpa_id_range
@@ -402,7 +398,6 @@ class StemcellsMetabolomicsMetadata(BaseMetadata):
         all_rows = set()
         for fname in glob(self.path + '/*.xlsx'):
             logger.info("Processing Stemcells Metabolomics metadata file {0}".format(fname))
-            xlsx_info = self.metadata_info[os.path.basename(fname)]
             all_rows.update(StemcellsMetabolomicsMetadata.parse_spreadsheet(fname, self.metadata_info))
         for row in all_rows:
             bpa_id = row.bpa_id

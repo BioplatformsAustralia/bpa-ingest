@@ -73,7 +73,6 @@ class WheatPathogensGenomesMetadata(BaseMetadata):
         packages = []
         for fname in glob(self.path + '/Wheat_pathogens_genomic_metadata.xlsx'):
             logger.info("Processing Stemcells Transcriptomics metadata file {0}".format(fname))
-            xlsx_info = self.metadata_info[os.path.basename(fname)]
             # there are duplicates by BPA ID -- the spreadsheet is per-file data
             # including MD5s. Common values per BPA ID extracted to be package metadata
             by_bpaid = defaultdict(list)

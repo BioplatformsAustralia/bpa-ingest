@@ -1,5 +1,3 @@
-from ...libs.md5lines import md5lines
-
 import re
 
 

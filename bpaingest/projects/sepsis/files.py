@@ -1,7 +1,6 @@
 # -*- coding: utf-8 -*-
 
 import re
-from ...libs.md5lines import md5lines
 from ...util import make_logger
 
 

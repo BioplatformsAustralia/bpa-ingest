@@ -17,7 +17,7 @@ from collections import namedtuple
 import os
 import xlrd
 
-from ..util import make_logger, strip_to_ascii
+from ..util import strip_to_ascii
 
 
 FieldDefinition = namedtuple('FieldSpec', ['attribute', 'column_name', 'coerce', 'optional'])
