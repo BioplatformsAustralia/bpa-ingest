@@ -1,4 +1,28 @@
 5 digit BPA ID,Data type,Taxon_OR_organism,Strain_OR_isolate,Serovar,Growth Media,Replicate,Omics,Analytical platform,Facility,Work order #,Contextual Data Submission Date,Sample submission date,Data generated,Archive Ingestion Date,Archive ID,id,curation_url,in_data_portal,last_modified
+102.100.100.102.100.100.25980,Pilot,Klebsiella pneumoniae,AJ218,,Pooled sera,6,Proteomics,SWATH-MS,APAF,,2017-03-22,2017-03-22,1,2017-05-12,https://downloads-qcif.bioplatforms.com/bpa/sepsis/proteomics/raw/swathms-combined-sample/apaf/BPAOPS-151/,166,,1,2017-09-18 05:15:09
+102.100.100.102.100.100.25979,Pilot,Klebsiella pneumoniae,AJ218,,Pooled sera,5,Proteomics,SWATH-MS,APAF,,2017-03-22,2017-03-22,1,2017-05-12,https://downloads-qcif.bioplatforms.com/bpa/sepsis/proteomics/raw/swathms-combined-sample/apaf/BPAOPS-151/,165,,1,2017-09-18 05:15:18
+102.100.100.102.100.100.25978,Pilot,Klebsiella pneumoniae,AJ218,,Pooled sera,4,Proteomics,SWATH-MS,APAF,,2017-03-22,2017-03-22,1,2017-05-12,https://downloads-qcif.bioplatforms.com/bpa/sepsis/proteomics/raw/swathms-combined-sample/apaf/BPAOPS-151/,164,,1,2017-09-18 05:15:27
+102.100.100.102.100.100.25977,Pilot,Klebsiella pneumoniae,AJ218,,Pooled sera,3,Proteomics,SWATH-MS,APAF,,2017-03-22,2017-03-22,1,2017-05-12,https://downloads-qcif.bioplatforms.com/bpa/sepsis/proteomics/raw/swathms-combined-sample/apaf/BPAOPS-151/,163,,1,2017-09-18 05:15:36
+102.100.100.102.100.100.25976,Pilot,Klebsiella pneumoniae,AJ218,,Pooled sera,2,Proteomics,SWATH-MS,APAF,,2017-03-22,2017-03-22,1,2017-05-12,https://downloads-qcif.bioplatforms.com/bpa/sepsis/proteomics/raw/swathms-combined-sample/apaf/BPAOPS-151/,162,,1,2017-09-18 05:15:45
+102.100.100.102.100.100.25975,Pilot,Klebsiella pneumoniae,AJ218,,Pooled sera,1,Proteomics,SWATH-MS,APAF,,2017-03-22,2017-03-22,1,2017-05-12,https://downloads-qcif.bioplatforms.com/bpa/sepsis/proteomics/raw/swathms-combined-sample/apaf/BPAOPS-151/,161,,1,2017-09-18 05:15:53
+102.100.100.102.100.100.25974,Pilot,Klebsiella pneumoniae,AJ218,,RPMI,6,Proteomics,SWATH-MS,APAF,,2017-03-22,2017-03-22,1,2017-05-12,https://downloads-qcif.bioplatforms.com/bpa/sepsis/proteomics/raw/swathms-combined-sample/apaf/BPAOPS-151/,160,,1,2017-09-18 05:16:04
+102.100.100.102.100.100.25973,Pilot,Klebsiella pneumoniae,AJ218,,RPMI,5,Proteomics,SWATH-MS,APAF,,2017-03-22,2017-03-22,1,2017-05-12,https://downloads-qcif.bioplatforms.com/bpa/sepsis/proteomics/raw/swathms-combined-sample/apaf/BPAOPS-151/,159,,1,2017-09-18 05:16:49
+102.100.100.102.100.100.25972,Pilot,Klebsiella pneumoniae,AJ218,,RPMI,4,Proteomics,SWATH-MS,APAF,,2017-03-22,2017-03-22,1,2017-05-12,https://downloads-qcif.bioplatforms.com/bpa/sepsis/proteomics/raw/swathms-combined-sample/apaf/BPAOPS-151/,158,,1,2017-09-18 05:16:57
+102.100.100.102.100.100.25971,Pilot,Klebsiella pneumoniae,AJ218,,RPMI,3,Proteomics,SWATH-MS,APAF,,2017-03-22,2017-03-22,1,2017-05-12,https://downloads-qcif.bioplatforms.com/bpa/sepsis/proteomics/raw/swathms-combined-sample/apaf/BPAOPS-151/,157,,1,2017-09-18 05:17:07
+102.100.100.102.100.100.25970,Pilot,Klebsiella pneumoniae,AJ218,,RPMI,2,Proteomics,SWATH-MS,APAF,,2017-03-22,2017-03-22,1,2017-05-12,https://downloads-qcif.bioplatforms.com/bpa/sepsis/proteomics/raw/swathms-combined-sample/apaf/BPAOPS-151/,156,,1,2017-09-18 05:17:22
+102.100.100.102.100.100.25969,Pilot,Klebsiella pneumoniae,AJ218,,RPMI,1,Proteomics,SWATH-MS,APAF,,2017-03-22,2017-03-22,1,2017-05-12,https://downloads-qcif.bioplatforms.com/bpa/sepsis/proteomics/raw/swathms-combined-sample/apaf/BPAOPS-151/,155,,1,2017-09-18 05:17:31
+102.100.100.102.100.100.25968,Pilot,Klebsiella pneumoniae,KPC2,,Pooled sera,6,Proteomics,SWATH-MS,APAF,,2017-03-22,2017-03-22,1,2017-05-12,https://downloads-qcif.bioplatforms.com/bpa/sepsis/proteomics/raw/swathms-combined-sample/apaf/BPAOPS-151/,154,,1,2017-09-18 05:17:42
+102.100.100.102.100.100.25967,Pilot,Klebsiella pneumoniae,KPC2,,Pooled sera,5,Proteomics,SWATH-MS,APAF,,2017-03-22,2017-03-22,1,2017-05-12,https://downloads-qcif.bioplatforms.com/bpa/sepsis/proteomics/raw/swathms-combined-sample/apaf/BPAOPS-151/,153,,1,2017-09-18 05:17:53
+102.100.100.102.100.100.25966,Pilot,Klebsiella pneumoniae,KPC2,,Pooled sera,4,Proteomics,SWATH-MS,APAF,,2017-03-22,2017-03-22,1,2017-05-12,https://downloads-qcif.bioplatforms.com/bpa/sepsis/proteomics/raw/swathms-combined-sample/apaf/BPAOPS-151/,152,,1,2017-09-18 05:18:06
+102.100.100.102.100.100.25965,Pilot,Klebsiella pneumoniae,KPC2,,Pooled sera,3,Proteomics,SWATH-MS,APAF,,2017-03-22,2017-03-22,1,2017-05-12,https://downloads-qcif.bioplatforms.com/bpa/sepsis/proteomics/raw/swathms-combined-sample/apaf/BPAOPS-151/,151,,1,2017-09-18 05:18:22
+102.100.100.102.100.100.25964,Pilot,Klebsiella pneumoniae,KPC2,,Pooled sera,2,Proteomics,SWATH-MS,APAF,,2017-03-22,2017-03-22,1,2017-05-12,https://downloads-qcif.bioplatforms.com/bpa/sepsis/proteomics/raw/swathms-combined-sample/apaf/BPAOPS-151/,150,,1,2017-09-18 05:18:36
+102.100.100.102.100.100.25963,Pilot,Klebsiella pneumoniae,KPC2,,Pooled sera,1,Proteomics,SWATH-MS,APAF,,2017-03-22,2017-03-22,1,2017-05-12,https://downloads-qcif.bioplatforms.com/bpa/sepsis/proteomics/raw/swathms-combined-sample/apaf/BPAOPS-151/,149,,1,2017-09-18 05:18:44
+102.100.100.102.100.100.25962,Pilot,Klebsiella pneumoniae,KPC2,,RPMI,6,Proteomics,SWATH-MS,APAF,,2017-03-22,2017-03-22,1,2017-05-12,https://downloads-qcif.bioplatforms.com/bpa/sepsis/proteomics/raw/swathms-combined-sample/apaf/BPAOPS-151/,148,,1,2017-09-18 05:18:53
+102.100.100.102.100.100.25961,Pilot,Klebsiella pneumoniae,KPC2,,RPMI,5,Proteomics,SWATH-MS,APAF,,2017-03-22,2017-03-22,1,2017-05-12,https://downloads-qcif.bioplatforms.com/bpa/sepsis/proteomics/raw/swathms-combined-sample/apaf/BPAOPS-151/,147,,1,2017-09-18 05:19:03
+102.100.100.102.100.100.25960,Pilot,Klebsiella pneumoniae,KPC2,,RPMI,4,Proteomics,SWATH-MS,APAF,,2017-03-22,2017-03-22,1,2017-05-12,https://downloads-qcif.bioplatforms.com/bpa/sepsis/proteomics/raw/swathms-combined-sample/apaf/BPAOPS-151/,146,,1,2017-09-18 05:19:14
+102.100.100.102.100.100.25959,Pilot,Klebsiella pneumoniae,KPC2,,RPMI,3,Proteomics,SWATH-MS,APAF,,2017-03-22,2017-03-22,1,2017-05-12,https://downloads-qcif.bioplatforms.com/bpa/sepsis/proteomics/raw/swathms-combined-sample/apaf/BPAOPS-151/,145,,1,2017-09-18 05:19:23
+102.100.100.102.100.100.25958,Pilot,Klebsiella pneumoniae,KPC2,,RPMI,2,Proteomics,SWATH-MS,APAF,,2017-03-22,2017-03-22,1,2017-05-12,https://downloads-qcif.bioplatforms.com/bpa/sepsis/proteomics/raw/swathms-combined-sample/apaf/BPAOPS-151/,144,,1,2017-09-18 05:19:34
+102.100.100.102.100.100.25957,Pilot,Klebsiella pneumoniae,KPC2,,RPMI,1,Proteomics,SWATH-MS,APAF,,2017-03-22,2017-03-22,1,2017-05-12,https://downloads-qcif.bioplatforms.com/bpa/sepsis/proteomics/raw/swathms-combined-sample/apaf/BPAOPS-151/,143,,1,2017-09-18 05:19:45
 102.100.100.50625,Main dataset,Staphylococcus aureus,BPH2986,,Pooled sera,6,Proteomics,SWATH-MS,APAF,,2017-07-31,2017-07-31,0,,,142,,0,2017-08-25 03:12:12
 102.100.100.50624,Main dataset,Staphylococcus aureus,BPH2986,,Pooled sera,5,Proteomics,SWATH-MS,APAF,,2017-07-31,2017-07-31,0,,,141,,0,2017-08-25 03:12:12
 102.100.100.50623,Main dataset,Staphylococcus aureus,BPH2986,,Pooled sera,4,Proteomics,SWATH-MS,APAF,,2017-07-31,2017-07-31,0,,,140,,0,2017-08-25 03:12:12
@@ -59,7 +83,7 @@
 102.100.100.50568,Main dataset,Staphylococcus aureus,BPH2760,,RPMI,3,Proteomics,SWATH-MS,APAF,,2017-07-31,2017-07-31,0,,,85,,0,2017-08-25 03:12:12
 102.100.100.50567,Main dataset,Staphylococcus aureus,BPH2760,,RPMI,2,Proteomics,SWATH-MS,APAF,,2017-07-31,2017-07-31,0,,,84,,0,2017-08-25 03:12:12
 102.100.100.50566,Main dataset,Staphylococcus aureus,BPH2760,,RPMI,1,Proteomics,SWATH-MS,APAF,,2017-07-31,2017-07-31,0,,,83,,0,2017-08-25 03:12:12
-102.100.100.25980,Pilot,Klebsiella pneumoniae,AJ218,,Pooled sera,6,Proteomics,SWATH-MS,APAF,,2017-03-22,2017-03-22,0,,,81,,0,2017-03-30 09:44:28
+102.100.100.25980,Pilot,Klebsiella pneumoniae,AJ218,,Pooled sera,6,Proteomics,SWATH-MS,APAF,,2017-03-22,2017-03-22,1,2017-05-12,https://downloads-qcif.bioplatforms.com/bpa/sepsis/proteomics/raw/swathms-combined-sample/apaf/BPAOPS-151/,81,https://downloads-qcif.bioplatforms.com/bpa/sepsis/proteomics/raw/swathms-combined-sample/apaf/BPAOPS-151/,0,2017-09-18 05:04:57
 102.100.100.25979,Pilot,Klebsiella pneumoniae,AJ218,,Pooled sera,5,Proteomics,SWATH-MS,APAF,,2017-03-22,2017-03-22,0,,,80,,0,2017-03-30 09:44:28
 102.100.100.25978,Pilot,Klebsiella pneumoniae,AJ218,,Pooled sera,4,Proteomics,SWATH-MS,APAF,,2017-03-22,2017-03-22,0,,,79,,0,2017-03-30 09:44:28
 102.100.100.25977,Pilot,Klebsiella pneumoniae,AJ218,,Pooled sera,3,Proteomics,SWATH-MS,APAF,,2017-03-22,2017-03-22,0,,,78,,0,2017-03-30 09:44:28
@@ -80,32 +104,16 @@
 102.100.100.25962,Pilot,Klebsiella pneumoniae,KPC2,,RPMI,6,Proteomics,SWATH-MS,APAF,,2017-03-22,2017-03-22,0,,,63,,0,2017-03-30 09:44:27
 102.100.100.25961,Pilot,Klebsiella pneumoniae,KPC2,,RPMI,5,Proteomics,SWATH-MS,APAF,,2017-03-22,2017-03-22,0,,,62,,0,2017-03-30 09:44:27
 102.100.100.25960,Pilot,Klebsiella pneumoniae,KPC2,,RPMI,4,Proteomics,SWATH-MS,APAF,,2017-03-22,2017-03-22,0,,,61,,0,2017-03-30 09:44:27
-102.100.100.25959,Pilot,Klebsiella pneumoniae,KPC2,,RPMI,3,Proteomics,SWATH-MS,APAF,,2017-03-22,2017-03-22,0,,,60,,0,2017-03-30 09:44:27
-102.100.100.25958,Pilot,Klebsiella pneumoniae,KPC2,,RPMI,2,Proteomics,SWATH-MS,APAF,,2017-03-22,2017-03-22,0,,,59,,0,2017-03-30 09:44:27
-102.100.100.25957,Pilot,Klebsiella pneumoniae,KPC2,,RPMI,1,Proteomics,SWATH-MS,APAF,,2017-03-22,2017-03-22,0,,,58,,0,2017-03-30 09:44:27
-102.100.100.25956,Pilot,Staphylococcus aureus,BPH2760,,Pooled sera,6,Proteomics,SWATH-MS,APAF,,2017-03-22,2017-03-22,0,,,57,,0,2017-03-30 09:44:27
-102.100.100.25955,Pilot,Staphylococcus aureus,BPH2760,,Pooled sera,5,Proteomics,SWATH-MS,APAF,,2017-03-22,2017-03-22,0,,,56,,0,2017-03-30 09:44:27
+102.100.100.25959,Pilot,Klebsiella pneumoniae,KPC2,,RPMI,3,Proteomics,SWATH-MS,APAF,,2017-03-22,2017-03-22,1,2017-05-12,https://downloads-qcif.bioplatforms.com/bpa/sepsis/proteomics/raw/swathms-combined-sample/apaf/BPAOPS-151/,60,,1,2017-09-18 05:06:41
+102.100.100.25958,Pilot,Klebsiella pneumoniae,KPC2,,RPMI,2,Proteomics,SWATH-MS,APAF,,2017-03-22,2017-03-22,1,2017-05-12,https://downloads-qcif.bioplatforms.com/bpa/sepsis/proteomics/raw/swathms-combined-sample/apaf/BPAOPS-151/,59,,1,2017-09-18 05:07:22
+102.100.100.25957,Pilot,Klebsiella pneumoniae,KPC2,,RPMI,1,Proteomics,SWATH-MS,APAF,,2017-03-22,2017-03-22,1,2017-05-12,https://downloads-qcif.bioplatforms.com/bpa/sepsis/proteomics/raw/swathms-combined-sample/apaf/BPAOPS-151/,58,,1,2017-09-18 05:08:00
 102.100.100.25954,Pilot,Staphylococcus aureus,BPH2760,,Pooled sera,4,Proteomics,SWATH-MS,APAF,,2017-03-22,2017-03-22,0,,,55,,1,2017-07-28 02:09:35
-102.100.100.25953,Pilot,Staphylococcus aureus,BPH2760,,Pooled sera,3,Proteomics,SWATH-MS,APAF,,2017-03-22,2017-03-22,0,,,54,,0,2017-03-30 09:44:27
-102.100.100.25952,Pilot,Staphylococcus aureus,BPH2760,,Pooled sera,2,Proteomics,SWATH-MS,APAF,,2017-03-22,2017-03-22,0,,,53,,0,2017-03-30 09:44:27
 102.100.100.25951,Pilot,Staphylococcus aureus,BPH2760,,Pooled sera,1,Proteomics,SWATH-MS,APAF,,2017-03-22,2017-03-22,0,,,52,,1,2017-07-28 02:09:35
-102.100.100.25950,Pilot,Staphylococcus aureus,BPH2760,,RPMI,6,Proteomics,SWATH-MS,APAF,,2017-03-22,2017-03-22,0,,,51,,0,2017-03-30 09:44:27
-102.100.100.25949,Pilot,Staphylococcus aureus,BPH2760,,RPMI,5,Proteomics,SWATH-MS,APAF,,2017-03-22,2017-03-22,0,,,50,,0,2017-03-30 09:44:27
 102.100.100.25948,Pilot,Staphylococcus aureus,BPH2760,,RPMI,4,Proteomics,SWATH-MS,APAF,,2017-03-22,2017-03-22,0,,,49,,1,2017-07-28 02:09:35
-102.100.100.25947,Pilot,Staphylococcus aureus,BPH2760,,RPMI,3,Proteomics,SWATH-MS,APAF,,2017-03-22,2017-03-22,0,,,48,,0,2017-03-30 09:44:27
-102.100.100.25946,Pilot,Staphylococcus aureus,BPH2760,,RPMI,2,Proteomics,SWATH-MS,APAF,,2017-03-22,2017-03-22,0,,,47,,0,2017-03-30 09:44:27
 102.100.100.25945,Pilot,Staphylococcus aureus,BPH2760,,RPMI,1,Proteomics,SWATH-MS,APAF,,2017-03-22,2017-03-22,0,,,46,,1,2017-07-28 02:09:35
-102.100.100.25944,Pilot,Staphylococcus aureus,BPH2900,,Pooled sera,6,Proteomics,SWATH-MS,APAF,,2017-03-22,2017-03-22,0,,,45,,0,2017-03-30 09:44:27
-102.100.100.25943,Pilot,Staphylococcus aureus,BPH2900,,Pooled sera,5,Proteomics,SWATH-MS,APAF,,2017-03-22,2017-03-22,0,,,44,,0,2017-03-30 09:44:27
 102.100.100.25942,Pilot,Staphylococcus aureus,BPH2900,,Pooled sera,4,Proteomics,SWATH-MS,APAF,,2017-03-22,2017-03-22,0,,,43,,1,2017-07-28 02:09:35
-102.100.100.25941,Pilot,Staphylococcus aureus,BPH2900,,Pooled sera,3,Proteomics,SWATH-MS,APAF,,2017-03-22,2017-03-22,0,,,42,,0,2017-03-30 09:44:27
-102.100.100.25940,Pilot,Staphylococcus aureus,BPH2900,,Pooled sera,2,Proteomics,SWATH-MS,APAF,,2017-03-22,2017-03-22,0,,,41,,0,2017-03-30 09:44:27
 102.100.100.25939,Pilot,Staphylococcus aureus,BPH2900,,Pooled sera,1,Proteomics,SWATH-MS,APAF,,2017-03-22,2017-03-22,0,,,40,,1,2017-07-28 02:09:35
-102.100.100.25938,Pilot,Staphylococcus aureus,BPH2900,,RPMI,6,Proteomics,SWATH-MS,APAF,,2017-03-22,2017-03-22,0,,,39,,0,2017-03-30 09:44:27
-102.100.100.25937,Pilot,Staphylococcus aureus,BPH2900,,RPMI,5,Proteomics,SWATH-MS,APAF,,2017-03-22,2017-03-22,0,,,38,,0,2017-03-30 09:44:27
 102.100.100.25936,Pilot,Staphylococcus aureus,BPH2900,,RPMI,4,Proteomics,SWATH-MS,APAF,,2017-03-22,2017-03-22,0,,,37,,1,2017-07-28 02:09:35
-102.100.100.25935,Pilot,Staphylococcus aureus,BPH2900,,RPMI,3,Proteomics,SWATH-MS,APAF,,2017-03-22,2017-03-22,0,,,36,,0,2017-03-30 09:44:27
-102.100.100.25934,Pilot,Staphylococcus aureus,BPH2900,,RPMI,2,Proteomics,SWATH-MS,APAF,,2017-03-22,2017-03-22,0,,,35,,0,2017-03-30 09:44:27
 102.100.100.25933,Pilot,Staphylococcus aureus,BPH2900,,RPMI,1,Proteomics,SWATH-MS,APAF,,2017-03-22,2017-03-22,0,,,34,,1,2017-07-28 02:09:35
 102.100.100.25908,Pilot,Staphylococcus aureus,BPH2760,,RPMI,6,Proteomics,SWATH-MS,APAF,,2016-10-19,2016-10-19,0,,,32,,1,2017-05-24 08:56:05
 102.100.100.25907,Pilot,Staphylococcus aureus,BPH2760,,RPMI,5,Proteomics,SWATH-MS,APAF,,2016-10-19,2016-10-19,0,,,31,,1,2017-05-24 08:56:05
