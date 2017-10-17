@@ -1,4 +1,9 @@
 5 digit BPA ID,Data type,Taxon_OR_organism,Strain_OR_isolate,Serovar,Growth Media,Replicate,Omics,Analytical platform,Facility,Work order #,Contextual Data Submission Date,Sample submission date,Data generated,Archive Ingestion Date,Archive ID,id,curation_url,in_data_portal,last_modified
+102.100.100.50084,Pilot,Streptococcus pneumoniae,180/2,3,RPMI + galactose,1,Proteomics,MS1 quantification,MBPF,,2017-08-29,2017-08-29,0,,,203,,0,2017-10-17 04:35:32
+102.100.100.50083,Pilot,Streptococcus pneumoniae,180/2,3,RPMI + glucose,1,Proteomics,MS1 quantification,MBPF,,2017-08-29,2017-08-29,0,,,202,,0,2017-10-17 04:35:32
+102.100.100.50082,Pilot,Streptococcus pneumoniae,180/2,3,Pooled sera,1,Proteomics,MS1 quantification,MBPF,,2017-08-29,2017-08-29,0,,,201,,0,2017-10-17 04:35:32
+102.100.100.50081,Pilot,Streptococcus pneumoniae,180/2,3,RPMI + glucose,1,Proteomics,MS1 quantification,MBPF,,2017-08-29,2017-08-29,0,,,200,,0,2017-10-17 04:35:32
+102.100.100.50080,Pilot,Streptococcus pneumoniae,180/2,3,Pooled sera,1,Proteomics,MS1 quantification,MBPF,,2017-08-29,2017-08-29,0,,,199,,0,2017-10-17 04:35:32
 102.100.100.50625,Main dataset,Staphylococcus aureus,BPH2986,,Pooled sera,6,Proteomics,MS1 quantification,MBPF,,2017-07-31,2017-07-31,0,,,198,,0,2017-08-25 03:10:12
 102.100.100.50624,Main dataset,Staphylococcus aureus,BPH2986,,Pooled sera,5,Proteomics,MS1 quantification,MBPF,,2017-07-31,2017-07-31,0,,,197,,0,2017-08-25 03:10:12
 102.100.100.50623,Main dataset,Staphylococcus aureus,BPH2986,,Pooled sera,4,Proteomics,MS1 quantification,MBPF,,2017-07-31,2017-07-31,0,,,196,,0,2017-08-25 03:10:12
