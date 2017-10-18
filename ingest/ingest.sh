@@ -78,7 +78,9 @@ marine_microbes()
 
 omg()
 {
-  apply omg-10x-raw-agrf
+  # disabled pending resolution of https://github.com/muccg/bpa-archive-ops/issues/329
+  # NB: no future data of this type is expected
+  # apply omg-10x-raw-agrf
   apply omg-10xprocessed
   apply omg-10xraw
   apply omg-exoncapture
