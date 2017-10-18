@@ -915,6 +915,108 @@ class SepsisProteomicsSwathMSCombinedSampleMetadata(BaseSepsisMetadata):
         return resources
 
 
+class SepsisProteomics2DLibraryMetadata(BaseSepsisMetadata):
+    contextual_classes = []
+    metadata_urls = ['https://downloads-qcif.bioplatforms.com/bpa/sepsis/proteomics/raw/2dlibrary/']
+    metadata_url_components = ('facility_code', 'ticket')
+    metadata_patterns = [r'^.*\.md5$', r'^.*_metadata\.xlsx$']
+    organization = 'bpa-sepsis'
+    auth = ('sepsis', 'sepsis')
+    ckan_data_type = 'arp-proteomics-2dlibrary'
+    resource_linkage = ('folder_name',)
+    omics = 'proteomics'
+    technology = '2dlibrary'
+    spreadsheet = {
+        'fields': [
+            fld('bpa_id_list', 'bacterial sample unique id', coerce=make_bpa_id_list),
+            fld('facility', 'facility'),
+            fld('sample_fractionation_none_number', 'sample fractionation (none/number)'),
+            fld('lc_column_type', 'lc/column type'),
+            fld('gradient_time_min', 'gradient time (min)  /  % acn (start-finish main gradient) / flow'),
+            fld('sample_on_column_ug', 'sample on column (g)'),
+            fld('mass_spectrometer', 'mass spectrometer'),
+            fld('acquisition_mode_fragmentation', 'acquisition mode / fragmentation'),
+            fld('raw_file_name', 'raw file name'),
+        ],
+        'options': {
+            'header_length': 2,
+            'column_name_row_index': 1,
+        }
+    }
+    md5 = {
+        'match': [files.proteomics_2dlibrary_filename_re],
+        'skip': None,
+    }
+
+    def __init__(self, metadata_path, contextual_metadata=None, metadata_info=None):
+        super(SepsisProteomics2DLibraryMetadata, self).__init__()
+        self.path = Path(metadata_path)
+        self.contextual_metadata = contextual_metadata
+        self.metadata_info = metadata_info
+        self.google_track_meta = SepsisGoogleTrackMetadata()
+
+    def _get_packages(self):
+        logger.info("Ingesting Sepsis metadata from {0}".format(self.path))
+        # we have one package per Zip of analysed data, and we take the common
+        # meta-data for each bpa-id
+        folder_rows = defaultdict(list)
+        for fname in glob(self.path + '/*.xlsx'):
+            logger.info("Processing Sepsis metadata file {0}".format(fname))
+            xlsx_info = self.metadata_info[os.path.basename(fname)]
+            ticket = xlsx_info['ticket']
+            if not ticket:
+                continue
+            folder_name = self.google_track_meta.get(ticket).folder_name
+            for row in self.parse_spreadsheet(fname, self.metadata_info):
+                folder_rows[(ticket, folder_name)].append(row)
+        packages = []
+        for (ticket, folder_name), rows in list(folder_rows.items()):
+            obj = common_values([t._asdict() for t in rows])
+            # we're hitting the 100-char limit, so we have to hash the folder name when
+            # generating the CKAN name
+            folder_name_md5 = md5hash(folder_name.encode('utf8')).hexdigest()
+            name = bpa_id_to_ckan_name(folder_name_md5, self.ckan_data_type)
+            track_meta = self.google_track_meta.get(ticket)
+            obj.update({
+                'name': name,
+                'id': name,
+                'notes': '%s' % (folder_name),
+                'title': '%s' % (folder_name),
+                'omics': 'proteomics',
+                'data_generated': 'True',
+                'type': self.ckan_data_type,
+                'date_of_transfer': ingest_utils.get_date_isoformat(track_meta.date_of_transfer),
+                'data_type': track_meta.data_type,
+                'description': track_meta.description,
+                'folder_name': track_meta.folder_name,
+                'sample_submission_date': ingest_utils.get_date_isoformat(track_meta.date_of_transfer),
+                'archive_ingestion_date': ingest_utils.get_date_isoformat(track_meta.date_of_transfer_to_archive),
+                'dataset_url': track_meta.download,
+                'private': True,
+            })
+            tag_names = sepsis_contextual_tags(self, obj)
+            obj['tags'] = [{'name': t} for t in tag_names]
+            packages.append(obj)
+        return packages
+
+    def _get_resources(self):
+        logger.info("Ingesting Sepsis md5 file information from {0}".format(self.path))
+        resources = []
+        # one MD5 file per 'folder_name', so we just take every file and upload
+        for md5_file in glob(self.path + '/*.md5'):
+            logger.info("Processing md5 file {0}".format(md5_file))
+            for filename, md5, file_info in self.parse_md5file(md5_file):
+                resource = {}
+                resource['md5'] = resource['id'] = md5
+                resource['name'] = filename
+                resource.update(file_info)
+                xlsx_info = self.metadata_info[os.path.basename(md5_file)]
+                folder_name = self.google_track_meta.get(xlsx_info['ticket']).folder_name
+                legacy_url = urljoin(xlsx_info['base_url'], filename)
+                resources.append(((folder_name,), legacy_url, resource))
+        return resources
+
+
 class SepsisProteomicsSwathMSMetadata(SepsisProteomicsSwathMSBaseSepsisMetadata):
     ckan_data_type = 'arp-proteomics-swathms'
     md5 = {

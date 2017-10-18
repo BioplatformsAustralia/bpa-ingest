@@ -104,6 +104,18 @@ PROTEOMICS_SWATHMS_SWATH_RAW_FILENAME_PATTERN = """
 """
 proteomics_swathms_swath_raw_filename_re = re.compile(PROTEOMICS_SWATHMS_SWATH_RAW_FILENAME_PATTERN, re.VERBOSE)
 
+PROTEOMICS_2DLIBRARY_FILENAME_PATTERN = """
+    (?P<pool_id>BPH\d+)_
+    (?P<pool_name>Pooled\ sera|RPMI)_
+    (?P<fraction>Fraction\d+)_
+    SEP_
+    (?P<vendor>MBPF)_
+    MS_
+    (?P<machine_data>[^\.]+).
+    raw$
+"""
+proteomics_2dlibrary_filename_re = re.compile(PROTEOMICS_2DLIBRARY_FILENAME_PATTERN, re.VERBOSE)
+
 
 PROTEOMICS_SWATHMS_LIB_FILENAME_PATTERN = """
     (?P<id>P\d{4,6})_

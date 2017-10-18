@@ -9,7 +9,8 @@ from .files import (
     proteomics_swathms_swath_raw_filename_re,
     proteomics_swathms_lib_filename_re,
     proteomics_swathms_mspeak_filename_re,
-    proteomics_swathms_msresult_filename_re)
+    proteomics_swathms_msresult_filename_re,
+    proteomics_2dlibrary_filename_re)
 
 
 def test_pacbio():
@@ -128,3 +129,12 @@ def test_proteomics_swathms_msresult():
 
     for filename in filenames:
         assert(proteomics_swathms_msresult_filename_re.match(filename) is not None)
+
+
+def test_proteomics_2dlibrary():
+    filenames = [
+        'BPH2760_Pooled sera_Fraction7_SEP_MBPF_MS_QEPlus1_P16_0062_Exp22.raw',
+        'BPH2760_RPMI_Fraction2_SEP_MBPF_MS_QEPlus1_P16_0062_Exp22.raw'
+    ]
+    for filename in filenames:
+        assert(proteomics_2dlibrary_filename_re.match(filename) is not None)
