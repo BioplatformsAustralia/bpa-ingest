@@ -20,9 +20,9 @@ amplicon_filename_re = re.compile("""
     (?P<extraction>\d)_
     (?P<amplicon>16S|18S|A16S)_
     (?P<vendor>AGRF|UNSW)_
-    (?P<index>[G|A|T|C|-]*)_
+    (?P<index>[G|A|T|C|-]*|UNKNOWN)_
     (?P<flow_id>\w{5})_
-    (?P<runsamplenum>\S\d*)_
+    (?P<runsamplenum>\S\d*|UNKNOWN)_
     (?P<lane>L\d{3})_
     (?P<read>[R|I][1|2])\.fastq\.gz
 """, re.VERBOSE)

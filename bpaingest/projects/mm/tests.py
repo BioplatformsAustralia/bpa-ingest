@@ -23,6 +23,8 @@ def test_amplicon():
     filenames = [
         '21878_1_A16S_UNSW_GGACTCCT-TATCCTCT_AP3JE_S17_L001_R1.fastq.gz',
         '21644_1_16S_UNSW_GAACTAGTCACC_AFGB7_S61_L001_R1.fastq.gz',
+        '27491_1_16S_UNSW_UNKNOWN_AHG7M_UNKNOWN_L001_R2.fastq.gz',
+        '27160_1_16S_UNSW_UNKNOWN_AH55W_UNKNOWN_L001_R1.fastq.gz',
     ]
     for filename in filenames:
         assert(amplicon_filename_re.match(filename) is not None)

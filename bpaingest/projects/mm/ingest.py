@@ -86,7 +86,7 @@ class BaseMarineMicrobesAmpliconsMetadata(BaseMetadata):
             fld("dilution_used", "Dilution used", coerce=ingest_utils.fix_date_interval),
             fld("reads", re.compile(r"^# of (raw )?reads$")),
             fld("analysis_software_version", "AnalysisSoftwareVersion"),
-            fld("comments", "Comments"),
+            fld("comments", re.compile(r'^comments')),
             fld("sample_name_on_sample_sheet", "Sample name on sample sheet"),
             # special case: we merge these together (and throw a hard error if more than one has data for a given row)
             fld("pass_fail", "P=pass, F=fail"),
