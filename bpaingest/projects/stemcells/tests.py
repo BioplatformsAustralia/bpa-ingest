@@ -36,6 +36,7 @@ def test_proteomics():
         '29614_SC_APAF_MS_1D_IDA_161102_P19598_05e6_01_ProteinSummary.txt',
         '29613_SC_APAF_MS_2D_IDA_161102_P19598_1e6_All_DistinctPeptideSummary.txt',
         '29707_SC_MBPF_MS_DIA1_P16_0064_Exp2_Fusion.raw',
+        '24717_SC_QIMR_20160414_VelosPro_BPAstem_Positive_2_5ug_300m_T1_R1.raw'
     ]
     for filename in filenames:
         assert(proteomics_filename_re.match(filename) is not None)

@@ -28,7 +28,7 @@ metabolomics_filename_re = re.compile("""
 proteomics_filename_re = re.compile("""
     (?P<id>\d{4,6})_
     SC_
-    (?P<vendor>APAF|MBPF)_
+    (?P<vendor>APAF|MBPF|QIMR)_
     .*
     (\.wiff|\.wiff\.scan|\.txt|\.raw)$
 """, re.VERBOSE)
