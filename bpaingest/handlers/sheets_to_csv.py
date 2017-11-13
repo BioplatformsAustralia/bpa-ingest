@@ -27,7 +27,7 @@ kms = boto3.client('kms')
 
 def set_up_credentials(env):
     config = s3.get_object(Bucket=env.s3_bucket, Key=env.s3_config_key)
-    json_data = json.loads(kms.decrypt(CiphertextBlob=config['Body'].read()))
+    json_data = json.loads(kms.decrypt(CiphertextBlob=config['Body'].read())['Plaintext'])
     scopes = ['https://www.googleapis.com/auth/drive.readonly']
     credentials = ServiceAccountCredentials.from_json_keyfile_dict(json_data, scopes=scopes)
     return credentials.authorize(Http(timeout=env.google_api_timeout))
