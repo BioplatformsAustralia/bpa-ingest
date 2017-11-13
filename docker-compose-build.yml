@@ -46,9 +46,3 @@ services:
       args:
         ARG_BUILD_VERSION: ${BUILD_VERSION}
     image: muccg/bpaingest:${BUILD_VERSION}
-
-  lint:
-    image: muccg/linter
-    working_dir: /data
-    volumes:
-      - ./:/data

@@ -1,4 +1,4 @@
-# Container used to build bpa-metadata
+# Container used to build bpa-ingest
 FROM muccg/bpaingest-base
 LABEL maintainer "https://github.com/muccg/"
 
