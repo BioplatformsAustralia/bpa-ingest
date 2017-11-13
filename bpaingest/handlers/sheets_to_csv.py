@@ -7,7 +7,7 @@ import json
 import os
 import re
 from base64 import b64decode
- 
+
 import boto3
 from datetime import datetime
 
@@ -16,28 +16,21 @@ from oauth2client.service_account import ServiceAccountCredentials
 
 
 # Set timeout to prevent paying if we can't connect to the Google APIs
-GOOGLE_API_TIMEOUT = 3  # seconds
 METADATA_FILE_NAME = 'metadata.json'
 UNSAFE_CHARS = re.compile(r'[^a-zA-Z0-9 !.-]')
 
 TS_FORMAT = '%Y-%m-%dT%H:%M:%S.%fZ'
 
 s3 = boto3.client('s3')
-
-
-credentials = None
-http_auth = None
+kms = boto3.client('kms')
 
 
 def set_up_credentials(env):
-    # TODO temporary solution, we will do this with AWS KMS
-    global credentials, http_auth
-
-    json_data = json.loads(env.google_credentials)
-
+    config = s3.get_object(Bucket=env.s3_bucket, Key=env.s3_config_key)
+    json_data = json.loads(kms.decrypt(CiphertextBlob=config['Body'].read()))
     scopes = ['https://www.googleapis.com/auth/drive.readonly']
     credentials = ServiceAccountCredentials.from_json_keyfile_dict(json_data, scopes=scopes)
-    http_auth = credentials.authorize(Http(timeout=GOOGLE_API_TIMEOUT))
+    return credentials.authorize(Http(timeout=env.google_api_timeout))
 
 
 Sheet = namedtuple('Sheet', ('name', 'file_name', 'last_modified_at', 'md5'))
@@ -99,14 +92,11 @@ class Metadata:
 
 
 def get_env_vars():
-    names = ('file_id', 's3_bucket', 's3_dir', 'google_credentials')
+    names = ('file_id', 's3_bucket', 's3_output_prefix', 's3_config_key', 'google_api_timeout')
     EnvVars = namedtuple('EnvVars', names)
 
-    kms = boto3.client('kms')
-
     def env_val(name):
-        encrypted = os.environ[name.upper()]
-        return kms.decrypt(CiphertextBlob=b64decode(encrypted))['Plaintext'].decode('utf8')
+        return os.environ[name.upper()]
 
     return EnvVars(*[env_val(name) for name in names])
 
@@ -114,18 +104,14 @@ def get_env_vars():
 def handler(event, context):
     env = get_env_vars()
 
-    set_up_credentials(env)
+    http_auth = set_up_credentials(env)
 
-    meta = Metadata(env.s3_bucket, env.s3_dir)
+    meta = Metadata(env.s3_bucket, env.s3_output_prefix)
     meta.load()
 
     drive_service = build('drive', 'v3', http=http_auth)
 
-    file_id = env.file_id
-    if file_id is None:
-        file_id = get_file_id(drive_service, env.file_name)
-
-    file_info = drive_service.files().get(fileId=file_id, fields='id, modifiedTime').execute()
+    file_info = drive_service.files().get(fileId=env.file_id, fields='id, modifiedTime').execute()
     file_last_modified_at = ts_from_str(file_info['modifiedTime'])
 
     if meta.last_processed_at is not None and meta.last_processed_at >= file_last_modified_at:
@@ -134,7 +120,7 @@ def handler(event, context):
 
     sheets_service = build('sheets', 'v4', http=http_auth)
 
-    response = sheets_service.spreadsheets().get(spreadsheetId=file_id).execute()
+    response = sheets_service.spreadsheets().get(spreadsheetId=env.file_id).execute()
 
     sheets = [s['properties']['title'] for s in response['sheets']]
     file_names = [re.sub(UNSAFE_CHARS, '_', name) + '.csv' for name in sheets]
@@ -150,7 +136,7 @@ def handler(event, context):
 
     changed = 0
     for sheet_title, file_name in zip(sheets, file_names):
-        data = get_spreadsheet_data(sheets_service, file_id, sheet_title)
+        data = get_spreadsheet_data(sheets_service, env.file_id, sheet_title)
         md5 = hashlib.md5(data.encode('utf-8')).hexdigest()
 
         previous_sheet = meta.get_sheet(sheet_title)
@@ -168,15 +154,6 @@ def handler(event, context):
 
     print('Changed %d files from a total of %d' % (changed, len(sheets)))
     return changed
-
-
-def get_file_id(drive_service, file_name):
-    files = drive_service.files().list(q='name="%s"' % file_name).execute().get('files', ())
-    if len(files) == 0:
-        raise ValueError('Could not find file "%s"' % file_name)
-    elif len(files) > 1:
-        raise ValueError('Passed in FILE_NAME "%s" matches more than 1 file' % file_name)
-    return files[0]['id']
 
 
 def get_spreadsheet_data(service, file_id, title):
