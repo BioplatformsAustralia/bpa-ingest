@@ -4,3 +4,7 @@ xlwt==1.2.0
 beautifulsoup4==4.6.0
 git+https://github.com/muccg/ckanapi.git@streaming-uploads
 requests==2.18.4
+httplib2==0.10.3
+boto3==1.4.7
+botocore==1.7.41
+google-api-python-client
