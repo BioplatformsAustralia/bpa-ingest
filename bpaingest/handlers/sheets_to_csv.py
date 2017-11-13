@@ -93,10 +93,14 @@ class Metadata:
 
 def get_env_vars():
     names = ('file_id', 's3_bucket', 's3_output_prefix', 's3_config_key', 'google_api_timeout')
+    conversions = {
+        'google_api_timeout': int
+    }
     EnvVars = namedtuple('EnvVars', names)
 
     def env_val(name):
-        return os.environ[name.upper()]
+        conversion = conversions.get(name, lambda x: x)
+        return conversion(os.environ[name.upper()])
 
     return EnvVars(*[env_val(name) for name in names])
 
