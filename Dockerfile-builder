@@ -1,0 +1,26 @@
+# Container used to build bpa-ingest
+FROM muccg/bpaingest-base
+LABEL maintainer "https://github.com/muccg/"
+
+ENV PIP_NO_CACHE_DIR "off"
+ENV PIP_INDEX_URL="https://pypi.python.org/simple"
+ENV PIP_TRUSTED_HOST="127.0.0.1"
+ENV NO_PROXY ${PIP_TRUSTED_HOST}
+
+RUN env | sort
+
+COPY docker-build.key /root/.ssh/id_rsa
+RUN chmod 600 /root/.ssh/id_rsa && \
+    echo "StrictHostKeyChecking no" > /root/.ssh/config && \
+    echo "UserKnownHostsFile /dev/null" >> /root/.ssh/config
+COPY docker-entrypoint-build.sh /app/docker-entrypoint-build.sh
+
+RUN mkdir -p /data
+
+VOLUME ["/data"]
+
+ENV HOME /data
+WORKDIR /data
+
+ENTRYPOINT ["/app/docker-entrypoint-build.sh"]
+CMD ["releaselambdazip"]

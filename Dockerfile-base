@@ -1,0 +1,15 @@
+FROM muccg/python-base:3.6-amazonlinux-2017.09
+LABEL maintainer "https://github.com/muccg/"
+
+ENV PROJECT_NAME bpaingest
+ENV PROJECT_SOURCE git@github.com:muccg/bpa-ingest.git
+ENV WRITABLE_DIRECTORY /data/scratch
+
+RUN env | sort
+
+RUN yum -y install \
+    git \
+    zip \
+    && yum clean all
+
+ENTRYPOINT ["/bin/bash"]
