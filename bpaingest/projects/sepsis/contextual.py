@@ -42,7 +42,7 @@ class SepsisBacterialContextual(object):
     Bacterial sample metadata: used by each of the -omics classes below.
     """
 
-    metadata_urls = ['https://downloads-qcif.bioplatforms.com/bpa/sepsis/projectdata/2017-05-31/bacterial/']
+    metadata_urls = ['https://downloads-qcif.bioplatforms.com/bpa/sepsis/projectdata/2017-11-14/bacterial/']
     name = 'sepsis-bacterial'
 
     def __init__(self, path):
@@ -103,7 +103,7 @@ class SepsisGenomicsContextual(object):
     Genomics sample metadata: used by the genomics classes.
     """
 
-    metadata_urls = ['https://downloads-qcif.bioplatforms.com/bpa/sepsis/projectdata/2017-05-31/sample/']
+    metadata_urls = ['https://downloads-qcif.bioplatforms.com/bpa/sepsis/projectdata/2017-11-14/sample/']
     name = 'sepsis-genomics'
 
     def __init__(self, path):
@@ -158,7 +158,7 @@ class SepsisTranscriptomicsHiseqContextual(object):
     Transcriptomics sample metadata: used by the genomics classes.
     """
 
-    metadata_urls = ['https://downloads-qcif.bioplatforms.com/bpa/sepsis/projectdata/2017-05-31/sample/']
+    metadata_urls = ['https://downloads-qcif.bioplatforms.com/bpa/sepsis/projectdata/2017-11-14/sample/']
     name = 'sepsis-transcriptomics-hiseq'
 
     def __init__(self, path):
@@ -225,7 +225,7 @@ class SepsisMetabolomicsLCMSContextual(object):
     Metabolomics sample metadata: used by the genomics classes.
     """
 
-    metadata_urls = ['https://downloads-qcif.bioplatforms.com/bpa/sepsis/projectdata/2017-05-31/sample/']
+    metadata_urls = ['https://downloads-qcif.bioplatforms.com/bpa/sepsis/projectdata/2017-11-14/sample/']
     name = 'sepsis-metabolomics-lcms'
 
     def __init__(self, path):
@@ -287,7 +287,7 @@ class SepsisProteomicsBaseContextual(object):
     Proteomics sample metadata: used by both proteomics classes.
     """
 
-    metadata_urls = ['https://downloads-qcif.bioplatforms.com/bpa/sepsis/projectdata/2017-05-31/sample/']
+    metadata_urls = ['https://downloads-qcif.bioplatforms.com/bpa/sepsis/projectdata/2017-11-14/sample/']
     name = 'sepsis-proteomics'
 
     def __init__(self, path, analytical_platform):

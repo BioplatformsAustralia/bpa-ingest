@@ -22,10 +22,17 @@ from .contextual import (
     SepsisProteomicsMS1QuantificationContextual,
     SepsisTranscriptomicsHiseqContextual)
 from . import files
+from datetime import datetime
 import os
 import re
 
 logger = make_logger(__name__)
+
+
+def fix_version(s):
+    if type(s) is datetime:
+        return ingest_utils.get_date_isoformat(s)
+    return str(s)
 
 
 def parse_pooled_bpa_id(s):
@@ -1134,7 +1141,7 @@ class SepsisProteomicsAnalysedMetadata(BaseSepsisAnalysedMetadata):
             fld('zip_file_name', 'file name of analysed data (folder or zip file)'),
             fld('genome_used', 'genome used (file name if used annoted bpa genome)'),
             fld('database', 'database (if used publicly available genome)'),
-            fld('version', 'version (genome or database)'),
+            fld('version', 'version (genome or database)', coerce=fix_version),
             fld('translation', 'translation (3 frame or 6 frame)'),
             fld('proteome_size', 'proteome size'),
         ],
@@ -1411,7 +1418,7 @@ class SepsisMetabolomicsAnalysedMetadata(BaseSepsisAnalysedMetadata):
             folder_name_md5 = md5hash(folder_name.encode('utf8')).hexdigest()
             name = bpa_id_to_ckan_name(folder_name_md5, self.ckan_data_type)
             track_meta = self.google_track_meta.get(ticket)
-            bpa_ids = list(sorted(set([t.bpa_id for t in rows])))
+            bpa_ids = list(sorted(set([t.bpa_id for t in rows if t.bpa_id])))
             obj.update(self.google_drive_track_to_object(track_meta))
             self.apply_common_context(obj, bpa_ids)
             obj.update({
@@ -1587,7 +1594,7 @@ class SepsisProteomicsProteinDatabaseMetadata(BaseSepsisAnalysedMetadata):
             fld('serovar', 'serovar'),
             fld('file_name', 'file name of database that is generated'),
             fld('bacterial_database_used', 'bacterial database used (ccg jira ticket)'),
-            fld('version', 'version (bacterial genome or database)', coerce=ingest_utils.get_date_isoformat),
+            fld('version', 'version (bacterial genome or database)', coerce=fix_version),
             fld('human_database_used', 'human database used (ccg jira ticket)'),
             fld('decription_of_how_the_database_is_generated', 'decription of how the database is generated'),
             fld('translation', 'translation (3 frame or 6 frame)'),
