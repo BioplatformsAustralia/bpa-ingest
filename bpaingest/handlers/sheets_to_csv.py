@@ -129,11 +129,11 @@ def handler(event, context):
     sheets = [s['properties']['title'] for s in response['sheets']]
     file_names = [re.sub(UNSAFE_CHARS, '_', name) + '.csv' for name in sheets]
 
-    cur_meta = Metadata(env.s3_bucket, env.s3_dir)
+    cur_meta = Metadata(env.s3_bucket, env.s3_output_prefix)
     cur_meta.file_last_modified_at = file_last_modified_at
 
     def export_csv(file_name, data, md5, create=False):
-        key_name = os.path.join(env.s3_dir, file_name)
+        key_name = os.path.join(env.s3_output_prefix, file_name)
         action = 'Creating' if create else 'Updating'
         print('%s %s in bucket %s' % (action, key_name, env.s3_bucket), md5)
         s3.put_object(Bucket=env.s3_bucket, Key=key_name, Body=data)
