@@ -404,45 +404,38 @@ class OMGExonCaptureMetadata(BaseMetadata):
         'https://downloads-qcif.bioplatforms.com/bpa/omg_staging/exon_capture/',
     ]
     metadata_url_components = ('ticket',)
-    resource_linkage = ('bpa_id', 'flowcell_id', 'index_sequence')
+    resource_linkage = ('bpa_library_id', 'flowcell_id', 'library_index_sequence')
     spreadsheet = {
         'fields': [
-            fld("bpa_id", "bpa_id", coerce=ingest_utils.extract_bpa_id),
-            fld('voucher_id', 'voucher_id'),
-            fld('dna_extraction_date', 'dna_extraction_date'),
-            fld('dna_extracted_by', 'dna_extracted_by'),
-            fld('dna_extraction_method', 'dna_extraction_method'),
-            fld('sample_origin', 'sample_origin'),
-            fld('dsdna_conc_ng_ul', 'dsdna__conc_ng_ul'),
+            fld('bpa_dataset_id', 'bpa_dataset_id', coerce=ingest_utils.extract_bpa_id),
+            fld('bpa_library_id', 'bpa_library_id', coerce=ingest_utils.extract_bpa_id),
+            fld('bpa_sample_id', 'bpa_sample_id', coerce=ingest_utils.extract_bpa_id),
+            fld('facility_sample_id', 'facility_sample_id'),
+            fld('library_type', 'library_type'),
+            fld('library_prep_date', 'library_prep_date', coerce=ingest_utils.get_date_isoformat),
+            fld('library_prepared_by', 'library_prepared_by'),
+            fld('library_prep_method', 'library_prep_method'),
             fld('experimental_design', 'experimental_design'),
-            fld('library_construction_method', 'library_construction_method'),
-            fld('n_samples_pooled', 'n_samples_pooled'),
-            fld('capture_type', 'capture_type'),
-            fld('exon_capture_pool', 'exon_capture_pool', coerce=ingest_utils.get_int),
-            fld('index_used', 'index_used', coerce=ingest_utils.get_int),
-            fld('brf_sample_id', 'brf_sample_id'),
-            fld('oligo_id', 'oligo_id'),
-            fld('oligo_sequence', 'oligo_sequence'),
-            fld('index_sequence', 'index_sequence'),
-            fld('index_pcr_rep1_cycles', 'index_pcr_rep1_cycles', coerce=ingest_utils.get_int),
-            fld('index_pcr_rep2_cycles', 'index_pcr_rep2_cycles', coerce=ingest_utils.get_int),
-            fld('indexpcr_conc_ng_ul', 'indexpcr_conc_ng_ul'),
-            fld('bpa_work_order', 'bpa_work_order', coerce=ingest_utils.get_int),
+            fld('omg_project', 'omg_project'),
+            fld('data_custodian', 'data_custodian'),
+            fld('dna_treatment', 'dna_treatment'),
+            fld('library_index_id', 'library_index_id'),
+            fld('library_index_sequence', 'library_index_sequence'),
+            fld('library_oligo_sequence', 'library_oligo_sequence'),
+            fld('library_pcr_reps', 'library_pcr_reps'),
+            fld('library_pcr_cycles', 'library_pcr_cycles'),
+            fld('library_ng_ul', 'library_ng_ul'),
+            fld('library_comments', 'library_comments'),
+            fld('library_location', 'library_location'),
+            fld('library_status', 'library_status'),
             fld('sequencing_facility', 'sequencing_facility'),
+            fld('n_libraries_pooled', 'n_libraries_pooled'),
+            fld('bpa_work_order', 'bpa_work_order'),
             fld('sequencing_platform', 'sequencing_platform'),
             fld('sequence_length', 'sequence_length'),
             fld('flowcell_id', 'flowcell_id'),
-            fld('pre_capture_conc_ng_ul', 'pre_capture_conc_ng_ul'),
-            fld('hyb_duration_hours', 'hyb_duration_hours'),
-            fld('post_capture_conc_ng_ul', 'post_capture_conc_ng_ul'),
-            fld('qpcr_p1_meancp_pre', 'qpcr_p1_meancp_pre'),
-            fld('qpcr_p1_meancp_post', 'qpcr_p1_meancp_post'),
-            fld('qpcr_p2_meancp_pre', 'qpcr_p2_meancp_pre'),
-            fld('qpcr_p2_meancp_post', 'qpcr_p2_meancp_post'),
-            fld('qpcr_n1_meancp_pre', 'qpcr_n1_meancp_pre'),
-            fld('qpcr_n1_meancp_post', 'qpcr_n1_meancp_post'),
-            fld('qpcr_n2_meancp_pre', 'qpcr_n2_meancp_pre'),
-            fld('qpcr_n2_meancp_post', 'qpcr_n2_meancp_post'),
+            fld('software_version', 'software_version'),
+            fld('file', 'file'),
         ],
         'options': {
             'header_length': 1,
@@ -483,20 +476,20 @@ class OMGExonCaptureMetadata(BaseMetadata):
                     if track_meta is None:
                         return None
                     return getattr(track_meta, k)
-                bpa_id = ingest_utils.extract_bpa_id(row.bpa_id)
-                if bpa_id is None:
+
+                library_id = row.bpa_library_id
+                if library_id is None:
                     continue
-                linkage = self.flow_cell_index_linkage(row.flowcell_id, row.index_sequence)
-                name = bpa_id_to_ckan_name(bpa_id, self.ckan_data_type, linkage)
+                linkage = self.flow_cell_index_linkage(row.flowcell_id, row.library_index_sequence)
+                name = bpa_id_to_ckan_name(library_id, self.ckan_data_type, linkage)
                 obj = row._asdict()
                 context = {}
                 for contextual_source in self.contextual_metadata:
-                    context.update(contextual_source.get(bpa_id))
+                    context.update(contextual_source.get(row.bpa_sample_id))
                 obj.update({
                     'name': name,
                     'id': name,
-                    'bpa_id': bpa_id,
-                    'title': 'OMG Exon Capture Raw %s %s %s' % (bpa_id, row.flowcell_id, row.index_sequence),
+                    'title': 'OMG Exon Capture Raw %s %s %s' % (library_id, row.flowcell_id, row.library_index_sequence),
                     'notes': '%s. %s.' % (context.get('common_name', ''), context.get('institution_name', '')),
                     'date_of_transfer': ingest_utils.get_date_isoformat(track_get('date_of_transfer')),
                     'data_type': track_get('data_type'),
@@ -527,10 +520,10 @@ class OMGExonCaptureMetadata(BaseMetadata):
                 resource['md5'] = resource['id'] = md5
                 resource['name'] = filename
                 resource['resource_type'] = self.ckan_data_type
-                bpa_id = ingest_utils.extract_bpa_id(resource['bpa_id'])
+                library_id = ingest_utils.extract_bpa_id(resource['bpa_library_id'])
                 xlsx_info = self.metadata_info[os.path.basename(md5_file)]
                 legacy_url = urljoin(xlsx_info['base_url'], filename)
-                resources.append(((bpa_id, resource['flow_cell_id'], resource['index']), legacy_url, resource))
+                resources.append(((library_id, resource['flow_cell_id'], resource['index']), legacy_url, resource))
         return resources
 
 
