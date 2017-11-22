@@ -1,12 +1,14 @@
+from base64 import b64decode
 from collections import namedtuple
 import csv
+from functools import partial
 import hashlib
 from httplib2 import Http
 import io
 import json
 import os
 import re
-from base64 import b64decode
+import traceback
 
 import boto3
 from datetime import datetime
@@ -22,6 +24,7 @@ UNSAFE_CHARS = re.compile(r'[^a-zA-Z0-9 !.-]')
 TS_FORMAT = '%Y-%m-%dT%H:%M:%S.%fZ'
 
 s3 = boto3.client('s3')
+sns = boto3.client('sns')
 kms = boto3.client('kms')
 
 
@@ -92,7 +95,10 @@ class Metadata:
 
 
 def get_env_vars():
-    names = ('file_id', 's3_bucket', 's3_output_prefix', 's3_config_key', 'google_api_timeout')
+    names = ('file_id', 's3_bucket', 's3_output_prefix', 's3_config_key', 'google_api_timeout',
+            'sns_on_success_topic_arn', 'sns_on_change_topic_arn', 'sns_on_error_topic_arn')
+    optional = set(('sns_on_success_topic_arn', 'sns_on_change_topic_arn', 'sns_on_error_topic_arn'))
+
     conversions = {
         'google_api_timeout': int
     }
@@ -100,14 +106,23 @@ def get_env_vars():
 
     def env_val(name):
         conversion = conversions.get(name, lambda x: x)
-        return conversion(os.environ[name.upper()])
+        return conversion(os.environ[name.upper()] if name not in optional else os.environ.get(name.upper()))
 
     return EnvVars(*[env_val(name) for name in names])
 
 
 def handler(event, context):
-    env = get_env_vars()
+    env = None
+    try:
+        env = get_env_vars()
+        return _handler(env, event, context)
+    except Exception as exc:
+        if env:
+            sns_on_error(env, exc)
+        raise
 
+
+def _handler(env, event, context):
     http_auth = set_up_credentials(env)
 
     meta = Metadata(env.s3_bucket, env.s3_output_prefix)
@@ -115,11 +130,16 @@ def handler(event, context):
 
     drive_service = build('drive', 'v3', http=http_auth)
 
-    file_info = drive_service.files().get(fileId=env.file_id, fields='id, modifiedTime').execute()
+    file_info = drive_service.files().get(fileId=env.file_id, fields='id, name, modifiedTime').execute()
     file_last_modified_at = ts_from_str(file_info['modifiedTime'])
 
+    sns_success = partial(sns_on_success, env, file_info['name'])
+    sns_change = partial(sns_on_change, env, file_info['name'])
+
     if meta.last_processed_at is not None and meta.last_processed_at >= file_last_modified_at:
-        print('Latest version of file already processed. Nothing to do...')
+        msg = 'Latest version of file already processed. Nothing to do...'
+        print(msg)
+        sns_success(msg)
         return 0
 
     sheets_service = build('sheets', 'v4', http=http_auth)
@@ -138,7 +158,7 @@ def handler(event, context):
         print('%s %s in bucket %s' % (action, key_name, env.s3_bucket), md5)
         s3.put_object(Bucket=env.s3_bucket, Key=key_name, Body=data)
 
-    changed = 0
+    changed_sheets = []
     for sheet_title, file_name in zip(sheets, file_names):
         data = get_spreadsheet_data(sheets_service, env.file_id, sheet_title)
         md5 = hashlib.md5(data.encode('utf-8')).hexdigest()
@@ -146,18 +166,67 @@ def handler(event, context):
         previous_sheet = meta.get_sheet(sheet_title)
 
         if previous_sheet is not None and previous_sheet.md5 == md5:
-            # Data is sheet hasn't changed
+            # Data in sheet hasn't changed
             cur_meta.add_sheet(previous_sheet)
         else:
             export_csv(file_name, data, md5, create=previous_sheet is None)
-            cur_meta.add_sheet(Sheet(sheet_title, file_name, cur_meta.file_last_modified_at, md5))
-            changed += 1
+            sheet = Sheet(sheet_title, file_name, cur_meta.file_last_modified_at, md5)
+            cur_meta.add_sheet(sheet)
+            changed_sheets.append(sheet)
 
-    cur_meta.data['last_run_changed_files_count'] = changed
+    cur_meta.data['last_run_changed_files_count'] = len(changed_sheets)
     cur_meta.save()
 
-    print('Changed %d files from a total of %d' % (changed, len(sheets)))
-    return changed
+    msg = 'Changed %d files from a total of %d' % (len(changed_sheets), len(sheets))
+    print(msg)
+    if len(changed_sheets) > 0:
+        sns_change(msg, changed_sheets)
+    else:
+        sns_success(msg)
+    return len(changed_sheets)
+
+
+def sns_on_change(env, file_name, msg, changed_sheets):
+    if not env.sns_on_change_topic_arn:
+        return
+    subject = shorten('%s - %s' % ('Changes in', file_name))
+
+    data = {
+        'default': msg,
+        'email-json': json.dumps({
+            'msg': msg,
+            'changed_sheets': [dict(s._asdict().items()) for s in changed_sheets],
+        }, default=json_converter)
+    }
+
+    sns.publish(TopicArn=env.sns_on_change_topic_arn,
+        Subject=subject,
+        MessageStructure='json',
+        Message=json.dumps(data))
+
+
+def sns_on_success(env, file_name, msg):
+    if not env.sns_on_success_topic_arn:
+        return
+    subject = shorten('%s - %s' % ('No changes in', file_name))
+
+    data = {
+        'default': msg,
+        'email-json': json.dumps({'msg': msg, 'changed_sheets': []})
+    }
+
+    sns.publish(TopicArn=env.sns_on_success_topic_arn,
+        Subject=subject,
+        MessageStructure='json',
+        Message=json.dumps(data))
+
+
+def sns_on_error(env, exc):
+    if env is None or getattr(env, 'sns_on_error_topic_arn') is None:
+        return
+    subject = shorten('ERROR in - %s' % (getattr(env, 'file_name', getattr(env, 'file_id', 'Unknown'))))
+    msg = '\n'.join((str(exc), traceback.format_exc()))
+    sns.publish(TopicArn=env.sns_on_error_topic_arn, Subject=subject, Message=msg)
 
 
 def get_spreadsheet_data(service, file_id, title):
@@ -170,6 +239,12 @@ def get_spreadsheet_data(service, file_id, title):
         writer.writerow(row)
 
     return f.getvalue()
+
+
+def shorten(s, length=100):
+    if length <= 3:
+        return s[:length]
+    return s if len(s) <= length else s[:length-3] + '...'
 
 
 def ts_from_str(s):
