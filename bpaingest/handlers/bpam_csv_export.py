@@ -20,7 +20,9 @@ from datetime import datetime
 from apiclient.discovery import build
 from oauth2client.service_account import ServiceAccountCredentials
 
-from .common import METADATA_FILE_NAME, UNSAFE_CHARS, TS_FORMAT, shorten, ts_from_str, json_converter
+from bpaingest.handlers.common import (
+    METADATA_FILE_NAME, UNSAFE_CHARS, TS_FORMAT,
+    shorten, ts_from_str, json_converter)
 
 
 s3 = boto3.client('s3')
