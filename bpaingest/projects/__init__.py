@@ -70,9 +70,9 @@ class ProjectInfo:
         #     MarineMicrobesMetatranscriptomeMetadata,
         # ],
         'omg': [
+            # OMG10XRawMetadata,
             # OMG10XRawIlluminaMetadata,
-            OMG10XRawMetadata,
-            # OMG10XProcessedIlluminaMetadata,
+            OMG10XProcessedIlluminaMetadata,
 
             # OMGExonCaptureMetadata,
             # OMGGenomicsHiSeqMetadata,
