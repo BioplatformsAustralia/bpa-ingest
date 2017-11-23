@@ -185,19 +185,42 @@ class OMG10XRawMetadata(BaseMetadata):
         'https://downloads-qcif.bioplatforms.com/bpa/omg_staging/10x_raw/',
     ]
     metadata_url_components = ('ticket',)
-    resource_linkage = ('bpa_id', 'flow_id')
+    resource_linkage = ('bpa_sample_id', 'flow_id')
     spreadsheet = {
         'fields': [
-            fld('bpa_id', 'bpa id', coerce=ingest_utils.extract_bpa_id),
-            fld('facility', 'facility'),
+            fld('bpa_dataset_id', 'bpa_dataset_id', coerce=ingest_utils.extract_bpa_id),
+            fld('bpa_library_id', 'bpa_library_id', coerce=ingest_utils.extract_bpa_id),
+            fld('bpa_sample_id', 'bpa_sample_id', coerce=ingest_utils.extract_bpa_id),
+            fld('facility_sample_id', 'facility_sample_id'),
+            fld('library_type', 'library_type'),
+            fld('library_prep_date', 'library_prep_date'),
+            fld('library_prepared_by', 'library_prepared_by'),
+            fld('library_prep_method', 'library_prep_method'),
+            fld('experimental_design', 'experimental_design'),
+            fld('omg_project', 'omg_project'),
+            fld('data_custodian', 'data_custodian'),
+            fld('dna_treatment', 'dna_treatment'),
+            fld('library_index_id', 'library_index_id'),
+            fld('library_index_sequence', 'library_index_sequence'),
+            fld('library_oligo_sequence', 'library_oligo_sequence'),
+            fld('library_pcr_reps', 'library_pcr_reps'),
+            fld('library_pcr_cycles', 'library_pcr_cycles'),
+            fld('library_ng_ul', 'library_ng_ul'),
+            fld('library_comments', 'library_comments'),
+            fld('library_location', 'library_location'),
+            fld('library_status', 'library_status'),
+            fld('sequencing_facility', 'sequencing_facility'),
+            fld('n_libraries_pooled', 'n_libraries_pooled'),
+            fld('bpa_work_order', 'bpa_work_order'),
+            fld('sequencing_platform', 'sequencing_platform'),
+            fld('sequence_length', 'sequence_length'),
+            fld('flowcell_id', 'flowcell_id'),
+            fld('software_version', 'software_version'),
             fld('file', 'file'),
-            fld('library_preparation', 'library prep'),
-            fld('platform', 'platform'),
-            fld('software_version', 'software version'),
         ],
         'options': {
-            'header_length': 2,
-            'column_name_row_index': 1,
+            'header_length': 1,
+            'column_name_row_index': 0,
         }
     }
     md5 = {
@@ -232,14 +255,14 @@ class OMG10XRawMetadata(BaseMetadata):
             file_info = files.tenx_raw_xlsx_filename_re.match(os.path.basename(fname)).groupdict()
             obj['flow_id'] = file_info['flow_id']
 
-            bpa_id = obj['bpa_id']
+            bpa_sample_id = obj['bpa_sample_id']
             flow_id = obj['flow_id']
             self.flow_lookup[obj['ticket']] = flow_id
 
-            name = bpa_id_to_ckan_name(bpa_id, self.ckan_data_type, flow_id)
+            name = bpa_id_to_ckan_name(bpa_sample_id, self.ckan_data_type, flow_id)
             context = {}
             for contextual_source in self.contextual_metadata:
-                context.update(contextual_source.get(bpa_id))
+                context.update(contextual_source.get(bpa_sample_id))
 
             track_meta = self.track_meta.get(obj['ticket'])
 
@@ -251,9 +274,8 @@ class OMG10XRawMetadata(BaseMetadata):
             obj.update({
                 'name': name,
                 'id': name,
-                'bpa_id': bpa_id,
-                'flow_id': flow_id,
-                'title': 'OMG 10x Raw %s %s' % (bpa_id, flow_id),
+                'bpa_sample_id': bpa_sample_id,
+                'title': 'OMG 10x Raw %s %s' % (bpa_sample_id, flow_id),
                 'notes': '%s. %s.' % (context.get('common_name', ''), context.get('institution_name', '')),
                 'date_of_transfer': ingest_utils.get_date_isoformat(track_get('date_of_transfer')),
                 'data_type': track_get('data_type'),
@@ -283,14 +305,14 @@ class OMG10XRawMetadata(BaseMetadata):
                 xlsx_info = self.metadata_info[os.path.basename(md5_file)]
                 ticket = xlsx_info['ticket']
                 flow_id = self.flow_lookup[ticket]
-                bpa_id = ingest_utils.extract_bpa_id(file_info['bpa_id'])
+                bpa_sample_id = ingest_utils.extract_bpa_id(file_info['bpa_sample_id'])
 
                 resource = file_info.copy()
                 resource['md5'] = resource['id'] = md5
                 resource['name'] = filename
                 resource['resource_type'] = self.ckan_data_type
                 legacy_url = urljoin(xlsx_info['base_url'], filename)
-                resources.append(((bpa_id, flow_id), legacy_url, resource))
+                resources.append(((bpa_sample_id, flow_id), legacy_url, resource))
         return resources
 
 
