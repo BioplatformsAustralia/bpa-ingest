@@ -71,9 +71,8 @@ class ProjectInfo:
         # ],
         'omg': [
             # OMG10XRawMetadata,
-            # OMG10XRawIlluminaMetadata,
-            OMG10XProcessedIlluminaMetadata,
-
+            OMG10XRawIlluminaMetadata,
+            # OMG10XProcessedIlluminaMetadata,
             # OMGExonCaptureMetadata,
             # OMGGenomicsHiSeqMetadata,
         ],

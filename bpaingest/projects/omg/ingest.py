@@ -24,7 +24,15 @@ logger = make_logger(__name__)
 
 class OMG10XRawIlluminaMetadata(BaseMetadata):
     """
-    early run data, produced at AGRF. No future data will be produced in this way.
+    early run data, produced at AGRF.
+
+    This data is unusual: it may contain more than one sample/library ID
+    in a single tar file. It's been confirmed by AGRF that the data cannot
+    be split by sample if this has happened.
+
+    We use flow_id as the single key for resource linkage, and we then
+    use the spreadsheet to determine the [library, sample, dataset] IDs
+    for each tar file and present the metadata for each to the user.
     """
 
     auth = ('omg', 'omg')
@@ -37,7 +45,7 @@ class OMG10XRawIlluminaMetadata(BaseMetadata):
         'https://downloads-qcif.bioplatforms.com/bpa/omg_staging/10x_raw_agrf/',
     ]
     metadata_url_components = ('ticket',)
-    resource_linkage = ('bpa_sample_id', 'flow_id')
+    resource_linkage = ('archive_name',)
     spreadsheet = {
         'fields': [
             fld('bpa_dataset_id', 'bpa_dataset_id', coerce=ingest_utils.extract_bpa_id),
@@ -105,52 +113,81 @@ class OMG10XRawIlluminaMetadata(BaseMetadata):
             return m.groups()[0]
 
         logger.info("Ingesting OMG metadata from {0}".format(self.path))
-        packages = []
+
+        def make_row_metadata(row):
+            bpa_sample_id = row.bpa_sample_id
+            row_obj = {}
+            context = {}
+            for contextual_source in self.contextual_metadata:
+                context.update(contextual_source.get(bpa_sample_id))
+            row_obj.update(row._asdict())
+            row_obj.update(context)
+            return row_obj
+
+        # glomp together the spreadsheet rows by filename
+        fname_rows = defaultdict(list)
+
         for fname in glob(self.path + '/*.xlsx'):
             logger.info("Processing OMG metadata file {0}".format(os.path.basename(fname)))
             for row in self.parse_spreadsheet(fname, self.metadata_info):
-                track_meta = self.track_meta.get(row.ticket)
-                flow_id = get_flow_id(fname)
+                fname_rows[(get_flow_id(fname), row.file)].append(row)
 
-                def track_get(k):
-                    if track_meta is None:
-                        return None
-                    return getattr(track_meta, k)
-                bpa_sample_id = row.bpa_sample_id
-                if bpa_sample_id is None:
-                    continue
-                obj = {}
-                name = bpa_id_to_ckan_name(bpa_sample_id, self.ckan_data_type, flow_id)
-                assert(row.file not in self.file_package)
-                self.file_package[row.file] = (bpa_sample_id, flow_id)
-                context = {}
-                for contextual_source in self.contextual_metadata:
-                    context.update(contextual_source.get(bpa_sample_id))
-                obj.update(row._asdict())
-                obj.update({
-                    'name': name,
-                    'id': name,
-                    'flow_id': flow_id,
-                    'title': 'OMG 10x Illumina Raw %s %s' % (bpa_sample_id, flow_id),
-                    'notes': '%s. %s.' % (context.get('common_name', ''), context.get('institution_name', '')),
-                    'date_of_transfer': ingest_utils.get_date_isoformat(track_get('date_of_transfer')),
-                    'data_type': track_get('data_type'),
-                    'description': track_get('description'),
-                    'folder_name': track_get('folder_name'),
-                    'sample_submission_date': ingest_utils.get_date_isoformat(track_get('date_of_transfer')),
-                    'contextual_data_submission_date': None,
-                    'data_generated': ingest_utils.get_date_isoformat(track_get('date_of_transfer_to_archive')),
-                    'archive_ingestion_date': ingest_utils.get_date_isoformat(track_get('date_of_transfer_to_archive')),
-                    'dataset_url': track_get('download'),
-                    'ticket': row.ticket,
-                    'type': self.ckan_data_type,
-                    'private': True,
-                })
-                obj.update(context)
-                ingest_utils.add_spatial_extra(obj)
-                tag_names = ['10x-raw']
-                obj['tags'] = [{'name': t} for t in tag_names]
-                packages.append(obj)
+        packages = []
+        for (flow_id, fname), rows in fname_rows.items():
+            name = bpa_id_to_ckan_name(fname, self.ckan_data_type, flow_id)
+            assert(fname not in self.file_package)
+            self.file_package[fname] = fname
+            row_metadata = [make_row_metadata(row) for row in rows]
+
+            bpa_sample_ids = ', '.join([t.bpa_sample_id for t in rows])
+            bpa_dataset_ids = ', '.join([t.bpa_dataset_id for t in rows])
+            bpa_library_ids = ', '.join([t.bpa_library_id for t in rows])
+
+            obj = {
+                'name': name,
+                'id': name,
+                'flow_id': flow_id,
+                'bpa_sample_ids': bpa_sample_ids,
+                'bpa_library_ids': bpa_library_ids,
+                'bpa_dataset_ids': bpa_dataset_ids,
+                'title': 'OMG 10x Illumina Raw %s %s' % (bpa_sample_ids, flow_id),
+                'archive_name': fname,
+                'type': self.ckan_data_type,
+                'private': True,
+            }
+            # there must be only one ticket
+            assert(len(set(t.ticket for t in rows)) == 1)
+
+            ticket = rows[0].ticket
+            track_meta = self.track_meta.get(ticket)
+
+            def track_get(k):
+                if track_meta is None:
+                    return None
+                return getattr(track_meta, k)
+
+            notes = '\n'.join('%s. %s.' % (t.get('common_name', ''), t.get('institution_name', '')) for t in row_metadata)
+
+            obj.update({
+                'ticket': ticket,
+                'date_of_transfer': ingest_utils.get_date_isoformat(track_get('date_of_transfer')),
+                'data_type': track_get('data_type'),
+                'description': track_get('description'),
+                'folder_name': track_get('folder_name'),
+                'sample_submission_date': ingest_utils.get_date_isoformat(track_get('date_of_transfer')),
+                'contextual_data_submission_date': None,
+                'data_generated': ingest_utils.get_date_isoformat(track_get('date_of_transfer_to_archive')),
+                'archive_ingestion_date': ingest_utils.get_date_isoformat(track_get('date_of_transfer_to_archive')),
+                'dataset_url': track_get('download'),
+                'notes': notes,
+            })
+            ingest_utils.add_spatial_extra(obj)
+            obj.update(common_values([make_row_metadata(row) for row in rows]))
+
+            tag_names = ['10x-raw']
+            obj['tags'] = [{'name': t} for t in tag_names]
+            packages.append(obj)
+
         return packages
 
     def _get_resources(self):
@@ -158,7 +195,7 @@ class OMG10XRawIlluminaMetadata(BaseMetadata):
         resources = []
         for md5_file in glob(self.path + '/*.md5'):
             for filename, md5, file_info in self.parse_md5file(md5_file):
-                bpa_sample_id, flow_id = self.file_package[filename]
+                archive_name = self.file_package[filename]
                 resource = file_info.copy()
                 # waiting on filename convention from AGRF
                 del resource['basename']
@@ -167,7 +204,7 @@ class OMG10XRawIlluminaMetadata(BaseMetadata):
                 resource['resource_type'] = self.ckan_data_type
                 xlsx_info = self.metadata_info[os.path.basename(md5_file)]
                 legacy_url = urljoin(xlsx_info['base_url'], filename)
-                resources.append(((bpa_sample_id, flow_id), legacy_url, resource))
+                resources.append(((archive_name,), legacy_url, resource))
         return resources
 
 
