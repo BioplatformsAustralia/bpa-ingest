@@ -16,12 +16,8 @@ from datetime import datetime
 from apiclient.discovery import build
 from oauth2client.service_account import ServiceAccountCredentials
 
+from .common import METADATA_FILE_NAME, UNSAFE_CHARS, TS_FORMAT, shorten, ts_from_str, json_converter
 
-# Set timeout to prevent paying if we can't connect to the Google APIs
-METADATA_FILE_NAME = 'metadata.json'
-UNSAFE_CHARS = re.compile(r'[^a-zA-Z0-9 !.-]')
-
-TS_FORMAT = '%Y-%m-%dT%H:%M:%S.%fZ'
 
 s3 = boto3.client('s3')
 sns = boto3.client('sns')
@@ -239,18 +235,3 @@ def get_spreadsheet_data(service, file_id, title):
         writer.writerow(row)
 
     return f.getvalue()
-
-
-def shorten(s, length=100):
-    if length <= 3:
-        return s[:length]
-    return s if len(s) <= length else s[:length-3] + '...'
-
-
-def ts_from_str(s):
-    return datetime.strptime(s, TS_FORMAT)
-
-
-def json_converter(o):
-    if isinstance(o, datetime):
-        return o.strftime(TS_FORMAT)
