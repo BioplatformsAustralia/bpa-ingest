@@ -251,6 +251,8 @@ class MarineMicrobesSampleContextual(object):
                 header_length=1,
                 column_name_row_index=0,
                 additional_context={'sample_type': sheet_name})
+            for error in wrapper.get_errors():
+                logger.error(error)
             rows += wrapper.get_all()
         return rows
 

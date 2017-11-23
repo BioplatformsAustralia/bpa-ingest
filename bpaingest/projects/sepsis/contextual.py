@@ -95,6 +95,8 @@ class SepsisBacterialContextual(object):
             sheet_name=None,
             header_length=5,
             column_name_row_index=4)
+        for error in wrapper.get_errors():
+            logger.error(error)
         return wrapper.get_all()
 
 
@@ -150,6 +152,8 @@ class SepsisGenomicsContextual(object):
             sheet_name='Genomics',
             header_length=4,
             column_name_row_index=3)
+        for error in wrapper.get_errors():
+            logger.error(error)
         return wrapper.get_all()
 
 
@@ -217,6 +221,8 @@ class SepsisTranscriptomicsHiseqContextual(object):
             sheet_name='RNA HiSeq',
             header_length=4,
             column_name_row_index=3)
+        for error in wrapper.get_errors():
+            logger.error(error)
         return wrapper.get_all()
 
 
@@ -279,6 +285,8 @@ class SepsisMetabolomicsLCMSContextual(object):
             sheet_name='Metabolomics',
             header_length=4,
             column_name_row_index=3)
+        for error in wrapper.get_errors():
+            logger.error(error)
         return wrapper.get_all()
 
 
@@ -346,6 +354,8 @@ class SepsisProteomicsBaseContextual(object):
             sheet_name='Proteomics',
             header_length=4,
             column_name_row_index=3)
+        for error in wrapper.get_errors():
+            logger.error(error)
         return wrapper.get_all()
 
 

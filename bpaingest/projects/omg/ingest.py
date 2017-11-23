@@ -20,6 +20,7 @@ import os
 import re
 
 logger = make_logger(__name__)
+common_context = [OMGSampleContextual]
 
 
 class OMG10XRawIlluminaMetadata(BaseMetadata):
@@ -39,7 +40,7 @@ class OMG10XRawIlluminaMetadata(BaseMetadata):
     organization = 'bpa-omg'
     ckan_data_type = 'omg-10x-raw-illumina'
     technology = '10x-raw-agrf'
-    contextual_classes = [OMGSampleContextual]
+    contextual_classes = common_context
     metadata_patterns = [r'^.*\.md5$', r'^.*_metadata.*.*\.xlsx$']
     metadata_urls = [
         'https://downloads-qcif.bioplatforms.com/bpa/omg_staging/10x_raw_agrf/',
@@ -217,7 +218,7 @@ class OMG10XRawMetadata(BaseMetadata):
     organization = 'bpa-omg'
     ckan_data_type = 'omg-10x-raw'
     technology = '10xraw'
-    contextual_classes = [OMGSampleContextual]
+    contextual_classes = common_context
     metadata_patterns = [r'^.*\.md5$', r'^.*_metadata.*.*\.xlsx$']
     metadata_urls = [
         'https://downloads-qcif.bioplatforms.com/bpa/omg_staging/10x_raw/',
@@ -359,7 +360,7 @@ class OMG10XProcessedIlluminaMetadata(BaseMetadata):
     organization = 'bpa-omg'
     ckan_data_type = 'omg-10x-processed-illumina'
     technology = '10xprocessed'
-    contextual_classes = [OMGSampleContextual]
+    contextual_classes = common_context
     metadata_patterns = [r'^.*\.md5$', r'^.*_processed.*.*\.xlsx$']
     metadata_urls = [
         'https://downloads-qcif.bioplatforms.com/bpa/omg_staging/10x_processed/',
@@ -505,7 +506,7 @@ class OMGExonCaptureMetadata(BaseMetadata):
     organization = 'bpa-omg'
     ckan_data_type = 'omg-exon-capture'
     technology = 'exoncapture'
-    contextual_classes = [OMGSampleContextual]
+    contextual_classes = common_context
     metadata_patterns = [r'^.*\.md5$', r'^.*_metadata.*.*\.xlsx$']
     metadata_urls = [
         'https://downloads-qcif.bioplatforms.com/bpa/omg_staging/exon_capture/',
@@ -640,7 +641,7 @@ class OMGGenomicsHiSeqMetadata(BaseMetadata):
     ckan_data_type = 'omg-genomics-hiseq'
     omics = 'genomics'
     technology = 'hiseq'
-    contextual_classes = [OMGSampleContextual]
+    contextual_classes = common_context
     metadata_patterns = [r'^.*\.md5$', r'^.*_metadata.*.*\.xlsx$']
     metadata_urls = [
         'https://downloads-qcif.bioplatforms.com/bpa/omg_staging/genomics/raw/',

@@ -32,6 +32,8 @@ def get_run_data(file_name):
                   fld('casava_version', 'CASAVA version'), ]
 
     wrapper = ExcelWrapper(field_spec, file_name, sheet_name='Metadata', header_length=1)
+    for error in wrapper.get_errors():
+        logger.error(error)
     return wrapper.get_all()
 
 

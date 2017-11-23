@@ -515,6 +515,8 @@ class StemcellsProteomicsBaseMetadata(BaseMetadata):
             header_length=2,
             column_name_row_index=1,
             additional_context=additional_context)
+        for error in wrapper.get_errors():
+            logger.error(error)
         rows = list(wrapper.get_all())
         return rows
 

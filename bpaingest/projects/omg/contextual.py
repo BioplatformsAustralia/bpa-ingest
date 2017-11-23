@@ -8,8 +8,8 @@ logger = make_logger(__name__)
 
 
 class OMGSampleContextual(object):
-    metadata_urls = ['https://downloads-qcif.bioplatforms.com/bpa/omg_staging/metadata/2017-07-27/']
-    metadata_patterns = [re.compile(r'^.*\.xlsx$')]
+    metadata_urls = ['https://downloads-qcif.bioplatforms.com/bpa/omg_staging/metadata/2017-11-23/']
+    metadata_patterns = [re.compile(r'^OMG_samples_metadata.*\.xlsx$')]
     name = 'omg-sample-contextual'
 
     def __init__(self, path):
@@ -23,7 +23,7 @@ class OMGSampleContextual(object):
 
     def _read_metadata(self, fname):
         field_spec = [
-            fld('bpa_id', 'bpa_sample_id', coerce=ingest_utils.extract_bpa_id),
+            fld('bpa_sample_id', 'bpa_sample_id', coerce=ingest_utils.extract_bpa_id),
             fld('voucher_id', 'voucher_id'),
             fld('tissue_number', 'tissue_number'),
             fld('institution_name', 'institution_name'),
@@ -70,12 +70,6 @@ class OMGSampleContextual(object):
             fld('dna_extraction_method', 'dna_extraction_method'),
             fld('dna_conc_ng_ul', 'dna_conc_ng_ul'),
             fld('taxonomic_group', 'taxonomic_group'),
-            fld('genome_sample', 'genome_sample'),
-            fld('genome_status', 'genome_status'),
-            fld('phylogenomic_sample', 'phylogenomic_sample'),
-            fld('phylogenomic_status', 'phylogenomic_status'),
-            fld('conservation_sample', 'conservation_sample'),
-            fld('conservation_status', 'conservation_status'),
             fld('trace_lab', 'trace_lab'),
         ]
 
@@ -84,22 +78,27 @@ class OMGSampleContextual(object):
             fname,
             sheet_name=None,
             header_length=1,
-            column_name_row_index=0)
+            column_name_row_index=0,
+            suggest_template=True)
+        for error in wrapper.get_errors():
+            logger.error(error)
+
         name_mapping = {
             'decimal_longitude': 'longitude',
             'decimal_latitude': 'latitude',
             'class_': 'class',
         }
+
         sample_metadata = {}
         for row in wrapper.get_all():
-            if not row.bpa_id:
+            if not row.bpa_sample_id:
                 continue
-            assert(row.bpa_id not in sample_metadata)
-            bpa_id = ingest_utils.extract_bpa_id(row.bpa_id)
-            sample_metadata[bpa_id] = row_meta = {}
+            assert(row.bpa_sample_id not in sample_metadata)
+            bpa_sample_id = ingest_utils.extract_bpa_id(row.bpa_sample_id)
+            sample_metadata[bpa_sample_id] = row_meta = {}
             for field in row._fields:
                 value = getattr(row, field)
-                if field == 'bpa_id':
+                if field == 'bpa_sample_id':
                     continue
                 row_meta[name_mapping.get(field, field)] = value
         return sample_metadata

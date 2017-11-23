@@ -77,6 +77,8 @@ class StemcellsTranscriptomeContextual(object):
             sheet_name=self.sheet_name,
             header_length=3,
             column_name_row_index=2)
+        for error in wrapper.get_errors():
+            logger.error(error)
         return wrapper.get_all()
 
 
@@ -145,6 +147,8 @@ class StemcellsSmallRNAContextual(object):
             sheet_name=self.sheet_name,
             header_length=3,
             column_name_row_index=2)
+        for error in wrapper.get_errors():
+            logger.error(error)
         return wrapper.get_all()
 
 
@@ -213,6 +217,8 @@ class StemcellsSingleCellRNASeq(object):
             sheet_name=self.sheet_name,
             header_length=3,
             column_name_row_index=2)
+        for error in wrapper.get_errors():
+            logger.error(error)
         return wrapper.get_all()
 
 
@@ -281,6 +287,8 @@ class StemcellsMetabolomicsContextual(object):
             sheet_name=self.sheet_name,
             header_length=3,
             column_name_row_index=2)
+        for error in wrapper.get_errors():
+            logger.error(error)
         return wrapper.get_all()
 
 
@@ -353,6 +361,8 @@ class StemcellsProteomicsContextual(object):
                 sheet_name=sheet_name,
                 header_length=3,
                 column_name_row_index=2)
+            for error in wrapper.get_errors():
+                logger.error(error)
             rows += list(wrapper.get_all())
         # there are a bunch of duplicate rows, because per-file metadata is included
         # in the source spreadsheet

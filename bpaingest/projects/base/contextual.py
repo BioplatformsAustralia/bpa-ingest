@@ -134,7 +134,8 @@ class BASESampleContextual(ContextualBase):
             fld('boron_hot_cacl2', 'boron hot cacl2 (mg/kg)'),
         ]
         wrapper = ExcelWrapper(field_spec, metadata_path, sheet_name=None, header_length=1, column_name_row_index=0)
-
+        for error in wrapper.get_errors():
+            logger.error(error)
         return wrapper.get_all()
 
 
