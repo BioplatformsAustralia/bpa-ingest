@@ -14,13 +14,13 @@ from ...libs import ingest_utils
 from ...libs.excel_wrapper import make_field_definition as fld
 from . import files
 from .tracking import OMGTrackMetadata
-from .contextual import OMGSampleContextual
+from .contextual import (OMGSampleContextual, OMGLibraryContextual)
 
 import os
 import re
 
 logger = make_logger(__name__)
-common_context = [OMGSampleContextual]
+common_context = [OMGSampleContextual, OMGLibraryContextual]
 
 
 class OMG10XRawIlluminaMetadata(BaseMetadata):
@@ -116,11 +116,10 @@ class OMG10XRawIlluminaMetadata(BaseMetadata):
         logger.info("Ingesting OMG metadata from {0}".format(self.path))
 
         def make_row_metadata(row):
-            bpa_sample_id = row.bpa_sample_id
             row_obj = {}
             context = {}
             for contextual_source in self.contextual_metadata:
-                context.update(contextual_source.get(bpa_sample_id))
+                context.update(contextual_source.get(row.bpa_sample_id, row.bpa_library_id))
             row_obj.update(row._asdict())
             row_obj.update(context)
             return row_obj
@@ -295,13 +294,14 @@ class OMG10XRawMetadata(BaseMetadata):
             obj['flow_id'] = file_info['flow_id']
 
             bpa_sample_id = obj['bpa_sample_id']
+            bpa_library_id = obj['bpa_library_id']
             flow_id = obj['flow_id']
             self.flow_lookup[obj['ticket']] = flow_id
 
             name = bpa_id_to_ckan_name(bpa_sample_id, self.ckan_data_type, flow_id)
             context = {}
             for contextual_source in self.contextual_metadata:
-                context.update(contextual_source.get(bpa_sample_id))
+                context.update(contextual_source.get(bpa_sample_id, bpa_library_id))
 
             track_meta = self.track_meta.get(obj['ticket'])
 
@@ -446,6 +446,7 @@ class OMG10XProcessedIlluminaMetadata(BaseMetadata):
                         return None
                     return getattr(track_meta, k)
                 bpa_sample_id = row.bpa_sample_id
+                bpa_library_id = row.bpa_library_id
                 if bpa_sample_id is None:
                     continue
                 obj = {}
@@ -454,7 +455,7 @@ class OMG10XProcessedIlluminaMetadata(BaseMetadata):
                 self.file_package[row.file] = bpa_sample_id, flow_id
                 context = {}
                 for contextual_source in self.contextual_metadata:
-                    context.update(contextual_source.get(bpa_sample_id))
+                    context.update(contextual_source.get(bpa_sample_id, bpa_library_id))
                 obj.update(row._asdict())
                 obj.update({
                     'name': name,
@@ -593,7 +594,7 @@ class OMGExonCaptureMetadata(BaseMetadata):
                 obj = row._asdict()
                 context = {}
                 for contextual_source in self.contextual_metadata:
-                    context.update(contextual_source.get(row.bpa_sample_id))
+                    context.update(contextual_source.get(row.bpa_sample_id, row.bpa_library_id))
                 obj.update({
                     'name': name,
                     'id': name,
@@ -733,12 +734,13 @@ class OMGGenomicsHiSeqMetadata(BaseMetadata):
                         return None
                     return getattr(track_meta, k)
                 bpa_sample_id = obj['bpa_sample_id']
+                bpa_library_id = obj['bpa_library_id']
                 if bpa_sample_id is None:
                     continue
                 name = bpa_id_to_ckan_name(bpa_sample_id, self.ckan_data_type, flow_id)
                 context = {}
                 for contextual_source in self.contextual_metadata:
-                    context.update(contextual_source.get(bpa_sample_id))
+                    context.update(contextual_source.get(bpa_sample_id, bpa_library_id))
                 obj.update({
                     'name': name,
                     'id': name,

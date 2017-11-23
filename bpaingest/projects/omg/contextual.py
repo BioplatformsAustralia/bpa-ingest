@@ -15,10 +15,10 @@ class OMGSampleContextual(object):
     def __init__(self, path):
         self.sample_metadata = self._read_metadata(one(glob(path + '/*.xlsx')))
 
-    def get(self, bpa_id):
-        if bpa_id in self.sample_metadata:
-            return self.sample_metadata[bpa_id]
-        logger.warning("no %s metadata available for: %s" % (type(self).__name__, repr(bpa_id)))
+    def get(self, bpa_sample_id, bpa_library_id):
+        if bpa_sample_id in self.sample_metadata:
+            return self.sample_metadata[bpa_sample_id]
+        logger.warning("no %s metadata available for: %s" % (type(self).__name__, repr(bpa_sample_id)))
         return {}
 
     def _read_metadata(self, fname):
@@ -102,3 +102,64 @@ class OMGSampleContextual(object):
                     continue
                 row_meta[name_mapping.get(field, field)] = value
         return sample_metadata
+
+
+class OMGLibraryContextual(object):
+    metadata_urls = ['https://downloads-qcif.bioplatforms.com/bpa/omg_staging/metadata/2017-11-23/']
+    metadata_patterns = [re.compile(r'^OMG_library_metadata.*\.xlsx$')]
+    name = 'omg-library-contextual'
+
+    def __init__(self, path):
+        self.library_metadata = self._read_metadata(one(glob(path + '/*.xlsx')))
+
+    def get(self, bpa_sample_id, bpa_library_id):
+        if bpa_library_id in self.library_metadata:
+            return self.library_metadata[bpa_library_id]
+        logger.warning("no %s metadata available for: %s" % (type(self).__name__, repr(bpa_library_id)))
+        return {}
+
+    def _read_metadata(self, fname):
+        field_spec = [
+            fld('bpa_library_id', 'bpa_library_id', coerce=ingest_utils.extract_bpa_id),
+            fld('bpa_sample_id', 'bpa_sample_id', coerce=ingest_utils.extract_bpa_id),
+            fld('library_type', 'library_type'),
+            fld('library_prep_date', 'library_prep_date', coerce=ingest_utils.get_date_isoformat),
+            fld('library_prepared_by', 'library_prepared_by'),
+            fld('library_prep_method', 'library_prep_method'),
+            fld('experimental_design', 'experimental_design'),
+            fld('omg_project', 'omg_project'),
+            fld('data_custodian', 'data_custodian'),
+            fld('dna_treatment', 'dna_treatment'),
+            fld('library_index_id', 'library_index_id'),
+            fld('library_index_sequence', 'library_index_sequence'),
+            fld('library_oligo_sequence', 'library_oligo_sequence'),
+            fld('library_pcr_reps', 'library_pcr_reps'),
+            fld('library_pcr_cycles', 'library_pcr_cycles'),
+            fld('library_ng_ul', 'library_ng_ul'),
+            fld('library_comments', 'library_comments'),
+            fld('library_location', 'library_location'),
+            fld('library_status', 'library_status'),
+        ]
+        wrapper = ExcelWrapper(
+            field_spec,
+            fname,
+            sheet_name=None,
+            header_length=1,
+            column_name_row_index=0,
+            suggest_template=True)
+        for error in wrapper.get_errors():
+            logger.error(error)
+
+        library_metadata = {}
+        for row in wrapper.get_all():
+            if not row.bpa_library_id:
+                continue
+            assert(row.bpa_library_id not in library_metadata)
+            bpa_library_id = ingest_utils.extract_bpa_id(row.bpa_library_id)
+            library_metadata[bpa_library_id] = row_meta = {}
+            for field in row._fields:
+                value = getattr(row, field)
+                if field == 'bpa_library_id' or field == 'bpa_sample_id':
+                    continue
+                row_meta[field] = value
+        return library_metadata
