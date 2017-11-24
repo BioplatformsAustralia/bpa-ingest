@@ -39,7 +39,7 @@ def genhash(ckan, meta, mirror_path, num_threads):
         if size is None or not size_re.match(size):
             patch_obj['size'] = str(os.stat(fpath).st_size)
 
-        if len(ckan_resource.get('sha256', '')) != 64:
+        if not ckan_resource.get('s3etag_33554432'):
             hashes = generate_hashes(fpath)
             if hashes['md5'] != resource['md5']:
                 logger.critical("MD5 hash mismatch of on-disk data. Have `%s' and expected `%s': %s" % (hashes['md5'], resource['md5'], fpath))
