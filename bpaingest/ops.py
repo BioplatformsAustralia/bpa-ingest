@@ -176,7 +176,7 @@ def same_netloc(u1, u2):
     return n1 == n2
 
 
-def check_resource(ckan_address, archive_info, current_url, legacy_url, metadata_etag, auth=None):
+def check_resource(ckan_address, archive_info, current_url, legacy_url, metadata_etags, auth=None):
     """
     returns None if the ckan_obj looks good (is on the CKAN server, size matches legacy url size)
     otherwise returns a short string describing the problem
@@ -206,14 +206,14 @@ def check_resource(ckan_address, archive_info, current_url, legacy_url, metadata
         logger.error("CKAN resource %s has incorrect size: %d (should be %d)" % (current_url, current_size, legacy_size))
         return 'wrong-size'
 
-    if metadata_etag is None:
-        logger.warning("CKAN resource %s has no metadata etag: run genhash for this project." % (legacy_url))
-
     # if we have a pre-calculated s3etag in metadata, check it matches
     current_etag = archive_info.get_etag(current_url, None)
-    if metadata_etag is not None and current_etag.strip('"') != metadata_etag:
-        logger.error("CKAN resource %s has incorrect etag: %s (should be %s)" % (current_url, current_etag, metadata_etag))
-        return 'wrong-etag'
+    if current_etag.strip('"') not in metadata_etags:
+        if None in metadata_etags:
+            logger.warning("CKAN resource %s has no metadata etag: run genhash for this project." % (legacy_url))
+        else:
+            logger.error("CKAN resource %s has incorrect etag: %s (should be one of %s)" % (current_url, current_etag, metadata_etags))
+            return 'wrong-etag'
 
     return None
 

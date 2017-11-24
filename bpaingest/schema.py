@@ -94,6 +94,14 @@ schema_template = {
             "label": "S3 E-Tag (8MB multipart)"
         },
         {
+            "field_name": "s3etag_16777216",
+            "label": "S3 E-Tag (16MB multipart)"
+        },
+        {
+            "field_name": "s3etag_33554432",
+            "label": "S3 E-Tag (32MB multipart)"
+        },
+        {
             "field_name": "format",
             "label": "Format",
             "preset": "resource_format_autocomplete",

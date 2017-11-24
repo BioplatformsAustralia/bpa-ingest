@@ -6,7 +6,7 @@ from queue import Queue
 from threading import Thread
 from .util import make_logger
 from .util import prune_dict
-from .libs.multihash import S3_HASH_FIELD
+from .libs.multihash import S3_HASH_FIELDS
 from collections import Counter
 
 logger = make_logger(__name__)
@@ -66,7 +66,7 @@ def check_resources(ckan, current_resources, resource_id_legacy_url, auth, num_t
                 break
             current_ckan_obj, legacy_url, current_url = task
             obj_id = current_ckan_obj['id']
-            resource_issue = check_resource(ckan_address, archive_info, current_url, legacy_url, current_ckan_obj.get(S3_HASH_FIELD), auth)
+            resource_issue = check_resource(ckan_address, archive_info, current_url, legacy_url, [current_ckan_obj.get(t) for t in S3_HASH_FIELDS], auth)
             if resource_issue:
                 logger.error('resource check failed (%s) queued for re-upload: %s' % (resource_issue, obj_id))
                 to_reupload.append((current_ckan_obj, legacy_url))
