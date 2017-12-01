@@ -94,8 +94,8 @@ class Metadata:
 
 def get_env_vars():
     names = ('file_id', 's3_bucket', 's3_output_prefix', 's3_config_key', 'google_api_timeout',
-            'sns_on_success_topic_arn', 'sns_on_change_topic_arn', 'sns_on_error_topic_arn')
-    optional = set(('sns_on_success_topic_arn', 'sns_on_change_topic_arn', 'sns_on_error_topic_arn'))
+            'sns_on_success', 'sns_on_change', 'sns_on_error')
+    optional = set(('sns_on_success', 'sns_on_change', 'sns_on_error'))
 
     conversions = {
         'google_api_timeout': int
@@ -131,8 +131,8 @@ def _handler(env, event, context):
     file_info = drive_service.files().get(fileId=env.file_id, fields='id, name, modifiedTime').execute()
     file_last_modified_at = ts_from_str(file_info['modifiedTime'])
 
-    sns_success = partial(sns_on_success, env, file_info['name'])
-    sns_change = partial(sns_on_change, env, file_info['name'])
+    sns_success = partial(sns_result, env.sns_on_success, file_info['name'])
+    sns_change = partial(sns_result, env.sns_on_change, file_info['name'])
 
     if meta.last_processed_at is not None and meta.last_processed_at >= file_last_modified_at:
         msg = 'Latest version of file already processed. Nothing to do...'
@@ -177,17 +177,19 @@ def _handler(env, event, context):
 
     msg = 'Changed %d files from a total of %d' % (len(changed_sheets), len(sheets))
     print(msg)
+    sns_success(msg, changed_sheets)
     if len(changed_sheets) > 0:
         sns_change(msg, changed_sheets)
-    else:
-        sns_success(msg)
     return len(changed_sheets)
 
 
-def sns_on_change(env, file_name, msg, changed_sheets):
-    if not env.sns_on_change_topic_arn:
+def sns_result(topic_arn, file_name, msg, changed_sheets=()):
+    if topic_arn is None:
         return
-    subject = shorten('%s - %s' % ('Changes in', file_name))
+
+    subject = shorten('%s - %s' % (
+       'Changes in' if len(changed_sheets) > 0 else 'No changes in',
+       file_name))
 
     data = {
         'default': msg,
@@ -197,34 +199,18 @@ def sns_on_change(env, file_name, msg, changed_sheets):
         }, default=json_converter)
     }
 
-    sns.publish(TopicArn=env.sns_on_change_topic_arn,
-        Subject=subject,
-        MessageStructure='json',
-        Message=json.dumps(data))
-
-
-def sns_on_success(env, file_name, msg):
-    if not env.sns_on_success_topic_arn:
-        return
-    subject = shorten('%s - %s' % ('No changes in', file_name))
-
-    data = {
-        'default': msg,
-        'email-json': json.dumps({'msg': msg, 'changed_sheets': []})
-    }
-
-    sns.publish(TopicArn=env.sns_on_success_topic_arn,
+    sns.publish(TopicArn=topic_arn,
         Subject=subject,
         MessageStructure='json',
         Message=json.dumps(data))
 
 
 def sns_on_error(env, exc):
-    if env is None or getattr(env, 'sns_on_error_topic_arn') is None:
+    if env is None or getattr(env, 'sns_on_error') is None:
         return
     subject = shorten('ERROR in - %s' % (getattr(env, 'file_name', getattr(env, 'file_id', 'Unknown'))))
     msg = '\n'.join((str(exc), traceback.format_exc()))
-    sns.publish(TopicArn=env.sns_on_error_topic_arn, Subject=subject, Message=msg)
+    sns.publish(TopicArn=env.sns_on_error, Subject=subject, Message=msg)
 
 
 def get_spreadsheet_data(service, file_id, title):
