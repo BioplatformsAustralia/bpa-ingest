@@ -12,7 +12,7 @@ logger = make_logger(__name__)
 class MarineMicrobesSampleContextual(object):
     # we smash together the tabs, because there is one tab per sample type
     # each BPA ID should have only one entry (if it has one at all)
-    metadata_urls = ['https://downloads-qcif.bioplatforms.com/bpa/marine_microbes/metadata/contextual/2017-10-24/']
+    metadata_urls = ['https://downloads-qcif.bioplatforms.com/bpa/marine_microbes/metadata/contextual/2017-12-04/']
     metadata_patterns = [re.compile(r'^.*\.xlsx$')]
     name = 'mm-samplecontextual'
     field_specs = {
@@ -234,7 +234,7 @@ class MarineMicrobesSampleContextual(object):
             for field in row._fields:
                 val = getattr(row, field)
                 if field == 'latitude':
-                    if val and val > 0:
+                    if val and type(val) is float and val > 0:
                         logger.warning("Positioned in northern hemisphere, inverting: %s / %s" % (row.bpa_id, val))
                         val *= -1
                 if field != 'bpa_id':
