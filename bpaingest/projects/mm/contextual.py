@@ -12,7 +12,7 @@ logger = make_logger(__name__)
 class MarineMicrobesSampleContextual(object):
     # we smash together the tabs, because there is one tab per sample type
     # each BPA ID should have only one entry (if it has one at all)
-    metadata_urls = ['https://downloads-qcif.bioplatforms.com/bpa/marine_microbes/metadata/contextual/2017-12-04/']
+    metadata_urls = ['https://downloads-qcif.bioplatforms.com/bpa/marine_microbes/metadata/contextual/2017-12-06/']
     metadata_patterns = [re.compile(r'^.*\.xlsx$')]
     name = 'mm-samplecontextual'
     field_specs = {
