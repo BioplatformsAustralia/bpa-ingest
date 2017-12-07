@@ -80,7 +80,7 @@ def merge_pass_fail(row):
         pass_fail_attrs = ('pass_fail', 'pass_fail_10')
     elif dilution == '1:100':
         pass_fail_attrs = ('pass_fail', 'pass_fail_100')
-    elif dilution == '2 x template' or dilution == 'weak':
+    elif dilution == '2 x template' or dilution == 'weak' or dilution == '2x':
         pass_fail_attrs = ('pass_fail',)
     else:
         raise Exception('unknown dilution: %s' % (dilution))
