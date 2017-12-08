@@ -102,6 +102,12 @@ schema_template = {
             "label": "S3 E-Tag (32MB multipart)"
         },
         {
+            "field_name": "s3_etag_verified_at",
+            "label": "S3 E-Tag Verified At",
+            "form_placeholder": "",
+            "preset": "date"
+        },
+        {
             "field_name": "format",
             "label": "Format",
             "preset": "resource_format_autocomplete",
