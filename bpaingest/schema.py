@@ -105,7 +105,7 @@ schema_template = {
             "field_name": "s3_etag_verified_at",
             "label": "S3 E-Tag Verified At",
             "form_placeholder": "",
-            "preset": "date"
+            "preset": "datetime"
         },
         {
             "field_name": "format",
