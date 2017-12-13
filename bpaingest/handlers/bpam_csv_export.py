@@ -270,6 +270,3 @@ def sns_on_error(env, exc):
     subject = shorten('ERROR in - %s' % (getattr(env, 'bpam_project_url', 'Unknown')))
     msg = '\n'.join((str(exc), traceback.format_exc()))
     sns.publish(TopicArn=env.sns_on_error, Subject=subject, Message=msg)
-
-
-

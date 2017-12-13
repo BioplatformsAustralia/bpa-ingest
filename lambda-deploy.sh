@@ -13,7 +13,7 @@ ZIPFILE="./build/${FILENAME}"
 aws s3 cp "$ZIPFILE" s3://bpa-lambda
 
 # this blob of code may have multiple handler functions in it; update each of them
-for funcname in BPAMAdminCSVExport CKANResourceIntegrityCheck SpreadsheetFunc; do
+for funcname in BPAMAdminCSVExport CKANCheckAllResourcesIntegrities CKANResourceIntegrityCheck SpreadsheetFunc; do
     aws lambda update-function-code --function-name "$funcname" --s3-bucket bpa-lambda --s3-key "${FILENAME}"
 done
 
