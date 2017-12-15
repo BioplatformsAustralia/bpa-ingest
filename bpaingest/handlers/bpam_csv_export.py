@@ -12,7 +12,6 @@ import traceback
 from urllib.parse import urljoin, urlparse, urlunparse
 
 from bs4 import BeautifulSoup
-import requests
 
 import boto3
 from datetime import datetime
@@ -22,34 +21,13 @@ from oauth2client.service_account import ServiceAccountCredentials
 
 from bpaingest.handlers.common import (
     METADATA_FILE_NAME, UNSAFE_CHARS, TS_FORMAT,
+    RequestsSession,
     shorten, ts_from_str, json_converter)
 
 
 s3 = boto3.client('s3')
 sns = boto3.client('sns')
 kms = boto3.client('kms')
-
-
-class RequestsSession(requests.Session):
-    def __init__(self, *args, default_timeout=None, **kwargs):
-        self.default_timeout = default_timeout
-        self.referrer = None
-        super().__init__(*args, **kwargs)
-
-    def process_response(self, response):
-        return response
-
-    def request(self, *args, **kwargs):
-        if self.default_timeout:
-            kwargs.setdefault('timeout', self.default_timeout)
-
-        if self.referrer is not None:
-            headers = kwargs.setdefault('headers', {})
-            if 'Referer' not in headers:
-                headers['Referer'] = self.referrer
-
-        resp = super().request(*args, **kwargs)
-        return self.process_response(resp)
 
 
 class AdminService:
@@ -292,6 +270,3 @@ def sns_on_error(env, exc):
     subject = shorten('ERROR in - %s' % (getattr(env, 'bpam_project_url', 'Unknown')))
     msg = '\n'.join((str(exc), traceback.format_exc()))
     sns.publish(TopicArn=env.sns_on_error, Subject=subject, Message=msg)
-
-
-

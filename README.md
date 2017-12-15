@@ -57,7 +57,7 @@ configuration once it has been read from S3.
 
 To store encrypted data at a key, this pattern works
 
-    $ aws kms encrypt --key-id <key> --plaintext fileb://config.json --output text --query CiphertextBlob | base64 --decode > config.env
+    $ aws kms encrypt --key-id <key> --plaintext fileb://config.json --output text --query CiphertextBlob | base64 --decode > config.enc
     $ aws s3 cp config.enc s3://bucket/key
 
 
