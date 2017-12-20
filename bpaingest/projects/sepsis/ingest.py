@@ -306,42 +306,63 @@ class SepsisTranscriptomicsHiseqMetadata(BaseSepsisMetadata):
     def _get_packages(self):
         logger.info("Ingesting Sepsis Transcriptomics Hiseq metadata from {0}".format(self.path))
         packages = []
+
+        # we have some rows which are the same except for the flow-cell. BPA have asked
+        # for these to be combined together, into a single package, with two flow-cells.
+        # Should be an uncommon case, only in AGRF data.
+
+        bpa_id_info = defaultdict(list)
         for fname in glob(self.path + '/*.xlsx'):
             logger.info("Processing Sepsis Transcriptomics metadata file {0}".format(fname))
+
             rows = self.parse_spreadsheet(fname, self.metadata_info)
             xlsx_info = self.metadata_info[os.path.basename(fname)]
             ticket = xlsx_info['ticket']
             google_track_meta = self.google_track_meta.get(ticket)
+
             for row in rows:
                 bpa_id = row.bpa_id
                 if bpa_id is None:
                     continue
-                track_meta = self.bpam_track_meta.get(bpa_id)
-                name = bpa_id_to_ckan_name(bpa_id.split('.')[-1], self.ckan_data_type)
-                obj = track_meta.copy()
-                obj.update({
-                    'name': name,
-                    'id': name,
-                    'bpa_id': bpa_id,
-                    'archive_ingestion_date': ingest_utils.get_date_isoformat(google_track_meta.date_of_transfer_to_archive),
-                    'title': 'ARP Transcriptomics Hiseq %s' % (bpa_id),
-                    'ticket': row.ticket,
-                    'facility': row.facility_code.upper(),
-                    'notes': 'ARP Transcriptomics Hiseq Data: %s %s' % (track_meta['taxon_or_organism'], track_meta['strain_or_isolate']),
-                    'sample': row.sample,
-                    'library_construction_protocol': row.library_construction_protocol,
-                    'barcode_tag': row.barcode_tag,
-                    'sequencer': row.sequencer,
-                    'casava_version': row.casava_version,
-                    'type': self.ckan_data_type,
-                    'private': True,
-                    'data_generated': True,
-                })
-                for contextual_source in self.contextual_metadata:
-                    obj.update(contextual_source.get(bpa_id, track_meta))
-                tag_names = sepsis_contextual_tags(self, obj)
-                obj['tags'] = [{'name': t} for t in tag_names]
-                packages.append(obj)
+                bpa_id_info[bpa_id].append([row, xlsx_info, google_track_meta])
+        
+        # collate together the flow cell IDs
+        bpa_id_flowcells = defaultdict(set)
+        for md5_file in glob(self.path + '/*.md5'):
+            for filename, md5, file_info in self.parse_md5file(md5_file):
+                bpa_id = ingest_utils.extract_bpa_id(file_info.get('id'))
+                bpa_id_flowcells[bpa_id].add(file_info['flow_cell_id'])
+
+        for bpa_id, info in bpa_id_info.items():
+            tickets = ', '.join(sorted(set(xlsx_info['ticket'] for _, xlsx_info, _ in info)))
+            archive_ingestion_dates = ', '.join(sorted(set(google_track_meta.date_of_transfer_to_archive for _, _, google_track_meta in info)))
+            name = bpa_id_to_ckan_name(bpa_id.split('.')[-1], self.ckan_data_type)
+            track_meta = self.bpam_track_meta.get(bpa_id)
+            obj = track_meta.copy()
+            obj.update({
+                'name': name,
+                'id': name,
+                'bpa_id': bpa_id,
+                'flow_cell_ids': ', '.join(sorted(bpa_id_flowcells[bpa_id])),
+                'title': 'ARP Transcriptomics Hiseq %s' % (bpa_id),
+                'archive_ingestion_dates': archive_ingestion_dates,
+                'tickets': tickets,
+                'facility': row.facility_code.upper(),
+                'notes': 'ARP Transcriptomics Hiseq Data: %s %s' % (track_meta['taxon_or_organism'], track_meta['strain_or_isolate']),
+                'sample': row.sample,
+                'library_construction_protocol': row.library_construction_protocol,
+                'barcode_tag': row.barcode_tag,
+                'sequencer': row.sequencer,
+                'casava_version': row.casava_version,
+                'type': self.ckan_data_type,
+                'private': True,
+                'data_generated': True,
+            })
+            for contextual_source in self.contextual_metadata:
+                obj.update(contextual_source.get(bpa_id, track_meta))
+            tag_names = sepsis_contextual_tags(self, obj)
+            obj['tags'] = [{'name': t} for t in tag_names]
+            packages.append(obj)
         return packages
 
     def _get_resources(self):

@@ -130,6 +130,10 @@ def extract_bpa_id_silent(s):
     return extract_bpa_id(s, silent=True)
 
 
+def short_bpa_id(s):
+    return extract_bpa_id(s).split('.')[-1]
+
+
 def get_int(val, default=None):
     """
     get a int from a string containing other alpha characters
