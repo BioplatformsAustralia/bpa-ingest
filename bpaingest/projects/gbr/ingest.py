@@ -15,6 +15,114 @@ from ...abstract import BaseMetadata
 logger = make_logger(__name__)
 
 
+
+
+
+
+class GbrPacbioMetadata(BaseMetadata):
+    metadata_urls = ['https://downloads-qcif.bioplatforms.com/bpa/gbr/raw/pacbio/']
+    metadata_url_components = ('pacbio_', 'facility_code', 'ticket')
+    organization = 'bpa-great-barrier-reef'
+    ckan_data_type = 'great-barrier-reef-pacbio'
+    omics = 'genomics'
+    technology = 'pacbio'
+    auth = ("bpa", "gbr")
+    resource_linkage = ('bpa_id', 'amplicon', 'index')
+    extract_index_re = re.compile('^.*_([GATC]{8}_[GATC]{8})$')
+    spreadsheet = {
+        'fields': [
+            fld('bpa_id', 'Sample unique ID', coerce=ingest_utils.extract_bpa_id),
+            fld('sequencing_facility', 'Sequencing facility'),
+            fld('index1', 'index'),
+            fld('library', 'Library'),
+            fld('library_code', 'Library code'),
+            fld('library_construction_avg_insert_size', 'Library Construction - average insert size'),
+            fld('insert_size_range', 'Insert size range'),
+            fld('library_construction_protocol', 'Library construction protocol'),
+            fld('sequencer', 'Sequencer'),
+            fld('run_number', 'Run number'),
+            fld('run_number_flow_cell_id', 'Run #:Flow Cell ID'),
+            fld('lane_number', 'Lane number'),
+            fld('casava_version', 'CASAVA version'),
+        ],
+        'options': {
+            'header_length': 3,
+            'column_name_row_index': 1,
+        }
+    }
+    md5 = {
+        'match': [files.amplicon_filename_re],
+        'skip': None,
+    }
+
+    def __init__(self, metadata_path, metadata_info=None):
+        super(GbrPacbioMetadata, self).__init__()
+        self.path = Path(metadata_path)
+        self.metadata_info = metadata_info
+
+    def _get_packages(self):
+        packages = []
+        for fname in glob(self.path + '/*.xlsx'):
+            logger.info("Processing Pacbio metadata file {0}".format(fname))
+            for row in self.parse_spreadsheet(fname, self.metadata_info):
+                bpa_id = row.bpa_id
+                if bpa_id is None:
+                    continue
+                index = self.extract_index_re.match(row.name).groups()[0].upper()
+                amplicon = row.amplicon.upper()
+                name = bpa_id_to_ckan_name(bpa_id, self.ckan_data_type + '-' + amplicon, index)
+                obj = {
+                    'name': name,
+                    'id': name,
+                    'bpa_id': bpa_id,
+                    'title': 'Amplicon {} {}'.format(bpa_id, index),
+                    'notes': 'Amplicon {} {}'.format(bpa_id, index),
+                    'tags': [{'name': 'Amplicon'}],
+                    'type': GbrAmpliconsMetadata.ckan_data_type,
+                    'private': True,
+                    'sample_extraction_id': row.sample_extraction_id,
+                    'sequencing_facility': row.sequencing_facility,
+                    'amplicon': amplicon,
+                    'i7_index': row.i7_index,
+                    'i5_index': row.i5_index,
+                    'index': index,
+                    'index1': row.index1,
+                    'index2': row.index2,
+                    'pcr_1_to_10': row.pcr_1_to_10,
+                    'pcr_1_to_100': row.pcr_1_to_100,
+                    'pcr_neat': row.pcr_neat,
+                    'dilution': row.dilution,
+                    'sequencing_run_number': row.sequencing_run_number,
+                    'flow_cell_id': row.flow_cell_id,
+                    'reads': row.reads,
+                    'ticket': row.ticket,
+                    'facility_code': row.facility_code,
+                    'analysis_software_version': row.analysis_software_version,
+                }
+                packages.append(obj)
+        return packages
+
+    def _get_resources(self):
+        logger.info("Ingesting md5 file information from {0}".format(self.path))
+        resources = []
+        for md5_file in glob(self.path + '/*.md5'):
+            logger.info("Processing md5 file {0}".format(md5_file))
+            for filename, md5, file_info in self.parse_md5file(md5_file):
+                resource = file_info.copy()
+                resource['md5'] = resource['id'] = md5
+                resource['name'] = filename
+                bpa_id = ingest_utils.extract_bpa_id(file_info['bpa_id'])
+                xlsx_info = self.metadata_info[os.path.basename(md5_file)]
+                legacy_url = urljoin(xlsx_info['base_url'], filename)
+                resources.append(((bpa_id, file_info['amplicon'], file_info['index']), legacy_url, resource))
+        return resources
+
+
+
+
+
+
+
 class GbrAmpliconsMetadata(BaseMetadata):
     metadata_urls = ['https://downloads-qcif.bioplatforms.com/bpa/gbr/raw/amplicons/']
     metadata_url_components = ('amplicon_', 'facility_code', 'ticket')

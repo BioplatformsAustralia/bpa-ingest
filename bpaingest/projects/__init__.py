@@ -3,7 +3,9 @@ from .base.ingest import (
     BASEMetagenomicsMetadata,
     BASEAmpliconsControlMetadata,
     BASESiteImagesMetadata)
-from .gbr.ingest import GbrAmpliconsMetadata
+from .gbr.ingest import (
+    GbrAmpliconsMetadata,
+    GbrPacbioMetadata)
 from .mm.ingest import (
     MarineMicrobesGenomicsAmplicons16SMetadata,
     MarineMicrobesGenomicsAmpliconsA16SMetadata,
@@ -58,6 +60,7 @@ class ProjectInfo:
         ],
         'gbr': [
             GbrAmpliconsMetadata,
+            GbrPacbioMetadata,
         ],
         'marine-microbes': [
             MarineMicrobesGenomicsAmplicons16SMetadata,
