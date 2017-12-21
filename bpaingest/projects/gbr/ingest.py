@@ -1,9 +1,8 @@
-
-
 import os
 import re
 from . import files
 
+from hashlib import md5
 from ...libs.excel_wrapper import make_field_definition as fld
 from unipath import Path
 from glob import glob
@@ -15,33 +14,28 @@ from ...abstract import BaseMetadata
 logger = make_logger(__name__)
 
 
-
-
-
-
 class GbrPacbioMetadata(BaseMetadata):
     metadata_urls = ['https://downloads-qcif.bioplatforms.com/bpa/gbr/raw/pacbio/']
-    metadata_url_components = ('pacbio_', 'facility_code', 'ticket')
+    metadata_url_components = ('facility_code', 'ticket')
     organization = 'bpa-great-barrier-reef'
     ckan_data_type = 'great-barrier-reef-pacbio'
     omics = 'genomics'
     technology = 'pacbio'
     auth = ("bpa", "gbr")
-    resource_linkage = ('bpa_id', 'amplicon', 'index')
-    extract_index_re = re.compile('^.*_([GATC]{8}_[GATC]{8})$')
+    resource_linkage = ('bpa_id', 'run_number', 'flow_cell_id')
     spreadsheet = {
         'fields': [
             fld('bpa_id', 'Sample unique ID', coerce=ingest_utils.extract_bpa_id),
             fld('sequencing_facility', 'Sequencing facility'),
-            fld('index1', 'index'),
-            fld('library', 'Library'),
+            fld('index', 'index'),
+            fld('pacbio', 'Library'),
             fld('library_code', 'Library code'),
             fld('library_construction_avg_insert_size', 'Library Construction - average insert size'),
             fld('insert_size_range', 'Insert size range'),
             fld('library_construction_protocol', 'Library construction protocol'),
             fld('sequencer', 'Sequencer'),
             fld('run_number', 'Run number'),
-            fld('run_number_flow_cell_id', 'Run #:Flow Cell ID'),
+            fld('flow_cell_id', 'Run #:Flow Cell ID'),
             fld('lane_number', 'Lane number'),
             fld('casava_version', 'CASAVA version'),
         ],
@@ -51,7 +45,7 @@ class GbrPacbioMetadata(BaseMetadata):
         }
     }
     md5 = {
-        'match': [files.amplicon_filename_re],
+        'match': [files.pacbio_filename_re],
         'skip': None,
     }
 
@@ -68,39 +62,33 @@ class GbrPacbioMetadata(BaseMetadata):
                 bpa_id = row.bpa_id
                 if bpa_id is None:
                     continue
-                index = self.extract_index_re.match(row.name).groups()[0].upper()
-                amplicon = row.amplicon.upper()
-                name = bpa_id_to_ckan_name(bpa_id, self.ckan_data_type + '-' + amplicon, index)
+
+                short_code = md5((row.run_number + ':' + row.flow_cell_id).encode('utf8')).hexdigest()
+                name = bpa_id_to_ckan_name(bpa_id, self.ckan_data_type, short_code)
+
                 obj = {
                     'name': name,
                     'id': name,
-                    'bpa_id': bpa_id,
-                    'title': 'Amplicon {} {}'.format(bpa_id, index),
-                    'notes': 'Amplicon {} {}'.format(bpa_id, index),
-                    'tags': [{'name': 'Amplicon'}],
-                    'type': GbrAmpliconsMetadata.ckan_data_type,
+                    'title': 'Pacbio {} {}'.format(bpa_id, row.flow_cell_id),
+                    'notes': 'Pacbio {} {}'.format(bpa_id, row.flow_cell_id),
+                    'tags': [{'name': 'Pacbio'}],
+                    'type': GbrPacbioMetadata.ckan_data_type,
                     'private': True,
-                    'sample_extraction_id': row.sample_extraction_id,
+                    'bpa_id': bpa_id,
                     'sequencing_facility': row.sequencing_facility,
-                    'amplicon': amplicon,
-                    'i7_index': row.i7_index,
-                    'i5_index': row.i5_index,
-                    'index': index,
-                    'index1': row.index1,
-                    'index2': row.index2,
-                    'pcr_1_to_10': row.pcr_1_to_10,
-                    'pcr_1_to_100': row.pcr_1_to_100,
-                    'pcr_neat': row.pcr_neat,
-                    'dilution': row.dilution,
-                    'sequencing_run_number': row.sequencing_run_number,
+                    'run_number': row.run_number,
                     'flow_cell_id': row.flow_cell_id,
-                    'reads': row.reads,
-                    'ticket': row.ticket,
-                    'facility_code': row.facility_code,
-                    'analysis_software_version': row.analysis_software_version,
+                    'library_code': row.library_code,
+                    'library_construction_avg_insert_size': row.library_construction_avg_insert_size,
+                    'insert_size_range': row.insert_size_range,
+                    'library_construction_protocol': row.library_construction_protocol,
+                    'sequencer': row.sequencer,
+                    'lane_number': row.lane_number,
+                    'casava_version': row.casava_version,
                 }
                 packages.append(obj)
         return packages
+
 
     def _get_resources(self):
         logger.info("Ingesting md5 file information from {0}".format(self.path))
@@ -114,13 +102,8 @@ class GbrPacbioMetadata(BaseMetadata):
                 bpa_id = ingest_utils.extract_bpa_id(file_info['bpa_id'])
                 xlsx_info = self.metadata_info[os.path.basename(md5_file)]
                 legacy_url = urljoin(xlsx_info['base_url'], filename)
-                resources.append(((bpa_id, file_info['amplicon'], file_info['index']), legacy_url, resource))
+                resources.append(((bpa_id, file_info['run_number'], file_info['flow_cell_id']), legacy_url, resource))
         return resources
-
-
-
-
-
 
 
 class GbrAmpliconsMetadata(BaseMetadata):
