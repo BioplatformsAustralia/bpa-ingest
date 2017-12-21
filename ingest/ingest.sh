@@ -17,7 +17,7 @@
 # ./ingest.sh sync <x> stemcell
 # in prod, syncing a single components of the stemcell project (fast)
 # ./ingest.sh sync <x> run stemcells-singlecellrnaseq
-# 
+#
 # in local dev, running a single project component:
 # DEV_MODE=1 ./ingest.sh sync <x> run stemcells-singlecellrnaseq
 #
@@ -62,6 +62,7 @@ base()
 
 gbr() {
   apply gbr-genomics-amplicons
+  apply gbr-genomics-pacbio
 }
 
 marine_microbes()

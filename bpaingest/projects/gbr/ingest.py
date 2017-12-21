@@ -1,9 +1,8 @@
-
-
 import os
 import re
 from . import files
 
+from hashlib import md5
 from ...libs.excel_wrapper import make_field_definition as fld
 from unipath import Path
 from glob import glob
@@ -13,6 +12,98 @@ from urllib.parse import urljoin
 from ...abstract import BaseMetadata
 
 logger = make_logger(__name__)
+
+
+class GbrPacbioMetadata(BaseMetadata):
+    metadata_urls = ['https://downloads-qcif.bioplatforms.com/bpa/gbr/raw/pacbio/']
+    metadata_url_components = ('facility_code', 'ticket')
+    organization = 'bpa-great-barrier-reef'
+    ckan_data_type = 'great-barrier-reef-pacbio'
+    omics = 'genomics'
+    technology = 'pacbio'
+    auth = ("bpa", "gbr")
+    resource_linkage = ('bpa_id', 'run_number', 'flow_cell_id')
+    spreadsheet = {
+        'fields': [
+            fld('bpa_id', 'Sample unique ID', coerce=ingest_utils.extract_bpa_id),
+            fld('sequencing_facility', 'Sequencing facility'),
+            fld('index', 'index'),
+            fld('pacbio', 'Library'),
+            fld('library_code', 'Library code'),
+            fld('library_construction_avg_insert_size', 'Library Construction - average insert size'),
+            fld('insert_size_range', 'Insert size range'),
+            fld('library_construction_protocol', 'Library construction protocol'),
+            fld('sequencer', 'Sequencer'),
+            fld('run_number', 'Run number'),
+            fld('flow_cell_id', 'Run #:Flow Cell ID'),
+            fld('lane_number', 'Lane number'),
+            fld('casava_version', 'CASAVA version'),
+        ],
+        'options': {
+            'header_length': 3,
+            'column_name_row_index': 1,
+        }
+    }
+    md5 = {
+        'match': [files.pacbio_filename_re, files.pacbio_filename2_re],
+        'skip': None,
+    }
+
+    def __init__(self, metadata_path, metadata_info=None):
+        super(GbrPacbioMetadata, self).__init__()
+        self.path = Path(metadata_path)
+        self.metadata_info = metadata_info
+
+    def _get_packages(self):
+        packages = []
+        for fname in glob(self.path + '/*.xlsx'):
+            logger.info("Processing Pacbio metadata file {0}".format(fname))
+            for row in self.parse_spreadsheet(fname, self.metadata_info):
+                bpa_id = row.bpa_id
+                if bpa_id is None:
+                    continue
+
+                short_code = md5((row.run_number + ':' + row.flow_cell_id).encode('utf8')).hexdigest()
+                name = bpa_id_to_ckan_name(bpa_id, self.ckan_data_type, short_code)
+
+                obj = {
+                    'name': name,
+                    'id': name,
+                    'title': 'Pacbio {} {}'.format(bpa_id, row.flow_cell_id),
+                    'notes': 'Pacbio {} {}'.format(bpa_id, row.flow_cell_id),
+                    'tags': [{'name': 'Pacbio'}],
+                    'type': GbrPacbioMetadata.ckan_data_type,
+                    'private': True,
+                    'bpa_id': bpa_id,
+                    'sequencing_facility': row.sequencing_facility,
+                    'run_number': row.run_number,
+                    'flow_cell_id': row.flow_cell_id,
+                    'library_code': row.library_code,
+                    'library_construction_avg_insert_size': row.library_construction_avg_insert_size,
+                    'insert_size_range': row.insert_size_range,
+                    'library_construction_protocol': row.library_construction_protocol,
+                    'sequencer': row.sequencer,
+                    'lane_number': row.lane_number,
+                    'casava_version': row.casava_version,
+                }
+                packages.append(obj)
+        return packages
+
+
+    def _get_resources(self):
+        logger.info("Ingesting md5 file information from {0}".format(self.path))
+        resources = []
+        for md5_file in glob(self.path + '/*.md5'):
+            logger.info("Processing md5 file {0}".format(md5_file))
+            for filename, md5, file_info in self.parse_md5file(md5_file):
+                resource = file_info.copy()
+                resource['md5'] = resource['id'] = md5
+                resource['name'] = filename
+                bpa_id = ingest_utils.extract_bpa_id(file_info['bpa_id'])
+                xlsx_info = self.metadata_info[os.path.basename(md5_file)]
+                legacy_url = urljoin(xlsx_info['base_url'], filename)
+                resources.append(((bpa_id, file_info['run_number'], file_info['flow_cell_id']), legacy_url, resource))
+        return resources
 
 
 class GbrAmpliconsMetadata(BaseMetadata):
