@@ -923,3 +923,127 @@ class StemcellsMetabolomicsAnalysedMetadata(BaseMetadata):
                 legacy_url = urljoin(xlsx_info['base_url'], filename)
                 resources.append(((folder_name,), legacy_url, resource))
         return resources
+
+
+class StemcellsTranscriptomeAnalysedMetadata(BaseMetadata):
+    contextual_classes = []
+    metadata_urls = ['https://downloads-qcif.bioplatforms.com/bpa/stemcell/analysed/transcriptome/']
+    metadata_url_components = ('facility_code', 'ticket')
+    metadata_patterns = [r'^.*\.md5', r'^.*_metadata\.xlsx$']
+    organization = 'bpa-stemcells'
+    auth = ('stemcell', 'stemcell')
+    ckan_data_type = 'stemcells-transcriptome-analysed'
+    omics = 'transcriptome'
+    analysed = True
+    resource_linkage = ('folder_name',)
+    spreadsheet = {
+        'fields': [
+            fld('date', 'date (yyyy-mm-dd)', coerce=ingest_utils.get_date_isoformat),
+            fld('bpa_id', 'bpa identifier', coerce=ingest_utils.extract_bpa_id),
+            fld('plate_number', 'plate number'),
+            fld('well_no', 'well no'),
+            fld('sample_name', 'sample name'),
+            fld('replicate_group_id', 'replicate group id'),
+            fld('data_set', 'data set'),
+            fld('species', 'species'),
+            fld('sample_description', 'sample_description'),
+            fld('tissue', 'tissue'),
+            fld('cell_type', 'cell type'),
+            fld('disease_state', 'disease state'),
+            fld('labelling', 'labelling'),
+            fld('organism_part', 'organism part'),
+            fld('molecule', 'molecule'),
+            fld('growth_protocol', 'growth protocol'),
+            fld('treatment_protocol', 'treatment protocol'),
+            fld('extract_protocol', 'extract protocol'),
+            fld('library_construction_protocol', 'library construction protocol'),
+            fld('library_strategy', 'library strategy'),
+            fld('omics', 'omics'),
+            fld('analytical_plaform', 'analytical plaform'),
+            fld('facility', 'facility'),
+            fld('data_type', 'data type'),
+            fld('folder_name', 'file name of analysed data (folder or zip file)'),
+        ],
+        'options': {
+            'header_length': 9,
+            'column_name_row_index': 8,
+        }
+    }
+    md5 = {
+        'match': [
+            re.compile(r'^.*$'),
+        ],
+        'skip': common_skip
+    }
+
+    def __init__(self, metadata_path, contextual_metadata=None, metadata_info=None):
+        super(StemcellsTranscriptomeAnalysedMetadata, self).__init__()
+        self.path = Path(metadata_path)
+        self.contextual_metadata = contextual_metadata
+        self.metadata_info = metadata_info
+        self.track_meta = StemcellsTrackMetadata()
+
+    def _get_packages(self):
+        logger.info("Ingesting Stemcells metadata from {0}".format(self.path))
+        # we have one package per Zip of analysed data, and we take the common
+        # meta-data for each bpa-id
+        folder_rows = defaultdict(list)
+        for fname in glob(self.path + '/*.xlsx'):
+            logger.info("Processing Stemcells metadata file {0}".format(fname))
+            xlsx_info = self.metadata_info[os.path.basename(fname)]
+            ticket = xlsx_info['ticket']
+            if not ticket:
+                continue
+            folder_name = self.track_meta.get(ticket).folder_name
+            for row in self.parse_spreadsheet(fname, self.metadata_info):
+                folder_rows[(ticket, folder_name)].append(row)
+        packages = []
+        for (ticket, folder_name), rows in list(folder_rows.items()):
+            obj = common_values([t._asdict() for t in rows])
+            name = bpa_id_to_ckan_name(folder_name, self.ckan_data_type)
+            track_meta = self.track_meta.get(ticket)
+            bpa_ids = sorted(set([t.bpa_id.strip() for t in rows]))
+            obj.update({
+                'name': name,
+                'id': name,
+                'notes': '%s' % (folder_name),
+                'title': '%s' % (folder_name),
+                'omics': 'transcriptomics',
+                'bpa_ids': ', '.join(bpa_ids),
+                'type': self.ckan_data_type,
+                'date_of_transfer': ingest_utils.get_date_isoformat(track_meta.date_of_transfer),
+                'data_type': track_meta.data_type,
+                'description': track_meta.description,
+                'folder_name': track_meta.folder_name,
+                'sample_submission_date': ingest_utils.get_date_isoformat(track_meta.date_of_transfer),
+                'contextual_data_submission_date': None,
+                'data_generated': ingest_utils.get_date_isoformat(track_meta.date_of_transfer_to_archive),
+                'archive_ingestion_date': ingest_utils.get_date_isoformat(track_meta.date_of_transfer_to_archive),
+                'dataset_url': track_meta.download,
+                'private': True,
+            })
+            # for contextual_source in self.contextual_metadata:
+            #     obj.update(contextual_source.get(ticket))
+            tag_names = ['transcriptomics', 'analysed']
+            obj['tags'] = [{'name': t} for t in tag_names]
+            packages.append(obj)
+        return packages
+
+    def _get_resources(self):
+        logger.info("Ingesting Sepsis md5 file information from {0}".format(self.path))
+        resources = []
+        # one MD5 file per 'folder_name', so we just take every file and upload
+        for md5_file in glob(self.path + '/*.md5'):
+            logger.info("Processing md5 file {0}".format(md5_file))
+            for filename, md5, file_info in self.parse_md5file(md5_file):
+                resource = file_info.copy()
+                resource = {}
+                resource['md5'] = md5
+                xlsx_info = self.metadata_info[os.path.basename(md5_file)]
+                # analysed data has duplicate PNG images in it - we need to keep the id unique
+                resource['id'] = 'u-' + md5hash((self.ckan_data_type + xlsx_info['base_url'] + md5).encode('utf8')).hexdigest()
+                resource['name'] = filename
+                folder_name = self.track_meta.get(xlsx_info['ticket']).folder_name
+                legacy_url = urljoin(xlsx_info['base_url'], filename)
+                resources.append(((folder_name,), legacy_url, resource))
+        return resources

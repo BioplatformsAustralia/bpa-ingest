@@ -37,7 +37,8 @@ from .stemcells.ingest import (
     StemcellsProteomicsMetadata,
     StemcellsProteomicsPoolMetadata,
     StemcellsProteomicsAnalysedMetadata,
-    StemcellsMetabolomicsAnalysedMetadata)
+    StemcellsMetabolomicsAnalysedMetadata,
+    StemcellsTranscriptomeAnalysedMetadata)
 from .wheat_cultivars.ingest import WheatCultivarsMetadata
 from .wheat_pathogens_genomes.ingest import WheatPathogensGenomesMetadata
 from .omg.ingest import (
@@ -102,6 +103,7 @@ class ProjectInfo:
             StemcellsProteomicsPoolMetadata,
             StemcellsProteomicsAnalysedMetadata,
             StemcellsMetabolomicsAnalysedMetadata,
+            StemcellsTranscriptomeAnalysedMetadata,
         ],
         'wheat-cultivars': [
             WheatCultivarsMetadata,
