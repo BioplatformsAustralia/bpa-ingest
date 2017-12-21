@@ -1,0 +1,241 @@
+5 digit BPA ID,Data type,Taxon_OR_organism,Strain_OR_isolate,Serovar,Growth Media,Replicate,Omics,Analytical platform,Facility,Work order #,Contextual Data Submission Date,Sample submission date,Data generated,Archive Ingestion Date,Archive ID,id,curation_url,in_data_portal,last_modified
+102.100.100.50912,Main dataset,Escherichia coli,MS14387,,Pooled sera,6,Transcriptomics,HiSeq,AGRF,,2017-11-14,2017-11-13,0,,,266,,0,2017-11-14 08:15:21
+102.100.100.50911,Main dataset,Escherichia coli,MS14387,,Pooled sera,5,Transcriptomics,HiSeq,AGRF,,2017-11-14,2017-11-13,0,,,265,,0,2017-11-14 08:15:21
+102.100.100.51072,Main dataset,Escherichia coli,MS14387,,Pooled sera,4,Transcriptomics,HiSeq,AGRF,,2017-11-14,2017-11-13,0,,,264,,0,2017-11-14 08:15:21
+102.100.100.51071,Main dataset,Escherichia coli,MS14387,,Pooled sera,3,Transcriptomics,HiSeq,AGRF,,2017-11-14,2017-11-13,0,,,263,,0,2017-11-14 08:15:21
+102.100.100.51070,Main dataset,Escherichia coli,MS14387,,Pooled sera,2,Transcriptomics,HiSeq,AGRF,,2017-11-14,2017-10-16,0,,,262,,0,2017-11-14 08:15:21
+102.100.100.51069,Main dataset,Escherichia coli,MS14387,,Pooled sera,1,Transcriptomics,HiSeq,AGRF,,2017-11-14,2017-10-16,0,,,261,,0,2017-11-14 08:15:21
+102.100.100.50906,Main dataset,Escherichia coli,MS14387,,RPMI,6,Transcriptomics,HiSeq,AGRF,,2017-11-14,2017-11-13,0,,,260,,0,2017-11-14 08:15:21
+102.100.100.50905,Main dataset,Escherichia coli,MS14387,,RPMI,5,Transcriptomics,HiSeq,AGRF,,2017-11-14,2017-11-13,0,,,259,,0,2017-11-14 08:15:21
+102.100.100.51068,Main dataset,Escherichia coli,MS14387,,RPMI,4,Transcriptomics,HiSeq,AGRF,,2017-11-14,2017-11-13,0,,,258,,0,2017-11-14 08:15:21
+102.100.100.51067,Main dataset,Escherichia coli,MS14387,,RPMI,3,Transcriptomics,HiSeq,AGRF,,2017-11-14,2017-11-13,0,,,257,,0,2017-11-14 08:15:21
+102.100.100.51066,Main dataset,Escherichia coli,MS14387,,RPMI,2,Transcriptomics,HiSeq,AGRF,,2017-11-14,2017-10-16,0,,,256,,0,2017-11-14 08:15:21
+102.100.100.51065,Main dataset,Escherichia coli,MS14387,,RPMI,1,Transcriptomics,HiSeq,AGRF,,2017-11-14,2017-10-16,0,,,255,,0,2017-11-14 08:15:21
+102.100.100.50900,Main dataset,Escherichia coli,MS14386,,Pooled sera,6,Transcriptomics,HiSeq,AGRF,,2017-11-14,2017-11-13,0,,,254,,0,2017-11-14 08:15:21
+102.100.100.50899,Main dataset,Escherichia coli,MS14386,,Pooled sera,5,Transcriptomics,HiSeq,AGRF,,2017-11-14,2017-11-13,0,,,253,,0,2017-11-14 08:15:21
+102.100.100.51064,Main dataset,Escherichia coli,MS14386,,Pooled sera,4,Transcriptomics,HiSeq,AGRF,,2017-11-14,2017-11-13,0,,,252,,0,2017-11-14 08:15:21
+102.100.100.51063,Main dataset,Escherichia coli,MS14386,,Pooled sera,3,Transcriptomics,HiSeq,AGRF,,2017-11-14,2017-11-13,0,,,251,,0,2017-11-14 08:15:21
+102.100.100.51062,Main dataset,Escherichia coli,MS14386,,Pooled sera,2,Transcriptomics,HiSeq,AGRF,,2017-11-14,2017-10-16,0,,,250,,0,2017-11-14 08:15:21
+102.100.100.51061,Main dataset,Escherichia coli,MS14386,,Pooled sera,1,Transcriptomics,HiSeq,AGRF,,2017-11-14,2017-10-16,0,,,249,,0,2017-11-14 08:15:21
+102.100.100.50894,Main dataset,Escherichia coli,MS14386,,RPMI,6,Transcriptomics,HiSeq,AGRF,,2017-11-14,2017-11-13,0,,,248,,0,2017-11-14 08:15:21
+102.100.100.50893,Main dataset,Escherichia coli,MS14386,,RPMI,5,Transcriptomics,HiSeq,AGRF,,2017-11-14,2017-11-13,0,,,247,,0,2017-11-14 08:15:21
+102.100.100.51060,Main dataset,Escherichia coli,MS14386,,RPMI,4,Transcriptomics,HiSeq,AGRF,,2017-11-14,2017-11-13,0,,,246,,0,2017-11-14 08:15:21
+102.100.100.51059,Main dataset,Escherichia coli,MS14386,,RPMI,3,Transcriptomics,HiSeq,AGRF,,2017-11-14,2017-11-13,0,,,245,,0,2017-11-14 08:15:21
+102.100.100.51058,Main dataset,Escherichia coli,MS14386,,RPMI,2,Transcriptomics,HiSeq,AGRF,,2017-11-14,2017-10-16,0,,,244,,0,2017-11-14 08:15:21
+102.100.100.51057,Main dataset,Escherichia coli,MS14386,,RPMI,1,Transcriptomics,HiSeq,AGRF,,2017-11-14,2017-10-16,0,,,243,,0,2017-11-14 08:15:21
+102.100.100.50888,Main dataset,Escherichia coli,MS14385,,Pooled sera,6,Transcriptomics,HiSeq,AGRF,,2017-11-14,2017-11-13,0,,,242,,0,2017-11-14 08:15:21
+102.100.100.50887,Main dataset,Escherichia coli,MS14385,,Pooled sera,5,Transcriptomics,HiSeq,AGRF,,2017-11-14,2017-11-13,0,,,241,,0,2017-11-14 08:15:21
+102.100.100.51056,Main dataset,Escherichia coli,MS14385,,Pooled sera,4,Transcriptomics,HiSeq,AGRF,,2017-11-14,2017-11-13,0,,,240,,0,2017-11-14 08:15:21
+102.100.100.51055,Main dataset,Escherichia coli,MS14385,,Pooled sera,3,Transcriptomics,HiSeq,AGRF,,2017-11-14,2017-11-13,0,,,239,,0,2017-11-14 08:15:21
+102.100.100.51054,Main dataset,Escherichia coli,MS14385,,Pooled sera,2,Transcriptomics,HiSeq,AGRF,,2017-11-14,2017-10-16,0,,,238,,0,2017-11-14 08:15:21
+102.100.100.51053,Main dataset,Escherichia coli,MS14385,,Pooled sera,1,Transcriptomics,HiSeq,AGRF,,2017-11-14,2017-10-16,0,,,237,,0,2017-11-14 08:15:21
+102.100.100.50882,Main dataset,Escherichia coli,MS14385,,RPMI,6,Transcriptomics,HiSeq,AGRF,,2017-11-14,2017-11-13,0,,,236,,0,2017-11-14 08:15:21
+102.100.100.50881,Main dataset,Escherichia coli,MS14385,,RPMI,5,Transcriptomics,HiSeq,AGRF,,2017-11-14,2017-11-13,0,,,235,,0,2017-11-14 08:15:21
+102.100.100.51052,Main dataset,Escherichia coli,MS14385,,RPMI,4,Transcriptomics,HiSeq,AGRF,,2017-11-14,2017-11-13,0,,,234,,0,2017-11-14 08:15:21
+102.100.100.51051,Main dataset,Escherichia coli,MS14385,,RPMI,3,Transcriptomics,HiSeq,AGRF,,2017-11-14,2017-11-13,0,,,233,,0,2017-11-14 08:15:21
+102.100.100.51050,Main dataset,Escherichia coli,MS14385,,RPMI,2,Transcriptomics,HiSeq,AGRF,,2017-11-14,2017-10-16,0,,,232,,0,2017-11-14 08:15:21
+102.100.100.51049,Main dataset,Escherichia coli,MS14385,,RPMI,1,Transcriptomics,HiSeq,AGRF,,2017-11-14,2017-10-16,0,,,231,,0,2017-11-14 08:15:21
+102.100.100.50876,Main dataset,Escherichia coli,MS14384,,Pooled sera,6,Transcriptomics,HiSeq,AGRF,,2017-11-14,2017-11-13,0,,,230,,0,2017-11-14 08:15:21
+102.100.100.50875,Main dataset,Escherichia coli,MS14384,,Pooled sera,5,Transcriptomics,HiSeq,AGRF,,2017-11-14,2017-11-13,0,,,229,,0,2017-11-14 08:15:21
+102.100.100.51048,Main dataset,Escherichia coli,MS14384,,Pooled sera,4,Transcriptomics,HiSeq,AGRF,,2017-11-14,2017-11-13,0,,,228,,0,2017-11-14 08:15:21
+102.100.100.51047,Main dataset,Escherichia coli,MS14384,,Pooled sera,3,Transcriptomics,HiSeq,AGRF,,2017-11-14,2017-11-13,0,,,227,,0,2017-11-14 08:15:21
+102.100.100.51046,Main dataset,Escherichia coli,MS14384,,Pooled sera,2,Transcriptomics,HiSeq,AGRF,,2017-11-14,2017-10-16,0,,,226,,0,2017-11-14 08:15:21
+102.100.100.51045,Main dataset,Escherichia coli,MS14384,,Pooled sera,1,Transcriptomics,HiSeq,AGRF,,2017-11-14,2017-10-16,0,,,225,,0,2017-11-14 08:15:21
+102.100.100.50870,Main dataset,Escherichia coli,MS14384,,RPMI,6,Transcriptomics,HiSeq,AGRF,,2017-11-14,2017-11-13,0,,,224,,0,2017-11-14 08:15:21
+102.100.100.50869,Main dataset,Escherichia coli,MS14384,,RPMI,5,Transcriptomics,HiSeq,AGRF,,2017-11-14,2017-11-13,0,,,223,,0,2017-11-14 08:15:21
+102.100.100.51044,Main dataset,Escherichia coli,MS14384,,RPMI,4,Transcriptomics,HiSeq,AGRF,,2017-11-14,2017-11-13,0,,,222,,0,2017-11-14 08:15:21
+102.100.100.51043,Main dataset,Escherichia coli,MS14384,,RPMI,3,Transcriptomics,HiSeq,AGRF,,2017-11-14,2017-11-13,0,,,221,,0,2017-11-14 08:15:21
+102.100.100.51042,Main dataset,Escherichia coli,MS14384,,RPMI,2,Transcriptomics,HiSeq,AGRF,,2017-11-14,2017-10-16,0,,,220,,0,2017-11-14 08:15:20
+102.100.100.51041,Main dataset,Escherichia coli,MS14384,,RPMI,1,Transcriptomics,HiSeq,AGRF,,2017-11-14,2017-10-16,0,,,219,,0,2017-11-14 08:15:20
+102.100.100.50864,Main dataset,Escherichia coli,B36,,Pooled sera,6,Transcriptomics,HiSeq,AGRF,,2017-11-14,2017-11-13,0,,,218,,0,2017-11-14 08:15:20
+102.100.100.50863,Main dataset,Escherichia coli,B36,,Pooled sera,5,Transcriptomics,HiSeq,AGRF,,2017-11-14,2017-11-13,0,,,217,,0,2017-11-14 08:15:20
+102.100.100.51040,Main dataset,Escherichia coli,B36,,Pooled sera,4,Transcriptomics,HiSeq,AGRF,,2017-11-14,2017-11-13,0,,,216,,0,2017-11-14 08:15:20
+102.100.100.51039,Main dataset,Escherichia coli,B36,,Pooled sera,3,Transcriptomics,HiSeq,AGRF,,2017-11-14,2017-11-13,0,,,215,,0,2017-11-14 08:15:20
+102.100.100.51038,Main dataset,Escherichia coli,B36,,Pooled sera,2,Transcriptomics,HiSeq,AGRF,,2017-11-14,2017-10-16,0,,,214,,0,2017-11-14 08:15:20
+102.100.100.51037,Main dataset,Escherichia coli,B36,,Pooled sera,1,Transcriptomics,HiSeq,AGRF,,2017-11-14,2017-10-16,0,,,213,,0,2017-11-14 08:15:20
+102.100.100.50858,Main dataset,Escherichia coli,B36,,RPMI,6,Transcriptomics,HiSeq,AGRF,,2017-11-14,2017-11-13,0,,,212,,0,2017-11-14 08:15:20
+102.100.100.50857,Main dataset,Escherichia coli,B36,,RPMI,5,Transcriptomics,HiSeq,AGRF,,2017-11-14,2017-11-13,0,,,211,,0,2017-11-14 08:15:20
+102.100.100.51036,Main dataset,Escherichia coli,B36,,RPMI,4,Transcriptomics,HiSeq,AGRF,,2017-11-14,2017-11-13,0,,,210,,0,2017-11-14 08:15:20
+102.100.100.51035,Main dataset,Escherichia coli,B36,,RPMI,3,Transcriptomics,HiSeq,AGRF,,2017-11-14,2017-11-13,0,,,209,,0,2017-11-14 08:15:20
+102.100.100.51034,Main dataset,Escherichia coli,B36,,RPMI,2,Transcriptomics,HiSeq,AGRF,,2017-11-14,2017-10-16,0,,,208,,0,2017-11-14 08:15:20
+102.100.100.51033,Main dataset,Escherichia coli,B36,,RPMI,1,Transcriptomics,HiSeq,AGRF,,2017-11-14,2017-10-16,0,,,207,,0,2017-11-14 08:15:20
+102.100.100.50354,Main dataset,Streptococcus pneumoniae,4496,1,RPMI + galactose,6,Transcriptomics,HiSeq,AGRF,,2017-10-31,2017-10-31,0,,,206,,0,2017-11-03 01:56:38
+102.100.100.50353,Main dataset,Streptococcus pneumoniae,4496,1,RPMI + glucose,6,Transcriptomics,HiSeq,AGRF,,2017-10-31,2017-10-31,0,,,205,,0,2017-11-03 01:56:38
+102.100.100.50352,Main dataset,Streptococcus pneumoniae,4496,1,Pooled sera,6,Transcriptomics,HiSeq,AGRF,,2017-10-31,2017-10-31,0,,,204,,0,2017-11-03 01:56:38
+102.100.100.50351,Main dataset,Streptococcus pneumoniae,180/15,3,RPMI + galactose,6,Transcriptomics,HiSeq,AGRF,,2017-10-31,2017-10-31,0,,,203,,0,2017-11-03 01:56:38
+102.100.100.50350,Main dataset,Streptococcus pneumoniae,180/15,3,RPMI + glucose,6,Transcriptomics,HiSeq,AGRF,,2017-10-31,2017-10-31,0,,,202,,0,2017-11-03 01:56:38
+102.100.100.50349,Main dataset,Streptococcus pneumoniae,180/15,3,Pooled sera,6,Transcriptomics,HiSeq,AGRF,,2017-10-31,2017-10-31,0,,,201,,0,2017-11-03 01:56:38
+102.100.100.50348,Main dataset,Streptococcus pneumoniae,180/2,3,RPMI + galactose,6,Transcriptomics,HiSeq,AGRF,,2017-10-31,2017-10-31,0,,,200,,0,2017-11-03 01:56:38
+102.100.100.50347,Main dataset,Streptococcus pneumoniae,180/2,3,RPMI + glucose,6,Transcriptomics,HiSeq,AGRF,,2017-10-31,2017-10-31,0,,,199,,0,2017-11-03 01:56:38
+102.100.100.50346,Main dataset,Streptococcus pneumoniae,180/2,3,Pooled sera,6,Transcriptomics,HiSeq,AGRF,,2017-10-31,2017-10-31,0,,,198,,0,2017-11-03 01:56:38
+102.100.100.50345,Main dataset,Streptococcus pneumoniae,947,14,RPMI + galactose,6,Transcriptomics,HiSeq,AGRF,,2017-10-31,2017-10-31,0,,,197,,0,2017-11-03 01:56:38
+102.100.100.50344,Main dataset,Streptococcus pneumoniae,947,14,RPMI + glucose,6,Transcriptomics,HiSeq,AGRF,,2017-10-31,2017-10-31,0,,,196,,0,2017-11-03 01:56:38
+102.100.100.50343,Main dataset,Streptococcus pneumoniae,947,14,Pooled sera,6,Transcriptomics,HiSeq,AGRF,,2017-10-31,2017-10-31,0,,,195,,0,2017-11-03 01:56:38
+102.100.100.50342,Main dataset,Streptococcus pneumoniae,4559,14,RPMI + galactose,6,Transcriptomics,HiSeq,AGRF,,2017-10-31,2017-10-31,0,,,194,,0,2017-11-03 01:56:38
+102.100.100.50341,Main dataset,Streptococcus pneumoniae,4559,14,RPMI + glucose,6,Transcriptomics,HiSeq,AGRF,,2017-10-31,2017-10-31,0,,,193,,0,2017-11-03 01:56:38
+102.100.100.50340,Main dataset,Streptococcus pneumoniae,4559,14,Pooled sera,6,Transcriptomics,HiSeq,AGRF,,2017-10-31,2017-10-31,0,,,192,,0,2017-11-03 01:56:38
+102.100.100.50339,Main dataset,Streptococcus pneumoniae,4496,1,RPMI + galactose,5,Transcriptomics,HiSeq,AGRF,,2017-10-31,2017-10-31,0,,,191,,0,2017-11-03 01:56:38
+102.100.100.50338,Main dataset,Streptococcus pneumoniae,4496,1,RPMI + glucose,5,Transcriptomics,HiSeq,AGRF,,2017-10-31,2017-10-31,0,,,190,,0,2017-11-03 01:56:38
+102.100.100.50337,Main dataset,Streptococcus pneumoniae,4496,1,Pooled sera,5,Transcriptomics,HiSeq,AGRF,,2017-10-31,2017-10-31,0,,,189,,0,2017-11-03 01:56:38
+102.100.100.50336,Main dataset,Streptococcus pneumoniae,180/15,3,RPMI + galactose,5,Transcriptomics,HiSeq,AGRF,,2017-10-31,2017-10-31,0,,,188,,0,2017-11-03 01:56:38
+102.100.100.50335,Main dataset,Streptococcus pneumoniae,180/15,3,RPMI + glucose,5,Transcriptomics,HiSeq,AGRF,,2017-10-31,2017-10-31,0,,,187,,0,2017-11-03 01:56:38
+102.100.100.50334,Main dataset,Streptococcus pneumoniae,180/15,3,Pooled sera,5,Transcriptomics,HiSeq,AGRF,,2017-10-31,2017-10-31,0,,,186,,0,2017-11-03 01:56:38
+102.100.100.50333,Main dataset,Streptococcus pneumoniae,180/2,3,RPMI + galactose,5,Transcriptomics,HiSeq,AGRF,,2017-10-31,2017-10-31,0,,,185,,0,2017-11-03 01:56:38
+102.100.100.50332,Main dataset,Streptococcus pneumoniae,180/2,3,RPMI + glucose,5,Transcriptomics,HiSeq,AGRF,,2017-10-31,2017-10-31,0,,,184,,0,2017-11-03 01:56:38
+102.100.100.50331,Main dataset,Streptococcus pneumoniae,180/2,3,Pooled sera,5,Transcriptomics,HiSeq,AGRF,,2017-10-31,2017-10-31,0,,,183,,0,2017-11-03 01:56:38
+102.100.100.50330,Main dataset,Streptococcus pneumoniae,947,14,RPMI + galactose,5,Transcriptomics,HiSeq,AGRF,,2017-10-31,2017-10-31,0,,,182,,0,2017-11-03 01:56:38
+102.100.100.50329,Main dataset,Streptococcus pneumoniae,947,14,RPMI + glucose,5,Transcriptomics,HiSeq,AGRF,,2017-10-31,2017-10-31,0,,,181,,0,2017-11-03 01:56:38
+102.100.100.50328,Main dataset,Streptococcus pneumoniae,947,14,Pooled sera,5,Transcriptomics,HiSeq,AGRF,,2017-10-31,2017-10-31,0,,,180,,0,2017-11-03 01:56:38
+102.100.100.50327,Main dataset,Streptococcus pneumoniae,4559,14,RPMI + galactose,5,Transcriptomics,HiSeq,AGRF,,2017-10-31,2017-10-31,0,,,179,,0,2017-11-03 01:56:38
+102.100.100.50326,Main dataset,Streptococcus pneumoniae,4559,14,RPMI + glucose,5,Transcriptomics,HiSeq,AGRF,,2017-10-31,2017-10-31,0,,,178,,0,2017-11-03 01:56:38
+102.100.100.50325,Main dataset,Streptococcus pneumoniae,4559,14,Pooled sera,5,Transcriptomics,HiSeq,AGRF,,2017-10-31,2017-10-31,0,,,177,,0,2017-11-03 01:56:38
+102.100.100.50324,Main dataset,Streptococcus pneumoniae,4496,1,RPMI + galactose,4,Transcriptomics,HiSeq,AGRF,,2017-10-31,2017-10-31,0,,,176,,0,2017-11-03 01:56:38
+102.100.100.50323,Main dataset,Streptococcus pneumoniae,4496,1,RPMI + glucose,4,Transcriptomics,HiSeq,AGRF,,2017-10-31,2017-10-31,0,,,175,,0,2017-11-03 01:56:38
+102.100.100.50322,Main dataset,Streptococcus pneumoniae,4496,1,Pooled sera,4,Transcriptomics,HiSeq,AGRF,,2017-10-31,2017-10-31,0,,,174,,0,2017-11-03 01:56:38
+102.100.100.50321,Main dataset,Streptococcus pneumoniae,180/15,3,RPMI + galactose,4,Transcriptomics,HiSeq,AGRF,,2017-10-31,2017-10-31,0,,,173,,0,2017-11-03 01:56:38
+102.100.100.50320,Main dataset,Streptococcus pneumoniae,180/15,3,RPMI + glucose,4,Transcriptomics,HiSeq,AGRF,,2017-10-31,2017-10-31,0,,,172,,0,2017-11-03 01:56:38
+102.100.100.50319,Main dataset,Streptococcus pneumoniae,180/15,3,Pooled sera,4,Transcriptomics,HiSeq,AGRF,,2017-10-31,2017-10-31,0,,,171,,0,2017-11-03 01:56:38
+102.100.100.50318,Main dataset,Streptococcus pneumoniae,180/2,3,RPMI + galactose,4,Transcriptomics,HiSeq,AGRF,,2017-10-31,2017-10-31,0,,,170,,0,2017-11-03 01:56:38
+102.100.100.50317,Main dataset,Streptococcus pneumoniae,180/2,3,RPMI + glucose,4,Transcriptomics,HiSeq,AGRF,,2017-10-31,2017-10-31,0,,,169,,0,2017-11-03 01:56:37
+102.100.100.50316,Main dataset,Streptococcus pneumoniae,180/2,3,Pooled sera,4,Transcriptomics,HiSeq,AGRF,,2017-10-31,2017-10-31,0,,,168,,0,2017-11-03 01:56:37
+102.100.100.50315,Main dataset,Streptococcus pneumoniae,947,14,RPMI + galactose,4,Transcriptomics,HiSeq,AGRF,,2017-10-31,2017-10-31,0,,,167,,0,2017-11-03 01:56:37
+102.100.100.50314,Main dataset,Streptococcus pneumoniae,947,14,RPMI + glucose,4,Transcriptomics,HiSeq,AGRF,,2017-10-31,2017-10-31,0,,,166,,0,2017-11-03 01:56:37
+102.100.100.50313,Main dataset,Streptococcus pneumoniae,947,14,Pooled sera,4,Transcriptomics,HiSeq,AGRF,,2017-10-31,2017-10-31,0,,,165,,0,2017-11-03 01:56:37
+102.100.100.50312,Main dataset,Streptococcus pneumoniae,4559,14,RPMI + galactose,4,Transcriptomics,HiSeq,AGRF,,2017-10-31,2017-10-31,0,,,164,,0,2017-11-03 01:56:37
+102.100.100.50311,Main dataset,Streptococcus pneumoniae,4559,14,RPMI + glucose,4,Transcriptomics,HiSeq,AGRF,,2017-10-31,2017-10-31,0,,,163,,0,2017-11-03 01:56:37
+102.100.100.50310,Main dataset,Streptococcus pneumoniae,4559,14,Pooled sera,4,Transcriptomics,HiSeq,AGRF,,2017-10-31,2017-10-31,0,,,162,,0,2017-11-03 01:56:37
+102.100.100.50309,Main dataset,Streptococcus pneumoniae,4496,1,RPMI + galactose,3,Transcriptomics,HiSeq,AGRF,,2017-10-31,2017-10-31,0,,,161,,0,2017-11-03 01:56:37
+102.100.100.50308,Main dataset,Streptococcus pneumoniae,4496,1,RPMI + glucose,3,Transcriptomics,HiSeq,AGRF,,2017-10-31,2017-10-31,0,,,160,,0,2017-11-03 01:56:37
+102.100.100.50307,Main dataset,Streptococcus pneumoniae,4496,1,Pooled sera,3,Transcriptomics,HiSeq,AGRF,,2017-10-31,2017-10-31,0,,,159,,0,2017-11-03 01:56:37
+102.100.100.50306,Main dataset,Streptococcus pneumoniae,180/15,3,RPMI + galactose,3,Transcriptomics,HiSeq,AGRF,,2017-10-31,2017-10-31,0,,,158,,0,2017-11-03 01:56:37
+102.100.100.50305,Main dataset,Streptococcus pneumoniae,180/15,3,RPMI + glucose,3,Transcriptomics,HiSeq,AGRF,,2017-10-31,2017-10-31,0,,,157,,0,2017-11-03 01:56:37
+102.100.100.50304,Main dataset,Streptococcus pneumoniae,180/15,3,Pooled sera,3,Transcriptomics,HiSeq,AGRF,,2017-10-31,2017-10-31,0,,,156,,0,2017-11-03 01:56:37
+102.100.100.50303,Main dataset,Streptococcus pneumoniae,180/2,3,RPMI + galactose,3,Transcriptomics,HiSeq,AGRF,,2017-10-31,2017-10-31,0,,,155,,0,2017-11-03 01:56:37
+102.100.100.50302,Main dataset,Streptococcus pneumoniae,180/2,3,RPMI + glucose,3,Transcriptomics,HiSeq,AGRF,,2017-10-31,2017-10-31,0,,,154,,0,2017-11-03 01:56:37
+102.100.100.50301,Main dataset,Streptococcus pneumoniae,180/2,3,Pooled sera,3,Transcriptomics,HiSeq,AGRF,,2017-10-31,2017-10-31,0,,,153,,0,2017-11-03 01:56:37
+102.100.100.50300,Main dataset,Streptococcus pneumoniae,947,14,RPMI + galactose,3,Transcriptomics,HiSeq,AGRF,,2017-10-31,2017-10-31,0,,,152,,0,2017-11-03 01:56:37
+102.100.100.50299,Main dataset,Streptococcus pneumoniae,947,14,RPMI + glucose,3,Transcriptomics,HiSeq,AGRF,,2017-10-31,2017-10-31,0,,,151,,0,2017-11-03 01:56:37
+102.100.100.50298,Main dataset,Streptococcus pneumoniae,947,14,Pooled sera,3,Transcriptomics,HiSeq,AGRF,,2017-10-31,2017-10-31,0,,,150,,0,2017-11-03 01:56:37
+102.100.100.50297,Main dataset,Streptococcus pneumoniae,4559,14,RPMI + galactose,3,Transcriptomics,HiSeq,AGRF,,2017-10-31,2017-10-31,0,,,149,,0,2017-11-03 01:56:37
+102.100.100.50296,Main dataset,Streptococcus pneumoniae,4559,14,RPMI + glucose,3,Transcriptomics,HiSeq,AGRF,,2017-10-31,2017-10-31,0,,,148,,0,2017-11-03 01:56:37
+102.100.100.50295,Main dataset,Streptococcus pneumoniae,4559,14,Pooled sera,3,Transcriptomics,HiSeq,AGRF,,2017-10-31,2017-10-31,0,,,147,,0,2017-11-03 01:56:37
+102.100.100.50294,Main dataset,Streptococcus pneumoniae,4496,1,RPMI + galactose,2,Transcriptomics,HiSeq,AGRF,,2017-10-31,2017-10-31,0,,,146,,0,2017-11-03 01:56:37
+102.100.100.50293,Main dataset,Streptococcus pneumoniae,4496,1,RPMI + glucose,2,Transcriptomics,HiSeq,AGRF,,2017-10-31,2017-10-31,0,,,145,,0,2017-11-03 01:56:37
+102.100.100.50292,Main dataset,Streptococcus pneumoniae,4496,1,Pooled sera,2,Transcriptomics,HiSeq,AGRF,,2017-10-31,2017-10-31,0,,,144,,0,2017-11-03 01:56:37
+102.100.100.50291,Main dataset,Streptococcus pneumoniae,180/15,3,RPMI + galactose,2,Transcriptomics,HiSeq,AGRF,,2017-10-31,2017-10-31,0,,,143,,0,2017-11-03 01:56:37
+102.100.100.50290,Main dataset,Streptococcus pneumoniae,180/15,3,RPMI + glucose,2,Transcriptomics,HiSeq,AGRF,,2017-10-31,2017-10-31,0,,,142,,0,2017-11-03 01:56:37
+102.100.100.50289,Main dataset,Streptococcus pneumoniae,180/15,3,Pooled sera,2,Transcriptomics,HiSeq,AGRF,,2017-10-31,2017-10-31,0,,,141,,0,2017-11-03 01:56:37
+102.100.100.50288,Main dataset,Streptococcus pneumoniae,180/2,3,RPMI + galactose,2,Transcriptomics,HiSeq,AGRF,,2017-10-31,2017-10-31,0,,,140,,0,2017-11-03 01:56:37
+102.100.100.50287,Main dataset,Streptococcus pneumoniae,180/2,3,RPMI + glucose,2,Transcriptomics,HiSeq,AGRF,,2017-10-31,2017-10-31,0,,,139,,0,2017-11-03 01:56:37
+102.100.100.50286,Main dataset,Streptococcus pneumoniae,180/2,3,Pooled sera,2,Transcriptomics,HiSeq,AGRF,,2017-10-31,2017-10-31,0,,,138,,0,2017-11-03 01:56:37
+102.100.100.50285,Main dataset,Streptococcus pneumoniae,947,14,RPMI + galactose,2,Transcriptomics,HiSeq,AGRF,,2017-10-31,2017-10-31,0,,,137,,0,2017-11-03 01:56:37
+102.100.100.50284,Main dataset,Streptococcus pneumoniae,947,14,RPMI + glucose,2,Transcriptomics,HiSeq,AGRF,,2017-10-31,2017-10-31,0,,,136,,0,2017-11-03 01:56:37
+102.100.100.50283,Main dataset,Streptococcus pneumoniae,947,14,Pooled sera,2,Transcriptomics,HiSeq,AGRF,,2017-10-31,2017-10-31,0,,,135,,0,2017-11-03 01:56:37
+102.100.100.50282,Main dataset,Streptococcus pneumoniae,4559,14,RPMI + galactose,2,Transcriptomics,HiSeq,AGRF,,2017-10-31,2017-10-31,0,,,134,,0,2017-11-03 01:56:37
+102.100.100.50281,Main dataset,Streptococcus pneumoniae,4559,14,RPMI + glucose,2,Transcriptomics,HiSeq,AGRF,,2017-10-31,2017-10-31,0,,,133,,0,2017-11-03 01:56:37
+102.100.100.50280,Main dataset,Streptococcus pneumoniae,4559,14,Pooled sera,2,Transcriptomics,HiSeq,AGRF,,2017-10-31,2017-10-31,0,,,132,,0,2017-11-03 01:56:37
+102.100.100.50279,Main dataset,Streptococcus pneumoniae,4496,1,RPMI + galactose,1,Transcriptomics,HiSeq,AGRF,,2017-10-31,2017-10-31,0,,,131,,0,2017-11-03 01:56:37
+102.100.100.50278,Main dataset,Streptococcus pneumoniae,4496,1,RPMI + glucose,1,Transcriptomics,HiSeq,AGRF,,2017-10-31,2017-10-31,0,,,130,,0,2017-11-03 01:56:37
+102.100.100.50277,Main dataset,Streptococcus pneumoniae,4496,1,Pooled sera,1,Transcriptomics,HiSeq,AGRF,,2017-10-31,2017-10-31,0,,,129,,0,2017-11-03 01:56:37
+102.100.100.50276,Main dataset,Streptococcus pneumoniae,180/15,3,RPMI + galactose,1,Transcriptomics,HiSeq,AGRF,,2017-10-31,2017-10-31,0,,,128,,0,2017-11-03 01:56:37
+102.100.100.50275,Main dataset,Streptococcus pneumoniae,180/15,3,RPMI + glucose,1,Transcriptomics,HiSeq,AGRF,,2017-10-31,2017-10-31,0,,,127,,0,2017-11-03 01:56:37
+102.100.100.50274,Main dataset,Streptococcus pneumoniae,180/15,3,Pooled sera,1,Transcriptomics,HiSeq,AGRF,,2017-10-31,2017-10-31,0,,,126,,0,2017-11-03 01:56:37
+102.100.100.50273,Main dataset,Streptococcus pneumoniae,180/2,3,RPMI + galactose,1,Transcriptomics,HiSeq,AGRF,,2017-10-31,2017-10-31,0,,,125,,0,2017-11-03 01:56:37
+102.100.100.50272,Main dataset,Streptococcus pneumoniae,180/2,3,RPMI + glucose,1,Transcriptomics,HiSeq,AGRF,,2017-10-31,2017-10-31,0,,,124,,0,2017-11-03 01:56:37
+102.100.100.50271,Main dataset,Streptococcus pneumoniae,180/2,3,Pooled sera,1,Transcriptomics,HiSeq,AGRF,,2017-10-31,2017-10-31,0,,,123,,0,2017-11-03 01:56:37
+102.100.100.50270,Main dataset,Streptococcus pneumoniae,947,14,RPMI + galactose,1,Transcriptomics,HiSeq,AGRF,,2017-10-31,2017-10-31,0,,,122,,0,2017-11-03 01:56:37
+102.100.100.50269,Main dataset,Streptococcus pneumoniae,947,14,RPMI + glucose,1,Transcriptomics,HiSeq,AGRF,,2017-10-31,2017-10-31,0,,,121,,0,2017-11-03 01:56:37
+102.100.100.50268,Main dataset,Streptococcus pneumoniae,947,14,Pooled sera,1,Transcriptomics,HiSeq,AGRF,,2017-10-31,2017-10-31,0,,,120,,0,2017-11-03 01:56:37
+102.100.100.50267,Main dataset,Streptococcus pneumoniae,4559,14,RPMI + galactose,1,Transcriptomics,HiSeq,AGRF,,2017-10-31,2017-10-31,0,,,119,,0,2017-11-03 01:56:37
+102.100.100.50266,Main dataset,Streptococcus pneumoniae,4559,14,RPMI + glucose,1,Transcriptomics,HiSeq,AGRF,,2017-10-31,2017-10-31,0,,,118,,0,2017-11-03 01:56:37
+102.100.100.50265,Main dataset,Streptococcus pneumoniae,4559,14,Pooled sera,1,Transcriptomics,HiSeq,AGRF,,2017-10-31,2017-10-31,0,,,117,,0,2017-11-03 01:56:37
+102.100.100.50505,Main dataset,Staphylococcus aureus,BPH2986,,Pooled sera,6,Transcriptomics,HiSeq,AGRF,,2017-07-31,2017-07-31,0,,,116,,1,2017-09-16 10:38:33
+102.100.100.50504,Main dataset,Staphylococcus aureus,BPH2986,,Pooled sera,5,Transcriptomics,HiSeq,AGRF,,2017-07-31,2017-07-31,0,,,115,,1,2017-09-16 10:38:33
+102.100.100.50503,Main dataset,Staphylococcus aureus,BPH2986,,Pooled sera,4,Transcriptomics,HiSeq,AGRF,,2017-07-31,2017-07-31,0,,,114,,1,2017-09-16 10:38:33
+102.100.100.50502,Main dataset,Staphylococcus aureus,BPH2986,,Pooled sera,3,Transcriptomics,HiSeq,AGRF,,2017-07-31,2017-07-31,0,,,113,,1,2017-09-16 10:38:33
+102.100.100.50501,Main dataset,Staphylococcus aureus,BPH2986,,Pooled sera,2,Transcriptomics,HiSeq,AGRF,,2017-07-31,2017-07-31,0,,,112,,1,2017-09-16 10:38:33
+102.100.100.50628,Main dataset,Staphylococcus aureus,BPH2986,,Pooled sera,1,Transcriptomics,HiSeq,AGRF,,2017-07-31,2017-07-31,0,,,111,,1,2017-09-16 10:38:33
+102.100.100.50499,Main dataset,Staphylococcus aureus,BPH2986,,RPMI,6,Transcriptomics,HiSeq,AGRF,,2017-07-31,2017-07-31,0,,,110,,1,2017-09-16 10:38:33
+102.100.100.50498,Main dataset,Staphylococcus aureus,BPH2986,,RPMI,5,Transcriptomics,HiSeq,AGRF,,2017-07-31,2017-07-31,0,,,109,,1,2017-09-16 10:38:33
+102.100.100.50497,Main dataset,Staphylococcus aureus,BPH2986,,RPMI,4,Transcriptomics,HiSeq,AGRF,,2017-07-31,2017-07-31,0,,,108,,1,2017-09-16 10:38:33
+102.100.100.50496,Main dataset,Staphylococcus aureus,BPH2986,,RPMI,3,Transcriptomics,HiSeq,AGRF,,2017-07-31,2017-07-31,0,,,107,,1,2017-09-16 10:38:33
+102.100.100.50495,Main dataset,Staphylococcus aureus,BPH2986,,RPMI,2,Transcriptomics,HiSeq,AGRF,,2017-07-31,2017-07-31,0,,,106,,1,2017-09-16 10:38:33
+102.100.100.50494,Main dataset,Staphylococcus aureus,BPH2986,,RPMI,1,Transcriptomics,HiSeq,AGRF,,2017-07-31,2017-07-31,0,,,105,,1,2017-09-16 10:38:33
+102.100.100.50493,Main dataset,Staphylococcus aureus,BPH2947,,Pooled sera,6,Transcriptomics,HiSeq,AGRF,,2017-07-31,2017-07-31,0,,,104,,1,2017-09-16 10:38:33
+102.100.100.50492,Main dataset,Staphylococcus aureus,BPH2947,,Pooled sera,5,Transcriptomics,HiSeq,AGRF,,2017-07-31,2017-07-31,0,,,103,,1,2017-09-16 10:38:33
+102.100.100.50491,Main dataset,Staphylococcus aureus,BPH2947,,Pooled sera,4,Transcriptomics,HiSeq,AGRF,,2017-07-31,2017-07-31,0,,,102,,1,2017-09-16 10:38:33
+102.100.100.50490,Main dataset,Staphylococcus aureus,BPH2947,,Pooled sera,3,Transcriptomics,HiSeq,AGRF,,2017-07-31,2017-07-31,0,,,101,,1,2017-09-16 10:38:33
+102.100.100.50489,Main dataset,Staphylococcus aureus,BPH2947,,Pooled sera,2,Transcriptomics,HiSeq,AGRF,,2017-07-31,2017-07-31,0,,,100,,1,2017-09-16 10:38:33
+102.100.100.50627,Main dataset,Staphylococcus aureus,BPH2947,,Pooled sera,1,Transcriptomics,HiSeq,AGRF,,2017-07-31,2017-07-31,0,,,99,,1,2017-09-16 10:38:33
+102.100.100.50487,Main dataset,Staphylococcus aureus,BPH2947,,RPMI,6,Transcriptomics,HiSeq,AGRF,,2017-07-31,2017-07-31,0,,,98,,1,2017-09-16 10:38:33
+102.100.100.50486,Main dataset,Staphylococcus aureus,BPH2947,,RPMI,5,Transcriptomics,HiSeq,AGRF,,2017-07-31,2017-07-31,0,,,97,,1,2017-09-16 10:38:33
+102.100.100.50485,Main dataset,Staphylococcus aureus,BPH2947,,RPMI,4,Transcriptomics,HiSeq,AGRF,,2017-07-31,2017-07-31,0,,,96,,1,2017-09-16 10:38:33
+102.100.100.50484,Main dataset,Staphylococcus aureus,BPH2947,,RPMI,3,Transcriptomics,HiSeq,AGRF,,2017-07-31,2017-07-31,0,,,95,,1,2017-09-16 10:38:33
+102.100.100.50483,Main dataset,Staphylococcus aureus,BPH2947,,RPMI,2,Transcriptomics,HiSeq,AGRF,,2017-07-31,2017-07-31,0,,,94,,1,2017-09-16 10:38:33
+102.100.100.50482,Main dataset,Staphylococcus aureus,BPH2947,,RPMI,1,Transcriptomics,HiSeq,AGRF,,2017-07-31,2017-07-31,0,,,93,,1,2017-09-16 10:38:33
+102.100.100.50481,Main dataset,Staphylococcus aureus,BPH2900,,Pooled sera,6,Transcriptomics,HiSeq,AGRF,,2017-07-31,2017-07-31,0,,,92,,1,2017-09-16 10:38:33
+102.100.100.50480,Main dataset,Staphylococcus aureus,BPH2900,,Pooled sera,5,Transcriptomics,HiSeq,AGRF,,2017-07-31,2017-07-31,0,,,91,,1,2017-09-16 10:38:33
+102.100.100.50478,Main dataset,Staphylococcus aureus,BPH2900,,Pooled sera,3,Transcriptomics,HiSeq,AGRF,,2017-07-31,2017-07-31,0,,,90,,1,2017-09-16 10:38:33
+102.100.100.50477,Main dataset,Staphylococcus aureus,BPH2900,,Pooled sera,2,Transcriptomics,HiSeq,AGRF,,2017-07-31,2017-07-31,0,,,89,,1,2017-09-16 10:38:33
+102.100.100.50476,Main dataset,Staphylococcus aureus,BPH2900,,Pooled sera,1,Transcriptomics,HiSeq,AGRF,,2017-07-31,2017-07-31,0,,,88,,1,2017-09-16 10:38:33
+102.100.100.50475,Main dataset,Staphylococcus aureus,BPH2900,,RPMI,6,Transcriptomics,HiSeq,AGRF,,2017-07-31,2017-07-31,0,,,87,,1,2017-09-16 10:38:33
+102.100.100.50474,Main dataset,Staphylococcus aureus,BPH2900,,RPMI,5,Transcriptomics,HiSeq,AGRF,,2017-07-31,2017-07-31,0,,,86,,1,2017-09-16 10:38:33
+102.100.100.50473,Main dataset,Staphylococcus aureus,BPH2900,,RPMI,4,Transcriptomics,HiSeq,AGRF,,2017-07-31,2017-07-31,0,,,85,,1,2017-09-16 10:38:33
+102.100.100.50472,Main dataset,Staphylococcus aureus,BPH2900,,RPMI,3,Transcriptomics,HiSeq,AGRF,,2017-07-31,2017-07-31,0,,,84,,1,2017-09-16 10:38:33
+102.100.100.50471,Main dataset,Staphylococcus aureus,BPH2900,,RPMI,2,Transcriptomics,HiSeq,AGRF,,2017-07-31,2017-07-31,0,,,83,,1,2017-09-16 10:38:33
+102.100.100.50470,Main dataset,Staphylococcus aureus,BPH2900,,RPMI,1,Transcriptomics,HiSeq,AGRF,,2017-07-31,2017-07-31,0,,,82,,1,2017-09-16 10:38:33
+102.100.100.50852,Main dataset,Staphylococcus aureus,BPH2819,,Pooled sera,7,Transcriptomics,HiSeq,AGRF,,2017-08-25,2017-08-25,0,,,81,,1,2017-09-16 10:38:33
+102.100.100.50469,Main dataset,Staphylococcus aureus,BPH2819,,Pooled sera,6,Transcriptomics,HiSeq,AGRF,,2017-07-31,2017-07-31,0,,,80,,1,2017-09-16 10:38:33
+102.100.100.50468,Main dataset,Staphylococcus aureus,BPH2819,,Pooled sera,5,Transcriptomics,HiSeq,AGRF,,2017-07-31,2017-07-31,0,,,79,,1,2017-09-16 10:38:33
+102.100.100.50467,Main dataset,Staphylococcus aureus,BPH2819,,Pooled sera,4,Transcriptomics,HiSeq,AGRF,,2017-07-31,2017-07-31,0,,,78,,1,2017-09-16 10:38:33
+102.100.100.50466,Main dataset,Staphylococcus aureus,BPH2819,,Pooled sera,3,Transcriptomics,HiSeq,AGRF,,2017-07-31,2017-07-31,0,,,77,,0,2017-08-25 02:23:00
+102.100.100.50465,Main dataset,Staphylococcus aureus,BPH2819,,Pooled sera,2,Transcriptomics,HiSeq,AGRF,,2017-07-31,2017-07-31,0,,,76,,1,2017-09-16 10:38:33
+102.100.100.50851,Main dataset,Staphylococcus aureus,BPH2819,,Pooled sera,1,Transcriptomics,HiSeq,AGRF,,2017-08-25,2017-08-25,0,,,75,,1,2017-09-16 10:38:33
+102.100.100.50463,Main dataset,Staphylococcus aureus,BPH2819,,RPMI,6,Transcriptomics,HiSeq,AGRF,,2017-07-31,2017-07-31,0,,,74,,1,2017-09-16 10:38:33
+102.100.100.50462,Main dataset,Staphylococcus aureus,BPH2819,,RPMI,5,Transcriptomics,HiSeq,AGRF,,2017-07-31,2017-07-31,0,,,73,,1,2017-09-16 10:38:33
+102.100.100.50461,Main dataset,Staphylococcus aureus,BPH2819,,RPMI,4,Transcriptomics,HiSeq,AGRF,,2017-07-31,2017-07-31,0,,,72,,1,2017-09-16 10:38:33
+102.100.100.50460,Main dataset,Staphylococcus aureus,BPH2819,,RPMI,3,Transcriptomics,HiSeq,AGRF,,2017-07-31,2017-07-31,0,,,71,,1,2017-09-16 10:38:33
+102.100.100.50459,Main dataset,Staphylococcus aureus,BPH2819,,RPMI,2,Transcriptomics,HiSeq,AGRF,,2017-07-31,2017-07-31,0,,,70,,1,2017-09-16 10:38:33
+102.100.100.50458,Main dataset,Staphylococcus aureus,BPH2819,,RPMI,1,Transcriptomics,HiSeq,AGRF,,2017-07-31,2017-07-31,0,,,69,,1,2017-09-16 10:38:33
+102.100.100.50457,Main dataset,Staphylococcus aureus,BPH2760,,Pooled sera,6,Transcriptomics,HiSeq,AGRF,,2017-07-31,2017-07-31,0,,,68,,1,2017-09-16 10:38:33
+102.100.100.50456,Main dataset,Staphylococcus aureus,BPH2760,,Pooled sera,5,Transcriptomics,HiSeq,AGRF,,2017-07-31,2017-07-31,0,,,67,,1,2017-09-16 10:38:33
+102.100.100.50455,Main dataset,Staphylococcus aureus,BPH2760,,Pooled sera,4,Transcriptomics,HiSeq,AGRF,,2017-07-31,2017-07-31,0,,,66,,1,2017-09-16 10:38:33
+102.100.100.50454,Main dataset,Staphylococcus aureus,BPH2760,,Pooled sera,3,Transcriptomics,HiSeq,AGRF,,2017-07-31,2017-07-31,0,,,65,,1,2017-09-16 10:38:33
+102.100.100.50453,Main dataset,Staphylococcus aureus,BPH2760,,Pooled sera,2,Transcriptomics,HiSeq,AGRF,,2017-07-31,2017-07-31,0,,,64,,1,2017-09-16 10:38:33
+102.100.100.50452,Main dataset,Staphylococcus aureus,BPH2760,,Pooled sera,1,Transcriptomics,HiSeq,AGRF,,2017-07-31,2017-07-31,0,,,63,,1,2017-09-16 10:38:33
+102.100.100.50451,Main dataset,Staphylococcus aureus,BPH2760,,RPMI,6,Transcriptomics,HiSeq,AGRF,,2017-07-31,2017-07-31,0,,,62,,1,2017-09-16 10:38:33
+102.100.100.50450,Main dataset,Staphylococcus aureus,BPH2760,,RPMI,5,Transcriptomics,HiSeq,AGRF,,2017-07-31,2017-07-31,0,,,61,,1,2017-09-16 10:38:33
+102.100.100.50449,Main dataset,Staphylococcus aureus,BPH2760,,RPMI,4,Transcriptomics,HiSeq,AGRF,,2017-07-31,2017-07-31,0,,,60,,1,2017-09-16 10:38:33
+102.100.100.50448,Main dataset,Staphylococcus aureus,BPH2760,,RPMI,3,Transcriptomics,HiSeq,AGRF,,2017-07-31,2017-07-31,0,,,59,,1,2017-09-16 10:38:33
+102.100.100.50447,Main dataset,Staphylococcus aureus,BPH2760,,RPMI,2,Transcriptomics,HiSeq,AGRF,,2017-07-31,2017-07-31,0,,,58,,1,2017-09-16 10:38:33
+102.100.100.50446,Main dataset,Staphylococcus aureus,BPH2760,,RPMI,1,Transcriptomics,HiSeq,AGRF,,2017-07-31,2017-07-31,0,,,57,,1,2017-09-16 10:38:33
+102.100.100.25986,Pilot,Staphylococcus aureus,BPH2900,,Pooled sera,1,Transcriptomics,HiSeq,AGRF,,2017-04-11,2017-04-11,0,,,56,,0,2017-04-13 12:53:29
+102.100.100.25985,Pilot,Staphylococcus aureus,BPH2760,,Pooled sera,1,Transcriptomics,HiSeq,AGRF,,2017-04-11,2017-04-11,0,,,55,,0,2017-04-13 12:53:29
+102.100.100.25984,Pilot,Klebsiella pneumoniae,AJ218,,Pooled sera,1,Transcriptomics,HiSeq,AGRF,,2017-04-11,2017-04-11,0,,,54,,0,2017-04-13 12:53:29
+102.100.100.25983,Pilot,Klebsiella pneumoniae,KPC2,,Pooled sera,1,Transcriptomics,HiSeq,AGRF,,2017-04-11,2017-04-11,0,,,53,,0,2017-04-13 12:53:29
+102.100.100.25982,Pilot,Klebsiella pneumoniae,AJ218,,RPMI,1,Transcriptomics,HiSeq,AGRF,,2017-04-11,2017-04-11,0,,,52,,0,2017-04-13 12:53:29
+102.100.100.25981,Pilot,Klebsiella pneumoniae,KPC2,,RPMI,1,Transcriptomics,HiSeq,AGRF,,2017-04-11,2017-04-11,0,,,51,,0,2017-04-13 12:53:29
+102.100.100.25884,Pilot,Staphylococcus aureus,BPH2760,ST1,RPMI,6,Transcriptomics,HiSeq,AGRF,8,2016-09-06,2016-09-01,1,2016-10-17,BPAOPS-34,50,,1,2017-05-24 08:56:06
+102.100.100.25883,Pilot,Staphylococcus aureus,BPH2760,ST1,RPMI,5,Transcriptomics,HiSeq,AGRF,8,2016-09-06,2016-09-01,1,2016-10-17,BPAOPS-34,49,,1,2017-05-24 08:56:06
+102.100.100.25882,Pilot,Staphylococcus aureus,BPH2760,ST1,RPMI,4,Transcriptomics,HiSeq,AGRF,8,2016-09-06,2016-09-01,1,2016-10-17,BPAOPS-34,48,,1,2017-05-24 08:56:06
+102.100.100.25881,Pilot,Staphylococcus aureus,BPH2760,ST1,RPMI,3,Transcriptomics,HiSeq,AGRF,8,2016-09-06,2016-09-01,1,2016-10-17,BPAOPS-34,47,,1,2017-05-24 08:56:06
+102.100.100.25880,Pilot,Staphylococcus aureus,BPH2760,ST1,RPMI,2,Transcriptomics,HiSeq,AGRF,8,2016-09-06,2016-09-01,1,2016-10-17,BPAOPS-34,46,,1,2017-05-24 08:56:06
+102.100.100.25879,Pilot,Staphylococcus aureus,BPH2760,ST1,RPMI,1,Transcriptomics,HiSeq,AGRF,8,2016-09-06,2016-09-01,1,2016-10-17,BPAOPS-34,45,,1,2017-05-24 08:56:06
+102.100.100.25878,Pilot,Staphylococcus aureus,BPH2900,ST22,RPMI,6,Transcriptomics,HiSeq,AGRF,8,2016-09-06,2016-09-01,1,2016-10-17,BPAOPS-34,44,,1,2017-05-24 08:56:06
+102.100.100.25877,Pilot,Staphylococcus aureus,BPH2900,ST22,RPMI,5,Transcriptomics,HiSeq,AGRF,8,2016-09-06,2016-09-01,1,2016-10-17,BPAOPS-34,43,,1,2017-05-24 08:56:06
+102.100.100.25876,Pilot,Staphylococcus aureus,BPH2900,ST22,RPMI,4,Transcriptomics,HiSeq,AGRF,8,2016-09-06,2016-09-01,1,2016-10-17,BPAOPS-34,42,,1,2017-05-24 08:56:06
+102.100.100.25875,Pilot,Staphylococcus aureus,BPH2900,ST22,RPMI,3,Transcriptomics,HiSeq,AGRF,8,2016-09-06,2016-09-01,1,2016-10-17,BPAOPS-34,41,,1,2017-05-24 08:56:06
+102.100.100.25874,Pilot,Staphylococcus aureus,BPH2900,ST22,RPMI,2,Transcriptomics,HiSeq,AGRF,8,2016-09-06,2016-09-01,1,2016-10-17,BPAOPS-34,40,,1,2017-05-24 08:56:06
+102.100.100.25873,Pilot,Staphylococcus aureus,BPH2900,ST22,RPMI,1,Transcriptomics,HiSeq,AGRF,8,2016-09-06,2016-09-01,1,2016-10-17,BPAOPS-34,39,,1,2017-05-24 08:56:06
+102.100.100.25872,Pilot,Klebsiella pneumoniae,KPC2,Unknown,RPMI,6,Transcriptomics,HiSeq,AGRF,8,2016-09-06,2016-09-01,1,2016-10-17,BPAOPS-34,38,,1,2017-05-24 08:56:06
+102.100.100.25871,Pilot,Klebsiella pneumoniae,KPC2,Unknown,RPMI,5,Transcriptomics,HiSeq,AGRF,8,2016-09-06,2016-09-01,1,2016-10-17,BPAOPS-34,37,,1,2017-05-24 08:56:06
+102.100.100.25870,Pilot,Klebsiella pneumoniae,KPC2,Unknown,RPMI,4,Transcriptomics,HiSeq,AGRF,8,2016-09-06,2016-09-01,1,2016-10-17,BPAOPS-34,36,,1,2017-05-24 08:56:06
+102.100.100.25869,Pilot,Klebsiella pneumoniae,KPC2,Unknown,RPMI,3,Transcriptomics,HiSeq,AGRF,8,2016-09-06,2016-09-01,1,2016-10-17,BPAOPS-34,35,,1,2017-05-24 08:56:06
+102.100.100.25868,Pilot,Klebsiella pneumoniae,KPC2,Unknown,RPMI,2,Transcriptomics,HiSeq,AGRF,8,2016-09-06,2016-09-01,1,2016-10-17,BPAOPS-34,34,,1,2017-05-24 08:56:06
+102.100.100.25867,Pilot,Klebsiella pneumoniae,KPC2,Unknown,RPMI,1,Transcriptomics,HiSeq,AGRF,8,2016-09-06,2016-09-01,1,2016-10-17,BPAOPS-34,33,,1,2017-05-24 08:56:06
+102.100.100.25866,Pilot,Klebsiella pneumoniae,AJ218,K54,RPMI,6,Transcriptomics,HiSeq,AGRF,8,2016-09-06,2016-09-01,1,2016-10-17,BPAOPS-34,32,,1,2017-05-24 08:56:06
+102.100.100.25865,Pilot,Klebsiella pneumoniae,AJ218,K54,RPMI,5,Transcriptomics,HiSeq,AGRF,8,2016-09-06,2016-09-01,1,2016-10-17,BPAOPS-34,31,,1,2017-05-24 08:56:06
+102.100.100.25864,Pilot,Klebsiella pneumoniae,AJ218,K54,RPMI,4,Transcriptomics,HiSeq,AGRF,8,2016-09-06,2016-09-01,1,2016-10-17,BPAOPS-34,30,,1,2017-05-24 08:56:06
+102.100.100.25863,Pilot,Klebsiella pneumoniae,AJ218,K54,RPMI,3,Transcriptomics,HiSeq,AGRF,8,2016-09-06,2016-09-01,1,2016-10-17,BPAOPS-34,29,,1,2017-05-24 08:56:06
+102.100.100.25862,Pilot,Klebsiella pneumoniae,AJ218,K54,RPMI,2,Transcriptomics,HiSeq,AGRF,8,2016-09-06,2016-09-01,1,2016-10-17,BPAOPS-34,28,,1,2017-05-24 08:56:06
+102.100.100.25861,Pilot,Klebsiella pneumoniae,AJ218,K54,RPMI,1,Transcriptomics,HiSeq,AGRF,8,2016-09-06,2016-09-01,1,2016-10-17,BPAOPS-34,27,,1,2017-05-24 08:56:06
