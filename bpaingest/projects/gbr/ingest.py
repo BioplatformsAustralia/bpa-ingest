@@ -45,7 +45,7 @@ class GbrPacbioMetadata(BaseMetadata):
         }
     }
     md5 = {
-        'match': [files.pacbio_filename_re],
+        'match': [files.pacbio_filename_re, files.pacbio_filename2_re],
         'skip': None,
     }
 

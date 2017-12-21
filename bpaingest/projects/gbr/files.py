@@ -29,6 +29,18 @@ PACBIO_FILE_PATTERN = """
 pacbio_filename_re = re.compile(PACBIO_FILE_PATTERN, re.VERBOSE)
 
 
+PACBIO_FILE_PATTERN2 = """
+    ^(?P<bpa_id>\d{4,6})_
+    GBR_
+    (?P<vendor>AGRF|UNSW)_
+    PAC_
+    (?P<run_number>m\d+_\d+_\d+)_
+    (?P<flow_cell_id>c\d+)_
+    .*
+"""
+pacbio_filename2_re = re.compile(PACBIO_FILE_PATTERN2, re.VERBOSE)
+
+
 def _file_from_line(line):
     obj = {
         'filename': line.filename,
