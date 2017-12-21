@@ -468,7 +468,7 @@ class MarineMicrobesMetatranscriptomeMetadata(BaseMetadata):
         }
     }
     md5 = {
-        'match': [files.metatranscriptome_filename_re],
+        'match': [files.metatranscriptome_filename_re, files.metatranscriptome_filename2_re],
         'skip': None,
     }
 

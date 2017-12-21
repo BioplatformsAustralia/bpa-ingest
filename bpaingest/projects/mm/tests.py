@@ -3,6 +3,7 @@ from .files import (
     amplicon_filename_re,
     transcriptome_filename_re,
     metatranscriptome_filename_re,
+    metatranscriptome_filename2_re,
     metagenomics_filename_re,
     metagenomics_filename_v2_re)
 
@@ -46,6 +47,16 @@ def test_metatranscriptome():
     ]
     for filename in filenames:
         assert(metatranscriptome_filename_re.match(filename) is not None)
+
+
+def test_metatranscriptome2():
+    filenames = [
+        '57510_1_PE_210bp_MM_AGRF_CC26CANXX_CGATGT_L003_R1.fastq.gz',
+        '57512_1_PE_210bp_MM_AGRF_CC26CANXX_CAGATC_L002_R2.fastq.gz',
+        '57518_1_PE_210bp_MM_AGRF_CC26CANXX_GCCAAT_L003_R2.fastq.gz',
+    ]
+    for filename in filenames:
+        assert(metatranscriptome_filename2_re.match(filename) is not None)
 
 
 def test_metagenomics():

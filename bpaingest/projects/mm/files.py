@@ -56,6 +56,20 @@ metatranscriptome_filename_re = re.compile("""
 """, re.VERBOSE)
 
 
+metatranscriptome_filename2_re = re.compile("""
+    (?P<id>\d{4,6})_
+    (?P<extraction>\d+)_
+    (?P<library>PE|MP)_
+    (?P<insert_size>\d*bp)_
+    MM_
+    (?P<vendor>AGRF|UNSW)_
+    (?P<flow_id>\w{9})_
+    (?P<index>[G|A|T|C|-]*|NoIndex)_
+    (?P<lane>L\d{3})_
+    (?P<read>[R|I][1|2])\.fastq\.gz
+""", re.VERBOSE)
+
+
 metagenomics_filename_re = re.compile("""
     (?P<id>\d{4,6})_
     (?P<extraction>\d)_
