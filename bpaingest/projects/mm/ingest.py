@@ -119,8 +119,6 @@ class MarineMicrobesGenomicsAmplicons16SMetadata(BaseMarineMicrobesAmpliconsMeta
     ]
     metadata_url_components = ('facility_code', 'ticket')
 
-
-
     def __init__(self, metadata_path, contextual_metadata=None, metadata_info=None):
         super(BaseMarineMicrobesAmpliconsMetadata, self).__init__()
         self.path = Path(metadata_path)
@@ -173,7 +171,6 @@ class MarineMicrobesGenomicsAmplicons16SMetadata(BaseMarineMicrobesAmpliconsMeta
                     'title': 'Marine Microbes Amplicons %s %s %s' % (self.amplicon, bpa_id, flow_id),
                     'omics': 'Genomics',
                     'analytical_platform': 'MiSeq',
-
                     'sample_type': track_meta['sample_type'],
                     'costal_id': track_meta['costal_id'],
                     'contextual_data_submission_date': ingest_utils.get_date_isoformat(track_meta['contextual_data_submission_date']),
@@ -184,7 +181,6 @@ class MarineMicrobesGenomicsAmplicons16SMetadata(BaseMarineMicrobesAmpliconsMeta
                     'facility': track_meta['facility'],
                     'archive_ingestion_date': ingest_utils.get_date_isoformat(track_meta['archive_ingestion_date']),
                     'file_name': track_meta['file_name'],
-
                     'ticket': row.ticket,
                     'facility': row.facility_code.upper(),
                     'type': self.ckan_data_type,
@@ -230,8 +226,6 @@ class MarineMicrobesGenomicsAmpliconsA16SMetadata(BaseMarineMicrobesAmpliconsMet
         'https://downloads-qcif.bioplatforms.com/bpa/marine_microbes/raw/amplicons/a16s/'
     ]
     metadata_url_components = ('facility_code', 'ticket')
-
-
 
     def __init__(self, metadata_path, contextual_metadata=None, metadata_info=None):
         super(BaseMarineMicrobesAmpliconsMetadata, self).__init__()
@@ -285,7 +279,6 @@ class MarineMicrobesGenomicsAmpliconsA16SMetadata(BaseMarineMicrobesAmpliconsMet
                     'title': 'Marine Microbes Amplicons %s %s %s' % (self.amplicon, bpa_id, flow_id),
                     'omics': 'Genomics',
                     'analytical_platform': 'MiSeq',
-
                     'sample_type': track_meta['sample_type'],
                     'costal_id': track_meta['costal_id'],
                     'contextual_data_submission_date': ingest_utils.get_date_isoformat(track_meta['contextual_data_submission_date']),
@@ -296,7 +289,6 @@ class MarineMicrobesGenomicsAmpliconsA16SMetadata(BaseMarineMicrobesAmpliconsMet
                     'facility': track_meta['facility'],
                     'archive_ingestion_date': ingest_utils.get_date_isoformat(track_meta['archive_ingestion_date']),
                     'file_name': track_meta['file_name'],
-
                     'ticket': row.ticket,
                     'facility': row.facility_code.upper(),
                     'type': self.ckan_data_type,
@@ -395,7 +387,6 @@ class MarineMicrobesGenomicsAmplicons18SMetadata(BaseMarineMicrobesAmpliconsMeta
                     'title': 'Marine Microbes Amplicons %s %s %s' % (self.amplicon, bpa_id, flow_id),
                     'omics': 'Genomics',
                     'analytical_platform': 'MiSeq',
-
                     'sample_type': track_meta['sample_type'],
                     'costal_id': track_meta['costal_id'],
                     'contextual_data_submission_date': ingest_utils.get_date_isoformat(track_meta['contextual_data_submission_date']),
@@ -406,7 +397,6 @@ class MarineMicrobesGenomicsAmplicons18SMetadata(BaseMarineMicrobesAmpliconsMeta
                     'facility': track_meta['facility'],
                     'archive_ingestion_date': ingest_utils.get_date_isoformat(track_meta['archive_ingestion_date']),
                     'file_name': track_meta['file_name'],
-
                     'ticket': row.ticket,
                     'facility': row.facility_code.upper(),
                     'type': self.ckan_data_type,
@@ -606,7 +596,6 @@ class MarineMicrobesMetagenomicsMetadata(BaseMetadata):
                     'omics': 'metagenomics',
                     'analytical_platform': 'HiSeq',
                     'read_length': '250bp',
-
                     'sample_type': track_meta['sample_type'],
                     'costal_id': track_meta['costal_id'],
                     'contextual_data_submission_date': ingest_utils.get_date_isoformat(track_meta['contextual_data_submission_date']),
@@ -617,7 +606,6 @@ class MarineMicrobesMetagenomicsMetadata(BaseMetadata):
                     'facility': track_meta['facility'],
                     'archive_ingestion_date': ingest_utils.get_date_isoformat(track_meta['archive_ingestion_date']),
                     'file_name': track_meta['file_name'],
-
                     'contextual_data_submission_date': None,
                     'sample_extraction_id': ingest_utils.make_sample_extraction_id(row.sample_extraction_id, bpa_id),
                     'insert_size_range': row.insert_size_range,
@@ -721,8 +709,6 @@ class MarineMicrobesMetatranscriptomeMetadata(BaseMetadata):
                 'omics': 'metatranscriptomics',
                 'analytical_platform': 'HiSeq',
                 'read_length': '250bp',  # to be confirmed by Jason Koval
-
-
                 'sample_type': track_meta['sample_type'],
                 'costal_id': track_meta['costal_id'],
                 'contextual_data_submission_date': ingest_utils.get_date_isoformat(track_meta['contextual_data_submission_date']),
@@ -733,7 +719,6 @@ class MarineMicrobesMetatranscriptomeMetadata(BaseMetadata):
                 'facility': track_meta['facility'],
                 'archive_ingestion_date': ingest_utils.get_date_isoformat(track_meta['archive_ingestion_date']),
                 'file_name': track_meta['file_name'],
-
                 'contextual_data_submission_date': None,
                 'sample_extraction_id': ingest_utils.make_sample_extraction_id(row.sample_extraction_id, bpa_id),
                 'insert_size_range': row.insert_size_range,
