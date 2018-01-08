@@ -4,7 +4,7 @@ from unipath import Path
 
 from ...abstract import BaseMetadata
 
-from ...util import make_logger, bpa_id_to_ckan_name, one, common_values
+from ...util import make_logger, bpa_id_to_ckan_name, one, common_values, apply_license
 from urllib.parse import urljoin
 
 from glob import glob
@@ -143,6 +143,8 @@ class BASEAmpliconsMetadata(BaseMetadata):
                 obj = {}
                 amplicon = row.amplicon.upper()
                 name = bpa_id_to_ckan_name(sample_extraction_id, self.ckan_data_type + '-' + amplicon, base_amplicon_linkage)
+                archive_ingestion_date = ingest_utils.get_date_isoformat(track_get('date_of_transfer_to_archive'))
+
                 obj.update({
                     'name': name,
                     'id': name,
@@ -175,7 +177,8 @@ class BASEAmpliconsMetadata(BaseMetadata):
                     'sample_submission_date': ingest_utils.get_date_isoformat(track_get('date_of_transfer')),
                     'contextual_data_submission_date': None,
                     'data_generated': ingest_utils.get_date_isoformat(track_get('date_of_transfer_to_archive')),
-                    'archive_ingestion_date': ingest_utils.get_date_isoformat(track_get('date_of_transfer_to_archive')),
+                    'archive_ingestion_date': archive_ingestion_date,
+                    'license': apply_license(archive_ingestion_date),
                     'dataset_url': track_get('download'),
                     'ticket': row.ticket,
                     'facility': row.facility_code.upper(),
@@ -257,6 +260,8 @@ class BASEAmpliconsControlMetadata(BaseMetadata):
                     return None
                 return getattr(track_meta, k)
 
+            archive_ingestion_date = ingest_utils.get_date_isoformat(track_get('date_of_transfer_to_archive'))
+
             obj.update({
                 'name': name,
                 'id': name,
@@ -273,7 +278,8 @@ class BASEAmpliconsControlMetadata(BaseMetadata):
                 'sample_submission_date': ingest_utils.get_date_isoformat(track_get('date_of_transfer')),
                 'contextual_data_submission_date': None,
                 'data_generated': ingest_utils.get_date_isoformat(track_get('date_of_transfer_to_archive')),
-                'archive_ingestion_date': ingest_utils.get_date_isoformat(track_get('date_of_transfer_to_archive')),
+                'archive_ingestion_date': archive_ingestion_date,
+                'license': apply_license(archive_ingestion_date),
                 'dataset_url': track_get('download'),
                 'ticket': info['ticket'],
                 'facility': info['facility_code'].upper(),
@@ -372,6 +378,8 @@ class BASEMetagenomicsMetadata(BaseMetadata):
             return res
 
         name = bpa_id_to_ckan_name(sample_extraction_id, self.ckan_data_type, flow_id)
+        archive_ingestion_date = ingest_utils.get_date_isoformat(track_get('date_of_transfer_to_archive'))
+
         obj = {
             'name': name,
             'sample_type': 'soil',
@@ -393,7 +401,8 @@ class BASEMetagenomicsMetadata(BaseMetadata):
             'sample_submission_date': ingest_utils.get_date_isoformat(track_get('date_of_transfer')),
             'contextual_data_submission_date': None,
             'data_generated': ingest_utils.get_date_isoformat(track_get('date_of_transfer_to_archive')),
-            'archive_ingestion_date': ingest_utils.get_date_isoformat(track_get('date_of_transfer_to_archive')),
+            'archive_ingestion_date': archive_ingestion_date,
+            'license': apply_license(archive_ingestion_date),
             'dataset_url': track_get('download'),
             'ticket': row_get('ticket'),
             'facility': row_get('facility_code', lambda v: v.upper()),
