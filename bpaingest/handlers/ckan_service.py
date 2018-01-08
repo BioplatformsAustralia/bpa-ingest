@@ -17,6 +17,7 @@ class CKANURLs:
         self.actions = os.path.join(self.base, 'api/3/action')
 
         self.packages_with_resources = self.action_url('current_package_list_with_resources')
+        self.package_search = self.action_url('package_search')
         self.resource = self.action_url('resource_show')
         self.resource_patch = self.action_url('resource_patch')
 
@@ -40,6 +41,23 @@ class CKANService:
     @property
     def auth_admin_header(self):
         return {'Authorization': self.credentials['CKAN_ADMIN_API_KEY']}
+
+    def get_packages_by_bpa_id(self, bpa_id):
+        params = {
+            'include_private': True,
+            'q': 'bpa_id:%s' % bpa_id,
+        }
+        resp = self.session.get(self.urls.package_search, headers=self.auth_header, params=params)
+        try:
+            resp.raise_for_status()
+            json_resp = resp.json()
+            if not json_resp['success']:
+                raise Exception('Package search (by bpa_id) returned success False')
+            return json_resp['result']['results']
+        except Exception as exc:
+            msg = 'Package search (%s) for packages with bpa_id "%s" was NOT successful!' % (
+                resp.request.url, bpa_id)
+            raise Exception(msg) from exc
 
     def get_all_resources(self):
         next_page = 1
