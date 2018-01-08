@@ -76,6 +76,10 @@ class BaseMarineMicrobesMetadata(BaseMetadata):
         self.google_track_meta = MarineMicrobesGoogleTrackMetadata()
         self.track_meta = MarineMicrobesTrackMetadata(self.tracker_filename)
 
+    def extract_bpam_metadata(self, track_meta):
+        fields = ('archive_ingestion_date', 'contextual_data_submission_date', 'data_generated', 'sample_submission_date', 'submitter', 'work_order')
+        return dict((t, track_meta.get(t, '')) for t in fields)
+
 
 class BaseMarineMicrobesAmpliconsMetadata(BaseMarineMicrobesMetadata):
     auth = ('marine', 'marine')
@@ -135,12 +139,12 @@ class BaseMarineMicrobesAmpliconsMetadata(BaseMarineMicrobesMetadata):
             # the pilot data needs increased linkage, due to multiple trials on the same BPA ID
             index_linkage = base_fname in self.index_linkage_spreadsheets
             for row in BaseMarineMicrobesAmpliconsMetadata.parse_spreadsheet(fname, self.metadata_info):
-                track_meta = self.track_meta.get(row.ticket)
-                google_track_meta = self.google_track_meta.get(row.ticket)
                 bpa_id = row.bpa_id
                 if bpa_id is None:
                     continue
-                obj = {}
+                track_meta = self.track_meta.get(bpa_id)
+                google_track_meta = self.google_track_meta.get(row.ticket)
+                obj = self.extract_bpam_metadata(track_meta)
                 index = index_from_comment([row.comments, row.sample_name_on_sample_sheet])
                 mm_amplicon_linkage = build_mm_amplicon_linkage(index_linkage, flow_id, index)
                 name = bpa_id_to_ckan_name(bpa_id.split('.')[-1], self.ckan_data_type + '-' + self.amplicon, mm_amplicon_linkage)
@@ -167,7 +171,6 @@ class BaseMarineMicrobesAmpliconsMetadata(BaseMarineMicrobesMetadata):
                     'description': google_track_meta.description,
                     'folder_name': google_track_meta.folder_name,
                     'sample_submission_date': ingest_utils.get_date_isoformat(google_track_meta.date_of_transfer),
-                    'contextual_data_submission_date': None,
                     'data_generated': ingest_utils.get_date_isoformat(google_track_meta.date_of_transfer_to_archive),
                     'archive_ingestion_date': ingest_utils.get_date_isoformat(google_track_meta.date_of_transfer_to_archive),
                     'dataset_url': google_track_meta.download,
@@ -274,7 +277,6 @@ class BaseMarineMicrobesAmpliconsControlMetadata(BaseMarineMicrobesMetadata):
         for flow_id, info in sorted(flow_id_ticket.items()):
             obj = {}
             name = bpa_id_to_ckan_name('control', self.ckan_data_type + '-' + self.amplicon, flow_id).lower()
-            track_meta = self.track_meta.get(info['ticket'])
             google_track_meta = self.google_track_meta.get(info['ticket'])
             obj.update({
                 'name': name,
@@ -290,7 +292,6 @@ class BaseMarineMicrobesAmpliconsControlMetadata(BaseMarineMicrobesMetadata):
                 'description': google_track_meta.description,
                 'folder_name': google_track_meta.folder_name,
                 'sample_submission_date': ingest_utils.get_date_isoformat(google_track_meta.date_of_transfer),
-                'contextual_data_submission_date': None,
                 'data_generated': ingest_utils.get_date_isoformat(google_track_meta.date_of_transfer_to_archive),
                 'archive_ingestion_date': ingest_utils.get_date_isoformat(google_track_meta.date_of_transfer_to_archive),
                 'dataset_url': google_track_meta.download,
@@ -395,9 +396,9 @@ class MarineMicrobesMetagenomicsMetadata(BaseMarineMicrobesMetadata):
                 bpa_id = row.bpa_id
                 if bpa_id is None:
                     continue
-                track_meta = self.track_meta.get(row.ticket)
+                track_meta = self.track_meta.get(bpa_id)
                 google_track_meta = self.google_track_meta.get(row.ticket)
-                obj = {}
+                obj = self.extract_bpam_metadata(track_meta)
                 name = bpa_id_to_ckan_name(bpa_id.split('.')[-1], self.ckan_data_type)
                 obj.update({
                     'name': name,
@@ -413,7 +414,6 @@ class MarineMicrobesMetagenomicsMetadata(BaseMarineMicrobesMetadata):
                     'description': google_track_meta.description,
                     'folder_name': google_track_meta.folder_name,
                     'sample_submission_date': ingest_utils.get_date_isoformat(google_track_meta.date_of_transfer),
-                    'contextual_data_submission_date': None,
                     'data_generated': ingest_utils.get_date_isoformat(google_track_meta.date_of_transfer_to_archive),
                     'archive_ingestion_date': ingest_utils.get_date_isoformat(google_track_meta.date_of_transfer_to_archive),
                     'dataset_url': google_track_meta.download,
@@ -507,9 +507,9 @@ class MarineMicrobesMetatranscriptomeMetadata(BaseMarineMicrobesMetadata):
             bpa_id = row.bpa_id
             if bpa_id is None:
                 continue
-            track_meta = self.track_meta.get(row.ticket)
+            track_meta = self.track_meta.get(bpa_id)
             google_track_meta = self.google_track_meta.get(row.ticket)
-            obj = {}
+            obj = self.extract_bpam_metadata(track_meta)
             name = bpa_id_to_ckan_name(bpa_id.split('.')[-1], self.ckan_data_type)
             obj.update({
                 'name': name,
@@ -525,7 +525,6 @@ class MarineMicrobesMetatranscriptomeMetadata(BaseMarineMicrobesMetadata):
                 'description': google_track_meta.description,
                 'folder_name': google_track_meta.folder_name,
                 'sample_submission_date': ingest_utils.get_date_isoformat(google_track_meta.date_of_transfer),
-                'contextual_data_submission_date': None,
                 'data_generated': ingest_utils.get_date_isoformat(google_track_meta.date_of_transfer_to_archive),
                 'archive_ingestion_date': ingest_utils.get_date_isoformat(google_track_meta.date_of_transfer_to_archive),
                 'dataset_url': google_track_meta.download,
