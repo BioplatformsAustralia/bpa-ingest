@@ -8,7 +8,7 @@ logger = make_logger(__name__)
 
 class SepsisTrackMetadata(object):
     def __init__(self, name):
-        fname = get_track_csv('bpam', '*' + name + '*.csv')
+        fname = get_track_csv('bpam', '*' + name + '*.csv', project='sepsis')
         self.track_meta = self.read_track_csv(fname)
 
     def read_track_csv(self, fname):

@@ -6,15 +6,20 @@ from glob import glob
 logger = make_logger(__name__)
 
 
-def get_track_dir(platform):
+def get_track_dir(platform, project=None):
+    if project is not None:
+        rel_path = '../track-metadata/' + platform + '/' + project + '/'
+    else:
+        rel_path = '../track-metadata/' + platform + '/'
     return os.path.abspath(
         os.path.join(
             os.path.dirname(__file__),
-            '../track-metadata/' + platform + '/'))
+            rel_path))
 
 
-def get_track_csv(platform, glob_pattern):
-    return one(glob(os.path.join(get_track_dir(platform), glob_pattern)))
+def get_track_csv(platform, glob_pattern, project=None):
+    print(os.path.join(get_track_dir(platform, project), glob_pattern))
+    return one(glob(os.path.join(get_track_dir(platform, project), glob_pattern)))
 
 
 class GoogleDriveTrackMetadata(object):
