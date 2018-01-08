@@ -52,4 +52,4 @@ class MarineMicrobesTrackMetadata(object):
 
 
 class MarineMicrobesGoogleTrackMetadata(GoogleDriveTrackMetadata):
-    name = 'Marine Microbes'
+    name = 'Marine Microbe'

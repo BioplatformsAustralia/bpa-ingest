@@ -18,7 +18,6 @@ def get_track_dir(platform, project=None):
 
 
 def get_track_csv(platform, glob_pattern, project=None):
-    print(os.path.join(get_track_dir(platform, project), glob_pattern))
     return one(glob(os.path.join(get_track_dir(platform, project), glob_pattern)))
 
 
