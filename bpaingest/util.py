@@ -13,6 +13,7 @@ import datetime
 
 
 
+
 def one(l):
     if len(l) != 1:
         raise Exception("Expected one element, got {}: {}".format(len(l), l))
@@ -156,12 +157,11 @@ def common_values(dicts):
 
 def apply_license(archive_ingestion_date):
     if not archive_ingestion_date:
-        return "Not Applicable"
+        return "notspecified"
 
     archive_ingestion_date = datetime.datetime.strptime(archive_ingestion_date, "%Y-%m-%d").date()
 
-
     if archive_ingestion_date + relativedelta(months=3) > datetime.date.today():
-        return "Proprietary"
+        return "other-closed"
     else:
-        return "Creative Commons"
+        return "CC-BY-3.0-AU"
