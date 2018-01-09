@@ -9,7 +9,7 @@ from ...libs import ingest_utils
 from ...abstract import BaseMetadata
 from ...libs.excel_wrapper import make_field_definition as fld
 from . import files
-from . tracking import MarineMicrobesTrackMetadata
+from . tracking import (MarineMicrobesGoogleTrackMetadata, MarineMicrobesTrackMetadata)
 from .contextual import (MarineMicrobesSampleContextual, MarineMicrobesNCBIContextual)
 
 import os
@@ -70,7 +70,18 @@ def unique_spreadsheets(fnames):
     return [t for t in fnames if t not in skip_files]
 
 
-class BaseMarineMicrobesAmpliconsMetadata(BaseMetadata):
+class BaseMarineMicrobesMetadata(BaseMetadata):
+    def __init__(self, *args, **kwargs):
+        super(BaseMarineMicrobesMetadata, self).__init__(*args, **kwargs)
+        self.google_track_meta = MarineMicrobesGoogleTrackMetadata()
+        self.track_meta = MarineMicrobesTrackMetadata(self.tracker_filename)
+
+    def extract_bpam_metadata(self, track_meta):
+        fields = ('archive_ingestion_date', 'contextual_data_submission_date', 'data_generated', 'sample_submission_date', 'submitter', 'work_order')
+        return dict((t, track_meta.get(t, '')) for t in fields)
+
+
+class BaseMarineMicrobesAmpliconsMetadata(BaseMarineMicrobesMetadata):
     auth = ('marine', 'marine')
     organization = 'bpa-marine-microbes'
     ckan_data_type = 'mm-genomics-amplicon'
@@ -109,7 +120,6 @@ class BaseMarineMicrobesAmpliconsMetadata(BaseMetadata):
         self.path = Path(metadata_path)
         self.contextual_metadata = contextual_metadata
         self.metadata_info = metadata_info
-        self.track_meta = MarineMicrobesTrackMetadata()
 
     def _get_packages(self):
         xlsx_re = re.compile(r'^.*_(\w+)_metadata.*\.xlsx$')
@@ -129,15 +139,16 @@ class BaseMarineMicrobesAmpliconsMetadata(BaseMetadata):
             # the pilot data needs increased linkage, due to multiple trials on the same BPA ID
             index_linkage = base_fname in self.index_linkage_spreadsheets
             for row in BaseMarineMicrobesAmpliconsMetadata.parse_spreadsheet(fname, self.metadata_info):
-                track_meta = self.track_meta.get(row.ticket)
                 bpa_id = row.bpa_id
                 if bpa_id is None:
                     continue
-                obj = {}
+                track_meta = self.track_meta.get(bpa_id)
+                google_track_meta = self.google_track_meta.get(row.ticket)
+                obj = self.extract_bpam_metadata(track_meta)
                 index = index_from_comment([row.comments, row.sample_name_on_sample_sheet])
                 mm_amplicon_linkage = build_mm_amplicon_linkage(index_linkage, flow_id, index)
                 name = bpa_id_to_ckan_name(bpa_id.split('.')[-1], self.ckan_data_type + '-' + self.amplicon, mm_amplicon_linkage)
-                archive_ingestion_date = ingest_utils.get_date_isoformat(track_meta.date_of_transfer_to_archive)
+                archive_ingestion_date = ingest_utils.get_date_isoformat(google_track_meta.date_of_transfer_to_archive)
 
                 obj.update({
                     'name': name,
@@ -157,16 +168,15 @@ class BaseMarineMicrobesAmpliconsMetadata(BaseMetadata):
                     'title': 'Marine Microbes Amplicons %s %s %s' % (self.amplicon, bpa_id, flow_id),
                     'omics': 'Genomics',
                     'analytical_platform': 'MiSeq',
-                    'date_of_transfer': ingest_utils.get_date_isoformat(track_meta.date_of_transfer),
-                    'data_type': track_meta.data_type,
-                    'description': track_meta.description,
-                    'folder_name': track_meta.folder_name,
-                    'sample_submission_date': ingest_utils.get_date_isoformat(track_meta.date_of_transfer),
-                    'contextual_data_submission_date': None,
-                    'data_generated': ingest_utils.get_date_isoformat(track_meta.date_of_transfer_to_archive),
+                    'date_of_transfer': ingest_utils.get_date_isoformat(google_track_meta.date_of_transfer),
+                    'data_type': google_track_meta.data_type,
+                    'description': google_track_meta.description,
+                    'folder_name': google_track_meta.folder_name,
+                    'sample_submission_date': ingest_utils.get_date_isoformat(google_track_meta.date_of_transfer),
+                    'data_generated': ingest_utils.get_date_isoformat(google_track_meta.date_of_transfer_to_archive),
                     'archive_ingestion_date': archive_ingestion_date,
                     'license': apply_license(archive_ingestion_date),
-                    'dataset_url': track_meta.download,
+                    'dataset_url': google_track_meta.download,
                     'ticket': row.ticket,
                     'facility': row.facility_code.upper(),
                     'type': self.ckan_data_type,
@@ -212,6 +222,7 @@ class MarineMicrobesGenomicsAmplicons16SMetadata(BaseMarineMicrobesAmpliconsMeta
         'https://downloads-qcif.bioplatforms.com/bpa/marine_microbes/raw/amplicons/16s/'
     ]
     metadata_url_components = ('facility_code', 'ticket')
+    tracker_filename = 'Amplicon16STrack'
 
 
 class MarineMicrobesGenomicsAmpliconsA16SMetadata(BaseMarineMicrobesAmpliconsMetadata):
@@ -223,6 +234,7 @@ class MarineMicrobesGenomicsAmpliconsA16SMetadata(BaseMarineMicrobesAmpliconsMet
         'https://downloads-qcif.bioplatforms.com/bpa/marine_microbes/raw/amplicons/a16s/'
     ]
     metadata_url_components = ('facility_code', 'ticket')
+    tracker_filename = 'AmpliconA16STrack'
 
 
 class MarineMicrobesGenomicsAmplicons18SMetadata(BaseMarineMicrobesAmpliconsMetadata):
@@ -234,9 +246,10 @@ class MarineMicrobesGenomicsAmplicons18SMetadata(BaseMarineMicrobesAmpliconsMeta
         'https://downloads-qcif.bioplatforms.com/bpa/marine_microbes/raw/amplicons/18s/'
     ]
     metadata_url_components = ('facility_code', 'ticket')
+    tracker_filename = 'Amplicon18STrack'
 
 
-class BaseMarineMicrobesAmpliconsControlMetadata(BaseMetadata):
+class BaseMarineMicrobesAmpliconsControlMetadata(BaseMarineMicrobesMetadata):
     auth = ('marine', 'marine')
     organization = 'bpa-marine-microbes'
     ckan_data_type = 'mm-genomics-amplicon-control'
@@ -253,7 +266,6 @@ class BaseMarineMicrobesAmpliconsControlMetadata(BaseMetadata):
         super(BaseMarineMicrobesAmpliconsControlMetadata, self).__init__()
         self.path = Path(metadata_path)
         self.metadata_info = metadata_info
-        self.track_meta = MarineMicrobesTrackMetadata()
 
     def md5_lines(self):
         logger.info("Ingesting MM md5 file information from {0}".format(self.path))
@@ -269,7 +281,9 @@ class BaseMarineMicrobesAmpliconsControlMetadata(BaseMetadata):
             obj = {}
             name = bpa_id_to_ckan_name('control', self.ckan_data_type + '-' + self.amplicon, flow_id).lower()
             track_meta = self.track_meta.get(info['ticket'])
-            archive_ingestion_date = ingest_utils.get_date_isoformat(track_meta.date_of_transfer_to_archive)
+            google_track_meta = self.google_track_meta.get(info['ticket'])
+
+            archive_ingestion_date = ingest_utils.get_date_isoformat(google_track_meta.date_of_transfer_to_archive)
 
             obj.update({
                 'name': name,
@@ -280,16 +294,15 @@ class BaseMarineMicrobesAmpliconsControlMetadata(BaseMetadata):
                 'omics': 'Genomics',
                 'analytical_platform': 'MiSeq',
                 'read_length': mm_amplicon_read_length(self.amplicon),
-                'date_of_transfer': ingest_utils.get_date_isoformat(track_meta.date_of_transfer),
-                'data_type': track_meta.data_type,
-                'description': track_meta.description,
-                'folder_name': track_meta.folder_name,
-                'sample_submission_date': ingest_utils.get_date_isoformat(track_meta.date_of_transfer),
-                'contextual_data_submission_date': None,
-                'data_generated': ingest_utils.get_date_isoformat(track_meta.date_of_transfer_to_archive),
+                'date_of_transfer': ingest_utils.get_date_isoformat(google_track_meta.date_of_transfer),
+                'data_type': google_track_meta.data_type,
+                'description': google_track_meta.description,
+                'folder_name': google_track_meta.folder_name,
+                'sample_submission_date': ingest_utils.get_date_isoformat(google_track_meta.date_of_transfer),
+                'data_generated': ingest_utils.get_date_isoformat(google_track_meta.date_of_transfer_to_archive),
                 'archive_ingestion_date': archive_ingestion_date,
                 'license': apply_license(archive_ingestion_date),
-                'dataset_url': track_meta.download,
+                'dataset_url': google_track_meta.download,
                 'ticket': info['ticket'],
                 'facility': info['facility_code'].upper(),
                 'amplicon': self.amplicon,
@@ -322,6 +335,7 @@ class MarineMicrobesGenomicsAmplicons16SControlMetadata(BaseMarineMicrobesAmplic
         'https://downloads-qcif.bioplatforms.com/bpa/marine_microbes/raw/amplicons/16s/'
     ]
     metadata_url_components = ('facility_code', 'ticket')
+    tracker_filename = 'Amplicon16STrack'
 
 
 class MarineMicrobesGenomicsAmpliconsA16SControlMetadata(BaseMarineMicrobesAmpliconsControlMetadata):
@@ -331,6 +345,7 @@ class MarineMicrobesGenomicsAmpliconsA16SControlMetadata(BaseMarineMicrobesAmpli
         'https://downloads-qcif.bioplatforms.com/bpa/marine_microbes/raw/amplicons/a16s/'
     ]
     metadata_url_components = ('facility_code', 'ticket')
+    tracker_filename = 'AmpliconA16STrack'
 
 
 class MarineMicrobesGenomicsAmplicons18SControlMetadata(BaseMarineMicrobesAmpliconsControlMetadata):
@@ -340,9 +355,10 @@ class MarineMicrobesGenomicsAmplicons18SControlMetadata(BaseMarineMicrobesAmplic
         'https://downloads-qcif.bioplatforms.com/bpa/marine_microbes/raw/amplicons/18s/'
     ]
     metadata_url_components = ('facility_code', 'ticket')
+    tracker_filename = 'Amplicon18STrack'
 
 
-class MarineMicrobesMetagenomicsMetadata(BaseMetadata):
+class MarineMicrobesMetagenomicsMetadata(BaseMarineMicrobesMetadata):
     auth = ('marine', 'marine')
     organization = 'bpa-marine-microbes'
     ckan_data_type = 'mm-metagenomics'
@@ -353,6 +369,7 @@ class MarineMicrobesMetagenomicsMetadata(BaseMetadata):
         'https://downloads-qcif.bioplatforms.com/bpa/marine_microbes/raw/metagenomics/'
     ]
     metadata_url_components = ('facility_code', 'ticket')
+    tracker_filename = 'MetagenomicsTrack'
     spreadsheet = {
         'fields': [
             fld("bpa_id", re.compile(r'^.*sample unique id$'), coerce=ingest_utils.extract_bpa_id),
@@ -377,7 +394,6 @@ class MarineMicrobesMetagenomicsMetadata(BaseMetadata):
         self.path = Path(metadata_path)
         self.contextual_metadata = contextual_metadata
         self.metadata_info = metadata_info
-        self.track_meta = MarineMicrobesTrackMetadata()
 
     def _get_packages(self):
         logger.info("Ingesting Marine Microbes metadata from {0}".format(self.path))
@@ -388,10 +404,11 @@ class MarineMicrobesMetagenomicsMetadata(BaseMetadata):
                 bpa_id = row.bpa_id
                 if bpa_id is None:
                     continue
-                track_meta = self.track_meta.get(row.ticket)
-                obj = {}
+                track_meta = self.track_meta.get(bpa_id)
+                google_track_meta = self.google_track_meta.get(row.ticket)
+                obj = self.extract_bpam_metadata(track_meta)
                 name = bpa_id_to_ckan_name(bpa_id.split('.')[-1], self.ckan_data_type)
-                archive_ingestion_date = ingest_utils.get_date_isoformat(track_meta.date_of_transfer_to_archive)
+                archive_ingestion_date = ingest_utils.get_date_isoformat(google_track_meta.date_of_transfer_to_archive)
 
                 obj.update({
                     'name': name,
@@ -402,16 +419,15 @@ class MarineMicrobesMetagenomicsMetadata(BaseMetadata):
                     'omics': 'metagenomics',
                     'analytical_platform': 'HiSeq',
                     'read_length': '250bp',
-                    'date_of_transfer': ingest_utils.get_date_isoformat(track_meta.date_of_transfer),
-                    'data_type': track_meta.data_type,
-                    'description': track_meta.description,
-                    'folder_name': track_meta.folder_name,
-                    'sample_submission_date': ingest_utils.get_date_isoformat(track_meta.date_of_transfer),
-                    'contextual_data_submission_date': None,
-                    'data_generated': ingest_utils.get_date_isoformat(track_meta.date_of_transfer_to_archive),
+                    'date_of_transfer': ingest_utils.get_date_isoformat(google_track_meta.date_of_transfer),
+                    'data_type': google_track_meta.data_type,
+                    'description': google_track_meta.description,
+                    'folder_name': google_track_meta.folder_name,
+                    'sample_submission_date': ingest_utils.get_date_isoformat(google_track_meta.date_of_transfer),
+                    'data_generated': ingest_utils.get_date_isoformat(google_track_meta.date_of_transfer_to_archive),
                     'archive_ingestion_date': archive_ingestion_date,
                     'license': apply_license(archive_ingestion_date),
-                    'dataset_url': track_meta.download,
+                    'dataset_url': google_track_meta.download,
                     'sample_extraction_id': ingest_utils.make_sample_extraction_id(row.sample_extraction_id, bpa_id),
                     'insert_size_range': row.insert_size_range,
                     'library_construction_protocol': row.library_construction_protocol,
@@ -451,7 +467,7 @@ class MarineMicrobesMetagenomicsMetadata(BaseMetadata):
         return resources
 
 
-class MarineMicrobesMetatranscriptomeMetadata(BaseMetadata):
+class MarineMicrobesMetatranscriptomeMetadata(BaseMarineMicrobesMetadata):
     auth = ('marine', 'marine')
     organization = 'bpa-marine-microbes'
     ckan_data_type = 'mm-metatranscriptome'
@@ -462,6 +478,7 @@ class MarineMicrobesMetatranscriptomeMetadata(BaseMetadata):
         'https://downloads-qcif.bioplatforms.com/bpa/marine_microbes/raw/metatranscriptome/'
     ]
     metadata_url_components = ('facility_code', 'ticket')
+    tracker_filename = 'MetatranscriptomeTrack'
     spreadsheet = {
         'fields': [
             fld("bpa_id", re.compile(r'^.*sample unique id$'), coerce=ingest_utils.extract_bpa_id),
@@ -486,7 +503,6 @@ class MarineMicrobesMetatranscriptomeMetadata(BaseMetadata):
         self.path = Path(metadata_path)
         self.contextual_metadata = contextual_metadata
         self.metadata_info = metadata_info
-        self.track_meta = MarineMicrobesTrackMetadata()
 
     def _get_packages(self):
         logger.info("Ingesting Marine Microbes Transcriptomics metadata from {0}".format(self.path))
@@ -502,10 +518,11 @@ class MarineMicrobesMetatranscriptomeMetadata(BaseMetadata):
             bpa_id = row.bpa_id
             if bpa_id is None:
                 continue
-            track_meta = self.track_meta.get(row.ticket)
-            obj = {}
+            track_meta = self.track_meta.get(bpa_id)
+            google_track_meta = self.google_track_meta.get(row.ticket)
+            obj = self.extract_bpam_metadata(track_meta)
             name = bpa_id_to_ckan_name(bpa_id.split('.')[-1], self.ckan_data_type)
-            archive_ingestion_date = ingest_utils.get_date_isoformat(track_meta.date_of_transfer_to_archive)
+            archive_ingestion_date = ingest_utils.get_date_isoformat(google_track_meta.date_of_transfer_to_archive)
 
             obj.update({
                 'name': name,
@@ -516,16 +533,15 @@ class MarineMicrobesMetatranscriptomeMetadata(BaseMetadata):
                 'omics': 'metatranscriptomics',
                 'analytical_platform': 'HiSeq',
                 'read_length': '250bp',  # to be confirmed by Jason Koval
-                'date_of_transfer': ingest_utils.get_date_isoformat(track_meta.date_of_transfer),
-                'data_type': track_meta.data_type,
-                'description': track_meta.description,
-                'folder_name': track_meta.folder_name,
-                'sample_submission_date': ingest_utils.get_date_isoformat(track_meta.date_of_transfer),
-                'contextual_data_submission_date': None,
-                'data_generated': ingest_utils.get_date_isoformat(track_meta.date_of_transfer_to_archive),
+                'date_of_transfer': ingest_utils.get_date_isoformat(google_track_meta.date_of_transfer),
+                'data_type': google_track_meta.data_type,
+                'description': google_track_meta.description,
+                'folder_name': google_track_meta.folder_name,
+                'sample_submission_date': ingest_utils.get_date_isoformat(google_track_meta.date_of_transfer),
+                'data_generated': ingest_utils.get_date_isoformat(google_track_meta.date_of_transfer_to_archive),
                 'archive_ingestion_date': archive_ingestion_date,
                 'license': apply_license(archive_ingestion_date),
-                'dataset_url': track_meta.download,
+                'dataset_url': google_track_meta.download,
                 'sample_extraction_id': ingest_utils.make_sample_extraction_id(row.sample_extraction_id, bpa_id),
                 'insert_size_range': row.insert_size_range,
                 'library_construction_protocol': row.library_construction_protocol,

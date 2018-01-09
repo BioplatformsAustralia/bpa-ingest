@@ -73,7 +73,7 @@ class GenericHandler:
 
         def env_val(name):
             conversion = conversions.get(name, lambda x: x)
-            return conversion(os.environ[name.upper()])
+            return conversion(os.environ[name.upper()] if name not in optional else os.environ.get(name.upper()))
 
         EnvVars = namedtuple('EnvVars', names)
         return EnvVars(*[env_val(name) for name in names])

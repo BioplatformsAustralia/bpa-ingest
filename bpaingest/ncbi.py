@@ -55,11 +55,18 @@ class NCBISRAContextual:
         """
         SRA subtemplates as sent through to NCBI, TSV format
         """
+
+        def yank_filenames(rows):
+            for row in (t._asdict() for t in rows):
+                for k, v in row.items():
+                    if k.startswith('filename'):
+                        yield v
+
         templates = glob(self._path + '/' + 'SRA_subtemplate*.txt')
         files = set()
         for fname in templates:
             _, rows = csv_to_named_tuple('SRARow', fname, mode='rU', dialect='excel-tab')
-            files.update({t.filename for t in rows})
+            files.update(yank_filenames(rows))
         return files
 
     def _read_2016_submitted(self):
