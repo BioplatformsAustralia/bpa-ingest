@@ -70,6 +70,28 @@ class BASEAmpliconsMetadata(BaseMetadata):
     # pilot data
     index_linkage_spreadsheets = ('BASE_18S_UNSW_A6BRJ_metadata.xlsx',)
     index_linkage_md5s = ('BASE_18S_UNSW_A6BRJ_checksums.md5',)
+    # FIXME: these to be corrected with the real dates (all early data)
+    # work-around put in place to proceed with NCBI upload GB 10/01/2018
+    missing_ingest_dates = [
+        'BRLOPS-215',
+        'BRLOPS-268',
+        'BRLOPS-269',
+        'BRLOPS-270',
+        'BRLOPS-273',
+        'BRLOPS-288',
+        'BRLOPS-289',
+        'BRLOPS-290',
+        'BRLOPS-291',
+        'BRLOPS-301',
+        'BRLOPS-302',
+        'BRLOPS-303',
+        'BRLOPS-309',
+        'BRLOPS-311',
+        'BRLOPS-382',
+        'BRLOPS-419',
+        'BRLOPS-652',
+        'BRLOPS-677',
+    ]
     # spreadsheet
     spreadsheet = {
         'fields': [
@@ -126,9 +148,12 @@ class BASEAmpliconsMetadata(BaseMetadata):
                 flow_id = get_flow_id(fname)
 
                 def track_get(k):
+                    if row.ticket.strip() in self.missing_ingest_dates and k.startswith('date_of_transfer'):
+                        return '2015-01-01'
                     if track_meta is None:
                         return None
                     return getattr(track_meta, k)
+
                 bpa_id = row.bpa_id
                 if bpa_id is None:
                     continue
@@ -168,18 +193,18 @@ class BASEAmpliconsMetadata(BaseMetadata):
                     'amplicon': amplicon,
                     'notes': 'BASE Amplicons %s %s %s' % (amplicon, sample_extraction_id, note_extra),
                     'title': 'BASE Amplicons %s %s %s' % (amplicon, sample_extraction_id, note_extra),
+                    'contextual_data_submission_date': None,
+                    'ticket': row.ticket,
+                    'facility': row.facility_code.upper(),
+                    'type': self.ckan_data_type,
                     'date_of_transfer': ingest_utils.get_date_isoformat(track_get('date_of_transfer')),
                     'data_type': track_get('data_type'),
                     'description': track_get('description'),
                     'folder_name': track_get('folder_name'),
                     'sample_submission_date': ingest_utils.get_date_isoformat(track_get('date_of_transfer')),
-                    'contextual_data_submission_date': None,
                     'data_generated': ingest_utils.get_date_isoformat(track_get('date_of_transfer_to_archive')),
                     'archive_ingestion_date': ingest_utils.get_date_isoformat(track_get('date_of_transfer_to_archive')),
                     'dataset_url': track_get('download'),
-                    'ticket': row.ticket,
-                    'facility': row.facility_code.upper(),
-                    'type': self.ckan_data_type,
                     'comments': row.comments,
                     'private': True,
                 })
@@ -386,17 +411,17 @@ class BASEMetagenomicsMetadata(BaseMetadata):
             'analysis_software_version': row_get('casava_version'),
             'notes': 'BASE Metagenomics %s' % (sample_extraction_id),
             'title': 'BASE Metagenomics %s' % (sample_extraction_id),
+            'contextual_data_submission_date': None,
+            'ticket': row_get('ticket'),
+            'facility': row_get('facility_code', lambda v: v.upper()),
             'date_of_transfer': ingest_utils.get_date_isoformat(track_get('date_of_transfer')),
+            'sample_submission_date': ingest_utils.get_date_isoformat(track_get('date_of_transfer')),
+            'data_generated': ingest_utils.get_date_isoformat(track_get('date_of_transfer_to_archive')),
+            'archive_ingestion_date': ingest_utils.get_date_isoformat(track_get('date_of_transfer_to_archive')),
             'data_type': track_get('data_type'),
             'description': track_get('description'),
             'folder_name': track_get('folder_name'),
-            'sample_submission_date': ingest_utils.get_date_isoformat(track_get('date_of_transfer')),
-            'contextual_data_submission_date': None,
-            'data_generated': ingest_utils.get_date_isoformat(track_get('date_of_transfer_to_archive')),
-            'archive_ingestion_date': ingest_utils.get_date_isoformat(track_get('date_of_transfer_to_archive')),
             'dataset_url': track_get('download'),
-            'ticket': row_get('ticket'),
-            'facility': row_get('facility_code', lambda v: v.upper()),
             'type': self.ckan_data_type,
             'private': True,
         }
@@ -420,14 +445,27 @@ class BASEMetagenomicsMetadata(BaseMetadata):
         logger.info("Ingesting BASE Metagenomics metadata from {0}".format(self.path))
         packages = []
 
+        class FakePilotRow(object):
+            def __init__(self, xlsx_info):
+                self.ticket = xlsx_info['ticket']
+                self.facility_code = xlsx_info['facility_code']
+                for attr in ('insert_size_range', 'library_construction_protocol', 'sequencer', 'casava_version'):
+                    setattr(self, attr, None)
+
+        class FakePilotTrackMeta(object):
+            def __init__(self):
+                # place-holder date, this is very early data
+                self.archive_ingest_date = self.date_of_transfer_to_archive = self.date_of_transfer = '2015-01-01'
+                for attr in ('data_type', 'description', 'folder_name', 'download'):
+                    setattr(self, attr, None)
+
         # missing metadata (see note above)
         for sample_extraction_id, flow_id in self.missing_packages:
             bpa_id = ingest_utils.extract_bpa_id(sample_extraction_id.split('_')[0])
             sample_extraction_id = ingest_utils.make_sample_extraction_id(sample_extraction_id, bpa_id)
             md5_file = one(glob(self.path + '/*%s*.md5' % (flow_id)))
             xlsx_info = self.metadata_info[os.path.basename(md5_file)]
-            track_meta = self.track_meta.get(xlsx_info['ticket'])
-            packages.append(self.assemble_obj(bpa_id, sample_extraction_id, flow_id, None, track_meta))
+            packages.append(self.assemble_obj(bpa_id, sample_extraction_id, flow_id, FakePilotRow(xlsx_info), FakePilotTrackMeta()))
 
         # the generated package IDs will have duplicates, due to data issues in the pilot data
         # we simply skip over the duplicates, which don't have any significant data differences
@@ -436,8 +474,11 @@ class BASEMetagenomicsMetadata(BaseMetadata):
             logger.info("Processing BASE Metagenomics metadata file {0}".format(os.path.basename(fname)))
             # unique the rows, duplicates in some of the sheets
             uniq_rows = set(t for t in self.parse_spreadsheet(fname, self.metadata_info))
+            xlsx_info = self.metadata_info[os.path.basename(fname)]
             for row in uniq_rows:
                 track_meta = self.track_meta.get(row.ticket)
+                if not track_meta:
+                    logger.critical("OOPS: {}".format(xlsx_info))
                 # pilot data has the flow cell in the spreadsheet; in the main dataset
                 # there is one flow-cell per spreadsheet, so it's in the spreadsheet
                 # filename
