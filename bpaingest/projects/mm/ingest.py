@@ -1,4 +1,4 @@
-
+AusMicro
 
 from unipath import Path
 from urllib.parse import urljoin
@@ -9,8 +9,8 @@ from ...libs import ingest_utils
 from ...abstract import BaseMetadata
 from ...libs.excel_wrapper import make_field_definition as fld
 from . import files
-from . tracking import (MarineMicrobesGoogleTrackMetadata, MarineMicrobesTrackMetadata)
-from .contextual import (MarineMicrobesSampleContextual, MarineMicrobesNCBIContextual)
+from . tracking import (AusMicroGoogleTrackMetadata, AusMicroTrackMetadata)
+from .contextual import (AusMicroSampleContextual, AusMicroNCBIContextual)
 
 import os
 import re
@@ -21,7 +21,7 @@ logger = make_logger(__name__)
 index_from_comment_re = re.compile(r'([G|A|T|C|-]{6,}_[G|A|T|C|-]{6,})')
 index_from_comment_pilot_re = re.compile(r'_([G|A|T|C|-]{6,})_')
 
-common_context = [MarineMicrobesSampleContextual, MarineMicrobesNCBIContextual]
+common_context = [AusMicroSampleContextual, AusMicroNCBIContextual]
 
 read_lengths = {
     '16S': '300bp',
@@ -30,7 +30,7 @@ read_lengths = {
 }
 
 
-def mm_amplicon_read_length(amplicon):
+def ausmicro_amplicon_read_length(amplicon):
     return read_lengths[amplicon.upper()]
 
 
@@ -50,7 +50,7 @@ def index_from_comment(attrs):
         return m.groups()[0]
 
 
-def build_mm_amplicon_linkage(index_linkage, flow_id, index):
+def build_ausmicro_amplicon_linkage(index_linkage, flow_id, index):
     # build linkage, `index_linkage` indicates whether we need
     # to include index in the linkage
     if index_linkage:
@@ -70,11 +70,11 @@ def unique_spreadsheets(fnames):
     return [t for t in fnames if t not in skip_files]
 
 
-class BaseMarineMicrobesMetadata(BaseMetadata):
+class BaseAusMicroMetadata(BaseMetadata):
     def __init__(self, *args, **kwargs):
-        super(BaseMarineMicrobesMetadata, self).__init__(*args, **kwargs)
-        self.google_track_meta = MarineMicrobesGoogleTrackMetadata()
-        self.track_meta = MarineMicrobesTrackMetadata(self.tracker_filename)
+        super(BaseAusMicroMetadata, self).__init__(*args, **kwargs)
+        self.google_track_meta = AusMicroGoogleTrackMetadata()
+        self.track_meta = AusMicroTrackMetadata(self.tracker_filename)
 
     def extract_bpam_metadata(self, track_meta):
         fields = ('archive_ingestion_date', 'contextual_data_submission_date', 'data_generated', 'sample_submission_date', 'submitter', 'work_order')
@@ -88,7 +88,7 @@ class BaseMarineMicrobesAmpliconsMetadata(BaseMarineMicrobesMetadata):
     omics = 'genomics'
     contextual_classes = common_context
     metadata_patterns = [r'^.*\.md5', r'^.*_metadata.*.*\.xlsx']
-    resource_linkage = ('bpa_id', 'mm_amplicon_linkage')
+    resource_linkage = ('bpa_id', 'ausmicro_amplicon_linkage')
     spreadsheet = {
         'fields': [
             fld("bpa_id", re.compile(r'^.*sample unique id$'), coerce=ingest_utils.extract_bpa_id),
@@ -116,7 +116,7 @@ class BaseMarineMicrobesAmpliconsMetadata(BaseMarineMicrobesMetadata):
     }
 
     def __init__(self, metadata_path, contextual_metadata=None, metadata_info=None):
-        super(BaseMarineMicrobesAmpliconsMetadata, self).__init__()
+        super(BaseAusMicroAmpliconsMetadata, self).__init__()
         self.path = Path(metadata_path)
         self.contextual_metadata = contextual_metadata
         self.metadata_info = metadata_info
@@ -130,15 +130,15 @@ class BaseMarineMicrobesAmpliconsMetadata(BaseMarineMicrobesMetadata):
                 raise Exception("unable to find flowcell for filename: `%s'" % (fname))
             return m.groups()[0]
 
-        logger.info("Ingesting Marine Microbes metadata from {0}".format(self.path))
+        logger.info("Ingesting AusMicro metadata from {0}".format(self.path))
         packages = []
         for fname in unique_spreadsheets(glob(self.path + '/*.xlsx')):
             base_fname = os.path.basename(fname)
-            logger.info("Processing Marine Microbes metadata file {0}".format(os.path.basename(fname)))
+            logger.info("Processing AusMicro metadata file {0}".format(os.path.basename(fname)))
             flow_id = get_flow_id(fname)
             # the pilot data needs increased linkage, due to multiple trials on the same BPA ID
             index_linkage = base_fname in self.index_linkage_spreadsheets
-            for row in BaseMarineMicrobesAmpliconsMetadata.parse_spreadsheet(fname, self.metadata_info):
+            for row in BaseAusMicroAmpliconsMetadata.parse_spreadsheet(fname, self.metadata_info):
                 bpa_id = row.bpa_id
                 if bpa_id is None:
                     continue
@@ -146,24 +146,24 @@ class BaseMarineMicrobesAmpliconsMetadata(BaseMarineMicrobesMetadata):
                 google_track_meta = self.google_track_meta.get(row.ticket)
                 obj = self.extract_bpam_metadata(track_meta)
                 index = index_from_comment([row.comments, row.sample_name_on_sample_sheet])
-                mm_amplicon_linkage = build_mm_amplicon_linkage(index_linkage, flow_id, index)
-                name = bpa_id_to_ckan_name(bpa_id.split('.')[-1], self.ckan_data_type + '-' + self.amplicon, mm_amplicon_linkage)
+                ausmicro_amplicon_linkage = build_ausmicro_amplicon_linkage(index_linkage, flow_id, index)
+                name = bpa_id_to_ckan_name(bpa_id.split('.')[-1], self.ckan_data_type + '-' + self.amplicon, ausmicro_amplicon_linkage)
                 obj.update({
                     'name': name,
                     'id': name,
                     'bpa_id': bpa_id,
                     'flow_id': flow_id,
-                    'mm_amplicon_linkage': mm_amplicon_linkage,
+                    'ausmicro_amplicon_linkage': ausmicro_amplicon_linkage,
                     'sample_extraction_id': ingest_utils.make_sample_extraction_id(row.sample_extraction_id, bpa_id),
-                    'read_length': mm_amplicon_read_length(self.amplicon),
+                    'read_length': ausmicro_amplicon_read_length(self.amplicon),
                     'target': row.target,
                     'pass_fail': ingest_utils.merge_pass_fail(row),
                     'dilution_used': row.dilution_used,
                     'reads': row.reads,
                     'analysis_software_version': row.analysis_software_version,
                     'amplicon': self.amplicon,
-                    'notes': 'Marine Microbes Amplicons %s %s %s' % (self.amplicon, bpa_id, flow_id),
-                    'title': 'Marine Microbes Amplicons %s %s %s' % (self.amplicon, bpa_id, flow_id),
+                    'notes': 'AusMicro Amplicons %s %s %s' % (self.amplicon, bpa_id, flow_id),
+                    'title': 'AusMicro Amplicons %s %s %s' % (self.amplicon, bpa_id, flow_id),
                     'omics': 'Genomics',
                     'analytical_platform': 'MiSeq',
                     'date_of_transfer': ingest_utils.get_date_isoformat(google_track_meta.date_of_transfer),
@@ -191,7 +191,7 @@ class BaseMarineMicrobesAmpliconsMetadata(BaseMarineMicrobesMetadata):
         return packages
 
     def _get_resources(self):
-        logger.info("Ingesting MM md5 file information from {0}".format(self.path))
+        logger.info("Ingesting AusMicro md5 file information from {0}".format(self.path))
         resources = []
         for md5_file in glob(self.path + '/*.md5'):
             index_linkage = os.path.basename(md5_file) in self.index_linkage_md5s
@@ -206,15 +206,15 @@ class BaseMarineMicrobesAmpliconsMetadata(BaseMarineMicrobesMetadata):
                 bpa_id = ingest_utils.extract_bpa_id(file_info.get('id'))
                 xlsx_info = self.metadata_info[os.path.basename(md5_file)]
                 legacy_url = urljoin(xlsx_info['base_url'], filename)
-                resources.append(((bpa_id, build_mm_amplicon_linkage(index_linkage, resource['flow_id'], resource['index'])), legacy_url, resource))
+                resources.append(((bpa_id, build_ausmicro_amplicon_linkage(index_linkage, resource['flow_id'], resource['index'])), legacy_url, resource))
         return resources
 
 
-class MarineMicrobesGenomicsAmplicons16SMetadata(BaseMarineMicrobesAmpliconsMetadata):
+class AusMicroGenomicsAmplicons16SMetadata(BaseAusMicroAmpliconsMetadata):
     amplicon = '16s'
     technology = 'amplicons-16s'
-    index_linkage_spreadsheets = ('MM_Pilot_1_16S_UNSW_AFGB7_metadata.xlsx',)
-    index_linkage_md5s = ('MM_1_16S_UNSW_AFGB7_checksums.md5',)
+    index_linkage_spreadsheets = ('AusMicro_Pilot_1_16S_UNSW_AFGB7_metadata.xlsx',)
+    index_linkage_md5s = ('AusMicro_1_16S_UNSW_AFGB7_checksums.md5',)
     metadata_urls = [
         'https://downloads-qcif.bioplatforms.com/bpa/marine_microbes/raw/amplicons/16s/'
     ]
@@ -222,11 +222,11 @@ class MarineMicrobesGenomicsAmplicons16SMetadata(BaseMarineMicrobesAmpliconsMeta
     tracker_filename = 'Amplicon16STrack'
 
 
-class MarineMicrobesGenomicsAmpliconsA16SMetadata(BaseMarineMicrobesAmpliconsMetadata):
+class AusMicroGenomicsAmpliconsA16SMetadata(BaseAusMicroAmpliconsMetadata):
     amplicon = 'a16s'
     technology = 'amplicons-a16s'
-    index_linkage_spreadsheets = ('MM-Pilot_A16S_UNSW_AG27L_metadata_UPDATE.xlsx',)
-    index_linkage_md5s = ('MM_Pilot_A16S_UNSW_AG27L_checksums.md5',)
+    index_linkage_spreadsheets = ('AusMicro-Pilot_A16S_UNSW_AG27L_metadata_UPDATE.xlsx',)
+    index_linkage_md5s = ('AusMicro_Pilot_A16S_UNSW_AG27L_checksums.md5',)
     metadata_urls = [
         'https://downloads-qcif.bioplatforms.com/bpa/marine_microbes/raw/amplicons/a16s/'
     ]
@@ -234,11 +234,11 @@ class MarineMicrobesGenomicsAmpliconsA16SMetadata(BaseMarineMicrobesAmpliconsMet
     tracker_filename = 'AmpliconA16STrack'
 
 
-class MarineMicrobesGenomicsAmplicons18SMetadata(BaseMarineMicrobesAmpliconsMetadata):
+class AusMicroGenomicsAmplicons18SMetadata(BaseAusMicroAmpliconsMetadata):
     amplicon = '18s'
     technology = 'amplicons-18s'
-    index_linkage_spreadsheets = ('MM_Pilot_18S_UNSW_AGGNB_metadata.xlsx',)
-    index_linkage_md5s = ('MM_18S_UNSW_AGGNB_checksums.md5',)
+    index_linkage_spreadsheets = ('AusMicro_Pilot_18S_UNSW_AGGNB_metadata.xlsx',)
+    index_linkage_md5s = ('AusMicro_18S_UNSW_AGGNB_checksums.md5',)
     metadata_urls = [
         'https://downloads-qcif.bioplatforms.com/bpa/marine_microbes/raw/amplicons/18s/'
     ]
@@ -260,12 +260,12 @@ class BaseMarineMicrobesAmpliconsControlMetadata(BaseMarineMicrobesMetadata):
     }
 
     def __init__(self, metadata_path, contextual_metadata=None, metadata_info=None):
-        super(BaseMarineMicrobesAmpliconsControlMetadata, self).__init__()
+        super(BaseAusMicroAmpliconsControlMetadata, self).__init__()
         self.path = Path(metadata_path)
         self.metadata_info = metadata_info
 
     def md5_lines(self):
-        logger.info("Ingesting MM md5 file information from {0}".format(self.path))
+        logger.info("Ingesting AusMicro md5 file information from {0}".format(self.path))
         for md5_file in glob(self.path + '/*.md5'):
             logger.info("Processing md5 file {}".format(md5_file))
             for filename, md5, file_info in self.parse_md5file(md5_file):
@@ -282,11 +282,11 @@ class BaseMarineMicrobesAmpliconsControlMetadata(BaseMarineMicrobesMetadata):
                 'name': name,
                 'id': name,
                 'flow_id': flow_id,
-                'notes': 'Marine Microbes Amplicons Control %s %s' % (self.amplicon, flow_id),
-                'title': 'Marine Microbes Amplicons Control %s %s' % (self.amplicon, flow_id),
+                'notes': 'AusMicro Amplicons Control %s %s' % (self.amplicon, flow_id),
+                'title': 'AusMicro Amplicons Control %s %s' % (self.amplicon, flow_id),
                 'omics': 'Genomics',
                 'analytical_platform': 'MiSeq',
-                'read_length': mm_amplicon_read_length(self.amplicon),
+                'read_length': ausmicro_amplicon_read_length(self.amplicon),
                 'date_of_transfer': ingest_utils.get_date_isoformat(google_track_meta.date_of_transfer),
                 'data_type': google_track_meta.data_type,
                 'description': google_track_meta.description,
@@ -320,7 +320,7 @@ class BaseMarineMicrobesAmpliconsControlMetadata(BaseMarineMicrobesMetadata):
         return resources
 
 
-class MarineMicrobesGenomicsAmplicons16SControlMetadata(BaseMarineMicrobesAmpliconsControlMetadata):
+class AusMicroGenomicsAmplicons16SControlMetadata(BaseAusMicroAmpliconsControlMetadata):
     amplicon = '16s'
     technology = 'amplicons-control-16s'
     metadata_urls = [
@@ -330,7 +330,7 @@ class MarineMicrobesGenomicsAmplicons16SControlMetadata(BaseMarineMicrobesAmplic
     tracker_filename = 'Amplicon16STrack'
 
 
-class MarineMicrobesGenomicsAmpliconsA16SControlMetadata(BaseMarineMicrobesAmpliconsControlMetadata):
+class AusMicroGenomicsAmpliconsA16SControlMetadata(BaseAusMicroAmpliconsControlMetadata):
     amplicon = 'a16s'
     technology = 'amplicons-control-a16s'
     metadata_urls = [
@@ -340,7 +340,7 @@ class MarineMicrobesGenomicsAmpliconsA16SControlMetadata(BaseMarineMicrobesAmpli
     tracker_filename = 'AmpliconA16STrack'
 
 
-class MarineMicrobesGenomicsAmplicons18SControlMetadata(BaseMarineMicrobesAmpliconsControlMetadata):
+class AusMicroGenomicsAmplicons18SControlMetadata(BaseAusMicroAmpliconsControlMetadata):
     amplicon = '18s'
     technology = 'amplicons-control-18s'
     metadata_urls = [
@@ -382,17 +382,17 @@ class MarineMicrobesMetagenomicsMetadata(BaseMarineMicrobesMetadata):
     }
 
     def __init__(self, metadata_path, contextual_metadata=None, metadata_info=None):
-        super(MarineMicrobesMetagenomicsMetadata, self).__init__()
+        super(AusMicroMetagenomicsMetadata, self).__init__()
         self.path = Path(metadata_path)
         self.contextual_metadata = contextual_metadata
         self.metadata_info = metadata_info
 
     def _get_packages(self):
-        logger.info("Ingesting Marine Microbes metadata from {0}".format(self.path))
+        logger.info("Ingesting AusMicro metadata from {0}".format(self.path))
         packages = []
         for fname in unique_spreadsheets(glob(self.path + '/*.xlsx')):
-            logger.info("Processing Marine Microbes metadata file {0}".format(os.path.basename(fname)))
-            for row in MarineMicrobesMetagenomicsMetadata.parse_spreadsheet(fname, self.metadata_info):
+            logger.info("Processing AusMicro metadata file {0}".format(os.path.basename(fname)))
+            for row in AusMicroMetagenomicsMetadata.parse_spreadsheet(fname, self.metadata_info):
                 bpa_id = row.bpa_id
                 if bpa_id is None:
                     continue
@@ -404,8 +404,8 @@ class MarineMicrobesMetagenomicsMetadata(BaseMarineMicrobesMetadata):
                     'name': name,
                     'id': name,
                     'bpa_id': bpa_id,
-                    'notes': 'Marine Microbes Metagenomics %s' % (bpa_id),
-                    'title': 'Marine Microbes Metagenomics %s' % (bpa_id),
+                    'notes': 'AusMicro Metagenomics %s' % (bpa_id),
+                    'title': 'AusMicro Metagenomics %s' % (bpa_id),
                     'omics': 'metagenomics',
                     'analytical_platform': 'HiSeq',
                     'read_length': '250bp',
@@ -438,7 +438,7 @@ class MarineMicrobesMetagenomicsMetadata(BaseMarineMicrobesMetadata):
         return packages
 
     def _get_resources(self):
-        logger.info("Ingesting MM md5 file information from {0}".format(self.path))
+        logger.info("Ingesting AusMicro md5 file information from {0}".format(self.path))
         resources = []
         for md5_file in glob(self.path + '/*.md5'):
             logger.info("Processing md5 file {0}".format(md5_file))
@@ -488,20 +488,20 @@ class MarineMicrobesMetatranscriptomeMetadata(BaseMarineMicrobesMetadata):
     }
 
     def __init__(self, metadata_path, contextual_metadata=None, metadata_info=None):
-        super(MarineMicrobesMetatranscriptomeMetadata, self).__init__()
+        super(AusMicroMetatranscriptomeMetadata, self).__init__()
         self.path = Path(metadata_path)
         self.contextual_metadata = contextual_metadata
         self.metadata_info = metadata_info
 
     def _get_packages(self):
-        logger.info("Ingesting Marine Microbes Transcriptomics metadata from {0}".format(self.path))
+        logger.info("Ingesting AusMicro Transcriptomics metadata from {0}".format(self.path))
         packages = []
         # duplicate rows are an issue in this project. we filter them out by uniquifying
         # this is harmless as they have to precisly match, and BPA_ID is the primary key
         all_rows = set()
         for fname in unique_spreadsheets(glob(self.path + '/*.xlsx')):
-            logger.info("Processing Marine Microbes Transcriptomics metadata file {0}".format(os.path.basename(fname)))
-            for row in MarineMicrobesMetatranscriptomeMetadata.parse_spreadsheet(fname, self.metadata_info):
+            logger.info("Processing AusMicro Transcriptomics metadata file {0}".format(os.path.basename(fname)))
+            for row in AusMicroMetatranscriptomeMetadata.parse_spreadsheet(fname, self.metadata_info):
                 all_rows.add(row)
         for row in all_rows:
             bpa_id = row.bpa_id
@@ -515,8 +515,8 @@ class MarineMicrobesMetatranscriptomeMetadata(BaseMarineMicrobesMetadata):
                 'name': name,
                 'id': name,
                 'bpa_id': bpa_id,
-                'notes': 'Marine Microbes Metatranscriptome %s' % (bpa_id),
-                'title': 'Marine Microbes Metatranscriptome %s' % (bpa_id),
+                'notes': 'AusMicro Metatranscriptome %s' % (bpa_id),
+                'title': 'AusMicro Metatranscriptome %s' % (bpa_id),
                 'omics': 'metatranscriptomics',
                 'analytical_platform': 'HiSeq',
                 'read_length': '250bp',  # to be confirmed by Jason Koval
@@ -549,7 +549,7 @@ class MarineMicrobesMetatranscriptomeMetadata(BaseMarineMicrobesMetadata):
         return packages
 
     def _get_resources(self):
-        logger.info("Ingesting MM md5 file information from {0}".format(self.path))
+        logger.info("Ingesting AusMicro md5 file information from {0}".format(self.path))
         resources = []
         for md5_file in glob(self.path + '/*.md5'):
             logger.info("Processing md5 file {0}".format(md5_file))
