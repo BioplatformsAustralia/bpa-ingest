@@ -9,12 +9,12 @@ from ...ncbi import NCBISRAContextual
 logger = make_logger(__name__)
 
 
-class MarineMicrobesSampleContextual(object):
+class AusMicroSampleContextual(object):
     # we smash together the tabs, because there is one tab per sample type
     # each BPA ID should have only one entry (if it has one at all)
     metadata_urls = ['https://downloads-qcif.bioplatforms.com/bpa/marine_microbes/metadata/contextual/2018-01-09/']
     metadata_patterns = [re.compile(r'^.*\.xlsx$')]
-    name = 'mm-samplecontextual'
+    name = 'ausmicro-samplecontextual'
     field_specs = {
         'Coastal water': [
             fld('bpa_id', 'bpa_id', coerce=ingest_utils.extract_bpa_id),
@@ -260,7 +260,7 @@ class MarineMicrobesSampleContextual(object):
         return {}
 
 
-class MarineMicrobesNCBIContextual(NCBISRAContextual):
+class AusMicroNCBIContextual(NCBISRAContextual):
     metadata_urls = ['https://downloads-qcif.bioplatforms.com/bpa/marine_microbes/metadata/ncbi/']
     name = 'base-ncbi-contextual'
     bioproject_accession = 'PRJNA385736'

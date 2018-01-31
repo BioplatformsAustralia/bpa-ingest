@@ -6,13 +6,13 @@ from ...tracking import GoogleDriveTrackMetadata, get_track_csv
 logger = make_logger(__name__)
 
 
-class MarineMicrobesTrackMetadata(object):
+class AusMicroTrackMetadata(object):
     def __init__(self, name):
         fname = get_track_csv('bpam', '*' + name + '*.csv', project='marine-microbes')
         self.track_meta = self.read_track_csv(fname)
 
     def read_track_csv(self, fname):
-        header, rows = csv_to_named_tuple('MarineMicrobesTrack', fname)
+        header, rows = csv_to_named_tuple('AusMicroTrack', fname)
         return dict((ingest_utils.extract_bpa_id(t.five_digit_bpa_id), t) for t in rows)
 
     def get(self, bpa_id):
@@ -51,5 +51,5 @@ class MarineMicrobesTrackMetadata(object):
         return data
 
 
-class MarineMicrobesGoogleTrackMetadata(GoogleDriveTrackMetadata):
+class AusMicroGoogleTrackMetadata(GoogleDriveTrackMetadata):
     name = 'Marine Microbe'
