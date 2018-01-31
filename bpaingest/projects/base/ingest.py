@@ -68,8 +68,8 @@ class AusMicroAmpliconsMetadata(AusMicroMetadata):
     metadata_url_components = ('amplicon', 'facility_code', 'ticket')
     resource_linkage = ('sample_extraction_id', 'amplicon', 'base_amplicon_linkage')
     # pilot data
-    index_linkage_spreadsheets = ('BASE_18S_UNSW_A6BRJ_metadata.xlsx',)
-    index_linkage_md5s = ('BASE_18S_UNSW_A6BRJ_checksums.md5',)
+    index_linkage_spreadsheets = ('AusMicro_18S_UNSW_A6BRJ_metadata.xlsx',)
+    index_linkage_md5s = ('AusMicro_18S_UNSW_A6BRJ_checksums.md5',)
     # FIXME: these to be corrected with the real dates (all early data)
     # work-around put in place to proceed with NCBI upload GB 10/01/2018
     missing_ingest_dates = [
@@ -191,8 +191,8 @@ class AusMicroAmpliconsMetadata(AusMicroMetadata):
                     'sample_name': row.sample_name,
                     'analysis_software_version': row.analysis_software_version,
                     'amplicon': amplicon,
-                    'notes': 'BASE Amplicons %s %s %s' % (amplicon, sample_extraction_id, note_extra),
-                    'title': 'BASE Amplicons %s %s %s' % (amplicon, sample_extraction_id, note_extra),
+                    'notes': 'AusMicro Amplicons %s %s %s' % (amplicon, sample_extraction_id, note_extra),
+                    'title': 'AusMicro Amplicons %s %s %s' % (amplicon, sample_extraction_id, note_extra),
                     'contextual_data_submission_date': None,
                     'ticket': row.ticket,
                     'facility': row.facility_code.upper(),
@@ -409,8 +409,8 @@ class AusMicroMetagenomicsMetadata(BaseMetadata):
             'library_construction_protocol': row_get('library_construction_protocol'),
             'sequencer': row_get('sequencer'),
             'analysis_software_version': row_get('casava_version'),
-            'notes': 'BASE Metagenomics %s' % (sample_extraction_id),
-            'title': 'BASE Metagenomics %s' % (sample_extraction_id),
+            'notes': 'AusMicro Metagenomics %s' % (sample_extraction_id),
+            'title': 'AusMicro Metagenomics %s' % (sample_extraction_id),
             'contextual_data_submission_date': None,
             'ticket': row_get('ticket'),
             'facility': row_get('facility_code', lambda v: v.upper()),
