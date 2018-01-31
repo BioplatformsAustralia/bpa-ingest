@@ -13,10 +13,10 @@ from ...libs import ingest_utils
 from ...libs.excel_wrapper import make_field_definition as fld
 from . import files
 from .tracking import (
-    BASETrackMetadata)
+    AusMicroTrackMetadata)
 from .contextual import (
-    BASESampleContextual,
-    BASENCBIContextual)
+    AusMicroSampleContextual,
+    AusMicroNCBIContextual)
 
 import os
 import re
@@ -24,7 +24,7 @@ import re
 logger = make_logger(__name__)
 
 
-common_context = [BASESampleContextual, BASENCBIContextual]
+common_context = [AusMicroSampleContextual, AusMicroNCBIContextual]
 
 
 # fixed read lengths provided by AB at CSIRO
@@ -54,10 +54,10 @@ def build_base_amplicon_linkage(index_linkage, flow_id, index):
     return flow_id
 
 
-class BASEAmpliconsMetadata(BaseMetadata):
-    auth = ('base', 'base')
-    organization = 'bpa-base'
-    ckan_data_type = 'base-genomics-amplicon'
+class AusMicroAmpliconsMetadata(AusMicroMetadata):
+    auth = ('ausmicro', 'ausmicro')
+    organization = 'bpa-ausmicro'
+    ckan_data_type = 'ausmicro-genomics-amplicon'
     omics = 'genomics'
     technology = 'amplicons'
     contextual_classes = common_context
@@ -124,11 +124,11 @@ class BASEAmpliconsMetadata(BaseMetadata):
     }
 
     def __init__(self, metadata_path, contextual_metadata=None, metadata_info=None):
-        super(BASEAmpliconsMetadata, self).__init__()
+        super(AusMicroAmpliconsMetadata, self).__init__()
         self.path = Path(metadata_path)
         self.contextual_metadata = contextual_metadata
         self.metadata_info = metadata_info
-        self.track_meta = BASETrackMetadata()
+        self.track_meta = AusMicroTrackMetadata()
 
     def _get_packages(self):
         xlsx_re = re.compile(r'^.*_(\w+)_metadata.*\.xlsx$')
@@ -139,10 +139,10 @@ class BASEAmpliconsMetadata(BaseMetadata):
                 raise Exception("unable to find flowcell for filename: `%s'" % (fname))
             return m.groups()[0]
 
-        logger.info("Ingesting BASE Amplicon metadata from {0}".format(self.path))
+        logger.info("Ingesting AusMicro Amplicon metadata from {0}".format(self.path))
         packages = []
         for fname in glob(self.path + '/*.xlsx'):
-            logger.info("Processing BASE Amplicon metadata file {0}".format(os.path.basename(fname)))
+            logger.info("Processing AusMicro Amplicon metadata file {0}".format(os.path.basename(fname)))
             for row in self.parse_spreadsheet(fname, self.metadata_info):
                 track_meta = self.track_meta.get(row.ticket)
                 flow_id = get_flow_id(fname)
@@ -217,7 +217,7 @@ class BASEAmpliconsMetadata(BaseMetadata):
         return packages
 
     def _get_resources(self):
-        logger.info("Ingesting BASE Amplicon md5 file information from {0}".format(self.path))
+        logger.info("Ingesting AusMicro Amplicon md5 file information from {0}".format(self.path))
         resources = []
 
         for md5_file in glob(self.path + '/*.md5'):
@@ -238,10 +238,10 @@ class BASEAmpliconsMetadata(BaseMetadata):
         return resources
 
 
-class BASEAmpliconsControlMetadata(BaseMetadata):
-    auth = ('base', 'base')
-    organization = 'bpa-base'
-    ckan_data_type = 'base-genomics-amplicon-control'
+class AusMicroAmpliconsControlMetadata(BaseMetadata):
+    auth = ('ausmicro', 'ausmicro')
+    organization = 'bpa-ausmicro'
+    ckan_data_type = 'ausmicro-genomics-amplicon-control'
     omics = 'genomics'
     technology = 'amplicons-control'
     contextual_classes = common_context
@@ -257,11 +257,11 @@ class BASEAmpliconsControlMetadata(BaseMetadata):
     }
 
     def __init__(self, metadata_path, contextual_metadata=None, metadata_info=None):
-        super(BASEAmpliconsControlMetadata, self).__init__()
+        super(AusMicroAmpliconsControlMetadata, self).__init__()
         self.path = Path(metadata_path)
         self.metadata_info = metadata_info
         self.contextual_metadata = contextual_metadata
-        self.track_meta = BASETrackMetadata()
+        self.track_meta = AusMicroTrackMetadata()
 
     def md5_lines(self):
         for md5_file in glob(self.path + '/*.md5'):
@@ -286,8 +286,8 @@ class BASEAmpliconsControlMetadata(BaseMetadata):
                 'name': name,
                 'id': name,
                 'flow_id': flow_id,
-                'notes': 'BASE Amplicons Control %s %s' % (amplicon, flow_id),
-                'title': 'BASE Amplicons Control %s %s' % (amplicon, flow_id),
+                'notes': 'AusMicro Amplicons Control %s %s' % (amplicon, flow_id),
+                'title': 'AusMicro Amplicons Control %s %s' % (amplicon, flow_id),
                 'read_length': base_amplicon_read_length(amplicon),  # hard-coded for now, on advice of AB at CSIRO
                 'omics': 'Genomics',
                 'analytical_platform': 'MiSeq',
@@ -327,10 +327,10 @@ class BASEAmpliconsControlMetadata(BaseMetadata):
         return resources
 
 
-class BASEMetagenomicsMetadata(BaseMetadata):
-    auth = ('base', 'base')
-    organization = 'bpa-base'
-    ckan_data_type = 'base-metagenomics'
+class AusMicroMetagenomicsMetadata(BaseMetadata):
+    auth = ('ausmicro', 'ausmicro')
+    organization = 'bpa-ausmicro'
+    ckan_data_type = 'ausmicro-metagenomics'
     omics = 'metagenomics'
     contextual_classes = common_context
     metadata_patterns = [r'^.*\.md5$', r'^.*_metadata.*.*\.xlsx$']
@@ -376,11 +376,11 @@ class BASEMetagenomicsMetadata(BaseMetadata):
         ('8271_2', 'H9EV8ADXX')]
 
     def __init__(self, metadata_path, contextual_metadata=None, metadata_info=None):
-        super(BASEMetagenomicsMetadata, self).__init__()
+        super(AusMicroMetagenomicsMetadata, self).__init__()
         self.path = Path(metadata_path)
         self.contextual_metadata = contextual_metadata
         self.metadata_info = metadata_info
-        self.track_meta = BASETrackMetadata()
+        self.track_meta = AusMicroTrackMetadata()
 
     def assemble_obj(self, bpa_id, sample_extraction_id, flow_id, row, track_meta):
         def track_get(k):
@@ -442,7 +442,7 @@ class BASEMetagenomicsMetadata(BaseMetadata):
                 return None
             return m.groups()[0]
 
-        logger.info("Ingesting BASE Metagenomics metadata from {0}".format(self.path))
+        logger.info("Ingesting AusMicro Metagenomics metadata from {0}".format(self.path))
         packages = []
 
         class FakePilotRow(object):
@@ -471,7 +471,7 @@ class BASEMetagenomicsMetadata(BaseMetadata):
         # we simply skip over the duplicates, which don't have any significant data differences
         generated_packages = set()
         for fname in glob(self.path + '/*.xlsx'):
-            logger.info("Processing BASE Metagenomics metadata file {0}".format(os.path.basename(fname)))
+            logger.info("Processing AusMicro Metagenomics metadata file {0}".format(os.path.basename(fname)))
             # unique the rows, duplicates in some of the sheets
             uniq_rows = set(t for t in self.parse_spreadsheet(fname, self.metadata_info))
             xlsx_info = self.metadata_info[os.path.basename(fname)]
@@ -501,7 +501,7 @@ class BASEMetagenomicsMetadata(BaseMetadata):
         return packages
 
     def _get_resources(self):
-        logger.info("Ingesting BASE Metagenomics md5 file information from {0}".format(self.path))
+        logger.info("Ingesting AusMicro Metagenomics md5 file information from {0}".format(self.path))
         resources = []
         for md5_file in glob(self.path + '/*.md5'):
             logger.info("Processing md5 file {}".format(md5_file))
@@ -520,10 +520,10 @@ class BASEMetagenomicsMetadata(BaseMetadata):
         return resources
 
 
-class BASESiteImagesMetadata(BaseMetadata):
-    auth = ('base', 'base')
-    organization = 'bpa-base'
-    ckan_data_type = 'base-site-image'
+class AusMicroSiteImagesMetadata(BaseMetadata):
+    auth = ('ausmicro', 'ausmicro')
+    organization = 'bpa-ausmicro'
+    ckan_data_type = 'ausmicro-site-image'
     contextual_classes = common_context
     metadata_patterns = [r'^.*\.md5$']
     omics = None
@@ -541,7 +541,7 @@ class BASESiteImagesMetadata(BaseMetadata):
     }
 
     def __init__(self, metadata_path, contextual_metadata=None, metadata_info=None):
-        super(BASESiteImagesMetadata, self).__init__()
+        super(AusMicroSiteImagesMetadata, self).__init__()
         self.path = Path(metadata_path)
         self.contextual_metadata = contextual_metadata
         self.metadata_info = metadata_info
@@ -568,7 +568,7 @@ class BASESiteImagesMetadata(BaseMetadata):
         return ', '.join([ingest_utils.extract_bpa_id(t) for t in id_tpl])
 
     def _get_packages(self):
-        logger.info("Ingesting BPA BASE Images metadata from {0}".format(self.path))
+        logger.info("Ingesting BPA AusMicro Images metadata from {0}".format(self.path))
         packages = []
         for id_tpl in sorted(self.id_to_resources):
             info = self.id_to_resources[id_tpl]
@@ -586,7 +586,7 @@ class BASESiteImagesMetadata(BaseMetadata):
                 'name': name,
                 'id': name,
                 'site_ids': self.id_tpl_to_site_ids(id_tpl),
-                'title': 'BASE Site Image %s %s' % id_tpl,
+                'title': 'AusMicro Site Image %s %s' % id_tpl,
                 'notes': 'Site image: %s' % (obj['location_description']),
                 'omics': 'Genomics',
                 'analytical_platform': 'MiSeq',
