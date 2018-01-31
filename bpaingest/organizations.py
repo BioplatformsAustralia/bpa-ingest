@@ -15,17 +15,17 @@ ORGANIZATIONS = [
         'type': 'organization',
     },
     {
+        'name': 'bpa-ausmicro',
+        'title': 'Australian Micro Biome',
+        'display_name': 'Australian Micro Biome',
+        'image_url': 'https://data.bioplatforms.com/beer-bread.jpg',
+        'groups': [{'capacity': 'public', 'name': BPA_ORGANIZATION_ID}],
+    },
+    {
         'name': 'bpa-barcode',
         'title': 'Barcode',
         'display_name': 'Barcode',
         'image_url': 'https://data.bioplatforms.com/barcode.png',
-        'groups': [{'capacity': 'public', 'name': BPA_ORGANIZATION_ID}],
-    },
-    {
-        'name': 'bpa-base',
-        'title': 'Biome of Australian Soil Environments',
-        'display_name': 'Biome of Australian Soil Environments',
-        'image_url': 'https://data.bioplatforms.com/base.png',
         'groups': [{'capacity': 'public', 'name': BPA_ORGANIZATION_ID}],
     },
     {
@@ -40,14 +40,6 @@ ORGANIZATIONS = [
         'title': 'Melanoma',
         'display_name': 'Melanoma',
         'image_url': 'https://data.bioplatforms.com/melanoma.png',
-        'groups': [{'capacity': 'public', 'name': BPA_ORGANIZATION_ID}],
-    },
-    {
-        'name': 'bpa-marine-microbes',
-        'title': 'Marine Microbes',
-        'display_name': 'Marine Microbes',
-        'image_url': 'https://data.bioplatforms.com/tricho.jpg',
-        'display_name': 'Marine Microbes',
         'groups': [{'capacity': 'public', 'name': BPA_ORGANIZATION_ID}],
     },
     {
