@@ -59,6 +59,12 @@ schema_template = {
             "display_property": "dcat:Dataset/dct:spatial",
             "form_placeholder": "Paste a valid GeoJSON geometry",
             "display_snippet": "spatial.html"
+        },
+        {
+            "field_name": "license_id",
+            "label": "License",
+            "display_property": "dcat:Dataset/dcat:distribution/dcat:Distribution/dct:license",
+            "form_snippet": "license.html"
         }
     ],
     "resource_fields": [
@@ -76,12 +82,6 @@ schema_template = {
             "preset": "resource_url_upload",
             "form_placeholder": "http://downloads-qcif.bioplatforms.com/my-dataset.fastq.gz",
             "upload_label": "Sequence File"
-        },
-        {
-            "field_name": "license_id",
-            "label": "License",
-            "display_property": "dcat:Dataset/dcat:distribution/dcat:Distribution/dct:license",
-            "form_snippet": "license.html"
         },
         {
             "field_name": "md5",
