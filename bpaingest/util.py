@@ -8,6 +8,10 @@ import csv
 import requests
 
 from collections import namedtuple
+from dateutil.relativedelta import relativedelta
+import datetime
+
+
 
 
 def one(l):
@@ -149,3 +153,15 @@ def common_values(dicts):
         if len(vals) == 1:
             r[k] = dicts[0][k]
     return r
+
+
+def apply_license(archive_ingestion_date):
+    if not archive_ingestion_date:
+        return "notspecified"
+
+    archive_ingestion_date = datetime.datetime.strptime(archive_ingestion_date, "%Y-%m-%d").date()
+
+    if archive_ingestion_date + relativedelta(months=3) > datetime.date.today():
+        return "other-closed"
+    else:
+        return "CC-BY-3.0-AU"
