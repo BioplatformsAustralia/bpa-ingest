@@ -8,3 +8,4 @@ httplib2==0.10.3
 boto3==1.4.7
 botocore==1.7.41
 google-api-python-client
+python-dateutil==2.6.1
