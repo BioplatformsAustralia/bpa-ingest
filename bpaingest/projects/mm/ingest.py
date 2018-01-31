@@ -438,7 +438,7 @@ class AusMicroMetagenomicsMetadata(BaseAusMicroMetadata):
         return packages
 
     def _get_resources(self):
-        logger.info("Ingesting MM md5 file information from {0}".format(self.path))
+        logger.info("Ingesting AusMicro md5 file information from {0}".format(self.path))
         resources = []
         for md5_file in glob(self.path + '/*.md5'):
             logger.info("Processing md5 file {0}".format(md5_file))
@@ -457,9 +457,9 @@ class AusMicroMetagenomicsMetadata(BaseAusMicroMetadata):
 
 
 class AusMicroMetatranscriptomeMetadata(BaseAusMicroMetadata):
-    auth = ('marine', 'marine')
+    auth = ('ausmicro', 'ausmicro')
     organization = 'bpa-ausmicro'
-    ckan_data_type = 'mm-metatranscriptome'
+    ckan_data_type = 'ausmicro-metatranscriptome'
     contextual_classes = common_context
     omics = 'metatranscriptomics'
     metadata_patterns = [r'^.*\.md5', r'^.*_metadata.*\.xlsx']

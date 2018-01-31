@@ -35,9 +35,9 @@ class ContextualBase(object):
         return {}
 
 
-class BASESampleContextual(ContextualBase):
+class AusMicroSampleContextual(ContextualBase):
     metadata_urls = ['https://downloads-qcif.bioplatforms.com/bpa/base/metadata/contextual/2017-06-28/']
-    name = 'base-contextual'
+    name = 'ausmicro-contextual'
 
     def __init__(self, path):
         xlsx_path = one(glob(path + '/*.xlsx'))
@@ -139,7 +139,7 @@ class BASESampleContextual(ContextualBase):
         return wrapper.get_all()
 
 
-class BASENCBIContextual(NCBISRAContextual):
+class AusMicroNCBIContextual(NCBISRAContextual):
     metadata_urls = ['https://downloads-qcif.bioplatforms.com/bpa/base/metadata/ncbi/']
-    name = 'base-ncbi-contextual'
+    name = 'ausmicro-ncbi-contextual'
     bioproject_accession = 'PRJNA317932'

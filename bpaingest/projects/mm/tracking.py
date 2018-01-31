@@ -8,7 +8,7 @@ logger = make_logger(__name__)
 
 class AusMicroTrackMetadata(object):
     def __init__(self, name):
-        fname = get_track_csv('bpam', '*' + name + '*.csv', project='marine-microbes')
+        fname = get_track_csv('bpam', '*' + name + '*.csv', project='ausmicro')
         self.track_meta = self.read_track_csv(fname)
 
     def read_track_csv(self, fname):
@@ -52,4 +52,4 @@ class AusMicroTrackMetadata(object):
 
 
 class AusMicroGoogleTrackMetadata(GoogleDriveTrackMetadata):
-    name = 'Marine Microbe'
+    name = 'AusMicro'
