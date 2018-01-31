@@ -16,8 +16,8 @@ ORGANIZATIONS = [
     },
     {
         'name': 'bpa-ausmicro',
-        'title': 'Australian Micro Biome',
-        'display_name': 'Australian Micro Biome',
+        'title': 'Australian Microbiome',
+        'display_name': 'Australian Microbiome',
         'image_url': 'https://data.bioplatforms.com/beer-bread.jpg',
         'groups': [{'capacity': 'public', 'name': BPA_ORGANIZATION_ID}],
     },
