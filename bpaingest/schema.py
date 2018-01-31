@@ -78,6 +78,12 @@ schema_template = {
             "upload_label": "Sequence File"
         },
         {
+            "field_name": "license_id",
+            "label": "License",
+            "display_property": "dcat:Dataset/dcat:distribution/dcat:Distribution/dct:license",
+            "form_snippet": "license.html"
+        },
+        {
             "field_name": "md5",
             "label": "MD5"
         },
