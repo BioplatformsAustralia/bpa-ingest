@@ -56,7 +56,7 @@ def build_base_amplicon_linkage(index_linkage, flow_id, index):
 
 class BASEAmpliconsMetadata(BaseMetadata):
     auth = ('base', 'base')
-    organization = 'bpa-ausmicro'
+    organization = 'australian-microbiome'
     ckan_data_type = 'base-genomics-amplicon'
     omics = 'genomics'
     technology = 'amplicons'
@@ -243,7 +243,7 @@ class BASEAmpliconsMetadata(BaseMetadata):
 
 class BASEAmpliconsControlMetadata(BaseMetadata):
     auth = ('base', 'base')
-    organization = 'bpa-ausmicro'
+    organization = 'australian-microbiome'
     ckan_data_type = 'base-genomics-amplicon-control'
     omics = 'genomics'
     technology = 'amplicons-control'
@@ -335,7 +335,7 @@ class BASEAmpliconsControlMetadata(BaseMetadata):
 
 class BASEMetagenomicsMetadata(BaseMetadata):
     auth = ('base', 'base')
-    organization = 'bpa-ausmicro'
+    organization = 'australian-microbiome'
     ckan_data_type = 'base-metagenomics'
     omics = 'metagenomics'
     contextual_classes = common_context
@@ -531,7 +531,7 @@ class BASEMetagenomicsMetadata(BaseMetadata):
 
 class BASESiteImagesMetadata(BaseMetadata):
     auth = ('base', 'base')
-    organization = 'bpa-ausmicro'
+    organization = 'australian-microbiome'
     ckan_data_type = 'base-site-image'
     contextual_classes = common_context
     metadata_patterns = [r'^.*\.md5$']

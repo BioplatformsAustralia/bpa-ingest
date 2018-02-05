@@ -83,7 +83,7 @@ class BaseMarineMicrobesMetadata(BaseMetadata):
 
 class BaseMarineMicrobesAmpliconsMetadata(BaseMarineMicrobesMetadata):
     auth = ('marine', 'marine')
-    organization = 'bpa-ausmicro'
+    organization = 'australian-microbiome'
     ckan_data_type = 'mm-genomics-amplicon'
     omics = 'genomics'
     contextual_classes = common_context
@@ -251,7 +251,7 @@ class MarineMicrobesGenomicsAmplicons18SMetadata(BaseMarineMicrobesAmpliconsMeta
 
 class BaseMarineMicrobesAmpliconsControlMetadata(BaseMarineMicrobesMetadata):
     auth = ('marine', 'marine')
-    organization = 'bpa-ausmicro'
+    organization = 'australian-microbiome'
     ckan_data_type = 'mm-genomics-amplicon-control'
     omics = 'genomics'
     contextual_classes = []
@@ -360,7 +360,7 @@ class MarineMicrobesGenomicsAmplicons18SControlMetadata(BaseMarineMicrobesAmplic
 
 class MarineMicrobesMetagenomicsMetadata(BaseMarineMicrobesMetadata):
     auth = ('marine', 'marine')
-    organization = 'bpa-ausmicro'
+    organization = 'australian-microbiome'
     ckan_data_type = 'mm-metagenomics'
     omics = 'metagenomics'
     contextual_classes = common_context
@@ -469,7 +469,7 @@ class MarineMicrobesMetagenomicsMetadata(BaseMarineMicrobesMetadata):
 
 class MarineMicrobesMetatranscriptomeMetadata(BaseMarineMicrobesMetadata):
     auth = ('marine', 'marine')
-    organization = 'bpa-ausmicro'
+    organization = 'australian-microbiome'
     ckan_data_type = 'mm-metatranscriptome'
     contextual_classes = common_context
     omics = 'metatranscriptomics'
