@@ -12,7 +12,7 @@ as mangled by the provided method.
 '''
 
 import datetime
-from collections import namedtuple
+from collections import namedtuple, Counter
 
 import os
 import xlrd
@@ -81,7 +81,7 @@ class ExcelWrapper(object):
         if len(set(names)) != len(self.field_spec):
             # this is a problem in the bpa-ingest code, not in the passed-in spreadsheet,
             # so we can fail hard here
-            raise Exception("duplicate `attribute` in field definition")
+            raise Exception("duplicate `attribute` in field definition: %s" % [t for (t, c) in Counter(names).items() if c > 1])
         return names
 
     def set_name_to_column_map(self):
