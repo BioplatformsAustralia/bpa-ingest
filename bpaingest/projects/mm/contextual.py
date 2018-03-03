@@ -89,7 +89,7 @@ class MarineMicrobesSampleContextual(object):
             fld('oxygen_ctd', 'oxygen (mol/kg) ctd'),
             fld('density', 'density [density, kg/m^3] ctd'),
             fld('turbidity', 'turbidity (nephelometric turbidity units) ctd'),
-            fld('chlf', 'chlf: ctd'),
+            fld('chlf_ctd', 'chlf: ctd'),
             fld('silicate', 'silicate (mol/l)'),
             fld('nitrate_nitrite', 'nitrate/nitrite (mol/l)'),
             fld('nitrite', 'nitrite (mol/l)'),
