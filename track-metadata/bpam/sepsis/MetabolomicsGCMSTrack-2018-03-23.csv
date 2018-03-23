@@ -1,0 +1,211 @@
+5 digit BPA ID,Data type,Taxon_OR_organism,Strain_OR_isolate,Serovar,Growth Media,Replicate,Omics,Analytical platform,Facility,Work order #,Contextual Data Submission Date,Sample submission date,Data generated,Archive Ingestion Date,Archive ID,id,curation_url,in_data_portal,last_modified
+102.100.100.50972,Main dataset,Escherichia coli,MS14387,,Pooled sera,6,Metabolomics,GC-MS,MA,,2017-11-14,2017-11-13,0,,,210,,0,2017-11-14 08:00:25
+102.100.100.50971,Main dataset,Escherichia coli,MS14387,,Pooled sera,5,Metabolomics,GC-MS,MA,,2017-11-14,2017-11-13,0,,,209,,0,2017-11-14 08:00:25
+102.100.100.50970,Main dataset,Escherichia coli,MS14387,,Pooled sera,4,Metabolomics,GC-MS,MA,,2017-11-14,2017-11-13,0,,,208,,0,2017-11-14 08:00:25
+102.100.100.50969,Main dataset,Escherichia coli,MS14387,,Pooled sera,3,Metabolomics,GC-MS,MA,,2017-11-14,2017-11-13,0,,,207,,0,2017-11-14 08:00:25
+102.100.100.50968,Main dataset,Escherichia coli,MS14387,,Pooled sera,2,Metabolomics,GC-MS,MA,,2017-11-14,2017-11-13,0,,,206,,0,2017-11-14 08:00:25
+102.100.100.50967,Main dataset,Escherichia coli,MS14387,,Pooled sera,1,Metabolomics,GC-MS,MA,,2017-11-14,2017-11-13,0,,,205,,0,2017-11-14 08:00:25
+102.100.100.50966,Main dataset,Escherichia coli,MS14387,,RPMI,6,Metabolomics,GC-MS,MA,,2017-11-14,2017-11-13,0,,,204,,0,2017-11-14 08:00:25
+102.100.100.50965,Main dataset,Escherichia coli,MS14387,,RPMI,5,Metabolomics,GC-MS,MA,,2017-11-14,2017-11-13,0,,,203,,0,2017-11-14 08:00:25
+102.100.100.50964,Main dataset,Escherichia coli,MS14387,,RPMI,4,Metabolomics,GC-MS,MA,,2017-11-14,2017-11-13,0,,,202,,0,2017-11-14 08:00:25
+102.100.100.50963,Main dataset,Escherichia coli,MS14387,,RPMI,3,Metabolomics,GC-MS,MA,,2017-11-14,2017-11-13,0,,,201,,0,2017-11-14 08:00:25
+102.100.100.50962,Main dataset,Escherichia coli,MS14387,,RPMI,2,Metabolomics,GC-MS,MA,,2017-11-14,2017-11-13,0,,,200,,0,2017-11-14 08:00:25
+102.100.100.50961,Main dataset,Escherichia coli,MS14387,,RPMI,1,Metabolomics,GC-MS,MA,,2017-11-14,2017-11-13,0,,,199,,0,2017-11-14 08:00:25
+102.100.100.50960,Main dataset,Escherichia coli,MS14386,,Pooled sera,6,Metabolomics,GC-MS,MA,,2017-11-14,2017-11-13,0,,,198,,0,2017-11-14 08:00:25
+102.100.100.50959,Main dataset,Escherichia coli,MS14386,,Pooled sera,5,Metabolomics,GC-MS,MA,,2017-11-14,2017-11-13,0,,,197,,0,2017-11-14 08:00:25
+102.100.100.50958,Main dataset,Escherichia coli,MS14386,,Pooled sera,4,Metabolomics,GC-MS,MA,,2017-11-14,2017-11-13,0,,,196,,0,2017-11-14 08:00:25
+102.100.100.50957,Main dataset,Escherichia coli,MS14386,,Pooled sera,3,Metabolomics,GC-MS,MA,,2017-11-14,2017-11-13,0,,,195,,0,2017-11-14 08:00:25
+102.100.100.50956,Main dataset,Escherichia coli,MS14386,,Pooled sera,2,Metabolomics,GC-MS,MA,,2017-11-14,2017-11-13,0,,,194,,0,2017-11-14 08:00:25
+102.100.100.50955,Main dataset,Escherichia coli,MS14386,,Pooled sera,1,Metabolomics,GC-MS,MA,,2017-11-14,2017-11-13,0,,,193,,0,2017-11-14 08:00:25
+102.100.100.50954,Main dataset,Escherichia coli,MS14386,,RPMI,6,Metabolomics,GC-MS,MA,,2017-11-14,2017-11-13,0,,,192,,0,2017-11-14 08:00:25
+102.100.100.50953,Main dataset,Escherichia coli,MS14386,,RPMI,5,Metabolomics,GC-MS,MA,,2017-11-14,2017-11-13,0,,,191,,0,2017-11-14 08:00:25
+102.100.100.50952,Main dataset,Escherichia coli,MS14386,,RPMI,4,Metabolomics,GC-MS,MA,,2017-11-14,2017-11-13,0,,,190,,0,2017-11-14 08:00:25
+102.100.100.50951,Main dataset,Escherichia coli,MS14386,,RPMI,3,Metabolomics,GC-MS,MA,,2017-11-14,2017-11-13,0,,,189,,0,2017-11-14 08:00:24
+102.100.100.50950,Main dataset,Escherichia coli,MS14386,,RPMI,2,Metabolomics,GC-MS,MA,,2017-11-14,2017-11-13,0,,,188,,0,2017-11-14 08:00:24
+102.100.100.50949,Main dataset,Escherichia coli,MS14386,,RPMI,1,Metabolomics,GC-MS,MA,,2017-11-14,2017-11-13,0,,,187,,0,2017-11-14 08:00:24
+102.100.100.50948,Main dataset,Escherichia coli,MS14385,,Pooled sera,6,Metabolomics,GC-MS,MA,,2017-11-14,2017-11-13,0,,,186,,0,2017-11-14 08:00:24
+102.100.100.50947,Main dataset,Escherichia coli,MS14385,,Pooled sera,5,Metabolomics,GC-MS,MA,,2017-11-14,2017-11-13,0,,,185,,0,2017-11-14 08:00:24
+102.100.100.50946,Main dataset,Escherichia coli,MS14385,,Pooled sera,4,Metabolomics,GC-MS,MA,,2017-11-14,2017-11-13,0,,,184,,0,2017-11-14 08:00:24
+102.100.100.50945,Main dataset,Escherichia coli,MS14385,,Pooled sera,3,Metabolomics,GC-MS,MA,,2017-11-14,2017-11-13,0,,,183,,0,2017-11-14 08:00:24
+102.100.100.50944,Main dataset,Escherichia coli,MS14385,,Pooled sera,2,Metabolomics,GC-MS,MA,,2017-11-14,2017-11-13,0,,,182,,0,2017-11-14 08:00:24
+102.100.100.50943,Main dataset,Escherichia coli,MS14385,,Pooled sera,1,Metabolomics,GC-MS,MA,,2017-11-14,2017-11-13,0,,,181,,0,2017-11-14 08:00:24
+102.100.100.50942,Main dataset,Escherichia coli,MS14385,,RPMI,6,Metabolomics,GC-MS,MA,,2017-11-14,2017-11-13,0,,,180,,0,2017-11-14 08:00:24
+102.100.100.50941,Main dataset,Escherichia coli,MS14385,,RPMI,5,Metabolomics,GC-MS,MA,,2017-11-14,2017-11-13,0,,,179,,0,2017-11-14 08:00:24
+102.100.100.50940,Main dataset,Escherichia coli,MS14385,,RPMI,4,Metabolomics,GC-MS,MA,,2017-11-14,2017-11-13,0,,,178,,0,2017-11-14 08:00:24
+102.100.100.50939,Main dataset,Escherichia coli,MS14385,,RPMI,3,Metabolomics,GC-MS,MA,,2017-11-14,2017-11-13,0,,,177,,0,2017-11-14 08:00:24
+102.100.100.50938,Main dataset,Escherichia coli,MS14385,,RPMI,2,Metabolomics,GC-MS,MA,,2017-11-14,2017-11-13,0,,,176,,0,2017-11-14 08:00:24
+102.100.100.50937,Main dataset,Escherichia coli,MS14385,,RPMI,1,Metabolomics,GC-MS,MA,,2017-11-14,2017-11-13,0,,,175,,0,2017-11-14 08:00:24
+102.100.100.50936,Main dataset,Escherichia coli,MS14384,,Pooled sera,6,Metabolomics,GC-MS,MA,,2017-11-14,2017-11-13,0,,,174,,0,2017-11-14 08:00:24
+102.100.100.50935,Main dataset,Escherichia coli,MS14384,,Pooled sera,5,Metabolomics,GC-MS,MA,,2017-11-14,2017-11-13,0,,,173,,0,2017-11-14 08:00:24
+102.100.100.50934,Main dataset,Escherichia coli,MS14384,,Pooled sera,4,Metabolomics,GC-MS,MA,,2017-11-14,2017-11-13,0,,,172,,0,2017-11-14 08:00:24
+102.100.100.50933,Main dataset,Escherichia coli,MS14384,,Pooled sera,3,Metabolomics,GC-MS,MA,,2017-11-14,2017-11-13,0,,,171,,0,2017-11-14 08:00:24
+102.100.100.50932,Main dataset,Escherichia coli,MS14384,,Pooled sera,2,Metabolomics,GC-MS,MA,,2017-11-14,2017-11-13,0,,,170,,0,2017-11-14 08:00:24
+102.100.100.50931,Main dataset,Escherichia coli,MS14384,,Pooled sera,1,Metabolomics,GC-MS,MA,,2017-11-14,2017-11-13,0,,,169,,0,2017-11-14 08:00:24
+102.100.100.50930,Main dataset,Escherichia coli,MS14384,,RPMI,6,Metabolomics,GC-MS,MA,,2017-11-14,2017-11-13,0,,,168,,0,2017-11-14 08:00:24
+102.100.100.50929,Main dataset,Escherichia coli,MS14384,,RPMI,5,Metabolomics,GC-MS,MA,,2017-11-14,2017-11-13,0,,,167,,0,2017-11-14 08:00:24
+102.100.100.50928,Main dataset,Escherichia coli,MS14384,,RPMI,4,Metabolomics,GC-MS,MA,,2017-11-14,2017-11-13,0,,,166,,0,2017-11-14 08:00:24
+102.100.100.50927,Main dataset,Escherichia coli,MS14384,,RPMI,3,Metabolomics,GC-MS,MA,,2017-11-14,2017-11-13,0,,,165,,0,2017-11-14 08:00:24
+102.100.100.50926,Main dataset,Escherichia coli,MS14384,,RPMI,2,Metabolomics,GC-MS,MA,,2017-11-14,2017-11-13,0,,,164,,0,2017-11-14 08:00:24
+102.100.100.50925,Main dataset,Escherichia coli,MS14384,,RPMI,1,Metabolomics,GC-MS,MA,,2017-11-14,2017-11-13,0,,,163,,0,2017-11-14 08:00:24
+102.100.100.50924,Main dataset,Escherichia coli,B36,,Pooled sera,6,Metabolomics,GC-MS,MA,,2017-11-14,2017-11-13,0,,,162,,0,2017-11-14 08:00:24
+102.100.100.50923,Main dataset,Escherichia coli,B36,,Pooled sera,5,Metabolomics,GC-MS,MA,,2017-11-14,2017-11-13,0,,,161,,0,2017-11-14 08:00:24
+102.100.100.50922,Main dataset,Escherichia coli,B36,,Pooled sera,4,Metabolomics,GC-MS,MA,,2017-11-14,2017-11-13,0,,,160,,0,2017-11-14 08:00:24
+102.100.100.50921,Main dataset,Escherichia coli,B36,,Pooled sera,3,Metabolomics,GC-MS,MA,,2017-11-14,2017-11-13,0,,,159,,0,2017-11-14 08:00:24
+102.100.100.50920,Main dataset,Escherichia coli,B36,,Pooled sera,2,Metabolomics,GC-MS,MA,,2017-11-14,2017-11-13,0,,,158,,0,2017-11-14 08:00:24
+102.100.100.50919,Main dataset,Escherichia coli,B36,,Pooled sera,1,Metabolomics,GC-MS,MA,,2017-11-14,2017-11-13,0,,,157,,0,2017-11-14 08:00:24
+102.100.100.50918,Main dataset,Escherichia coli,B36,,RPMI,6,Metabolomics,GC-MS,MA,,2017-11-14,2017-11-13,0,,,156,,0,2017-11-14 08:00:24
+102.100.100.50917,Main dataset,Escherichia coli,B36,,RPMI,5,Metabolomics,GC-MS,MA,,2017-11-14,2017-11-13,0,,,155,,0,2017-11-14 08:00:24
+102.100.100.50916,Main dataset,Escherichia coli,B36,,RPMI,4,Metabolomics,GC-MS,MA,,2017-11-14,2017-11-13,0,,,154,,0,2017-11-14 08:00:24
+102.100.100.50915,Main dataset,Escherichia coli,B36,,RPMI,3,Metabolomics,GC-MS,MA,,2017-11-14,2017-11-13,0,,,153,,0,2017-11-14 08:00:24
+102.100.100.50914,Main dataset,Escherichia coli,B36,,RPMI,2,Metabolomics,GC-MS,MA,,2017-11-14,2017-11-13,0,,,152,,0,2017-11-14 08:00:24
+102.100.100.50913,Main dataset,Escherichia coli,B36,,RPMI,1,Metabolomics,GC-MS,MA,,2017-11-14,2017-11-13,0,,,151,,0,2017-11-14 08:00:24
+102.100.100.50264,Main dataset,Streptococcus pneumoniae,4496,1,RPMI + galactose,6,Metabolomics,GC-MS ,MA,,2017-10-31,2017-10-31,0,,,150,,0,2017-10-31 04:25:48
+102.100.100.50263,Main dataset,Streptococcus pneumoniae,4496,1,RPMI + glucose,6,Metabolomics,GC-MS ,MA,,2017-10-31,2017-10-31,0,,,149,,0,2017-10-31 04:25:48
+102.100.100.50262,Main dataset,Streptococcus pneumoniae,4496,1,Pooled sera,6,Metabolomics,GC-MS ,MA,,2017-10-31,2017-10-31,0,,,148,,0,2017-10-31 04:25:48
+102.100.100.50261,Main dataset,Streptococcus pneumoniae,180/15,3,RPMI + galactose,6,Metabolomics,GC-MS ,MA,,2017-10-31,2017-10-31,0,,,147,,0,2017-10-31 04:25:48
+102.100.100.50260,Main dataset,Streptococcus pneumoniae,180/15,3,RPMI + glucose,6,Metabolomics,GC-MS ,MA,,2017-10-31,2017-10-31,0,,,146,,0,2017-10-31 04:25:48
+102.100.100.50259,Main dataset,Streptococcus pneumoniae,180/15,3,Pooled sera,6,Metabolomics,GC-MS ,MA,,2017-10-31,2017-10-31,0,,,145,,0,2017-10-31 04:25:48
+102.100.100.50258,Main dataset,Streptococcus pneumoniae,180/2,3,RPMI + galactose,6,Metabolomics,GC-MS ,MA,,2017-10-31,2017-10-31,0,,,144,,0,2017-10-31 04:25:48
+102.100.100.50257,Main dataset,Streptococcus pneumoniae,180/2,3,RPMI + glucose,6,Metabolomics,GC-MS ,MA,,2017-10-31,2017-10-31,0,,,143,,0,2017-10-31 04:25:48
+102.100.100.50256,Main dataset,Streptococcus pneumoniae,180/2,3,Pooled sera,6,Metabolomics,GC-MS ,MA,,2017-10-31,2017-10-31,0,,,142,,0,2017-10-31 04:25:48
+102.100.100.50255,Main dataset,Streptococcus pneumoniae,947,14,RPMI + galactose,6,Metabolomics,GC-MS ,MA,,2017-10-31,2017-10-31,0,,,141,,0,2017-10-31 04:25:48
+102.100.100.50254,Main dataset,Streptococcus pneumoniae,947,14,RPMI + glucose,6,Metabolomics,GC-MS ,MA,,2017-10-31,2017-10-31,0,,,140,,0,2017-10-31 04:25:48
+102.100.100.50253,Main dataset,Streptococcus pneumoniae,947,14,Pooled sera,6,Metabolomics,GC-MS ,MA,,2017-10-31,2017-10-31,0,,,139,,0,2017-10-31 04:25:48
+102.100.100.50252,Main dataset,Streptococcus pneumoniae,4559,14,RPMI + galactose,6,Metabolomics,GC-MS ,MA,,2017-10-31,2017-10-31,0,,,138,,0,2017-10-31 04:25:48
+102.100.100.50251,Main dataset,Streptococcus pneumoniae,4559,14,RPMI + glucose,6,Metabolomics,GC-MS ,MA,,2017-10-31,2017-10-31,0,,,137,,0,2017-10-31 04:25:48
+102.100.100.50250,Main dataset,Streptococcus pneumoniae,4559,14,Pooled sera,6,Metabolomics,GC-MS ,MA,,2017-10-31,2017-10-31,0,,,136,,0,2017-10-31 04:25:48
+102.100.100.50249,Main dataset,Streptococcus pneumoniae,4496,1,RPMI + galactose,5,Metabolomics,GC-MS ,MA,,2017-10-31,2017-10-31,0,,,135,,0,2017-10-31 04:25:48
+102.100.100.50248,Main dataset,Streptococcus pneumoniae,4496,1,RPMI + glucose,5,Metabolomics,GC-MS ,MA,,2017-10-31,2017-10-31,0,,,134,,0,2017-10-31 04:25:48
+102.100.100.50247,Main dataset,Streptococcus pneumoniae,4496,1,Pooled sera,5,Metabolomics,GC-MS ,MA,,2017-10-31,2017-10-31,0,,,133,,0,2017-10-31 04:25:48
+102.100.100.50246,Main dataset,Streptococcus pneumoniae,180/15,3,RPMI + galactose,5,Metabolomics,GC-MS ,MA,,2017-10-31,2017-10-31,0,,,132,,0,2017-10-31 04:25:48
+102.100.100.50245,Main dataset,Streptococcus pneumoniae,180/15,3,RPMI + glucose,5,Metabolomics,GC-MS ,MA,,2017-10-31,2017-10-31,0,,,131,,0,2017-10-31 04:25:48
+102.100.100.50244,Main dataset,Streptococcus pneumoniae,180/15,3,Pooled sera,5,Metabolomics,GC-MS ,MA,,2017-10-31,2017-10-31,0,,,130,,0,2017-10-31 04:25:48
+102.100.100.50243,Main dataset,Streptococcus pneumoniae,180/2,3,RPMI + galactose,5,Metabolomics,GC-MS ,MA,,2017-10-31,2017-10-31,0,,,129,,0,2017-10-31 04:25:48
+102.100.100.50242,Main dataset,Streptococcus pneumoniae,180/2,3,RPMI + glucose,5,Metabolomics,GC-MS ,MA,,2017-10-31,2017-10-31,0,,,128,,0,2017-10-31 04:25:48
+102.100.100.50241,Main dataset,Streptococcus pneumoniae,180/2,3,Pooled sera,5,Metabolomics,GC-MS ,MA,,2017-10-31,2017-10-31,0,,,127,,0,2017-10-31 04:25:48
+102.100.100.50240,Main dataset,Streptococcus pneumoniae,947,14,RPMI + galactose,5,Metabolomics,GC-MS ,MA,,2017-10-31,2017-10-31,0,,,126,,0,2017-10-31 04:25:48
+102.100.100.50239,Main dataset,Streptococcus pneumoniae,947,14,RPMI + glucose,5,Metabolomics,GC-MS ,MA,,2017-10-31,2017-10-31,0,,,125,,0,2017-10-31 04:25:48
+102.100.100.50238,Main dataset,Streptococcus pneumoniae,947,14,Pooled sera,5,Metabolomics,GC-MS ,MA,,2017-10-31,2017-10-31,0,,,124,,0,2017-10-31 04:25:48
+102.100.100.50237,Main dataset,Streptococcus pneumoniae,4559,14,RPMI + galactose,5,Metabolomics,GC-MS ,MA,,2017-10-31,2017-10-31,0,,,123,,0,2017-10-31 04:25:48
+102.100.100.50236,Main dataset,Streptococcus pneumoniae,4559,14,RPMI + glucose,5,Metabolomics,GC-MS ,MA,,2017-10-31,2017-10-31,0,,,122,,0,2017-10-31 04:25:48
+102.100.100.50235,Main dataset,Streptococcus pneumoniae,4559,14,Pooled sera,5,Metabolomics,GC-MS ,MA,,2017-10-31,2017-10-31,0,,,121,,0,2017-10-31 04:25:48
+102.100.100.50234,Main dataset,Streptococcus pneumoniae,4496,1,RPMI + galactose,4,Metabolomics,GC-MS ,MA,,2017-10-31,2017-10-31,0,,,120,,0,2017-10-31 04:25:48
+102.100.100.50233,Main dataset,Streptococcus pneumoniae,4496,1,RPMI + glucose,4,Metabolomics,GC-MS ,MA,,2017-10-31,2017-10-31,0,,,119,,0,2017-10-31 04:25:48
+102.100.100.50232,Main dataset,Streptococcus pneumoniae,4496,1,Pooled sera,4,Metabolomics,GC-MS ,MA,,2017-10-31,2017-10-31,0,,,118,,0,2017-10-31 04:25:48
+102.100.100.50231,Main dataset,Streptococcus pneumoniae,180/15,3,RPMI + galactose,4,Metabolomics,GC-MS ,MA,,2017-10-31,2017-10-31,0,,,117,,0,2017-10-31 04:25:48
+102.100.100.50230,Main dataset,Streptococcus pneumoniae,180/15,3,RPMI + glucose,4,Metabolomics,GC-MS ,MA,,2017-10-31,2017-10-31,0,,,116,,0,2017-10-31 04:25:48
+102.100.100.50229,Main dataset,Streptococcus pneumoniae,180/15,3,Pooled sera,4,Metabolomics,GC-MS ,MA,,2017-10-31,2017-10-31,0,,,115,,0,2017-10-31 04:25:48
+102.100.100.50228,Main dataset,Streptococcus pneumoniae,180/2,3,RPMI + galactose,4,Metabolomics,GC-MS ,MA,,2017-10-31,2017-10-31,0,,,114,,0,2017-10-31 04:25:48
+102.100.100.50227,Main dataset,Streptococcus pneumoniae,180/2,3,RPMI + glucose,4,Metabolomics,GC-MS ,MA,,2017-10-31,2017-10-31,0,,,113,,0,2017-10-31 04:25:48
+102.100.100.50226,Main dataset,Streptococcus pneumoniae,180/2,3,Pooled sera,4,Metabolomics,GC-MS ,MA,,2017-10-31,2017-10-31,0,,,112,,0,2017-10-31 04:25:48
+102.100.100.50225,Main dataset,Streptococcus pneumoniae,947,14,RPMI + galactose,4,Metabolomics,GC-MS ,MA,,2017-10-31,2017-10-31,0,,,111,,0,2017-10-31 04:25:48
+102.100.100.50224,Main dataset,Streptococcus pneumoniae,947,14,RPMI + glucose,4,Metabolomics,GC-MS ,MA,,2017-10-31,2017-10-31,0,,,110,,0,2017-10-31 04:25:48
+102.100.100.50223,Main dataset,Streptococcus pneumoniae,947,14,Pooled sera,4,Metabolomics,GC-MS ,MA,,2017-10-31,2017-10-31,0,,,109,,0,2017-10-31 04:25:48
+102.100.100.50222,Main dataset,Streptococcus pneumoniae,4559,14,RPMI + galactose,4,Metabolomics,GC-MS ,MA,,2017-10-31,2017-10-31,0,,,108,,0,2017-10-31 04:25:48
+102.100.100.50221,Main dataset,Streptococcus pneumoniae,4559,14,RPMI + glucose,4,Metabolomics,GC-MS ,MA,,2017-10-31,2017-10-31,0,,,107,,0,2017-10-31 04:25:48
+102.100.100.50220,Main dataset,Streptococcus pneumoniae,4559,14,Pooled sera,4,Metabolomics,GC-MS ,MA,,2017-10-31,2017-10-31,0,,,106,,0,2017-10-31 04:25:48
+102.100.100.50219,Main dataset,Streptococcus pneumoniae,4496,1,RPMI + galactose,3,Metabolomics,GC-MS ,MA,,2017-10-31,2017-10-31,0,,,105,,0,2017-10-31 04:25:48
+102.100.100.50218,Main dataset,Streptococcus pneumoniae,4496,1,RPMI + glucose,3,Metabolomics,GC-MS ,MA,,2017-10-31,2017-10-31,0,,,104,,0,2017-10-31 04:25:48
+102.100.100.50217,Main dataset,Streptococcus pneumoniae,4496,1,Pooled sera,3,Metabolomics,GC-MS ,MA,,2017-10-31,2017-10-31,0,,,103,,0,2017-10-31 04:25:48
+102.100.100.50216,Main dataset,Streptococcus pneumoniae,180/15,3,RPMI + galactose,3,Metabolomics,GC-MS ,MA,,2017-10-31,2017-10-31,0,,,102,,0,2017-10-31 04:25:48
+102.100.100.50215,Main dataset,Streptococcus pneumoniae,180/15,3,RPMI + glucose,3,Metabolomics,GC-MS ,MA,,2017-10-31,2017-10-31,0,,,101,,0,2017-10-31 04:25:48
+102.100.100.50214,Main dataset,Streptococcus pneumoniae,180/15,3,Pooled sera,3,Metabolomics,GC-MS ,MA,,2017-10-31,2017-10-31,0,,,100,,0,2017-10-31 04:25:48
+102.100.100.50213,Main dataset,Streptococcus pneumoniae,180/2,3,RPMI + galactose,3,Metabolomics,GC-MS ,MA,,2017-10-31,2017-10-31,0,,,99,,0,2017-10-31 04:25:48
+102.100.100.50212,Main dataset,Streptococcus pneumoniae,180/2,3,RPMI + glucose,3,Metabolomics,GC-MS ,MA,,2017-10-31,2017-10-31,0,,,98,,0,2017-10-31 04:25:48
+102.100.100.50211,Main dataset,Streptococcus pneumoniae,180/2,3,Pooled sera,3,Metabolomics,GC-MS ,MA,,2017-10-31,2017-10-31,0,,,97,,0,2017-10-31 04:25:48
+102.100.100.50210,Main dataset,Streptococcus pneumoniae,947,14,RPMI + galactose,3,Metabolomics,GC-MS ,MA,,2017-10-31,2017-10-31,0,,,96,,0,2017-10-31 04:25:48
+102.100.100.50209,Main dataset,Streptococcus pneumoniae,947,14,RPMI + glucose,3,Metabolomics,GC-MS ,MA,,2017-10-31,2017-10-31,0,,,95,,0,2017-10-31 04:25:48
+102.100.100.50208,Main dataset,Streptococcus pneumoniae,947,14,Pooled sera,3,Metabolomics,GC-MS ,MA,,2017-10-31,2017-10-31,0,,,94,,0,2017-10-31 04:25:48
+102.100.100.50207,Main dataset,Streptococcus pneumoniae,4559,14,RPMI + galactose,3,Metabolomics,GC-MS ,MA,,2017-10-31,2017-10-31,0,,,93,,0,2017-10-31 04:25:48
+102.100.100.50206,Main dataset,Streptococcus pneumoniae,4559,14,RPMI + glucose,3,Metabolomics,GC-MS ,MA,,2017-10-31,2017-10-31,0,,,92,,0,2017-10-31 04:25:48
+102.100.100.50205,Main dataset,Streptococcus pneumoniae,4559,14,Pooled sera,3,Metabolomics,GC-MS ,MA,,2017-10-31,2017-10-31,0,,,91,,0,2017-10-31 04:25:48
+102.100.100.50204,Main dataset,Streptococcus pneumoniae,4496,1,RPMI + galactose,2,Metabolomics,GC-MS ,MA,,2017-10-31,2017-10-31,0,,,90,,0,2017-10-31 04:25:48
+102.100.100.50203,Main dataset,Streptococcus pneumoniae,4496,1,RPMI + glucose,2,Metabolomics,GC-MS ,MA,,2017-10-31,2017-10-31,0,,,89,,0,2017-10-31 04:25:48
+102.100.100.50202,Main dataset,Streptococcus pneumoniae,4496,1,Pooled sera,2,Metabolomics,GC-MS ,MA,,2017-10-31,2017-10-31,0,,,88,,0,2017-10-31 04:25:48
+102.100.100.50201,Main dataset,Streptococcus pneumoniae,180/15,3,RPMI + galactose,2,Metabolomics,GC-MS ,MA,,2017-10-31,2017-10-31,0,,,87,,0,2017-10-31 04:25:48
+102.100.100.50200,Main dataset,Streptococcus pneumoniae,180/15,3,RPMI + glucose,2,Metabolomics,GC-MS ,MA,,2017-10-31,2017-10-31,0,,,86,,0,2017-10-31 04:25:48
+102.100.100.50199,Main dataset,Streptococcus pneumoniae,180/15,3,Pooled sera,2,Metabolomics,GC-MS ,MA,,2017-10-31,2017-10-31,0,,,85,,0,2017-10-31 04:25:48
+102.100.100.50198,Main dataset,Streptococcus pneumoniae,180/2,3,RPMI + galactose,2,Metabolomics,GC-MS ,MA,,2017-10-31,2017-10-31,0,,,84,,0,2017-10-31 04:25:48
+102.100.100.50197,Main dataset,Streptococcus pneumoniae,180/2,3,RPMI + glucose,2,Metabolomics,GC-MS ,MA,,2017-10-31,2017-10-31,0,,,83,,0,2017-10-31 04:25:48
+102.100.100.50196,Main dataset,Streptococcus pneumoniae,180/2,3,Pooled sera,2,Metabolomics,GC-MS ,MA,,2017-10-31,2017-10-31,0,,,82,,0,2017-10-31 04:25:48
+102.100.100.50195,Main dataset,Streptococcus pneumoniae,947,14,RPMI + galactose,2,Metabolomics,GC-MS ,MA,,2017-10-31,2017-10-31,0,,,81,,0,2017-10-31 04:25:48
+102.100.100.50194,Main dataset,Streptococcus pneumoniae,947,14,RPMI + glucose,2,Metabolomics,GC-MS ,MA,,2017-10-31,2017-10-31,0,,,80,,0,2017-10-31 04:25:48
+102.100.100.50193,Main dataset,Streptococcus pneumoniae,947,14,Pooled sera,2,Metabolomics,GC-MS ,MA,,2017-10-31,2017-10-31,0,,,79,,0,2017-10-31 04:25:48
+102.100.100.50192,Main dataset,Streptococcus pneumoniae,4559,14,RPMI + galactose,2,Metabolomics,GC-MS ,MA,,2017-10-31,2017-10-31,0,,,78,,0,2017-10-31 04:25:48
+102.100.100.50191,Main dataset,Streptococcus pneumoniae,4559,14,RPMI + glucose,2,Metabolomics,GC-MS ,MA,,2017-10-31,2017-10-31,0,,,77,,0,2017-10-31 04:25:48
+102.100.100.50190,Main dataset,Streptococcus pneumoniae,4559,14,Pooled sera,2,Metabolomics,GC-MS ,MA,,2017-10-31,2017-10-31,0,,,76,,0,2017-10-31 04:25:48
+102.100.100.50189,Main dataset,Streptococcus pneumoniae,4496,1,RPMI + galactose,1,Metabolomics,GC-MS ,MA,,2017-10-31,2017-10-31,0,,,75,,0,2017-10-31 04:25:48
+102.100.100.50188,Main dataset,Streptococcus pneumoniae,4496,1,RPMI + glucose,1,Metabolomics,GC-MS ,MA,,2017-10-31,2017-10-31,0,,,74,,0,2017-10-31 04:25:48
+102.100.100.50187,Main dataset,Streptococcus pneumoniae,4496,1,Pooled sera,1,Metabolomics,GC-MS ,MA,,2017-10-31,2017-10-31,0,,,73,,0,2017-10-31 04:25:48
+102.100.100.50186,Main dataset,Streptococcus pneumoniae,180/15,3,RPMI + galactose,1,Metabolomics,GC-MS ,MA,,2017-10-31,2017-10-31,0,,,72,,0,2017-10-31 04:25:48
+102.100.100.50185,Main dataset,Streptococcus pneumoniae,180/15,3,RPMI + glucose,1,Metabolomics,GC-MS ,MA,,2017-10-31,2017-10-31,0,,,71,,0,2017-10-31 04:25:48
+102.100.100.50184,Main dataset,Streptococcus pneumoniae,180/15,3,Pooled sera,1,Metabolomics,GC-MS ,MA,,2017-10-31,2017-10-31,0,,,70,,0,2017-10-31 04:25:48
+102.100.100.50183,Main dataset,Streptococcus pneumoniae,180/2,3,RPMI + galactose,1,Metabolomics,GC-MS ,MA,,2017-10-31,2017-10-31,0,,,69,,0,2017-10-31 04:25:48
+102.100.100.50182,Main dataset,Streptococcus pneumoniae,180/2,3,RPMI + glucose,1,Metabolomics,GC-MS ,MA,,2017-10-31,2017-10-31,0,,,68,,0,2017-10-31 04:25:48
+102.100.100.50181,Main dataset,Streptococcus pneumoniae,180/2,3,Pooled sera,1,Metabolomics,GC-MS ,MA,,2017-10-31,2017-10-31,0,,,67,,0,2017-10-31 04:25:48
+102.100.100.50180,Main dataset,Streptococcus pneumoniae,947,14,RPMI + galactose,1,Metabolomics,GC-MS ,MA,,2017-10-31,2017-10-31,0,,,66,,0,2017-10-31 04:25:48
+102.100.100.50179,Main dataset,Streptococcus pneumoniae,947,14,RPMI + glucose,1,Metabolomics,GC-MS ,MA,,2017-10-31,2017-10-31,0,,,65,,0,2017-10-31 04:25:48
+102.100.100.50178,Main dataset,Streptococcus pneumoniae,947,14,Pooled sera,1,Metabolomics,GC-MS ,MA,,2017-10-31,2017-10-31,0,,,64,,0,2017-10-31 04:25:48
+102.100.100.50177,Main dataset,Streptococcus pneumoniae,4559,14,RPMI + galactose,1,Metabolomics,GC-MS ,MA,,2017-10-31,2017-10-31,0,,,63,,0,2017-10-31 04:25:48
+102.100.100.50176,Main dataset,Streptococcus pneumoniae,4559,14,RPMI + glucose,1,Metabolomics,GC-MS ,MA,,2017-10-31,2017-10-31,0,,,62,,0,2017-10-31 04:25:48
+102.100.100.50175,Main dataset,Streptococcus pneumoniae,4559,14,Pooled sera,1,Metabolomics,GC-MS ,MA,,2017-10-31,2017-10-31,0,,,61,,0,2017-10-31 04:25:48
+102.100.100.50565,Main dataset,Staphylococcus aureus,BPH2986,,Pooled sera,6,Metabolomics,GC-MS,MA,,2017-07-31,2017-07-31,0,,,60,,1,2017-11-21 02:27:31
+102.100.100.50564,Main dataset,Staphylococcus aureus,BPH2986,,Pooled sera,5,Metabolomics,GC-MS,MA,,2017-07-31,2017-07-31,0,,,59,,1,2017-11-21 02:27:31
+102.100.100.50563,Main dataset,Staphylococcus aureus,BPH2986,,Pooled sera,4,Metabolomics,GC-MS,MA,,2017-07-31,2017-07-31,0,,,58,,1,2017-11-21 02:27:31
+102.100.100.50562,Main dataset,Staphylococcus aureus,BPH2986,,Pooled sera,3,Metabolomics,GC-MS,MA,,2017-07-31,2017-07-31,0,,,57,,1,2017-11-21 02:27:31
+102.100.100.50561,Main dataset,Staphylococcus aureus,BPH2986,,Pooled sera,2,Metabolomics,GC-MS,MA,,2017-07-31,2017-07-31,0,,,56,,1,2017-11-21 02:27:31
+102.100.100.50631,Main dataset,Staphylococcus aureus,BPH2986,,Pooled sera,1,Metabolomics,GC-MS,MA,,2017-07-31,2017-07-31,0,,,55,,1,2017-11-21 02:27:31
+102.100.100.50559,Main dataset,Staphylococcus aureus,BPH2986,,RPMI,6,Metabolomics,GC-MS,MA,,2017-07-31,2017-07-31,0,,,54,,1,2017-11-21 02:27:31
+102.100.100.50558,Main dataset,Staphylococcus aureus,BPH2986,,RPMI,5,Metabolomics,GC-MS,MA,,2017-07-31,2017-07-31,0,,,53,,1,2017-11-21 02:27:31
+102.100.100.50557,Main dataset,Staphylococcus aureus,BPH2986,,RPMI,4,Metabolomics,GC-MS,MA,,2017-07-31,2017-07-31,0,,,52,,1,2017-11-21 02:27:31
+102.100.100.50556,Main dataset,Staphylococcus aureus,BPH2986,,RPMI,3,Metabolomics,GC-MS,MA,,2017-07-31,2017-07-31,0,,,51,,1,2017-11-21 02:27:31
+102.100.100.50555,Main dataset,Staphylococcus aureus,BPH2986,,RPMI,2,Metabolomics,GC-MS,MA,,2017-07-31,2017-07-31,0,,,50,,1,2017-11-21 02:27:31
+102.100.100.50554,Main dataset,Staphylococcus aureus,BPH2986,,RPMI,1,Metabolomics,GC-MS,MA,,2017-07-31,2017-07-31,0,,,49,,1,2017-11-21 02:27:31
+102.100.100.50553,Main dataset,Staphylococcus aureus,BPH2947,,Pooled sera,6,Metabolomics,GC-MS,MA,,2017-07-31,2017-07-31,0,,,48,,1,2017-11-21 02:27:31
+102.100.100.50552,Main dataset,Staphylococcus aureus,BPH2947,,Pooled sera,5,Metabolomics,GC-MS,MA,,2017-07-31,2017-07-31,0,,,47,,1,2017-11-21 02:27:31
+102.100.100.50551,Main dataset,Staphylococcus aureus,BPH2947,,Pooled sera,4,Metabolomics,GC-MS,MA,,2017-07-31,2017-07-31,0,,,46,,1,2017-11-21 02:27:31
+102.100.100.50550,Main dataset,Staphylococcus aureus,BPH2947,,Pooled sera,3,Metabolomics,GC-MS,MA,,2017-07-31,2017-07-31,0,,,45,,1,2017-11-21 02:27:31
+102.100.100.50549,Main dataset,Staphylococcus aureus,BPH2947,,Pooled sera,2,Metabolomics,GC-MS,MA,,2017-07-31,2017-07-31,0,,,44,,1,2017-11-21 02:27:31
+102.100.100.50630,Main dataset,Staphylococcus aureus,BPH2947,,Pooled sera,1,Metabolomics,GC-MS,MA,,2017-07-31,2017-07-31,0,,,43,,1,2017-11-21 02:27:31
+102.100.100.50547,Main dataset,Staphylococcus aureus,BPH2947,,RPMI,6,Metabolomics,GC-MS,MA,,2017-07-31,2017-07-31,0,,,42,,1,2017-11-21 02:27:31
+102.100.100.50546,Main dataset,Staphylococcus aureus,BPH2947,,RPMI,5,Metabolomics,GC-MS,MA,,2017-07-31,2017-07-31,0,,,41,,1,2017-11-21 02:27:31
+102.100.100.50545,Main dataset,Staphylococcus aureus,BPH2947,,RPMI,4,Metabolomics,GC-MS,MA,,2017-07-31,2017-07-31,0,,,40,,1,2017-11-21 02:27:31
+102.100.100.50544,Main dataset,Staphylococcus aureus,BPH2947,,RPMI,3,Metabolomics,GC-MS,MA,,2017-07-31,2017-07-31,0,,,39,,1,2017-11-21 02:27:31
+102.100.100.50543,Main dataset,Staphylococcus aureus,BPH2947,,RPMI,2,Metabolomics,GC-MS,MA,,2017-07-31,2017-07-31,0,,,38,,1,2017-11-21 02:27:31
+102.100.100.50542,Main dataset,Staphylococcus aureus,BPH2947,,RPMI,1,Metabolomics,GC-MS,MA,,2017-07-31,2017-07-31,0,,,37,,1,2017-11-21 02:27:31
+102.100.100.50541,Main dataset,Staphylococcus aureus,BPH2900,,Pooled sera,6,Metabolomics,GC-MS,MA,,2017-07-31,2017-07-31,0,,,36,,1,2017-11-21 02:27:31
+102.100.100.50540,Main dataset,Staphylococcus aureus,BPH2900,,Pooled sera,5,Metabolomics,GC-MS,MA,,2017-07-31,2017-07-31,0,,,35,,1,2017-11-21 02:27:31
+102.100.100.50539,Main dataset,Staphylococcus aureus,BPH2900,,Pooled sera,4,Metabolomics,GC-MS,MA,,2017-07-31,2017-07-31,0,,,34,,1,2017-11-21 02:27:31
+102.100.100.50538,Main dataset,Staphylococcus aureus,BPH2900,,Pooled sera,3,Metabolomics,GC-MS,MA,,2017-07-31,2017-07-31,0,,,33,,1,2017-11-21 02:27:31
+102.100.100.50537,Main dataset,Staphylococcus aureus,BPH2900,,Pooled sera,2,Metabolomics,GC-MS,MA,,2017-07-31,2017-07-31,0,,,32,,1,2017-11-21 02:27:31
+102.100.100.50536,Main dataset,Staphylococcus aureus,BPH2900,,Pooled sera,1,Metabolomics,GC-MS,MA,,2017-07-31,2017-07-31,0,,,31,,1,2017-11-21 02:27:31
+102.100.100.50535,Main dataset,Staphylococcus aureus,BPH2900,,RPMI,6,Metabolomics,GC-MS,MA,,2017-07-31,2017-07-31,0,,,30,,1,2017-11-21 02:27:31
+102.100.100.50534,Main dataset,Staphylococcus aureus,BPH2900,,RPMI,5,Metabolomics,GC-MS,MA,,2017-07-31,2017-07-31,0,,,29,,1,2017-11-21 02:27:31
+102.100.100.50533,Main dataset,Staphylococcus aureus,BPH2900,,RPMI,4,Metabolomics,GC-MS,MA,,2017-07-31,2017-07-31,0,,,28,,1,2017-11-21 02:27:31
+102.100.100.50532,Main dataset,Staphylococcus aureus,BPH2900,,RPMI,3,Metabolomics,GC-MS,MA,,2017-07-31,2017-07-31,0,,,27,,1,2017-11-21 02:27:31
+102.100.100.50531,Main dataset,Staphylococcus aureus,BPH2900,,RPMI,2,Metabolomics,GC-MS,MA,,2017-07-31,2017-07-31,0,,,26,,1,2017-11-21 02:27:31
+102.100.100.50530,Main dataset,Staphylococcus aureus,BPH2900,,RPMI,1,Metabolomics,GC-MS,MA,,2017-07-31,2017-07-31,0,,,25,,1,2017-11-21 02:27:31
+102.100.100.50529,Main dataset,Staphylococcus aureus,BPH2819,,Pooled sera,6,Metabolomics,GC-MS,MA,,2017-07-31,2017-07-31,0,,,24,,1,2017-11-21 02:27:31
+102.100.100.50528,Main dataset,Staphylococcus aureus,BPH2819,,Pooled sera,5,Metabolomics,GC-MS,MA,,2017-07-31,2017-07-31,0,,,23,,1,2017-11-21 02:27:31
+102.100.100.50527,Main dataset,Staphylococcus aureus,BPH2819,,Pooled sera,4,Metabolomics,GC-MS,MA,,2017-07-31,2017-07-31,0,,,22,,1,2017-11-21 02:27:31
+102.100.100.50526,Main dataset,Staphylococcus aureus,BPH2819,,Pooled sera,3,Metabolomics,GC-MS,MA,,2017-07-31,2017-07-31,0,,,21,,1,2017-11-21 02:27:31
+102.100.100.50525,Main dataset,Staphylococcus aureus,BPH2819,,Pooled sera,2,Metabolomics,GC-MS,MA,,2017-07-31,2017-07-31,0,,,20,,1,2017-11-21 02:27:31
+102.100.100.50629,Main dataset,Staphylococcus aureus,BPH2819,,Pooled sera,1,Metabolomics,GC-MS,MA,,2017-07-31,2017-07-31,0,,,19,,1,2017-11-21 02:27:31
+102.100.100.50523,Main dataset,Staphylococcus aureus,BPH2819,,RPMI,6,Metabolomics,GC-MS,MA,,2017-07-31,2017-07-31,0,,,18,,1,2017-11-21 02:27:31
+102.100.100.50522,Main dataset,Staphylococcus aureus,BPH2819,,RPMI,5,Metabolomics,GC-MS,MA,,2017-07-31,2017-07-31,0,,,17,,1,2017-11-21 02:27:31
+102.100.100.50521,Main dataset,Staphylococcus aureus,BPH2819,,RPMI,4,Metabolomics,GC-MS,MA,,2017-07-31,2017-07-31,0,,,16,,1,2017-11-21 02:27:31
+102.100.100.50520,Main dataset,Staphylococcus aureus,BPH2819,,RPMI,3,Metabolomics,GC-MS,MA,,2017-07-31,2017-07-31,0,,,15,,1,2017-11-21 02:27:31
+102.100.100.50519,Main dataset,Staphylococcus aureus,BPH2819,,RPMI,2,Metabolomics,GC-MS,MA,,2017-07-31,2017-07-31,0,,,14,,1,2017-11-21 02:27:31
+102.100.100.50518,Main dataset,Staphylococcus aureus,BPH2819,,RPMI,1,Metabolomics,GC-MS,MA,,2017-07-31,2017-07-31,0,,,13,,1,2017-11-21 02:27:31
+102.100.100.50517,Main dataset,Staphylococcus aureus,BPH2760,,Pooled sera,6,Metabolomics,GC-MS,MA,,2017-07-31,2017-07-31,0,,,12,,1,2017-11-21 02:27:31
+102.100.100.50516,Main dataset,Staphylococcus aureus,BPH2760,,Pooled sera,5,Metabolomics,GC-MS,MA,,2017-07-31,2017-07-31,0,,,11,,1,2017-11-21 02:27:31
+102.100.100.50515,Main dataset,Staphylococcus aureus,BPH2760,,Pooled sera,4,Metabolomics,GC-MS,MA,,2017-07-31,2017-07-31,0,,,10,,1,2017-11-21 02:27:31
+102.100.100.50514,Main dataset,Staphylococcus aureus,BPH2760,,Pooled sera,3,Metabolomics,GC-MS,MA,,2017-07-31,2017-07-31,0,,,9,,1,2017-11-21 02:27:31
+102.100.100.50513,Main dataset,Staphylococcus aureus,BPH2760,,Pooled sera,2,Metabolomics,GC-MS,MA,,2017-07-31,2017-07-31,0,,,8,,1,2017-11-21 02:27:31
+102.100.100.50512,Main dataset,Staphylococcus aureus,BPH2760,,Pooled sera,1,Metabolomics,GC-MS,MA,,2017-07-31,2017-07-31,0,,,7,,1,2017-11-21 02:27:31
+102.100.100.50511,Main dataset,Staphylococcus aureus,BPH2760,,RPMI,6,Metabolomics,GC-MS,MA,,2017-07-31,2017-07-31,0,,,6,,1,2017-11-21 02:27:31
+102.100.100.50510,Main dataset,Staphylococcus aureus,BPH2760,,RPMI,5,Metabolomics,GC-MS,MA,,2017-07-31,2017-07-31,0,,,5,,1,2017-11-21 02:27:31
+102.100.100.50509,Main dataset,Staphylococcus aureus,BPH2760,,RPMI,4,Metabolomics,GC-MS,MA,,2017-07-31,2017-07-31,0,,,4,,1,2017-11-21 02:27:31
+102.100.100.50508,Main dataset,Staphylococcus aureus,BPH2760,,RPMI,3,Metabolomics,GC-MS,MA,,2017-07-31,2017-07-31,0,,,3,,1,2017-11-21 02:27:31
+102.100.100.50507,Main dataset,Staphylococcus aureus,BPH2760,,RPMI,2,Metabolomics,GC-MS,MA,,2017-07-31,2017-07-31,0,,,2,,1,2017-11-21 02:27:31
+102.100.100.50506,Main dataset,Staphylococcus aureus,BPH2760,,RPMI,1,Metabolomics,GC-MS,MA,,2017-07-31,2017-07-31,0,,,1,,1,2017-11-21 02:27:31

@@ -1,0 +1,323 @@
+5 digit BPA ID,Data type,Taxon_OR_organism,Strain_OR_isolate,Serovar,Growth Media,Replicate,Omics,Analytical platform,Facility,Work order #,Contextual Data Submission Date,Sample submission date,Data generated,Archive Ingestion Date,Archive ID,id,curation_url,in_data_portal,last_modified
+102.100.100.51032,Main dataset,Escherichia coli,MS14387,,Pooled sera,6,Proteomics,SWATH-MS,APAF,,2017-11-14,2017-11-13,0,,,353,,0,2017-11-14 08:03:03
+102.100.100.51031,Main dataset,Escherichia coli,MS14387,,Pooled sera,5,Proteomics,SWATH-MS,APAF,,2017-11-14,2017-11-13,0,,,352,,0,2017-11-14 08:03:03
+102.100.100.51030,Main dataset,Escherichia coli,MS14387,,Pooled sera,4,Proteomics,SWATH-MS,APAF,,2017-11-14,2017-11-13,0,,,351,,0,2017-11-14 08:03:03
+102.100.100.51029,Main dataset,Escherichia coli,MS14387,,Pooled sera,3,Proteomics,SWATH-MS,APAF,,2017-11-14,2017-11-13,0,,,350,,0,2017-11-14 08:03:03
+102.100.100.51028,Main dataset,Escherichia coli,MS14387,,Pooled sera,2,Proteomics,SWATH-MS,APAF,,2017-11-14,2017-11-13,0,,,349,,0,2017-11-14 08:03:03
+102.100.100.51027,Main dataset,Escherichia coli,MS14387,,Pooled sera,1,Proteomics,SWATH-MS,APAF,,2017-11-14,2017-11-13,0,,,348,,0,2017-11-14 08:03:03
+102.100.100.51026,Main dataset,Escherichia coli,MS14387,,RPMI,6,Proteomics,SWATH-MS,APAF,,2017-11-14,2017-11-13,0,,,347,,0,2017-11-14 08:03:03
+102.100.100.51025,Main dataset,Escherichia coli,MS14387,,RPMI,5,Proteomics,SWATH-MS,APAF,,2017-11-14,2017-11-13,0,,,346,,0,2017-11-14 08:03:03
+102.100.100.51024,Main dataset,Escherichia coli,MS14387,,RPMI,4,Proteomics,SWATH-MS,APAF,,2017-11-14,2017-11-13,0,,,345,,0,2017-11-14 08:03:03
+102.100.100.51023,Main dataset,Escherichia coli,MS14387,,RPMI,3,Proteomics,SWATH-MS,APAF,,2017-11-14,2017-11-13,0,,,344,,0,2017-11-14 08:03:03
+102.100.100.51022,Main dataset,Escherichia coli,MS14387,,RPMI,2,Proteomics,SWATH-MS,APAF,,2017-11-14,2017-11-13,0,,,343,,0,2017-11-14 08:03:03
+102.100.100.51021,Main dataset,Escherichia coli,MS14387,,RPMI,1,Proteomics,SWATH-MS,APAF,,2017-11-14,2017-11-13,0,,,342,,0,2017-11-14 08:03:03
+102.100.100.51020,Main dataset,Escherichia coli,MS14386,,Pooled sera,6,Proteomics,SWATH-MS,APAF,,2017-11-14,2017-11-13,0,,,341,,0,2017-11-14 08:03:03
+102.100.100.51019,Main dataset,Escherichia coli,MS14386,,Pooled sera,5,Proteomics,SWATH-MS,APAF,,2017-11-14,2017-11-13,0,,,340,,0,2017-11-14 08:03:03
+102.100.100.51018,Main dataset,Escherichia coli,MS14386,,Pooled sera,4,Proteomics,SWATH-MS,APAF,,2017-11-14,2017-11-13,0,,,339,,0,2017-11-14 08:03:03
+102.100.100.51017,Main dataset,Escherichia coli,MS14386,,Pooled sera,3,Proteomics,SWATH-MS,APAF,,2017-11-14,2017-11-13,0,,,338,,0,2017-11-14 08:03:03
+102.100.100.51016,Main dataset,Escherichia coli,MS14386,,Pooled sera,2,Proteomics,SWATH-MS,APAF,,2017-11-14,2017-11-13,0,,,337,,0,2017-11-14 08:03:03
+102.100.100.51015,Main dataset,Escherichia coli,MS14386,,Pooled sera,1,Proteomics,SWATH-MS,APAF,,2017-11-14,2017-11-13,0,,,336,,0,2017-11-14 08:03:03
+102.100.100.51014,Main dataset,Escherichia coli,MS14386,,RPMI,6,Proteomics,SWATH-MS,APAF,,2017-11-14,2017-11-13,0,,,335,,0,2017-11-14 08:03:03
+102.100.100.51013,Main dataset,Escherichia coli,MS14386,,RPMI,5,Proteomics,SWATH-MS,APAF,,2017-11-14,2017-11-13,0,,,334,,0,2017-11-14 08:03:03
+102.100.100.51012,Main dataset,Escherichia coli,MS14386,,RPMI,4,Proteomics,SWATH-MS,APAF,,2017-11-14,2017-11-13,0,,,333,,0,2017-11-14 08:03:03
+102.100.100.51011,Main dataset,Escherichia coli,MS14386,,RPMI,3,Proteomics,SWATH-MS,APAF,,2017-11-14,2017-11-13,0,,,332,,0,2017-11-14 08:03:03
+102.100.100.51010,Main dataset,Escherichia coli,MS14386,,RPMI,2,Proteomics,SWATH-MS,APAF,,2017-11-14,2017-11-13,0,,,331,,0,2017-11-14 08:03:03
+102.100.100.51009,Main dataset,Escherichia coli,MS14386,,RPMI,1,Proteomics,SWATH-MS,APAF,,2017-11-14,2017-11-13,0,,,330,,0,2017-11-14 08:03:03
+102.100.100.51008,Main dataset,Escherichia coli,MS14385,,Pooled sera,6,Proteomics,SWATH-MS,APAF,,2017-11-14,2017-11-13,0,,,329,,0,2017-11-14 08:03:03
+102.100.100.51007,Main dataset,Escherichia coli,MS14385,,Pooled sera,5,Proteomics,SWATH-MS,APAF,,2017-11-14,2017-11-13,0,,,328,,0,2017-11-14 08:03:03
+102.100.100.51006,Main dataset,Escherichia coli,MS14385,,Pooled sera,4,Proteomics,SWATH-MS,APAF,,2017-11-14,2017-11-13,0,,,327,,0,2017-11-14 08:03:03
+102.100.100.51005,Main dataset,Escherichia coli,MS14385,,Pooled sera,3,Proteomics,SWATH-MS,APAF,,2017-11-14,2017-11-13,0,,,326,,0,2017-11-14 08:03:03
+102.100.100.51004,Main dataset,Escherichia coli,MS14385,,Pooled sera,2,Proteomics,SWATH-MS,APAF,,2017-11-14,2017-11-13,0,,,325,,0,2017-11-14 08:03:03
+102.100.100.51003,Main dataset,Escherichia coli,MS14385,,Pooled sera,1,Proteomics,SWATH-MS,APAF,,2017-11-14,2017-11-13,0,,,324,,0,2017-11-14 08:03:03
+102.100.100.51002,Main dataset,Escherichia coli,MS14385,,RPMI,6,Proteomics,SWATH-MS,APAF,,2017-11-14,2017-11-13,0,,,323,,0,2017-11-14 08:03:03
+102.100.100.51001,Main dataset,Escherichia coli,MS14385,,RPMI,5,Proteomics,SWATH-MS,APAF,,2017-11-14,2017-11-13,0,,,322,,0,2017-11-14 08:03:03
+102.100.100.51000,Main dataset,Escherichia coli,MS14385,,RPMI,4,Proteomics,SWATH-MS,APAF,,2017-11-14,2017-11-13,0,,,321,,0,2017-11-14 08:03:03
+102.100.100.50999,Main dataset,Escherichia coli,MS14385,,RPMI,3,Proteomics,SWATH-MS,APAF,,2017-11-14,2017-11-13,0,,,320,,0,2017-11-14 08:03:03
+102.100.100.50998,Main dataset,Escherichia coli,MS14385,,RPMI,2,Proteomics,SWATH-MS,APAF,,2017-11-14,2017-11-13,0,,,319,,0,2017-11-14 08:03:03
+102.100.100.50997,Main dataset,Escherichia coli,MS14385,,RPMI,1,Proteomics,SWATH-MS,APAF,,2017-11-14,2017-11-13,0,,,318,,0,2017-11-14 08:03:03
+102.100.100.50996,Main dataset,Escherichia coli,MS14384,,Pooled sera,6,Proteomics,SWATH-MS,APAF,,2017-11-14,2017-11-13,0,,,317,,0,2017-11-14 08:03:03
+102.100.100.50995,Main dataset,Escherichia coli,MS14384,,Pooled sera,5,Proteomics,SWATH-MS,APAF,,2017-11-14,2017-11-13,0,,,316,,0,2017-11-14 08:03:03
+102.100.100.50994,Main dataset,Escherichia coli,MS14384,,Pooled sera,4,Proteomics,SWATH-MS,APAF,,2017-11-14,2017-11-13,0,,,315,,0,2017-11-14 08:03:03
+102.100.100.50993,Main dataset,Escherichia coli,MS14384,,Pooled sera,3,Proteomics,SWATH-MS,APAF,,2017-11-14,2017-11-13,0,,,314,,0,2017-11-14 08:03:03
+102.100.100.50992,Main dataset,Escherichia coli,MS14384,,Pooled sera,2,Proteomics,SWATH-MS,APAF,,2017-11-14,2017-11-13,0,,,313,,0,2017-11-14 08:03:03
+102.100.100.50991,Main dataset,Escherichia coli,MS14384,,Pooled sera,1,Proteomics,SWATH-MS,APAF,,2017-11-14,2017-11-13,0,,,312,,0,2017-11-14 08:03:03
+102.100.100.50990,Main dataset,Escherichia coli,MS14384,,RPMI,6,Proteomics,SWATH-MS,APAF,,2017-11-14,2017-11-13,0,,,311,,0,2017-11-14 08:03:03
+102.100.100.50989,Main dataset,Escherichia coli,MS14384,,RPMI,5,Proteomics,SWATH-MS,APAF,,2017-11-14,2017-11-13,0,,,310,,0,2017-11-14 08:03:03
+102.100.100.50988,Main dataset,Escherichia coli,MS14384,,RPMI,4,Proteomics,SWATH-MS,APAF,,2017-11-14,2017-11-13,0,,,309,,0,2017-11-14 08:03:03
+102.100.100.50987,Main dataset,Escherichia coli,MS14384,,RPMI,3,Proteomics,SWATH-MS,APAF,,2017-11-14,2017-11-13,0,,,308,,0,2017-11-14 08:03:03
+102.100.100.50986,Main dataset,Escherichia coli,MS14384,,RPMI,2,Proteomics,SWATH-MS,APAF,,2017-11-14,2017-11-13,0,,,307,,0,2017-11-14 08:03:03
+102.100.100.50985,Main dataset,Escherichia coli,MS14384,,RPMI,1,Proteomics,SWATH-MS,APAF,,2017-11-14,2017-11-13,0,,,306,,0,2017-11-14 08:03:03
+102.100.100.50984,Main dataset,Escherichia coli,B36,,Pooled sera,6,Proteomics,SWATH-MS,APAF,,2017-11-14,2017-11-13,0,,,305,,0,2017-11-14 08:03:03
+102.100.100.50983,Main dataset,Escherichia coli,B36,,Pooled sera,5,Proteomics,SWATH-MS,APAF,,2017-11-14,2017-11-13,0,,,304,,0,2017-11-14 08:03:03
+102.100.100.50982,Main dataset,Escherichia coli,B36,,Pooled sera,4,Proteomics,SWATH-MS,APAF,,2017-11-14,2017-11-13,0,,,303,,0,2017-11-14 08:03:03
+102.100.100.50981,Main dataset,Escherichia coli,B36,,Pooled sera,3,Proteomics,SWATH-MS,APAF,,2017-11-14,2017-11-13,0,,,302,,0,2017-11-14 08:03:03
+102.100.100.50980,Main dataset,Escherichia coli,B36,,Pooled sera,2,Proteomics,SWATH-MS,APAF,,2017-11-14,2017-11-13,0,,,301,,0,2017-11-14 08:03:03
+102.100.100.50979,Main dataset,Escherichia coli,B36,,Pooled sera,1,Proteomics,SWATH-MS,APAF,,2017-11-14,2017-11-13,0,,,300,,0,2017-11-14 08:03:03
+102.100.100.50978,Main dataset,Escherichia coli,B36,,RPMI,6,Proteomics,SWATH-MS,APAF,,2017-11-14,2017-11-13,0,,,299,,0,2017-11-14 08:03:03
+102.100.100.50977,Main dataset,Escherichia coli,B36,,RPMI,5,Proteomics,SWATH-MS,APAF,,2017-11-14,2017-11-13,0,,,298,,0,2017-11-14 08:03:03
+102.100.100.50976,Main dataset,Escherichia coli,B36,,RPMI,4,Proteomics,SWATH-MS,APAF,,2017-11-14,2017-11-13,0,,,297,,0,2017-11-14 08:03:03
+102.100.100.50975,Main dataset,Escherichia coli,B36,,RPMI,3,Proteomics,SWATH-MS,APAF,,2017-11-14,2017-11-13,0,,,296,,0,2017-11-14 08:03:03
+102.100.100.50974,Main dataset,Escherichia coli,B36,,RPMI,2,Proteomics,SWATH-MS,APAF,,2017-11-14,2017-11-13,0,,,295,,0,2017-11-14 08:03:03
+102.100.100.50973,Main dataset,Escherichia coli,B36,,RPMI,1,Proteomics,SWATH-MS,APAF,,2017-11-14,2017-11-13,0,,,294,,0,2017-11-14 08:03:03
+102.100.100.50174,Main dataset,Streptococcus pneumoniae,4496,1,RPMI + galactose,6,Proteomics,MS1 quantification,MBPF,,2017-10-31,2017-10-31,0,,,293,,0,2017-10-31 04:36:06
+102.100.100.50173,Main dataset,Streptococcus pneumoniae,4496,1,RPMI + glucose,6,Proteomics,MS1 quantification,MBPF,,2017-10-31,2017-10-31,0,,,292,,0,2017-10-31 04:36:06
+102.100.100.50172,Main dataset,Streptococcus pneumoniae,4496,1,Pooled sera,6,Proteomics,MS1 quantification,MBPF,,2017-10-31,2017-10-31,0,,,291,,0,2017-10-31 04:36:06
+102.100.100.50171,Main dataset,Streptococcus pneumoniae,180/15,3,RPMI + galactose,6,Proteomics,MS1 quantification,MBPF,,2017-10-31,2017-10-31,0,,,290,,0,2017-10-31 04:36:06
+102.100.100.50170,Main dataset,Streptococcus pneumoniae,180/15,3,RPMI + glucose,6,Proteomics,MS1 quantification,MBPF,,2017-10-31,2017-10-31,0,,,289,,0,2017-10-31 04:36:06
+102.100.100.50169,Main dataset,Streptococcus pneumoniae,180/15,3,Pooled sera,6,Proteomics,MS1 quantification,MBPF,,2017-10-31,2017-10-31,0,,,288,,0,2017-10-31 04:36:06
+102.100.100.50168,Main dataset,Streptococcus pneumoniae,180/2,3,RPMI + galactose,6,Proteomics,MS1 quantification,MBPF,,2017-10-31,2017-10-31,0,,,287,,0,2017-10-31 04:36:06
+102.100.100.50167,Main dataset,Streptococcus pneumoniae,180/2,3,RPMI + glucose,6,Proteomics,MS1 quantification,MBPF,,2017-10-31,2017-10-31,0,,,286,,0,2017-10-31 04:36:06
+102.100.100.50166,Main dataset,Streptococcus pneumoniae,180/2,3,Pooled sera,6,Proteomics,MS1 quantification,MBPF,,2017-10-31,2017-10-31,0,,,285,,0,2017-10-31 04:36:05
+102.100.100.50165,Main dataset,Streptococcus pneumoniae,947,14,RPMI + galactose,6,Proteomics,MS1 quantification,MBPF,,2017-10-31,2017-10-31,0,,,284,,0,2017-10-31 04:36:05
+102.100.100.50164,Main dataset,Streptococcus pneumoniae,947,14,RPMI + glucose,6,Proteomics,MS1 quantification,MBPF,,2017-10-31,2017-10-31,0,,,283,,0,2017-10-31 04:36:05
+102.100.100.50163,Main dataset,Streptococcus pneumoniae,947,14,Pooled sera,6,Proteomics,MS1 quantification,MBPF,,2017-10-31,2017-10-31,0,,,282,,0,2017-10-31 04:36:05
+102.100.100.50162,Main dataset,Streptococcus pneumoniae,4559,14,RPMI + galactose,6,Proteomics,MS1 quantification,MBPF,,2017-10-31,2017-10-31,0,,,281,,0,2017-10-31 04:36:05
+102.100.100.50161,Main dataset,Streptococcus pneumoniae,4559,14,RPMI + glucose,6,Proteomics,MS1 quantification,MBPF,,2017-10-31,2017-10-31,0,,,280,,0,2017-10-31 04:36:05
+102.100.100.50160,Main dataset,Streptococcus pneumoniae,4559,14,Pooled sera,6,Proteomics,MS1 quantification,MBPF,,2017-10-31,2017-10-31,0,,,279,,0,2017-10-31 04:36:05
+102.100.100.50159,Main dataset,Streptococcus pneumoniae,4496,1,RPMI + galactose,5,Proteomics,MS1 quantification,MBPF,,2017-10-31,2017-10-31,0,,,278,,0,2017-10-31 04:36:05
+102.100.100.50158,Main dataset,Streptococcus pneumoniae,4496,1,RPMI + glucose,5,Proteomics,MS1 quantification,MBPF,,2017-10-31,2017-10-31,0,,,277,,0,2017-10-31 04:36:05
+102.100.100.50157,Main dataset,Streptococcus pneumoniae,4496,1,Pooled sera,5,Proteomics,MS1 quantification,MBPF,,2017-10-31,2017-10-31,0,,,276,,0,2017-10-31 04:36:05
+102.100.100.50156,Main dataset,Streptococcus pneumoniae,180/15,3,RPMI + galactose,5,Proteomics,MS1 quantification,MBPF,,2017-10-31,2017-10-31,0,,,275,,0,2017-10-31 04:36:05
+102.100.100.50155,Main dataset,Streptococcus pneumoniae,180/15,3,RPMI + glucose,5,Proteomics,MS1 quantification,MBPF,,2017-10-31,2017-10-31,0,,,274,,0,2017-10-31 04:36:05
+102.100.100.50154,Main dataset,Streptococcus pneumoniae,180/15,3,Pooled sera,5,Proteomics,MS1 quantification,MBPF,,2017-10-31,2017-10-31,0,,,273,,0,2017-10-31 04:36:05
+102.100.100.50153,Main dataset,Streptococcus pneumoniae,180/2,3,RPMI + galactose,5,Proteomics,MS1 quantification,MBPF,,2017-10-31,2017-10-31,0,,,272,,0,2017-10-31 04:36:05
+102.100.100.50152,Main dataset,Streptococcus pneumoniae,180/2,3,RPMI + glucose,5,Proteomics,MS1 quantification,MBPF,,2017-10-31,2017-10-31,0,,,271,,0,2017-10-31 04:36:05
+102.100.100.50151,Main dataset,Streptococcus pneumoniae,180/2,3,Pooled sera,5,Proteomics,MS1 quantification,MBPF,,2017-10-31,2017-10-31,0,,,270,,0,2017-10-31 04:36:05
+102.100.100.50150,Main dataset,Streptococcus pneumoniae,947,14,RPMI + galactose,5,Proteomics,MS1 quantification,MBPF,,2017-10-31,2017-10-31,0,,,269,,0,2017-10-31 04:36:05
+102.100.100.50149,Main dataset,Streptococcus pneumoniae,947,14,RPMI + glucose,5,Proteomics,MS1 quantification,MBPF,,2017-10-31,2017-10-31,0,,,268,,0,2017-10-31 04:36:05
+102.100.100.50148,Main dataset,Streptococcus pneumoniae,947,14,Pooled sera,5,Proteomics,MS1 quantification,MBPF,,2017-10-31,2017-10-31,0,,,267,,0,2017-10-31 04:36:05
+102.100.100.50147,Main dataset,Streptococcus pneumoniae,4559,14,RPMI + galactose,5,Proteomics,MS1 quantification,MBPF,,2017-10-31,2017-10-31,0,,,266,,0,2017-10-31 04:36:05
+102.100.100.50146,Main dataset,Streptococcus pneumoniae,4559,14,RPMI + glucose,5,Proteomics,MS1 quantification,MBPF,,2017-10-31,2017-10-31,0,,,265,,0,2017-10-31 04:36:05
+102.100.100.50145,Main dataset,Streptococcus pneumoniae,4559,14,Pooled sera,5,Proteomics,MS1 quantification,MBPF,,2017-10-31,2017-10-31,0,,,264,,0,2017-10-31 04:36:05
+102.100.100.50144,Main dataset,Streptococcus pneumoniae,4496,1,RPMI + galactose,4,Proteomics,MS1 quantification,MBPF,,2017-10-31,2017-10-31,0,,,263,,0,2017-10-31 04:36:05
+102.100.100.50143,Main dataset,Streptococcus pneumoniae,4496,1,RPMI + glucose,4,Proteomics,MS1 quantification,MBPF,,2017-10-31,2017-10-31,0,,,262,,0,2017-10-31 04:36:05
+102.100.100.50142,Main dataset,Streptococcus pneumoniae,4496,1,Pooled sera,4,Proteomics,MS1 quantification,MBPF,,2017-10-31,2017-10-31,0,,,261,,0,2017-10-31 04:36:05
+102.100.100.50141,Main dataset,Streptococcus pneumoniae,180/15,3,RPMI + galactose,4,Proteomics,MS1 quantification,MBPF,,2017-10-31,2017-10-31,0,,,260,,0,2017-10-31 04:36:05
+102.100.100.50140,Main dataset,Streptococcus pneumoniae,180/15,3,RPMI + glucose,4,Proteomics,MS1 quantification,MBPF,,2017-10-31,2017-10-31,0,,,259,,0,2017-10-31 04:36:05
+102.100.100.50139,Main dataset,Streptococcus pneumoniae,180/15,3,Pooled sera,4,Proteomics,MS1 quantification,MBPF,,2017-10-31,2017-10-31,0,,,258,,0,2017-10-31 04:36:05
+102.100.100.50138,Main dataset,Streptococcus pneumoniae,180/2,3,RPMI + galactose,4,Proteomics,MS1 quantification,MBPF,,2017-10-31,2017-10-31,0,,,257,,0,2017-10-31 04:36:05
+102.100.100.50137,Main dataset,Streptococcus pneumoniae,180/2,3,RPMI + glucose,4,Proteomics,MS1 quantification,MBPF,,2017-10-31,2017-10-31,0,,,256,,0,2017-10-31 04:36:05
+102.100.100.50136,Main dataset,Streptococcus pneumoniae,180/2,3,Pooled sera,4,Proteomics,MS1 quantification,MBPF,,2017-10-31,2017-10-31,0,,,255,,0,2017-10-31 04:36:05
+102.100.100.50135,Main dataset,Streptococcus pneumoniae,947,14,RPMI + galactose,4,Proteomics,MS1 quantification,MBPF,,2017-10-31,2017-10-31,0,,,254,,0,2017-10-31 04:36:05
+102.100.100.50134,Main dataset,Streptococcus pneumoniae,947,14,RPMI + glucose,4,Proteomics,MS1 quantification,MBPF,,2017-10-31,2017-10-31,0,,,253,,0,2017-10-31 04:36:05
+102.100.100.50133,Main dataset,Streptococcus pneumoniae,947,14,Pooled sera,4,Proteomics,MS1 quantification,MBPF,,2017-10-31,2017-10-31,0,,,252,,0,2017-10-31 04:36:05
+102.100.100.50132,Main dataset,Streptococcus pneumoniae,4559,14,RPMI + galactose,4,Proteomics,MS1 quantification,MBPF,,2017-10-31,2017-10-31,0,,,251,,0,2017-10-31 04:36:05
+102.100.100.50131,Main dataset,Streptococcus pneumoniae,4559,14,RPMI + glucose,4,Proteomics,MS1 quantification,MBPF,,2017-10-31,2017-10-31,0,,,250,,0,2017-10-31 04:36:05
+102.100.100.50130,Main dataset,Streptococcus pneumoniae,4559,14,Pooled sera,4,Proteomics,MS1 quantification,MBPF,,2017-10-31,2017-10-31,0,,,249,,0,2017-10-31 04:36:05
+102.100.100.50129,Main dataset,Streptococcus pneumoniae,4496,1,RPMI + galactose,3,Proteomics,MS1 quantification,MBPF,,2017-10-31,2017-10-31,0,,,248,,0,2017-10-31 04:36:05
+102.100.100.50128,Main dataset,Streptococcus pneumoniae,4496,1,RPMI + glucose,3,Proteomics,MS1 quantification,MBPF,,2017-10-31,2017-10-31,0,,,247,,0,2017-10-31 04:36:05
+102.100.100.50127,Main dataset,Streptococcus pneumoniae,4496,1,Pooled sera,3,Proteomics,MS1 quantification,MBPF,,2017-10-31,2017-10-31,0,,,246,,0,2017-10-31 04:36:05
+102.100.100.50126,Main dataset,Streptococcus pneumoniae,180/15,3,RPMI + galactose,3,Proteomics,MS1 quantification,MBPF,,2017-10-31,2017-10-31,0,,,245,,0,2017-10-31 04:36:05
+102.100.100.50125,Main dataset,Streptococcus pneumoniae,180/15,3,RPMI + glucose,3,Proteomics,MS1 quantification,MBPF,,2017-10-31,2017-10-31,0,,,244,,0,2017-10-31 04:36:05
+102.100.100.50124,Main dataset,Streptococcus pneumoniae,180/15,3,Pooled sera,3,Proteomics,MS1 quantification,MBPF,,2017-10-31,2017-10-31,0,,,243,,0,2017-10-31 04:36:05
+102.100.100.50123,Main dataset,Streptococcus pneumoniae,180/2,3,RPMI + galactose,3,Proteomics,MS1 quantification,MBPF,,2017-10-31,2017-10-31,0,,,242,,0,2017-10-31 04:36:05
+102.100.100.50122,Main dataset,Streptococcus pneumoniae,180/2,3,RPMI + glucose,3,Proteomics,MS1 quantification,MBPF,,2017-10-31,2017-10-31,0,,,241,,0,2017-10-31 04:36:05
+102.100.100.50121,Main dataset,Streptococcus pneumoniae,180/2,3,Pooled sera,3,Proteomics,MS1 quantification,MBPF,,2017-10-31,2017-10-31,0,,,240,,0,2017-10-31 04:36:05
+102.100.100.50120,Main dataset,Streptococcus pneumoniae,947,14,RPMI + galactose,3,Proteomics,MS1 quantification,MBPF,,2017-10-31,2017-10-31,0,,,239,,0,2017-10-31 04:36:05
+102.100.100.50119,Main dataset,Streptococcus pneumoniae,947,14,RPMI + glucose,3,Proteomics,MS1 quantification,MBPF,,2017-10-31,2017-10-31,0,,,238,,0,2017-10-31 04:36:05
+102.100.100.50118,Main dataset,Streptococcus pneumoniae,947,14,Pooled sera,3,Proteomics,MS1 quantification,MBPF,,2017-10-31,2017-10-31,0,,,237,,0,2017-10-31 04:36:05
+102.100.100.50117,Main dataset,Streptococcus pneumoniae,4559,14,RPMI + galactose,3,Proteomics,MS1 quantification,MBPF,,2017-10-31,2017-10-31,0,,,236,,0,2017-10-31 04:36:05
+102.100.100.50116,Main dataset,Streptococcus pneumoniae,4559,14,RPMI + glucose,3,Proteomics,MS1 quantification,MBPF,,2017-10-31,2017-10-31,0,,,235,,0,2017-10-31 04:36:05
+102.100.100.50115,Main dataset,Streptococcus pneumoniae,4559,14,Pooled sera,3,Proteomics,MS1 quantification,MBPF,,2017-10-31,2017-10-31,0,,,234,,0,2017-10-31 04:36:05
+102.100.100.50114,Main dataset,Streptococcus pneumoniae,4496,1,RPMI + galactose,2,Proteomics,MS1 quantification,MBPF,,2017-10-31,2017-10-31,0,,,233,,0,2017-10-31 04:36:05
+102.100.100.50113,Main dataset,Streptococcus pneumoniae,4496,1,RPMI + glucose,2,Proteomics,MS1 quantification,MBPF,,2017-10-31,2017-10-31,0,,,232,,0,2017-10-31 04:36:05
+102.100.100.50112,Main dataset,Streptococcus pneumoniae,4496,1,Pooled sera,2,Proteomics,MS1 quantification,MBPF,,2017-10-31,2017-10-31,0,,,231,,0,2017-10-31 04:36:05
+102.100.100.50111,Main dataset,Streptococcus pneumoniae,180/15,3,RPMI + galactose,2,Proteomics,MS1 quantification,MBPF,,2017-10-31,2017-10-31,0,,,230,,0,2017-10-31 04:36:05
+102.100.100.50110,Main dataset,Streptococcus pneumoniae,180/15,3,RPMI + glucose,2,Proteomics,MS1 quantification,MBPF,,2017-10-31,2017-10-31,0,,,229,,0,2017-10-31 04:36:05
+102.100.100.50109,Main dataset,Streptococcus pneumoniae,180/15,3,Pooled sera,2,Proteomics,MS1 quantification,MBPF,,2017-10-31,2017-10-31,0,,,228,,0,2017-10-31 04:36:05
+102.100.100.50108,Main dataset,Streptococcus pneumoniae,180/2,3,RPMI + galactose,2,Proteomics,MS1 quantification,MBPF,,2017-10-31,2017-10-31,0,,,227,,0,2017-10-31 04:36:05
+102.100.100.50107,Main dataset,Streptococcus pneumoniae,180/2,3,RPMI + glucose,2,Proteomics,MS1 quantification,MBPF,,2017-10-31,2017-10-31,0,,,226,,0,2017-10-31 04:36:05
+102.100.100.50106,Main dataset,Streptococcus pneumoniae,180/2,3,Pooled sera,2,Proteomics,MS1 quantification,MBPF,,2017-10-31,2017-10-31,0,,,225,,0,2017-10-31 04:36:05
+102.100.100.50105,Main dataset,Streptococcus pneumoniae,947,14,RPMI + galactose,2,Proteomics,MS1 quantification,MBPF,,2017-10-31,2017-10-31,0,,,224,,0,2017-10-31 04:36:05
+102.100.100.50104,Main dataset,Streptococcus pneumoniae,947,14,RPMI + glucose,2,Proteomics,MS1 quantification,MBPF,,2017-10-31,2017-10-31,0,,,223,,0,2017-10-31 04:36:05
+102.100.100.50103,Main dataset,Streptococcus pneumoniae,947,14,Pooled sera,2,Proteomics,MS1 quantification,MBPF,,2017-10-31,2017-10-31,0,,,222,,0,2017-10-31 04:36:05
+102.100.100.50102,Main dataset,Streptococcus pneumoniae,4559,14,RPMI + galactose,2,Proteomics,MS1 quantification,MBPF,,2017-10-31,2017-10-31,0,,,221,,0,2017-10-31 04:36:05
+102.100.100.50101,Main dataset,Streptococcus pneumoniae,4559,14,RPMI + glucose,2,Proteomics,MS1 quantification,MBPF,,2017-10-31,2017-10-31,0,,,220,,0,2017-10-31 04:36:05
+102.100.100.50100,Main dataset,Streptococcus pneumoniae,4559,14,Pooled sera,2,Proteomics,MS1 quantification,MBPF,,2017-10-31,2017-10-31,0,,,219,,0,2017-10-31 04:36:05
+102.100.100.50099,Main dataset,Streptococcus pneumoniae,4496,1,RPMI + galactose,1,Proteomics,MS1 quantification,MBPF,,2017-10-31,2017-10-31,0,,,218,,0,2017-10-31 04:36:05
+102.100.100.50098,Main dataset,Streptococcus pneumoniae,4496,1,RPMI + glucose,1,Proteomics,MS1 quantification,MBPF,,2017-10-31,2017-10-31,0,,,217,,0,2017-10-31 04:36:05
+102.100.100.50097,Main dataset,Streptococcus pneumoniae,4496,1,Pooled sera,1,Proteomics,MS1 quantification,MBPF,,2017-10-31,2017-10-31,0,,,216,,0,2017-10-31 04:36:05
+102.100.100.50096,Main dataset,Streptococcus pneumoniae,180/15,3,RPMI + galactose,1,Proteomics,MS1 quantification,MBPF,,2017-10-31,2017-10-31,0,,,215,,0,2017-10-31 04:36:05
+102.100.100.50095,Main dataset,Streptococcus pneumoniae,180/15,3,RPMI + glucose,1,Proteomics,MS1 quantification,MBPF,,2017-10-31,2017-10-31,0,,,214,,0,2017-10-31 04:36:05
+102.100.100.50094,Main dataset,Streptococcus pneumoniae,180/15,3,Pooled sera,1,Proteomics,MS1 quantification,MBPF,,2017-10-31,2017-10-31,0,,,213,,0,2017-10-31 04:36:05
+102.100.100.50093,Main dataset,Streptococcus pneumoniae,180/2,3,RPMI + galactose,1,Proteomics,MS1 quantification,MBPF,,2017-10-31,2017-10-31,0,,,212,,0,2017-10-31 04:36:05
+102.100.100.50092,Main dataset,Streptococcus pneumoniae,180/2,3,RPMI + glucose,1,Proteomics,MS1 quantification,MBPF,,2017-10-31,2017-10-31,0,,,211,,0,2017-10-31 04:36:05
+102.100.100.50091,Main dataset,Streptococcus pneumoniae,180/2,3,Pooled sera,1,Proteomics,MS1 quantification,MBPF,,2017-10-31,2017-10-31,0,,,210,,0,2017-10-31 04:36:05
+102.100.100.50090,Main dataset,Streptococcus pneumoniae,947,14,RPMI + galactose,1,Proteomics,MS1 quantification,MBPF,,2017-10-31,2017-10-31,0,,,209,,0,2017-10-31 04:36:05
+102.100.100.50089,Main dataset,Streptococcus pneumoniae,947,14,RPMI + glucose,1,Proteomics,MS1 quantification,MBPF,,2017-10-31,2017-10-31,0,,,208,,0,2017-10-31 04:36:05
+102.100.100.50088,Main dataset,Streptococcus pneumoniae,947,14,Pooled sera,1,Proteomics,MS1 quantification,MBPF,,2017-10-31,2017-10-31,0,,,207,,0,2017-10-31 04:36:05
+102.100.100.50087,Main dataset,Streptococcus pneumoniae,4559,14,RPMI + galactose,1,Proteomics,MS1 quantification,MBPF,,2017-10-31,2017-10-31,0,,,206,,0,2017-10-31 04:36:05
+102.100.100.50086,Main dataset,Streptococcus pneumoniae,4559,14,RPMI + glucose,1,Proteomics,MS1 quantification,MBPF,,2017-10-31,2017-10-31,0,,,205,,0,2017-10-31 04:36:05
+102.100.100.50085,Main dataset,Streptococcus pneumoniae,4559,14,Pooled sera,1,Proteomics,MS1 quantification,MBPF,,2017-10-31,2017-10-31,0,,,204,,0,2017-10-31 04:36:05
+102.100.100.50084,Pilot,Streptococcus pneumoniae,180/2,3,RPMI + galactose,1,Proteomics,MS1 quantification,MBPF,,2017-08-29,2017-08-29,0,,,203,,1,2017-11-21 02:27:34
+102.100.100.50083,Pilot,Streptococcus pneumoniae,180/2,3,RPMI + glucose,1,Proteomics,MS1 quantification,MBPF,,2017-08-29,2017-08-29,0,,,202,,1,2017-11-21 02:27:34
+102.100.100.50082,Pilot,Streptococcus pneumoniae,180/2,3,Pooled sera,1,Proteomics,MS1 quantification,MBPF,,2017-08-29,2017-08-29,0,,,201,,1,2017-11-21 02:27:34
+102.100.100.50081,Pilot,Streptococcus pneumoniae,180/2,3,RPMI + glucose,1,Proteomics,MS1 quantification,MBPF,,2017-08-29,2017-08-29,0,,,200,,1,2017-11-21 02:27:34
+102.100.100.50080,Pilot,Streptococcus pneumoniae,180/2,3,Pooled sera,1,Proteomics,MS1 quantification,MBPF,,2017-08-29,2017-08-29,0,,,199,,1,2017-11-21 02:27:34
+102.100.100.50625,Main dataset,Staphylococcus aureus,BPH2986,,Pooled sera,6,Proteomics,MS1 quantification,MBPF,,2017-07-31,2017-07-31,0,,,198,,1,2017-11-21 02:27:34
+102.100.100.50624,Main dataset,Staphylococcus aureus,BPH2986,,Pooled sera,5,Proteomics,MS1 quantification,MBPF,,2017-07-31,2017-07-31,0,,,197,,1,2017-11-21 02:27:34
+102.100.100.50623,Main dataset,Staphylococcus aureus,BPH2986,,Pooled sera,4,Proteomics,MS1 quantification,MBPF,,2017-07-31,2017-07-31,0,,,196,,1,2017-11-21 02:27:34
+102.100.100.50622,Main dataset,Staphylococcus aureus,BPH2986,,Pooled sera,3,Proteomics,MS1 quantification,MBPF,,2017-07-31,2017-07-31,0,,,195,,1,2017-11-21 02:27:34
+102.100.100.50621,Main dataset,Staphylococcus aureus,BPH2986,,Pooled sera,2,Proteomics,MS1 quantification,MBPF,,2017-07-31,2017-07-31,0,,,194,,1,2017-11-21 02:27:34
+102.100.100.50634,Main dataset,Staphylococcus aureus,BPH2986,,Pooled sera,1,Proteomics,MS1 quantification,MBPF,,2017-07-31,2017-07-31,0,,,193,,1,2017-11-21 02:27:34
+102.100.100.50619,Main dataset,Staphylococcus aureus,BPH2986,,RPMI,6,Proteomics,MS1 quantification,MBPF,,2017-07-31,2017-07-31,0,,,192,,1,2017-11-21 02:27:34
+102.100.100.50618,Main dataset,Staphylococcus aureus,BPH2986,,RPMI,5,Proteomics,MS1 quantification,MBPF,,2017-07-31,2017-07-31,0,,,191,,1,2017-11-21 02:27:34
+102.100.100.50617,Main dataset,Staphylococcus aureus,BPH2986,,RPMI,4,Proteomics,MS1 quantification,MBPF,,2017-07-31,2017-07-31,0,,,190,,1,2017-11-21 02:27:34
+102.100.100.50616,Main dataset,Staphylococcus aureus,BPH2986,,RPMI,3,Proteomics,MS1 quantification,MBPF,,2017-07-31,2017-07-31,0,,,189,,1,2017-11-21 02:27:34
+102.100.100.50615,Main dataset,Staphylococcus aureus,BPH2986,,RPMI,2,Proteomics,MS1 quantification,MBPF,,2017-07-31,2017-07-31,0,,,188,,1,2017-11-21 02:27:34
+102.100.100.50614,Main dataset,Staphylococcus aureus,BPH2986,,RPMI,1,Proteomics,MS1 quantification,MBPF,,2017-07-31,2017-07-31,0,,,187,,1,2017-11-21 02:27:34
+102.100.100.50613,Main dataset,Staphylococcus aureus,BPH2947,,Pooled sera,6,Proteomics,MS1 quantification,MBPF,,2017-07-31,2017-07-31,0,,,186,,1,2017-11-21 02:27:34
+102.100.100.50612,Main dataset,Staphylococcus aureus,BPH2947,,Pooled sera,5,Proteomics,MS1 quantification,MBPF,,2017-07-31,2017-07-31,0,,,185,,1,2017-11-21 02:27:34
+102.100.100.50611,Main dataset,Staphylococcus aureus,BPH2947,,Pooled sera,4,Proteomics,MS1 quantification,MBPF,,2017-07-31,2017-07-31,0,,,184,,1,2017-11-21 02:27:34
+102.100.100.50610,Main dataset,Staphylococcus aureus,BPH2947,,Pooled sera,3,Proteomics,MS1 quantification,MBPF,,2017-07-31,2017-07-31,0,,,183,,1,2017-11-21 02:27:34
+102.100.100.50609,Main dataset,Staphylococcus aureus,BPH2947,,Pooled sera,2,Proteomics,MS1 quantification,MBPF,,2017-07-31,2017-07-31,0,,,182,,1,2017-11-21 02:27:34
+102.100.100.50633,Main dataset,Staphylococcus aureus,BPH2947,,Pooled sera,1,Proteomics,MS1 quantification,MBPF,,2017-07-31,2017-07-31,0,,,181,,1,2017-11-21 02:27:34
+102.100.100.50607,Main dataset,Staphylococcus aureus,BPH2947,,RPMI,6,Proteomics,MS1 quantification,MBPF,,2017-07-31,2017-07-31,0,,,180,,1,2017-11-21 02:27:34
+102.100.100.50606,Main dataset,Staphylococcus aureus,BPH2947,,RPMI,5,Proteomics,MS1 quantification,MBPF,,2017-07-31,2017-07-31,0,,,179,,1,2017-11-21 02:27:34
+102.100.100.50605,Main dataset,Staphylococcus aureus,BPH2947,,RPMI,4,Proteomics,MS1 quantification,MBPF,,2017-07-31,2017-07-31,0,,,178,,1,2017-11-21 02:27:34
+102.100.100.50604,Main dataset,Staphylococcus aureus,BPH2947,,RPMI,3,Proteomics,MS1 quantification,MBPF,,2017-07-31,2017-07-31,0,,,177,,1,2017-11-21 02:27:34
+102.100.100.50603,Main dataset,Staphylococcus aureus,BPH2947,,RPMI,2,Proteomics,MS1 quantification,MBPF,,2017-07-31,2017-07-31,0,,,176,,1,2017-11-21 02:27:34
+102.100.100.50602,Main dataset,Staphylococcus aureus,BPH2947,,RPMI,1,Proteomics,MS1 quantification,MBPF,,2017-07-31,2017-07-31,0,,,175,,1,2017-11-21 02:27:34
+102.100.100.50601,Main dataset,Staphylococcus aureus,BPH2900,,Pooled sera,6,Proteomics,MS1 quantification,MBPF,,2017-07-31,2017-07-31,0,,,174,,1,2017-11-21 02:27:34
+102.100.100.50600,Main dataset,Staphylococcus aureus,BPH2900,,Pooled sera,5,Proteomics,MS1 quantification,MBPF,,2017-07-31,2017-07-31,0,,,173,,1,2017-11-21 02:27:34
+102.100.100.50599,Main dataset,Staphylococcus aureus,BPH2900,,Pooled sera,4,Proteomics,MS1 quantification,MBPF,,2017-07-31,2017-07-31,0,,,172,,1,2017-11-21 02:27:34
+102.100.100.50598,Main dataset,Staphylococcus aureus,BPH2900,,Pooled sera,3,Proteomics,MS1 quantification,MBPF,,2017-07-31,2017-07-31,0,,,171,,1,2017-11-21 02:27:34
+102.100.100.50597,Main dataset,Staphylococcus aureus,BPH2900,,Pooled sera,2,Proteomics,MS1 quantification,MBPF,,2017-07-31,2017-07-31,0,,,170,,1,2017-11-21 02:27:34
+102.100.100.50596,Main dataset,Staphylococcus aureus,BPH2900,,Pooled sera,1,Proteomics,MS1 quantification,MBPF,,2017-07-31,2017-07-31,0,,,169,,1,2017-11-21 02:27:34
+102.100.100.50595,Main dataset,Staphylococcus aureus,BPH2900,,RPMI,6,Proteomics,MS1 quantification,MBPF,,2017-07-31,2017-07-31,0,,,168,,1,2017-11-21 02:27:34
+102.100.100.50594,Main dataset,Staphylococcus aureus,BPH2900,,RPMI,5,Proteomics,MS1 quantification,MBPF,,2017-07-31,2017-07-31,0,,,167,,1,2017-11-21 02:27:34
+102.100.100.50593,Main dataset,Staphylococcus aureus,BPH2900,,RPMI,4,Proteomics,MS1 quantification,MBPF,,2017-07-31,2017-07-31,0,,,166,,1,2017-11-21 02:27:34
+102.100.100.50592,Main dataset,Staphylococcus aureus,BPH2900,,RPMI,3,Proteomics,MS1 quantification,MBPF,,2017-07-31,2017-07-31,0,,,165,,1,2017-11-21 02:27:34
+102.100.100.50591,Main dataset,Staphylococcus aureus,BPH2900,,RPMI,2,Proteomics,MS1 quantification,MBPF,,2017-07-31,2017-07-31,0,,,164,,1,2017-11-21 02:27:34
+102.100.100.50590,Main dataset,Staphylococcus aureus,BPH2900,,RPMI,1,Proteomics,MS1 quantification,MBPF,,2017-07-31,2017-07-31,0,,,163,,1,2017-11-21 02:27:34
+102.100.100.50589,Main dataset,Staphylococcus aureus,BPH2819,,Pooled sera,6,Proteomics,MS1 quantification,MBPF,,2017-07-31,2017-07-31,0,,,162,,1,2017-11-21 02:27:34
+102.100.100.50588,Main dataset,Staphylococcus aureus,BPH2819,,Pooled sera,5,Proteomics,MS1 quantification,MBPF,,2017-07-31,2017-07-31,0,,,161,,1,2017-11-21 02:27:34
+102.100.100.50587,Main dataset,Staphylococcus aureus,BPH2819,,Pooled sera,4,Proteomics,MS1 quantification,MBPF,,2017-07-31,2017-07-31,0,,,160,,1,2017-11-21 02:27:34
+102.100.100.50586,Main dataset,Staphylococcus aureus,BPH2819,,Pooled sera,3,Proteomics,MS1 quantification,MBPF,,2017-07-31,2017-07-31,0,,,159,,1,2017-11-21 02:27:34
+102.100.100.50585,Main dataset,Staphylococcus aureus,BPH2819,,Pooled sera,2,Proteomics,MS1 quantification,MBPF,,2017-07-31,2017-07-31,0,,,158,,1,2017-11-21 02:27:34
+102.100.100.50632,Main dataset,Staphylococcus aureus,BPH2819,,Pooled sera,1,Proteomics,MS1 quantification,MBPF,,2017-07-31,2017-07-31,0,,,157,,1,2017-11-21 02:27:34
+102.100.100.50583,Main dataset,Staphylococcus aureus,BPH2819,,RPMI,6,Proteomics,MS1 quantification,MBPF,,2017-07-31,2017-07-31,0,,,156,,1,2017-11-21 02:27:34
+102.100.100.50582,Main dataset,Staphylococcus aureus,BPH2819,,RPMI,5,Proteomics,MS1 quantification,MBPF,,2017-07-31,2017-07-31,0,,,155,,1,2017-11-21 02:27:34
+102.100.100.50581,Main dataset,Staphylococcus aureus,BPH2819,,RPMI,4,Proteomics,MS1 quantification,MBPF,,2017-07-31,2017-07-31,0,,,154,,1,2017-11-21 02:27:34
+102.100.100.50580,Main dataset,Staphylococcus aureus,BPH2819,,RPMI,3,Proteomics,MS1 quantification,MBPF,,2017-07-31,2017-07-31,0,,,153,,1,2017-11-21 02:27:34
+102.100.100.50579,Main dataset,Staphylococcus aureus,BPH2819,,RPMI,2,Proteomics,MS1 quantification,MBPF,,2017-07-31,2017-07-31,0,,,152,,1,2017-11-21 02:27:34
+102.100.100.50578,Main dataset,Staphylococcus aureus,BPH2819,,RPMI,1,Proteomics,MS1 quantification,MBPF,,2017-07-31,2017-07-31,0,,,151,,1,2017-11-21 02:27:34
+102.100.100.50577,Main dataset,Staphylococcus aureus,BPH2760,,Pooled sera,6,Proteomics,MS1 quantification,MBPF,,2017-07-31,2017-07-31,0,,,150,,1,2017-11-21 02:27:34
+102.100.100.50576,Main dataset,Staphylococcus aureus,BPH2760,,Pooled sera,5,Proteomics,MS1 quantification,MBPF,,2017-07-31,2017-07-31,0,,,149,,1,2017-11-21 02:27:34
+102.100.100.50575,Main dataset,Staphylococcus aureus,BPH2760,,Pooled sera,4,Proteomics,MS1 quantification,MBPF,,2017-07-31,2017-07-31,0,,,148,,1,2017-11-21 02:27:34
+102.100.100.50574,Main dataset,Staphylococcus aureus,BPH2760,,Pooled sera,3,Proteomics,MS1 quantification,MBPF,,2017-07-31,2017-07-31,0,,,147,,1,2017-11-21 02:27:34
+102.100.100.50573,Main dataset,Staphylococcus aureus,BPH2760,,Pooled sera,2,Proteomics,MS1 quantification,MBPF,,2017-07-31,2017-07-31,0,,,146,,1,2017-11-21 02:27:34
+102.100.100.50572,Main dataset,Staphylococcus aureus,BPH2760,,Pooled sera,1,Proteomics,MS1 quantification,MBPF,,2017-07-31,2017-07-31,0,,,145,,1,2017-11-21 02:27:34
+102.100.100.50571,Main dataset,Staphylococcus aureus,BPH2760,,RPMI,6,Proteomics,MS1 quantification,MBPF,,2017-07-31,2017-07-31,0,,,144,,1,2017-11-21 02:27:34
+102.100.100.50570,Main dataset,Staphylococcus aureus,BPH2760,,RPMI,5,Proteomics,MS1 quantification,MBPF,,2017-07-31,2017-07-31,0,,,143,,1,2017-11-21 02:27:34
+102.100.100.50569,Main dataset,Staphylococcus aureus,BPH2760,,RPMI,4,Proteomics,MS1 quantification,MBPF,,2017-07-31,2017-07-31,0,,,142,,1,2017-11-21 02:27:34
+102.100.100.50568,Main dataset,Staphylococcus aureus,BPH2760,,RPMI,3,Proteomics,MS1 quantification,MBPF,,2017-07-31,2017-07-31,0,,,141,,1,2017-11-21 02:27:34
+102.100.100.50567,Main dataset,Staphylococcus aureus,BPH2760,,RPMI,2,Proteomics,MS1 quantification,MBPF,,2017-07-31,2017-07-31,0,,,140,,1,2017-11-21 02:27:34
+102.100.100.50566,Main dataset,Staphylococcus aureus,BPH2760,,RPMI,1,Proteomics,MS1 quantification,MBPF,,2017-07-31,2017-07-31,0,,,139,,1,2017-11-21 02:27:34
+102.100.100.26057,Pilot,Escherichia coli,MS14387,,RPMI,1,Proteomics,MS1 quantification,MBPF,,2017-07-24,2017-07-24,0,,,138,,1,2017-09-16 10:38:32
+102.100.100.26056,Pilot,Escherichia coli,MS14386,,RPMI,1,Proteomics,MS1 quantification,MBPF,,2017-07-24,2017-07-24,0,,,137,,1,2017-09-16 10:38:32
+102.100.100.26055,Pilot,Escherichia coli,MS14385,,RPMI,1,Proteomics,MS1 quantification,MBPF,,2017-07-24,2017-07-24,0,,,136,,1,2017-09-16 10:38:32
+102.100.100.26054,Pilot,Escherichia coli,MS14384,,RPMI,1,Proteomics,MS1 quantification,MBPF,,2017-07-24,2017-07-24,0,,,135,,1,2017-09-16 10:38:32
+102.100.100.26053,Pilot,Escherichia coli,B36,,RPMI,1,Proteomics,MS1 quantification,MBPF,,2017-07-24,2017-07-24,0,,,134,,1,2017-09-16 10:38:32
+102.100.100.26052,Pilot,Escherichia coli,MS14387,,Pooled sera,1,Proteomics,MS1 quantification,MBPF,,2017-07-24,2017-07-24,0,,,133,,1,2017-09-16 10:38:32
+102.100.100.26051,Pilot,Escherichia coli,MS14386,,Pooled sera,1,Proteomics,MS1 quantification,MBPF,,2017-07-24,2017-07-24,0,,,132,,1,2017-09-16 10:38:32
+102.100.100.26050,Pilot,Escherichia coli,MS14385,,Pooled sera,1,Proteomics,MS1 quantification,MBPF,,2017-07-24,2017-07-24,0,,,131,,1,2017-09-16 10:38:32
+102.100.100.26049,Pilot,Escherichia coli,MS14384,,Pooled sera,1,Proteomics,MS1 quantification,MBPF,,2017-07-24,2017-07-24,0,,,130,,1,2017-09-16 10:38:32
+102.100.100.26048,Pilot,Escherichia coli,B36,,Pooled sera,1,Proteomics,MS1 quantification,MBPF,,2017-07-24,2017-07-24,0,,,129,,1,2017-09-16 10:38:32
+102.100.100.50075,Pilot,Streptococcus pneumoniae,180/15,3,RPMI + galactose,1,Proteomics,MS1 quantification,MBPF,,2017-06-19,2017-06-19,0,,,128,,1,2017-09-16 10:38:32
+102.100.100.50074,Pilot,Streptococcus pneumoniae,180/2,3,RPMI + galactose,1,Proteomics,MS1 quantification,MBPF,,2017-06-19,2017-06-19,0,,,127,,1,2017-09-16 10:38:32
+102.100.100.50073,Pilot,Streptococcus pneumoniae,4559,14,RPMI + galactose,1,Proteomics,MS1 quantification,MBPF,,2017-06-19,2017-06-19,0,,,126,,1,2017-09-16 10:38:32
+102.100.100.50072,Pilot,Streptococcus pneumoniae,947,14,RPMI + galactose,1,Proteomics,MS1 quantification,MBPF,,2017-06-19,2017-06-19,0,,,125,,1,2017-09-16 10:38:32
+102.100.100.50071,Pilot,Streptococcus pneumoniae,4496,1,RPMI + galactose,1,Proteomics,MS1 quantification,MBPF,,2017-06-19,2017-06-19,0,,,124,,1,2017-09-16 10:38:32
+102.100.100.50070,Pilot,Streptococcus pneumoniae,180/15,3,RPMI + glucose,1,Proteomics,MS1 quantification,MBPF,,2017-06-19,2017-06-19,0,,,123,,1,2017-09-16 10:38:32
+102.100.100.50069,Pilot,Streptococcus pneumoniae,180/2,3,RPMI + glucose,1,Proteomics,MS1 quantification,MBPF,,2017-06-19,2017-06-19,0,,,122,,1,2017-09-16 10:38:32
+102.100.100.50068,Pilot,Streptococcus pneumoniae,4559,14,RPMI + glucose,1,Proteomics,MS1 quantification,MBPF,,2017-06-19,2017-06-19,0,,,121,,1,2017-09-16 10:38:32
+102.100.100.50067,Pilot,Streptococcus pneumoniae,947,14,RPMI + glucose,1,Proteomics,MS1 quantification,MBPF,,2017-06-19,2017-06-19,0,,,120,,1,2017-09-16 10:38:32
+102.100.100.50066,Pilot,Streptococcus pneumoniae,4496,1,RPMI + glucose,1,Proteomics,MS1 quantification,MBPF,,2017-06-19,2017-06-19,0,,,119,,1,2017-09-16 10:38:32
+102.100.100.50065,Pilot,Streptococcus pneumoniae,180/15,3,Pooled sera,1,Proteomics,MS1 quantification,MBPF,,2017-06-19,2017-06-19,0,,,118,,1,2017-09-16 10:38:32
+102.100.100.50064,Pilot,Streptococcus pneumoniae,180/2,3,Pooled sera,1,Proteomics,MS1 quantification,MBPF,,2017-06-19,2017-06-19,0,,,117,,1,2017-09-16 10:38:32
+102.100.100.50063,Pilot,Streptococcus pneumoniae,4559,14,Pooled sera,1,Proteomics,MS1 quantification,MBPF,,2017-06-19,2017-06-19,0,,,116,,1,2017-09-16 10:38:32
+102.100.100.50062,Pilot,Streptococcus pneumoniae,947,14,Pooled sera,1,Proteomics,MS1 quantification,MBPF,,2017-06-19,2017-06-19,0,,,115,,1,2017-09-16 10:38:32
+102.100.100.50061,Pilot,Streptococcus pneumoniae,4496,1,Pooled sera,1,Proteomics,MS1 quantification,MBPF,,2017-06-19,2017-06-19,0,,,114,,1,2017-09-16 10:38:32
+102.100.100.26042,Pilot,Klebsiella pneumoniae,03-311-0071,,RMPI,1,Proteomics,MS1 quantification,MBPF,,2017-06-19,2017-06-19,0,,,113,,1,2017-09-16 10:38:32
+102.100.100.26041,Pilot,Klebsiella pneumoniae,AJ055,,RMPI,1,Proteomics,MS1 quantification,MBPF,,2017-06-19,2017-06-19,0,,,112,,1,2017-09-16 10:38:32
+102.100.100.26040,Pilot,Klebsiella pneumoniae,AJ292,,RMPI,1,Proteomics,MS1 quantification,MBPF,,2017-06-19,2017-06-19,0,,,111,,1,2017-09-16 10:38:32
+102.100.100.26039,Pilot,Klebsiella pneumoniae,04153260899A,,RMPI,1,Proteomics,MS1 quantification,MBPF,,2017-06-19,2017-06-19,0,,,110,,1,2017-09-16 10:38:32
+102.100.100.26038,Pilot,Klebsiella pneumoniae,03-311-0071,,Pooled sera,1,Proteomics,MS1 quantification,MBPF,,2017-06-19,2017-06-19,0,,,109,,1,2017-09-16 10:38:32
+102.100.100.26037,Pilot,Klebsiella pneumoniae,AJ055,,Pooled sera,1,Proteomics,MS1 quantification,MBPF,,2017-06-19,2017-06-19,0,,,108,,1,2017-09-16 10:38:32
+102.100.100.26036,Pilot,Klebsiella pneumoniae,AJ292,,Pooled sera,1,Proteomics,MS1 quantification,MBPF,,2017-06-19,2017-06-19,0,,,107,,1,2017-09-16 10:38:32
+102.100.100.26035,Pilot,Klebsiella pneumoniae,04153260899A,,Pooled sera,1,Proteomics,MS1 quantification,MBPF,,2017-06-19,2017-06-19,0,,,106,,1,2017-09-16 10:38:32
+102.100.100.26034,Pilot,Escherichia coli,MS14387,,RMPI,1,Proteomics,MS1 quantification,MBPF,,2017-06-19,2017-06-19,0,,,105,,1,2017-09-16 10:38:32
+102.100.100.26033,Pilot,Escherichia coli,MS14386,,RMPI,1,Proteomics,MS1 quantification,MBPF,,2017-06-19,2017-06-19,0,,,104,,1,2017-09-16 10:38:32
+102.100.100.26032,Pilot,Escherichia coli,MS14385,,RMPI,1,Proteomics,MS1 quantification,MBPF,,2017-06-19,2017-06-19,0,,,103,,1,2017-09-16 10:38:32
+102.100.100.26031,Pilot,Escherichia coli,MS14384,,RMPI,1,Proteomics,MS1 quantification,MBPF,,2017-06-19,2017-06-19,0,,,102,,1,2017-09-16 10:38:32
+102.100.100.26030,Pilot,Escherichia coli,B36,,RMPI,1,Proteomics,MS1 quantification,MBPF,,2017-06-19,2017-06-19,0,,,101,,1,2017-09-16 10:38:32
+102.100.100.26029,Pilot,Escherichia coli,MS14387,,Pooled sera,1,Proteomics,MS1 quantification,MBPF,,2017-06-19,2017-06-19,0,,,100,,1,2017-09-16 10:38:32
+102.100.100.26028,Pilot,Escherichia coli,MS14386,,Pooled sera,1,Proteomics,MS1 quantification,MBPF,,2017-06-19,2017-06-19,0,,,99,,1,2017-09-16 10:38:32
+102.100.100.26027,Pilot,Escherichia coli,MS14385,,Pooled sera,1,Proteomics,MS1 quantification,MBPF,,2017-06-19,2017-06-19,0,,,98,,1,2017-09-16 10:38:32
+102.100.100.26026,Pilot,Escherichia coli,MS14384,,Pooled sera,1,Proteomics,MS1 quantification,MBPF,,2017-06-19,2017-06-19,0,,,97,,1,2017-09-16 10:38:32
+102.100.100.26025,Pilot,Escherichia coli,B36,,Pooled sera,1,Proteomics,MS1 quantification,MBPF,,2017-06-19,2017-06-19,0,,,96,,1,2017-09-16 10:38:32
+102.100.100.26001,Pilot,Staphylococcus aureus,BPH2819,,RPMI,1,Proteomics,MS1 quantification,MBPF,,2017-05-26,2017-05-26,0,,,95,,1,2017-06-20 03:46:30
+102.100.100.26000,Pilot,Staphylococcus aureus,BPH2947,,RPMI,1,Proteomics,MS1 quantification,MBPF,,2017-05-26,2017-05-26,0,,,94,,1,2017-06-20 03:46:30
+102.100.100.25999,Pilot,Staphylococcus aureus,BPH2986,,RPMI,1,Proteomics,MS1 quantification,MBPF,,2017-05-26,2017-05-26,0,,,93,,1,2017-06-20 03:46:30
+102.100.100.25998,Pilot,Staphylococcus aureus,BPH2819,,RPMI,1,Proteomics,MS1 quantification,MBPF,,2017-05-26,2017-05-26,0,,,92,,1,2017-06-20 03:46:30
+102.100.100.25997,Pilot,Staphylococcus aureus,BPH2947,,RPMI,1,Proteomics,MS1 quantification,MBPF,,2017-05-26,2017-05-26,0,,,91,,1,2017-06-20 03:46:30
+102.100.100.25996,Pilot,Staphylococcus aureus,BPH2986,,RPMI,1,Proteomics,MS1 quantification,MBPF,,2017-05-26,2017-05-26,0,,,90,,1,2017-06-20 03:46:30
+102.100.100.25995,Pilot,Staphylococcus aureus,BPH2819,,Pooled sera,1,Proteomics,MS1 quantification,MBPF,,2017-05-26,2017-05-26,0,,,89,,1,2017-06-20 03:46:30
+102.100.100.25994,Pilot,Staphylococcus aureus,BPH2947,,Pooled sera,1,Proteomics,MS1 quantification,MBPF,,2017-05-26,2017-05-26,0,,,88,,1,2017-06-20 03:46:30
+102.100.100.25993,Pilot,Staphylococcus aureus,BPH2986,,Pooled sera,1,Proteomics,MS1 quantification,MBPF,,2017-05-26,2017-05-26,0,,,87,,1,2017-06-20 03:46:30
+102.100.100.25992,Pilot,Staphylococcus aureus,BPH2819,,Pooled sera,1,Proteomics,MS1 quantification,MBPF,,2017-05-26,2017-05-26,0,,,86,,1,2017-06-20 03:46:30
+102.100.100.25991,Pilot,Staphylococcus aureus,BPH2947,,Pooled sera,1,Proteomics,MS1 quantification,MBPF,,2017-05-26,2017-05-26,0,,,85,,1,2017-06-20 03:46:30
+102.100.100.25990,Pilot,Staphylococcus aureus,BPH2986,,Pooled sera,1,Proteomics,MS1 quantification,MBPF,,2017-05-26,2017-05-26,0,,,84,,1,2017-06-20 03:46:30
+102.100.100.25979,Pilot,Klebsiella pneumoniae,AJ218,,Pooled sera,5,Proteomics,MS1 quantification,MBPF,,2017-03-22,2017-03-22,0,,,80,,1,2017-11-21 03:22:39
+102.100.100.25978,Pilot,Klebsiella pneumoniae,AJ218,,Pooled sera,4,Proteomics,MS1 quantification,MBPF,,2017-03-22,2017-03-22,0,,,79,,1,2017-06-20 03:46:30
+102.100.100.25975,Pilot,Klebsiella pneumoniae,AJ218,,Pooled sera,1,Proteomics,MS1 quantification,MBPF,,2017-03-22,2017-03-22,0,,,76,,1,2017-06-20 03:46:30
+102.100.100.25973,Pilot,Klebsiella pneumoniae,AJ218,,RPMI,5,Proteomics,MS1 quantification,MBPF,,2017-03-22,2017-03-22,0,,,74,,1,2017-06-20 03:46:30
+102.100.100.25972,Pilot,Klebsiella pneumoniae,AJ218,,RPMI,4,Proteomics,MS1 quantification,MBPF,,2017-03-22,2017-03-22,0,,,73,,1,2017-06-20 03:46:30
+102.100.100.25970,Pilot,Klebsiella pneumoniae,AJ218,,RPMI,2,Proteomics,MS1 quantification,MBPF,,2017-03-22,2017-03-22,0,,,71,,1,2017-06-20 03:46:31
+102.100.100.25967,Pilot,Klebsiella pneumoniae,KPC2,,Pooled sera,5,Proteomics,MS1 quantification,MBPF,,2017-03-22,2017-03-22,0,,,68,,1,2017-06-20 03:46:31
+102.100.100.25965,Pilot,Klebsiella pneumoniae,KPC2,,Pooled sera,3,Proteomics,MS1 quantification,MBPF,,2017-03-22,2017-03-22,0,,,66,,1,2017-06-20 03:46:31
+102.100.100.25963,Pilot,Klebsiella pneumoniae,KPC2,,Pooled sera,1,Proteomics,MS1 quantification,MBPF,,2017-03-22,2017-03-22,0,,,64,,1,2017-06-20 03:46:31
+102.100.100.25962,Pilot,Klebsiella pneumoniae,KPC2,,RPMI,6,Proteomics,MS1 quantification,MBPF,,2017-03-22,2017-03-22,0,,,63,,1,2017-06-20 03:46:31
+102.100.100.25961,Pilot,Klebsiella pneumoniae,KPC2,,RPMI,5,Proteomics,MS1 quantification,MBPF,,2017-03-22,2017-03-22,0,,,62,,1,2017-06-20 03:46:31
+102.100.100.25960,Pilot,Klebsiella pneumoniae,KPC2,,RPMI,4,Proteomics,MS1 quantification,MBPF,,2017-03-22,2017-03-22,0,,,61,,1,2017-06-20 03:46:31
+102.100.100.25954,Pilot,Staphylococcus aureus,BPH2760,,Pooled sera,4,Proteomics,MS1 quantification,MBPF,,2017-03-22,2017-03-22,0,,,55,,1,2017-06-20 03:46:31
+102.100.100.25951,Pilot,Staphylococcus aureus,BPH2760,,Pooled sera,1,Proteomics,MS1 quantification,MBPF,,2017-03-22,2017-03-22,0,,,52,,1,2017-06-20 03:46:31
+102.100.100.25948,Pilot,Staphylococcus aureus,BPH2760,,RPMI,4,Proteomics,MS1 quantification,MBPF,,2017-03-22,2017-03-22,0,,,49,,1,2017-06-20 03:46:31
+102.100.100.25945,Pilot,Staphylococcus aureus,BPH2760,,RPMI,1,Proteomics,MS1 quantification,MBPF,,2017-03-22,2017-03-22,0,,,46,,1,2017-06-20 03:46:31
+102.100.100.25942,Pilot,Staphylococcus aureus,BPH2900,,Pooled sera,4,Proteomics,MS1 quantification,MBPF,,2017-03-22,2017-03-22,0,,,43,,1,2017-06-20 03:46:31
+102.100.100.25939,Pilot,Staphylococcus aureus,BPH2900,,Pooled sera,1,Proteomics,MS1 quantification,MBPF,,2017-03-22,2017-03-22,0,,,40,,1,2017-06-20 03:46:31
+102.100.100.25936,Pilot,Staphylococcus aureus,BPH2900,,RPMI,4,Proteomics,MS1 quantification,MBPF,,2017-03-22,2017-03-22,0,,,37,,1,2017-06-20 03:46:31
+102.100.100.25933,Pilot,Staphylococcus aureus,BPH2900,,RPMI,1,Proteomics,MS1 quantification,MBPF,,2017-03-22,2017-03-22,0,,,34,,1,2017-06-20 03:46:31
+102.100.100.25908,Pilot,Staphylococcus aureus,BPH2760,,RPMI,6,Proteomics,MS1 quantification,MBPF,,2016-10-19,2016-10-19,1,2017-03-21,https://downloads-qcif.bioplatforms.com/bpa/sepsis/proteomics/raw/ms1quantification/mbpf/BPAOPS-94/,32,,1,2017-05-24 08:56:06
+102.100.100.25907,Pilot,Staphylococcus aureus,BPH2760,,RPMI,5,Proteomics,MS1 quantification,MBPF,,2016-10-19,2016-10-19,1,2017-03-21,https://downloads-qcif.bioplatforms.com/bpa/sepsis/proteomics/raw/ms1quantification/mbpf/BPAOPS-94/,31,,1,2017-05-24 08:56:06
+102.100.100.25906,Pilot,Staphylococcus aureus,BPH2760,,RPMI,4,Proteomics,MS1 quantification,MBPF,,2016-10-19,2016-10-19,1,2017-03-21,https://downloads-qcif.bioplatforms.com/bpa/sepsis/proteomics/raw/ms1quantification/mbpf/BPAOPS-94/,30,,1,2017-05-24 08:56:06
+102.100.100.25905,Pilot,Staphylococcus aureus,BPH2760,,RPMI,3,Proteomics,MS1 quantification,MBPF,,2016-10-19,2016-10-19,1,2017-03-21,https://downloads-qcif.bioplatforms.com/bpa/sepsis/proteomics/raw/ms1quantification/mbpf/BPAOPS-94/,29,,1,2017-05-24 08:56:06
+102.100.100.25904,Pilot,Staphylococcus aureus,BPH2760,,RPMI,2,Proteomics,MS1 quantification,MBPF,,2016-10-19,2016-10-19,1,2017-03-21,https://downloads-qcif.bioplatforms.com/bpa/sepsis/proteomics/raw/ms1quantification/mbpf/BPAOPS-94/,28,,1,2017-05-24 08:56:06
+102.100.100.25903,Pilot,Staphylococcus aureus,BPH2760,,RPMI,1,Proteomics,MS1 quantification,MBPF,,2016-10-19,2016-10-19,1,2017-03-21,https://downloads-qcif.bioplatforms.com/bpa/sepsis/proteomics/raw/ms1quantification/mbpf/BPAOPS-94/,27,,1,2017-05-24 08:56:06
+102.100.100.25902,Pilot,Staphylococcus aureus,BPH2900,,RPMI,6,Proteomics,MS1 quantification,MBPF,,2016-10-19,2016-10-19,1,2017-03-21,https://downloads-qcif.bioplatforms.com/bpa/sepsis/proteomics/raw/ms1quantification/mbpf/BPAOPS-94/,26,,1,2017-05-24 08:56:06
+102.100.100.25901,Pilot,Staphylococcus aureus,BPH2900,,RPMI,5,Proteomics,MS1 quantification,MBPF,,2016-10-19,2016-10-19,1,2017-03-21,https://downloads-qcif.bioplatforms.com/bpa/sepsis/proteomics/raw/ms1quantification/mbpf/BPAOPS-94/,25,,1,2017-05-24 08:56:06
+102.100.100.25900,Pilot,Staphylococcus aureus,BPH2900,,RPMI,4,Proteomics,MS1 quantification,MBPF,,2016-10-19,2016-10-19,1,2017-03-21,https://downloads-qcif.bioplatforms.com/bpa/sepsis/proteomics/raw/ms1quantification/mbpf/BPAOPS-94/,24,,1,2017-05-24 08:56:06
+102.100.100.25899,Pilot,Staphylococcus aureus,BPH2900,,RPMI,3,Proteomics,MS1 quantification,MBPF,,2016-10-19,2016-10-19,1,2017-03-21,https://downloads-qcif.bioplatforms.com/bpa/sepsis/proteomics/raw/ms1quantification/mbpf/BPAOPS-94/,23,,1,2017-05-24 08:56:06
+102.100.100.25898,Pilot,Staphylococcus aureus,BPH2900,,RPMI,2,Proteomics,MS1 quantification,MBPF,,2016-10-19,2016-10-19,1,2017-03-21,https://downloads-qcif.bioplatforms.com/bpa/sepsis/proteomics/raw/ms1quantification/mbpf/BPAOPS-94/,22,,1,2017-05-24 08:56:06
+102.100.100.25897,Pilot,Staphylococcus aureus,BPH2900,,RPMI,1,Proteomics,MS1 quantification,MBPF,,2016-10-19,2016-10-19,1,2017-03-21,https://downloads-qcif.bioplatforms.com/bpa/sepsis/proteomics/raw/ms1quantification/mbpf/BPAOPS-94/,21,,1,2017-05-24 08:56:06
+102.100.100.25896,Pilot,Klebsiella pneumoniae,KPC2,,RPMI,6,Proteomics,MS1 quantification,MBPF,,2016-10-19,2016-10-19,1,2017-03-21,https://downloads-qcif.bioplatforms.com/bpa/sepsis/proteomics/raw/ms1quantification/mbpf/BPAOPS-94/,20,,1,2017-05-24 08:56:06
+102.100.100.25895,Pilot,Klebsiella pneumoniae,KPC2,,RPMI,5,Proteomics,MS1 quantification,MBPF,,2016-10-19,2016-10-19,1,2017-03-21,https://downloads-qcif.bioplatforms.com/bpa/sepsis/proteomics/raw/ms1quantification/mbpf/BPAOPS-94/,19,,1,2017-05-24 08:56:06
+102.100.100.25894,Pilot,Klebsiella pneumoniae,KPC2,,RPMI,4,Proteomics,MS1 quantification,MBPF,,2016-10-19,2016-10-19,1,2017-03-21,https://downloads-qcif.bioplatforms.com/bpa/sepsis/proteomics/raw/ms1quantification/mbpf/BPAOPS-94/,18,,1,2017-05-24 08:56:06
+102.100.100.25893,Pilot,Klebsiella pneumoniae,KPC2,,RPMI,3,Proteomics,MS1 quantification,MBPF,,2016-10-19,2016-10-19,1,2017-03-21,https://downloads-qcif.bioplatforms.com/bpa/sepsis/proteomics/raw/ms1quantification/mbpf/BPAOPS-94/,17,,1,2017-05-24 08:56:06
+102.100.100.25892,Pilot,Klebsiella pneumoniae,KPC2,,RPMI,2,Proteomics,MS1 quantification,MBPF,,2016-10-19,2016-10-19,1,2017-03-21,https://downloads-qcif.bioplatforms.com/bpa/sepsis/proteomics/raw/ms1quantification/mbpf/BPAOPS-94/,16,,1,2017-05-24 08:56:06
+102.100.100.25891,Pilot,Klebsiella pneumoniae,KPC2,,RPMI,1,Proteomics,MS1 quantification,MBPF,,2016-10-19,2016-10-19,1,2017-03-21,https://downloads-qcif.bioplatforms.com/bpa/sepsis/proteomics/raw/ms1quantification/mbpf/BPAOPS-94/,15,,1,2017-05-24 08:56:06
+102.100.100.25890,Pilot,Klebsiella pneumoniae,AJ218,,RPMI,6,Proteomics,MS1 quantification,MBPF,,2016-10-19,2016-10-19,1,2017-03-21,https://downloads-qcif.bioplatforms.com/bpa/sepsis/proteomics/raw/ms1quantification/mbpf/BPAOPS-94/,14,,1,2017-05-24 08:56:06
+102.100.100.25889,Pilot,Klebsiella pneumoniae,AJ218,,RPMI,5,Proteomics,MS1 quantification,MBPF,,2016-10-19,2016-10-19,1,2017-03-21,https://downloads-qcif.bioplatforms.com/bpa/sepsis/proteomics/raw/ms1quantification/mbpf/BPAOPS-94/,13,,1,2017-05-24 08:56:06
+102.100.100.25888,Pilot,Klebsiella pneumoniae,AJ218,,RPMI,4,Proteomics,MS1 quantification,MBPF,,2016-10-19,2016-10-19,1,2017-03-21,https://downloads-qcif.bioplatforms.com/bpa/sepsis/proteomics/raw/ms1quantification/mbpf/BPAOPS-94/,12,,1,2017-05-24 08:56:06
+102.100.100.25887,Pilot,Klebsiella pneumoniae,AJ218,,RPMI,3,Proteomics,MS1 quantification,MBPF,,2016-10-19,2016-10-19,1,2017-03-21,https://downloads-qcif.bioplatforms.com/bpa/sepsis/proteomics/raw/ms1quantification/mbpf/BPAOPS-94/,11,,1,2017-05-24 08:56:06
+102.100.100.25886,Pilot,Klebsiella pneumoniae,AJ218,,RPMI,2,Proteomics,MS1 quantification,MBPF,,2016-10-19,2016-10-19,1,2017-03-21,https://downloads-qcif.bioplatforms.com/bpa/sepsis/proteomics/raw/ms1quantification/mbpf/BPAOPS-94/,10,,1,2017-05-24 08:56:06
+102.100.100.25885,Pilot,Klebsiella pneumoniae,AJ218,,RPMI,1,Proteomics,MS1 quantification,MBPF,,2016-10-19,2016-10-19,1,2017-03-21,https://downloads-qcif.bioplatforms.com/bpa/sepsis/proteomics/raw/ms1quantification/mbpf/BPAOPS-94/,9,,1,2017-05-24 08:56:06
+102.100.100.26090,Pre-pilot,Staphylococcus aureus,NRSA384,,RPMI,4,Proteomics,MS1 quantification,MBPF,,2016-09-08,2016-09-08,1,2016-10-24,BPAOPS-35,8,,1,2017-05-24 08:56:06
+102.100.100.26089,Pre-pilot,Staphylococcus aureus,NRSA384,,RPMI,3,Proteomics,MS1 quantification,MBPF,,2016-09-08,2016-09-08,1,2016-10-24,BPAOPS-35,7,,1,2017-05-24 08:56:06
+102.100.100.26088,Pre-pilot,Staphylococcus aureus,NRSA384,,RPMI,2,Proteomics,MS1 quantification,MBPF,,2016-09-08,2016-09-08,1,2016-10-24,BPAOPS-35,6,,1,2017-05-24 08:56:06
+102.100.100.26087,Pre-pilot,Staphylococcus aureus,NRSA384,,RPMI,1,Proteomics,MS1 quantification,MBPF,,2016-09-08,2016-09-08,1,2016-10-24,BPAOPS-35,5,,1,2017-05-24 08:56:06
+102.100.100.25816,Pre-pilot,Klebsiella pneumoniae,AJ218,,RPMI,4,Proteomics,MS1 quantification,MBPF,,2016-09-08,2016-09-08,1,2016-10-24,BPAOPS-35,4,,1,2017-05-24 08:56:06
+102.100.100.25815,Pre-pilot,Klebsiella pneumoniae,AJ218,,RPMI,3,Proteomics,MS1 quantification,MBPF,,2016-09-08,2016-09-08,1,2016-10-24,BPAOPS-35,3,,1,2017-05-24 08:56:06
+102.100.100.25814,Pre-pilot,Klebsiella pneumoniae,AJ218,,RPMI,2,Proteomics,MS1 quantification,MBPF,,2016-09-08,2016-09-08,1,2016-10-24,BPAOPS-35,2,,1,2017-05-24 08:56:06
+102.100.100.25813,Pre-pilot,Klebsiella pneumoniae,AJ218,,RPMI,1,Proteomics,MS1 quantification,MBPF,,2016-09-08,2016-09-08,1,2016-10-24,BPAOPS-35,1,,1,2017-05-24 08:56:06
