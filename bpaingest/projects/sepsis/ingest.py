@@ -640,6 +640,8 @@ class SepsisProteomicsMS1QuantificationMetadata(BaseSepsisMetadata):
                 if bpa_id is None:
                     continue
                 bpam_track_meta = self.bpam_track_meta.get(bpa_id)
+                if 'taxon_or_organism' not in bpam_track_meta:
+                    continue
                 obj = bpam_track_meta.copy()
                 name = bpa_id_to_ckan_name(bpa_id.split('.')[-1], self.ckan_data_type)
                 obj.update({
