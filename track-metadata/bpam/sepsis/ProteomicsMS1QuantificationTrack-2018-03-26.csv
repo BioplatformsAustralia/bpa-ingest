@@ -1,4 +1,14 @@
 5 digit BPA ID,Data type,Taxon_OR_organism,Strain_OR_isolate,Serovar,Growth Media,Replicate,Omics,Analytical platform,Facility,Work order #,Contextual Data Submission Date,Sample submission date,Data generated,Archive Ingestion Date,Archive ID,id,curation_url,in_data_portal,last_modified
+102.100.100.26110,Pilot,Streptococcus pyogenes,PS006,M28,Pooled sera,1,Proteomics,MS1 quantification,MBPF,,2018-01-23,2018-01-23,0,,,363,,0,2018-03-26 02:52:18
+102.100.100.26109,Pilot,Streptococcus pyogenes,PS003,"M77, unusual M type associated with peurperal sepsis",Pooled sera,1,Proteomics,MS1 quantification,MBPF,,2018-01-23,2018-01-23,0,,,362,,0,2018-03-26 02:52:18
+102.100.100.26108,Pilot,Streptococcus pyogenes,HKU419,M1T1 clone,Pooled sera,1,Proteomics,MS1 quantification,MBPF,,2018-01-23,2018-01-23,0,,,361,,0,2018-03-26 02:52:18
+102.100.100.26107,Pilot,Streptococcus pyogenes,SP444,M4,Pooled sera,1,Proteomics,MS1 quantification,MBPF,,2018-01-23,2018-01-23,0,,,360,,0,2018-03-26 02:52:18
+102.100.100.26106,Pilot,Streptococcus pyogenes,5448,M1T1 clone,Pooled sera,1,Proteomics,MS1 quantification,MBPF,,2018-01-23,2018-01-23,0,,,359,,0,2018-03-26 02:52:18
+102.100.100.26105,Pilot,Streptococcus pyogenes,PS006,M28,RPMI_modified,1,Proteomics,MS1 quantification,MBPF,,2018-01-23,2018-01-23,0,,,358,,0,2018-03-26 02:52:18
+102.100.100.26104,Pilot,Streptococcus pyogenes,PS003,"M77, unusual M type associated with peurperal sepsis",RPMI_modified,1,Proteomics,MS1 quantification,MBPF,,2018-01-23,2018-01-23,0,,,357,,0,2018-03-26 02:52:18
+102.100.100.26103,Pilot,Streptococcus pyogenes,HKU419,M1T1 clone,RPMI_modified,1,Proteomics,MS1 quantification,MBPF,,2018-01-23,2018-01-23,0,,,356,,0,2018-03-26 02:52:18
+102.100.100.26102,Pilot,Streptococcus pyogenes,SP444,M4,RPMI_modified,1,Proteomics,MS1 quantification,MBPF,,2018-01-23,2018-01-23,0,,,355,,0,2018-03-26 02:52:18
+102.100.100.26101,Pilot,Streptococcus pyogenes,5448,M1T1 clone,RPMI_modified,1,Proteomics,MS1 quantification,MBPF,,2018-01-23,2018-01-23,0,,,354,,0,2018-03-26 02:52:18
 102.100.100.51032,Main dataset,Escherichia coli,MS14387,,Pooled sera,6,Proteomics,SWATH-MS,APAF,,2017-11-14,2017-11-13,0,,,353,,0,2017-11-14 08:03:03
 102.100.100.51031,Main dataset,Escherichia coli,MS14387,,Pooled sera,5,Proteomics,SWATH-MS,APAF,,2017-11-14,2017-11-13,0,,,352,,0,2017-11-14 08:03:03
 102.100.100.51030,Main dataset,Escherichia coli,MS14387,,Pooled sera,4,Proteomics,SWATH-MS,APAF,,2017-11-14,2017-11-13,0,,,351,,0,2017-11-14 08:03:03
