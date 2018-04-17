@@ -123,11 +123,18 @@ class BaseMarineMicrobesAmpliconsMetadata(BaseMarineMicrobesMetadata):
 
     def _get_packages(self):
         xlsx_re = re.compile(r'^.*_(\w+)_metadata.*\.xlsx$')
+        flow_comment_re = re.compile(r'^\d{4,6}_(\w{5,})$')  # e.g. 34658_AYBH6
 
         def get_flow_id(fname):
             m = xlsx_re.match(fname)
             if not m:
                 raise Exception("unable to find flowcell for filename: `%s'" % (fname))
+            return m.groups()[0]
+
+        def get_flow_id_from_comment(comment):
+            m = flow_comment_re.match(comment)
+            if not m:
+                raise Exception("unable to derive flowcell from comment: `%s'" % (comment))
             return m.groups()[0]
 
         logger.info("Ingesting Marine Microbes metadata from {0}".format(self.path))
@@ -137,16 +144,20 @@ class BaseMarineMicrobesAmpliconsMetadata(BaseMarineMicrobesMetadata):
             logger.info("Processing Marine Microbes metadata file {0}".format(os.path.basename(fname)))
             flow_id = get_flow_id(fname)
             # the pilot data needs increased linkage, due to multiple trials on the same BPA ID
-            index_linkage = base_fname in self.index_linkage_spreadsheets
+            use_index_linkage = base_fname in self.index_linkage_spreadsheets
+            # the GOSHIP data has flowcells in the comments field
+            use_flowid_from_comment = base_fname in self.flowcell_comment_spreadsheets
             for row in BaseMarineMicrobesAmpliconsMetadata.parse_spreadsheet(fname, self.metadata_info):
                 bpa_id = row.bpa_id
                 if bpa_id is None:
                     continue
+                if use_flowid_from_comment:
+                    flow_id = get_flow_id_from_comment(row.comments)
                 track_meta = self.track_meta.get(bpa_id)
                 google_track_meta = self.google_track_meta.get(row.ticket)
                 obj = self.extract_bpam_metadata(track_meta)
                 index = index_from_comment([row.comments, row.sample_name_on_sample_sheet])
-                mm_amplicon_linkage = build_mm_amplicon_linkage(index_linkage, flow_id, index)
+                mm_amplicon_linkage = build_mm_amplicon_linkage(use_index_linkage, flow_id, index)
                 name = bpa_id_to_ckan_name(bpa_id.split('.')[-1], self.ckan_data_type + '-' + self.amplicon, mm_amplicon_linkage)
                 archive_ingestion_date = ingest_utils.get_date_isoformat(google_track_meta.date_of_transfer_to_archive)
 
@@ -197,8 +208,8 @@ class BaseMarineMicrobesAmpliconsMetadata(BaseMarineMicrobesMetadata):
         logger.info("Ingesting MM md5 file information from {0}".format(self.path))
         resources = []
         for md5_file in glob(self.path + '/*.md5'):
-            index_linkage = os.path.basename(md5_file) in self.index_linkage_md5s
-            logger.info("Processing md5 file {} {}".format(md5_file, index_linkage))
+            use_index_linkage = os.path.basename(md5_file) in self.index_linkage_md5s
+            logger.info("Processing md5 file {} {}".format(md5_file, use_index_linkage))
             for filename, md5, file_info in self.parse_md5file(md5_file):
                 resource = file_info.copy()
                 resource['md5'] = resource['id'] = md5
@@ -209,7 +220,7 @@ class BaseMarineMicrobesAmpliconsMetadata(BaseMarineMicrobesMetadata):
                 bpa_id = ingest_utils.extract_bpa_id(file_info.get('id'))
                 xlsx_info = self.metadata_info[os.path.basename(md5_file)]
                 legacy_url = urljoin(xlsx_info['base_url'], filename)
-                resources.append(((bpa_id, build_mm_amplicon_linkage(index_linkage, resource['flow_id'], resource['index'])), legacy_url, resource))
+                resources.append(((bpa_id, build_mm_amplicon_linkage(use_index_linkage, resource['flow_id'], resource['index'])), legacy_url, resource))
         return resources
 
 
@@ -218,6 +229,7 @@ class MarineMicrobesGenomicsAmplicons16SMetadata(BaseMarineMicrobesAmpliconsMeta
     technology = 'amplicons-16s'
     index_linkage_spreadsheets = ('MM_Pilot_1_16S_UNSW_AFGB7_metadata.xlsx',)
     index_linkage_md5s = ('MM_1_16S_UNSW_AFGB7_checksums.md5',)
+    flowcell_comment_spreadsheets = ('MM_16S_preBPA2_UNSW_metadata.xlsx',)
     metadata_urls = [
         'https://downloads-qcif.bioplatforms.com/bpa/marine_microbes/raw/amplicons/16s/'
     ]
@@ -230,6 +242,7 @@ class MarineMicrobesGenomicsAmpliconsA16SMetadata(BaseMarineMicrobesAmpliconsMet
     technology = 'amplicons-a16s'
     index_linkage_spreadsheets = ('MM-Pilot_A16S_UNSW_AG27L_metadata_UPDATE.xlsx',)
     index_linkage_md5s = ('MM_Pilot_A16S_UNSW_AG27L_checksums.md5',)
+    flowcell_comment_spreadsheets = ('MM_A16S_preBPA2_UNSW_metadata.xlsx',)
     metadata_urls = [
         'https://downloads-qcif.bioplatforms.com/bpa/marine_microbes/raw/amplicons/a16s/'
     ]
@@ -242,6 +255,7 @@ class MarineMicrobesGenomicsAmplicons18SMetadata(BaseMarineMicrobesAmpliconsMeta
     technology = 'amplicons-18s'
     index_linkage_spreadsheets = ('MM_Pilot_18S_UNSW_AGGNB_metadata.xlsx',)
     index_linkage_md5s = ('MM_18S_UNSW_AGGNB_checksums.md5',)
+    flowcell_comment_spreadsheets = ('MM_18S_preBPA2_UNSW_metadata.xlsx',)
     metadata_urls = [
         'https://downloads-qcif.bioplatforms.com/bpa/marine_microbes/raw/amplicons/18s/'
     ]
