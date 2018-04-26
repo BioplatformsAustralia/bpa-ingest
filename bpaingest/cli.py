@@ -30,9 +30,20 @@ def bootstrap(args):
         make_organization(ckan, organization)
 
 
+# https://stackoverflow.com/questions/15008758/parsing-boolean-values-with-argparse
+def str2bool(v):
+    if v.lower() in ('yes', 'true', 't', 'y', '1'):
+        return True
+    elif v.lower() in ('no', 'false', 'f', 'n', '0'):
+        return False
+    else:
+        raise argparse.ArgumentTypeError('Boolean value expected.')
+
+
 def setup_ckan(subparser):
     subparser.add_argument('-k', '--api-key', required=True, help='CKAN API Key')
     subparser.add_argument('-u', '--ckan-url', required=True, help='CKAN base url')
+    subparser.add_argument('--verify-ssl', required=False, type=str2bool, default=True, help='CKAN base url')
 
 
 def setup_sync(subparser):

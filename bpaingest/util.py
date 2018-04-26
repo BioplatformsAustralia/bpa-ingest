@@ -67,7 +67,8 @@ def make_logger(name):
 
 
 def make_ckan_api(args):
-    ckan = ckanapi.RemoteCKAN(args.ckan_url, apikey=args.api_key)
+    print(args.verify_ssl)
+    ckan = ckanapi.RemoteCKAN(args.ckan_url, apikey=args.api_key, verify_ssl=args.verify_ssl)
     return ckan
 
 
