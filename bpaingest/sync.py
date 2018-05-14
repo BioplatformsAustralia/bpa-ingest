@@ -44,18 +44,20 @@ def sync_package(ckan, obj, cached_obj):
     return ckan_obj
 
 
-def build_package_cache(ckan, package_types):
+def build_package_cache(ckan, sync_packages):
     """
-    build a cache of all the packages in `org`, to speed up comparison
+    build a cache of all the packages in `org`, to speed up comparison.
+    `sync_packages` is the packages we are aiming to set as our target
+    state
     """
-
+    package_types = set(t['type'] for t in sync_packages)
     packages = []
     for typ in package_types:
         logger.info("Retrieving all extant packages of type: {}".format(typ))
         results = ckan_method(ckan, 'package', 'search')(q='type:{}'.format(typ), include_private=True, rows=50000)
         packages += results['results']
     logger.info("{} packages cached.".format(len(packages)))
-    return dict((t['id'], t) for t in packages)
+    return {t['id']: t for t in packages}
 
 
 def sync_packages(ckan, packages, org, group):
@@ -65,7 +67,7 @@ def sync_packages(ckan, packages, org, group):
     api_group_obj = prune_dict(group, ('display_name', 'description', 'title', 'image_display_url', 'id', 'name'))
     ckan_packages = []
 
-    cache = build_package_cache(ckan, set(t['type'] for t in packages))
+    cache = build_package_cache(ckan, packages)
 
     for package in sorted(packages, key=lambda p: p['name']):
         obj = package.copy()
