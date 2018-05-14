@@ -12,7 +12,7 @@ from collections import Counter
 logger = make_logger(__name__)
 
 
-def sync_package(ckan, obj):
+def get_or_create_package(ckan, obj):
     try:
         ckan_obj = ckan_method(ckan, 'package', 'show')(id=obj['name'])
     except ckanapi.errors.NotFound:
@@ -25,6 +25,14 @@ def sync_package(ckan, obj):
         }
         ckan_obj = ckan_method(ckan, 'package', 'create')(**create_obj)
         logger.info('created package object: %s' % (obj['id']))
+    return ckan_obj
+
+
+def sync_package(ckan, obj, cached_obj):
+    if cached_obj is None:
+        ckan_obj = get_or_create_package(ckan, obj)
+    else:
+        ckan_obj = cached_obj
     patch_obj = obj.copy()
     patch_obj['id'] = ckan_obj['id']
     # tags are handed back with a bunch of info that's irrelevant
@@ -36,18 +44,38 @@ def sync_package(ckan, obj):
     return ckan_obj
 
 
+def build_package_cache(ckan, sync_packages):
+    """
+    build a cache of all the packages in `org`, to speed up comparison.
+    `sync_packages` is the packages we are aiming to set as our target
+    state
+    """
+    package_types = set(t['type'] for t in sync_packages)
+    packages = []
+    for typ in package_types:
+        logger.info("Retrieving all extant packages of type: {}".format(typ))
+        results = ckan_method(ckan, 'package', 'search')(q='type:{}'.format(typ), include_private=True, rows=50000)
+        packages += results['results']
+    logger.info("{} packages cached.".format(len(packages)))
+    return {t['id']: t for t in packages}
+
+
 def sync_packages(ckan, packages, org, group):
     # FIXME: we don't check if there are any packages we should remove (unpublish)
     logger.info('syncing %d packages' % (len(packages)))
     # we have to post the group back in package objects, send a minimal version of it
     api_group_obj = prune_dict(group, ('display_name', 'description', 'title', 'image_display_url', 'id', 'name'))
     ckan_packages = []
+
+    cache = build_package_cache(ckan, packages)
+
     for package in sorted(packages, key=lambda p: p['name']):
         obj = package.copy()
         obj['owner_org'] = org['id']
         if api_group_obj is not None:
             obj['groups'] = [api_group_obj]
-        ckan_packages.append(sync_package(ckan, obj))
+        ckan_packages.append(
+            sync_package(ckan, obj, cache.get(obj['id'])))
     return ckan_packages
 
 
@@ -136,7 +164,9 @@ def sync_package_resources(ckan, package_obj, resource_id_legacy_url, resources,
 
     # patch all the resources, to ensure everything is synced on
     # existing resources
-    package_obj = ckan_method(ckan, 'package', 'show')(id=package_obj['id'])
+    if to_create or to_delete:
+        # if we've changed the resources attached to the package, refresh it
+        package_obj = ckan_method(ckan, 'package', 'show')(id=package_obj['id'])
     current_resources = package_obj['resources']
     for current_ckan_obj in current_resources:
         obj_id = current_ckan_obj['id']

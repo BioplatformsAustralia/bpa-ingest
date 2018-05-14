@@ -12,8 +12,6 @@ from dateutil.relativedelta import relativedelta
 import datetime
 
 
-
-
 def one(l):
     if len(l) != 1:
         raise Exception("Expected one element, got {}: {}".format(len(l), l))
@@ -67,7 +65,6 @@ def make_logger(name):
 
 
 def make_ckan_api(args):
-    print(args.verify_ssl)
     ckan = ckanapi.RemoteCKAN(args.ckan_url, apikey=args.api_key, verify_ssl=args.verify_ssl)
     return ckan
 
