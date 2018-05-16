@@ -11,6 +11,7 @@ from urllib.parse import urljoin
 from glob import glob
 
 from ...libs import ingest_utils
+from ...libs.sensitive_data import SensitiveDataGeneraliser
 from ...libs.excel_wrapper import make_field_definition as fld
 from . import files
 from .tracking import OMGTrackMetadata
@@ -21,6 +22,8 @@ import re
 
 logger = make_logger(__name__)
 common_context = [OMGSampleContextual, OMGLibraryContextual]
+
+generaliser = SensitiveDataGeneraliser()
 
 
 class OMG10XRawIlluminaMetadata(BaseMetadata):
@@ -181,6 +184,8 @@ class OMG10XRawIlluminaMetadata(BaseMetadata):
                 'dataset_url': track_get('download'),
                 'notes': notes,
             })
+
+            generaliser.apply(obj)
             ingest_utils.add_spatial_extra(obj)
             obj.update(common_values([make_row_metadata(row) for row in rows]))
 
@@ -329,6 +334,7 @@ class OMG10XRawMetadata(BaseMetadata):
                 'private': True,
             })
             obj.update(context)
+            generaliser.apply(obj)
             ingest_utils.add_spatial_extra(obj)
             tag_names = ['10x-raw']
             obj['tags'] = [{'name': t} for t in tag_names]
@@ -477,6 +483,7 @@ class OMG10XProcessedIlluminaMetadata(BaseMetadata):
                     'private': True,
                 })
                 obj.update(context)
+                generaliser.apply(obj)
                 ingest_utils.add_spatial_extra(obj)
                 tag_names = ['10x-processed']
                 obj['tags'] = [{'name': t} for t in tag_names]
@@ -613,6 +620,7 @@ class OMGExonCaptureMetadata(BaseMetadata):
                     'private': True,
                 })
                 obj.update(context)
+                generaliser.apply(obj)
                 ingest_utils.add_spatial_extra(obj)
                 tag_names = ['exon-capture', 'raw']
                 obj['tags'] = [{'name': t} for t in tag_names]
@@ -760,6 +768,7 @@ class OMGGenomicsHiSeqMetadata(BaseMetadata):
                     'private': True,
                 })
                 obj.update(context)
+                generaliser.apply(obj)
                 ingest_utils.add_spatial_extra(obj)
                 tag_names = ['genomics-hiseq']
                 obj['tags'] = [{'name': t} for t in tag_names]
