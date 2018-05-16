@@ -134,7 +134,12 @@ def test_proteomics_swathms_msresult():
 def test_proteomics_2dlibrary():
     filenames = [
         'BPH2760_Pooled sera_Fraction7_SEP_MBPF_MS_QEPlus1_P16_0062_Exp22.raw',
-        'BPH2760_RPMI_Fraction2_SEP_MBPF_MS_QEPlus1_P16_0062_Exp22.raw'
+        'BPH2760_RPMI_Fraction2_SEP_MBPF_MS_QEPlus1_P16_0062_Exp22.raw',
+        'B36_Serum_Fraction1_SEP_MBPF_MS_QEPlus1_P16_0062_Exp23.raw',
+        'MS14387_RPMI_Fraction3_SEP_MBPF_MS_QEPlus1_P16_0062_Exp23.raw',
+        'Sp180-15_PooledSera_Fraction9_SEP_MBPF_MS_QEPlus2_P16_0062_Exp25.raw',
+        'Sp4559_RPMIGalactose_Fraction0_SEP_MBPF_MS_QEPlus2_P16_0062_Exp25.raw',
+        'Sp947_RPMIGlucose_Fraction11_SEP_MBPF_MS_QEPlus2_P16_0062_Exp25.raw',
     ]
     for filename in filenames:
         assert(proteomics_2dlibrary_filename_re.match(filename) is not None)
