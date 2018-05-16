@@ -1,4 +1,4 @@
-"Supplied Name","guid","scientificName","family","kingdom","vernacular name","family","TSC Status","TSC Status Description","taxonRemarks","Reason","category","generalisation"
+"Supplied Name","guid","scientificName","family","kingdom","vernacular name","family2","TSC Status","TSC Status Description","taxonRemarks","Reason","category","generalisation"
 "Pterostylis foliata","NZOR-4-64757","Pterostylis foliata","Orchidaceae",,,,"V","Vulnerable",,"Risk of disturbance and collection","2","10km"
 "Polytelis swainsonii","urn:lsid:biodiversity.org.au:afd.taxon:51dc6bc2-9165-4fc3-a374-1010ac3037d0","Polytelis swainsonii","Psittacidae",,,"Psittacidae","V","Vulnerable",,"Risk of egg collection and nest disturbance","3","1km"
 "Pterostylis despectans (Nicholls)","http://id.biodiversity.org.au/node/apni/2901078","Pterostylis despectans","Orchidaceae",,,"Orchidaceae","E4A","Critically Endangered",,"Risk of disturbance and collection","2","10km"

@@ -1,4 +1,4 @@
-"Supplied Name","guid","scientificName","family","kingdom","family","genus","order","taxonRank","class"
+"Supplied Name","guid","scientificName","family","kingdom","family2","genus","order","taxonRank","class"
 "Cynoglossum nobile Hook.f.","NZOR-4-32928","Myosotidium hortensia","Boraginaceae",,"Boraginaceae","Myosotidium",,"species","Magnoliopsida"
 "Luzula celata Edgar","NZOR-4-121374","Luzula celata","Juncaceae",,"Juncaceae","Luzula","Poales","species","Magnoliopsida"
 "Todea africana Willd. ex Bernh.","http://id.biodiversity.org.au/node/apni/2916843","Todea barbara","Osmundaceae",,"Osmundaceae","Todea","Osmundales","species","Polypodiopsida"
