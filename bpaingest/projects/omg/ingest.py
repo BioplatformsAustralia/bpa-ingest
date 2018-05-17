@@ -23,14 +23,10 @@ import re
 logger = make_logger(__name__)
 common_context = [OMGSampleContextual, OMGLibraryContextual]
 
-
-class OMGBaseMetadata(BaseMetadata):
-    def __init__(self, *args, **kwargs):
-        self.generaliser = SensitiveDataGeneraliser()
-        super(OMGBaseMetadata, self).__init__(*args, **kwargs)
+generaliser = SensitiveDataGeneraliser()
 
 
-class OMG10XRawIlluminaMetadata(OMGBaseMetadata):
+class OMG10XRawIlluminaMetadata(BaseMetadata):
     """
     early run data, produced at AGRF.
 
@@ -173,8 +169,7 @@ class OMG10XRawIlluminaMetadata(OMGBaseMetadata):
                     return None
                 return getattr(track_meta, k)
 
-            notes = '\n'.join('%s. %s.' % (t.get('common_name', ''), t.get('institution_name', ''))
-                              for t in row_metadata)
+            notes = '\n'.join('%s. %s.' % (t.get('common_name', ''), t.get('institution_name', '')) for t in row_metadata)
 
             obj.update({
                 'ticket': ticket,
@@ -190,7 +185,7 @@ class OMG10XRawIlluminaMetadata(OMGBaseMetadata):
                 'notes': notes,
             })
 
-            self.generaliser.apply(obj)
+            generaliser.apply(obj)
             ingest_utils.add_spatial_extra(obj)
             obj.update(common_values([make_row_metadata(row) for row in rows]))
 
@@ -218,7 +213,7 @@ class OMG10XRawIlluminaMetadata(OMGBaseMetadata):
         return resources
 
 
-class OMG10XRawMetadata(OMGBaseMetadata):
+class OMG10XRawMetadata(BaseMetadata):
     """
     this data conforms to the BPA 10X raw workflow. future data
     will use this ingest class.
@@ -339,7 +334,7 @@ class OMG10XRawMetadata(OMGBaseMetadata):
                 'private': True,
             })
             obj.update(context)
-            self.generaliser.apply(obj)
+            generaliser.apply(obj)
             ingest_utils.add_spatial_extra(obj)
             tag_names = ['10x-raw']
             obj['tags'] = [{'name': t} for t in tag_names]
@@ -366,7 +361,7 @@ class OMG10XRawMetadata(OMGBaseMetadata):
         return resources
 
 
-class OMG10XProcessedIlluminaMetadata(OMGBaseMetadata):
+class OMG10XProcessedIlluminaMetadata(BaseMetadata):
     auth = ('omg', 'omg')
     organization = 'bpa-omg'
     ckan_data_type = 'omg-10x-processed-illumina'
@@ -488,7 +483,7 @@ class OMG10XProcessedIlluminaMetadata(OMGBaseMetadata):
                     'private': True,
                 })
                 obj.update(context)
-                self.generaliser.apply(obj)
+                generaliser.apply(obj)
                 ingest_utils.add_spatial_extra(obj)
                 tag_names = ['10x-processed']
                 obj['tags'] = [{'name': t} for t in tag_names]
@@ -514,7 +509,7 @@ class OMG10XProcessedIlluminaMetadata(OMGBaseMetadata):
         return resources
 
 
-class OMGExonCaptureMetadata(OMGBaseMetadata):
+class OMGExonCaptureMetadata(BaseMetadata):
     auth = ('omg', 'omg')
     organization = 'bpa-omg'
     ckan_data_type = 'omg-exon-capture'
@@ -625,7 +620,7 @@ class OMGExonCaptureMetadata(OMGBaseMetadata):
                     'private': True,
                 })
                 obj.update(context)
-                self.generaliser.apply(obj)
+                generaliser.apply(obj)
                 ingest_utils.add_spatial_extra(obj)
                 tag_names = ['exon-capture', 'raw']
                 obj['tags'] = [{'name': t} for t in tag_names]
@@ -649,7 +644,7 @@ class OMGExonCaptureMetadata(OMGBaseMetadata):
         return resources
 
 
-class OMGGenomicsHiSeqMetadata(OMGBaseMetadata):
+class OMGGenomicsHiSeqMetadata(BaseMetadata):
     auth = ('omg', 'omg')
     organization = 'bpa-omg'
     ckan_data_type = 'omg-genomics-hiseq'
@@ -773,7 +768,7 @@ class OMGGenomicsHiSeqMetadata(OMGBaseMetadata):
                     'private': True,
                 })
                 obj.update(context)
-                self.generaliser.apply(obj)
+                generaliser.apply(obj)
                 ingest_utils.add_spatial_extra(obj)
                 tag_names = ['genomics-hiseq']
                 obj['tags'] = [{'name': t} for t in tag_names]
