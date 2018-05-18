@@ -23,10 +23,13 @@ import re
 logger = make_logger(__name__)
 common_context = [OMGSampleContextual, OMGLibraryContextual]
 
-generaliser = SensitiveDataGeneraliser()
+class OMGBaseMetadata(BaseMetadata):
+    def __init__(self, *args, **kwargs):
+        self.generaliser = SensitiveDataGeneraliser()
+        super(OMGBaseMetadata, self).__init__(*args, **kwargs)
 
 
-class OMG10XRawIlluminaMetadata(BaseMetadata):
+class OMG10XRawIlluminaMetadata(OMGBaseMetadata):
     """
     early run data, produced at AGRF.
 
@@ -185,7 +188,7 @@ class OMG10XRawIlluminaMetadata(BaseMetadata):
                 'notes': notes,
             })
 
-            generaliser.apply(obj)
+            self.generaliser.apply(obj)
             ingest_utils.add_spatial_extra(obj)
             obj.update(common_values([make_row_metadata(row) for row in rows]))
 
@@ -213,7 +216,7 @@ class OMG10XRawIlluminaMetadata(BaseMetadata):
         return resources
 
 
-class OMG10XRawMetadata(BaseMetadata):
+class OMG10XRawMetadata(OMGBaseMetadata):
     """
     this data conforms to the BPA 10X raw workflow. future data
     will use this ingest class.
@@ -334,7 +337,7 @@ class OMG10XRawMetadata(BaseMetadata):
                 'private': True,
             })
             obj.update(context)
-            generaliser.apply(obj)
+            self.generaliser.apply(obj)
             ingest_utils.add_spatial_extra(obj)
             tag_names = ['10x-raw']
             obj['tags'] = [{'name': t} for t in tag_names]
@@ -361,7 +364,7 @@ class OMG10XRawMetadata(BaseMetadata):
         return resources
 
 
-class OMG10XProcessedIlluminaMetadata(BaseMetadata):
+class OMG10XProcessedIlluminaMetadata(OMGBaseMetadata):
     auth = ('omg', 'omg')
     organization = 'bpa-omg'
     ckan_data_type = 'omg-10x-processed-illumina'
@@ -483,7 +486,7 @@ class OMG10XProcessedIlluminaMetadata(BaseMetadata):
                     'private': True,
                 })
                 obj.update(context)
-                generaliser.apply(obj)
+                self.generaliser.apply(obj)
                 ingest_utils.add_spatial_extra(obj)
                 tag_names = ['10x-processed']
                 obj['tags'] = [{'name': t} for t in tag_names]
@@ -509,7 +512,7 @@ class OMG10XProcessedIlluminaMetadata(BaseMetadata):
         return resources
 
 
-class OMGExonCaptureMetadata(BaseMetadata):
+class OMGExonCaptureMetadata(OMGBaseMetadata):
     auth = ('omg', 'omg')
     organization = 'bpa-omg'
     ckan_data_type = 'omg-exon-capture'
@@ -620,7 +623,7 @@ class OMGExonCaptureMetadata(BaseMetadata):
                     'private': True,
                 })
                 obj.update(context)
-                generaliser.apply(obj)
+                self.generaliser.apply(obj)
                 ingest_utils.add_spatial_extra(obj)
                 tag_names = ['exon-capture', 'raw']
                 obj['tags'] = [{'name': t} for t in tag_names]
@@ -644,7 +647,7 @@ class OMGExonCaptureMetadata(BaseMetadata):
         return resources
 
 
-class OMGGenomicsHiSeqMetadata(BaseMetadata):
+class OMGGenomicsHiSeqMetadata(OMGBaseMetadata):
     auth = ('omg', 'omg')
     organization = 'bpa-omg'
     ckan_data_type = 'omg-genomics-hiseq'
@@ -768,7 +771,7 @@ class OMGGenomicsHiSeqMetadata(BaseMetadata):
                     'private': True,
                 })
                 obj.update(context)
-                generaliser.apply(obj)
+                self.generaliser.apply(obj)
                 ingest_utils.add_spatial_extra(obj)
                 tag_names = ['genomics-hiseq']
                 obj['tags'] = [{'name': t} for t in tag_names]
