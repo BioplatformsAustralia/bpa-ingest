@@ -294,7 +294,6 @@ class BaseMarineMicrobesAmpliconsControlMetadata(BaseMarineMicrobesMetadata):
         for flow_id, info in sorted(flow_id_ticket.items()):
             obj = {}
             name = bpa_id_to_ckan_name('control', self.ckan_data_type + '-' + self.amplicon, flow_id).lower()
-            track_meta = self.track_meta.get(info['ticket'])
             google_track_meta = self.google_track_meta.get(info['ticket'])
 
             archive_ingestion_date = ingest_utils.get_date_isoformat(google_track_meta.date_of_transfer_to_archive)

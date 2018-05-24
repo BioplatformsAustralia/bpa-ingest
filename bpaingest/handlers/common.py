@@ -100,7 +100,7 @@ class GenericHandler:
 def shorten(s, length=100):
     if length <= 3:
         return s[:length]
-    return s if len(s) <= length else s[:length-3] + '...'
+    return s if len(s) <= length else s[:length - 3] + '...'
 
 
 def ts_from_str(s):

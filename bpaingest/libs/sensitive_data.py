@@ -12,6 +12,7 @@ logger = make_logger(__name__)
 
 SENSITIVE_DATA_DIR = "sensitive_data"
 
+
 class GeneralisationRules:
     WITHHOLD = re.compile("^WITHHOLD$")
     KM = re.compile("^(\d+)km$")
@@ -80,6 +81,7 @@ class Generalisation:
                 self.km = int(m.groups()[0])
             else:
                 logger.info("Unrecognised generalisation expression: %s" % expression)
+
 
 class SensitiveDataGeneraliser:
     DEFAULT_GENERALISATION = "1km"

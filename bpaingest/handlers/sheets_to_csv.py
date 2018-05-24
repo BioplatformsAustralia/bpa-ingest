@@ -1,4 +1,3 @@
-from base64 import b64decode
 from collections import namedtuple
 import csv
 from functools import partial
@@ -93,8 +92,7 @@ class Metadata:
 
 
 def get_env_vars():
-    names = ('file_id', 's3_bucket', 's3_output_prefix', 's3_config_key', 'google_api_timeout',
-            'sns_on_success', 'sns_on_change', 'sns_on_error')
+    names = ('file_id', 's3_bucket', 's3_output_prefix', 's3_config_key', 'google_api_timeout', 'sns_on_success', 'sns_on_change', 'sns_on_error')
     optional = set(('sns_on_success', 'sns_on_change', 'sns_on_error'))
 
     conversions = {
@@ -188,8 +186,7 @@ def sns_result(topic_arn, file_name, msg, changed_sheets=()):
         return
 
     subject = shorten('%s - %s' % (
-       'Changes in' if len(changed_sheets) > 0 else 'No changes in',
-       file_name))
+        'Changes in' if len(changed_sheets) > 0 else 'No changes in', file_name))
 
     data = {
         'default': msg,
@@ -199,7 +196,8 @@ def sns_result(topic_arn, file_name, msg, changed_sheets=()):
         }, default=json_converter)
     }
 
-    sns.publish(TopicArn=topic_arn,
+    sns.publish(
+        TopicArn=topic_arn,
         Subject=subject,
         MessageStructure='json',
         Message=json.dumps(data))

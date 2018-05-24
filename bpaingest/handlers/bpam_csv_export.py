@@ -1,23 +1,16 @@
-from base64 import b64decode
 from collections import namedtuple
-import csv
 from functools import partial
 import hashlib
-from httplib2 import Http
-import io
 import json
 import os
 import re
 import traceback
-from urllib.parse import urljoin, urlparse, urlunparse
+from urllib.parse import urlparse, urlunparse
 
 from bs4 import BeautifulSoup
 
 import boto3
 from datetime import datetime
-
-from apiclient.discovery import build
-from oauth2client.service_account import ServiceAccountCredentials
 
 from bpaingest.handlers.common import (
     METADATA_FILE_NAME, UNSAFE_CHARS, TS_FORMAT,
@@ -169,8 +162,9 @@ class Metadata:
 
 
 def get_env_vars():
-    names = ('bpam_project_url', 's3_bucket', 's3_output_prefix', 's3_config_key', 'bpam_admin_timeout',
-            'sns_on_success', 'sns_on_change', 'sns_on_error')
+    names = (
+        'bpam_project_url', 's3_bucket', 's3_output_prefix', 's3_config_key', 'bpam_admin_timeout',
+        'sns_on_success', 'sns_on_change', 'sns_on_error')
     optional = set(('sns_on_success', 'sns_on_change', 'sns_on_error'))
 
     conversions = {
@@ -246,9 +240,8 @@ def sns_result(topic_arn, project_url, msg, changed_models=()):
     if topic_arn is None:
         return
 
-    subject = shorten('%s - %s' % (
-       'Changes in' if len(changed_models) > 0 else 'No changes in',
-       project_url))
+    subject = shorten(
+        '%s - %s' % ('Changes in' if len(changed_models) > 0 else 'No changes in', project_url))
 
     data = {
         'default': msg,
@@ -258,7 +251,8 @@ def sns_result(topic_arn, project_url, msg, changed_models=()):
         }, default=json_converter)
     }
 
-    sns.publish(TopicArn=topic_arn,
+    sns.publish(
+        TopicArn=topic_arn,
         Subject=subject,
         MessageStructure='json',
         Message=json.dumps(data))

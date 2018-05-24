@@ -7,7 +7,6 @@ import boto3
 
 from bpaingest.handlers.common import GenericHandler, shorten
 from bpaingest.projects.base.contextual import BASESampleContextual
-from bpaingest.libs.ingest_utils import get_clean_number
 
 
 logger = logging.getLogger()
@@ -54,7 +53,8 @@ class Handler(GenericHandler):
         msg = 'Processed %s, sent SNS messages to apply contextual metadata to %d BPA Ids.' % (
             self.metadata_s3_key, len(rows))
 
-        sns.publish(TopicArn=self.env.sns_on_success,
+        sns.publish(
+            TopicArn=self.env.sns_on_success,
             Subject=subject,
             Message=msg)
 
@@ -71,7 +71,8 @@ class Handler(GenericHandler):
             'email-json': json_data,
         }
 
-        sns.publish(TopicArn=self.env.sns_apply_to_bpa_id,
+        sns.publish(
+            TopicArn=self.env.sns_apply_to_bpa_id,
             MessageStructure='json',
             Message=json.dumps(data))
 

@@ -2,7 +2,6 @@ import os
 import re
 from . import files
 
-from hashlib import md5
 from ...libs.excel_wrapper import make_field_definition as fld
 from unipath import Path
 from glob import glob
@@ -112,7 +111,6 @@ class GbrPacbioMetadata(BaseMetadata):
                 }
                 packages.append(obj)
         return packages
-
 
     def _get_resources(self):
         logger.info("Ingesting md5 file information from {0}".format(self.path))

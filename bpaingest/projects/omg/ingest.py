@@ -23,6 +23,7 @@ import re
 logger = make_logger(__name__)
 common_context = [OMGSampleContextual, OMGLibraryContextual]
 
+
 class OMGBaseMetadata(BaseMetadata):
     def __init__(self, *args, **kwargs):
         self.generaliser = SensitiveDataGeneraliser()

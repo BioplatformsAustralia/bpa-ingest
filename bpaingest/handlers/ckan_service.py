@@ -71,7 +71,8 @@ class CKANService:
             next_page += 1
 
     def get_resource_by_id(self, resource_id):
-        resp = self.session.get(self.urls.resource,
+        resp = self.session.get(
+            self.urls.resource,
             headers=self.auth_header, params={'id': resource_id})
         try:
             resp.raise_for_status()
@@ -107,7 +108,8 @@ class CKANService:
     def _get_next_packages(self, page, limit=PACKAGE_LIMIT):
         resp = None
         try:
-            resp = self.session.get(self.urls.packages_with_resources,
+            resp = self.session.get(
+                self.urls.packages_with_resources,
                 headers=self.auth_header,
                 params={'limit': limit, 'page': page})
             resp.raise_for_status()
@@ -116,7 +118,6 @@ class CKANService:
                 raise Exception('Get package list with resourses call returned success False')
             return json_resp.get('result', ())
         except Exception as exc:
-            msg = 'Get package list with resources call (%s) was NOT successful! ' % (
-               resp.request.url if resp else self.urls.packages_with_resources)
+            msg = 'Get package list with resources call (%s) was NOT successful! ' % (resp.request.url if resp else self.urls.packages_with_resources)
             print(msg)
             raise Exception(msg) from exc

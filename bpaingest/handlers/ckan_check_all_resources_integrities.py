@@ -5,7 +5,7 @@ import logging
 import boto3
 from datetime import datetime, timedelta
 
-from bpaingest.handlers.common import GenericHandler, UnrecoverableError, ts_from_iso_str
+from bpaingest.handlers.common import GenericHandler, ts_from_iso_str
 from bpaingest.handlers.ckan_service import set_up_ckan_service
 
 
@@ -18,7 +18,8 @@ sns = boto3.client('sns')
 
 class Handler(GenericHandler):
     ENV_VAR_DEFS = {
-        'names': ('s3_bucket', 's3_config_key',
+        'names': (
+            's3_bucket', 's3_config_key',
             'ckan_base_url', 'ckan_timeout',
             'integrity_check_expiry_days',
             'sns_check_resource_integrity',
@@ -56,7 +57,8 @@ class Handler(GenericHandler):
             'lambda': json.dumps({'resource_id': resource_id})
         }
 
-        sns.publish(TopicArn=self.env.sns_check_resource_integrity,
+        sns.publish(
+            TopicArn=self.env.sns_check_resource_integrity,
             MessageStructure='json',
             Message=json.dumps(data))
 

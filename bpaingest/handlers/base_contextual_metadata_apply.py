@@ -28,7 +28,8 @@ class Handler(GenericHandler):
     '''
 
     ENV_VAR_DEFS = {
-        'names': ('s3_bucket', 's3_config_key', 'ckan_base_url', 'ckan_timeout',
+        'names': (
+            's3_bucket', 's3_config_key', 'ckan_base_url', 'ckan_timeout',
             'sns_ckan_patch_package',
             'sns_on_success', 'sns_on_error'),
         'optional': ('sns_on_success', ),
@@ -63,7 +64,8 @@ class Handler(GenericHandler):
         logger.info(msg)
         if not self.env.sns_on_success:
             return
-        sns.publish(TopicArn=self.env.sns_on_success,
+        sns.publish(
+            TopicArn=self.env.sns_on_success,
             Subject=subject,
             Message=msg)
 
@@ -79,7 +81,8 @@ class Handler(GenericHandler):
             'email-json': json_data,
         }
 
-        sns.publish(TopicArn=self.env.sns_ckan_patch_package,
+        sns.publish(
+            TopicArn=self.env.sns_ckan_patch_package,
             MessageStructure='json',
             Message=json.dumps(data))
 

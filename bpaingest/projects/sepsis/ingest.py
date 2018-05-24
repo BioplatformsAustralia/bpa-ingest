@@ -325,7 +325,7 @@ class SepsisTranscriptomicsHiseqMetadata(BaseSepsisMetadata):
                 if bpa_id is None:
                     continue
                 bpa_id_info[bpa_id].append([row, xlsx_info, google_track_meta])
-        
+
         # collate together the flow cell IDs
         bpa_id_flowcells = defaultdict(set)
         for md5_file in glob(self.path + '/*.md5'):
