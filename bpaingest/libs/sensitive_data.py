@@ -98,6 +98,10 @@ class SensitiveDataGeneraliser:
             genus = package["genus"]
             species = package['species']
             scientific_name = "{0} {1}".format(genus, species).strip().lower()
+            # optimisation: if this species isn't sensitive in any state, we can skip doing
+            # expensive location determination
+            if scientific_name not in self._all_scientific_names:
+                return
             location = self._get_location(package)
             generalisation_expression = self._get_generalisation_expression(location,
                                                                             scientific_name)
@@ -141,9 +145,14 @@ class SensitiveDataGeneraliser:
                 sn = row.scientificname.strip().lower()
                 data[sn] = getattr(row, "generalisation", self.DEFAULT_GENERALISATION)
             self.sensitive_species_map[location] = data
+        self._all_scientific_names = set()
+        for species_map in self.sensitive_species_map.values():
+            self._all_scientific_names |= set(species_map.keys())
 
     def _get_aus_location(self, point):
-        for location, state_shape in self.shape_map[ShapeFiles.AUS_DIR]:
+        for location, bounds, state_shape in self.shape_map[ShapeFiles.AUS_DIR]:
+            if not bounds.contains(point):
+                continue
             if state_shape.contains(point):
                 return location
 
@@ -166,7 +175,15 @@ class SensitiveDataGeneraliser:
             for state_shape_record in coll:
                 shape = shapely.geometry.asShape(state_shape_record['geometry'])
                 location = self._get_location_name(subdir, state_shape_record)
-                shapes.append((location, shape))
+                if location is None:
+                    continue
+                minx, miny, maxx, maxy = shape.bounds
+                bounds_poly = shapely.geometry.Polygon([
+                    (minx, miny),
+                    (minx, maxy),
+                    (maxx, maxy),
+                    (maxx, miny)])
+                shapes.append((location, bounds_poly, shape))
         return shapes
 
     def _get_shapefile_path(self, subdir, shape_filename):
