@@ -1,3 +1,8 @@
+from ...tracking import GoogleDriveTrackMetadata
+
+
+class BASETrackMetadata(GoogleDriveTrackMetadata):
+    name = 'BASE'
 from ...util import make_logger, csv_to_named_tuple
 from ...libs import ingest_utils
 from ...tracking import GoogleDriveTrackMetadata, get_track_csv

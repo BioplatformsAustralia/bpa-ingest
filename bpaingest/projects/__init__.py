@@ -1,12 +1,8 @@
-from .base.ingest import (
+from .amdb.ingest import (
     BASEAmpliconsMetadata,
     BASEMetagenomicsMetadata,
     BASEAmpliconsControlMetadata,
-    BASESiteImagesMetadata)
-from .gbr.ingest import (
-    GbrAmpliconsMetadata,
-    GbrPacbioMetadata)
-from .mm.ingest import (
+    BASESiteImagesMetadata,
     MarineMicrobesGenomicsAmplicons16SMetadata,
     MarineMicrobesGenomicsAmpliconsA16SMetadata,
     MarineMicrobesGenomicsAmplicons18SMetadata,
@@ -15,6 +11,9 @@ from .mm.ingest import (
     MarineMicrobesGenomicsAmplicons18SControlMetadata,
     MarineMicrobesMetagenomicsMetadata,
     MarineMicrobesMetatranscriptomeMetadata)
+from .gbr.ingest import (
+    GbrAmpliconsMetadata,
+    GbrPacbioMetadata)
 from .sepsis.ingest import (
     SepsisGenomicsMiseqMetadata,
     SepsisTranscriptomicsHiseqMetadata,
