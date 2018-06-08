@@ -1,29 +1,23 @@
-
+import os
+import re
+from glob import glob
+from urllib.parse import urljoin
 
 from unipath import Path
 
+from . import files
 from ...abstract import BaseMetadata
-
-from ...util import make_logger, bpa_id_to_ckan_name, one, common_values, apply_license
-from urllib.parse import urljoin
-
-from glob import glob
-
 from ...libs import ingest_utils
 from ...libs.excel_wrapper import make_field_definition as fld
-from . import files
-from .tracking import (
-    BASETrackMetadata)
-from .contextual import (
-    BASESampleContextual,
-    BASENCBIContextual)
-
-import os
-import re
+from ...util import (apply_license, bpa_id_to_ckan_name, common_values,
+                     make_logger, one)
+from .contextual import (BASENCBIContextual, BASESampleContextual,
+                         MarineMicrobesNCBIContextual,
+                         MarineMicrobesSampleContextual)
+from .tracking import (BASETrackMetadata, MarineMicrobesGoogleTrackMetadata,
+                       MarineMicrobesTrackMetadata)
 
 logger = make_logger(__name__)
-
-
 common_context = [BASESampleContextual, BASENCBIContextual]
 
 
@@ -119,8 +113,8 @@ class BASEAmpliconsMetadata(BaseMetadata):
         }
     }
     md5 = {
-        'match': files.amplicon_regexps,
-        'skip': common_skip + files.amplicon_control_regexps,
+        'match': files.base_amplicon_regexps,
+        'skip': common_skip + files.base_amplicon_control_regexps,
     }
 
     def __init__(self, metadata_path, contextual_metadata=None, metadata_info=None):
@@ -255,8 +249,8 @@ class BASEAmpliconsControlMetadata(BaseMetadata):
     metadata_url_components = ('amplicon', 'facility_code', 'ticket')
     resource_linkage = ('amplicon', 'flow_id')
     md5 = {
-        'match': files.amplicon_control_regexps,
-        'skip': common_skip + files.amplicon_regexps,
+        'match': files.base_amplicon_control_regexps,
+        'skip': common_skip + files.base_amplicon_regexps,
     }
 
     def __init__(self, metadata_path, contextual_metadata=None, metadata_info=None):
@@ -361,7 +355,7 @@ class BASEMetagenomicsMetadata(BaseMetadata):
         }
     }
     md5 = {
-        'match': files.metagenomics_regexps,
+        'match': files.base_metagenomics_regexps,
         'skip': common_skip,
     }
     # these are packages from the pilot, which have missing metadata
@@ -544,7 +538,7 @@ class BASESiteImagesMetadata(BaseMetadata):
     resource_linkage = ('site_ids',)
     md5 = {
         'match': [
-            files.site_image_filename_re
+            files.base_site_image_filename_re
         ],
         'skip': None,
     }
@@ -623,25 +617,6 @@ class BASESiteImagesMetadata(BaseMetadata):
             resources.append(((site_ids,), legacy_url, resource))
         return resources
 
-
-
-from unipath import Path
-from urllib.parse import urljoin
-from glob import glob
-
-from ...util import make_logger, bpa_id_to_ckan_name, apply_license
-from ...libs import ingest_utils
-from ...abstract import BaseMetadata
-from ...libs.excel_wrapper import make_field_definition as fld
-from . import files
-from . tracking import (MarineMicrobesGoogleTrackMetadata, MarineMicrobesTrackMetadata)
-from .contextual import (MarineMicrobesSampleContextual, MarineMicrobesNCBIContextual)
-
-import os
-import re
-
-
-logger = make_logger(__name__)
 
 index_from_comment_re = re.compile(r'([G|A|T|C|-]{6,}_[G|A|T|C|-]{6,})')
 index_from_comment_pilot_re = re.compile(r'_([G|A|T|C|-]{6,})_')
@@ -736,8 +711,8 @@ class BaseMarineMicrobesAmpliconsMetadata(BaseMarineMicrobesMetadata):
         }
     }
     md5 = {
-        'match': [files.amplicon_filename_re],
-        'skip': [files.amplicon_control_filename_re],
+        'match': [files.mm_amplicon_filename_re],
+        'skip': [files.mm_amplicon_control_filename_re],
     }
 
     def __init__(self, metadata_path, contextual_metadata=None, metadata_info=None):
@@ -897,8 +872,8 @@ class BaseMarineMicrobesAmpliconsControlMetadata(BaseMarineMicrobesMetadata):
     metadata_patterns = [r'^.*\.md5']
     resource_linkage = ('amplicon', 'flow_id')
     md5 = {
-        'match': [files.amplicon_control_filename_re],
-        'skip': [files.amplicon_filename_re],
+        'match': [files.mm_amplicon_control_filename_re],
+        'skip': [files.mm_amplicon_filename_re],
     }
 
     def __init__(self, metadata_path, contextual_metadata=None, metadata_info=None):
@@ -1023,7 +998,7 @@ class MarineMicrobesMetagenomicsMetadata(BaseMarineMicrobesMetadata):
         }
     }
     md5 = {
-        'match': [files.metagenomics_filename_re, files.metagenomics_filename_v2_re],
+        'match': [files.mm_metagenomics_filename_re, files.mm_metagenomics_filename_v2_re],
         'skip': None,
     }
 
@@ -1132,7 +1107,7 @@ class MarineMicrobesMetatranscriptomeMetadata(BaseMarineMicrobesMetadata):
         }
     }
     md5 = {
-        'match': [files.metatranscriptome_filename_re, files.metatranscriptome_filename2_re],
+        'match': [files.mm_metatranscriptome_filename_re, files.mm_metatranscriptome_filename2_re],
         'skip': None,
     }
 

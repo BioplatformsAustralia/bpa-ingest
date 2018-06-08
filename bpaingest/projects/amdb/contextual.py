@@ -1,9 +1,11 @@
 import datetime
+import re
 from glob import glob
 from ...libs import ingest_utils
 from ...libs.excel_wrapper import ExcelWrapper, make_field_definition as fld
 from ...util import make_logger, one
 from ...ncbi import NCBISRAContextual
+
 
 logger = make_logger(__name__)
 
@@ -143,16 +145,6 @@ class BASENCBIContextual(NCBISRAContextual):
     metadata_urls = ['https://downloads-qcif.bioplatforms.com/bpa/base/metadata/ncbi/']
     name = 'base-ncbi-contextual'
     bioproject_accession = 'PRJNA317932'
-
-import re
-from glob import glob
-from ...util import make_logger, one
-from ...libs import ingest_utils
-from ...libs.excel_wrapper import ExcelWrapper, make_field_definition as fld
-from ...ncbi import NCBISRAContextual
-
-
-logger = make_logger(__name__)
 
 
 class MarineMicrobesSampleContextual(object):

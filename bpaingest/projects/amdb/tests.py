@@ -1,16 +1,21 @@
-from .files import (
-    amplicon_control_tech_vendor_filename_re,
-    amplicon_filename_flow_index_swapped_re,
-    amplicon_filename_re,
-    amplicon_control_tech_vendor_flow_filename_re,
-    amplicon_index2_filename_re,
-    amplicon_index3_filename_re,
-    metagenomics_filename_re,
-    metagenomics_run_filename_re,
-    site_image_filename_re)
+from .files import (base_amplicon_control_tech_vendor_filename_re,
+                    base_amplicon_control_tech_vendor_flow_filename_re,
+                    base_amplicon_filename_flow_index_swapped_re,
+                    base_amplicon_filename_re,
+                    base_amplicon_index2_filename_re,
+                    base_amplicon_index3_filename_re,
+                    base_metagenomics_filename_re,
+                    base_metagenomics_run_filename_re,
+                    base_site_image_filename_re,
+                    mm_amplicon_control_filename_re, mm_amplicon_filename_re,
+                    mm_metagenomics_filename_re,
+                    mm_metagenomics_filename_v2_re,
+                    mm_metatranscriptome_filename2_re,
+                    mm_metatranscriptome_filename_re,
+                    mm_transcriptome_filename_re)
 
 
-def test_amplicon_control():
+def test_base_amplicon_control():
     filenames = [
         'Arch_mock_community_A16S_UNSW_ATCTCAGG_AAGGCTAT_AHFYA_S72_L001_I2.fastq.gz',
         'Arc_mock_community_A16S_UNSW_ATCTCAGG_AAGGCTAT_AE4DM_S72_L001_R2.fastq.gz',
@@ -27,10 +32,10 @@ def test_amplicon_control():
         'Soil-DNA_ITS_AGRF_ACACTAGATCCG_AN5TK_AN5TK_ACACTAGATCCG_L001_R2.fastq.gz',
     ]
     for filename in filenames:
-        assert(amplicon_control_tech_vendor_filename_re.match(filename) is not None)
+        assert(base_amplicon_control_tech_vendor_filename_re.match(filename) is not None)
 
 
-def test_amplicon_control2():
+def test_base_amplicon_control2():
     filenames = [
         'Bac_mock_community_16S_AGRF_B3BDY_AGATGTTCTGCT_L001_R2.fastq.gz',
         'Fungal__mock_Community_ITS_AGRF_B39G7_ATGGACCGAACC_L001_R2.fastq.gz',
@@ -43,10 +48,10 @@ def test_amplicon_control2():
         'Undetermined_16S_AGRF_A5K1H_S0_L001_R2.fastq.gz',
     ]
     for filename in filenames:
-        assert(amplicon_control_tech_vendor_flow_filename_re.match(filename) is not None)
+        assert(base_amplicon_control_tech_vendor_flow_filename_re.match(filename) is not None)
 
 
-def test_amplicon():
+def test_base_amplicon():
     filenames = [
         '15984_1_ITS_UNSW_ACTATTGTCACG_AGEDA_S71_L001_R2.fastq.gz',
         '9504_1_16S_AGRF_AATGCCTCAACT_A5K1H_S59_L001_R2.fastq.gz',
@@ -55,68 +60,60 @@ def test_amplicon():
         '42198_1_A16S_UNSW_TACGCTGC-TATCCTCT_B8RGF_S102_L001_R2.fastq.gz'
     ]
     for filename in filenames:
-        assert(amplicon_filename_re.match(filename) is not None)
+        assert(base_amplicon_filename_re.match(filename) is not None)
 
 
-def test_amplicon_flow_index_swapped():
+def test_base_amplicon_flow_index_swapped():
     filenames = [
         '19621_1_18S_AGRF_B3C5P_CCTTAAGTCAGT_L001_R1.fastq.gz',
         '19569_1_18S_AGRF_B3C5P_CTCCTGAAAGTT_L001_R1.fastq.gz'
     ]
     for filename in filenames:
-        assert(amplicon_filename_flow_index_swapped_re.match(filename) is not None)
+        assert(base_amplicon_filename_flow_index_swapped_re.match(filename) is not None)
 
 
-def test_amplicon_index2():
+def test_base_amplicon_index2():
     filenames = [
         '19418_1_ITS_AGRF_GTCCGAAACACT_ANVM7_ANVM7_GTCCGAAACACT_L001_R1.fastq.gz',
     ]
     for filename in filenames:
-        assert(amplicon_index2_filename_re.match(filename) is not None)
+        assert(base_amplicon_index2_filename_re.match(filename) is not None)
 
 
-def test_amplicon_index3():
+def test_base_amplicon_index3():
     filenames = [
         '13392_1_A16S_UNSW_TAGGCATG_GTAAGGAG_ACG8D_S30_L001_I1.fastq.gz',
     ]
     for filename in filenames:
-        assert(amplicon_index3_filename_re.match(filename) is not None)
+        assert(base_amplicon_index3_filename_re.match(filename) is not None)
 
 
-def test_metagenomics():
+def test_base_metagenomics():
     filenames = [
         '10718_2_PE_550bp_BASE_AGRF_HFLF3BCXX_ATTACTCG-CCTATCCT_L002_R2.fastq.gz',
     ]
     for filename in filenames:
-        assert(metagenomics_filename_re.match(filename) is not None)
+        assert(base_metagenomics_filename_re.match(filename) is not None)
 
 
-def test_metagenomics_run():
+def test_base_metagenomics_run():
     filenames = [
         '12450_1_PE_550bp_BASE_UNSW_HCLVFBCXX_ATTCAGAA-CCTATCCT_L001_R2_001.fastq.gz',
     ]
     for filename in filenames:
-        assert(metagenomics_run_filename_re.match(filename) is not None)
+        assert(base_metagenomics_run_filename_re.match(filename) is not None)
 
 
-def test_site_image():
+def test_base_site_image():
     filenames = [
         '7075-7076.jpg',
         '19233-19234.jpg'
     ]
     for filename in filenames:
-        assert(site_image_filename_re.match(filename) is not None)
-from .files import (
-    amplicon_control_filename_re,
-    amplicon_filename_re,
-    transcriptome_filename_re,
-    metatranscriptome_filename_re,
-    metatranscriptome_filename2_re,
-    metagenomics_filename_re,
-    metagenomics_filename_v2_re)
+        assert(base_site_image_filename_re.match(filename) is not None)
 
 
-def test_amplicon_control():
+def test_mm_amplicon_control():
     filenames = [
         'Arc_mock_community_1_A16S_UNSW_CGATCAGT-CCTAGAGT_ARVTL_S105_L001_R2.fastq.gz',
         'Bac_mock_community_16S_UNSW_GGATCGCA-CTAGTATG_AUWLK_S124_L001_I2.fastq.gz',
@@ -125,10 +122,10 @@ def test_amplicon_control():
         'STAN_16S_UNSW_TATCAGGTGTGC_AL1HY_S97_L001_R1.fastq.gz',
     ]
     for filename in filenames:
-        assert(amplicon_control_filename_re.match(filename) is not None)
+        assert(mm_amplicon_control_filename_re.match(filename) is not None)
 
 
-def test_amplicon():
+def test_mm_amplicon():
     filenames = [
         '21878_1_A16S_UNSW_GGACTCCT-TATCCTCT_AP3JE_S17_L001_R1.fastq.gz',
         '21644_1_16S_UNSW_GAACTAGTCACC_AFGB7_S61_L001_R1.fastq.gz',
@@ -136,16 +133,16 @@ def test_amplicon():
         '27160_1_16S_UNSW_UNKNOWN_AH55W_UNKNOWN_L001_R1.fastq.gz',
     ]
     for filename in filenames:
-        assert(amplicon_filename_re.match(filename) is not None)
+        assert(mm_amplicon_filename_re.match(filename) is not None)
 
 
-def test_transcriptome():
+def test_mm_transcriptome():
     filenames = [
         '24708_PE_200bp_STEMCELLS_AGRF_HMHNFBCXX_CGATGT_L002_R2.fastq.gz',
         '29586_PE_200bp_STEMCELLS_AGRF_CAGCTANXX_CGATGT_L001_R1.fastq.gz',
     ]
     for filename in filenames:
-        assert(transcriptome_filename_re.match(filename) is not None)
+        assert(mm_transcriptome_filename_re.match(filename) is not None)
 
 
 def test_metatranscriptome():
@@ -154,33 +151,33 @@ def test_metatranscriptome():
         '34955_1_wir_PE_200bp_MM_AGRF_CA5YNANXX_TTAGGC_L003_R1.fastq.gz',
     ]
     for filename in filenames:
-        assert(metatranscriptome_filename_re.match(filename) is not None)
+        assert(mm_metatranscriptome_filename_re.match(filename) is not None)
 
 
-def test_metatranscriptome2():
+def test_mm_metatranscriptome2():
     filenames = [
         '57510_1_PE_210bp_MM_AGRF_CC26CANXX_CGATGT_L003_R1.fastq.gz',
         '57512_1_PE_210bp_MM_AGRF_CC26CANXX_CAGATC_L002_R2.fastq.gz',
         '57518_1_PE_210bp_MM_AGRF_CC26CANXX_GCCAAT_L003_R2.fastq.gz',
     ]
     for filename in filenames:
-        assert(metatranscriptome_filename2_re.match(filename) is not None)
+        assert(mm_metatranscriptome_filename2_re.match(filename) is not None)
 
 
-def test_metagenomics():
+def test_mm_metagenomics():
     filenames = [
         '21744_1_PE_700bp_MM_UNSW_HM7K2BCXX_AAGAGGCA-AAGGAGTA_L001_R1.fastq.gz',
         '34318_1_PE_680bp_MM_AGRF_H3KWTBCXY_CTCTCTAC-ACTGCATA_L002_R1.fastq.gz',
         '21730_1_PE_700bp_MM_UNSW_HL7NGBCXX_GTAGAGGA-ACTGCATA_L002_R1.fastq.gz',
     ]
     for filename in filenames:
-        assert(metagenomics_filename_re.match(filename) is not None)
+        assert(mm_metagenomics_filename_re.match(filename) is not None)
 
 
-def test_metagenomics_v2():
+def test_mm_metagenomics_v2():
     filenames = [
         '34734_1_PE_700bp_MM_UNSW_HMMJFBCXY_TAAGGCGA-CTCTCTAT_S5_L001_R2_001.fastq.gz',
         '36064_1_PE_700bp_MM_UNSW_HM35MBCXY_ACTGAGCG-GAGCCTTA_S13_L002_R1_001.fastq.gz',
     ]
     for filename in filenames:
-        assert(metagenomics_filename_v2_re.match(filename) is not None)
+        assert(mm_metagenomics_filename_v2_re.match(filename) is not None)
