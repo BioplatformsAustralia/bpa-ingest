@@ -29,15 +29,7 @@ def fix_slope_date(val):
     return val
 
 
-class ContextualBase(object):
-    def get(self, *args, **kwargs):
-        return {}
-
-    def filename_metadata(self, *args, **kwargs):
-        return {}
-
-
-class BASESampleContextual(ContextualBase):
+class BASESampleContextual:
     metadata_urls = ['https://downloads-qcif.bioplatforms.com/bpa/base/metadata/contextual/2017-06-28/']
     name = 'base-contextual'
 
