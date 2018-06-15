@@ -11,6 +11,21 @@ from copy import deepcopy
 logger = make_logger(__name__)
 
 
+class SchemaBaseField:
+    def __init__(self, field_name, label, python_type):
+        self.field_name = field_name
+        self.label = label
+        self.python_type = python_type
+
+
+class SchemaDatasetField(SchemaBaseField):
+    field_type = 'dataset'
+
+
+class SchemaResourceField(SchemaBaseField):
+    field_type = 'resource'
+
+
 schema_template = {
     "scheming_version": 1,
     "about_url": "https://data.bioplatforms.com/",

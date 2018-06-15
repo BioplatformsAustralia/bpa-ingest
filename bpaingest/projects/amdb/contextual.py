@@ -531,6 +531,9 @@ class MarineMicrobesSampleContextual(object):
         xlsx_path = one(glob(path + '/*.xlsx'))
         self.sample_metadata = self._package_metadata(self._read_metadata(xlsx_path))
 
+    def filename_metadata(self, *args, **kwargs):
+        return {}
+
     def get(self, bpa_id):
         if bpa_id in self.sample_metadata:
             return self.sample_metadata[bpa_id]
