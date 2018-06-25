@@ -523,7 +523,7 @@ class OMGExonCaptureMetadata(OMGBaseMetadata):
     metadata_urls = [
         'https://downloads-qcif.bioplatforms.com/bpa/omg_staging/exon_capture/',
     ]
-    metadata_url_components = ('ticket',)
+    metadata_url_components = ('facility', 'ticket',)
     resource_linkage = ('bpa_library_id', 'flowcell_id', 'library_index_sequence')
     spreadsheet = {
         'fields': [
