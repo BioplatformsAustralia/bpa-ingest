@@ -1,7 +1,6 @@
 #!/usr/bin/env python3
 
 import string
-import json
 import xlrd
 import sys
 import os
@@ -16,15 +15,23 @@ def main():
     wb = xlrd.open_workbook(fname)
     for sheet in wb.sheets():
         header = sheet.row_values(0)
+        print('''\
+# generated from: {} ({})
+
+from ...schema import SchemaDatasetField
+
+
+''')
         print('# {}: {}'.format(os.path.basename(fname), sheet.name))
         defns = []
         for cell in header:
-            defns.append({
-                'field_name': generate_name(cell),
-                'label': cell,
-                'python_type': 'str'
-            })
-        print('''{}_fields = [SchemaDatasetField(**t) for t in {}]'''.format(generate_name(sheet.name), json.dumps(defns, indent=4, sort_keys=True)))
+            defns.append('''\
+{{
+    'field_name': {},
+    'label': {},
+    'python_type': str,
+}}'''.format(repr(generate_name(cell)), repr(cell)))
+        print('''{}_fields = [SchemaDatasetField(**t) for t in [{}]]'''.format(generate_name(sheet.name), ', '.join(defns)))
 
 
 if __name__ == '__main__':

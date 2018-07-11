@@ -1,323 +1,1016 @@
-# contextual-2017-06-28.xlsx: Sheet1
-sheet1_fields = [SchemaDatasetField(**t) for t in [
-    {
-        "field_name": "sample_id",
-        "label": "Sample_ID",
-        "python_type": "str"
-    },
-    {
-        "field_name": "date_sampled",
-        "label": "Date sampled",
-        "python_type": "str"
-    },
-    {
-        "field_name": "latitude",
-        "label": "latitude",
-        "python_type": "str"
-    },
-    {
-        "field_name": "longitude",
-        "label": "longitude",
-        "python_type": "str"
-    },
-    {
-        "field_name": "depth",
-        "label": "Depth",
-        "python_type": "str"
-    },
-    {
-        "field_name": "horizon",
-        "label": "Horizon",
-        "python_type": "str"
-    },
-    {
-        "field_name": "soil_sample_storage_method",
-        "label": "soil sample storage method",
-        "python_type": "str"
-    },
-    {
-        "field_name": "geo_loc",
-        "label": "geo_loc",
-        "python_type": "str"
-    },
-    {
-        "field_name": "location_description",
-        "label": "location description",
-        "python_type": "str"
-    },
-    {
-        "field_name": "broad_land_use",
-        "label": "broad land use",
-        "python_type": "str"
-    },
-    {
-        "field_name": "detailed_land_use",
-        "label": "Detailed land use",
-        "python_type": "str"
-    },
-    {
-        "field_name": "general_ecological_zone",
-        "label": "General Ecological Zone",
-        "python_type": "str"
-    },
-    {
-        "field_name": "vegetation_type",
-        "label": "Vegetation Type",
-        "python_type": "str"
-    },
-    {
-        "field_name": "vegetation_total_cover",
-        "label": "Vegetation Total cover (%)",
-        "python_type": "str"
-    },
-    {
-        "field_name": "vegetation_dom_trees",
-        "label": "Vegetation Dom. Trees (%)",
-        "python_type": "str"
-    },
-    {
-        "field_name": "vegetation_dom_shrubs",
-        "label": "Vegetation Dom. Shrubs (%)",
-        "python_type": "str"
-    },
-    {
-        "field_name": "vegetation_dom_grasses",
-        "label": "Vegetation Dom. Grasses (%)",
-        "python_type": "str"
-    },
-    {
-        "field_name": "elevation",
-        "label": "Elevation ()",
-        "python_type": "str"
-    },
-    {
-        "field_name": "slope",
-        "label": "Slope (%)",
-        "python_type": "str"
-    },
-    {
-        "field_name": "slope_aspect",
-        "label": "Slope Aspect (Direction or degrees; e.g., NW or 315\u00b0)",
-        "python_type": "str"
-    },
-    {
-        "field_name": "profile_position_controlled_vocab",
-        "label": "Profile Position controlled vocab (5)",
-        "python_type": "str"
-    },
-    {
-        "field_name": "australian_soil_classification_controlled_vocab",
-        "label": "Australian Soil Classification controlled vocab (6)",
-        "python_type": "str"
-    },
-    {
-        "field_name": "fao_soil_classification_controlled_vocab",
-        "label": "FAO soil classification controlled vocab (7)",
-        "python_type": "str"
-    },
-    {
-        "field_name": "immediate_previous_land_use_controlled_vocab",
-        "label": "Immediate Previous Land Use controlled vocab (2)",
-        "python_type": "str"
-    },
-    {
-        "field_name": "date_since_change_in_land_use",
-        "label": "Date since change in Land Use",
-        "python_type": "str"
-    },
-    {
-        "field_name": "crop_rotation_1yr_since_present",
-        "label": "Crop rotation 1yr since present",
-        "python_type": "str"
-    },
-    {
-        "field_name": "crop_rotation_2yrs_since_present",
-        "label": "Crop rotation 2yrs since present",
-        "python_type": "str"
-    },
-    {
-        "field_name": "crop_rotation_3yrs_since_present",
-        "label": "Crop rotation 3yrs since present",
-        "python_type": "str"
-    },
-    {
-        "field_name": "crop_rotation_4yrs_since_present",
-        "label": "Crop rotation 4yrs since present",
-        "python_type": "str"
-    },
-    {
-        "field_name": "crop_rotation_5yrs_since_present",
-        "label": "Crop rotation 5yrs since present",
-        "python_type": "str"
-    },
-    {
-        "field_name": "agrochemical_additions",
-        "label": "Agrochemical Additions",
-        "python_type": "str"
-    },
-    {
-        "field_name": "tillage_controlled_vocab",
-        "label": "Tillage controlled vocab (9)",
-        "python_type": "str"
-    },
-    {
-        "field_name": "fire",
-        "label": "Fire",
-        "python_type": "str"
-    },
-    {
-        "field_name": "fire_intensity_if_known",
-        "label": "fire intensity if known",
-        "python_type": "str"
-    },
-    {
-        "field_name": "flooding",
-        "label": "Flooding",
-        "python_type": "str"
-    },
-    {
-        "field_name": "extreme_events",
-        "label": "Extreme Events",
-        "python_type": "str"
-    },
-    {
-        "field_name": "soil_moisture",
-        "label": "Soil moisture (%)",
-        "python_type": "str"
-    },
-    {
-        "field_name": "color_controlled_vocab",
-        "label": "Color controlled vocab (10)",
-        "python_type": "str"
-    },
-    {
-        "field_name": "gravel",
-        "label": "Gravel (%)- ( >2.0 mm)",
-        "python_type": "str"
-    },
-    {
-        "field_name": "texture",
-        "label": "Texture ()",
-        "python_type": "str"
-    },
-    {
-        "field_name": "course_sand",
-        "label": "Course Sand (%) (200-2000 \u00b5m)",
-        "python_type": "str"
-    },
-    {
-        "field_name": "fine_sand",
-        "label": "Fine Sand (%) - (20-200 \u00b5m)",
-        "python_type": "str"
-    },
-    {
-        "field_name": "sand",
-        "label": "Sand (%)",
-        "python_type": "str"
-    },
-    {
-        "field_name": "silt",
-        "label": "Silt  (%) (2-20 \u00b5m)",
-        "python_type": "str"
-    },
-    {
-        "field_name": "clay",
-        "label": "Clay (%) (<2 \u00b5m)",
-        "python_type": "str"
-    },
-    {
-        "field_name": "ammonium_nitrogen",
-        "label": "Ammonium Nitrogen (mg/Kg)",
-        "python_type": "str"
-    },
-    {
-        "field_name": "nitrate_nitrogen",
-        "label": "Nitrate Nitrogen (mg/Kg)",
-        "python_type": "str"
-    },
-    {
-        "field_name": "phosphorus_colwell",
-        "label": "Phosphorus Colwell (mg/Kg)",
-        "python_type": "str"
-    },
-    {
-        "field_name": "potassium_colwell",
-        "label": "Potassium Colwell (mg/Kg)",
-        "python_type": "str"
-    },
-    {
-        "field_name": "sulphur",
-        "label": "Sulphur (mg/Kg)",
-        "python_type": "str"
-    },
-    {
-        "field_name": "organic_carbon",
-        "label": "Organic Carbon (%)",
-        "python_type": "str"
-    },
-    {
-        "field_name": "conductivity",
-        "label": "Conductivity (dS/m)",
-        "python_type": "str"
-    },
-    {
-        "field_name": "ph_level",
-        "label": "pH Level (CaCl2) (pH)",
-        "python_type": "str"
-    },
-    {
-        "field_name": "ph_level",
-        "label": "pH Level (H2O) (pH)",
-        "python_type": "str"
-    },
-    {
-        "field_name": "dtpa_copper",
-        "label": "DTPA Copper (mg/Kg)",
-        "python_type": "str"
-    },
-    {
-        "field_name": "dtpa_iron",
-        "label": "DTPA Iron (mg/Kg)",
-        "python_type": "str"
-    },
-    {
-        "field_name": "dtpa_manganese",
-        "label": "DTPA Manganese (mg/Kg)",
-        "python_type": "str"
-    },
-    {
-        "field_name": "dtpa_zinc",
-        "label": "DTPA Zinc (mg/Kg)",
-        "python_type": "str"
-    },
-    {
-        "field_name": "exc_aluminium",
-        "label": "Exc. Aluminium (meq/100g)",
-        "python_type": "str"
-    },
-    {
-        "field_name": "exc_calcium",
-        "label": "Exc. Calcium (meq/100g)",
-        "python_type": "str"
-    },
-    {
-        "field_name": "exc_magnesium",
-        "label": "Exc. Magnesium (meq/100g)",
-        "python_type": "str"
-    },
-    {
-        "field_name": "exc_potassium",
-        "label": "Exc. Potassium (meq/100g)",
-        "python_type": "str"
-    },
-    {
-        "field_name": "exc_sodium",
-        "label": "Exc. Sodium (meq/100g)",
-        "python_type": "str"
-    },
-    {
-        "field_name": "boron_hot_cacl2",
-        "label": "Boron Hot CaCl2 (mg/Kg)",
-        "python_type": "str"
-    }
-]]
+# generated from: {} ({})
+
+from ...schema import SchemaDatasetField
+
+
+
+# MM_Contextual_Data_Master_Sheet-20180306.xlsx: Coastal water
+coastal_water_fields = [SchemaDatasetField(**t) for t in [{
+    'field_name': 'bpa_id',
+    'label': 'BPA_ID',
+    'python_type': str,
+}, {
+    'field_name': 'ncbi_submission',
+    'label': 'NCBI_Submission',
+    'python_type': str,
+}, {
+    'field_name': 'id',
+    'label': 'ID',
+    'python_type': str,
+}, {
+    'field_name': 'ncbi_sample_accession',
+    'label': 'NCBI Sample Accession',
+    'python_type': str,
+}, {
+    'field_name': 'organism',
+    'label': 'Organism',
+    'python_type': str,
+}, {
+    'field_name': 'tax_id',
+    'label': 'Tax ID',
+    'python_type': str,
+}, {
+    'field_name': 'samplename_depth',
+    'label': 'SampleName_depth',
+    'python_type': str,
+}, {
+    'field_name': 'ncbi_bioproject',
+    'label': 'NCBI BioProject',
+    'python_type': str,
+}, {
+    'field_name': 'date_sampled',
+    'label': 'Date sampled (YYYY-MM-DD)',
+    'python_type': str,
+}, {
+    'field_name': 'time_sampled',
+    'label': 'Time sampled (hh:mm)',
+    'python_type': str,
+}, {
+    'field_name': 'latitude',
+    'label': 'Latitude (decimal degrees)',
+    'python_type': str,
+}, {
+    'field_name': 'longitude',
+    'label': 'Longitude (decimal degrees)',
+    'python_type': str,
+}, {
+    'field_name': 'depth',
+    'label': 'Depth (m)',
+    'python_type': str,
+}, {
+    'field_name': 'geo_loc',
+    'label': 'geo_loc (country:subregion)',
+    'python_type': str,
+}, {
+    'field_name': 'sample_site',
+    'label': 'Sample Site',
+    'python_type': str,
+}, {
+    'field_name': 'coastal_id',
+    'label': 'Coastal_ID',
+    'python_type': str,
+}, {
+    'field_name': 'notes',
+    'label': 'Notes',
+    'python_type': str,
+}, {
+    'field_name': 'ph_level',
+    'label': 'pH Level (H2O) (pH)',
+    'python_type': str,
+}, {
+    'field_name': 'oxygen',
+    'label': 'Oxygen (μmol/L) Lab',
+    'python_type': str,
+}, {
+    'field_name': 'oxygen',
+    'label': 'Oxygen (ml/L) CTD',
+    'python_type': str,
+}, {
+    'field_name': 'nitratenitrite',
+    'label': 'Nitrate/Nitrite (μmol/L)',
+    'python_type': str,
+}, {
+    'field_name': 'phosphate',
+    'label': 'Phosphate (μmol/L)',
+    'python_type': str,
+}, {
+    'field_name': 'ammonium',
+    'label': 'Ammonium (μmol/L)',
+    'python_type': str,
+}, {
+    'field_name': 'total_co2',
+    'label': 'Total CO2 (μmol/kg)',
+    'python_type': str,
+}, {
+    'field_name': 'total_alkalinity',
+    'label': 'Total alkalinity (μmol/kg)',
+    'python_type': str,
+}, {
+    'field_name': 'temperature_its-90_deg_c',
+    'label': 'Temperature [ITS-90, deg C]',
+    'python_type': str,
+}, {
+    'field_name': 'conductivity_sm',
+    'label': 'Conductivity [S/m]',
+    'python_type': str,
+}, {
+    'field_name': 'turbidity',
+    'label': 'Turbidity (Upoly 0, WET Labs FLNTURT)',
+    'python_type': str,
+}, {
+    'field_name': 'salinity_psu_laboratory',
+    'label': 'Salinity [PSU] Laboratory',
+    'python_type': str,
+}, {
+    'field_name': 'microbial_abundance',
+    'label': 'microbial abundance (cells per ml)',
+    'python_type': str,
+}, {
+    'field_name': 'chlorophyll_a',
+    'label': 'chlorophyll a (μg/L)',
+    'python_type': str,
+}, {
+    'field_name': 'total_carbon',
+    'label': '%total carbon',
+    'python_type': str,
+}, {
+    'field_name': '_total_inorganc_carbon',
+    'label': '% total inorganc carbon',
+    'python_type': str,
+}, {
+    'field_name': 'light_intensity',
+    'label': 'light intensity (lux)',
+    'python_type': str,
+}]]
+# generated from: {} ({})
+
+from ...schema import SchemaDatasetField
+
+
+
+# MM_Contextual_Data_Master_Sheet-20180306.xlsx: Coral
+coral_fields = [SchemaDatasetField(**t) for t in [{
+    'field_name': 'bpa_id',
+    'label': 'BPA_ID',
+    'python_type': str,
+}, {
+    'field_name': 'ncbi_submission',
+    'label': 'NCBI_Submission',
+    'python_type': str,
+}, {
+    'field_name': 'id',
+    'label': 'ID',
+    'python_type': str,
+}, {
+    'field_name': 'ncbi_sample_accession',
+    'label': 'NCBI Sample Accession',
+    'python_type': str,
+}, {
+    'field_name': 'organism',
+    'label': 'Organism',
+    'python_type': str,
+}, {
+    'field_name': 'tax_id',
+    'label': 'Tax ID',
+    'python_type': str,
+}, {
+    'field_name': 'samplename_depth',
+    'label': 'SampleName_depth',
+    'python_type': str,
+}, {
+    'field_name': 'ncbi_bioproject',
+    'label': 'NCBI BioProject',
+    'python_type': str,
+}, {
+    'field_name': 'date_sampled',
+    'label': 'Date sampled (YYYY-MM-DD)',
+    'python_type': str,
+}, {
+    'field_name': 'time_sampled',
+    'label': 'Time sampled (hh:mm)',
+    'python_type': str,
+}, {
+    'field_name': 'latitude',
+    'label': 'Latitude (decimal degrees)',
+    'python_type': str,
+}, {
+    'field_name': 'longitude',
+    'label': 'Longitude (decimal degrees)',
+    'python_type': str,
+}, {
+    'field_name': 'depth',
+    'label': 'Depth (m)',
+    'python_type': str,
+}, {
+    'field_name': 'geo_loc',
+    'label': 'geo_loc (country:subregion)',
+    'python_type': str,
+}, {
+    'field_name': 'sample_site',
+    'label': 'Sample Site',
+    'python_type': str,
+}, {
+    'field_name': 'coastal_id',
+    'label': 'Coastal_ID',
+    'python_type': str,
+}, {
+    'field_name': 'host_species',
+    'label': 'Host Species',
+    'python_type': str,
+}, {
+    'field_name': 'notes',
+    'label': 'Notes',
+    'python_type': str,
+}, {
+    'field_name': 'pulse_amplitude_modulated',
+    'label': 'Pulse amplitude modulated (PAM) fluorometer measurement',
+    'python_type': str,
+}, {
+    'field_name': 'host_state',
+    'label': 'host state (free text field)',
+    'python_type': str,
+}, {
+    'field_name': 'host_abundance',
+    'label': 'host abundance (individuals per m2)',
+    'python_type': str,
+}, {
+    'field_name': '',
+    'label': '(null)',
+    'python_type': str,
+}, {
+    'field_name': '',
+    'label': '(null)',
+    'python_type': str,
+}, {
+    'field_name': '',
+    'label': '(null)',
+    'python_type': str,
+}, {
+    'field_name': '',
+    'label': '(null)',
+    'python_type': str,
+}, {
+    'field_name': '',
+    'label': '(null)',
+    'python_type': str,
+}, {
+    'field_name': '',
+    'label': '(null)',
+    'python_type': str,
+}, {
+    'field_name': '',
+    'label': '(null)',
+    'python_type': str,
+}, {
+    'field_name': '',
+    'label': '(null)',
+    'python_type': str,
+}, {
+    'field_name': '',
+    'label': '(null)',
+    'python_type': str,
+}, {
+    'field_name': '',
+    'label': '(null)',
+    'python_type': str,
+}, {
+    'field_name': '',
+    'label': '(null)',
+    'python_type': str,
+}, {
+    'field_name': '',
+    'label': '(null)',
+    'python_type': str,
+}, {
+    'field_name': '',
+    'label': '(null)',
+    'python_type': str,
+}, {
+    'field_name': '',
+    'label': '(null)',
+    'python_type': str,
+}]]
+# generated from: {} ({})
+
+from ...schema import SchemaDatasetField
+
+
+
+# MM_Contextual_Data_Master_Sheet-20180306.xlsx: Pelagic_Public
+pelagic_public_fields = [SchemaDatasetField(**t) for t in [{
+    'field_name': 'id',
+    'label': 'ID',
+    'python_type': str,
+}, {
+    'field_name': 'ncbi_sample_accession',
+    'label': 'NCBI Sample Accession',
+    'python_type': str,
+}, {
+    'field_name': 'organism',
+    'label': 'Organism',
+    'python_type': str,
+}, {
+    'field_name': 'tax_id',
+    'label': 'Tax ID',
+    'python_type': str,
+}, {
+    'field_name': 'samplename_depth',
+    'label': 'SampleName_depth',
+    'python_type': str,
+}, {
+    'field_name': 'ncbi_bioproject',
+    'label': 'NCBI BioProject',
+    'python_type': str,
+}, {
+    'field_name': 'date_sampled',
+    'label': 'Date sampled (YYYY-MM-DD)',
+    'python_type': str,
+}, {
+    'field_name': 'time_sampled',
+    'label': 'Time sampled (hh:mm)',
+    'python_type': str,
+}, {
+    'field_name': 'latitude',
+    'label': 'Latitude (decimal degrees)',
+    'python_type': str,
+}, {
+    'field_name': 'longitude',
+    'label': 'Longitude (decimal degrees)',
+    'python_type': str,
+}, {
+    'field_name': 'depth',
+    'label': 'Depth (m)',
+    'python_type': str,
+}, {
+    'field_name': 'nrs_location_code_voyage_code',
+    'label': 'NRS_Location_code; Voyage_code',
+    'python_type': str,
+}, {
+    'field_name': 'nrs_trip_code',
+    'label': 'NRS_TRIP_CODE',
+    'python_type': str,
+}, {
+    'field_name': 'nrs_sample_code',
+    'label': 'NRS_SAMPLE_CODE',
+    'python_type': str,
+}, {
+    'field_name': 'geo_loc',
+    'label': 'geo_loc (country:subregion)',
+    'python_type': str,
+}, {
+    'field_name': 'sample_site',
+    'label': 'Sample Site',
+    'python_type': str,
+}, {
+    'field_name': 'notes',
+    'label': 'Notes',
+    'python_type': str,
+}, {
+    'field_name': 'ph_level',
+    'label': 'pH Level (H2O) (pH)',
+    'python_type': str,
+}, {
+    'field_name': 'fluorescence',
+    'label': 'Fluorescence (AU)',
+    'python_type': str,
+}, {
+    'field_name': 'transmittance',
+    'label': 'TRANSMITTANCE (%)',
+    'python_type': str,
+}, {
+    'field_name': 'secchi_depth',
+    'label': 'Secchi Depth (m)',
+    'python_type': str,
+}, {
+    'field_name': 'bottom_depth',
+    'label': 'Bottom depth',
+    'python_type': str,
+}, {
+    'field_name': 'pressure_bottle',
+    'label': 'Pressure bottle',
+    'python_type': str,
+}, {
+    'field_name': 'temperature_ctd_its-90_deg_c',
+    'label': 'Temperature: CTD [ITS-90, deg C]',
+    'python_type': str,
+}, {
+    'field_name': 'salinity_psu_ctd',
+    'label': 'Salinity [PSU] CTD',
+    'python_type': str,
+}, {
+    'field_name': 'oxygen',
+    'label': 'Oxygen (μmol/kg) CTD',
+    'python_type': str,
+}, {
+    'field_name': 'density_density_kgm3_ctd',
+    'label': 'Density [density, Kg/m^3] CTD',
+    'python_type': str,
+}, {
+    'field_name': 'turbidity',
+    'label': 'Turbidity (Nephelometric Turbidity Units) CTD',
+    'python_type': str,
+}, {
+    'field_name': 'chlf_ctd',
+    'label': 'Chlf: CTD',
+    'python_type': str,
+}, {
+    'field_name': 'silicate',
+    'label': 'Silicate (μmol/L)',
+    'python_type': str,
+}, {
+    'field_name': 'nitratenitrite',
+    'label': 'Nitrate/Nitrite (μmol/L)',
+    'python_type': str,
+}, {
+    'field_name': 'nitrite',
+    'label': 'Nitrite (μmol/L)',
+    'python_type': str,
+}, {
+    'field_name': 'phosphate',
+    'label': 'Phosphate (μmol/L)',
+    'python_type': str,
+}, {
+    'field_name': 'ammonium',
+    'label': 'Ammonium (μmol/L)',
+    'python_type': str,
+}, {
+    'field_name': 'salinity_psu_lab',
+    'label': 'Salinity [PSU] Lab',
+    'python_type': str,
+}, {
+    'field_name': 'oxygen',
+    'label': 'Oxygen (μmol/L) Lab',
+    'python_type': str,
+}, {
+    'field_name': 'total_co2',
+    'label': 'Total CO2 (μmol/kg)',
+    'python_type': str,
+}, {
+    'field_name': 'total_alkalinity',
+    'label': 'Total alkalinity (μmol/kg)',
+    'python_type': str,
+}, {
+    'field_name': 'tss_mgl',
+    'label': 'TSS [mg/L]',
+    'python_type': str,
+}, {
+    'field_name': 'inorganic_fraction_mgl',
+    'label': 'Inorganic Fraction [mg/L]',
+    'python_type': str,
+}, {
+    'field_name': 'organic_fraction_mgl',
+    'label': 'Organic Fraction [mg/L]',
+    'python_type': str,
+}, {
+    'field_name': 'allo_mgm3',
+    'label': 'ALLO [mg/m3]',
+    'python_type': str,
+}, {
+    'field_name': 'alpha_beta_car_mgm3',
+    'label': 'ALPHA_BETA_CAR [mg/m3]',
+    'python_type': str,
+}, {
+    'field_name': 'anth_mgm3',
+    'label': 'ANTH [mg/m3]',
+    'python_type': str,
+}, {
+    'field_name': 'asta_mgm3',
+    'label': 'ASTA [mg/m3]',
+    'python_type': str,
+}, {
+    'field_name': 'beta_beta_car_mgm3',
+    'label': 'BETA_BETA_CAR [mg/m3]',
+    'python_type': str,
+}, {
+    'field_name': 'beta_epi_car_mgm3',
+    'label': 'BETA_EPI_CAR [mg/m3]',
+    'python_type': str,
+}, {
+    'field_name': 'but_fuco_mgm3',
+    'label': 'BUT_FUCO [mg/m3]',
+    'python_type': str,
+}, {
+    'field_name': 'cantha_mgm3',
+    'label': 'CANTHA [mg/m3]',
+    'python_type': str,
+}, {
+    'field_name': 'cphl_a_mgm3',
+    'label': 'CPHL_A [mg/m3]',
+    'python_type': str,
+}, {
+    'field_name': 'cphl_b_mgm3',
+    'label': 'CPHL_B [mg/m3]',
+    'python_type': str,
+}, {
+    'field_name': 'cphl_c1c2_mgm3',
+    'label': 'CPHL_C1C2 [mg/m3]',
+    'python_type': str,
+}, {
+    'field_name': 'cphl_c1_mgm3',
+    'label': 'CPHL_C1 [mg/m3]',
+    'python_type': str,
+}, {
+    'field_name': 'cphl_c2_mgm3',
+    'label': 'CPHL_C2 [mg/m3]',
+    'python_type': str,
+}, {
+    'field_name': 'cphl_c3_mgm3',
+    'label': 'CPHL_C3 [mg/m3]',
+    'python_type': str,
+}, {
+    'field_name': 'cphlide_a_mgm3',
+    'label': 'CPHLIDE_A [mg/m3]',
+    'python_type': str,
+}, {
+    'field_name': 'diadchr_mgm3',
+    'label': 'DIADCHR [mg/m3]',
+    'python_type': str,
+}, {
+    'field_name': 'diadino_mgm3',
+    'label': 'DIADINO [mg/m3]',
+    'python_type': str,
+}, {
+    'field_name': 'diato_mgm3',
+    'label': 'DIATO [mg/m3]',
+    'python_type': str,
+}, {
+    'field_name': 'dino_mgm3',
+    'label': 'DINO [mg/m3]',
+    'python_type': str,
+}, {
+    'field_name': 'dv_cphl_a_and_cphl_a_mgm3',
+    'label': 'DV_CPHL_A_and_CPHL_A [mg/m3]',
+    'python_type': str,
+}, {
+    'field_name': 'dv_cphl_a_mgm3',
+    'label': 'DV_CPHL_A [mg/m3]',
+    'python_type': str,
+}, {
+    'field_name': 'dv_cphl_b_and_cphl_b_mgm3',
+    'label': 'DV_CPHL_B_and_CPHL_B [mg/m3]',
+    'python_type': str,
+}, {
+    'field_name': 'dv_cphl_b_mgm3',
+    'label': 'DV_CPHL_B [mg/m3]',
+    'python_type': str,
+}, {
+    'field_name': 'echin_mgm3',
+    'label': 'ECHIN [mg/m3]',
+    'python_type': str,
+}, {
+    'field_name': 'fuco_mgm3',
+    'label': 'FUCO [mg/m3]',
+    'python_type': str,
+}, {
+    'field_name': 'gyro_mgm3',
+    'label': 'GYRO [mg/m3]',
+    'python_type': str,
+}, {
+    'field_name': 'hex_fuco_mgm3',
+    'label': 'HEX_FUCO [mg/m3]',
+    'python_type': str,
+}, {
+    'field_name': 'keto_hex_fuco_mgm3',
+    'label': 'KETO_HEX_FUCO [mg/m3]',
+    'python_type': str,
+}, {
+    'field_name': 'lut_mgm3',
+    'label': 'LUT [mg/m3]',
+    'python_type': str,
+}, {
+    'field_name': 'lyco_mgm3',
+    'label': 'LYCO [mg/m3]',
+    'python_type': str,
+}, {
+    'field_name': 'mg_dvp_mgm3',
+    'label': 'MG_DVP [mg/m3]',
+    'python_type': str,
+}, {
+    'field_name': 'neo_mgm3',
+    'label': 'NEO [mg/m3]',
+    'python_type': str,
+}, {
+    'field_name': 'perid_mgm3',
+    'label': 'PERID [mg/m3]',
+    'python_type': str,
+}, {
+    'field_name': 'phide_a_mgm3',
+    'label': 'PHIDE_A [mg/m3]',
+    'python_type': str,
+}, {
+    'field_name': 'phytin_a_mgm3',
+    'label': 'PHYTIN_A [mg/m3]',
+    'python_type': str,
+}, {
+    'field_name': 'phytin_b_mgm3',
+    'label': 'PHYTIN_B [mg/m3]',
+    'python_type': str,
+}, {
+    'field_name': 'pras_mgm3',
+    'label': 'PRAS [mg/m3]',
+    'python_type': str,
+}, {
+    'field_name': 'pyrophide_a_mgm3',
+    'label': 'PYROPHIDE_A [mg/m3]',
+    'python_type': str,
+}, {
+    'field_name': 'pyrophytin_a_mgm3',
+    'label': 'PYROPHYTIN_A [mg/m3]',
+    'python_type': str,
+}, {
+    'field_name': 'viola_mgm3',
+    'label': 'VIOLA [mg/m3]',
+    'python_type': str,
+}, {
+    'field_name': 'zea_mgm3',
+    'label': 'ZEA [mg/m3]',
+    'python_type': str,
+}]]
+# generated from: {} ({})
+
+from ...schema import SchemaDatasetField
+
+
+
+# MM_Contextual_Data_Master_Sheet-20180306.xlsx: Seagrass
+seagrass_fields = [SchemaDatasetField(**t) for t in [{
+    'field_name': 'bpa_id',
+    'label': 'BPA_ID',
+    'python_type': str,
+}, {
+    'field_name': 'date_sampled',
+    'label': 'Date sampled (YYYY-MM-DD)',
+    'python_type': str,
+}, {
+    'field_name': 'time_sampled',
+    'label': 'Time sampled (hh:mm)',
+    'python_type': str,
+}, {
+    'field_name': 'latitude',
+    'label': 'Latitude (decimal degrees)',
+    'python_type': str,
+}, {
+    'field_name': 'longitude',
+    'label': 'Longitude (decimal degrees)',
+    'python_type': str,
+}, {
+    'field_name': 'depth',
+    'label': 'Depth (m)',
+    'python_type': str,
+}, {
+    'field_name': 'geo_loc',
+    'label': 'geo_loc (country:subregion)',
+    'python_type': str,
+}, {
+    'field_name': 'sample_site',
+    'label': 'Sample Site',
+    'python_type': str,
+}, {
+    'field_name': 'coastal_id',
+    'label': 'Coastal_ID',
+    'python_type': str,
+}, {
+    'field_name': 'host_species',
+    'label': 'Host Species',
+    'python_type': str,
+}, {
+    'field_name': 'notes',
+    'label': 'Notes',
+    'python_type': str,
+}, {
+    'field_name': 'pulse_amplitude_modulated',
+    'label': 'Pulse amplitude modulated (PAM) fluorometer measurement',
+    'python_type': str,
+}, {
+    'field_name': 'host_state',
+    'label': 'host state (free text field)',
+    'python_type': str,
+}, {
+    'field_name': 'host_abundance',
+    'label': 'host abundance (individuals per m2)',
+    'python_type': str,
+}]]
+# generated from: {} ({})
+
+from ...schema import SchemaDatasetField
+
+
+
+# MM_Contextual_Data_Master_Sheet-20180306.xlsx: Seaweed
+seaweed_fields = [SchemaDatasetField(**t) for t in [{
+    'field_name': 'bpa_id',
+    'label': 'BPA_ID',
+    'python_type': str,
+}, {
+    'field_name': 'ncbi_submission',
+    'label': 'NCBI_Submission',
+    'python_type': str,
+}, {
+    'field_name': 'id',
+    'label': 'ID',
+    'python_type': str,
+}, {
+    'field_name': 'ncbi_sample_accession',
+    'label': 'NCBI Sample Accession',
+    'python_type': str,
+}, {
+    'field_name': 'organism',
+    'label': 'Organism',
+    'python_type': str,
+}, {
+    'field_name': 'tax_id',
+    'label': 'Tax ID',
+    'python_type': str,
+}, {
+    'field_name': 'samplename_depth',
+    'label': 'SampleName_depth',
+    'python_type': str,
+}, {
+    'field_name': 'ncbi_bioproject',
+    'label': 'NCBI BioProject',
+    'python_type': str,
+}, {
+    'field_name': 'date_sampled',
+    'label': 'Date sampled (YYYY-MM-DD)',
+    'python_type': str,
+}, {
+    'field_name': 'time_sampled',
+    'label': 'Time sampled (hh:mm)',
+    'python_type': str,
+}, {
+    'field_name': 'latitude',
+    'label': 'Latitude (decimal degrees)',
+    'python_type': str,
+}, {
+    'field_name': 'longitude',
+    'label': 'Longitude (decimal degrees)',
+    'python_type': str,
+}, {
+    'field_name': 'depth',
+    'label': 'Depth (m)',
+    'python_type': str,
+}, {
+    'field_name': 'geo_loc',
+    'label': 'geo_loc (country:subregion)',
+    'python_type': str,
+}, {
+    'field_name': 'sample_site',
+    'label': 'Sample Site',
+    'python_type': str,
+}, {
+    'field_name': 'coastal_id',
+    'label': 'Coastal_ID',
+    'python_type': str,
+}, {
+    'field_name': 'host_species',
+    'label': 'Host Species',
+    'python_type': str,
+}, {
+    'field_name': 'notes',
+    'label': 'Notes',
+    'python_type': str,
+}, {
+    'field_name': 'pulse_amplitude_modulated',
+    'label': 'Pulse amplitude modulated (PAM) fluorometer measurement',
+    'python_type': str,
+}, {
+    'field_name': 'host_state',
+    'label': 'host state (free text field)',
+    'python_type': str,
+}, {
+    'field_name': 'host_abundance',
+    'label': 'host abundance (individuals per m2)',
+    'python_type': str,
+}]]
+# generated from: {} ({})
+
+from ...schema import SchemaDatasetField
+
+
+
+# MM_Contextual_Data_Master_Sheet-20180306.xlsx: Sediment
+sediment_fields = [SchemaDatasetField(**t) for t in [{
+    'field_name': 'bpa_id',
+    'label': 'BPA_ID',
+    'python_type': str,
+}, {
+    'field_name': 'ncbi_submission',
+    'label': 'NCBI_Submission',
+    'python_type': str,
+}, {
+    'field_name': 'id',
+    'label': 'ID',
+    'python_type': str,
+}, {
+    'field_name': 'ncbi_sample_accession',
+    'label': 'NCBI Sample Accession',
+    'python_type': str,
+}, {
+    'field_name': 'organism',
+    'label': 'Organism',
+    'python_type': str,
+}, {
+    'field_name': 'tax_id',
+    'label': 'Tax ID',
+    'python_type': str,
+}, {
+    'field_name': 'samplename_depth',
+    'label': 'SampleName_depth',
+    'python_type': str,
+}, {
+    'field_name': 'ncbi_bioproject',
+    'label': 'NCBI BioProject',
+    'python_type': str,
+}, {
+    'field_name': 'date_sampled',
+    'label': 'Date sampled (YYYY-MM-DD)',
+    'python_type': str,
+}, {
+    'field_name': 'time_sampled',
+    'label': 'Time sampled (hh:mm)',
+    'python_type': str,
+}, {
+    'field_name': 'latitude',
+    'label': 'Latitude (decimal degrees)',
+    'python_type': str,
+}, {
+    'field_name': 'longitude',
+    'label': 'Longitude (decimal degrees)',
+    'python_type': str,
+}, {
+    'field_name': 'depth',
+    'label': 'Depth (m)',
+    'python_type': str,
+}, {
+    'field_name': 'geo_loc',
+    'label': 'geo_loc (country:subregion)',
+    'python_type': str,
+}, {
+    'field_name': 'sample_site',
+    'label': 'Sample Site',
+    'python_type': str,
+}, {
+    'field_name': 'coastal_id',
+    'label': 'Coastal_ID',
+    'python_type': str,
+}, {
+    'field_name': 'notes',
+    'label': 'Notes',
+    'python_type': str,
+}, {
+    'field_name': 'total_carbon',
+    'label': '%total carbon',
+    'python_type': str,
+}, {
+    'field_name': '_fine_sediment',
+    'label': '% fine sediment',
+    'python_type': str,
+}, {
+    'field_name': '_total_nitrogen',
+    'label': '% total nitrogen',
+    'python_type': str,
+}, {
+    'field_name': '_total_phosphorous',
+    'label': '% total phosphorous',
+    'python_type': str,
+}, {
+    'field_name': 'sedimentation_rate',
+    'label': 'sedimentation rate (g /(cm2 x y)r)',
+    'python_type': str,
+}, {
+    'field_name': '',
+    'label': '(null)',
+    'python_type': str,
+}, {
+    'field_name': '',
+    'label': '(null)',
+    'python_type': str,
+}, {
+    'field_name': '',
+    'label': '(null)',
+    'python_type': str,
+}, {
+    'field_name': '',
+    'label': '(null)',
+    'python_type': str,
+}, {
+    'field_name': '',
+    'label': '(null)',
+    'python_type': str,
+}, {
+    'field_name': '',
+    'label': '(null)',
+    'python_type': str,
+}, {
+    'field_name': '',
+    'label': '(null)',
+    'python_type': str,
+}, {
+    'field_name': '',
+    'label': '(null)',
+    'python_type': str,
+}, {
+    'field_name': '',
+    'label': '(null)',
+    'python_type': str,
+}, {
+    'field_name': '',
+    'label': '(null)',
+    'python_type': str,
+}, {
+    'field_name': '',
+    'label': '(null)',
+    'python_type': str,
+}, {
+    'field_name': '',
+    'label': '(null)',
+    'python_type': str,
+}]]
+# generated from: {} ({})
+
+from ...schema import SchemaDatasetField
+
+
+
+# MM_Contextual_Data_Master_Sheet-20180306.xlsx: Sponge
+sponge_fields = [SchemaDatasetField(**t) for t in [{
+    'field_name': 'bpa_id',
+    'label': 'BPA_ID',
+    'python_type': str,
+}, {
+    'field_name': 'ncbi_submission',
+    'label': 'NCBI_Submission',
+    'python_type': str,
+}, {
+    'field_name': 'id',
+    'label': 'ID',
+    'python_type': str,
+}, {
+    'field_name': 'ncbi_sample_accession',
+    'label': 'NCBI Sample Accession',
+    'python_type': str,
+}, {
+    'field_name': 'organism',
+    'label': 'Organism',
+    'python_type': str,
+}, {
+    'field_name': 'tax_id',
+    'label': 'Tax ID',
+    'python_type': str,
+}, {
+    'field_name': 'samplename_depth',
+    'label': 'SampleName_depth',
+    'python_type': str,
+}, {
+    'field_name': 'ncbi_bioproject',
+    'label': 'NCBI BioProject',
+    'python_type': str,
+}, {
+    'field_name': 'date_sampled',
+    'label': 'Date sampled (YYYY-MM-DD)',
+    'python_type': str,
+}, {
+    'field_name': 'time_sampled',
+    'label': 'Time sampled (hh:mm)',
+    'python_type': str,
+}, {
+    'field_name': 'latitude',
+    'label': 'Latitude (decimal degrees)',
+    'python_type': str,
+}, {
+    'field_name': 'longitude',
+    'label': 'Longitude (decimal degrees)',
+    'python_type': str,
+}, {
+    'field_name': 'depth',
+    'label': 'Depth (m)',
+    'python_type': str,
+}, {
+    'field_name': 'geo_loc',
+    'label': 'geo_loc (country:subregion)',
+    'python_type': str,
+}, {
+    'field_name': 'sample_site',
+    'label': 'Sample Site',
+    'python_type': str,
+}, {
+    'field_name': 'coastal_id',
+    'label': 'Coastal_ID',
+    'python_type': str,
+}, {
+    'field_name': 'host_species',
+    'label': 'Host Species',
+    'python_type': str,
+}, {
+    'field_name': 'notes',
+    'label': 'Notes',
+    'python_type': str,
+}, {
+    'field_name': 'host_state',
+    'label': 'host state (free text field)',
+    'python_type': str,
+}, {
+    'field_name': 'host_abundance',
+    'label': 'host abundance (individuals per m2)',
+    'python_type': str,
+}]]
