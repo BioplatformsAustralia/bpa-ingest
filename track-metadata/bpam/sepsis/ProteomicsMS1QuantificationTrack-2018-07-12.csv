@@ -1,4 +1,64 @@
 5 digit BPA ID,Data type,Taxon_OR_organism,Strain_OR_isolate,Serovar,Growth Media,Replicate,Omics,Analytical platform,Facility,Work order #,Contextual Data Submission Date,Sample submission date,Data generated,Archive Ingestion Date,Archive ID,id,curation_url,in_data_portal,last_modified
+102.100.100.51301,Main dataset,Streptococcus pyogenes,PS006,M28,Pooled sera,6,Proteomics,MS1 quantification,MBPF,,2018-04-05,2018-04-05,0,,,423,,0,2018-05-09 07:21:14
+102.100.100.51300,Main dataset,Streptococcus pyogenes,PS006,M28,Pooled sera,5,Proteomics,MS1 quantification,MBPF,,2018-04-05,2018-04-05,0,,,422,,0,2018-05-09 07:21:14
+102.100.100.51299,Main dataset,Streptococcus pyogenes,PS006,M28,Pooled sera,4,Proteomics,MS1 quantification,MBPF,,2018-04-05,2018-04-05,0,,,421,,0,2018-05-09 07:21:14
+102.100.100.51298,Main dataset,Streptococcus pyogenes,PS006,M28,Pooled sera,3,Proteomics,MS1 quantification,MBPF,,2018-04-05,2018-04-05,0,,,420,,0,2018-05-09 07:21:14
+102.100.100.51297,Main dataset,Streptococcus pyogenes,PS006,M28,Pooled sera,2,Proteomics,MS1 quantification,MBPF,,2018-04-05,2018-04-05,0,,,419,,0,2018-05-09 07:21:14
+102.100.100.51296,Main dataset,Streptococcus pyogenes,PS006,M28,Pooled sera,1,Proteomics,MS1 quantification,MBPF,,2018-04-05,2018-04-05,0,,,418,,0,2018-05-09 07:21:14
+102.100.100.51295,Main dataset,Streptococcus pyogenes,PS006,M28,RPMI_modified,6,Proteomics,MS1 quantification,MBPF,,2018-04-05,2018-04-05,0,,,417,,0,2018-05-09 07:21:14
+102.100.100.51294,Main dataset,Streptococcus pyogenes,PS006,M28,RPMI_modified,5,Proteomics,MS1 quantification,MBPF,,2018-04-05,2018-04-05,0,,,416,,0,2018-05-09 07:21:14
+102.100.100.51293,Main dataset,Streptococcus pyogenes,PS006,M28,RPMI_modified,4,Proteomics,MS1 quantification,MBPF,,2018-04-05,2018-04-05,0,,,415,,0,2018-05-09 07:21:14
+102.100.100.51292,Main dataset,Streptococcus pyogenes,PS006,M28,RPMI_modified,3,Proteomics,MS1 quantification,MBPF,,2018-04-05,2018-04-05,0,,,414,,0,2018-05-09 07:21:14
+102.100.100.51291,Main dataset,Streptococcus pyogenes,PS006,M28,RPMI_modified,2,Proteomics,MS1 quantification,MBPF,,2018-04-05,2018-04-05,0,,,413,,0,2018-05-09 07:21:14
+102.100.100.51290,Main dataset,Streptococcus pyogenes,PS006,M28,RPMI_modified,1,Proteomics,MS1 quantification,MBPF,,2018-04-05,2018-04-05,0,,,412,,0,2018-05-09 07:21:14
+102.100.100.51289,Main dataset,Streptococcus pyogenes,PS003,"M77, unusual M type associated with peurperal sepsis",Pooled sera,6,Proteomics,MS1 quantification,MBPF,,2018-04-05,2018-04-05,0,,,411,,0,2018-05-09 07:21:14
+102.100.100.51288,Main dataset,Streptococcus pyogenes,PS003,"M77, unusual M type associated with peurperal sepsis",Pooled sera,5,Proteomics,MS1 quantification,MBPF,,2018-04-05,2018-04-05,0,,,410,,0,2018-05-09 07:21:14
+102.100.100.51287,Main dataset,Streptococcus pyogenes,PS003,"M77, unusual M type associated with peurperal sepsis",Pooled sera,4,Proteomics,MS1 quantification,MBPF,,2018-04-05,2018-04-05,0,,,409,,0,2018-05-09 07:21:14
+102.100.100.51286,Main dataset,Streptococcus pyogenes,PS003,"M77, unusual M type associated with peurperal sepsis",Pooled sera,3,Proteomics,MS1 quantification,MBPF,,2018-04-05,2018-04-05,0,,,408,,0,2018-05-09 07:21:14
+102.100.100.51285,Main dataset,Streptococcus pyogenes,PS003,"M77, unusual M type associated with peurperal sepsis",Pooled sera,2,Proteomics,MS1 quantification,MBPF,,2018-04-05,2018-04-05,0,,,407,,0,2018-05-09 07:21:14
+102.100.100.51284,Main dataset,Streptococcus pyogenes,PS003,"M77, unusual M type associated with peurperal sepsis",Pooled sera,1,Proteomics,MS1 quantification,MBPF,,2018-04-05,2018-04-05,0,,,406,,0,2018-05-09 07:21:14
+102.100.100.51283,Main dataset,Streptococcus pyogenes,PS003,"M77, unusual M type associated with peurperal sepsis",RPMI_modified,6,Proteomics,MS1 quantification,MBPF,,2018-04-05,2018-04-05,0,,,405,,0,2018-05-09 07:21:14
+102.100.100.51282,Main dataset,Streptococcus pyogenes,PS003,"M77, unusual M type associated with peurperal sepsis",RPMI_modified,5,Proteomics,MS1 quantification,MBPF,,2018-04-05,2018-04-05,0,,,404,,0,2018-05-09 07:21:14
+102.100.100.51281,Main dataset,Streptococcus pyogenes,PS003,"M77, unusual M type associated with peurperal sepsis",RPMI_modified,4,Proteomics,MS1 quantification,MBPF,,2018-04-05,2018-04-05,0,,,403,,0,2018-05-09 07:21:14
+102.100.100.51280,Main dataset,Streptococcus pyogenes,PS003,"M77, unusual M type associated with peurperal sepsis",RPMI_modified,3,Proteomics,MS1 quantification,MBPF,,2018-04-05,2018-04-05,0,,,402,,0,2018-05-09 07:21:14
+102.100.100.51279,Main dataset,Streptococcus pyogenes,PS003,"M77, unusual M type associated with peurperal sepsis",RPMI_modified,2,Proteomics,MS1 quantification,MBPF,,2018-04-05,2018-04-05,0,,,401,,0,2018-05-09 07:21:14
+102.100.100.51278,Main dataset,Streptococcus pyogenes,PS003,"M77, unusual M type associated with peurperal sepsis",RPMI_modified,1,Proteomics,MS1 quantification,MBPF,,2018-04-05,2018-04-05,0,,,400,,0,2018-05-09 07:21:14
+102.100.100.51277,Main dataset,Streptococcus pyogenes,HKU419,M1T1 clone,Pooled sera,6,Proteomics,MS1 quantification,MBPF,,2018-04-05,2018-04-05,0,,,399,,0,2018-05-09 07:21:14
+102.100.100.51276,Main dataset,Streptococcus pyogenes,HKU419,M1T1 clone,Pooled sera,5,Proteomics,MS1 quantification,MBPF,,2018-04-05,2018-04-05,0,,,398,,0,2018-05-09 07:21:14
+102.100.100.51275,Main dataset,Streptococcus pyogenes,HKU419,M1T1 clone,Pooled sera,4,Proteomics,MS1 quantification,MBPF,,2018-04-05,2018-04-05,0,,,397,,0,2018-05-09 07:21:14
+102.100.100.51274,Main dataset,Streptococcus pyogenes,HKU419,M1T1 clone,Pooled sera,3,Proteomics,MS1 quantification,MBPF,,2018-04-05,2018-04-05,0,,,396,,0,2018-05-09 07:21:14
+102.100.100.51273,Main dataset,Streptococcus pyogenes,HKU419,M1T1 clone,Pooled sera,2,Proteomics,MS1 quantification,MBPF,,2018-04-05,2018-04-05,0,,,395,,0,2018-05-09 07:21:14
+102.100.100.51272,Main dataset,Streptococcus pyogenes,HKU419,M1T1 clone,Pooled sera,1,Proteomics,MS1 quantification,MBPF,,2018-04-05,2018-04-05,0,,,394,,0,2018-05-09 07:21:14
+102.100.100.51271,Main dataset,Streptococcus pyogenes,HKU419,M1T1 clone,RPMI_modified,6,Proteomics,MS1 quantification,MBPF,,2018-04-05,2018-04-05,0,,,393,,0,2018-05-09 07:21:14
+102.100.100.51270,Main dataset,Streptococcus pyogenes,HKU419,M1T1 clone,RPMI_modified,5,Proteomics,MS1 quantification,MBPF,,2018-04-05,2018-04-05,0,,,392,,0,2018-05-09 07:21:14
+102.100.100.51269,Main dataset,Streptococcus pyogenes,HKU419,M1T1 clone,RPMI_modified,4,Proteomics,MS1 quantification,MBPF,,2018-04-05,2018-04-05,0,,,391,,0,2018-05-09 07:21:14
+102.100.100.51268,Main dataset,Streptococcus pyogenes,HKU419,M1T1 clone,RPMI_modified,3,Proteomics,MS1 quantification,MBPF,,2018-04-05,2018-04-05,0,,,390,,0,2018-05-09 07:21:14
+102.100.100.51267,Main dataset,Streptococcus pyogenes,HKU419,M1T1 clone,RPMI_modified,2,Proteomics,MS1 quantification,MBPF,,2018-04-05,2018-04-05,0,,,389,,0,2018-05-09 07:21:14
+102.100.100.51266,Main dataset,Streptococcus pyogenes,HKU419,M1T1 clone,RPMI_modified,1,Proteomics,MS1 quantification,MBPF,,2018-04-05,2018-04-05,0,,,388,,0,2018-05-09 07:21:14
+102.100.100.51265,Main dataset,Streptococcus pyogenes,SP444,M4,Pooled sera,6,Proteomics,MS1 quantification,MBPF,,2018-04-05,2018-04-05,0,,,387,,0,2018-05-09 07:21:14
+102.100.100.51264,Main dataset,Streptococcus pyogenes,SP444,M4,Pooled sera,5,Proteomics,MS1 quantification,MBPF,,2018-04-05,2018-04-05,0,,,386,,0,2018-05-09 07:21:14
+102.100.100.51263,Main dataset,Streptococcus pyogenes,SP444,M4,Pooled sera,4,Proteomics,MS1 quantification,MBPF,,2018-04-05,2018-04-05,0,,,385,,0,2018-05-09 07:21:14
+102.100.100.51262,Main dataset,Streptococcus pyogenes,SP444,M4,Pooled sera,3,Proteomics,MS1 quantification,MBPF,,2018-04-05,2018-04-05,0,,,384,,0,2018-05-09 07:21:14
+102.100.100.51261,Main dataset,Streptococcus pyogenes,SP444,M4,Pooled sera,2,Proteomics,MS1 quantification,MBPF,,2018-04-05,2018-04-05,0,,,383,,0,2018-05-09 07:21:14
+102.100.100.51260,Main dataset,Streptococcus pyogenes,SP444,M4,Pooled sera,1,Proteomics,MS1 quantification,MBPF,,2018-04-05,2018-04-05,0,,,382,,0,2018-05-09 07:21:14
+102.100.100.51259,Main dataset,Streptococcus pyogenes,SP444,M4,RPMI_modified,6,Proteomics,MS1 quantification,MBPF,,2018-04-05,2018-04-05,0,,,381,,0,2018-05-09 07:21:14
+102.100.100.51258,Main dataset,Streptococcus pyogenes,SP444,M4,RPMI_modified,5,Proteomics,MS1 quantification,MBPF,,2018-04-05,2018-04-05,0,,,380,,0,2018-05-09 07:21:14
+102.100.100.51257,Main dataset,Streptococcus pyogenes,SP444,M4,RPMI_modified,4,Proteomics,MS1 quantification,MBPF,,2018-04-05,2018-04-05,0,,,379,,0,2018-05-09 07:21:14
+102.100.100.51256,Main dataset,Streptococcus pyogenes,SP444,M4,RPMI_modified,3,Proteomics,MS1 quantification,MBPF,,2018-04-05,2018-04-05,0,,,378,,0,2018-05-09 07:21:14
+102.100.100.51255,Main dataset,Streptococcus pyogenes,SP444,M4,RPMI_modified,2,Proteomics,MS1 quantification,MBPF,,2018-04-05,2018-04-05,0,,,377,,0,2018-05-09 07:21:14
+102.100.100.51254,Main dataset,Streptococcus pyogenes,SP444,M4,RPMI_modified,1,Proteomics,MS1 quantification,MBPF,,2018-04-05,2018-04-05,0,,,376,,0,2018-05-09 07:21:14
+102.100.100.51253,Main dataset,Streptococcus pyogenes,5448,M1T1 clone,Pooled sera,6,Proteomics,MS1 quantification,MBPF,,2018-04-05,2018-04-05,0,,,375,,0,2018-05-09 07:21:14
+102.100.100.51252,Main dataset,Streptococcus pyogenes,5448,M1T1 clone,Pooled sera,5,Proteomics,MS1 quantification,MBPF,,2018-04-05,2018-04-05,0,,,374,,0,2018-05-09 07:21:14
+102.100.100.51251,Main dataset,Streptococcus pyogenes,5448,M1T1 clone,Pooled sera,4,Proteomics,MS1 quantification,MBPF,,2018-04-05,2018-04-05,0,,,373,,0,2018-05-09 07:21:14
+102.100.100.51250,Main dataset,Streptococcus pyogenes,5448,M1T1 clone,Pooled sera,3,Proteomics,MS1 quantification,MBPF,,2018-04-05,2018-04-05,0,,,372,,0,2018-05-09 07:21:14
+102.100.100.51249,Main dataset,Streptococcus pyogenes,5448,M1T1 clone,Pooled sera,2,Proteomics,MS1 quantification,MBPF,,2018-04-05,2018-04-05,0,,,371,,0,2018-05-09 07:21:14
+102.100.100.51248,Main dataset,Streptococcus pyogenes,5448,M1T1 clone,Pooled sera,1,Proteomics,MS1 quantification,MBPF,,2018-04-05,2018-04-05,0,,,370,,0,2018-05-09 07:21:14
+102.100.100.51247,Main dataset,Streptococcus pyogenes,5448,M1T1 clone,RPMI_modified,6,Proteomics,MS1 quantification,MBPF,,2018-04-05,2018-04-05,0,,,369,,0,2018-05-09 07:21:14
+102.100.100.51246,Main dataset,Streptococcus pyogenes,5448,M1T1 clone,RPMI_modified,5,Proteomics,MS1 quantification,MBPF,,2018-04-05,2018-04-05,0,,,368,,0,2018-05-09 07:21:14
+102.100.100.51245,Main dataset,Streptococcus pyogenes,5448,M1T1 clone,RPMI_modified,4,Proteomics,MS1 quantification,MBPF,,2018-04-05,2018-04-05,0,,,367,,0,2018-05-09 07:21:14
+102.100.100.51244,Main dataset,Streptococcus pyogenes,5448,M1T1 clone,RPMI_modified,3,Proteomics,MS1 quantification,MBPF,,2018-04-05,2018-04-05,0,,,366,,0,2018-05-09 07:21:14
+102.100.100.51243,Main dataset,Streptococcus pyogenes,5448,M1T1 clone,RPMI_modified,2,Proteomics,MS1 quantification,MBPF,,2018-04-05,2018-04-05,0,,,365,,0,2018-05-09 07:21:14
+102.100.100.51242,Main dataset,Streptococcus pyogenes,5448,M1T1 clone,RPMI_modified,1,Proteomics,MS1 quantification,MBPF,,2018-04-05,2018-04-05,0,,,364,,0,2018-05-09 07:21:14
 102.100.100.26110,Pilot,Streptococcus pyogenes,PS006,M28,Pooled sera,1,Proteomics,MS1 quantification,MBPF,,2018-01-23,2018-01-23,0,,,363,,0,2018-03-26 02:52:18
 102.100.100.26109,Pilot,Streptococcus pyogenes,PS003,"M77, unusual M type associated with peurperal sepsis",Pooled sera,1,Proteomics,MS1 quantification,MBPF,,2018-01-23,2018-01-23,0,,,362,,0,2018-03-26 02:52:18
 102.100.100.26108,Pilot,Streptococcus pyogenes,HKU419,M1T1 clone,Pooled sera,1,Proteomics,MS1 quantification,MBPF,,2018-01-23,2018-01-23,0,,,361,,0,2018-03-26 02:52:18
