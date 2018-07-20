@@ -11,6 +11,7 @@ from .ingest_utils import get_clean_number
 logger = make_logger(__name__)
 
 SENSITIVE_DATA_DIR = "sensitive_data"
+GENERALISATION_FIELD = "location_generalisation"
 
 
 class GeneralisationRules:
@@ -44,13 +45,13 @@ class Generalisation:
 
     def apply(self, data):
         if self.withhold:
-            data["location_generalisation"] = "WITHHOLD"
+            data[GENERALISATION_FIELD] = "WITHHOLD"
             if "latitude" in data:
                 del data["latitude"]
             if "longitude" in data:
                 del data["longitude"]
         elif self.km is not None:
-            data["location_generalisation"] = "%skm" % self.km
+            data[GENERALISATION_FIELD] = "%skm" % self.km
             if "latitude" in data and "longitude" in data:
                 lat = get_clean_number(data["latitude"])
                 lng = get_clean_number(data["longitude"])
@@ -58,8 +59,6 @@ class Generalisation:
                 data["latitude"], data["longitude"] = self._generalise(lat,
                                                                        lng,
                                                                        self.km)
-        else:
-            data["location_generalisation"] = "None"
 
     def _generalise(self, latitude, longitude, km):
         if km < 10:
@@ -96,6 +95,8 @@ class SensitiveDataGeneraliser:
         self._load_shape_map()
 
     def apply(self, package):
+        # this will be overwritten if generalisation is actually applied
+        package[GENERALISATION_FIELD] = "None"
         if "species" in package and "genus" in package:
             genus = package["genus"]
             species = package['species']
