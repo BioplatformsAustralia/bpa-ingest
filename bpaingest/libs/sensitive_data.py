@@ -58,6 +58,8 @@ class Generalisation:
                 data["latitude"], data["longitude"] = self._generalise(lat,
                                                                        lng,
                                                                        self.km)
+        else:
+            data["location_generalisation"] = "None"
 
     def _generalise(self, latitude, longitude, km):
         if km < 10:
