@@ -348,6 +348,7 @@ class SepsisTranscriptomicsHiseqMetadata(BaseSepsisMetadata):
                 'archive_ingestion_dates': archive_ingestion_dates,
                 'tickets': tickets,
                 'facility': row.facility_code.upper(),
+                'ticket': row.ticket,
                 'notes': 'ARP Transcriptomics Hiseq Data: %s %s' % (track_meta['taxon_or_organism'], track_meta['strain_or_isolate']),
                 'sample': row.sample,
                 'library_construction_protocol': row.library_construction_protocol,
@@ -764,6 +765,8 @@ class SepsisProteomicsSwathMSBaseSepsisMetadata(BaseSepsisMetadata):
                         contextual_meta.update(contextual_source.get(bpa_id, track_meta))
                 name = bpa_id_to_ckan_name(printable_bpa_id.split('.')[-1], self.ckan_data_type)
                 package_meta = {
+                    'facility': row.facility_code.upper(),
+                    'ticket': row.ticket,
                     'lc_column_type': row.lc_column_type,
                     'gradient_time_per_acn': row.gradient_time_per_acn,
                     'mass_spectrometer': row.mass_spectrometer,
