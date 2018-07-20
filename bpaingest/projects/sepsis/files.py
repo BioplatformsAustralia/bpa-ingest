@@ -50,7 +50,7 @@ hiseq_filename_re = re.compile(HISEQ_FILENAME_PATTERN, re.VERBOSE)
 
 METABOLOMICS_LCMS_GCMS_FILENAME_PATTERN = """
     (?P<id>\d{4,6})_
-    SEP_
+    (SEP|Sep)_
     (?P<vendor>MA)_
     (?P<platform>LC-MS|LCMS|GCMS|GC-MS)_
     (?P<mastr_ms_id>[A-Z0-9-]+)_

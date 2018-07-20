@@ -299,3 +299,64 @@
 102.100.100.25863,Pilot,Klebsiella pneumoniae,AJ218,K54,RPMI,3,Transcriptomics,HiSeq,AGRF,8,2016-09-06,2016-09-01,1,2016-10-17,BPAOPS-34,29,,1,2017-05-24 08:56:06
 102.100.100.25862,Pilot,Klebsiella pneumoniae,AJ218,K54,RPMI,2,Transcriptomics,HiSeq,AGRF,8,2016-09-06,2016-09-01,1,2016-10-17,BPAOPS-34,28,,1,2017-05-24 08:56:06
 102.100.100.25861,Pilot,Klebsiella pneumoniae,AJ218,K54,RPMI,1,Transcriptomics,HiSeq,AGRF,8,2016-09-06,2016-09-01,1,2016-10-17,BPAOPS-34,27,,1,2017-05-24 08:56:06
+5 digit BPA ID,Data type,Taxon_OR_organism,Strain_OR_isolate,Serovar,Growth Media,Replicate,Omics,Analytical platform,Facility,Work order #,Contextual Data Submission Date,Sample submission date,Data generated,Archive Ingestion Date,Archive ID,id,curation_url,in_data_portal,last_modified
+102.100.100.51181,Main dataset,Streptococcus pyogenes,PS006,M28,Pooled sera,6,Transcriptomics,HiSeq,AGRF,,2018-04-05,2018-04-05,0,,,60,,0,2018-04-09 04:46:03
+102.100.100.51180,Main dataset,Streptococcus pyogenes,PS006,M28,Pooled sera,5,Transcriptomics,HiSeq,AGRF,,2018-04-05,2018-04-05,0,,,59,,0,2018-04-09 04:46:03
+102.100.100.51179,Main dataset,Streptococcus pyogenes,PS006,M28,Pooled sera,4,Transcriptomics,HiSeq,AGRF,,2018-04-05,2018-04-05,0,,,58,,0,2018-04-09 04:46:03
+102.100.100.51178,Main dataset,Streptococcus pyogenes,PS006,M28,Pooled sera,3,Transcriptomics,HiSeq,AGRF,,2018-04-05,2018-04-05,0,,,57,,0,2018-04-09 04:46:03
+102.100.100.51177,Main dataset,Streptococcus pyogenes,PS006,M28,Pooled sera,2,Transcriptomics,HiSeq,AGRF,,2018-04-05,2018-04-05,0,,,56,,0,2018-04-09 04:46:03
+102.100.100.51176,Main dataset,Streptococcus pyogenes,PS006,M28,Pooled sera,1,Transcriptomics,HiSeq,AGRF,,2018-04-05,2018-03-13,0,,,55,,0,2018-04-09 04:46:03
+102.100.100.51175,Main dataset,Streptococcus pyogenes,PS006,M28,RPMI_modified,6,Transcriptomics,HiSeq,AGRF,,2018-04-05,2018-04-05,0,,,54,,0,2018-04-09 04:46:03
+102.100.100.51174,Main dataset,Streptococcus pyogenes,PS006,M28,RPMI_modified,5,Transcriptomics,HiSeq,AGRF,,2018-04-05,2018-04-05,0,,,53,,0,2018-04-09 04:46:03
+102.100.100.51173,Main dataset,Streptococcus pyogenes,PS006,M28,RPMI_modified,4,Transcriptomics,HiSeq,AGRF,,2018-04-05,2018-04-05,0,,,52,,0,2018-04-09 04:46:03
+102.100.100.51172,Main dataset,Streptococcus pyogenes,PS006,M28,RPMI_modified,3,Transcriptomics,HiSeq,AGRF,,2018-04-05,2018-04-05,0,,,51,,0,2018-04-09 04:46:03
+102.100.100.51171,Main dataset,Streptococcus pyogenes,PS006,M28,RPMI_modified,2,Transcriptomics,HiSeq,AGRF,,2018-04-05,2018-04-05,0,,,50,,0,2018-04-09 04:46:03
+102.100.100.51170,Main dataset,Streptococcus pyogenes,PS006,M28,RPMI_modified,1,Transcriptomics,HiSeq,AGRF,,2018-04-05,2018-03-13,0,,,49,,0,2018-04-09 04:46:03
+102.100.100.51169,Main dataset,Streptococcus pyogenes,PS003,"M77, unusual M type associated with peurperal sepsis",Pooled sera,6,Transcriptomics,HiSeq,AGRF,,2018-04-05,2018-04-05,0,,,48,,0,2018-04-09 04:46:03
+102.100.100.51168,Main dataset,Streptococcus pyogenes,PS003,"M77, unusual M type associated with peurperal sepsis",Pooled sera,5,Transcriptomics,HiSeq,AGRF,,2018-04-05,2018-04-05,0,,,47,,0,2018-04-09 04:46:03
+102.100.100.51167,Main dataset,Streptococcus pyogenes,PS003,"M77, unusual M type associated with peurperal sepsis",Pooled sera,4,Transcriptomics,HiSeq,AGRF,,2018-04-05,2018-04-05,0,,,46,,0,2018-04-09 04:46:03
+102.100.100.51166,Main dataset,Streptococcus pyogenes,PS003,"M77, unusual M type associated with peurperal sepsis",Pooled sera,3,Transcriptomics,HiSeq,AGRF,,2018-04-05,2018-04-05,0,,,45,,0,2018-04-09 04:46:03
+102.100.100.51165,Main dataset,Streptococcus pyogenes,PS003,"M77, unusual M type associated with peurperal sepsis",Pooled sera,2,Transcriptomics,HiSeq,AGRF,,2018-04-05,2018-04-05,0,,,44,,0,2018-04-09 04:46:03
+102.100.100.51164,Main dataset,Streptococcus pyogenes,PS003,"M77, unusual M type associated with peurperal sepsis",Pooled sera,1,Transcriptomics,HiSeq,AGRF,,2018-04-05,2018-03-13,0,,,43,,0,2018-04-09 04:46:03
+102.100.100.51163,Main dataset,Streptococcus pyogenes,PS003,"M77, unusual M type associated with peurperal sepsis",RPMI_modified,6,Transcriptomics,HiSeq,AGRF,,2018-04-05,2018-04-05,0,,,42,,0,2018-04-09 04:46:03
+102.100.100.51162,Main dataset,Streptococcus pyogenes,PS003,"M77, unusual M type associated with peurperal sepsis",RPMI_modified,5,Transcriptomics,HiSeq,AGRF,,2018-04-05,2018-04-05,0,,,41,,0,2018-04-09 04:46:03
+102.100.100.51161,Main dataset,Streptococcus pyogenes,PS003,"M77, unusual M type associated with peurperal sepsis",RPMI_modified,4,Transcriptomics,HiSeq,AGRF,,2018-04-05,2018-04-05,0,,,40,,0,2018-04-09 04:46:03
+102.100.100.51160,Main dataset,Streptococcus pyogenes,PS003,"M77, unusual M type associated with peurperal sepsis",RPMI_modified,3,Transcriptomics,HiSeq,AGRF,,2018-04-05,2018-04-05,0,,,39,,0,2018-04-09 04:46:03
+102.100.100.51159,Main dataset,Streptococcus pyogenes,PS003,"M77, unusual M type associated with peurperal sepsis",RPMI_modified,2,Transcriptomics,HiSeq,AGRF,,2018-04-05,2018-04-05,0,,,38,,0,2018-04-09 04:46:03
+102.100.100.51158,Main dataset,Streptococcus pyogenes,PS003,"M77, unusual M type associated with peurperal sepsis",RPMI_modified,1,Transcriptomics,HiSeq,AGRF,,2018-04-05,2018-03-13,0,,,37,,0,2018-04-09 04:46:03
+102.100.100.51157,Main dataset,Streptococcus pyogenes,HKU419,M1T1 clone,Pooled sera,6,Transcriptomics,HiSeq,AGRF,,2018-04-05,2018-04-05,0,,,36,,0,2018-04-09 04:46:03
+102.100.100.51156,Main dataset,Streptococcus pyogenes,HKU419,M1T1 clone,Pooled sera,5,Transcriptomics,HiSeq,AGRF,,2018-04-05,2018-04-05,0,,,35,,0,2018-04-09 04:46:03
+102.100.100.51155,Main dataset,Streptococcus pyogenes,HKU419,M1T1 clone,Pooled sera,4,Transcriptomics,HiSeq,AGRF,,2018-04-05,2018-04-05,0,,,34,,0,2018-04-09 04:46:03
+102.100.100.51154,Main dataset,Streptococcus pyogenes,HKU419,M1T1 clone,Pooled sera,3,Transcriptomics,HiSeq,AGRF,,2018-04-05,2018-04-05,0,,,33,,0,2018-04-09 04:46:03
+102.100.100.51153,Main dataset,Streptococcus pyogenes,HKU419,M1T1 clone,Pooled sera,2,Transcriptomics,HiSeq,AGRF,,2018-04-05,2018-04-05,0,,,32,,0,2018-04-09 04:46:03
+102.100.100.51152,Main dataset,Streptococcus pyogenes,HKU419,M1T1 clone,Pooled sera,1,Transcriptomics,HiSeq,AGRF,,2018-04-05,2018-03-13,0,,,31,,0,2018-04-09 04:46:03
+102.100.100.51151,Main dataset,Streptococcus pyogenes,HKU419,M1T1 clone,RPMI_modified,6,Transcriptomics,HiSeq,AGRF,,2018-04-05,2018-04-05,0,,,30,,0,2018-04-09 04:46:03
+102.100.100.51150,Main dataset,Streptococcus pyogenes,HKU419,M1T1 clone,RPMI_modified,5,Transcriptomics,HiSeq,AGRF,,2018-04-05,2018-04-05,0,,,29,,0,2018-04-09 04:46:03
+102.100.100.51149,Main dataset,Streptococcus pyogenes,HKU419,M1T1 clone,RPMI_modified,4,Transcriptomics,HiSeq,AGRF,,2018-04-05,2018-04-05,0,,,28,,0,2018-04-09 04:46:03
+102.100.100.51148,Main dataset,Streptococcus pyogenes,HKU419,M1T1 clone,RPMI_modified,3,Transcriptomics,HiSeq,AGRF,,2018-04-05,2018-04-05,0,,,27,,0,2018-04-09 04:46:03
+102.100.100.51147,Main dataset,Streptococcus pyogenes,HKU419,M1T1 clone,RPMI_modified,2,Transcriptomics,HiSeq,AGRF,,2018-04-05,2018-04-05,0,,,26,,0,2018-04-09 04:46:03
+102.100.100.51146,Main dataset,Streptococcus pyogenes,HKU419,M1T1 clone,RPMI_modified,1,Transcriptomics,HiSeq,AGRF,,2018-04-05,2018-03-13,0,,,25,,0,2018-04-09 04:46:03
+102.100.100.51145,Main dataset,Streptococcus pyogenes,SP444,M4,Pooled sera,6,Transcriptomics,HiSeq,AGRF,,2018-04-05,2018-04-05,0,,,24,,0,2018-04-09 04:46:03
+102.100.100.51144,Main dataset,Streptococcus pyogenes,SP444,M4,Pooled sera,5,Transcriptomics,HiSeq,AGRF,,2018-04-05,2018-04-05,0,,,23,,0,2018-04-09 04:46:03
+102.100.100.51143,Main dataset,Streptococcus pyogenes,SP444,M4,Pooled sera,4,Transcriptomics,HiSeq,AGRF,,2018-04-05,2018-04-05,0,,,22,,0,2018-04-09 04:46:03
+102.100.100.51142,Main dataset,Streptococcus pyogenes,SP444,M4,Pooled sera,3,Transcriptomics,HiSeq,AGRF,,2018-04-05,2018-04-05,0,,,21,,0,2018-04-09 04:46:03
+102.100.100.51141,Main dataset,Streptococcus pyogenes,SP444,M4,Pooled sera,2,Transcriptomics,HiSeq,AGRF,,2018-04-05,2018-04-05,0,,,20,,0,2018-04-09 04:46:03
+102.100.100.51140,Main dataset,Streptococcus pyogenes,SP444,M4,Pooled sera,1,Transcriptomics,HiSeq,AGRF,,2018-04-05,2018-03-13,0,,,19,,0,2018-04-09 04:46:03
+102.100.100.51139,Main dataset,Streptococcus pyogenes,SP444,M4,RPMI_modified,6,Transcriptomics,HiSeq,AGRF,,2018-04-05,2018-04-05,0,,,18,,0,2018-04-09 04:46:03
+102.100.100.51138,Main dataset,Streptococcus pyogenes,SP444,M4,RPMI_modified,5,Transcriptomics,HiSeq,AGRF,,2018-04-05,2018-04-05,0,,,17,,0,2018-04-09 04:46:03
+102.100.100.51137,Main dataset,Streptococcus pyogenes,SP444,M4,RPMI_modified,4,Transcriptomics,HiSeq,AGRF,,2018-04-05,2018-04-05,0,,,16,,0,2018-04-09 04:46:03
+102.100.100.51136,Main dataset,Streptococcus pyogenes,SP444,M4,RPMI_modified,3,Transcriptomics,HiSeq,AGRF,,2018-04-05,2018-04-05,0,,,15,,0,2018-04-09 04:46:03
+102.100.100.51135,Main dataset,Streptococcus pyogenes,SP444,M4,RPMI_modified,2,Transcriptomics,HiSeq,AGRF,,2018-04-05,2018-04-05,0,,,14,,0,2018-04-09 04:46:03
+102.100.100.51134,Main dataset,Streptococcus pyogenes,SP444,M4,RPMI_modified,1,Transcriptomics,HiSeq,AGRF,,2018-04-05,2018-03-13,0,,,13,,0,2018-04-09 04:46:03
+102.100.100.51133,Main dataset,Streptococcus pyogenes,5448,M1T1 clone,Pooled sera,6,Transcriptomics,HiSeq,AGRF,,2018-04-05,2018-04-05,0,,,12,,0,2018-04-09 04:46:03
+102.100.100.51132,Main dataset,Streptococcus pyogenes,5448,M1T1 clone,Pooled sera,5,Transcriptomics,HiSeq,AGRF,,2018-04-05,2018-04-05,0,,,11,,0,2018-04-09 04:46:03
+102.100.100.51131,Main dataset,Streptococcus pyogenes,5448,M1T1 clone,Pooled sera,4,Transcriptomics,HiSeq,AGRF,,2018-04-05,2018-04-05,0,,,10,,0,2018-04-09 04:46:03
+102.100.100.51130,Main dataset,Streptococcus pyogenes,5448,M1T1 clone,Pooled sera,3,Transcriptomics,HiSeq,AGRF,,2018-04-05,2018-04-05,0,,,9,,0,2018-04-09 04:46:03
+102.100.100.51129,Main dataset,Streptococcus pyogenes,5448,M1T1 clone,Pooled sera,2,Transcriptomics,HiSeq,AGRF,,2018-04-05,2018-04-05,0,,,8,,0,2018-04-09 04:46:03
+102.100.100.51128,Main dataset,Streptococcus pyogenes,5448,M1T1 clone,Pooled sera,1,Transcriptomics,HiSeq,AGRF,,2018-04-05,2018-03-13,0,,,7,,0,2018-04-09 04:46:03
+102.100.100.51127,Main dataset,Streptococcus pyogenes,5448,M1T1 clone,RPMI_modified,6,Transcriptomics,HiSeq,AGRF,,2018-04-05,2018-04-05,0,,,6,,0,2018-04-09 04:46:03
+102.100.100.51126,Main dataset,Streptococcus pyogenes,5448,M1T1 clone,RPMI_modified,5,Transcriptomics,HiSeq,AGRF,,2018-04-05,2018-04-05,0,,,5,,0,2018-04-09 04:46:03
+102.100.100.51125,Main dataset,Streptococcus pyogenes,5448,M1T1 clone,RPMI_modified,4,Transcriptomics,HiSeq,AGRF,,2018-04-05,2018-04-05,0,,,4,,0,2018-04-09 04:46:03
+102.100.100.51124,Main dataset,Streptococcus pyogenes,5448,M1T1 clone,RPMI_modified,3,Transcriptomics,HiSeq,AGRF,,2018-04-05,2018-04-05,0,,,3,,0,2018-04-09 04:46:03
+102.100.100.51123,Main dataset,Streptococcus pyogenes,5448,M1T1 clone,RPMI_modified,2,Transcriptomics,HiSeq,AGRF,,2018-04-05,2018-04-05,0,,,2,,0,2018-04-09 04:46:03
+102.100.100.51122,Main dataset,Streptococcus pyogenes,5448,M1T1 clone,RPMI_modified,1,Transcriptomics,HiSeq,AGRF,,2018-04-05,2018-03-13,0,,,1,,0,2018-04-09 04:46:03

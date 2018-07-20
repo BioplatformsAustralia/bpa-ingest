@@ -96,13 +96,13 @@ sepsis()
   apply sepsis-metabolomics-analysed
   apply sepsis-metabolomics-gcms
   apply sepsis-metabolomics-lcms
+  apply sepsis-proteomics-2dlibrary
   apply sepsis-proteomics-analysed
   apply sepsis-proteomics-ms1quantification
   apply sepsis-proteomics-proteindatabase-analysed
   apply sepsis-proteomics-swathms
   apply sepsis-proteomics-swathms-combined-sample
   apply sepsis-proteomics-swathms-pool
-  apply sepsis-proteomics-swathms-2dlibrary
   apply sepsis-transcriptomics-analysed
   apply sepsis-transcriptomics-hiseq
 }
