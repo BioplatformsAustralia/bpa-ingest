@@ -631,7 +631,7 @@ read_lengths = {
 
 
 def mm_amplicon_read_length(amplicon):
-    return read_lengths[amplicon.upper()]
+    return read_lengths[amplicon]
 
 
 def index_from_comment(attrs):
@@ -758,7 +758,7 @@ class BaseMarineMicrobesAmpliconsMetadata(BaseMarineMicrobesMetadata):
                 obj = self.extract_bpam_metadata(track_meta)
                 index = index_from_comment([row.comments, row.sample_name_on_sample_sheet])
                 mm_amplicon_linkage = build_mm_amplicon_linkage(use_index_linkage, flow_id, index)
-                name = bpa_id_to_ckan_name(bpa_id.split('.')[-1], self.ckan_data_type + '-' + self.amplicon, mm_amplicon_linkage)
+                name = bpa_id_to_ckan_name(bpa_id.split('.')[-1], self.ckan_data_type + '-' + self.amplicon.lower(), mm_amplicon_linkage)
                 archive_ingestion_date = ingest_utils.get_date_isoformat(google_track_meta.date_of_transfer_to_archive)
 
                 obj.update({
@@ -825,7 +825,7 @@ class BaseMarineMicrobesAmpliconsMetadata(BaseMarineMicrobesMetadata):
 
 
 class MarineMicrobesGenomicsAmplicons16SMetadata(BaseMarineMicrobesAmpliconsMetadata):
-    amplicon = '16s'
+    amplicon = '16S'
     technology = 'amplicons-16s'
     index_linkage_spreadsheets = ('MM_Pilot_1_16S_UNSW_AFGB7_metadata.xlsx',)
     index_linkage_md5s = ('MM_1_16S_UNSW_AFGB7_checksums.md5',)
@@ -838,7 +838,7 @@ class MarineMicrobesGenomicsAmplicons16SMetadata(BaseMarineMicrobesAmpliconsMeta
 
 
 class MarineMicrobesGenomicsAmpliconsA16SMetadata(BaseMarineMicrobesAmpliconsMetadata):
-    amplicon = 'a16s'
+    amplicon = 'A16S'
     technology = 'amplicons-a16s'
     index_linkage_spreadsheets = ('MM-Pilot_A16S_UNSW_AG27L_metadata_UPDATE.xlsx',)
     index_linkage_md5s = ('MM_Pilot_A16S_UNSW_AG27L_checksums.md5',)
@@ -851,7 +851,7 @@ class MarineMicrobesGenomicsAmpliconsA16SMetadata(BaseMarineMicrobesAmpliconsMet
 
 
 class MarineMicrobesGenomicsAmplicons18SMetadata(BaseMarineMicrobesAmpliconsMetadata):
-    amplicon = '18s'
+    amplicon = '18S'
     technology = 'amplicons-18s'
     index_linkage_spreadsheets = ('MM_Pilot_18S_UNSW_AGGNB_metadata.xlsx',)
     index_linkage_md5s = ('MM_18S_UNSW_AGGNB_checksums.md5',)
@@ -942,7 +942,7 @@ class BaseMarineMicrobesAmpliconsControlMetadata(BaseMarineMicrobesMetadata):
 
 
 class MarineMicrobesGenomicsAmplicons16SControlMetadata(BaseMarineMicrobesAmpliconsControlMetadata):
-    amplicon = '16s'
+    amplicon = '16S'
     technology = 'amplicons-control-16s'
     metadata_urls = [
         'https://downloads-qcif.bioplatforms.com/bpa/marine_microbes/raw/amplicons/16s/'
@@ -952,7 +952,7 @@ class MarineMicrobesGenomicsAmplicons16SControlMetadata(BaseMarineMicrobesAmplic
 
 
 class MarineMicrobesGenomicsAmpliconsA16SControlMetadata(BaseMarineMicrobesAmpliconsControlMetadata):
-    amplicon = 'a16s'
+    amplicon = 'A16S'
     technology = 'amplicons-control-a16s'
     metadata_urls = [
         'https://downloads-qcif.bioplatforms.com/bpa/marine_microbes/raw/amplicons/a16s/'
@@ -962,7 +962,7 @@ class MarineMicrobesGenomicsAmpliconsA16SControlMetadata(BaseMarineMicrobesAmpli
 
 
 class MarineMicrobesGenomicsAmplicons18SControlMetadata(BaseMarineMicrobesAmpliconsControlMetadata):
-    amplicon = '18s'
+    amplicon = '18S'
     technology = 'amplicons-control-18s'
     metadata_urls = [
         'https://downloads-qcif.bioplatforms.com/bpa/marine_microbes/raw/amplicons/18s/'
