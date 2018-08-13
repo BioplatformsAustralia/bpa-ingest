@@ -28,8 +28,6 @@ class SepsisTrackMetadata(object):
             'growth_media': track_meta.growth_media,
             'replicate': track_meta.replicate,
             'omics': track_meta.omics,
-            'analytical_platform': track_meta.analytical_platform.strip(),
-            'facility': track_meta.facility,
             'work_order': track_meta.work_order,
             'contextual_data_submission_date': track_meta.contextual_data_submission_date,
             'sample_submission_date': track_meta.sample_submission_date,
