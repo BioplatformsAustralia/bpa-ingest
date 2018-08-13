@@ -83,5 +83,12 @@ ORGANIZATIONS = [
         'display_name': 'Oz Mammals Genomics Initiative',
         'image_url': 'https://data.bioplatforms.com/omg-logo.png',
         'groups': [{'capacity': 'public', 'name': BPA_ORGANIZATION_ID}],
+    },
+    {
+        'name': 'bpa-plants',
+        'title': 'Genomics for Australian Plants',
+        'display_name': 'Genomics for Australian Plants',
+        'image_url': 'https://data.bioplatforms.com/plants-logo.png',
+        'groups': [{'capacity': 'public', 'name': BPA_ORGANIZATION_ID}],
     }
 ]
