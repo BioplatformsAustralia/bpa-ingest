@@ -89,7 +89,7 @@ class BASEAmpliconsMetadata(BaseMetadata):
     # spreadsheet
     spreadsheet = {
         'fields': [
-            fld("bpa_id", "Soil sample unique ID", coerce=ingest_utils.extract_bpa_id),
+            fld("bpa_id", re.compile(r".*sample unique id"), coerce=ingest_utils.extract_bpa_id),
             fld("sample_extraction_id", "Sample extraction ID", coerce=ingest_utils.fix_sample_extraction_id),
             fld("sequencing_facility", "Sequencing facility"),
             fld("target", "Target", coerce=lambda s: s.upper().strip()),
