@@ -51,8 +51,8 @@ ORGANIZATIONS = [
     },
     {
         'name': 'bpa-stemcells',
-        'title': 'Stemcells',
-        'display_name': 'Stemcells',
+        'title': 'Stem Cells',
+        'display_name': 'Stem Cells',
         'image_url': 'https://data.bioplatforms.com/stemcell.png',
         'groups': [{'capacity': 'public', 'name': BPA_ORGANIZATION_ID}],
     },
