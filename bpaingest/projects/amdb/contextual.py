@@ -345,7 +345,7 @@ class BASENCBIContextual(NCBISRAContextual):
 class MarineMicrobesSampleContextual(object):
     # we smash together the tabs, because there is one tab per sample type
     # each BPA ID should have only one entry (if it has one at all)
-    metadata_urls = ['https://downloads-qcif.bioplatforms.com/bpa/marine_microbes/metadata/contextual/2018-03-22/']
+    metadata_urls = ['https://downloads-qcif.bioplatforms.com/bpa/marine_microbes/metadata/contextual/2018-05-01/']
     metadata_patterns = [re.compile(r'^.*\.xlsx$')]
     name = 'mm-samplecontextual'
     field_specs = {
@@ -477,6 +477,24 @@ class MarineMicrobesSampleContextual(object):
             fld('viola', 'viola [mg/m3]'),
             fld('zea', 'zea [mg/m3]'),
         ],
+        'Seagrass': [
+            fld('bpa_id', 'bpa_id', coerce=ingest_utils.extract_bpa_id),
+            fld('date_sampled', 'date sampled (yyyy-mm-dd)', coerce=ingest_utils.get_date_isoformat),
+            fld('time_sampled', 'time sampled (hh:mm)', coerce=ingest_utils.get_time),
+            fld('latitude', 'latitude (decimal degrees)', coerce=ingest_utils.get_clean_number),
+            fld('longitude', 'longitude (decimal degrees)', coerce=ingest_utils.get_clean_number),
+            fld('depth', 'depth (m)', coerce=ingest_utils.get_clean_number),
+            fld('geo_loc', 'geo_loc (country:subregion)'),
+            fld('sample_site', 'sample site'),
+            fld('coastal_id', 'coastal_id'),
+            fld('host_species', 'host species'),
+            fld('notes', 'notes'),
+            fld('pulse_amplitude_modulated_pam_fluorometer_measurement', 'pulse amplitude modulated (pam) fluorometer measurement', coerce=ingest_utils.get_clean_number),
+            fld('host_state', 'host state (free text field)'),
+            fld('host_abundance', 'host abundance (individuals per m2)', coerce=ingest_utils.get_clean_number),
+            fld('light_intensity_surface', 'Light intensity (Surface) µmol/m²/s¯¹', coerce=ingest_utils.get_clean_number),
+            fld('light_intensity_meadow', 'Light intensity (Meadow) µmol/m²/s¯¹', coerce=ingest_utils.get_clean_number),
+        ],
         'Seaweed': [
             fld('bpa_id', 'bpa_id', coerce=ingest_utils.extract_bpa_id),
             fld('date_sampled', 'date sampled (yyyy-mm-dd)', coerce=ingest_utils.get_date_isoformat),
@@ -492,6 +510,12 @@ class MarineMicrobesSampleContextual(object):
             fld('pulse_amplitude_modulated_pam_fluorometer_measurement', 'pulse amplitude modulated (pam) fluorometer measurement'),
             fld('host_state', 'host state (free text field)'),
             fld('host_abundance', 'host abundance (individuals per m2)'),
+            fld('length', 'length (cm)', coerce=ingest_utils.get_clean_number),
+            fld('fouling', 'fouling', coerce=ingest_utils.get_clean_number),
+            fld('fouling_organisms', 'fouling_organisms'),
+            fld('bleaching', 'bleaching (%)', coerce=ingest_utils.get_clean_number),
+            fld('touching_organisms', 'touching_organisms'),
+            fld('information', 'Information'),
         ],
         'Sediment': [
             fld('bpa_id', 'bpa_id', coerce=ingest_utils.extract_bpa_id),
