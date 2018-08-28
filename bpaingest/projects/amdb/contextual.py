@@ -492,8 +492,8 @@ class MarineMicrobesSampleContextual(object):
             fld('pulse_amplitude_modulated_pam_fluorometer_measurement', 'pulse amplitude modulated (pam) fluorometer measurement', coerce=ingest_utils.get_clean_number),
             fld('host_state', 'host state (free text field)'),
             fld('host_abundance', 'host abundance (individuals per m2)', coerce=ingest_utils.get_clean_number),
-            fld('light_intensity_surface', 'Light intensity (Surface) µmol/m²/s¯¹', coerce=ingest_utils.get_clean_number),
-            fld('light_intensity_meadow', 'Light intensity (Meadow) µmol/m²/s¯¹', coerce=ingest_utils.get_clean_number),
+            fld('light_intensity_surface', re.compile(r'^light intensity \(surface\).*'), coerce=ingest_utils.get_clean_number),
+            fld('light_intensity_meadow', re.compile(r'^light intensity \(meadow\).*'), coerce=ingest_utils.get_clean_number),
         ],
         'Seaweed': [
             fld('bpa_id', 'bpa_id', coerce=ingest_utils.extract_bpa_id),
@@ -509,8 +509,8 @@ class MarineMicrobesSampleContextual(object):
             fld('notes', 'notes'),
             fld('pulse_amplitude_modulated_pam_fluorometer_measurement', 'pulse amplitude modulated (pam) fluorometer measurement'),
             fld('host_state', 'host state (free text field)'),
-            fld('host_abundance', 'host abundance (individuals per m2)'),
-            fld('length', 'length (cm)', coerce=ingest_utils.get_clean_number),
+            fld('host_abundance', 'average host abundance (% of individuals per m2)'),
+            fld('length', 'length(cm)', coerce=ingest_utils.get_clean_number),
             fld('fouling', 'fouling', coerce=ingest_utils.get_clean_number),
             fld('fouling_organisms', 'fouling_organisms'),
             fld('bleaching', 'bleaching (%)', coerce=ingest_utils.get_clean_number),
@@ -587,6 +587,7 @@ class MarineMicrobesSampleContextual(object):
                 sheet_name=sheet_name,
                 header_length=1,
                 column_name_row_index=0,
+                suggest_template=True,
                 additional_context={'sample_type': sheet_name})
             for error in wrapper.get_errors():
                 logger.error(error)
