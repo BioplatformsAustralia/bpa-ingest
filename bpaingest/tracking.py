@@ -35,3 +35,8 @@ class GoogleDriveTrackMetadata(object):
 
     def get(self, ticket):
         return self.track_meta.get(ticket.strip().lower())
+
+    def get_list(self, ticket):
+        fname = get_track_csv(self.platform, '*' + self.name + '*.csv')
+        header, rows = csv_to_named_tuple('GoogleDriveTrack', fname)
+        return [row for row in rows if row.ccg_jira_ticket.strip().lower() == ticket.strip().lower()]

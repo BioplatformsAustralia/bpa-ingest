@@ -1188,7 +1188,7 @@ class SepsisProteomicsAnalysedMetadata(BaseSepsisAnalysedMetadata):
         self.metadata_info = metadata_info
         self.google_track_meta = SepsisGoogleTrackMetadata()
         self.bpam_track_meta = [SepsisTrackMetadata('ProteomicsMS1Quantification'), SepsisTrackMetadata('ProteomicsSwathMS')]
-
+        
     def _get_packages(self):
         logger.info("Ingesting Sepsis metadata from {0}".format(self.path))
         # we have one package per Zip of analysed data, and we take the common
@@ -1533,7 +1533,7 @@ class SepsisGenomicsAnalysedMetadata(BaseSepsisAnalysedMetadata):
         self.metadata_info = metadata_info
         self.google_track_meta = SepsisGoogleTrackMetadata()
         self.bpam_track_meta = [SepsisGenomicsTrackMetadata('MetabolomicsLCMS')]
-
+        
     def _get_packages(self):
         logger.info("Ingesting Sepsis metadata from {0}".format(self.path))
         # we have one package per Zip of analysed data, and we take the common
@@ -1555,9 +1555,10 @@ class SepsisGenomicsAnalysedMetadata(BaseSepsisAnalysedMetadata):
             # generating the CKAN name
             folder_name_md5 = md5hash(folder_name.encode('utf8')).hexdigest()
             name = bpa_id_to_ckan_name(folder_name_md5, self.ckan_data_type)
-            track_meta = self.google_track_meta.get(ticket)
+            track_meta_list = self.google_track_meta.get_list(ticket)
+            common_track_meta_dict = common_values([item._asdict() for item in track_meta_list])
             bpa_ids = list(sorted(set([t.bpa_id for t in rows if t.bpa_id])))
-            obj.update(self.google_drive_track_to_object(track_meta))
+            obj.update(common_track_meta_dict)
             self.apply_common_context(obj, bpa_ids)
             obj.update({
                 'name': name,
@@ -1568,13 +1569,13 @@ class SepsisGenomicsAnalysedMetadata(BaseSepsisAnalysedMetadata):
                 'bpa_ids': ', '.join(bpa_ids),
                 'data_generated': 'True',
                 'type': self.ckan_data_type,
-                'date_of_transfer': ingest_utils.get_date_isoformat(track_meta.date_of_transfer),
-                'data_type': track_meta.data_type,
-                'description': track_meta.description,
-                'folder_name': track_meta.folder_name,
-                'sample_submission_date': ingest_utils.get_date_isoformat(track_meta.date_of_transfer),
-                'archive_ingestion_date': ingest_utils.get_date_isoformat(track_meta.date_of_transfer_to_archive),
-                'dataset_url': track_meta.download,
+                'date_of_transfer': ingest_utils.get_date_isoformat(common_track_meta_dict['date_of_transfer']),
+                'data_type': common_track_meta_dict['data_type'],
+                'description': common_track_meta_dict['description'],
+                'folder_name': common_track_meta_dict['folder_name'],
+                'sample_submission_date': ingest_utils.get_date_isoformat(common_track_meta_dict['date_of_transfer']),
+                'archive_ingestion_date': ingest_utils.get_date_isoformat(common_track_meta_dict['date_of_transfer_to_archive']),
+                'dataset_url': common_track_meta_dict['download'],
                 'private': True,
             })
             tag_names = sepsis_contextual_tags(self, obj)

@@ -50,11 +50,14 @@ class SepsisBacterialContextual(object):
         self.sample_metadata = self._package_metadata(self._read_metadata(xlsx_path))
 
     def get(self, bpa_id, submission_obj):
-        tpl = (submission_obj['taxon_or_organism'], submission_obj['strain_or_isolate'])
-        if tpl in self.sample_metadata:
-            return self.sample_metadata[tpl]
-        logger.warning("no %s metadata available for: %s" % (type(self).__name__, repr(tpl)))
-        return {}
+        if submission_obj.keys() in ['taxon_or_organism', 'strain_or_isolate']:
+            tpl = (submission_obj['taxon_or_organism'], submission_obj['strain_or_isolate'])
+            if tpl in self.sample_metadata:
+                return self.sample_metadata[tpl]
+            logger.warning("no %s metadata available for: %s" % (type(self).__name__, repr(tpl)))
+            return {}
+        else:
+            return {}
 
     def _package_metadata(self, rows):
         sample_metadata = {}
