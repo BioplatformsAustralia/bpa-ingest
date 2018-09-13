@@ -45,13 +45,19 @@ class SepsisGenomicsTrackMetadata(SepsisTrackMetadata):
         return obj
 
 
-class SepsisGoogleTrackMetadata(GoogleDriveTrackMetadata):
+class SepsisGoogleTrackMetadata(object):
     name = 'Antibiotic Resistant Pathogen'
+    platform = 'google-drive'
+
+    def __init__(self):
+        fname = get_track_csv(self.platform, '*' + self.name + '*.csv')
+        logger.info("Reading track CSV file: " + fname)
+        self.track_meta = self.read_track_csv(fname)
+
+    def read_track_csv(self, fname):
+        header, rows = csv_to_named_tuple('SepsisGoogleDriveTrack', fname)
+        return [row for row in rows]
 
     def get(self, ticket):
-        if Exception:
-            fname = get_track_csv(self.platform, '*' + self.name + '*.csv')
-            header, rows = csv_to_named_tuple('SepsisGoogleDriveTrack', fname)
-            meta_list = [row for row in rows if row.ccg_jira_ticket.strip().lower() == ticket.strip().lower()]
-            common_vals = common_values([item._asdict() for item in meta_list])
-            return common_vals
+        common_meta = common_values([row._asdict() for row in self.track_meta if row.ccg_jira_ticket.strip().lower() == ticket.strip().lower()])
+        return common_meta
