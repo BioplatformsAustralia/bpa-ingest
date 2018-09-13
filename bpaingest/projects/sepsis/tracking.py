@@ -1,7 +1,7 @@
-from ...util import make_logger, csv_to_named_tuple
+from ...util import make_logger, csv_to_named_tuple, common_values
 from ...libs import ingest_utils
 from ...tracking import GoogleDriveTrackMetadata, get_track_csv
-
+import collections
 
 logger = make_logger(__name__)
 
@@ -47,3 +47,11 @@ class SepsisGenomicsTrackMetadata(SepsisTrackMetadata):
 
 class SepsisGoogleTrackMetadata(GoogleDriveTrackMetadata):
     name = 'Antibiotic Resistant Pathogen'
+
+    def get(self, ticket):
+        if Exception:
+            fname = get_track_csv(self.platform, '*' + self.name + '*.csv')
+            header, rows = csv_to_named_tuple('SepsisGoogleDriveTrack', fname)
+            meta_list = [row for row in rows if row.ccg_jira_ticket.strip().lower() == ticket.strip().lower()]
+            common_vals = common_values([item._asdict() for item in meta_list])
+            return common_vals
