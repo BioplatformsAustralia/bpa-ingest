@@ -47,7 +47,8 @@ from .omg.ingest import (
     OMG10XRawIlluminaMetadata,
     OMG10XRawMetadata,
     OMGExonCaptureMetadata,
-    OMGGenomicsHiSeqMetadata)
+    OMGGenomicsHiSeqMetadata,
+    OMGGenomicsDDRADMetadata)
 
 
 class ProjectInfo:
@@ -78,6 +79,7 @@ class ProjectInfo:
             OMG10XProcessedIlluminaMetadata,
             OMGExonCaptureMetadata,
             OMGGenomicsHiSeqMetadata,
+            OMGGenomicsDDRADMetadata,
         ],
         'sepsis': [
             SepsisGenomicsMiseqMetadata,
