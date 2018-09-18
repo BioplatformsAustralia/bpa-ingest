@@ -894,7 +894,7 @@ class OMGGenomicsDDRADMetadata(OMGBaseMetadata):
             for row in self.parse_spreadsheet(fname, self.metadata_info):
                 obj = row._asdict()
                 obj.pop('file')
-                objs[obj['bpa_sample_id']].append(obj) # change it to bpa_library_id
+                objs[obj['bpa_library_id']].append(obj) # change it to bpa_library_id
 
             for bpa_sample_id, row_objs in list(objs.items()):
                 obj = common_values(row_objs)
