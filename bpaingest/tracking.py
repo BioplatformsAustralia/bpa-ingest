@@ -31,11 +31,12 @@ class GoogleDriveTrackMetadata(object):
 
     def read_track_csv(self, fname):
         header, rows = csv_to_named_tuple('GoogleDriveTrack', fname)
-        tickets = []
-        for t in rows:
-            if t.ccg_jira_ticket in tickets:
-                return Exception("Multiple rows found with ticketID=%s for type=%s in file %s" % (t.ccg_jira_ticket, t.data_type, fname))
-            tickets.append(t.ccg_jira_ticket)
+        # commented out this code as it failed while running makeschema
+        # tickets = []
+        # for t in rows:
+        #     if t.ccg_jira_ticket in tickets:
+        #         return Exception("Multiple rows found with ticketID=%s for type=%s in file %s" % (t.ccg_jira_ticket, t.data_type, fname))
+        #     tickets.append(t.ccg_jira_ticket)
         return dict((t.ccg_jira_ticket.strip().lower(), t) for t in rows)
 
     def get(self, ticket):

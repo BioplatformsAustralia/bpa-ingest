@@ -1545,7 +1545,7 @@ class SepsisGenomicsAnalysedMetadata(BaseSepsisAnalysedMetadata):
             ticket = xlsx_info['ticket']
             if not ticket:
                 continue
-            folder_name = self.google_track_meta.get(ticket)['folder_name']
+            folder_name = self.google_track_meta.get(ticket).folder_name
             for row in self.parse_spreadsheet(fname, self.metadata_info):
                 folder_rows[(ticket, folder_name)].append(row)
         packages = []
@@ -1557,7 +1557,7 @@ class SepsisGenomicsAnalysedMetadata(BaseSepsisAnalysedMetadata):
             name = bpa_id_to_ckan_name(folder_name_md5, self.ckan_data_type)
             track_meta = self.google_track_meta.get(ticket)
             bpa_ids = list(sorted(set([t.bpa_id for t in rows if t.bpa_id])))
-            obj.update(track_meta)
+            obj.update(self.google_drive_track_to_object(track_meta))
             self.apply_common_context(obj, bpa_ids)
             obj.update({
                 'name': name,
@@ -1568,13 +1568,13 @@ class SepsisGenomicsAnalysedMetadata(BaseSepsisAnalysedMetadata):
                 'bpa_ids': ', '.join(bpa_ids),
                 'data_generated': 'True',
                 'type': self.ckan_data_type,
-                'date_of_transfer': ingest_utils.get_date_isoformat(track_meta['date_of_transfer']),
-                'data_type': track_meta['data_type'],
-                'description': track_meta['description'],
-                'folder_name': track_meta['folder_name'],
-                'sample_submission_date': ingest_utils.get_date_isoformat(track_meta['date_of_transfer']),
-                'archive_ingestion_date': ingest_utils.get_date_isoformat(track_meta['date_of_transfer_to_archive']),
-                'dataset_url': track_meta['download'],
+                'date_of_transfer': ingest_utils.get_date_isoformat(track_meta.date_of_transfer),
+                'data_type': track_meta.data_type,
+                'description': track_meta.description,
+                'folder_name': track_meta.folder_name,
+                'sample_submission_date': ingest_utils.get_date_isoformat(track_meta.date_of_transfer),
+                'archive_ingestion_date': ingest_utils.get_date_isoformat(track_meta.date_of_transfer_to_archive),
+                'dataset_url': track_meta.download,
                 'private': True,
             })
             tag_names = sepsis_contextual_tags(self, obj)
@@ -1593,7 +1593,7 @@ class SepsisGenomicsAnalysedMetadata(BaseSepsisAnalysedMetadata):
                 resource['md5'] = resource['id'] = md5
                 resource['name'] = filename
                 xlsx_info = self.metadata_info[os.path.basename(md5_file)]
-                folder_name = self.google_track_meta.get(xlsx_info['ticket'])['folder_name']
+                folder_name = self.google_track_meta.get(xlsx_info['ticket']).folder_name
                 legacy_url = urljoin(xlsx_info['base_url'], filename)
                 resources.append(((folder_name,), legacy_url, resource))
         return resources
