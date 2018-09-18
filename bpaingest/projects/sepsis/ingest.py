@@ -1188,7 +1188,7 @@ class SepsisProteomicsAnalysedMetadata(BaseSepsisAnalysedMetadata):
         self.metadata_info = metadata_info
         self.google_track_meta = SepsisGoogleTrackMetadata()
         self.bpam_track_meta = [SepsisTrackMetadata('ProteomicsMS1Quantification'), SepsisTrackMetadata('ProteomicsSwathMS')]
-        
+
     def _get_packages(self):
         logger.info("Ingesting Sepsis metadata from {0}".format(self.path))
         # we have one package per Zip of analysed data, and we take the common
@@ -1533,7 +1533,7 @@ class SepsisGenomicsAnalysedMetadata(BaseSepsisAnalysedMetadata):
         self.metadata_info = metadata_info
         self.google_track_meta = SepsisGoogleTrackMetadata()
         self.bpam_track_meta = [SepsisGenomicsTrackMetadata('MetabolomicsLCMS')]
-        
+
     def _get_packages(self):
         logger.info("Ingesting Sepsis metadata from {0}".format(self.path))
         # we have one package per Zip of analysed data, and we take the common
