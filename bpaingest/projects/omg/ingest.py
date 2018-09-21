@@ -799,6 +799,7 @@ class OMGGenomicsDDRADMetadata(OMGBaseMetadata):
     """
     this data conforms to the BPA Genomics ddRAD workflow. future data
     will use this ingest class.
+    Issue: https://github.com/BioplatformsAustralia/bpa-archive-ops/issues/699
     """
     auth = ('omg', 'omg')
     organization = 'bpa-omg'
@@ -811,7 +812,7 @@ class OMGGenomicsDDRADMetadata(OMGBaseMetadata):
         'https://downloads-qcif.bioplatforms.com/bpa/omg_staging/nextseq_ddrad/',
     ]
     metadata_url_components = ('ticket',)
-    resource_linkage = ('bpa_sample_id', 'flow_id')
+    resource_linkage = ('bpa_dataset_id', 'flowcell_id')
     spreadsheet = {
         'fields': [
             fld('genus', 'genus'),
@@ -824,7 +825,7 @@ class OMGGenomicsDDRADMetadata(OMGBaseMetadata):
             fld('plate_well', 'plate_well'),
             fld('facility_sample_id', 'facility_sample_id'),
             fld('library_type', 'library_type'),
-            fld('library_prep_date', 'library_prep_date'),
+            fld('library_prep_date', 'library_prep_date', coerce=ingest_utils.get_date_isoformat),
             fld('library_prepared_by', 'library_prepared_by'),
             fld('library_prep_method', 'library_prep_method'),
             fld('experimental_design', 'experimental_design'),
@@ -862,7 +863,7 @@ class OMGGenomicsDDRADMetadata(OMGBaseMetadata):
             files.ddrad_fastq_filename_re
         ],
         'skip': [
-            re.compile(r'^.*_metadata\.xlsx$'),
+            #re.compile(r'^.*_metadata\.xlsx$'),
             re.compile(r'^.*SampleSheet.*'),
             re.compile(r'^.*TestFiles\.exe.*'),
         ]
@@ -894,32 +895,33 @@ class OMGGenomicsDDRADMetadata(OMGBaseMetadata):
             for row in self.parse_spreadsheet(fname, self.metadata_info):
                 obj = row._asdict()
                 obj.pop('file')
-                objs[obj['bpa_library_id']].append(obj) # change it to bpa_library_id
+                objs[(obj['bpa_dataset_id'], obj['flowcell_id'])].append(obj) 
 
-            for bpa_sample_id, row_objs in list(objs.items()):
+            for (bpa_dataset_id, flowcell_id) , row_objs in list(objs.items()):
+                print((bpa_dataset_id, flowcell_id))
                 obj = common_values(row_objs)
-                track_meta = self.track_meta.get(obj['ticket'])
+                print(obj)
 
+                track_meta = self.track_meta.get(obj['ticket'])
+                print(track_meta)
                 def track_get(k):
                     if track_meta is None:
                         return None
                     return getattr(track_meta, k)
-                bpa_sample_id = obj['bpa_sample_id']
-                # check with Anna(BPA) what to use 'bpa_sample_id' or 'facility_sample_id'or 'bpa_library_id' to generate ordered dict on line#897
-                # found two entry with bpa_sample_id=41016 in OMG_NGS_AGRF_HHYNNBGX7_metadata.xlsx
-                bpa_library_id = obj['bpa_library_id']
-                if bpa_sample_id is None:
-                    continue
-                name = bpa_id_to_ckan_name(bpa_sample_id, self.ckan_data_type, flow_id)
+                #bpa_sample_id = obj['bpa_sample_id']
+                #bpa_library_id = obj['bpa_library_id']
+                # if bpa_sample_id is None:
+                #     continue
+                name = bpa_id_to_ckan_name(bpa_dataset_id, self.ckan_data_type, flowcell_id)
                 context = {}
-                for contextual_source in self.contextual_metadata:
-                    context.update(contextual_source.get(bpa_sample_id, bpa_library_id))
+                # for contextual_source in self.contextual_metadata:
+                #     context.update(contextual_source.get(bpa_sample_id, bpa_library_id))
 
             obj.update({
                 'name': name,
                 'id': name,
-                'bpa_sample_id': bpa_sample_id,
-                'title': 'OMG Genomics ddRAD %s %s' % (bpa_sample_id, flow_id),
+                'bpa_dataset_id': bpa_dataset_id,
+                'title': 'OMG Genomics ddRAD %s %s' % (bpa_dataset_id, flow_id),
                 'notes': '%s. %s.' % (context.get('common_name', ''), context.get('institution_name', '')),
                 'date_of_transfer': ingest_utils.get_date_isoformat(track_get('date_of_transfer')),
                 'data_type': track_get('data_type'),
@@ -953,5 +955,5 @@ class OMGGenomicsDDRADMetadata(OMGBaseMetadata):
                 resource['resource_type'] = self.ckan_data_type
                 xlsx_info = self.metadata_info[os.path.basename(md5_file)]
                 legacy_url = urljoin(xlsx_info['base_url'], filename)
-                resources.append(((ingest_utils.extract_bpa_id(resource['bpa_sample_id']), resource['flow_cell_id']), legacy_url, resource))
+                resources.append(((resource['bpa_dataset_id'], resource['flowcell_id']), legacy_url, resource))
         return resources

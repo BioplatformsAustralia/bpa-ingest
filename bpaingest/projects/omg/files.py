@@ -57,8 +57,8 @@ hiseq_filename_re = re.compile(HISEQ_FILENAME_PATTERN, re.VERBOSE)
 sample_sheet_re = re.compile(r'^SampleSheet\.csv$')
 
 DDRAD_FASTQ_FILENAME_PATTERN = """
-    (?P<bpa_sample_id>\d{4,6})_
-    (?P<flow_cell_id>\w{9})_
+    (?P<bpa_dataset_id>\d{4,6})_
+    (?P<flowcell_id>\w{9})_
     (?P<index>[G|A|T|C|-]*|N)_
     (?P<lane>L\d{3})_
     (?P<read>[R|I][1|2])\.fastq\.gz
