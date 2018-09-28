@@ -1,7 +1,7 @@
-from ...util import make_logger, csv_to_named_tuple
+from ...util import make_logger, csv_to_named_tuple, common_values
 from ...libs import ingest_utils
 from ...tracking import GoogleDriveTrackMetadata, get_track_csv
-
+from collections import namedtuple, defaultdict
 
 logger = make_logger(__name__)
 
@@ -45,5 +45,34 @@ class SepsisGenomicsTrackMetadata(SepsisTrackMetadata):
         return obj
 
 
-class SepsisGoogleTrackMetadata(GoogleDriveTrackMetadata):
+class SepsisGoogleTrackMetadata(object):
     name = 'Antibiotic Resistant Pathogen'
+    platform = 'google-drive'
+
+    def __init__(self):
+        fname = get_track_csv(self.platform, '*' + self.name + '*.csv')
+        logger.info("Reading track CSV file: " + fname)
+        self.track_meta = self.read_track_csv(fname)
+
+    def read_track_csv(self, fname):
+        header, rows = csv_to_named_tuple('SepsisGoogleDriveTrack', fname)
+        # Sepsis has multiple row for one ticket in googledrive spreadsheet. See github issue -https://github.com/BioplatformsAustralia/bpa-archive-ops/issues/698
+        track_rows = defaultdict(list)
+        # Grouping rows per ticket
+        for row in rows:
+            track_rows[row.ccg_jira_ticket].append(row)
+        track_meta = {}
+        # Getting all fields with unique values for the given ticket
+        for ticket_id, meta_list in track_rows.items():
+            track_meta[ticket_id] = common_values([meta._asdict() for meta in meta_list])
+        # These fields have differing values for a given ticket, but the sorted set of unique values does have meaning to the user
+        for ticket_id, meta_list in track_rows.items():
+            for field in ('description', 'date_of_transfer_to_archive'):
+                vals = set(getattr(meta, field) for meta in meta_list)
+                track_meta[ticket_id][field] = ', '.join(sorted(vals))
+        return track_meta
+
+    def get(self, ticket):
+        # wrapping common values(dict) into a single object
+        custom_obj_type = namedtuple("SepsisGoogleDriveTrackCommonMeta", self.track_meta[ticket].keys())
+        return custom_obj_type(*(self.track_meta[ticket].values()))
