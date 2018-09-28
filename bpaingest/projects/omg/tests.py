@@ -4,7 +4,8 @@ from .files import (
     tenxfastq_filename_re,
     exon_filename_re,
     hiseq_filename_re,
-    ddrad_fastq_filename_re)
+    ddrad_fastq_filename_re,
+    ddrad_metadata_sheet_re)
 
 
 def test_tenxtar_raw_xlsx_filename_re():
@@ -67,7 +68,30 @@ def test_genomics_ddrad_fastq():
         '52588_HHVM5BGX7_GTGAAA_L002_R1.fastq.gz',
         '52588_HHVM5BGX7_GTGAAA_L003_R1.fastq.gz',
         '52588_HHVM5BGX7_GTGAAA_L004_R1.fastq.gz',
+
+        '52588_HHYNNBGX7_ACAGTG_L001_R1.fastq.gz',
+        '52588_HHYNNBGX7_ACAGTG_L002_R1.fastq.gz',
+        '52588_HHYNNBGX7_ACAGTG_L003_R1.fastq.gz',
+        '52588_HHYNNBGX7_ACAGTG_L004_R1.fastq.gz',
+        '52588_HHYNNBGX7_GCCAAT_L001_R1.fastq.gz',
+        '52588_HHYNNBGX7_GCCAAT_L002_R1.fastq.gz',
+        '52588_HHYNNBGX7_GCCAAT_L003_R1.fastq.gz',
+        '52588_HHYNNBGX7_GCCAAT_L004_R1.fastq.gz',
+        '52588_HHYNNBGX7_GTGAAA_L001_R1.fastq.gz',
+        '52588_HHYNNBGX7_GTGAAA_L002_R1.fastq.gz',
+        '52588_HHYNNBGX7_GTGAAA_L003_R1.fastq.gz',
+        '52588_HHYNNBGX7_GTGAAA_L004_R1.fastq.gz',
     ]
 
     for filename in filenames:
         assert(ddrad_fastq_filename_re.match(filename) is not None)
+
+
+def test_genomics_ddrad_metadata_sheet():
+    filenames = [
+        'OMG_NGS_AGRF_52588_HHVM5BGX7_metadata.xlsx',
+        'OMG_NGS_AGRF_52588_HHYNNBGX7_metadata.xlsx',
+    ]
+
+    for filename in filenames:
+        assert(ddrad_metadata_sheet_re.match(filename) is not None)
