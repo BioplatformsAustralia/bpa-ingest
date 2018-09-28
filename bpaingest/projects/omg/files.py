@@ -55,3 +55,21 @@ HISEQ_FILENAME_PATTERN = """
 hiseq_filename_re = re.compile(HISEQ_FILENAME_PATTERN, re.VERBOSE)
 
 sample_sheet_re = re.compile(r'^SampleSheet\.csv$')
+
+DDRAD_FASTQ_FILENAME_PATTERN = """
+    (?P<bpa_dataset_id>\d{4,6})_
+    (?P<flowcell_id>\w{9})_
+    (?P<index>[G|A|T|C|-]*|N)_
+    (?P<lane>L\d{3})_
+    (?P<read>[R|I][1|2])\.fastq\.gz
+"""
+ddrad_fastq_filename_re = re.compile(DDRAD_FASTQ_FILENAME_PATTERN, re.VERBOSE)
+DDRAD_METADATA_SHEET_PATTERN = """
+    OMG_
+    NGS_
+    AGRF_
+    (?P<bpa_dataset_id>\d{4,6})_
+    (?P<flowcell_id>\w{9})
+    _metadata.xlsx
+"""
+ddrad_metadata_sheet_re = re.compile(DDRAD_METADATA_SHEET_PATTERN, re.VERBOSE)
