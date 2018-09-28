@@ -86,6 +86,7 @@ omg()
   apply omg-10xraw
   apply omg-exoncapture
   apply omg-genomics-hiseq
+  apply omg-genomics-ddrad
 }
 
 sepsis()
