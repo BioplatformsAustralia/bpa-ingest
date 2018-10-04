@@ -799,11 +799,16 @@ class SepsisProteomicsSwathMSBaseSepsisMetadata(BaseSepsisMetadata):
                 obj.update({
                     'pool_bpa_ids': printable_bpa_id,
                 })
+            # package won't get replicate number if datatype is 2d, because it's getting common values. see code above.
+            if 'replicate' in obj:
+                replicate = ' Replicate %s'% obj['replicate']
+            else:
+                replicate = ''
             obj.update({
                 'name': name,
                 'id': name,
                 'title': 'ARP Proteomics SwathMS %s%s' % (pool, printable_bpa_id.split('.')[-1]),
-                'notes': 'ARP Proteomics SwathMS %s Raw Data: %s %s %s Replicate %s' % (pool, track_meta['taxon_or_organism'], track_meta['strain_or_isolate'], obj['growth_media'], obj['replicate']),
+                'notes': 'ARP Proteomics SwathMS %sRaw Data: %s %s %s%s' % (pool, track_meta['taxon_or_organism'], track_meta['strain_or_isolate'], obj['growth_media'], replicate),
                 'type': self.ckan_data_type,
                 'private': True,
                 'data_generated': True,
