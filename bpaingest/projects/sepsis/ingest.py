@@ -57,7 +57,11 @@ def sepsis_contextual_tags(cls, obj):
         tags.append(clean_tag_name(data_type))
     growth_media = obj.get('growth_media')
     if growth_media:
-        tags.append(clean_tag_name(growth_media))
+        if ', ' in growth_media:
+            for item in growth_media.split(', '):
+                tags.append(clean_tag_name(item))
+        else:
+            tags.append(clean_tag_name(growth_media))
     return tags
 
 
@@ -151,7 +155,8 @@ class SepsisGenomicsMiseqMetadata(BaseSepsisMetadata):
         for md5_file in glob(self.path + '/*.md5'):
             logger.info("Processing md5 file {0}".format(md5_file))
             for filename, md5, file_info in self.parse_md5file(md5_file):
-                resource = dict((t, file_info.get(t)) for t in ('index', 'lane', 'vendor', 'read', 'flow_cell_id', 'library', 'extraction', 'runsamplenum'))
+                resource = dict((t, file_info.get(t)) for t in ('index', 'lane', 'vendor',
+                                                                'read', 'flow_cell_id', 'library', 'extraction', 'runsamplenum'))
                 resource['seq_size'] = file_info.get('size')
                 resource['md5'] = resource['id'] = md5
                 resource['name'] = filename
@@ -335,7 +340,8 @@ class SepsisTranscriptomicsHiseqMetadata(BaseSepsisMetadata):
 
         for bpa_id, info in bpa_id_info.items():
             tickets = ', '.join(sorted(set(xlsx_info['ticket'] for _, xlsx_info, _ in info)))
-            archive_ingestion_dates = ', '.join(sorted(set(google_track_meta.date_of_transfer_to_archive for _, _, google_track_meta in info)))
+            archive_ingestion_dates = ', '.join(
+                sorted(set(google_track_meta.date_of_transfer_to_archive for _, _, google_track_meta in info)))
             name = bpa_id_to_ckan_name(bpa_id.split('.')[-1], self.ckan_data_type)
             track_meta = self.bpam_track_meta.get(bpa_id)
             obj = track_meta.copy()
@@ -372,7 +378,8 @@ class SepsisTranscriptomicsHiseqMetadata(BaseSepsisMetadata):
         for md5_file in glob(self.path + '/*.md5'):
             logger.info("Processing md5 file {0}".format(md5_file))
             for filename, md5, file_info in self.parse_md5file(md5_file):
-                resource = dict((t, file_info.get(t)) for t in ('library', 'vendor', 'flow_cell_id', 'index', 'lane', 'read'))
+                resource = dict((t, file_info.get(t))
+                                for t in ('library', 'vendor', 'flow_cell_id', 'index', 'lane', 'read'))
                 resource['seq_size'] = file_info.get('size')
                 resource['md5'] = resource['id'] = md5
                 resource['name'] = filename
@@ -1128,7 +1135,7 @@ class BaseSepsisAnalysedMetadata(BaseSepsisMetadata):
         }
         for field in ('date_of_transfer', 'taxon_or_organism', 'strain_or_isolate', 'growth_media', 'folder_name', 'date_of_transfer_to_archive', 'file_count'):
             if field in exclude:
-                    continue
+                continue
             if hasattr(trk, field):
                 obj[field] = getattr(trk, field)
         return obj
@@ -1187,7 +1194,8 @@ class SepsisProteomicsAnalysedMetadata(BaseSepsisAnalysedMetadata):
         self.contextual_metadata = contextual_metadata
         self.metadata_info = metadata_info
         self.google_track_meta = SepsisGoogleTrackMetadata()
-        self.bpam_track_meta = [SepsisTrackMetadata('ProteomicsMS1Quantification'), SepsisTrackMetadata('ProteomicsSwathMS')]
+        self.bpam_track_meta = [SepsisTrackMetadata(
+            'ProteomicsMS1Quantification'), SepsisTrackMetadata('ProteomicsSwathMS')]
 
     def _get_packages(self):
         logger.info("Ingesting Sepsis metadata from {0}".format(self.path))
@@ -1445,6 +1453,7 @@ class SepsisMetabolomicsAnalysedMetadata(BaseSepsisAnalysedMetadata):
             name = bpa_id_to_ckan_name(folder_name_md5, self.ckan_data_type)
             track_meta = self.google_track_meta.get(ticket)
             bpa_ids = list(sorted(set([t.bpa_id for t in rows if t.bpa_id])))
+            analytical_platform = list(sorted(set([t.analytical_platform for t in rows if t.analytical_platform])))
             obj.update(self.google_drive_track_to_object(track_meta))
             self.apply_common_context(obj, bpa_ids)
             obj.update({
@@ -1454,6 +1463,7 @@ class SepsisMetabolomicsAnalysedMetadata(BaseSepsisAnalysedMetadata):
                 'title': '%s' % (folder_name),
                 'omics': 'metabolomics',
                 'bpa_ids': ', '.join(bpa_ids),
+                'analytical_platform': ', '.join(analytical_platform),
                 'data_generated': 'True',
                 'type': self.ckan_data_type,
                 'date_of_transfer': ingest_utils.get_date_isoformat(track_meta.date_of_transfer),
@@ -1466,6 +1476,7 @@ class SepsisMetabolomicsAnalysedMetadata(BaseSepsisAnalysedMetadata):
                 'private': True,
             })
             tag_names = sepsis_contextual_tags(self, obj)
+            tag_names.append("Analysed metabolomics")
             obj['tags'] = [{'name': t} for t in tag_names]
             packages.append(obj)
         return packages
@@ -1668,7 +1679,8 @@ class SepsisProteomicsProteinDatabaseMetadata(BaseSepsisAnalysedMetadata):
             track_meta = self.google_track_meta.get(ticket)
             bpa_ids = list(sorted(set([t.bpa_id for t in rows if t.bpa_id])))
             # strain or isolate etc are per-file in this data, so we don't import them at the package level
-            obj.update(self.google_drive_track_to_object(track_meta, exclude=('taxon_or_organism', 'strain_or_isolate', 'growth_media')))
+            obj.update(self.google_drive_track_to_object(track_meta, exclude=(
+                'taxon_or_organism', 'strain_or_isolate', 'growth_media')))
             obj.update({
                 'name': name,
                 'id': name,

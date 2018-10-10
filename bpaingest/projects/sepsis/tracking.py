@@ -67,7 +67,7 @@ class SepsisGoogleTrackMetadata(object):
             track_meta[ticket_id] = common_values([meta._asdict() for meta in meta_list])
         # These fields have differing values for a given ticket, but the sorted set of unique values does have meaning to the user
         for ticket_id, meta_list in track_rows.items():
-            for field in ('description', 'date_of_transfer_to_archive'):
+            for field in ('description', 'date_of_transfer_to_archive', 'growth_media'):
                 vals = set(getattr(meta, field) for meta in meta_list)
                 track_meta[ticket_id][field] = ', '.join(sorted(vals))
         return track_meta
