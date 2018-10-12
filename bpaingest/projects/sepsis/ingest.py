@@ -1262,6 +1262,12 @@ class SepsisProteomicsAnalysedMetadata(BaseSepsisAnalysedMetadata):
             tag_names.extend(get_taxons_strains_tags(taxons, strains))
             # Remove duplicate tags
             tag_names = list(sorted(set(tag_names)))
+
+            analytical_platform = list(sorted(set([t.analytical_platform for t in rows if t.analytical_platform])))
+            obj.update({
+                'analytical_platform': ', '.join(analytical_platform),
+            })
+            tag_names.extend([', '.join(analytical_platform)])
             obj['tags'] = [{'name': t} for t in tag_names]
             packages.append(obj)
         return packages
