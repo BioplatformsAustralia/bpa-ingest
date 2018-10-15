@@ -46,11 +46,11 @@ def make_bpa_id_list(s):
     return tuple([ingest_utils.extract_bpa_id(t.strip()) for t in s.split(',')])
 
 
-def get_taxons_strains_tags(taxons, strains):
-    tags = []
+def update_taxons_strains_tags(taxons, strains, tag_names):
+    tags = tag_names
     for taxon, strain in zip(taxons, strains):
         tags.append(clean_tag_name(('%s_%s' % (taxon, strain)).replace(' ', '_')))
-    return tags
+    return list(sorted(set(tags)))  # remove duplicate tag names and return
 
 
 def sepsis_contextual_tags(cls, obj):
@@ -1040,8 +1040,17 @@ class SepsisProteomics2DLibraryMetadata(BaseSepsisMetadata):
                 'archive_ingestion_date': ingest_utils.get_date_isoformat(track_meta.date_of_transfer_to_archive),
                 'dataset_url': track_meta.download,
                 'private': True,
+                'growth_media': track_meta.growth_media,
             })
             tag_names = sepsis_contextual_tags(self, obj)
+            # Generate metadata and tags for more than one taxons and strains
+            taxons, strains = self.google_track_meta.get_taxons_strains(ticket)
+            obj.update({
+                'taxon_or_organism': ', '.join(list(sorted(set(taxons)))),
+                'strain_or_isolate': ', '.join(list(sorted(set(strains)))),
+            })
+            tag_names = update_taxons_strains_tags(taxons, strains, tag_names)
+            # update 2dlibrary tag name
             if '2dlibrary' in tag_names:
                 index = tag_names.index('2dlibrary')
                 tag_names[index] = "2D library"
@@ -1251,17 +1260,13 @@ class SepsisProteomicsAnalysedMetadata(BaseSepsisAnalysedMetadata):
                 'private': True,
             })
             tag_names = sepsis_contextual_tags(self, obj)
-            # Create tags for more than one taxons and strains
-            taxons = [t.taxon_or_organism for t in rows if t.taxon_or_organism]
-            strains = [str(t.strain_or_isolate) for t in rows if t.strain_or_isolate]
+            # Generate metadata and tags for more than one taxons and strains
+            taxons, strains = self.google_track_meta.get_taxons_strains(ticket)
             obj.update({
                 'taxon_or_organism': ', '.join(list(sorted(set(taxons)))),
                 'strain_or_isolate': ', '.join(list(sorted(set(strains)))),
             })
-            # Merge taxons_strains tags
-            tag_names.extend(get_taxons_strains_tags(taxons, strains))
-            # Remove duplicate tags
-            tag_names = list(sorted(set(tag_names)))
+            tag_names = update_taxons_strains_tags(taxons, strains, tag_names)
             # Correction with analytical platform and generate tag
             analytical_platform = list(sorted(set([t.analytical_platform for t in rows if t.analytical_platform])))
             obj.update({
@@ -1727,17 +1732,13 @@ class SepsisProteomicsProteinDatabaseMetadata(BaseSepsisAnalysedMetadata):
                 'private': True,
             })
             tag_names = sepsis_contextual_tags(self, obj)
-            # Create tags for more than one taxons and strains
-            taxons = [t.taxon_or_organism for t in rows if t.taxon_or_organism]
-            strains = [str(t.strain_or_isolate) for t in rows if t.strain_or_isolate]
+            # Generate metadata and tags for more than one taxons and strains
+            taxons, strains = self.google_track_meta.get_taxons_strains(ticket)
             obj.update({
                 'taxon_or_organism': ', '.join(list(sorted(set(taxons)))),
                 'strain_or_isolate': ', '.join(list(sorted(set(strains)))),
             })
-            # Merge taxons_strains tags
-            tag_names.extend(get_taxons_strains_tags(taxons, strains))
-            # Remove duplicate tags
-            tag_names = list(sorted(set(tag_names)))
+            tag_names = update_taxons_strains_tags(taxons, strains, tag_names)
             obj['tags'] = [{'name': t} for t in tag_names]
             packages.append(obj)
         return packages

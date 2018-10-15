@@ -52,15 +52,19 @@ class SepsisGoogleTrackMetadata(object):
     def __init__(self):
         fname = get_track_csv(self.platform, '*' + self.name + '*.csv')
         logger.info("Reading track CSV file: " + fname)
-        self.track_meta = self.read_track_csv(fname)
+        self.headers, self.track_rows = self.read_track_csv(fname)
+        self.track_meta = self.get_track_meta(self.track_rows)
 
     def read_track_csv(self, fname):
-        header, rows = csv_to_named_tuple('SepsisGoogleDriveTrack', fname)
+        headers, rows = csv_to_named_tuple('SepsisGoogleDriveTrack', fname)
         # Sepsis has multiple row for one ticket in googledrive spreadsheet. See github issue -https://github.com/BioplatformsAustralia/bpa-archive-ops/issues/698
         track_rows = defaultdict(list)
         # Grouping rows per ticket
         for row in rows:
             track_rows[row.ccg_jira_ticket].append(row)
+        return headers, track_rows
+
+    def get_track_meta(self, track_rows):
         track_meta = {}
         # Getting all fields with unique values for the given ticket
         for ticket_id, meta_list in track_rows.items():
@@ -76,3 +80,11 @@ class SepsisGoogleTrackMetadata(object):
         # wrapping common values(dict) into a single object
         custom_obj_type = namedtuple("SepsisGoogleDriveTrackCommonMeta", self.track_meta[ticket].keys())
         return custom_obj_type(*(self.track_meta[ticket].values()))
+
+    def get_taxons_strains(self, ticket):
+        taxons = defaultdict(list)
+        strains = defaultdict(list)
+        meta_list = self.track_rows[ticket]
+        taxons = list(getattr(meta, 'taxon_or_organism') for meta in meta_list)
+        strains = list(getattr(meta, 'strain_or_isolate') for meta in meta_list)
+        return taxons, strains
