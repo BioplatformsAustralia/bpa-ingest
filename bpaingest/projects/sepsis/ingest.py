@@ -1264,7 +1264,6 @@ class SepsisProteomicsAnalysedMetadata(BaseSepsisAnalysedMetadata):
                 'private': True,
             })
             tag_names = sepsis_contextual_tags(self, obj)
-            print(obj)
             # Generate metadata and tags for more than one taxons and strains
             taxons, strains = self.google_track_meta.get_taxons_strains(ticket)
             obj.update({
@@ -1277,7 +1276,7 @@ class SepsisProteomicsAnalysedMetadata(BaseSepsisAnalysedMetadata):
             obj.update({
                 'analytical_platform': ', '.join(analytical_platform),
             })
-            tag_names.extend(clean_tag_name([','.join(analytical_platform)]))
+            tag_names.extend([','.join(analytical_platform)])
             obj['tags'] = [{'name': t} for t in tag_names]
             packages.append(obj)
         return packages
