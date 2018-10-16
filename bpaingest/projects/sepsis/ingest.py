@@ -66,9 +66,9 @@ def sepsis_contextual_tags(cls, obj):
     if growth_media:
         if ', ' in growth_media:
             for item in growth_media.split(', '):
-                tags.append(clean_tag_name(item))
+                tags.append(clean_tag_name(item.replace('+', ' ')))
         else:
-            tags.append(clean_tag_name(growth_media))
+            tags.append(clean_tag_name(growth_media.replace('+', ' ')))
     return tags
 
 
