@@ -682,6 +682,10 @@ class SepsisProteomicsMS1QuantificationMetadata(BaseSepsisMetadata):
                 for contextual_source in self.contextual_metadata:
                     obj.update(contextual_source.get(bpa_id, bpam_track_meta))
                 tag_names = sepsis_contextual_tags(self, obj)
+                # update ms1quantification tag name
+                if 'ms1quantification' in tag_names:
+                    index = tag_names.index('ms1quantification')
+                    tag_names[index] = "MS1 quantification"
                 obj['tags'] = [{'name': t} for t in tag_names]
                 packages.append(obj)
         return packages
@@ -1053,7 +1057,7 @@ class SepsisProteomics2DLibraryMetadata(BaseSepsisMetadata):
             # update 2dlibrary tag name
             if '2dlibrary' in tag_names:
                 index = tag_names.index('2dlibrary')
-                tag_names[index] = "2D library"
+                tag_names[index] = "2D Library"
             obj['tags'] = [{'name': t} for t in tag_names]
             packages.append(obj)
         return packages
