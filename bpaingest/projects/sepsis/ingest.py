@@ -61,7 +61,7 @@ def sepsis_contextual_tags(cls, obj):
         tags.append(clean_tag_name(('%s_%s' % (taxon, strain)).replace(' ', '_')))
     data_type = obj.get('data_type')
     if data_type:
-        tags.append(clean_tag_name(data_type))
+        tags.append(clean_tag_name(data_type.rstrip()))
     growth_media = obj.get('growth_media')
     if growth_media:
         if ', ' in growth_media:
@@ -1264,6 +1264,7 @@ class SepsisProteomicsAnalysedMetadata(BaseSepsisAnalysedMetadata):
                 'private': True,
             })
             tag_names = sepsis_contextual_tags(self, obj)
+            print(obj)
             # Generate metadata and tags for more than one taxons and strains
             taxons, strains = self.google_track_meta.get_taxons_strains(ticket)
             obj.update({
@@ -1276,7 +1277,7 @@ class SepsisProteomicsAnalysedMetadata(BaseSepsisAnalysedMetadata):
             obj.update({
                 'analytical_platform': ', '.join(analytical_platform),
             })
-            tag_names.extend([', '.join(analytical_platform)])
+            tag_names.extend(clean_tag_name([','.join(analytical_platform)]))
             obj['tags'] = [{'name': t} for t in tag_names]
             packages.append(obj)
         return packages
