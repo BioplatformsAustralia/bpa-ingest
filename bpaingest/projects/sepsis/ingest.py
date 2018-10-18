@@ -1069,9 +1069,9 @@ class SepsisProteomics2DLibraryMetadata(BaseSepsisMetadata):
                 'growth_media': track_meta.growth_media,
             })
             tag_names = sepsis_contextual_tags(self, obj)
-            taxons, strains=add_taxons_strains_meta(self, obj)
-            tag_names=add_taxons_strains_tags(taxons, strains, tag_names)
-            obj['tags']=[{'name': expanded_tag_name(t)} for t in tag_names]
+            taxons, strains = add_taxons_strains_meta(self, obj)
+            tag_names = add_taxons_strains_tags(taxons, strains, tag_names)
+            obj['tags'] = [{'name': expanded_tag_name(t)} for t in tag_names]
             packages.append(obj)
         return packages
 
@@ -1277,15 +1277,15 @@ class SepsisProteomicsAnalysedMetadata(BaseSepsisAnalysedMetadata):
                 'private': True,
             })
             tag_names = sepsis_contextual_tags(self, obj)
-            taxons, strains=add_taxons_strains_meta(self, obj)
-            tag_names=add_taxons_strains_tags(taxons, strains, tag_names)
+            taxons, strains = add_taxons_strains_meta(self, obj)
+            tag_names = add_taxons_strains_tags(taxons, strains, tag_names)
             # Correction with analytical platform and generate tag
             analytical_platform = sorted(set([t.analytical_platform for t in rows if t.analytical_platform]))
             obj.update({
                 'analytical_platform': ', '.join(analytical_platform),
             })
             tag_names.extend([','.join(analytical_platform)])
-            obj['tags']=[{'name': expanded_tag_name(t)} for t in tag_names]
+            obj['tags'] = [{'name': expanded_tag_name(t)} for t in tag_names]
             # Update analysed package notes(showings as description)
             obj.update({
                 'notes': 'ARP %s %s analysed data: %s, %s' % (obj['omics'], obj['analytical_platform'], ', '.join(
@@ -1408,8 +1408,8 @@ class SepsisTranscriptomicsAnalysedMetadata(BaseSepsisAnalysedMetadata):
                 'private': True,
             })
             tag_names = sepsis_contextual_tags(self, obj)
-            taxons, strains=add_taxons_strains_meta(self, obj)
-            tag_names=add_taxons_strains_tags(taxons, strains, tag_names)
+            taxons, strains = add_taxons_strains_meta(self, obj)
+            tag_names = add_taxons_strains_tags(taxons, strains, tag_names)
             obj['tags'] = [{'name': t} for t in tag_names]
             # Update analysed package notes(showings as description)
             obj.update({
@@ -1533,8 +1533,8 @@ class SepsisMetabolomicsAnalysedMetadata(BaseSepsisAnalysedMetadata):
             })
             tag_names = sepsis_contextual_tags(self, obj)
             tag_names.append("Analysed metabolomics")
-            taxons, strains=add_taxons_strains_meta(self, obj)
-            tag_names=add_taxons_strains_tags(taxons, strains, tag_names)
+            taxons, strains = add_taxons_strains_meta(self, obj)
+            tag_names = add_taxons_strains_tags(taxons, strains, tag_names)
             obj['tags'] = [{'name': t} for t in tag_names]
             # Update analysed package notes(showings as description)
             obj.update({
@@ -1654,8 +1654,8 @@ class SepsisGenomicsAnalysedMetadata(BaseSepsisAnalysedMetadata):
                 'analytical_platform': ', '.join(analytical_platform),
             })
             tag_names = sepsis_contextual_tags(self, obj)
-            taxons, strains=add_taxons_strains_meta(self, obj)
-            tag_names=add_taxons_strains_tags(taxons, strains, tag_names)
+            taxons, strains = add_taxons_strains_meta(self, obj)
+            tag_names = add_taxons_strains_tags(taxons, strains, tag_names)
             obj['tags'] = [{'name': t} for t in tag_names]
             # Update analysed package notes(showings as description)
             obj.update({
@@ -1770,8 +1770,8 @@ class SepsisProteomicsProteinDatabaseMetadata(BaseSepsisAnalysedMetadata):
                 'private': True,
             })
             tag_names = sepsis_contextual_tags(self, obj)
-            taxons, strains=add_taxons_strains_meta(self, obj)
-            tag_names=add_taxons_strains_tags(taxons, strains, tag_names)
+            taxons, strains = add_taxons_strains_meta(self, obj)
+            tag_names = add_taxons_strains_tags(taxons, strains, tag_names)
             obj['tags'] = [{'name': t} for t in tag_names]
             # Update analysed package notes(showings as description)
             obj.update({
