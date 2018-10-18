@@ -47,15 +47,14 @@ def make_bpa_id_list(s):
 
 
 expanded_names = {
-        'ms1quantification': 'MS1 quantification',
-        '2dlibrary': '2D Library'
-    }
-    
+    'ms1quantification': 'MS1 quantification',
+    '2dlibrary': '2D Library'
+}
+
 def expanded_tag_name(tag_name):
     '''
     This function will return unique tag name.
     '''
-    
     return clean_tag_name(expanded_names.get(tag_name, tag_name))
 
 
