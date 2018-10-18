@@ -87,7 +87,7 @@ def sepsis_contextual_tags(cls, obj):
         tags.append(clean_tag_name(('%s_%s' % (taxon, strain)).replace(' ', '_')))
     data_type = obj.get('data_type')
     if data_type:
-        tags.append(clean_tag_name(data_type.rstrip()))
+        tags.append(clean_tag_name(data_type))
     growth_media = obj.get('growth_media')
     if growth_media:
         if ', ' in growth_media:
