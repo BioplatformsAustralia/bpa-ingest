@@ -46,14 +46,16 @@ def make_bpa_id_list(s):
     return tuple([ingest_utils.extract_bpa_id(t.strip()) for t in s.split(',')])
 
 
+expanded_names = {
+        'ms1quantification': 'MS1 quantification',
+        '2dlibrary': '2D Library'
+    }
+    
 def expanded_tag_name(tag_name):
     '''
     This function will return unique tag name.
     '''
-    expanded_names = {
-        'ms1quantification': 'MS1 quantification',
-        '2dlibrary': '2D Library'
-    }
+    
     return clean_tag_name(expanded_names.get(tag_name, tag_name))
 
 
