@@ -46,6 +46,40 @@ def make_bpa_id_list(s):
     return tuple([ingest_utils.extract_bpa_id(t.strip()) for t in s.split(',')])
 
 
+expanded_names = {
+    'ms1quantification': 'MS1 quantification',
+    '2dlibrary': '2D Library'
+}
+
+def expanded_tag_name(tag_name):
+    '''
+    This function will return unique tag name.
+    '''
+    return clean_tag_name(expanded_names.get(tag_name, tag_name))
+
+
+def add_taxons_strains_tags(taxons, strains, tag_names):
+    '''
+    This function generates taxons and strains tag names,
+    removes duplicates and adds them to the list.
+    '''
+    for taxon, strain in zip(taxons, strains):
+        tag_names.append(clean_tag_name(('%s_%s' % (taxon, strain)).replace(' ', '_')))
+    return sorted(set(tag_names))
+
+
+def add_taxons_strains_meta(cls, obj):
+    '''
+    This function adds taxons and strains metadata.
+    '''
+    taxons, strains = cls.google_track_meta.get_taxons_strains(obj['ticket'])
+    obj.update({
+        'taxon_or_organism': ', '.join(list(sorted(set(taxons)))),
+        'strain_or_isolate': ', '.join(list(sorted(set(strains)))),
+    })
+    return taxons, strains
+
+
 def sepsis_contextual_tags(cls, obj):
     tags = [cls.omics, cls.technology]
     taxon = obj.get('taxon_or_organism')
@@ -675,7 +709,7 @@ class SepsisProteomicsMS1QuantificationMetadata(BaseSepsisMetadata):
                 for contextual_source in self.contextual_metadata:
                     obj.update(contextual_source.get(bpa_id, bpam_track_meta))
                 tag_names = sepsis_contextual_tags(self, obj)
-                obj['tags'] = [{'name': t} for t in tag_names]
+                obj['tags']=[{'name': expanded_tag_name(t)} for t in tag_names]
                 packages.append(obj)
         return packages
 
@@ -1038,9 +1072,12 @@ class SepsisProteomics2DLibraryMetadata(BaseSepsisMetadata):
                 'archive_ingestion_date': ingest_utils.get_date_isoformat(track_meta.date_of_transfer_to_archive),
                 'dataset_url': track_meta.download,
                 'private': True,
+                'growth_media': track_meta.growth_media,
             })
             tag_names = sepsis_contextual_tags(self, obj)
-            obj['tags'] = [{'name': t} for t in tag_names]
+            taxons, strains = add_taxons_strains_meta(self, obj)
+            tag_names = add_taxons_strains_tags(taxons, strains, tag_names)
+            obj['tags'] = [{'name': expanded_tag_name(t)} for t in tag_names]
             packages.append(obj)
         return packages
 
@@ -1246,7 +1283,20 @@ class SepsisProteomicsAnalysedMetadata(BaseSepsisAnalysedMetadata):
                 'private': True,
             })
             tag_names = sepsis_contextual_tags(self, obj)
-            obj['tags'] = [{'name': t} for t in tag_names]
+            taxons, strains = add_taxons_strains_meta(self, obj)
+            tag_names = add_taxons_strains_tags(taxons, strains, tag_names)
+            # Correction with analytical platform and generate tag
+            analytical_platform = sorted(set([t.analytical_platform for t in rows if t.analytical_platform]))
+            obj.update({
+                'analytical_platform': ', '.join(analytical_platform),
+            })
+            tag_names.extend([','.join(analytical_platform)])
+            obj['tags'] = [{'name': expanded_tag_name(t)} for t in tag_names]
+            # Update analysed package notes(showings as description)
+            obj.update({
+                'notes': 'ARP %s %s analysed data: %s, %s' % (obj['omics'], obj['analytical_platform'], ', '.join(
+                    [taxons + ' ' + strains for taxons, strains in zip(taxons, strains)]), obj['growth_media'])
+            })
             packages.append(obj)
         return packages
 
@@ -1364,7 +1414,14 @@ class SepsisTranscriptomicsAnalysedMetadata(BaseSepsisAnalysedMetadata):
                 'private': True,
             })
             tag_names = sepsis_contextual_tags(self, obj)
+            taxons, strains = add_taxons_strains_meta(self, obj)
+            tag_names = add_taxons_strains_tags(taxons, strains, tag_names)
             obj['tags'] = [{'name': t} for t in tag_names]
+            # Update analysed package notes(showings as description)
+            obj.update({
+                'notes': 'ARP %s %s analysed data: %s, %s' % (obj['omics'], obj['analytical_platform'], ', '.join(
+                    [taxons + ' ' + strains for taxons, strains in zip(taxons, strains)]), obj['growth_media'])
+            })
             packages.append(obj)
         return packages
 
@@ -1482,7 +1539,14 @@ class SepsisMetabolomicsAnalysedMetadata(BaseSepsisAnalysedMetadata):
             })
             tag_names = sepsis_contextual_tags(self, obj)
             tag_names.append("Analysed metabolomics")
+            taxons, strains = add_taxons_strains_meta(self, obj)
+            tag_names = add_taxons_strains_tags(taxons, strains, tag_names)
             obj['tags'] = [{'name': t} for t in tag_names]
+            # Update analysed package notes(showings as description)
+            obj.update({
+                'notes': 'ARP %s %s analysed data: %s, %s' % (obj['omics'], obj['analytical_platform'], ', '.join(
+                    [taxons + ' ' + strains for taxons, strains in zip(taxons, strains)]), obj['growth_media'])
+            })
             packages.append(obj)
         return packages
 
@@ -1575,6 +1639,7 @@ class SepsisGenomicsAnalysedMetadata(BaseSepsisAnalysedMetadata):
             bpa_ids = list(sorted(set([t.bpa_id for t in rows if t.bpa_id])))
             obj.update(self.google_drive_track_to_object(track_meta))
             self.apply_common_context(obj, bpa_ids)
+            analytical_platform = list(sorted(set([t.analytical_platform for t in rows if t.analytical_platform])))
             obj.update({
                 'name': name,
                 'id': name,
@@ -1592,9 +1657,17 @@ class SepsisGenomicsAnalysedMetadata(BaseSepsisAnalysedMetadata):
                 'archive_ingestion_date': ingest_utils.get_date_isoformat(track_meta.date_of_transfer_to_archive),
                 'dataset_url': track_meta.download,
                 'private': True,
+                'analytical_platform': ', '.join(analytical_platform),
             })
             tag_names = sepsis_contextual_tags(self, obj)
+            taxons, strains = add_taxons_strains_meta(self, obj)
+            tag_names = add_taxons_strains_tags(taxons, strains, tag_names)
             obj['tags'] = [{'name': t} for t in tag_names]
+            # Update analysed package notes(showings as description)
+            obj.update({
+                'notes': 'ARP %s %s analysed data: %s, %s' % (obj['omics'], obj['analytical_platform'], ', '.join(
+                    [taxons + ' ' + strains for taxons, strains in zip(taxons, strains)]), obj['growth_media'])
+            })
             packages.append(obj)
         return packages
 
@@ -1683,9 +1756,7 @@ class SepsisProteomicsProteinDatabaseMetadata(BaseSepsisAnalysedMetadata):
             name = bpa_id_to_ckan_name(folder_name_md5, self.ckan_data_type)
             track_meta = self.google_track_meta.get(ticket)
             bpa_ids = list(sorted(set([t.bpa_id for t in rows if t.bpa_id])))
-            # strain or isolate etc are per-file in this data, so we don't import them at the package level
-            obj.update(self.google_drive_track_to_object(track_meta, exclude=(
-                'taxon_or_organism', 'strain_or_isolate', 'growth_media')))
+            obj.update(self.google_drive_track_to_object(track_meta))
             obj.update({
                 'name': name,
                 'id': name,
@@ -1705,7 +1776,13 @@ class SepsisProteomicsProteinDatabaseMetadata(BaseSepsisAnalysedMetadata):
                 'private': True,
             })
             tag_names = sepsis_contextual_tags(self, obj)
+            taxons, strains = add_taxons_strains_meta(self, obj)
+            tag_names = add_taxons_strains_tags(taxons, strains, tag_names)
             obj['tags'] = [{'name': t} for t in tag_names]
+            # Update analysed package notes(showings as description)
+            obj.update({
+                'notes': 'ARP %s proteindatabase analysed data: %s, %s' % (obj['omics'], ', '.join([taxons + ' ' + strains for taxons, strains in zip(taxons, strains)]), obj['growth_media'])
+            })
             packages.append(obj)
         return packages
 

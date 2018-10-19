@@ -37,6 +37,7 @@ def prune_dict(d, keys):
 
 def clean_tag_name(s):
     "reduce s to strings acceptable in a tag name"
+    s = s.replace('+', '_')
     return ''.join(t for t in s if t in string.digits or t in string.ascii_letters or t in '-_. ')
 
 
