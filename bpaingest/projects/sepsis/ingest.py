@@ -48,7 +48,8 @@ def make_bpa_id_list(s):
 
 expanded_names = {
     'ms1quantification': 'MS1 quantification',
-    '2dlibrary': '2D Library'
+    '2dlibrary': '2D Library',
+    'proteindatabase': 'protein database'
 }
 
 def expanded_tag_name(tag_name):
@@ -91,11 +92,12 @@ def sepsis_contextual_tags(cls, obj):
         tags.append(clean_tag_name(data_type))
     growth_media = obj.get('growth_media')
     if growth_media:
-        if ', ' in growth_media:
-            for item in growth_media.split(', '):
-                tags.append(clean_tag_name(item))
-        else:
-            tags.append(clean_tag_name(growth_media))
+        if growth_media not in 'N/A':
+            if ', ' in growth_media:
+                for item in growth_media.split(', '):
+                    tags.append(clean_tag_name(item))
+            else:
+                tags.append(clean_tag_name(growth_media))
     return tags
 
 
@@ -686,6 +688,8 @@ class SepsisProteomicsMS1QuantificationMetadata(BaseSepsisMetadata):
                     continue
                 obj = bpam_track_meta.copy()
                 name = bpa_id_to_ckan_name(bpa_id.split('.')[-1], self.ckan_data_type)
+                for contextual_source in self.contextual_metadata:
+                    obj.update(contextual_source.get(bpa_id, bpam_track_meta))
                 obj.update({
                     'name': name,
                     'id': name,
@@ -706,8 +710,6 @@ class SepsisProteomicsMS1QuantificationMetadata(BaseSepsisMetadata):
                     'private': True,
                     'data_generated': True,
                 })
-                for contextual_source in self.contextual_metadata:
-                    obj.update(contextual_source.get(bpa_id, bpam_track_meta))
                 tag_names = sepsis_contextual_tags(self, obj)
                 obj['tags']=[{'name': expanded_tag_name(t)} for t in tag_names]
                 packages.append(obj)
@@ -955,6 +957,7 @@ class SepsisProteomicsSwathMSCombinedSampleMetadata(BaseSepsisMetadata):
             folder_name_md5 = md5hash(folder_name.encode('utf8')).hexdigest()
             name = bpa_id_to_ckan_name(folder_name_md5, self.ckan_data_type)
             track_meta = self.google_track_meta.get(ticket)
+            taxons, strains = self.google_track_meta.get_taxons_strains(ticket)
             obj.update({
                 'name': name,
                 'id': name,
@@ -971,8 +974,15 @@ class SepsisProteomicsSwathMSCombinedSampleMetadata(BaseSepsisMetadata):
                 'archive_ingestion_date': ingest_utils.get_date_isoformat(track_meta.date_of_transfer_to_archive),
                 'dataset_url': track_meta.download,
                 'private': True,
+                'growth_media': track_meta.growth_media,
             })
             tag_names = sepsis_contextual_tags(self, obj)
+            taxons, strains = add_taxons_strains_meta(self, obj)
+            tag_names = add_taxons_strains_tags(taxons, strains, tag_names)
+            obj.update({
+                'notes': 'ARP Proteomics Swath-MS Combined Sample Raw Data: %s, %s' % (', '.join(
+                    [taxons + ' ' + strains for taxons, strains in zip(taxons, strains)]), obj['growth_media']),
+            })
             obj['tags'] = [{'name': t} for t in tag_names]
             packages.append(obj)
         return packages
@@ -1077,6 +1087,10 @@ class SepsisProteomics2DLibraryMetadata(BaseSepsisMetadata):
             tag_names = sepsis_contextual_tags(self, obj)
             taxons, strains = add_taxons_strains_meta(self, obj)
             tag_names = add_taxons_strains_tags(taxons, strains, tag_names)
+            obj.update({
+                'notes': 'ARP Proteomics 2D Library Raw Data: %s, %s' % (', '.join(
+                    [taxons + ' ' + strains for taxons, strains in zip(taxons, strains)]), obj['growth_media']),
+            })
             obj['tags'] = [{'name': expanded_tag_name(t)} for t in tag_names]
             packages.append(obj)
         return packages
@@ -1778,10 +1792,10 @@ class SepsisProteomicsProteinDatabaseMetadata(BaseSepsisAnalysedMetadata):
             tag_names = sepsis_contextual_tags(self, obj)
             taxons, strains = add_taxons_strains_meta(self, obj)
             tag_names = add_taxons_strains_tags(taxons, strains, tag_names)
-            obj['tags'] = [{'name': t} for t in tag_names]
+            obj['tags'] = [{'name': expanded_tag_name(t)} for t in tag_names]
             # Update analysed package notes(showings as description)
             obj.update({
-                'notes': 'ARP %s proteindatabase analysed data: %s, %s' % (obj['omics'], ', '.join([taxons + ' ' + strains for taxons, strains in zip(taxons, strains)]), obj['growth_media'])
+                'notes': 'ARP %s protein database analysed data: %s, %s' % (obj['omics'], ', '.join([taxons + ' ' + strains for taxons, strains in zip(taxons, strains)]), obj['growth_media'])
             })
             packages.append(obj)
         return packages
