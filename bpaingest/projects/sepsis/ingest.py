@@ -91,7 +91,7 @@ def sepsis_contextual_tags(cls, obj):
     if data_type:
         tags.append(clean_tag_name(data_type))
     growth_media = obj.get('growth_media')
-    growth_media_names = [tag for tag in growth_media.split(', ') if tag not in 'N/A']
+    growth_media_names = [tag.strip() for tag in growth_media.split(', ') if tag not in 'N/A']
     tags += [clean_tag_name(name) for name in growth_media_names]
     return tags
 
