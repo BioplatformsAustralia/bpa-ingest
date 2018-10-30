@@ -39,7 +39,7 @@ apply()
 
   if [ x"$DEV_MODE" != x ]; then
     extra_args1="-p /tmp/ingest/$project/"
-    extra_args2="--skip-resource-checks --metadata-only --verify-ssl False"
+    extra_args2="$INGEST_ARGS --skip-resource-checks --metadata-only --verify-ssl False"
   fi
   echo
   echo ">>> Executing bpa-ingest: $project"
