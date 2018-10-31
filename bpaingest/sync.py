@@ -60,7 +60,20 @@ def build_package_cache(ckan, sync_packages):
     return {t['id']: t for t in packages}
 
 
-def sync_packages(ckan, packages, org, group):
+def delete_dangling_packages(ckan, packages, cache, do_delete):
+    extant_ids = set(cache.keys())
+    continuing_ids = set(t['id'] for t in packages)
+    to_delete = extant_ids - continuing_ids
+
+    for delete_id in to_delete:
+        delete_obj = cache[delete_id]
+        logger.info('package for deletion: %s/%s (do_delete=%s)' % (delete_obj['id'], delete_id, do_delete))
+        if do_delete:
+            ckan_method(ckan, 'package', 'delete')(id=delete_id)
+            logger.info('deleted package: %s/%s' % (delete_obj['id'], delete_id))
+
+
+def sync_packages(ckan, packages, org, group, do_delete):
     # FIXME: we don't check if there are any packages we should remove (unpublish)
     logger.info('syncing %d packages' % (len(packages)))
     # we have to post the group back in package objects, send a minimal version of it
@@ -68,6 +81,8 @@ def sync_packages(ckan, packages, org, group):
     ckan_packages = []
 
     cache = build_package_cache(ckan, packages)
+
+    delete_dangling_packages(ckan, packages, cache, do_delete)
 
     for package in sorted(packages, key=lambda p: p['name']):
         obj = package.copy()
@@ -135,7 +150,7 @@ def check_package_resources(ckan, ckan_packages, resource_id_legacy_url, auth):
     return check_resources(ckan, all_resources, resource_id_legacy_url, auth, 8)
 
 
-def sync_package_resources(ckan, package_obj, resource_id_legacy_url, resources, auth):
+def sync_package_resources(ckan, package_obj, resource_id_legacy_url, resources, auth, do_delete):
     current_resources = package_obj['resources']
     existing_resources = dict((t['id'], t) for t in current_resources)
     needed_resources = dict((t['id'], t) for t in resources)
@@ -159,8 +174,10 @@ def sync_package_resources(ckan, package_obj, resource_id_legacy_url, resources,
 
     for obj_id in to_delete:
         delete_obj = existing_resources[obj_id]
-        ckan_method(ckan, 'resource', 'delete')(id=obj_id)
-        logger.info('deleted resource: %s/%s' % (delete_obj['package_id'], obj_id))
+        logger.info('resource for deletion: %s/%s (do_delete=%s)' % (delete_obj['package_id'], obj_id, do_delete))
+        if do_delete:
+            ckan_method(ckan, 'resource', 'delete')(id=obj_id)
+            logger.info('deleted resource: %s/%s' % (delete_obj['package_id'], obj_id))
 
     # patch all the resources, to ensure everything is synced on
     # existing resources
@@ -209,7 +226,7 @@ def reupload_resources(ckan, to_reupload, resource_id_legacy_url, auth, num_thre
         thread.join()
 
 
-def sync_resources(ckan, resources, resource_linkage_attrs, ckan_packages, auth, num_threads, do_uploads, do_resource_checks):
+def sync_resources(ckan, resources, resource_linkage_attrs, ckan_packages, auth, num_threads, do_uploads, do_resource_checks, do_delete):
     logger.info('syncing %d resources' % (len(resources)))
 
     resource_linkage_package_id = {}
@@ -244,13 +261,13 @@ def sync_resources(ckan, resources, resource_linkage_attrs, ckan_packages, auth,
         if package_resources is None:
             logger.warning("No resources for package `%s`" % (package_id))
             continue
-        to_reupload += sync_package_resources(ckan, package_obj, resource_id_legacy_url, package_resources, auth)
+        to_reupload += sync_package_resources(ckan, package_obj, resource_id_legacy_url, package_resources, auth, do_delete)
 
     if do_uploads:
         reupload_resources(ckan, to_reupload, resource_id_legacy_url, auth, num_threads)
 
 
-def sync_metadata(ckan, meta, auth, num_threads, do_uploads, do_resource_checks):
+def sync_metadata(ckan, meta, auth, num_threads, do_uploads, do_resource_checks, do_delete):
     def unique_packages():
         by_id = dict((t['id'], t) for t in packages)
         id_count = Counter(t['id'] for t in packages)
@@ -266,6 +283,6 @@ def sync_metadata(ckan, meta, auth, num_threads, do_uploads, do_resource_checks)
     organization = get_organization(ckan, meta.organization)
     packages = meta.get_packages()
     packages = list(unique_packages())
-    ckan_packages = sync_packages(ckan, packages, organization, None)
+    ckan_packages = sync_packages(ckan, packages, organization, None, do_delete)
     resources = meta.get_resources()
-    sync_resources(ckan, resources, meta.resource_linkage, ckan_packages, auth, num_threads, do_uploads, do_resource_checks)
+    sync_resources(ckan, resources, meta.resource_linkage, ckan_packages, auth, num_threads, do_uploads, do_resource_checks, do_delete)
