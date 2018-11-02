@@ -7,6 +7,34 @@ from glob import glob
 logger = make_logger(__name__)
 
 
+def int_or_comment(val):
+    # fix up '14.0' type values coming through from Excel; if not an integer,
+    # it's a note or a text code, which we just pass back unaltered
+    if val is None:
+        return None
+    try:
+        return str(int(float(val)))
+    except ValueError:
+        val = str(val).strip()
+        if not val:
+            return None
+        return val
+
+
+def date_or_comment(val):
+    # another mix of actual dates and free-text comments, clean up as much as we can
+    # into standard dates, but if not we return the underlying value
+    if val is None:
+        return None
+    val_as_date = ingest_utils.get_date_isoformat(val)
+    if val_as_date is not None:
+        return val_as_date
+    val = str(val).strip()
+    if not val:
+        return None
+    return val
+
+
 def get_gram_stain(val):
     if val and val is not '':
         val = val.lower()
@@ -18,13 +46,16 @@ def get_gram_stain(val):
 
 
 def get_sex(val):
-    if val and val is not '':
-        val = val.lower()
-        # order of these statements is significant
-        if 'female' in val:
-            return 'F'
-        if 'male' in val:
-            return 'M'
+    if val is None:
+        return None
+    val = val.lower()
+    # order of these statements is significant
+    if 'female' in val:
+        return 'F'
+    if 'male' in val:
+        return 'M'
+    if 'ethics embargo' in val:
+        return 'ethics embargo'
     return None
 
 
@@ -77,17 +108,18 @@ class SepsisBacterialContextual(object):
             fld('gram_stain', 'Gram_staining_(positive_or_negative)', coerce=get_gram_stain),
             fld('taxon_or_organism', 'Taxon_OR_organism'),
             fld('strain_or_isolate', 'Strain_OR_isolate', coerce=get_strain_or_isolate),
-            fld('serovar', 'Serovar'),
+            fld('serovar', 'Serovar', coerce=int_or_comment),
             fld('key_virulence_genes', 'Key_virulence_genes'),
             fld('isolation_source', 'Isolation_source'),
             fld('strain_description', 'Strain_description'),
             fld('publication_reference', 'Publication_reference'),
             fld('contact_researcher', 'Contact_researcher'),
             fld('culture_collection_id', 'Culture_collection_ID (alternative name[s])'),
-            fld('culture_collection_date', 'Culture_collection_date (YYYY-MM-DD)', coerce=ingest_utils.get_date_isoformat),
+            # note: these are free-text dates, there are comments mixed in
+            fld('culture_collection_date', 'Culture_collection_date (YYYY-MM-DD)', coerce=date_or_comment),
             fld('host_location', 'Host_location (state, country)'),
-            fld('host_age', 'Host_age', coerce=ingest_utils.get_int),
-            fld('host_dob', 'Host_DOB (YYYY-MM-DD)', coerce=ingest_utils.get_date_isoformat),
+            fld('host_age', 'Host_age', coerce=int_or_comment),
+            fld('host_dob', 'Host_DOB (YYYY-MM-DD)', coerce=date_or_comment),
             fld('host_sex', 'Host_sex (F/M)', coerce=get_sex),
             fld('host_disease_outcome', 'Host_disease_outcome'),
             fld('host_description', 'Host_description'),
@@ -139,7 +171,7 @@ class SepsisGenomicsContextual(object):
             fld('bpa_id', "BPA_sample_ID", coerce=ingest_utils.extract_bpa_id),
             fld('taxon_or_organism', "Taxon_OR_organism"),
             fld('strain_or_isolate', "Strain_OR_isolate"),
-            fld('serovar', "Serovar"),
+            fld('serovar', "Serovar", coerce=int_or_comment),
             fld('growth_condition_time', "Growth_condition_time"),
             fld('growth_condition_temperature', "Growth_condition_temperature", coerce=ingest_utils.get_clean_number),
             fld('growth_condition_media', "Growth_condition_media"),
@@ -203,7 +235,7 @@ class SepsisTranscriptomicsHiseqContextual(object):
             fld('either_260_280', '260/280'),
             fld('taxon_or_organism', 'taxon_or_organism'),
             fld('strain_or_isolate', 'strain_or_isolate'),
-            fld('serovar', 'serovar'),
+            fld('serovar', 'serovar', coerce=int_or_comment),
             fld('growth_media', 'growth media'),
             fld('replicate', 'replicate', coerce=ingest_utils.get_int),
             fld('growth_condition_time', 'growth_condition_time (h)'),
@@ -267,7 +299,7 @@ class SepsisMetabolomicsLCMSContextual(object):
             fld('bpa_id', 'sample name i.e. 5 digit bpa id', coerce=ingest_utils.extract_bpa_id),
             fld('taxon_or_organism', 'taxon_or_organism'),
             fld('strain_or_isolate', 'strain_or_isolate'),
-            fld('serovar', 'serovar'),
+            fld('serovar', 'serovar', coerce=int_or_comment),
             fld('growth_media', 'growth media'),
             fld('replicate', 'replicate', coerce=ingest_utils.get_int),
             fld('growth_condition_time', 'growth_condition_time (h)'),
@@ -338,7 +370,7 @@ class SepsisProteomicsBaseContextual(object):
             fld('peptide_resuspension_protocol', 'Peptide resuspension protocol'),
             fld('taxon_or_organism', 'Taxon_OR_organism'),
             fld('strain_or_isolate', 'Strain_OR_isolate'),
-            fld('serovar', 'Serovar'),
+            fld('serovar', 'Serovar', coerce=int_or_comment),
             fld('growth_media', 'Growth Media'),
             fld('replicate', 'Replicate', coerce=ingest_utils.get_int),
             fld('growth_condition_time', 'Growth_condition_time'),
