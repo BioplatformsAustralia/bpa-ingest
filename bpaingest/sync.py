@@ -44,13 +44,14 @@ def sync_package(ckan, obj, cached_obj):
     return ckan_obj
 
 
-def build_package_cache(ckan, sync_packages):
+def build_package_cache(ckan, ckan_data_type, sync_packages):
     """
     build a cache of all the packages in `org`, to speed up comparison.
     `sync_packages` is the packages we are aiming to set as our target
     state
     """
     package_types = set(t['type'] for t in sync_packages)
+    package_types.add(ckan_data_type)
     packages = []
     for typ in package_types:
         logger.info("Retrieving all extant packages of type: {}".format(typ))
@@ -73,14 +74,14 @@ def delete_dangling_packages(ckan, packages, cache, do_delete):
             logger.info('deleted package: %s/%s' % (delete_obj['id'], delete_id))
 
 
-def sync_packages(ckan, packages, org, group, do_delete):
+def sync_packages(ckan, ckan_data_type, packages, org, group, do_delete):
     # FIXME: we don't check if there are any packages we should remove (unpublish)
     logger.info('syncing %d packages' % (len(packages)))
     # we have to post the group back in package objects, send a minimal version of it
     api_group_obj = prune_dict(group, ('display_name', 'description', 'title', 'image_display_url', 'id', 'name'))
     ckan_packages = []
 
-    cache = build_package_cache(ckan, packages)
+    cache = build_package_cache(ckan, ckan_data_type, packages)
 
     delete_dangling_packages(ckan, packages, cache, do_delete)
 
@@ -283,6 +284,6 @@ def sync_metadata(ckan, meta, auth, num_threads, do_uploads, do_resource_checks,
     organization = get_organization(ckan, meta.organization)
     packages = meta.get_packages()
     packages = list(unique_packages())
-    ckan_packages = sync_packages(ckan, packages, organization, None, do_delete)
+    ckan_packages = sync_packages(ckan, meta.ckan_data_type, packages, organization, None, do_delete)
     resources = meta.get_resources()
     sync_resources(ckan, resources, meta.resource_linkage, ckan_packages, auth, num_threads, do_uploads, do_resource_checks, do_delete)
