@@ -1,4 +1,76 @@
 5 digit BPA ID,Data type,Taxon_OR_organism,Strain_OR_isolate,Serovar,Growth Media,Replicate,Omics,Analytical platform,Facility,Work order #,Contextual Data Submission Date,Sample submission date,Data generated,Archive Ingestion Date,Archive ID,id,curation_url,in_data_portal,last_modified
+102.100.100.51520,Main dataset,Klebsiella pneumoniae,04153260899A,,Pooled sera,6,Transcriptomics,HiSeq,AGRF,,2018-08-17,2018-08-08,0,,,401,,0,2018-08-22 02:09:38
+102.100.100.51519,Main dataset,Klebsiella pneumoniae,04153260899A,,Pooled sera,5,Transcriptomics,HiSeq,AGRF,,2018-08-17,2018-08-08,0,,,400,,0,2018-08-22 02:09:38
+102.100.100.51518,Main dataset,Klebsiella pneumoniae,04153260899A,,Pooled sera,4,Transcriptomics,HiSeq,AGRF,,2018-08-17,2018-08-03,0,,,399,,0,2018-08-22 02:09:38
+102.100.100.51517,Main dataset,Klebsiella pneumoniae,04153260899A,,Pooled sera,3,Transcriptomics,HiSeq,AGRF,,2018-08-17,2018-08-03,0,,,398,,0,2018-08-22 02:09:38
+102.100.100.51516,Main dataset,Klebsiella pneumoniae,04153260899A,,Pooled sera,2,Transcriptomics,HiSeq,AGRF,,2018-08-17,2018-07-27,0,,,397,,0,2018-08-22 02:09:38
+102.100.100.51515,Main dataset,Klebsiella pneumoniae,04153260899A,,Pooled sera,1,Transcriptomics,HiSeq,AGRF,,2018-08-17,2018-07-27,0,,,396,,0,2018-08-22 02:09:38
+102.100.100.51514,Main dataset,Klebsiella pneumoniae,04153260899A,,RPMI,6,Transcriptomics,HiSeq,AGRF,,2018-08-17,2018-08-08,0,,,395,,0,2018-08-22 02:09:38
+102.100.100.51513,Main dataset,Klebsiella pneumoniae,04153260899A,,RPMI,5,Transcriptomics,HiSeq,AGRF,,2018-08-17,2018-08-08,0,,,394,,0,2018-08-22 02:09:38
+102.100.100.51512,Main dataset,Klebsiella pneumoniae,04153260899A,,RPMI,4,Transcriptomics,HiSeq,AGRF,,2018-08-17,2018-08-03,0,,,393,,0,2018-08-22 02:09:38
+102.100.100.51511,Main dataset,Klebsiella pneumoniae,04153260899A,,RPMI,3,Transcriptomics,HiSeq,AGRF,,2018-08-17,2018-08-03,0,,,392,,0,2018-08-22 02:09:38
+102.100.100.51510,Main dataset,Klebsiella pneumoniae,04153260899A,,RPMI,2,Transcriptomics,HiSeq,AGRF,,2018-08-17,2018-07-27,0,,,391,,0,2018-08-22 02:09:38
+102.100.100.51509,Main dataset,Klebsiella pneumoniae,04153260899A,,RPMI,1,Transcriptomics,HiSeq,AGRF,,2018-08-17,2018-07-27,0,,,390,,0,2018-08-22 02:09:38
+102.100.100.51508,Main dataset,Klebsiella pneumoniae,03-311-0071,,Pooled sera,6,Transcriptomics,HiSeq,AGRF,,2018-08-17,2018-08-08,0,,,389,,0,2018-08-22 02:09:38
+102.100.100.51507,Main dataset,Klebsiella pneumoniae,03-311-0071,,Pooled sera,5,Transcriptomics,HiSeq,AGRF,,2018-08-17,2018-08-08,0,,,388,,0,2018-08-22 02:09:38
+102.100.100.51506,Main dataset,Klebsiella pneumoniae,03-311-0071,,Pooled sera,4,Transcriptomics,HiSeq,AGRF,,2018-08-17,2018-08-03,0,,,387,,0,2018-08-22 02:09:38
+102.100.100.51505,Main dataset,Klebsiella pneumoniae,03-311-0071,,Pooled sera,3,Transcriptomics,HiSeq,AGRF,,2018-08-17,2018-08-03,0,,,386,,0,2018-08-22 02:09:38
+102.100.100.51504,Main dataset,Klebsiella pneumoniae,03-311-0071,,Pooled sera,2,Transcriptomics,HiSeq,AGRF,,2018-08-17,2018-07-27,0,,,385,,0,2018-08-22 02:09:38
+102.100.100.51503,Main dataset,Klebsiella pneumoniae,03-311-0071,,Pooled sera,1,Transcriptomics,HiSeq,AGRF,,2018-08-17,2018-07-27,0,,,384,,0,2018-08-22 02:09:38
+102.100.100.51502,Main dataset,Klebsiella pneumoniae,03-311-0071,,RPMI,6,Transcriptomics,HiSeq,AGRF,,2018-08-17,2018-08-08,0,,,383,,0,2018-08-22 02:09:38
+102.100.100.51501,Main dataset,Klebsiella pneumoniae,03-311-0071,,RPMI,5,Transcriptomics,HiSeq,AGRF,,2018-08-17,2018-08-08,0,,,382,,0,2018-08-22 02:09:38
+102.100.100.51500,Main dataset,Klebsiella pneumoniae,03-311-0071,,RPMI,4,Transcriptomics,HiSeq,AGRF,,2018-08-17,2018-08-03,0,,,381,,0,2018-08-22 02:09:38
+102.100.100.51499,Main dataset,Klebsiella pneumoniae,03-311-0071,,RPMI,3,Transcriptomics,HiSeq,AGRF,,2018-08-17,2018-08-03,0,,,380,,0,2018-08-22 02:09:38
+102.100.100.51498,Main dataset,Klebsiella pneumoniae,03-311-0071,,RPMI,2,Transcriptomics,HiSeq,AGRF,,2018-08-17,2018-07-27,0,,,379,,0,2018-08-22 02:09:38
+102.100.100.51497,Main dataset,Klebsiella pneumoniae,03-311-0071,,RPMI,1,Transcriptomics,HiSeq,AGRF,,2018-08-17,2018-07-27,0,,,378,,0,2018-08-22 02:09:38
+102.100.100.51496,Main dataset,Klebsiella pneumoniae,KPC2,ethics embargo,Pooled sera,6,Transcriptomics,HiSeq,AGRF,,2018-08-17,2018-08-08,0,,,377,,0,2018-08-22 02:09:38
+102.100.100.51495,Main dataset,Klebsiella pneumoniae,KPC2,ethics embargo,Pooled sera,5,Transcriptomics,HiSeq,AGRF,,2018-08-17,2018-08-08,0,,,376,,0,2018-08-22 02:09:38
+102.100.100.51494,Main dataset,Klebsiella pneumoniae,KPC2,ethics embargo,Pooled sera,4,Transcriptomics,HiSeq,AGRF,,2018-08-17,2018-08-03,0,,,375,,0,2018-08-22 02:09:38
+102.100.100.51493,Main dataset,Klebsiella pneumoniae,KPC2,ethics embargo,Pooled sera,3,Transcriptomics,HiSeq,AGRF,,2018-08-17,2018-08-03,0,,,374,,0,2018-08-22 02:09:38
+102.100.100.51492,Main dataset,Klebsiella pneumoniae,KPC2,ethics embargo,Pooled sera,2,Transcriptomics,HiSeq,AGRF,,2018-08-17,2018-07-27,0,,,373,,0,2018-08-22 02:09:38
+102.100.100.51491,Main dataset,Klebsiella pneumoniae,KPC2,ethics embargo,Pooled sera,1,Transcriptomics,HiSeq,AGRF,,2018-08-17,2018-07-27,0,,,372,,0,2018-08-22 02:09:38
+102.100.100.51490,Main dataset,Klebsiella pneumoniae,KPC2,ethics embargo,RPMI,6,Transcriptomics,HiSeq,AGRF,,2018-08-17,2018-08-08,0,,,371,,0,2018-08-22 02:09:38
+102.100.100.51489,Main dataset,Klebsiella pneumoniae,KPC2,ethics embargo,RPMI,5,Transcriptomics,HiSeq,AGRF,,2018-08-17,2018-08-08,0,,,370,,0,2018-08-22 02:09:38
+102.100.100.51488,Main dataset,Klebsiella pneumoniae,KPC2,ethics embargo,RPMI,4,Transcriptomics,HiSeq,AGRF,,2018-08-17,2018-08-03,0,,,369,,0,2018-08-22 02:09:38
+102.100.100.51487,Main dataset,Klebsiella pneumoniae,KPC2,ethics embargo,RPMI,3,Transcriptomics,HiSeq,AGRF,,2018-08-17,2018-08-03,0,,,368,,0,2018-08-22 02:09:38
+102.100.100.51486,Main dataset,Klebsiella pneumoniae,KPC2,ethics embargo,RPMI,2,Transcriptomics,HiSeq,AGRF,,2018-08-17,2018-07-27,0,,,367,,0,2018-08-22 02:09:38
+102.100.100.51485,Main dataset,Klebsiella pneumoniae,KPC2,ethics embargo,RPMI,1,Transcriptomics,HiSeq,AGRF,,2018-08-17,2018-07-27,0,,,366,,0,2018-08-22 02:09:38
+102.100.100.51484,Main dataset,Klebsiella pneumoniae,AJ292,K61,Pooled sera,6,Transcriptomics,HiSeq,AGRF,,2018-08-17,2018-08-08,0,,,365,,0,2018-08-22 02:09:38
+102.100.100.51483,Main dataset,Klebsiella pneumoniae,AJ292,K61,Pooled sera,5,Transcriptomics,HiSeq,AGRF,,2018-08-17,2018-08-08,0,,,364,,0,2018-08-22 02:09:38
+102.100.100.51482,Main dataset,Klebsiella pneumoniae,AJ292,K61,Pooled sera,4,Transcriptomics,HiSeq,AGRF,,2018-08-17,2018-08-03,0,,,363,,0,2018-08-22 02:09:38
+102.100.100.51481,Main dataset,Klebsiella pneumoniae,AJ292,K61,Pooled sera,3,Transcriptomics,HiSeq,AGRF,,2018-08-17,2018-08-03,0,,,362,,0,2018-08-22 02:09:38
+102.100.100.51480,Main dataset,Klebsiella pneumoniae,AJ292,K61,Pooled sera,2,Transcriptomics,HiSeq,AGRF,,2018-08-17,2018-07-27,0,,,361,,0,2018-08-22 02:09:38
+102.100.100.51479,Main dataset,Klebsiella pneumoniae,AJ292,K61,Pooled sera,1,Transcriptomics,HiSeq,AGRF,,2018-08-17,2018-07-27,0,,,360,,0,2018-08-22 02:09:38
+102.100.100.51478,Main dataset,Klebsiella pneumoniae,AJ292,K61,RPMI,6,Transcriptomics,HiSeq,AGRF,,2018-08-17,2018-08-08,0,,,359,,0,2018-08-22 02:09:38
+102.100.100.51477,Main dataset,Klebsiella pneumoniae,AJ292,K61,RPMI,5,Transcriptomics,HiSeq,AGRF,,2018-08-17,2018-08-08,0,,,358,,0,2018-08-22 02:09:38
+102.100.100.51476,Main dataset,Klebsiella pneumoniae,AJ292,K61,RPMI,4,Transcriptomics,HiSeq,AGRF,,2018-08-17,2018-08-03,0,,,357,,0,2018-08-22 02:09:38
+102.100.100.51475,Main dataset,Klebsiella pneumoniae,AJ292,K61,RPMI,3,Transcriptomics,HiSeq,AGRF,,2018-08-17,2018-08-03,0,,,356,,0,2018-08-22 02:09:38
+102.100.100.51474,Main dataset,Klebsiella pneumoniae,AJ292,K61,RPMI,2,Transcriptomics,HiSeq,AGRF,,2018-08-17,2018-07-27,0,,,355,,0,2018-08-22 02:09:38
+102.100.100.51473,Main dataset,Klebsiella pneumoniae,AJ292,K61,RPMI,1,Transcriptomics,HiSeq,AGRF,,2018-08-17,2018-07-27,0,,,354,,0,2018-08-22 02:09:38
+102.100.100.51472,Main dataset,Klebsiella pneumoniae,AJ218,K54,Pooled sera,6,Transcriptomics,HiSeq,AGRF,,2018-08-17,2018-08-08,0,,,353,,0,2018-08-22 02:09:38
+102.100.100.51471,Main dataset,Klebsiella pneumoniae,AJ218,K54,Pooled sera,5,Transcriptomics,HiSeq,AGRF,,2018-08-17,2018-08-08,0,,,352,,0,2018-08-22 02:09:38
+102.100.100.51470,Main dataset,Klebsiella pneumoniae,AJ218,K54,Pooled sera,4,Transcriptomics,HiSeq,AGRF,,2018-08-17,2018-08-03,0,,,351,,0,2018-08-22 02:09:38
+102.100.100.51469,Main dataset,Klebsiella pneumoniae,AJ218,K54,Pooled sera,3,Transcriptomics,HiSeq,AGRF,,2018-08-17,2018-08-03,0,,,350,,0,2018-08-22 02:09:38
+102.100.100.51468,Main dataset,Klebsiella pneumoniae,AJ218,K54,Pooled sera,2,Transcriptomics,HiSeq,AGRF,,2018-08-17,2018-07-27,0,,,349,,0,2018-08-22 02:09:38
+102.100.100.51467,Main dataset,Klebsiella pneumoniae,AJ218,K54,Pooled sera,1,Transcriptomics,HiSeq,AGRF,,2018-08-17,2018-07-27,0,,,348,,0,2018-08-22 02:09:38
+102.100.100.51466,Main dataset,Klebsiella pneumoniae,AJ218,K54,RPMI,6,Transcriptomics,HiSeq,AGRF,,2018-08-17,2018-08-08,0,,,347,,0,2018-08-22 02:09:38
+102.100.100.51465,Main dataset,Klebsiella pneumoniae,AJ218,K54,RPMI,5,Transcriptomics,HiSeq,AGRF,,2018-08-17,2018-08-08,0,,,346,,0,2018-08-22 02:09:38
+102.100.100.51464,Main dataset,Klebsiella pneumoniae,AJ218,K54,RPMI,4,Transcriptomics,HiSeq,AGRF,,2018-08-17,2018-08-03,0,,,345,,0,2018-08-22 02:09:38
+102.100.100.51463,Main dataset,Klebsiella pneumoniae,AJ218,K54,RPMI,3,Transcriptomics,HiSeq,AGRF,,2018-08-17,2018-08-03,0,,,344,,0,2018-08-22 02:09:38
+102.100.100.51462,Main dataset,Klebsiella pneumoniae,AJ218,K54,RPMI,2,Transcriptomics,HiSeq,AGRF,,2018-08-17,2018-07-27,0,,,343,,0,2018-08-22 02:09:38
+102.100.100.51461,Main dataset,Klebsiella pneumoniae,AJ218,K54,RPMI,1,Transcriptomics,HiSeq,AGRF,,2018-08-17,2018-07-27,0,,,342,,0,2018-08-22 02:09:37
+102.100.100.51460,Main dataset,Klebsiella pneumoniae,AJ055,K0,Pooled sera,6,Transcriptomics,HiSeq,AGRF,,2018-08-17,2018-08-08,0,,,341,,0,2018-08-22 02:09:37
+102.100.100.51459,Main dataset,Klebsiella pneumoniae,AJ055,K0,Pooled sera,5,Transcriptomics,HiSeq,AGRF,,2018-08-17,2018-08-08,0,,,340,,0,2018-08-22 02:09:37
+102.100.100.51458,Main dataset,Klebsiella pneumoniae,AJ055,K0,Pooled sera,4,Transcriptomics,HiSeq,AGRF,,2018-08-17,2018-08-03,0,,,339,,0,2018-08-22 02:09:37
+102.100.100.51457,Main dataset,Klebsiella pneumoniae,AJ055,K0,Pooled sera,3,Transcriptomics,HiSeq,AGRF,,2018-08-17,2018-08-03,0,,,338,,0,2018-08-22 02:09:37
+102.100.100.51456,Main dataset,Klebsiella pneumoniae,AJ055,K0,Pooled sera,2,Transcriptomics,HiSeq,AGRF,,2018-08-17,2018-07-27,0,,,337,,0,2018-08-22 02:09:37
+102.100.100.51455,Main dataset,Klebsiella pneumoniae,AJ055,K0,Pooled sera,1,Transcriptomics,HiSeq,AGRF,,2018-08-17,2018-07-27,0,,,336,,0,2018-08-22 02:09:37
+102.100.100.51454,Main dataset,Klebsiella pneumoniae,AJ055,K0,RPMI,6,Transcriptomics,HiSeq,AGRF,,2018-08-17,2018-08-08,0,,,335,,0,2018-08-22 02:09:37
+102.100.100.51453,Main dataset,Klebsiella pneumoniae,AJ055,K0,RPMI,5,Transcriptomics,HiSeq,AGRF,,2018-08-17,2018-08-08,0,,,334,,0,2018-08-22 02:09:37
+102.100.100.51452,Main dataset,Klebsiella pneumoniae,AJ055,K0,RPMI,4,Transcriptomics,HiSeq,AGRF,,2018-08-17,2018-08-03,0,,,333,,0,2018-08-22 02:09:37
+102.100.100.51451,Main dataset,Klebsiella pneumoniae,AJ055,K0,RPMI,3,Transcriptomics,HiSeq,AGRF,,2018-08-17,2018-08-03,0,,,332,,0,2018-08-22 02:09:37
+102.100.100.51450,Main dataset,Klebsiella pneumoniae,AJ055,K0,RPMI,2,Transcriptomics,HiSeq,AGRF,,2018-08-17,2018-07-27,0,,,331,,0,2018-08-22 02:09:37
+102.100.100.51449,Main dataset,Klebsiella pneumoniae,AJ055,K0,RPMI,1,Transcriptomics,HiSeq,AGRF,,2018-08-17,2018-07-27,0,,,330,,0,2018-08-22 02:09:37
 102.100.100.51376,Main dataset,Streptococcus pyogenes,SP444,M4,RPMI_modified,4,Transcriptomics,HiSeq,AGRF,,2018-04-05,2018-04-05,0,,,329,,0,2018-08-15 02:14:21
 102.100.100.51375,Main dataset,Streptococcus pyogenes,SP444,M4,RPMI_modified,3,Transcriptomics,HiSeq,AGRF,,2018-04-05,2018-04-05,0,,,328,,0,2018-08-15 02:14:21
 102.100.100.51374,Main dataset,Streptococcus pyogenes,SP444,M4,RPMI_modified,2,Transcriptomics,HiSeq,AGRF,,2018-04-05,2018-04-05,0,,,327,,0,2018-08-15 02:14:21
