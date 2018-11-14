@@ -76,6 +76,9 @@ class NCBISRAContextual:
         _, upload_rows = csv_to_named_tuple('BioProject', fname, mode='rU')
         return {t.filename for t in upload_rows}
 
+    def sample_ids(self):
+        return list(self.bpaid_biosample.keys())
+
     def get(self, bpa_id):
         obj = {
             'ncbi_bioproject_accession': self.bioproject_accession,
