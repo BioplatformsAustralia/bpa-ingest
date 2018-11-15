@@ -9,7 +9,7 @@ logger = make_logger(__name__)
 
 
 class BaseMetadata:
-    resource_linkage = ('bpa_id',)
+    resource_linkage = ('sample_id',)
 
     @classmethod
     def parse_spreadsheet(cls, fname, metadata_info):

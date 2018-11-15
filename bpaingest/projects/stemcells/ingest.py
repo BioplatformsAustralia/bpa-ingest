@@ -6,7 +6,7 @@ from collections import defaultdict
 from hashlib import md5 as md5hash
 
 from ...libs import ingest_utils
-from ...util import make_logger, bpa_id_to_ckan_name, common_values, clean_tag_name
+from ...util import make_logger, sample_id_to_ckan_name, common_values, clean_tag_name
 from ...abstract import BaseMetadata
 from ...libs.excel_wrapper import ExcelWrapper, make_field_definition as fld
 from .tracking import StemcellsTrackMetadata
@@ -32,7 +32,7 @@ common_skip = [
 ]
 
 
-def parse_bpa_id_range(s):
+def parse_sample_id_range(s):
     return s.strip().split('/')[-1]
 
 
@@ -47,7 +47,7 @@ class StemcellsTranscriptomeMetadata(BaseMetadata):
     ckan_data_type = 'stemcells-transcriptomics'
     spreadsheet = {
         'fields': [
-            fld("bpa_id", re.compile(r'^.*sample unique id$'), coerce=ingest_utils.extract_bpa_id),
+            fld("sample_id", re.compile(r'^.*sample unique id$'), coerce=ingest_utils.extract_ands_id),
             fld("sample_extaction_id", "Sample extraction ID"),
             fld("insert_size_range", "Insert size range"),
             fld("library_construction_protocol", "Library construction protocol"),
@@ -77,24 +77,24 @@ class StemcellsTranscriptomeMetadata(BaseMetadata):
         logger.info("Ingesting Stemcells Transcriptomics metadata from {0}".format(self.path))
         packages = []
         # duplicate rows are an issue in this project. we filter them out by uniquifying
-        # this is harmless as they have to precisly match, and BPA_ID is the primary key
+        # this is harmless as they have to precisly match, and sample_id is the primary key
         all_rows = set()
         for fname in glob(self.path + '/*.xlsx'):
             logger.info("Processing Stemcells Transcriptomics metadata file {0}".format(fname))
             all_rows.update(StemcellsTranscriptomeMetadata.parse_spreadsheet(fname, self.metadata_info))
         for row in all_rows:
-            bpa_id = row.bpa_id
-            if bpa_id is None:
+            sample_id = row.sample_id
+            if sample_id is None:
                 continue
             obj = {}
-            name = bpa_id_to_ckan_name(bpa_id.split('.')[-1], self.ckan_data_type)
+            name = sample_id_to_ckan_name(sample_id.split('.')[-1], self.ckan_data_type)
             track_meta = self.track_meta.get(row.ticket)
             obj.update({
                 'name': name,
                 'id': name,
-                'bpa_id': bpa_id,
-                'notes': 'Stemcell Transcriptomics %s' % (bpa_id),
-                'title': 'Stemcell Transcriptomics %s' % (bpa_id),
+                'sample_id': sample_id,
+                'notes': 'Stemcell Transcriptomics %s' % (sample_id),
+                'title': 'Stemcell Transcriptomics %s' % (sample_id),
                 'omics': 'transcriptomics',
                 'insert_size_range': row.insert_size_range,
                 'library_construction_protocol': row.library_construction_protocol,
@@ -115,7 +115,7 @@ class StemcellsTranscriptomeMetadata(BaseMetadata):
                 'private': True,
             })
             for contextual_source in self.contextual_metadata:
-                obj.update(contextual_source.get(bpa_id))
+                obj.update(contextual_source.get(sample_id))
             tag_names = ['transcriptome', 'raw']
             obj['tags'] = [{'name': t} for t in tag_names]
             packages.append(obj)
@@ -130,10 +130,10 @@ class StemcellsTranscriptomeMetadata(BaseMetadata):
                 resource = file_info.copy()
                 resource['md5'] = resource['id'] = md5
                 resource['name'] = filename
-                bpa_id = ingest_utils.extract_bpa_id(file_info.get('id'))
+                sample_id = ingest_utils.extract_ands_id(file_info.get('id'))
                 xlsx_info = self.metadata_info[os.path.basename(md5_file)]
                 legacy_url = urljoin(xlsx_info['base_url'], filename)
-                resources.append(((bpa_id,), legacy_url, resource))
+                resources.append(((sample_id,), legacy_url, resource))
         return resources
 
 
@@ -148,7 +148,7 @@ class StemcellsSmallRNAMetadata(BaseMetadata):
     ckan_data_type = 'stemcells-smallrna'
     spreadsheet = {
         'fields': [
-            fld("bpa_id", re.compile(r'^.*sample unique id$'), coerce=ingest_utils.extract_bpa_id),
+            fld("sample_id", re.compile(r'^.*sample unique id$'), coerce=ingest_utils.extract_ands_id),
             fld("sample_extaction_id", "Sample extraction ID"),
             fld("insert_size_range", "Insert size range"),
             fld("library_construction_protocol", "Library construction protocol"),
@@ -178,24 +178,24 @@ class StemcellsSmallRNAMetadata(BaseMetadata):
         logger.info("Ingesting Stemcells SmallRNA metadata from {0}".format(self.path))
         packages = []
         # duplicate rows are an issue in this project. we filter them out by uniquifying
-        # this is harmless as they have to precisly match, and BPA_ID is the primary key
+        # this is harmless as they have to precisly match, and sample_id is the primary key
         all_rows = set()
         for fname in glob(self.path + '/*.xlsx'):
             logger.info("Processing Stemcells SmallRNA metadata file {0}".format(fname))
             all_rows.update(StemcellsSmallRNAMetadata.parse_spreadsheet(fname, self.metadata_info))
         for row in all_rows:
-            bpa_id = row.bpa_id
-            if bpa_id is None:
+            sample_id = row.sample_id
+            if sample_id is None:
                 continue
             obj = {}
-            name = bpa_id_to_ckan_name(bpa_id.split('.')[-1], self.ckan_data_type)
+            name = sample_id_to_ckan_name(sample_id.split('.')[-1], self.ckan_data_type)
             track_meta = self.track_meta.get(row.ticket)
             obj.update({
                 'name': name,
                 'id': name,
-                'bpa_id': bpa_id,
-                'notes': 'Stemcell SmallRNA %s' % (bpa_id),
-                'title': 'Stemcell SmallRNA %s' % (bpa_id),
+                'sample_id': sample_id,
+                'notes': 'Stemcell SmallRNA %s' % (sample_id),
+                'title': 'Stemcell SmallRNA %s' % (sample_id),
                 'omics': 'transcriptomics',
                 'insert_size_range': row.insert_size_range,
                 'library_construction_protocol': row.library_construction_protocol,
@@ -216,7 +216,7 @@ class StemcellsSmallRNAMetadata(BaseMetadata):
                 'private': True,
             })
             for contextual_source in self.contextual_metadata:
-                obj.update(contextual_source.get(bpa_id))
+                obj.update(contextual_source.get(sample_id))
             tag_names = ['small-rna', 'raw']
             obj['tags'] = [{'name': t} for t in tag_names]
             packages.append(obj)
@@ -231,10 +231,10 @@ class StemcellsSmallRNAMetadata(BaseMetadata):
                 resource = file_info.copy()
                 resource['md5'] = resource['id'] = md5
                 resource['name'] = filename
-                bpa_id = ingest_utils.extract_bpa_id(file_info.get('id'))
+                sample_id = ingest_utils.extract_ands_id(file_info.get('id'))
                 xlsx_info = self.metadata_info[os.path.basename(md5_file)]
                 legacy_url = urljoin(xlsx_info['base_url'], filename)
-                resources.append(((bpa_id,), legacy_url, resource))
+                resources.append(((sample_id,), legacy_url, resource))
         return resources
 
 
@@ -247,10 +247,10 @@ class StemcellsSingleCellRNASeqMetadata(BaseMetadata):
     technology = 'singlecellrna'
     auth = ('stemcell', 'stemcell')
     ckan_data_type = 'stemcells-singlecellrnaseq'
-    resource_linkage = ('bpa_id_range',)
+    resource_linkage = ('sample_id_range',)
     spreadsheet = {
         'fields': [
-            fld("bpa_id_range", re.compile(r'^.*sample unique id$'), coerce=parse_bpa_id_range),
+            fld("sample_id_range", re.compile(r'^.*sample unique id$'), coerce=parse_sample_id_range),
             fld("sample_extaction_id", "Sample extraction ID"),
             fld("insert_size_range", "Insert size range"),
             fld("library_construction_protocol", "Library construction protocol"),
@@ -281,31 +281,31 @@ class StemcellsSingleCellRNASeqMetadata(BaseMetadata):
         logger.info("Ingesting Stemcells SingleCellRNASeq metadata from {0}".format(self.path))
         packages = []
         # duplicate rows are an issue in this project. we filter them out by uniquifying
-        # this is harmless as they have to precisly match, and BPA_ID is the primary key
+        # this is harmless as they have to precisly match, and sample_id is the primary key
         all_rows = set()
         for fname in glob(self.path + '/*.xlsx'):
             logger.info("Processing Stemcells SingleCellRNASeq metadata file {0}".format(fname))
             all_rows.update(StemcellsSingleCellRNASeqMetadata.parse_spreadsheet(fname, self.metadata_info))
         for row in all_rows:
-            bpa_id_range = row.bpa_id_range
-            if bpa_id_range is None:
+            sample_id_range = row.sample_id_range
+            if sample_id_range is None:
                 continue
             obj = {}
-            name = bpa_id_to_ckan_name(bpa_id_range, self.ckan_data_type)
+            name = sample_id_to_ckan_name(sample_id_range, self.ckan_data_type)
             track_meta = self.track_meta.get(row.ticket)
             # check that it really is a range
-            if '-' not in bpa_id_range:
-                logger.error("Skipping row with BPA ID Range `%s'" % (bpa_id_range))
+            if '-' not in sample_id_range:
+                logger.error("Skipping row with BPA ID Range `%s'" % (sample_id_range))
                 continue
             # NB: this isn't really the BPA ID, it's the first BPA ID
-            bpa_id = ingest_utils.extract_bpa_id(bpa_id_range.split('-', 1)[0])
+            sample_id = ingest_utils.extract_ands_id(sample_id_range.split('-', 1)[0])
             obj.update({
                 'name': name,
                 'id': name,
-                'bpa_id': bpa_id,
-                'bpa_id_range': bpa_id_range,
-                'notes': 'Stemcell SingleCellRNASeq %s' % (bpa_id_range),
-                'title': 'Stemcell SingleCellRNASeq %s' % (bpa_id_range),
+                'sample_id': sample_id,
+                'sample_id_range': sample_id_range,
+                'notes': 'Stemcell SingleCellRNASeq %s' % (sample_id_range),
+                'title': 'Stemcell SingleCellRNASeq %s' % (sample_id_range),
                 'insert_size_range': row.insert_size_range,
                 'library_construction_protocol': row.library_construction_protocol,
                 'sequencer': row.sequencer,
@@ -327,7 +327,7 @@ class StemcellsSingleCellRNASeqMetadata(BaseMetadata):
             })
             for contextual_source in self.contextual_metadata:
                 # NB: the rows in the contextual metadata are all identical across the range, so this works
-                obj.update(contextual_source.get(bpa_id))
+                obj.update(contextual_source.get(sample_id))
             tag_names = ['single-cell-rnaseq', 'raw']
             obj['tags'] = [{'name': t} for t in tag_names]
             packages.append(obj)
@@ -344,10 +344,10 @@ class StemcellsSingleCellRNASeqMetadata(BaseMetadata):
                 resource = file_info.copy()
                 resource['md5'] = resource['id'] = md5
                 resource['name'] = filename
-                bpa_id_range = file_info.get('id')
+                sample_id_range = file_info.get('id')
                 xlsx_info = self.metadata_info[os.path.basename(md5_file)]
                 legacy_url = urljoin(xlsx_info['base_url'], filename)
-                resources.append(((bpa_id_range,), legacy_url, resource))
+                resources.append(((sample_id_range,), legacy_url, resource))
         return resources
 
 
@@ -359,11 +359,11 @@ class StemcellsMetabolomicsMetadata(BaseMetadata):
     organization = 'bpa-stemcells'
     omics = 'metabolomics'
     auth = ('stemcell', 'stemcell')
-    resource_linkage = ('bpa_id', 'analytical_platform')
+    resource_linkage = ('sample_id', 'analytical_platform')
     ckan_data_type = 'stemcells-metabolomic'
     spreadsheet = {
         'fields': [
-            fld("bpa_id", re.compile(r'^.*sample unique id$'), coerce=ingest_utils.extract_bpa_id),
+            fld("sample_id", re.compile(r'^.*sample unique id$'), coerce=ingest_utils.extract_ands_id),
             fld("sample_fractionation_extraction_solvent", "sample fractionation / extraction solvent"),
             fld("analytical_platform", "platform", coerce=fix_analytical_platform),
             fld("instrument_column_type", "instrument/column type"),
@@ -394,25 +394,25 @@ class StemcellsMetabolomicsMetadata(BaseMetadata):
         logger.info("Ingesting Stemcells Metabolomics metadata from {0}".format(self.path))
         packages = []
         # duplicate rows are an issue in this project. we filter them out by uniquifying
-        # this is harmless as they have to precisly match, and BPA_ID is the primary key
+        # this is harmless as they have to precisly match, and sample_id is the primary key
         all_rows = set()
         for fname in glob(self.path + '/*.xlsx'):
             logger.info("Processing Stemcells Metabolomics metadata file {0}".format(fname))
             all_rows.update(StemcellsMetabolomicsMetadata.parse_spreadsheet(fname, self.metadata_info))
         for row in all_rows:
-            bpa_id = row.bpa_id
-            if bpa_id is None:
+            sample_id = row.sample_id
+            if sample_id is None:
                 continue
             obj = {}
-            name = bpa_id_to_ckan_name(bpa_id.split('.')[-1] + '-' + row.analytical_platform, self.ckan_data_type)
+            name = sample_id_to_ckan_name(sample_id.split('.')[-1] + '-' + row.analytical_platform, self.ckan_data_type)
             track_meta = self.track_meta.get(row.ticket)
             analytical_platform = fix_analytical_platform(row.analytical_platform)
             obj.update({
                 'name': name,
                 'id': name,
-                'bpa_id': bpa_id,
-                'notes': 'Stemcell Metabolomics %s %s' % (bpa_id, analytical_platform),
-                'title': 'Stemcell Metabolomics %s %s' % (bpa_id, analytical_platform),
+                'sample_id': sample_id,
+                'notes': 'Stemcell Metabolomics %s %s' % (sample_id, analytical_platform),
+                'title': 'Stemcell Metabolomics %s %s' % (sample_id, analytical_platform),
                 'omics': 'metabolomics',
                 'sample_fractionation_extraction_solvent': row.sample_fractionation_extraction_solvent,
                 'analytical_platform': analytical_platform,
@@ -435,7 +435,7 @@ class StemcellsMetabolomicsMetadata(BaseMetadata):
                 'private': True,
             })
             for contextual_source in self.contextual_metadata:
-                obj.update(contextual_source.get(bpa_id, analytical_platform))
+                obj.update(contextual_source.get(sample_id, analytical_platform))
             tag_names = ['metabolomic', clean_tag_name(analytical_platform), 'raw']
             obj['tags'] = [{'name': t} for t in tag_names]
             packages.append(obj)
@@ -451,10 +451,10 @@ class StemcellsMetabolomicsMetadata(BaseMetadata):
                 resource['md5'] = resource['id'] = md5
                 resource['name'] = filename
                 resource['analytical_platform'] = fix_analytical_platform(resource['analytical_platform'])
-                bpa_id = ingest_utils.extract_bpa_id(file_info.get('id'))
+                sample_id = ingest_utils.extract_ands_id(file_info.get('id'))
                 xlsx_info = self.metadata_info[os.path.basename(md5_file)]
                 legacy_url = urljoin(xlsx_info['base_url'], filename)
-                resources.append(((bpa_id, resource['analytical_platform']), legacy_url, resource))
+                resources.append(((sample_id, resource['analytical_platform']), legacy_url, resource))
         return resources
 
 
@@ -489,7 +489,7 @@ class StemcellsProteomicsBaseMetadata(BaseMetadata):
     def parse_spreadsheet(self, fname, additional_context, mode):
         if mode == '1d':
             field_spec = [
-                fld("bpa_id", re.compile(r'^.*sample unique id$'), coerce=ingest_utils.extract_bpa_id_silent),
+                fld("sample_id", re.compile(r'^.*sample unique id$'), coerce=ingest_utils.extract_ands_id_silent),
             ]
         elif mode == '2d':
             field_spec = [
@@ -541,22 +541,22 @@ class StemcellsProteomicsMetadata(StemcellsProteomicsBaseMetadata):
         logger.info("Ingesting Stemcells Proteomics metadata from {0}".format(self.path))
         packages = []
         # duplicate rows are an issue in this project. we filter them out by uniquifying
-        # this is harmless as they have to precisly match, and BPA_ID is the primary key
+        # this is harmless as they have to precisly match, and sample_id is the primary key
         #
         # we also have rows relating to pooled data, and non-pooled data (this class
         # considers only non-pooled data)
         all_rows = self.read_all_rows('1d')
-        bpa_id_ticket_facility = dict((t.bpa_id, (t.ticket, t.facility_code)) for t in all_rows if t.bpa_id)
-        for bpa_id, (ticket, facility_code) in sorted(bpa_id_ticket_facility.items()):
+        sample_id_ticket_facility = dict((t.sample_id, (t.ticket, t.facility_code)) for t in all_rows if t.sample_id)
+        for sample_id, (ticket, facility_code) in sorted(sample_id_ticket_facility.items()):
             obj = {}
-            name = bpa_id_to_ckan_name(bpa_id.split('.')[-1], self.ckan_data_type)
+            name = sample_id_to_ckan_name(sample_id.split('.')[-1], self.ckan_data_type)
             track_meta = self.track_meta.get(ticket)
             obj.update({
                 'name': name,
                 'id': name,
-                'bpa_id': bpa_id,
-                'notes': 'Stemcell Proteomics %s' % (bpa_id),
-                'title': 'Stemcell Proteomics %s' % (bpa_id),
+                'sample_id': sample_id,
+                'notes': 'Stemcell Proteomics %s' % (sample_id),
+                'title': 'Stemcell Proteomics %s' % (sample_id),
                 'omics': 'proteomics',
                 'type': self.ckan_data_type,
                 'date_of_transfer': ingest_utils.get_date_isoformat(track_meta.date_of_transfer),
@@ -573,7 +573,7 @@ class StemcellsProteomicsMetadata(StemcellsProteomicsBaseMetadata):
                 'private': True,
             })
             for contextual_source in self.contextual_metadata:
-                obj.update(contextual_source.get(bpa_id))
+                obj.update(contextual_source.get(sample_id))
             tag_names = ['proteomic', 'raw']
             obj['tags'] = [{'name': t} for t in tag_names]
             packages.append(obj)
@@ -595,10 +595,10 @@ class StemcellsProteomicsMetadata(StemcellsProteomicsBaseMetadata):
                 resource_meta = self.filename_metadata.get(filename, {})
                 for k in ("sample_fractionation", "lc_column_type", "gradient_time", "sample_on_column", "mass_spectrometer", "acquisition_mode", "database", "database_size"):
                     resource[k] = getattr(resource_meta, k)
-                bpa_id = ingest_utils.extract_bpa_id(file_info.get('id'))
+                sample_id = ingest_utils.extract_ands_id(file_info.get('id'))
                 xlsx_info = self.metadata_info[os.path.basename(md5_file)]
                 legacy_url = urljoin(xlsx_info['base_url'], filename)
-                resources.append(((bpa_id, ), legacy_url, resource))
+                resources.append(((sample_id, ), legacy_url, resource))
         return resources
 
 
@@ -624,7 +624,7 @@ class StemcellsProteomicsPoolMetadata(StemcellsProteomicsBaseMetadata):
         logger.info("Ingesting Stemcells Proteomics Pool metadata from {0}".format(self.path))
         packages = []
         # duplicate rows are an issue in this project. we filter them out by uniquifying
-        # this is harmless as they have to precisly match, and BPA_ID is the primary key
+        # this is harmless as they have to precisly match, and sample_id is the primary key
         #
         # we also have rows relating to pooled data, and non-pooled data (this class
         # considers only non-pooled data)
@@ -632,7 +632,7 @@ class StemcellsProteomicsPoolMetadata(StemcellsProteomicsBaseMetadata):
         pool_id_ticket_facility = dict((t.pool_id, (t.ticket, t.facility_code)) for t in all_rows if t.pool_id)
         for pool_id, (ticket, facility_code) in sorted(pool_id_ticket_facility.items()):
             obj = {}
-            name = bpa_id_to_ckan_name(pool_id, self.ckan_data_type)
+            name = sample_id_to_ckan_name(pool_id, self.ckan_data_type)
             track_meta = self.track_meta.get(ticket)
             obj.update({
                 'name': name,
@@ -705,7 +705,7 @@ class StemcellsProteomicsAnalysedMetadata(BaseMetadata):
         'fields': [
             fld('date_submission', 'date submission yy/mm/dd', coerce=ingest_utils.get_date_isoformat),
             fld('facility_project_code_experiment_code', 'facility project_code _facility experiment code'),
-            fld('bpa_id', 'bpa unique  identifier', coerce=ingest_utils.extract_bpa_id),
+            fld('sample_id', 'bpa unique  identifier', coerce=ingest_utils.extract_ands_id),
             fld('sample_name', 'sample name'),
             fld('replicate_group_id', 'replicate group id'),
             fld('species', 'species'),
@@ -762,17 +762,17 @@ class StemcellsProteomicsAnalysedMetadata(BaseMetadata):
         for ticket, rows in list(ticket_rows.items()):
             obj = common_values([t._asdict() for t in rows])
             track_meta = self.track_meta.get(ticket)
-            name = bpa_id_to_ckan_name(track_meta.folder_name, self.ckan_data_type)
+            name = sample_id_to_ckan_name(track_meta.folder_name, self.ckan_data_type)
             # folder names can be quite long, truncate
             name = name[:100]
-            bpa_ids = sorted(set([ingest_utils.extract_bpa_id(t.bpa_id) for t in rows]))
+            sample_ids = sorted(set([ingest_utils.extract_ands_id(t.sample_id) for t in rows]))
             obj.update({
                 'name': name,
                 'id': name,
                 'notes': 'Stemcell Proteomics Analysed %s' % (track_meta.folder_name),
                 'title': 'Stemcell Proteomics Analysed %s' % (track_meta.folder_name),
                 'omics': 'proteomics',
-                'bpa_ids': ', '.join(bpa_ids),
+                'sample_ids': ', '.join(sample_ids),
                 'type': self.ckan_data_type,
                 'date_of_transfer': ingest_utils.get_date_isoformat(track_meta.date_of_transfer),
                 'data_type': track_meta.data_type,
@@ -823,7 +823,7 @@ class StemcellsMetabolomicsAnalysedMetadata(BaseMetadata):
     spreadsheet = {
         'fields': [
             fld('data_analysis_date', 'data analysis date'),
-            fld('bpa_id_range', 'bpa unique  identifier **'),
+            fld('sample_id_range', 'bpa unique  identifier **'),
             fld('sample_name', 'sample name **'),
             fld('replicate_group_id', 'replicate group id**'),
             fld('species', 'species**'),
@@ -876,16 +876,16 @@ class StemcellsMetabolomicsAnalysedMetadata(BaseMetadata):
         packages = []
         for (ticket, folder_name), rows in list(folder_rows.items()):
             obj = common_values([t._asdict() for t in rows])
-            name = bpa_id_to_ckan_name(folder_name, self.ckan_data_type)
+            name = sample_id_to_ckan_name(folder_name, self.ckan_data_type)
             track_meta = self.track_meta.get(ticket)
-            bpa_ids = sorted(set([t.bpa_id_range.strip() for t in rows]))
+            sample_ids = sorted(set([t.sample_id_range.strip() for t in rows]))
             obj.update({
                 'name': name,
                 'id': name,
                 'notes': '%s' % (folder_name),
                 'title': '%s' % (folder_name),
                 'omics': 'metabolomics',
-                'bpa_ids': ', '.join(bpa_ids),
+                'sample_ids': ', '.join(sample_ids),
                 'type': self.ckan_data_type,
                 'date_of_transfer': ingest_utils.get_date_isoformat(track_meta.date_of_transfer),
                 'data_type': track_meta.data_type,
@@ -939,7 +939,7 @@ class StemcellsTranscriptomeAnalysedMetadata(BaseMetadata):
     spreadsheet = {
         'fields': [
             fld('date', 'date (yyyy-mm-dd)', coerce=ingest_utils.get_date_isoformat),
-            fld('bpa_id', 'bpa identifier', coerce=ingest_utils.extract_bpa_id),
+            fld('sample_id', 'bpa identifier', coerce=ingest_utils.extract_ands_id),
             fld('plate_number', 'plate number'),
             fld('well_no', 'well no'),
             fld('sample_name', 'sample name'),
@@ -1000,16 +1000,16 @@ class StemcellsTranscriptomeAnalysedMetadata(BaseMetadata):
         packages = []
         for (ticket, folder_name), rows in list(folder_rows.items()):
             obj = common_values([t._asdict() for t in rows])
-            name = bpa_id_to_ckan_name(folder_name, self.ckan_data_type)
+            name = sample_id_to_ckan_name(folder_name, self.ckan_data_type)
             track_meta = self.track_meta.get(ticket)
-            bpa_ids = sorted(set([t.bpa_id.strip() for t in rows]))
+            sample_ids = sorted(set([t.sample_id.strip() for t in rows]))
             obj.update({
                 'name': name,
                 'id': name,
                 'notes': '%s' % (folder_name),
                 'title': '%s' % (folder_name),
                 'omics': 'transcriptomics',
-                'bpa_ids': ', '.join(bpa_ids),
+                'sample_ids': ', '.join(sample_ids),
                 'type': self.ckan_data_type,
                 'date_of_transfer': ingest_utils.get_date_isoformat(track_meta.date_of_transfer),
                 'data_type': track_meta.data_type,

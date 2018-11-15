@@ -7,7 +7,7 @@ from urllib.parse import urljoin
 
 from ...libs.excel_wrapper import make_field_definition as fld
 from ...libs import ingest_utils
-from ...util import make_logger, bpa_id_to_ckan_name
+from ...util import make_logger, sample_id_to_ckan_name
 from ...abstract import BaseMetadata
 from ...util import clean_tag_name
 from . import files
@@ -24,7 +24,7 @@ class WheatCultivarsMetadata(BaseMetadata):
         'fields': [
             fld("source_name", "BPA ID"),
             fld("code", "CODE"),
-            fld("bpa_id", "BPA ID", coerce=lambda s: s.replace("/", ".")),
+            fld("sample_id", "BPA ID", coerce=lambda s: s.replace("/", ".")),
             fld("characteristics", "Characteristics"),
             fld("organism", "Organism"),
             fld("variety", "Variety"),
@@ -57,15 +57,15 @@ class WheatCultivarsMetadata(BaseMetadata):
         for fname in glob(self.path + '/*.xlsx'):
             logger.info("Processing Stemcells Transcriptomics metadata file {0}".format(fname))
             for row in self.parse_spreadsheet(fname, self.metadata_info):
-                bpa_id = row.bpa_id
-                if bpa_id is None:
+                sample_id = row.sample_id
+                if sample_id is None:
                     continue
-                name = bpa_id_to_ckan_name(bpa_id)
+                name = sample_id_to_ckan_name(sample_id)
                 obj = {
                     'name': name,
-                    'id': bpa_id,
-                    'bpa_id': bpa_id,
-                    'title': bpa_id,
+                    'id': sample_id,
+                    'sample_id': sample_id,
+                    'title': sample_id,
                     'notes': '%s (%s): %s' % (row.variety, row.code, row.classification),
                     'type': self.ckan_data_type,
                     'private': False,
@@ -91,8 +91,8 @@ class WheatCultivarsMetadata(BaseMetadata):
                 resource['md5'] = resource['id'] = md5
                 resource['name'] = filename
                 resource.update(self.runs.get(resource['run'], BLANK_RUN))
-                bpa_id = ingest_utils.extract_bpa_id(file_info['bpa_id'])
+                sample_id = ingest_utils.extract_ands_id(file_info['sample_id'])
                 xlsx_info = self.metadata_info[os.path.basename(md5_file)]
                 legacy_url = urljoin(xlsx_info['base_url'], '../all/' + filename)
-                resources.append(((bpa_id, ), legacy_url, resource))
+                resources.append(((sample_id, ), legacy_url, resource))
         return resources

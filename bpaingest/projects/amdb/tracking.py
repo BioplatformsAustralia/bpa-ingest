@@ -17,13 +17,13 @@ class MarineMicrobesTrackMetadata(object):
 
     def read_track_csv(self, fname):
         header, rows = csv_to_named_tuple('MarineMicrobesTrack', fname)
-        return dict((ingest_utils.extract_bpa_id(t.five_digit_bpa_id), t) for t in rows)
+        return dict((ingest_utils.extract_ands_id(t.five_digit_bpa_id), t) for t in rows)
 
-    def get(self, bpa_id):
+    def get(self, sample_id):
         data = {}
 
-        if bpa_id not in self.track_meta:
-            logger.debug("No %s metadata for %s" % (type(self).__name__, bpa_id))
+        if sample_id not in self.track_meta:
+            logger.debug("No %s metadata for %s" % (type(self).__name__, sample_id))
             data = {
                 'sample_type': '',
                 'costal_id': '',
@@ -38,7 +38,7 @@ class MarineMicrobesTrackMetadata(object):
             }
             return data
 
-        track_meta = self.track_meta[bpa_id]
+        track_meta = self.track_meta[sample_id]
         data = {
             'sample_type': track_meta.sample_type,
             'costal_id': track_meta.costal_id.strip(),

@@ -207,7 +207,7 @@ class BASESampleContextual:
     metadata_urls = ['https://downloads-qcif.bioplatforms.com/bpa/base/metadata/contextual/2017-06-28/']
     name = 'base-contextual'
     field_spec = [
-        fld('bpa_id', 'sample_id', coerce=ingest_utils.extract_bpa_id),
+        fld('sample_id', 'sample_id', coerce=ingest_utils.extract_ands_id),
         fld('date_sampled', 'date sampled', coerce=ingest_utils.get_date_isoformat),
         fld('latitude', 'latitude', coerce=ingest_utils.get_clean_number),
         fld('longitude', 'longitude', coerce=ingest_utils.get_clean_number),
@@ -283,10 +283,10 @@ class BASESampleContextual:
     def filename_metadata(self, *args, **kwargs):
         return {}
 
-    def get(self, bpa_id):
-        if bpa_id in self.sample_metadata:
-            return self.sample_metadata[bpa_id]
-        logger.warning("no %s metadata available for: %s" % (type(self).__name__, repr(bpa_id)))
+    def get(self, sample_id):
+        if sample_id in self.sample_metadata:
+            return self.sample_metadata[sample_id]
+        logger.warning("no %s metadata available for: %s" % (type(self).__name__, repr(sample_id)))
         return {}
 
     def _package_metadata(self, rows):
@@ -312,17 +312,17 @@ class BASESampleContextual:
         onotology_error_values = dict((t, set()) for t in ontology_cleanups)
         sample_metadata = {}
         for row in rows:
-            if row.bpa_id is None:
+            if row.sample_id is None:
                 continue
-            assert(row.bpa_id not in sample_metadata)
-            sample_metadata[row.bpa_id] = row_meta = {}
+            assert(row.sample_id not in sample_metadata)
+            sample_metadata[row.sample_id] = row_meta = {}
             for field in row._fields:
                 val = getattr(row, field)
                 if field == 'latitude':
                     if val and val > 0:
-                        logger.warning("Positioned in northern hemisphere, inverting: %s / %s" % (row.bpa_id, val))
+                        logger.warning("Positioned in northern hemisphere, inverting: %s / %s" % (row.sample_id, val))
                         val *= -1
-                if field != 'bpa_id':
+                if field != 'sample_id':
                     row_meta[field] = val
             for cleanup_name, enforcer in ontology_cleanups.items():
                 try:
@@ -359,7 +359,7 @@ class MarineMicrobesSampleContextual(object):
     name = 'mm-samplecontextual'
     field_specs = {
         'Coastal water': [
-            fld('bpa_id', 'bpa_id', coerce=ingest_utils.extract_bpa_id),
+            fld('sample_id', 'bpa_id', coerce=ingest_utils.extract_ands_id),
             fld('date_sampled', 'date sampled (yyyy-mm-dd)', coerce=ingest_utils.get_date_isoformat),
             fld('time_sampled', 'time sampled (hh:mm)', coerce=ingest_utils.get_time),
             fld('latitude', 'latitude (decimal degrees)', coerce=ingest_utils.get_clean_number),
@@ -388,7 +388,7 @@ class MarineMicrobesSampleContextual(object):
             fld('light_intensity', 'light intensity (lux)', coerce=ingest_utils.get_clean_number),
         ],
         'Coral': [
-            fld('bpa_id', 'bpa_id', coerce=ingest_utils.extract_bpa_id),
+            fld('sample_id', 'bpa_id', coerce=ingest_utils.extract_ands_id),
             fld('date_sampled', 'date sampled (yyyy-mm-dd)', coerce=ingest_utils.get_date_isoformat),
             fld('time_sampled', 'time sampled (hh:mm)', coerce=ingest_utils.get_time),
             fld('latitude', 'latitude (decimal degrees)', coerce=ingest_utils.get_clean_number),
@@ -407,7 +407,7 @@ class MarineMicrobesSampleContextual(object):
             fld('host_abundance', 'host abundance (individuals per m2)', coerce=ingest_utils.get_clean_number),
         ],
         'Pelagic_Public': [
-            fld('bpa_id', 'id', coerce=ingest_utils.extract_bpa_id),
+            fld('sample_id', 'id', coerce=ingest_utils.extract_ands_id),
             fld('organism', 'organism'),
             fld('tax_id', 'tax id', coerce=ingest_utils.get_clean_number),
             fld('date_sampled', 'date sampled (yyyy-mm-dd)', coerce=ingest_utils.get_date_isoformat),
@@ -488,7 +488,7 @@ class MarineMicrobesSampleContextual(object):
             fld('zea', 'zea [mg/m3]', coerce=ingest_utils.get_clean_number),
         ],
         'Seagrass': [
-            fld('bpa_id', 'bpa_id', coerce=ingest_utils.extract_bpa_id),
+            fld('sample_id', 'bpa_id', coerce=ingest_utils.extract_ands_id),
             fld('date_sampled', 'date sampled (yyyy-mm-dd)', coerce=ingest_utils.get_date_isoformat),
             fld('time_sampled', 'time sampled (hh:mm)', coerce=ingest_utils.get_time),
             fld('latitude', 'latitude (decimal degrees)', coerce=ingest_utils.get_clean_number),
@@ -515,7 +515,7 @@ class MarineMicrobesSampleContextual(object):
                 coerce=ingest_utils.get_clean_number),
         ],
         'Seaweed': [
-            fld('bpa_id', 'bpa_id', coerce=ingest_utils.extract_bpa_id),
+            fld('sample_id', 'bpa_id', coerce=ingest_utils.extract_ands_id),
             fld('date_sampled', 'date sampled (yyyy-mm-dd)', coerce=ingest_utils.get_date_isoformat),
             fld('time_sampled', 'time sampled (hh:mm)', coerce=ingest_utils.get_time),
             fld('latitude', 'latitude (decimal degrees)', coerce=ingest_utils.get_clean_number),
@@ -538,7 +538,7 @@ class MarineMicrobesSampleContextual(object):
             fld('information', 'Information'),
         ],
         'Sediment': [
-            fld('bpa_id', 'bpa_id', coerce=ingest_utils.extract_bpa_id),
+            fld('sample_id', 'bpa_id', coerce=ingest_utils.extract_ands_id),
             fld('date_sampled', 'date sampled (yyyy-mm-dd)', coerce=ingest_utils.get_date_isoformat),
             fld('time_sampled', 'time sampled (hh:mm)', coerce=ingest_utils.get_time),
             fld('latitude', 'latitude (decimal degrees)', coerce=ingest_utils.get_clean_number),
@@ -555,7 +555,7 @@ class MarineMicrobesSampleContextual(object):
             fld('sedimentation_rate', 'sedimentation rate (g /(cm2 x y)r)', coerce=ingest_utils.get_clean_number),
         ],
         'Sponge': [
-            fld('bpa_id', 'bpa_id', coerce=ingest_utils.extract_bpa_id),
+            fld('sample_id', 'bpa_id', coerce=ingest_utils.extract_ands_id),
             fld('date_sampled', 'date sampled (yyyy-mm-dd)', coerce=ingest_utils.get_date_isoformat),
             fld('time_sampled', 'time sampled (hh:mm)', coerce=ingest_utils.get_time),
             fld('latitude', 'latitude (decimal degrees)', coerce=ingest_utils.get_clean_number),
@@ -578,26 +578,26 @@ class MarineMicrobesSampleContextual(object):
     def sample_ids(self):
         return list(self.sample_metadata.keys())
 
-    def get(self, bpa_id):
-        if bpa_id in self.sample_metadata:
-            return self.sample_metadata[bpa_id]
-        logger.warning("no %s metadata available for: %s" % (type(self).__name__, repr(bpa_id)))
+    def get(self, sample_id):
+        if sample_id in self.sample_metadata:
+            return self.sample_metadata[sample_id]
+        logger.warning("no %s metadata available for: %s" % (type(self).__name__, repr(sample_id)))
         return {}
 
     def _package_metadata(self, rows):
         sample_metadata = {}
         for row in rows:
-            if row.bpa_id is None:
+            if row.sample_id is None:
                 continue
-            assert(row.bpa_id not in sample_metadata)
-            sample_metadata[row.bpa_id] = row_meta = {}
+            assert(row.sample_id not in sample_metadata)
+            sample_metadata[row.sample_id] = row_meta = {}
             for field in row._fields:
                 val = getattr(row, field)
                 if field == 'latitude':
                     if val and type(val) is float and val > 0:
-                        logger.warning("Positioned in northern hemisphere, inverting: %s / %s" % (row.bpa_id, val))
+                        logger.warning("Positioned in northern hemisphere, inverting: %s / %s" % (row.sample_id, val))
                         val *= -1
-                if field != 'bpa_id':
+                if field != 'sample_id':
                     row_meta[field] = val
         return sample_metadata
 

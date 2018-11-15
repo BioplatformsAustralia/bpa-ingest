@@ -18,7 +18,7 @@ sns = boto3.client('sns')
 class Handler(GenericHandler):
     '''Applies BASE contextual metadata values to packages with a given BPA ID.
 
-    The function should be set up to be triggered by SNS messages that have the bpa_id and values
+    The function should be set up to be triggered by SNS messages that have the sample_id and values
     to apply in them.
     The packages matching the BPA ID will be looked up from CKAN and an SNS message will be created
     for each package, containing the package id and the values that have to be applied.
@@ -40,26 +40,26 @@ class Handler(GenericHandler):
     SNS_ON_ERROR_SUBJECT = 'ERROR: BASE Contextual Metadata Apply'
 
     def handler(self, event, context):
-        bpa_id, metadata = self._extract_data(event)
-        logger.info('Processing BPA ID %s', bpa_id)
+        sample_id, metadata = self._extract_data(event)
+        logger.info('Processing BPA ID %s', sample_id)
 
         ckan_service = set_up_ckan_service(self.env)
 
-        packages = ckan_service.get_packages_by_bpa_id(bpa_id)
+        packages = ckan_service.get_packages_by_sample_id(sample_id)
         pids_and_changes = [(p['id'], changes(p, metadata)) for p in packages]
         packages_with_changes = [x for x in pids_and_changes if len(x[1]) > 0]
         for pid, updates in packages_with_changes:
             self.sns_ckan_patch_package(pid, updates)
 
         unchanged_package_ids = [x[0] for x in pids_and_changes if len(x[1]) == 0]
-        self.sns_success(bpa_id, packages_with_changes, unchanged_package_ids)
+        self.sns_success(sample_id, packages_with_changes, unchanged_package_ids)
 
-    def sns_success(self, bpa_id, packages_with_changes, unchanged_package_ids):
-        subject = shorten('BASE Apply Contextual Metadata - BPA ID %s' % bpa_id)
+    def sns_success(self, sample_id, packages_with_changes, unchanged_package_ids):
+        subject = shorten('BASE Apply Contextual Metadata - Sample ID %s' % sample_id)
         changed_count = len(packages_with_changes)
         unchanged_count = len(unchanged_package_ids)
         msg = 'Processed BPA ID %s, found %d packages, %d already up-to-date, sent SNS patch requests for %d.' % (
-            bpa_id, changed_count + unchanged_count, unchanged_count, changed_count)
+            sample_id, changed_count + unchanged_count, unchanged_count, changed_count)
 
         logger.info(msg)
         if not self.env.sns_on_success:
@@ -88,7 +88,7 @@ class Handler(GenericHandler):
 
     def _extract_data(self, event):
         message = json.loads(event['Records'][0]['Sns']['Message'])
-        return (message['bpa_id'], message['metadata'])
+        return (message['sample_id'], message['metadata'])
 
 
 handler = Handler(logger)

@@ -18,7 +18,7 @@ def get_run_data(file_name):
     The run metadata for this set
     """
 
-    field_spec = [fld('bpa_id', 'Soil sample unique ID', coerce=lambda s: s.replace('/', '.')),
+    field_spec = [fld('sample_id', 'Soil sample unique ID', coerce=lambda s: s.replace('/', '.')),
                   fld('variety', 'Variety'),
                   fld('cultivar_code', 'Code'),
                   fld('library', 'Library code'),
@@ -40,7 +40,7 @@ def get_run_data(file_name):
 def parse_run_data(path):
     """
     Run data is uniquely defined by
-    - bpa_id
+    - sample_id
     - flowcell
     - library type
     - library size
@@ -67,7 +67,7 @@ def parse_run_data(path):
     run_lookup = {}
 
     for run in run_data:
-        key = run.bpa_id + run.flowcell + run.library + run.library_construction
+        key = run.sample_id + run.flowcell + run.library + run.library_construction
         run_lookup[key] = make_run(number=run.run_number,
                                    casava_version=run.casava_version,
                                    library_construction_protocol=run.library_construction_protocol,

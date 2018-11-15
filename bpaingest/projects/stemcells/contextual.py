@@ -21,21 +21,21 @@ class StemcellsTranscriptomeContextual(object):
         xlsx_path = one(glob(path + '/*.xlsx'))
         self.sample_metadata = self._package_metadata(self._read_metadata(xlsx_path))
 
-    def get(self, bpa_id):
-        if bpa_id in self.sample_metadata:
-            return self.sample_metadata[bpa_id]
-        logger.warning("no %s metadata available for: %s" % (type(self).__name__, bpa_id))
+    def get(self, sample_id):
+        if sample_id in self.sample_metadata:
+            return self.sample_metadata[sample_id]
+        logger.warning("no %s metadata available for: %s" % (type(self).__name__, sample_id))
         return {}
 
     def _package_metadata(self, rows):
         sample_metadata = {}
         for row in rows:
-            if row.bpa_id is None:
+            if row.sample_id is None:
                 continue
-            assert(row.bpa_id not in sample_metadata)
-            sample_metadata[row.bpa_id] = row_meta = {}
+            assert(row.sample_id not in sample_metadata)
+            sample_metadata[row.sample_id] = row_meta = {}
             for field in row._fields:
-                if field != 'bpa_id':
+                if field != 'sample_id':
                     row_meta[field] = getattr(row, field)
         return sample_metadata
 
@@ -49,8 +49,8 @@ class StemcellsTranscriptomeContextual(object):
             fld('sample_submission_date', 'sample submission date', coerce=ingest_utils.get_date_isoformat),
             fld('archive_ingestion_date', 'archive ingestion date', coerce=ingest_utils.get_date_isoformat),
             fld('total_samples', 'total samples', coerce=ingest_utils.get_int),
-            fld('bpa_dataset_id', 'data set id', coerce=ingest_utils.extract_bpa_id),
-            fld('bpa_id', 'bpa id', coerce=ingest_utils.extract_bpa_id),
+            fld('bpa_dataset_id', 'data set id', coerce=ingest_utils.extract_ands_id),
+            fld('sample_id', 'bpa id', coerce=ingest_utils.extract_ands_id),
             fld('plate_number', 'plate number'),
             fld('well_number', 'well number', coerce=ingest_utils.get_int),
             fld('sample_name', 'sample name'),
@@ -91,21 +91,21 @@ class StemcellsSmallRNAContextual(object):
         xlsx_path = one(glob(path + '/*.xlsx'))
         self.sample_metadata = self._package_metadata(self._read_metadata(xlsx_path))
 
-    def get(self, bpa_id):
-        if bpa_id in self.sample_metadata:
-            return self.sample_metadata[bpa_id]
-        logger.warning("no %s metadata available for: %s" % (type(self).__name__, bpa_id))
+    def get(self, sample_id):
+        if sample_id in self.sample_metadata:
+            return self.sample_metadata[sample_id]
+        logger.warning("no %s metadata available for: %s" % (type(self).__name__, sample_id))
         return {}
 
     def _package_metadata(self, rows):
         sample_metadata = {}
         for row in rows:
-            if row.bpa_id is None:
+            if row.sample_id is None:
                 continue
-            assert(row.bpa_id not in sample_metadata)
-            sample_metadata[row.bpa_id] = row_meta = {}
+            assert(row.sample_id not in sample_metadata)
+            sample_metadata[row.sample_id] = row_meta = {}
             for field in row._fields:
-                if field != 'bpa_id':
+                if field != 'sample_id':
                     row_meta[field] = getattr(row, field)
         return sample_metadata
 
@@ -119,8 +119,8 @@ class StemcellsSmallRNAContextual(object):
             fld('sample_submission_date', 'sample submission date', coerce=ingest_utils.get_date_isoformat),
             fld('archive_ingestion_date', 'archive ingestion date', coerce=ingest_utils.get_date_isoformat),
             fld('total_samples', 'total samples', coerce=ingest_utils.get_int),
-            fld('bpa_dataset_id', 'data set id', coerce=ingest_utils.extract_bpa_id),
-            fld('bpa_id', 'bpa id', coerce=ingest_utils.extract_bpa_id),
+            fld('bpa_dataset_id', 'data set id', coerce=ingest_utils.extract_ands_id),
+            fld('sample_id', 'bpa id', coerce=ingest_utils.extract_ands_id),
             fld('plate_number', 'plate number', coerce=ingest_utils.get_int),
             fld('well_number', 'well number', coerce=ingest_utils.get_int),
             fld('sample_name', 'sample name'),
@@ -161,21 +161,21 @@ class StemcellsSingleCellRNASeq(object):
         xlsx_path = one(glob(path + '/*.xlsx'))
         self.sample_metadata = self._package_metadata(self._read_metadata(xlsx_path))
 
-    def get(self, bpa_id):
-        if bpa_id in self.sample_metadata:
-            return self.sample_metadata[bpa_id]
-        logger.warning("no %s metadata available for: %s" % (type(self).__name__, bpa_id))
+    def get(self, sample_id):
+        if sample_id in self.sample_metadata:
+            return self.sample_metadata[sample_id]
+        logger.warning("no %s metadata available for: %s" % (type(self).__name__, sample_id))
         return {}
 
     def _package_metadata(self, rows):
         sample_metadata = {}
         for row in rows:
-            if row.bpa_id is None:
+            if row.sample_id is None:
                 continue
-            assert(row.bpa_id not in sample_metadata)
-            sample_metadata[row.bpa_id] = row_meta = {}
+            assert(row.sample_id not in sample_metadata)
+            sample_metadata[row.sample_id] = row_meta = {}
             for field in row._fields:
-                if field != 'bpa_id':
+                if field != 'sample_id':
                     row_meta[field] = getattr(row, field)
         return sample_metadata
 
@@ -189,8 +189,8 @@ class StemcellsSingleCellRNASeq(object):
             fld('sample_submission_date', 'sample submission date', coerce=ingest_utils.get_date_isoformat),
             fld('archive_ingestion_date', 'archive ingestion date', coerce=ingest_utils.get_date_isoformat),
             fld('total_samples', 'total samples', coerce=ingest_utils.get_int),
-            fld('bpa_dataset_id', 'data set id', coerce=ingest_utils.extract_bpa_id),
-            fld('bpa_id', 'bpa id', coerce=ingest_utils.extract_bpa_id),
+            fld('bpa_dataset_id', 'data set id', coerce=ingest_utils.extract_ands_id),
+            fld('sample_id', 'bpa id', coerce=ingest_utils.extract_ands_id),
             fld('plate_number', 'plate number', coerce=ingest_utils.get_int),
             fld('well_number', 'well number', coerce=ingest_utils.get_int),
             fld('sample_name', 'sample name'),
@@ -231,8 +231,8 @@ class StemcellsMetabolomicsContextual(object):
         xlsx_path = one(glob(path + '/*.xlsx'))
         self.sample_metadata = self._package_metadata(self._read_metadata(xlsx_path))
 
-    def get(self, bpa_id, analytical_platform):
-        tpl = (bpa_id, analytical_platform)
+    def get(self, sample_id, analytical_platform):
+        tpl = (sample_id, analytical_platform)
         if tpl in self.sample_metadata:
             return self.sample_metadata[tpl]
         logger.warning("no %s metadata available for: %s" % (type(self).__name__, tpl))
@@ -242,13 +242,13 @@ class StemcellsMetabolomicsContextual(object):
     def _package_metadata(self, rows):
         sample_metadata = {}
         for row in rows:
-            if row.bpa_id is None:
+            if row.sample_id is None:
                 continue
-            tpl = (row.bpa_id, row.analytical_platform)
+            tpl = (row.sample_id, row.analytical_platform)
             assert(tpl not in sample_metadata)
             sample_metadata[tpl] = row_meta = {}
             for field in row._fields:
-                if field != 'bpa_id' and field != 'analytical_platform':
+                if field != 'sample_id' and field != 'analytical_platform':
                     row_meta[field] = getattr(row, field)
         return sample_metadata
 
@@ -262,8 +262,8 @@ class StemcellsMetabolomicsContextual(object):
             fld('sample_submission_date', 'sample submission date', coerce=ingest_utils.get_date_isoformat),
             fld('archive_ingestion_date', 'archive ingestion date', coerce=ingest_utils.get_date_isoformat),
             fld('total_samples', 'total samples', coerce=ingest_utils.get_int),
-            fld('bpa_dataset_id', 'data set id', coerce=ingest_utils.extract_bpa_id),
-            fld('bpa_id', 'bpa id', coerce=ingest_utils.extract_bpa_id),
+            fld('bpa_dataset_id', 'data set id', coerce=ingest_utils.extract_ands_id),
+            fld('sample_id', 'bpa id', coerce=ingest_utils.extract_ands_id),
             fld('plate_number', 'plate number', coerce=ingest_utils.get_int),
             fld('well_number', 'well number', coerce=ingest_utils.get_int),
             fld('sample_name', 'sample name', coerce=ingest_utils.get_int),
@@ -301,10 +301,10 @@ class StemcellsProteomicsContextual(object):
         xlsx_path = one(glob(path + '/*.xlsx'))
         self.sample_metadata = self._package_metadata(self._read_metadata(xlsx_path))
 
-    def get(self, bpa_id):
-        if bpa_id in self.sample_metadata:
-            return self.sample_metadata[bpa_id]
-        logger.warning("no %s metadata available for: %s" % (type(self).__name__, bpa_id))
+    def get(self, sample_id):
+        if sample_id in self.sample_metadata:
+            return self.sample_metadata[sample_id]
+        logger.warning("no %s metadata available for: %s" % (type(self).__name__, sample_id))
         return {}
 
     def _package_metadata(self, rows):
@@ -312,11 +312,11 @@ class StemcellsProteomicsContextual(object):
         for row in rows:
             row_meta = {}
             for field in row._fields:
-                if field != 'bpa_id':
+                if field != 'sample_id':
                     row_meta[field] = getattr(row, field)
-            if row.bpa_id:
-                assert(row.bpa_id not in sample_metadata)
-                sample_metadata[row.bpa_id] = row_meta
+            if row.sample_id:
+                assert(row.sample_id not in sample_metadata)
+                sample_metadata[row.sample_id] = row_meta
         return sample_metadata
 
     def _read_metadata(self, metadata_path):
@@ -331,8 +331,8 @@ class StemcellsProteomicsContextual(object):
             fld('sample_submission_date', 'sample submission date', coerce=ingest_utils.get_date_isoformat),
             fld('archive_ingestion_date', 'archive ingestion date', coerce=ingest_utils.get_date_isoformat),
             fld('total_samples', 'total samples', coerce=ingest_utils.get_int),
-            fld('bpa_dataset_id', 'dataset id', coerce=ingest_utils.extract_bpa_id),
-            fld('bpa_id', 'bpa id', coerce=ingest_utils.extract_bpa_id),
+            fld('bpa_dataset_id', 'dataset id', coerce=ingest_utils.extract_ands_id),
+            fld('sample_id', 'bpa id', coerce=ingest_utils.extract_ands_id),
             fld('plate_number', 'plate number', coerce=ingest_utils.get_int),
             fld('well_number', 'well number', coerce=ingest_utils.get_int),
             fld('sample_name', 'sample name', coerce=ingest_utils.get_int),

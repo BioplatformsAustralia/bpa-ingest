@@ -24,7 +24,7 @@ size_re = re.compile(r'^[0-9]+$')
 
 
 def genhash(ckan, meta, mirror_path, num_threads):
-    def calculate_hashes(bpa_id, legacy_url, resource):
+    def calculate_hashes(sample_id, legacy_url, resource):
         fpath = localpath(mirror_path, legacy_url)
         patch_obj = {}
 

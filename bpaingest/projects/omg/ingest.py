@@ -5,7 +5,7 @@ from collections import defaultdict
 
 from ...abstract import BaseMetadata
 
-from ...util import make_logger, bpa_id_to_ckan_name, common_values
+from ...util import make_logger, sample_id_to_ckan_name, common_values
 from urllib.parse import urljoin
 
 from glob import glob
@@ -56,9 +56,9 @@ class OMG10XRawIlluminaMetadata(OMGBaseMetadata):
     resource_linkage = ('archive_name',)
     spreadsheet = {
         'fields': [
-            fld('bpa_dataset_id', 'bpa_dataset_id', coerce=ingest_utils.extract_bpa_id),
-            fld('bpa_library_id', 'bpa_library_id', coerce=ingest_utils.extract_bpa_id),
-            fld('bpa_sample_id', 'bpa_sample_id', coerce=ingest_utils.extract_bpa_id),
+            fld('bpa_dataset_id', 'bpa_dataset_id', coerce=ingest_utils.extract_ands_id),
+            fld('bpa_library_id', 'bpa_library_id', coerce=ingest_utils.extract_ands_id),
+            fld('bpa_sample_id', 'bpa_sample_id', coerce=ingest_utils.extract_ands_id),
             fld('facility_sample_id', 'facility_sample_id'),
             fld('library_type', 'library_type'),
             fld('library_prep_date', 'library_prep_date'),
@@ -141,7 +141,7 @@ class OMG10XRawIlluminaMetadata(OMGBaseMetadata):
 
         packages = []
         for (flow_id, fname), rows in fname_rows.items():
-            name = bpa_id_to_ckan_name(fname, self.ckan_data_type, flow_id)
+            name = sample_id_to_ckan_name(fname, self.ckan_data_type, flow_id)
             assert(fname not in self.file_package)
             self.file_package[fname] = fname
             row_metadata = [make_row_metadata(row) for row in rows]
@@ -236,9 +236,9 @@ class OMG10XRawMetadata(OMGBaseMetadata):
     resource_linkage = ('bpa_sample_id', 'flow_id')
     spreadsheet = {
         'fields': [
-            fld('bpa_dataset_id', 'bpa_dataset_id', coerce=ingest_utils.extract_bpa_id),
-            fld('bpa_library_id', 'bpa_library_id', coerce=ingest_utils.extract_bpa_id),
-            fld('bpa_sample_id', 'bpa_sample_id', coerce=ingest_utils.extract_bpa_id),
+            fld('bpa_dataset_id', 'bpa_dataset_id', coerce=ingest_utils.extract_ands_id),
+            fld('bpa_library_id', 'bpa_library_id', coerce=ingest_utils.extract_ands_id),
+            fld('bpa_sample_id', 'bpa_sample_id', coerce=ingest_utils.extract_ands_id),
             fld('facility_sample_id', 'facility_sample_id'),
             fld('library_type', 'library_type'),
             fld('library_prep_date', 'library_prep_date'),
@@ -308,7 +308,7 @@ class OMG10XRawMetadata(OMGBaseMetadata):
             flow_id = obj['flow_id']
             self.flow_lookup[obj['ticket']] = flow_id
 
-            name = bpa_id_to_ckan_name(bpa_sample_id, self.ckan_data_type, flow_id)
+            name = sample_id_to_ckan_name(bpa_sample_id, self.ckan_data_type, flow_id)
             context = {}
             for contextual_source in self.contextual_metadata:
                 context.update(contextual_source.get(bpa_sample_id, bpa_library_id))
@@ -355,7 +355,7 @@ class OMG10XRawMetadata(OMGBaseMetadata):
                 xlsx_info = self.metadata_info[os.path.basename(md5_file)]
                 ticket = xlsx_info['ticket']
                 flow_id = self.flow_lookup[ticket]
-                bpa_sample_id = ingest_utils.extract_bpa_id(file_info['bpa_sample_id'])
+                bpa_sample_id = ingest_utils.extract_ands_id(file_info['bpa_sample_id'])
 
                 resource = file_info.copy()
                 resource['md5'] = resource['id'] = md5
@@ -380,9 +380,9 @@ class OMG10XProcessedIlluminaMetadata(OMGBaseMetadata):
     resource_linkage = ('bpa_sample_id', 'flow_id')
     spreadsheet = {
         'fields': [
-            fld('bpa_dataset_id', 'bpa_dataset_id', coerce=ingest_utils.extract_bpa_id),
-            fld('bpa_library_id', 'bpa_library_id', coerce=ingest_utils.extract_bpa_id),
-            fld('bpa_sample_id', 'bpa_sample_id', coerce=ingest_utils.extract_bpa_id),
+            fld('bpa_dataset_id', 'bpa_dataset_id', coerce=ingest_utils.extract_ands_id),
+            fld('bpa_library_id', 'bpa_library_id', coerce=ingest_utils.extract_ands_id),
+            fld('bpa_sample_id', 'bpa_sample_id', coerce=ingest_utils.extract_ands_id),
             fld('facility_sample_id', 'facility_sample_id'),
             fld('library_type', 'library_type'),
             fld('library_prep_date', 'library_prep_date'),
@@ -461,7 +461,7 @@ class OMG10XProcessedIlluminaMetadata(OMGBaseMetadata):
                 if bpa_sample_id is None:
                     continue
                 obj = {}
-                name = bpa_id_to_ckan_name(bpa_sample_id, self.ckan_data_type, flow_id)
+                name = sample_id_to_ckan_name(bpa_sample_id, self.ckan_data_type, flow_id)
                 assert(row.file not in self.file_package)
                 self.file_package[row.file] = bpa_sample_id, flow_id
                 context = {}
@@ -528,9 +528,9 @@ class OMGExonCaptureMetadata(OMGBaseMetadata):
     resource_linkage = ('bpa_library_id', 'flowcell_id', 'library_index_sequence')
     spreadsheet = {
         'fields': [
-            fld('bpa_dataset_id', 'bpa_dataset_id', coerce=ingest_utils.extract_bpa_id),
-            fld('bpa_library_id', 'bpa_library_id', coerce=ingest_utils.extract_bpa_id),
-            fld('bpa_sample_id', 'bpa_sample_id', coerce=ingest_utils.extract_bpa_id),
+            fld('bpa_dataset_id', 'bpa_dataset_id', coerce=ingest_utils.extract_ands_id),
+            fld('bpa_library_id', 'bpa_library_id', coerce=ingest_utils.extract_ands_id),
+            fld('bpa_sample_id', 'bpa_sample_id', coerce=ingest_utils.extract_ands_id),
             fld('facility_sample_id', 'facility_sample_id'),
             fld('library_type', 'library_type'),
             fld('library_prep_date', 'library_prep_date', coerce=ingest_utils.get_date_isoformat),
@@ -602,7 +602,7 @@ class OMGExonCaptureMetadata(OMGBaseMetadata):
                 if library_id is None:
                     continue
                 linkage = self.flow_cell_index_linkage(row.flowcell_id, row.library_index_sequence)
-                name = bpa_id_to_ckan_name(library_id, self.ckan_data_type, linkage)
+                name = sample_id_to_ckan_name(library_id, self.ckan_data_type, linkage)
                 obj = row._asdict()
                 context = {}
                 for contextual_source in self.contextual_metadata:
@@ -642,7 +642,7 @@ class OMGExonCaptureMetadata(OMGBaseMetadata):
                 resource['md5'] = resource['id'] = md5
                 resource['name'] = filename
                 resource['resource_type'] = self.ckan_data_type
-                library_id = ingest_utils.extract_bpa_id(resource['bpa_library_id'])
+                library_id = ingest_utils.extract_ands_id(resource['bpa_library_id'])
                 xlsx_info = self.metadata_info[os.path.basename(md5_file)]
                 legacy_url = urljoin(xlsx_info['base_url'], filename)
                 resources.append(((library_id, resource['flow_cell_id'], resource['index']), legacy_url, resource))
@@ -664,9 +664,9 @@ class OMGGenomicsHiSeqMetadata(OMGBaseMetadata):
     resource_linkage = ('bpa_sample_id', 'flowcell_id')
     spreadsheet = {
         'fields': [
-            fld('bpa_dataset_id', 'bpa_dataset_id', coerce=ingest_utils.extract_bpa_id),
-            fld('bpa_library_id', 'bpa_library_id', coerce=ingest_utils.extract_bpa_id),
-            fld('bpa_sample_id', 'bpa_sample_id', coerce=ingest_utils.extract_bpa_id),
+            fld('bpa_dataset_id', 'bpa_dataset_id', coerce=ingest_utils.extract_ands_id),
+            fld('bpa_library_id', 'bpa_library_id', coerce=ingest_utils.extract_ands_id),
+            fld('bpa_sample_id', 'bpa_sample_id', coerce=ingest_utils.extract_ands_id),
             fld('facility_sample_id', 'facility_sample_id'),
             fld('library_type', 'library_type'),
             fld('library_prep_date', 'library_prep_date'),
@@ -750,7 +750,7 @@ class OMGGenomicsHiSeqMetadata(OMGBaseMetadata):
                 bpa_library_id = obj['bpa_library_id']
                 if bpa_sample_id is None:
                     continue
-                name = bpa_id_to_ckan_name(bpa_sample_id, self.ckan_data_type, flow_id)
+                name = sample_id_to_ckan_name(bpa_sample_id, self.ckan_data_type, flow_id)
                 context = {}
                 for contextual_source in self.contextual_metadata:
                     context.update(contextual_source.get(bpa_sample_id, bpa_library_id))
@@ -793,7 +793,7 @@ class OMGGenomicsHiSeqMetadata(OMGBaseMetadata):
                 xlsx_info = self.metadata_info[os.path.basename(md5_file)]
                 legacy_url = urljoin(xlsx_info['base_url'], filename)
                 resources.append(
-                    ((ingest_utils.extract_bpa_id(resource['bpa_sample_id']), resource['flow_cell_id']), legacy_url, resource))
+                    ((ingest_utils.extract_ands_id(resource['bpa_sample_id']), resource['flow_cell_id']), legacy_url, resource))
         return resources
 
 
@@ -820,9 +820,9 @@ class OMGGenomicsDDRADMetadata(OMGBaseMetadata):
             fld('genus', 'genus'),
             fld('species', 'species'),
             fld('voucher_id', 'voucher_id'),
-            fld('bpa_dataset_id', 'bpa_dataset_id', coerce=ingest_utils.extract_bpa_id),
-            fld('bpa_library_id', 'bpa_library_id', coerce=ingest_utils.extract_bpa_id),
-            fld('bpa_sample_id', 'bpa_sample_id', coerce=ingest_utils.extract_bpa_id),
+            fld('bpa_dataset_id', 'bpa_dataset_id', coerce=ingest_utils.extract_ands_id),
+            fld('bpa_library_id', 'bpa_library_id', coerce=ingest_utils.extract_ands_id),
+            fld('bpa_sample_id', 'bpa_sample_id', coerce=ingest_utils.extract_ands_id),
             fld('plate_name', 'plate_name'),
             fld('plate_well', 'plate_well'),
             fld('facility_sample_id', 'facility_sample_id'),
@@ -902,7 +902,7 @@ class OMGGenomicsDDRADMetadata(OMGBaseMetadata):
                     if track_meta is None:
                         return None
                     return getattr(track_meta, k)
-                name = bpa_id_to_ckan_name(bpa_dataset_id, self.ckan_data_type, flowcell_id)
+                name = sample_id_to_ckan_name(bpa_dataset_id, self.ckan_data_type, flowcell_id)
             obj.update({
                 'name': name,
                 'id': name,
@@ -940,5 +940,5 @@ class OMGGenomicsDDRADMetadata(OMGBaseMetadata):
                 xlsx_info = self.metadata_info[os.path.basename(md5_file)]
                 legacy_url = urljoin(xlsx_info['base_url'], filename)
                 resources.append(
-                    ((ingest_utils.extract_bpa_id(resource['bpa_dataset_id']), resource['flowcell_id']), legacy_url, resource))
+                    ((ingest_utils.extract_ands_id(resource['bpa_dataset_id']), resource['flowcell_id']), legacy_url, resource))
         return resources
