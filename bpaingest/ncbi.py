@@ -37,7 +37,7 @@ class NCBISRAContextual:
         if not os.access(fname, os.R_OK):
             return {}
         _, biosample_rows = csv_to_named_tuple('BioSample', fname, mode='rU')
-        return dict((ingest_utils.extract_sample_id(t.sample_name), t.accession.strip()) for t in biosample_rows)
+        return dict((ingest_utils.extract_ands_id(t.sample_name), t.accession.strip()) for t in biosample_rows)
 
     def _read_accessions(self):
         """
@@ -48,7 +48,7 @@ class NCBISRAContextual:
         accessions = {}
         for fname in sample_objects:
             _, rows = csv_to_named_tuple('SRARow', fname, mode='rU', dialect='excel-tab')
-            accessions.update(dict((ingest_utils.extract_sample_id(t.sample_name), t.accession) for t in rows))
+            accessions.update(dict((ingest_utils.extract_ands_id(t.sample_name), t.accession) for t in rows))
         return accessions
 
     def _read_ncbi_sra(self):
