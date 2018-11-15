@@ -18,7 +18,9 @@ from .tracking import (BASETrackMetadata, MarineMicrobesGoogleTrackMetadata,
                        MarineMicrobesTrackMetadata)
 
 logger = make_logger(__name__)
-common_context = [BASESampleContextual, BASENCBIContextual]
+
+base_common_context = [BASESampleContextual, BASENCBIContextual]
+marine_common_context = [MarineMicrobesSampleContextual, MarineMicrobesNCBIContextual]
 
 
 # fixed read lengths provided by AB at CSIRO
@@ -48,13 +50,50 @@ def build_base_amplicon_linkage(index_linkage, flow_id, index):
     return flow_id
 
 
+class BaseContextualAccessMetadata():
+    """
+    for use by tools (e.g. bpaotu) which need access to the contextual metadata for all
+    AMD data, but not package or resource metadata
+    """
+
+    def __init__(self, metadata_path, contextual_metadata=None, metadata_info=None):
+        super().__init__()
+        self.contextual_metadata = contextual_metadata
+
+    def _get_packages(self):
+        return []
+
+    def _get_resources(self):
+        return []
+
+
+class AccessBASEContextualMetadata(BaseContextualAccessMetadata):
+    auth = ('base', 'base')
+    """
+    for use by tools (e.g. bpaotu) which need access to the contextual metadata for all
+    AMD data
+    """
+    contextual_classes = base_common_context
+    metadata_urls = []
+
+
+class AccessMarineMicrobesContextualMetadata(BaseContextualAccessMetadata):
+    auth = ('marine', 'marine')
+    """
+    for use by tools (e.g. bpaotu) which need access to the contextual metadata for all
+    AMD data
+    """
+    contextual_classes = marine_common_context
+    metadata_urls = []
+
+
 class BASEAmpliconsMetadata(BaseMetadata):
     auth = ('base', 'base')
     organization = 'australian-microbiome'
     ckan_data_type = 'base-genomics-amplicon'
     omics = 'genomics'
     technology = 'amplicons'
-    contextual_classes = common_context
+    contextual_classes = base_common_context
     metadata_patterns = [r'^.*\.md5$', r'^.*_metadata.*.*\.xlsx$']
     metadata_urls = [
         'https://downloads-qcif.bioplatforms.com/bpa/base/raw/amplicons/',
@@ -241,7 +280,7 @@ class BASEAmpliconsControlMetadata(BaseMetadata):
     ckan_data_type = 'base-genomics-amplicon-control'
     omics = 'genomics'
     technology = 'amplicons-control'
-    contextual_classes = common_context
+    contextual_classes = base_common_context
     metadata_patterns = [r'^.*\.md5$', r'^.*_metadata.*.*\.xlsx$']
     metadata_urls = [
         'https://downloads-qcif.bioplatforms.com/bpa/base/raw/amplicons/',
@@ -332,7 +371,7 @@ class BASEMetagenomicsMetadata(BaseMetadata):
     organization = 'australian-microbiome'
     ckan_data_type = 'base-metagenomics'
     omics = 'metagenomics'
-    contextual_classes = common_context
+    contextual_classes = base_common_context
     metadata_patterns = [r'^.*\.md5$', r'^.*_metadata.*.*\.xlsx$']
     metadata_urls = [
         'https://downloads-qcif.bioplatforms.com/bpa/base/raw/metagenomics/',
@@ -527,7 +566,7 @@ class BASESiteImagesMetadata(BaseMetadata):
     auth = ('base', 'base')
     organization = 'australian-microbiome'
     ckan_data_type = 'base-site-image'
-    contextual_classes = common_context
+    contextual_classes = base_common_context
     metadata_patterns = [r'^.*\.md5$']
     omics = None
     technology = 'site-images'
@@ -618,11 +657,6 @@ class BASESiteImagesMetadata(BaseMetadata):
         return resources
 
 
-index_from_comment_re = re.compile(r'([G|A|T|C|-]{6,}_[G|A|T|C|-]{6,})')
-index_from_comment_pilot_re = re.compile(r'_([G|A|T|C|-]{6,})_')
-
-common_context = [MarineMicrobesSampleContextual, MarineMicrobesNCBIContextual]
-
 read_lengths = {
     '16S': '300bp',
     'A16S': '300bp',
@@ -632,6 +666,10 @@ read_lengths = {
 
 def mm_amplicon_read_length(amplicon):
     return read_lengths[amplicon]
+
+
+index_from_comment_re = re.compile(r'([G|A|T|C|-]{6,}_[G|A|T|C|-]{6,})')
+index_from_comment_pilot_re = re.compile(r'_([G|A|T|C|-]{6,})_')
 
 
 def index_from_comment(attrs):
@@ -686,7 +724,7 @@ class BaseMarineMicrobesAmpliconsMetadata(BaseMarineMicrobesMetadata):
     organization = 'australian-microbiome'
     ckan_data_type = 'mm-genomics-amplicon'
     omics = 'genomics'
-    contextual_classes = common_context
+    contextual_classes = marine_common_context
     metadata_patterns = [r'^.*\.md5', r'^.*_metadata.*.*\.xlsx']
     resource_linkage = ('bpa_id', 'mm_amplicon_linkage')
     spreadsheet = {
@@ -976,7 +1014,7 @@ class MarineMicrobesMetagenomicsMetadata(BaseMarineMicrobesMetadata):
     organization = 'australian-microbiome'
     ckan_data_type = 'mm-metagenomics'
     omics = 'metagenomics'
-    contextual_classes = common_context
+    contextual_classes = marine_common_context
     metadata_patterns = [r'^.*\.md5', r'^.*_metadata.*\.xlsx']
     metadata_urls = [
         'https://downloads-qcif.bioplatforms.com/bpa/marine_microbes/raw/metagenomics/'
@@ -1084,7 +1122,7 @@ class MarineMicrobesMetatranscriptomeMetadata(BaseMarineMicrobesMetadata):
     auth = ('marine', 'marine')
     organization = 'australian-microbiome'
     ckan_data_type = 'mm-metatranscriptome'
-    contextual_classes = common_context
+    contextual_classes = marine_common_context
     omics = 'metatranscriptomics'
     metadata_patterns = [r'^.*\.md5', r'^.*_metadata.*\.xlsx']
     metadata_urls = [
