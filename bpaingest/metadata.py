@@ -2,6 +2,7 @@ import tempfile
 import shutil
 import json
 import os
+from contextlib import suppress
 from .util import make_logger
 from .libs.fetch_data import Fetcher, get_password
 
@@ -41,6 +42,9 @@ class DownloadMetadata(object):
                 getattr(project_class, 'metadata_patterns', None),
                 metadata_info,
                 getattr(project_class, 'metadata_url_components', []))
+
+        with suppress(FileExistsError):
+            os.mkdir(self.path)
 
         for contextual_path, contextual_cls in contextual:
             os.mkdir(contextual_path)

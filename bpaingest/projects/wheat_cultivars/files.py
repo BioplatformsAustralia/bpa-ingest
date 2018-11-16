@@ -1,7 +1,7 @@
 from collections import namedtuple
 
-from ...libs import bpa_id_utils
 from ...util import make_logger
+from ...libs.ingest_utils import extract_ands_id
 
 logger = make_logger(__name__)
 
@@ -13,25 +13,19 @@ def parse_base_pair(val):
         return int(val[:-2]) * 1000
 
 
-def make_protocol(**kwargs):
-    fields = ('library_type', 'base_pairs', 'library_construction_protocol', 'sequencer')
-    return dict((t, kwargs.get(t)) for t in fields)
-
-
 def make_file_metadata(md5_lines):
     """
     Add md5 data
     """
     for md5_line in md5_lines:
-        bpa_idx = md5_line.bpa_id
-        bpa_id = bpa_id_utils.get_bpa_id(bpa_idx)
-        if bpa_id is None:
+        sample_id = extract_ands_id(md5_line.sample_id)
+        if sample_id is None:
             continue
 
-        run_key = md5_line.bpa_id + md5_line.flowcell + md5_line.lib_type + md5_line.lib_size
+        run_key = md5_line.sample_id + md5_line.flowcell + md5_line.lib_type + md5_line.lib_size
         yield {
             'run': run_key,
-            'bpa_id': bpa_id,
+            'sample_id': sample_id,
             'library_type': md5_line.lib_type,
             'base_pairs': parse_base_pair(md5_line.lib_size),
             'flowcell': md5_line.flowcell,
@@ -50,7 +44,7 @@ def cultivars_parse_md5_file(md5_file):
     """
 
     class MD5ParsedLine(object):
-        Cultivar = namedtuple('Cultivar', 'desc bpa_id')
+        Cultivar = namedtuple('Cultivar', 'desc sample_id')
         cultivars = {
             'DRY': Cultivar('Drysdale', '102.100.100.13703'),
             'GLA': Cultivar('Gladius', '102.100.100.13704'),
@@ -75,7 +69,7 @@ def cultivars_parse_md5_file(md5_file):
 
             self.cultivar_key = None
             self.cultivar = None
-            self.bpa_id = None
+            self.sample_id = None
             self.lib_type = None
             self.lib_size = None
             self.flowcell = None
@@ -123,7 +117,7 @@ def cultivars_parse_md5_file(md5_file):
                 self._ok = False
                 return
 
-            self.bpa_id = self.cultivar.bpa_id
+            self.sample_id = self.cultivar.sample_id
 
             # WYA_PE_300bp_AD0ALYACXX_ATCACG_L003_R2.fastq.gz
             # [Cultivar_key]_[Library_Type]_[Library_Size]_[FLowcel]_[Barcode]_L[Lane_number]_R[Read_Number].

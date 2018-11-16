@@ -9,7 +9,6 @@ ENV NO_PROXY ${PIP_TRUSTED_HOST}
 
 RUN env | sort
 
-COPY docker-build.key /root/.ssh/id_rsa
 RUN chmod 600 /root/.ssh/id_rsa && \
     echo "StrictHostKeyChecking no" > /root/.ssh/config && \
     echo "UserKnownHostsFile /dev/null" >> /root/.ssh/config

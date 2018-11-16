@@ -23,7 +23,7 @@ class OMGSampleContextual(object):
 
     def _read_metadata(self, fname):
         field_spec = [
-            fld('bpa_sample_id', 'bpa_sample_id', coerce=ingest_utils.extract_bpa_id),
+            fld('bpa_sample_id', 'bpa_sample_id', coerce=ingest_utils.extract_ands_id),
             fld('voucher_id', 'voucher_id'),
             fld('tissue_number', 'tissue_number'),
             fld('institution_name', 'institution_name'),
@@ -94,7 +94,7 @@ class OMGSampleContextual(object):
             if not row.bpa_sample_id:
                 continue
             assert(row.bpa_sample_id not in sample_metadata)
-            bpa_sample_id = ingest_utils.extract_bpa_id(row.bpa_sample_id)
+            bpa_sample_id = ingest_utils.extract_ands_id(row.bpa_sample_id)
             sample_metadata[bpa_sample_id] = row_meta = {}
             for field in row._fields:
                 value = getattr(row, field)
@@ -120,8 +120,8 @@ class OMGLibraryContextual(object):
 
     def _read_metadata(self, fname):
         field_spec = [
-            fld('bpa_library_id', 'bpa_library_id', coerce=ingest_utils.extract_bpa_id),
-            fld('bpa_sample_id', 'bpa_sample_id', coerce=ingest_utils.extract_bpa_id),
+            fld('bpa_library_id', 'bpa_library_id', coerce=ingest_utils.extract_ands_id),
+            fld('bpa_sample_id', 'bpa_sample_id', coerce=ingest_utils.extract_ands_id),
             fld('library_type', 'library_type'),
             fld('library_prep_date', 'library_prep_date', coerce=ingest_utils.get_date_isoformat),
             fld('library_prepared_by', 'library_prepared_by'),
@@ -155,7 +155,7 @@ class OMGLibraryContextual(object):
             if not row.bpa_library_id:
                 continue
             assert(row.bpa_library_id not in library_metadata)
-            bpa_library_id = ingest_utils.extract_bpa_id(row.bpa_library_id)
+            bpa_library_id = ingest_utils.extract_ands_id(row.bpa_library_id)
             library_metadata[bpa_library_id] = row_meta = {}
             for field in row._fields:
                 value = getattr(row, field)

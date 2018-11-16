@@ -13,13 +13,13 @@ class SepsisTrackMetadata(object):
 
     def read_track_csv(self, fname):
         header, rows = csv_to_named_tuple('SepsisTrack', fname)
-        return dict((ingest_utils.extract_bpa_id(t.five_digit_bpa_id), t) for t in rows)
+        return dict((ingest_utils.extract_ands_id(t.five_digit_bpa_id), t) for t in rows)
 
-    def get(self, bpa_id):
-        if bpa_id not in self.track_meta:
-            logger.debug("No %s metadata for %s" % (type(self).__name__, bpa_id))
+    def get(self, sample_id):
+        if sample_id not in self.track_meta:
+            logger.debug("No %s metadata for %s" % (type(self).__name__, sample_id))
             return {}
-        track_meta = self.track_meta[bpa_id]
+        track_meta = self.track_meta[sample_id]
         return {
             'data_type': track_meta.data_type,
             'taxon_or_organism': track_meta.taxon_or_organism,
@@ -37,9 +37,9 @@ class SepsisTrackMetadata(object):
 
 
 class SepsisGenomicsTrackMetadata(SepsisTrackMetadata):
-    def get(self, bpa_id):
-        obj = super(SepsisGenomicsTrackMetadata, self).get(bpa_id)
-        track_meta = self.track_meta.get(bpa_id)
+    def get(self, sample_id):
+        obj = super(SepsisGenomicsTrackMetadata, self).get(sample_id)
+        track_meta = self.track_meta.get(sample_id)
         if track_meta:
             obj['growth_condition_notes'] = track_meta.growth_condition_notes
         return obj

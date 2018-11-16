@@ -21,12 +21,12 @@ class Handler(GenericHandler):
 
     The function should be set up to be triggered by ObjectCreate S3 events for a bucket and path
     where contextual metadata spreadsheets will be uploaded.
-    The function will read each row and will create one SNS message for each, containing the bpa_id
+    The function will read each row and will create one SNS message for each, containing the sample_id
     and the metadata (rest of the values in the spreadsheet for the row).
-    The sns_apply_to_bpa_id should be set to the SNS topic arn that will receive these messages.
+    The sns_apply_to_sample_id should be set to the SNS topic arn that will receive these messages.
     '''
     ENV_VAR_DEFS = {
-        'names': ('sns_apply_to_bpa_id', 'sns_on_success', 'sns_on_error'),
+        'names': ('sns_apply_to_sample_id', 'sns_on_success', 'sns_on_error'),
     }
     SNS_ON_ERROR_SUBJECT = 'ERROR: BASE Contextual Metadata Sheet'
 
@@ -44,8 +44,8 @@ class Handler(GenericHandler):
 
             contextual = BASESampleContextual(dirname)
             rows = list(contextual.sample_metadata.items())
-            for bpa_id, values in rows:
-                self.sns_publish_apply_metadata(bpa_id, values)
+            for sample_id, values in rows:
+                self.sns_publish_apply_metadata(sample_id, values)
         self.sns_success(rows)
 
     def sns_success(self, rows):
@@ -58,11 +58,11 @@ class Handler(GenericHandler):
             Subject=subject,
             Message=msg)
 
-    def sns_publish_apply_metadata(self, bpa_id, metadata):
-        default = 'Apply contextual metadata to sample bpa_id:%s from %s' % (
-            bpa_id, self.metadata_s3_key)
+    def sns_publish_apply_metadata(self, sample_id, metadata):
+        default = 'Apply contextual metadata to sample sample_id:%s from %s' % (
+            sample_id, self.metadata_s3_key)
         json_data = json.dumps({
-            'bpa_id': bpa_id,
+            'sample_id': sample_id,
             'metadata': metadata,
         })
         data = {
@@ -72,7 +72,7 @@ class Handler(GenericHandler):
         }
 
         sns.publish(
-            TopicArn=self.env.sns_apply_to_bpa_id,
+            TopicArn=self.env.sns_apply_to_sample_id,
             MessageStructure='json',
             Message=json.dumps(data))
 

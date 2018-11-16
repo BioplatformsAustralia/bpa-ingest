@@ -80,7 +80,7 @@ class SepsisBacterialContextual(object):
         xlsx_path = one(glob(path + '/*.xlsx'))
         self.sample_metadata = self._package_metadata(self._read_metadata(xlsx_path))
 
-    def get(self, bpa_id, submission_obj):
+    def get(self, sample_id, submission_obj):
         if 'taxon_or_organism' in submission_obj and 'strain_or_isolate' in submission_obj:
             tpl = (submission_obj['taxon_or_organism'], submission_obj['strain_or_isolate'])
             if tpl in self.sample_metadata:
@@ -147,20 +147,20 @@ class SepsisGenomicsContextual(object):
         xlsx_path = one(glob(path + '/*.xlsx'))
         self.sample_metadata = self._package_metadata(self._read_metadata(xlsx_path))
 
-    def get(self, bpa_id, submission_obj):
-        if bpa_id in self.sample_metadata:
-            return self.sample_metadata[bpa_id]
-        logger.warning("no %s metadata available for: %s" % (type(self).__name__, repr(bpa_id)))
+    def get(self, sample_id, submission_obj):
+        if sample_id in self.sample_metadata:
+            return self.sample_metadata[sample_id]
+        logger.warning("no %s metadata available for: %s" % (type(self).__name__, repr(sample_id)))
         return {}
 
     def _package_metadata(self, rows):
         sample_metadata = {}
         for row in rows:
-            if not row.bpa_id:
+            if not row.sample_id:
                 continue
-            if row.bpa_id in sample_metadata:
-                logger.warning("{}: duplicate sample metadata row for {}".format(self.__class__.__name__, row.bpa_id))
-            sample_metadata[row.bpa_id] = row_meta = {}
+            if row.sample_id in sample_metadata:
+                logger.warning("{}: duplicate sample metadata row for {}".format(self.__class__.__name__, row.sample_id))
+            sample_metadata[row.sample_id] = row_meta = {}
             for field in row._fields:
                 if field != 'taxon_or_organism' and field != 'strain_or_isolate':
                     row_meta[field] = getattr(row, field)
@@ -168,7 +168,7 @@ class SepsisGenomicsContextual(object):
 
     def _read_metadata(self, metadata_path):
         field_spec = [
-            fld('bpa_id', "BPA_sample_ID", coerce=ingest_utils.extract_bpa_id),
+            fld('sample_id', "BPA_sample_ID", coerce=ingest_utils.extract_ands_id),
             fld('taxon_or_organism', "Taxon_OR_organism"),
             fld('strain_or_isolate', "Strain_OR_isolate"),
             fld('serovar', "Serovar", coerce=int_or_comment),
@@ -205,20 +205,20 @@ class SepsisTranscriptomicsHiseqContextual(object):
         for xlsx_path in glob(path + '/*.xlsx'):
             self.sample_metadata.update(self._package_metadata(self._read_metadata(xlsx_path)))
 
-    def get(self, bpa_id, submission_obj):
-        if bpa_id in self.sample_metadata:
-            return self.sample_metadata[bpa_id]
-        logger.warning("no %s metadata available for: %s" % (type(self).__name__, repr(bpa_id)))
+    def get(self, sample_id, submission_obj):
+        if sample_id in self.sample_metadata:
+            return self.sample_metadata[sample_id]
+        logger.warning("no %s metadata available for: %s" % (type(self).__name__, repr(sample_id)))
         return {}
 
     def _package_metadata(self, rows):
         sample_metadata = {}
         for row in rows:
-            if not row.bpa_id:
+            if not row.sample_id:
                 continue
-            if row.bpa_id in sample_metadata:
-                logger.warning("{}: duplicate sample metadata row for {}".format(self.__class__.__name__, row.bpa_id))
-            sample_metadata[row.bpa_id] = row_meta = {}
+            if row.sample_id in sample_metadata:
+                logger.warning("{}: duplicate sample metadata row for {}".format(self.__class__.__name__, row.sample_id))
+            sample_metadata[row.sample_id] = row_meta = {}
             for field in row._fields:
                 if field != 'taxon_or_organism' and field != 'strain_or_isolate':
                     row_meta[field] = getattr(row, field)
@@ -227,7 +227,7 @@ class SepsisTranscriptomicsHiseqContextual(object):
     def _read_metadata(self, metadata_path):
         field_spec = [
             fld('sample_submission_date', 'sample submission date (yyyy-mm-dd)', coerce=ingest_utils.get_date_isoformat),
-            fld('bpa_id', 'sample name i.e. 5 digit bpa id', coerce=ingest_utils.extract_bpa_id),
+            fld('sample_id', 'sample name i.e. 5 digit bpa id', coerce=ingest_utils.extract_ands_id),
             fld('sample_type', 'sample type'),
             fld('volume_ul', 'volume (ul)'),
             fld('concentration_ng_per_ul', 'concentration (ng/ul)'),
@@ -274,20 +274,20 @@ class SepsisMetabolomicsLCMSContextual(object):
         xlsx_path = one(glob(path + '/*.xlsx'))
         self.sample_metadata.update(self._package_metadata(self._read_metadata(xlsx_path)))
 
-    def get(self, bpa_id, submission_obj):
-        if bpa_id in self.sample_metadata:
-            return self.sample_metadata[bpa_id]
-        logger.warning("no %s metadata available for: %s" % (type(self).__name__, repr(bpa_id)))
+    def get(self, sample_id, submission_obj):
+        if sample_id in self.sample_metadata:
+            return self.sample_metadata[sample_id]
+        logger.warning("no %s metadata available for: %s" % (type(self).__name__, repr(sample_id)))
         return {}
 
     def _package_metadata(self, rows):
         sample_metadata = {}
         for row in rows:
-            if not row.bpa_id:
+            if not row.sample_id:
                 continue
-            if row.bpa_id in sample_metadata:
-                logger.warning("{}: duplicate sample metadata row for {}".format(self.__class__.__name__, row.bpa_id))
-            sample_metadata[row.bpa_id] = row_meta = {}
+            if row.sample_id in sample_metadata:
+                logger.warning("{}: duplicate sample metadata row for {}".format(self.__class__.__name__, row.sample_id))
+            sample_metadata[row.sample_id] = row_meta = {}
             for field in row._fields:
                 if field != 'taxon_or_organism' and field != 'strain_or_isolate':
                     row_meta[field] = getattr(row, field)
@@ -296,7 +296,7 @@ class SepsisMetabolomicsLCMSContextual(object):
     def _read_metadata(self, metadata_path):
         field_spec = [
             fld('sample_submission_date', 'sample submission date (yyyy-mm-dd)', coerce=ingest_utils.get_date_isoformat),
-            fld('bpa_id', 'sample name i.e. 5 digit bpa id', coerce=ingest_utils.extract_bpa_id),
+            fld('sample_id', 'sample name i.e. 5 digit bpa id', coerce=ingest_utils.extract_ands_id),
             fld('taxon_or_organism', 'taxon_or_organism'),
             fld('strain_or_isolate', 'strain_or_isolate'),
             fld('serovar', 'serovar', coerce=int_or_comment),
@@ -338,22 +338,22 @@ class SepsisProteomicsBaseContextual(object):
         xlsx_path = one(glob(path + '/*.xlsx'))
         self.sample_metadata = self._package_metadata(self._read_metadata(xlsx_path))
 
-    def get(self, bpa_id, submission_obj):
-        if bpa_id in self.sample_metadata:
-            return self.sample_metadata[bpa_id]
-        logger.warning("no %s metadata available for: %s" % (type(self).__name__, repr(bpa_id)))
+    def get(self, sample_id, submission_obj):
+        if sample_id in self.sample_metadata:
+            return self.sample_metadata[sample_id]
+        logger.warning("no %s metadata available for: %s" % (type(self).__name__, repr(sample_id)))
         return {}
 
     def _package_metadata(self, rows):
         sample_metadata = {}
         for row in rows:
-            if not row.bpa_id:
+            if not row.sample_id:
                 continue
             if row.analytical_platform.lower() != self.analytical_platform.lower():
                 continue
-            if row.bpa_id in sample_metadata:
-                logger.warning("{}: duplicate sample metadata row for {}".format(self.__class__.__name__, row.bpa_id))
-            sample_metadata[row.bpa_id] = row_meta = {}
+            if row.sample_id in sample_metadata:
+                logger.warning("{}: duplicate sample metadata row for {}".format(self.__class__.__name__, row.sample_id))
+            sample_metadata[row.sample_id] = row_meta = {}
             for field in row._fields:
                 if field != 'taxon_or_organism' and field != 'strain_or_isolate':
                     row_meta[field] = getattr(row, field)
@@ -362,7 +362,7 @@ class SepsisProteomicsBaseContextual(object):
     def _read_metadata(self, metadata_path):
         field_spec = [
             fld('sample_submission_date', 'Sample submission date (YYYY-MM-DD)', coerce=ingest_utils.get_date_isoformat),
-            fld('bpa_id', 'Sample name i.e. 5 digit BPA ID', coerce=ingest_utils.extract_bpa_id),
+            fld('sample_id', 'Sample name i.e. 5 digit BPA ID', coerce=ingest_utils.extract_ands_id),
             fld('sample_type', 'Sample type'),
             fld('protein_yield_total_ug', 'protein yield - total (g)'),  # it really is ug, just unicode stripping drops the 'u'
             fld('protein_yield_facility_ug', 'Protein Yield / Facility (g)'),

@@ -9,7 +9,7 @@ from . import files
 from ...abstract import BaseMetadata
 from ...libs import ingest_utils
 from ...libs.excel_wrapper import make_field_definition as fld
-from ...util import (apply_license, bpa_id_to_ckan_name, common_values,
+from ...util import (apply_license, sample_id_to_ckan_name, common_values,
                      make_logger, one)
 from .contextual import (BASENCBIContextual, BASESampleContextual,
                          MarineMicrobesNCBIContextual,
@@ -18,7 +18,9 @@ from .tracking import (BASETrackMetadata, MarineMicrobesGoogleTrackMetadata,
                        MarineMicrobesTrackMetadata)
 
 logger = make_logger(__name__)
-common_context = [BASESampleContextual, BASENCBIContextual]
+
+base_common_context = [BASESampleContextual, BASENCBIContextual]
+marine_common_context = [MarineMicrobesSampleContextual, MarineMicrobesNCBIContextual]
 
 
 # fixed read lengths provided by AB at CSIRO
@@ -48,13 +50,50 @@ def build_base_amplicon_linkage(index_linkage, flow_id, index):
     return flow_id
 
 
+class BaseContextualAccessMetadata():
+    """
+    for use by tools (e.g. bpaotu) which need access to the contextual metadata for all
+    AMD data, but not package or resource metadata
+    """
+
+    def __init__(self, metadata_path, contextual_metadata=None, metadata_info=None):
+        super().__init__()
+        self.contextual_metadata = contextual_metadata
+
+    def _get_packages(self):
+        return []
+
+    def _get_resources(self):
+        return []
+
+
+class AccessBASEContextualMetadata(BaseContextualAccessMetadata):
+    auth = ('base', 'base')
+    """
+    for use by tools (e.g. bpaotu) which need access to the contextual metadata for all
+    AMD data
+    """
+    contextual_classes = base_common_context
+    metadata_urls = []
+
+
+class AccessMarineMicrobesContextualMetadata(BaseContextualAccessMetadata):
+    auth = ('marine', 'marine')
+    """
+    for use by tools (e.g. bpaotu) which need access to the contextual metadata for all
+    AMD data
+    """
+    contextual_classes = marine_common_context
+    metadata_urls = []
+
+
 class BASEAmpliconsMetadata(BaseMetadata):
     auth = ('base', 'base')
     organization = 'australian-microbiome'
     ckan_data_type = 'base-genomics-amplicon'
     omics = 'genomics'
     technology = 'amplicons'
-    contextual_classes = common_context
+    contextual_classes = base_common_context
     metadata_patterns = [r'^.*\.md5$', r'^.*_metadata.*.*\.xlsx$']
     metadata_urls = [
         'https://downloads-qcif.bioplatforms.com/bpa/base/raw/amplicons/',
@@ -89,7 +128,7 @@ class BASEAmpliconsMetadata(BaseMetadata):
     # spreadsheet
     spreadsheet = {
         'fields': [
-            fld("bpa_id", re.compile(r".*sample unique id"), coerce=ingest_utils.extract_bpa_id),
+            fld("sample_id", re.compile(r".*sample unique id"), coerce=ingest_utils.extract_ands_id),
             fld("sample_extraction_id", "Sample extraction ID", coerce=ingest_utils.fix_sample_extraction_id),
             fld("sequencing_facility", "Sequencing facility"),
             fld("target", "Target", coerce=lambda s: s.upper().strip()),
@@ -148,10 +187,10 @@ class BASEAmpliconsMetadata(BaseMetadata):
                         return None
                     return getattr(track_meta, k)
 
-                bpa_id = row.bpa_id
-                if bpa_id is None:
+                sample_id = row.sample_id
+                if sample_id is None:
                     continue
-                sample_extraction_id = ingest_utils.make_sample_extraction_id(row.sample_extraction_id, bpa_id)
+                sample_extraction_id = ingest_utils.make_sample_extraction_id(row.sample_extraction_id, sample_id)
                 base_fname = os.path.basename(fname)
                 index_linkage = base_fname in self.index_linkage_spreadsheets
                 base_amplicon_linkage = build_base_amplicon_linkage(index_linkage, flow_id, row.index)
@@ -161,7 +200,7 @@ class BASEAmpliconsMetadata(BaseMetadata):
                     note_extra = flow_id
                 obj = {}
                 amplicon = row.amplicon.upper()
-                name = bpa_id_to_ckan_name(sample_extraction_id, self.ckan_data_type + '-' + amplicon, base_amplicon_linkage)
+                name = sample_id_to_ckan_name(sample_extraction_id, self.ckan_data_type + '-' + amplicon, base_amplicon_linkage)
                 archive_ingestion_date = ingest_utils.get_date_isoformat(track_get('date_of_transfer_to_archive'))
 
                 obj.update({
@@ -169,7 +208,7 @@ class BASEAmpliconsMetadata(BaseMetadata):
                     'id': name,
                     'sample_type': 'soil',
                     'read_length': base_amplicon_read_length(amplicon),  # hard-coded for now, on advice of AB at CSIRO
-                    'bpa_id': bpa_id,
+                    'sample_id': sample_id,
                     'flow_id': flow_id,
                     'base_amplicon_linkage': base_amplicon_linkage,
                     'sample_extraction_id': sample_extraction_id,
@@ -206,7 +245,7 @@ class BASEAmpliconsMetadata(BaseMetadata):
                     'private': True,
                 })
                 for contextual_source in self.contextual_metadata:
-                    obj.update(contextual_source.get(bpa_id))
+                    obj.update(contextual_source.get(sample_id))
                 ingest_utils.add_spatial_extra(obj)
                 tag_names = ['amplicons', amplicon, obj['sample_type']]
                 obj['tags'] = [{'name': t} for t in tag_names]
@@ -221,14 +260,14 @@ class BASEAmpliconsMetadata(BaseMetadata):
             index_linkage = os.path.basename(md5_file) in self.index_linkage_md5s
             logger.info("Processing md5 file {}".format(md5_file))
             for filename, md5, file_info in self.parse_md5file(md5_file):
-                bpa_id = ingest_utils.extract_bpa_id(file_info.get('id'))
+                sample_id = ingest_utils.extract_ands_id(file_info.get('id'))
                 resource = file_info.copy()
                 resource['md5'] = resource['id'] = md5
                 resource['name'] = filename
                 resource['resource_type'] = self.ckan_data_type
                 for contextual_source in self.contextual_metadata:
                     resource.update(contextual_source.filename_metadata(filename))
-                sample_extraction_id = bpa_id.split('.')[-1] + '_' + file_info.get('extraction')
+                sample_extraction_id = sample_id.split('.')[-1] + '_' + file_info.get('extraction')
                 xlsx_info = self.metadata_info[os.path.basename(md5_file)]
                 legacy_url = urljoin(xlsx_info['base_url'], filename)
                 resources.append(((sample_extraction_id, resource['amplicon'], build_base_amplicon_linkage(index_linkage, resource['flow_id'], resource['index'])), legacy_url, resource))
@@ -241,7 +280,7 @@ class BASEAmpliconsControlMetadata(BaseMetadata):
     ckan_data_type = 'base-genomics-amplicon-control'
     omics = 'genomics'
     technology = 'amplicons-control'
-    contextual_classes = common_context
+    contextual_classes = base_common_context
     metadata_patterns = [r'^.*\.md5$', r'^.*_metadata.*.*\.xlsx$']
     metadata_urls = [
         'https://downloads-qcif.bioplatforms.com/bpa/base/raw/amplicons/',
@@ -271,7 +310,7 @@ class BASEAmpliconsControlMetadata(BaseMetadata):
         packages = []
         for (amplicon, flow_id), info in sorted(flow_id_ticket.items()):
             obj = {}
-            name = bpa_id_to_ckan_name('control', self.ckan_data_type + '-' + amplicon, flow_id).lower()
+            name = sample_id_to_ckan_name('control', self.ckan_data_type + '-' + amplicon, flow_id).lower()
             track_meta = self.track_meta.get(info['ticket'])
 
             def track_get(k):
@@ -332,7 +371,7 @@ class BASEMetagenomicsMetadata(BaseMetadata):
     organization = 'australian-microbiome'
     ckan_data_type = 'base-metagenomics'
     omics = 'metagenomics'
-    contextual_classes = common_context
+    contextual_classes = base_common_context
     metadata_patterns = [r'^.*\.md5$', r'^.*_metadata.*.*\.xlsx$']
     metadata_urls = [
         'https://downloads-qcif.bioplatforms.com/bpa/base/raw/metagenomics/',
@@ -341,7 +380,7 @@ class BASEMetagenomicsMetadata(BaseMetadata):
     resource_linkage = ('sample_extraction_id', 'flow_id')
     spreadsheet = {
         'fields': [
-            fld('bpa_id', 'Soil sample unique ID', coerce=ingest_utils.extract_bpa_id),
+            fld('sample_id', 'Soil sample unique ID', coerce=ingest_utils.extract_ands_id),
             fld('sample_extraction_id', 'Sample extraction ID', coerce=ingest_utils.fix_sample_extraction_id),
             fld('insert_size_range', 'Insert size range'),
             fld('library_construction_protocol', 'Library construction protocol'),
@@ -382,7 +421,7 @@ class BASEMetagenomicsMetadata(BaseMetadata):
         self.metadata_info = metadata_info
         self.track_meta = BASETrackMetadata()
 
-    def assemble_obj(self, bpa_id, sample_extraction_id, flow_id, row, track_meta):
+    def assemble_obj(self, sample_id, sample_extraction_id, flow_id, row, track_meta):
         def track_get(k):
             if track_meta is None:
                 return None
@@ -396,14 +435,14 @@ class BASEMetagenomicsMetadata(BaseMetadata):
                 res = v_fn(res)
             return res
 
-        name = bpa_id_to_ckan_name(sample_extraction_id, self.ckan_data_type, flow_id)
+        name = sample_id_to_ckan_name(sample_extraction_id, self.ckan_data_type, flow_id)
         archive_ingestion_date = ingest_utils.get_date_isoformat(track_get('date_of_transfer_to_archive'))
 
         obj = {
             'name': name,
             'sample_type': 'soil',
             'id': name,
-            'bpa_id': bpa_id,
+            'sample_id': sample_id,
             'flow_id': flow_id,
             'read_length': '150bp',  # hard-coded for now, on advice of AB at CSIRO
             'sample_extraction_id': sample_extraction_id,
@@ -429,7 +468,7 @@ class BASEMetagenomicsMetadata(BaseMetadata):
             'private': True,
         }
         for contextual_source in self.contextual_metadata:
-            obj.update(contextual_source.get(bpa_id))
+            obj.update(contextual_source.get(sample_id))
         ingest_utils.add_spatial_extra(obj)
         tag_names = ['metagenomics', obj['sample_type']]
         obj['tags'] = [{'name': t} for t in tag_names]
@@ -464,11 +503,11 @@ class BASEMetagenomicsMetadata(BaseMetadata):
 
         # missing metadata (see note above)
         for sample_extraction_id, flow_id in self.missing_packages:
-            bpa_id = ingest_utils.extract_bpa_id(sample_extraction_id.split('_')[0])
-            sample_extraction_id = ingest_utils.make_sample_extraction_id(sample_extraction_id, bpa_id)
+            sample_id = ingest_utils.extract_ands_id(sample_extraction_id.split('_')[0])
+            sample_extraction_id = ingest_utils.make_sample_extraction_id(sample_extraction_id, sample_id)
             md5_file = one(glob(self.path + '/*%s*.md5' % (flow_id)))
             xlsx_info = self.metadata_info[os.path.basename(md5_file)]
-            packages.append(self.assemble_obj(bpa_id, sample_extraction_id, flow_id, FakePilotRow(xlsx_info), FakePilotTrackMeta()))
+            packages.append(self.assemble_obj(sample_id, sample_extraction_id, flow_id, FakePilotRow(xlsx_info), FakePilotTrackMeta()))
 
         # the generated package IDs will have duplicates, due to data issues in the pilot data
         # we simply skip over the duplicates, which don't have any significant data differences
@@ -490,11 +529,11 @@ class BASEMetagenomicsMetadata(BaseMetadata):
                     flow_id = get_flow_id(fname)
                 if flow_id is None:
                     raise Exception("can't determine flow_id for %s / %s" % (fname, repr(row)))
-                bpa_id = row.bpa_id
-                if bpa_id is None:
+                sample_id = row.sample_id
+                if sample_id is None:
                     continue
-                sample_extraction_id = ingest_utils.make_sample_extraction_id(row.sample_extraction_id, bpa_id)
-                new_obj = self.assemble_obj(bpa_id, sample_extraction_id, flow_id, row, track_meta)
+                sample_extraction_id = ingest_utils.make_sample_extraction_id(row.sample_extraction_id, sample_id)
+                new_obj = self.assemble_obj(sample_id, sample_extraction_id, flow_id, row, track_meta)
                 if new_obj['id'] in generated_packages:
                     logger.debug('skipped attempt to generate duplicate package: %s' % new_obj['id'])
                     continue
@@ -509,14 +548,14 @@ class BASEMetagenomicsMetadata(BaseMetadata):
         for md5_file in glob(self.path + '/*.md5'):
             logger.info("Processing md5 file {}".format(md5_file))
             for filename, md5, file_info in self.parse_md5file(md5_file):
-                bpa_id = ingest_utils.extract_bpa_id(file_info.get('id'))
+                sample_id = ingest_utils.extract_ands_id(file_info.get('id'))
                 resource = file_info.copy()
                 resource['md5'] = resource['id'] = md5
                 resource['name'] = filename
                 resource['resource_type'] = self.ckan_data_type
                 for contextual_source in self.contextual_metadata:
                     resource.update(contextual_source.filename_metadata(filename))
-                sample_extraction_id = bpa_id.split('.')[-1] + '_' + file_info.get('extraction')
+                sample_extraction_id = sample_id.split('.')[-1] + '_' + file_info.get('extraction')
                 xlsx_info = self.metadata_info[os.path.basename(md5_file)]
                 legacy_url = urljoin(xlsx_info['base_url'], filename)
                 resources.append(((sample_extraction_id, resource['flow_id']), legacy_url, resource))
@@ -527,7 +566,7 @@ class BASESiteImagesMetadata(BaseMetadata):
     auth = ('base', 'base')
     organization = 'australian-microbiome'
     ckan_data_type = 'base-site-image'
-    contextual_classes = common_context
+    contextual_classes = base_common_context
     metadata_patterns = [r'^.*\.md5$']
     omics = None
     technology = 'site-images'
@@ -568,7 +607,7 @@ class BASESiteImagesMetadata(BaseMetadata):
 
     @classmethod
     def id_tpl_to_site_ids(cls, id_tpl):
-        return ', '.join([ingest_utils.extract_bpa_id(t) for t in id_tpl])
+        return ', '.join([ingest_utils.extract_ands_id(t) for t in id_tpl])
 
     def _get_packages(self):
         logger.info("Ingesting BPA BASE Images metadata from {0}".format(self.path))
@@ -576,13 +615,13 @@ class BASESiteImagesMetadata(BaseMetadata):
         for id_tpl in sorted(self.id_to_resources):
             info = self.id_to_resources[id_tpl]
             obj = {}
-            name = bpa_id_to_ckan_name('%s-%s' % id_tpl, self.ckan_data_type).lower()
+            name = sample_id_to_ckan_name('%s-%s' % id_tpl, self.ckan_data_type).lower()
             # find the common contextual metadata for the site IDs
             context = []
             for abbrev in id_tpl:
                 fragment = {}
                 for contextual_source in self.contextual_metadata:
-                    fragment.update(contextual_source.get(ingest_utils.extract_bpa_id(abbrev)))
+                    fragment.update(contextual_source.get(ingest_utils.extract_ands_id(abbrev)))
                 context.append(fragment)
             obj.update(common_values(context))
             obj.update({
@@ -618,11 +657,6 @@ class BASESiteImagesMetadata(BaseMetadata):
         return resources
 
 
-index_from_comment_re = re.compile(r'([G|A|T|C|-]{6,}_[G|A|T|C|-]{6,})')
-index_from_comment_pilot_re = re.compile(r'_([G|A|T|C|-]{6,})_')
-
-common_context = [MarineMicrobesSampleContextual, MarineMicrobesNCBIContextual]
-
 read_lengths = {
     '16S': '300bp',
     'A16S': '300bp',
@@ -632,6 +666,10 @@ read_lengths = {
 
 def mm_amplicon_read_length(amplicon):
     return read_lengths[amplicon]
+
+
+index_from_comment_re = re.compile(r'([G|A|T|C|-]{6,}_[G|A|T|C|-]{6,})')
+index_from_comment_pilot_re = re.compile(r'_([G|A|T|C|-]{6,})_')
 
 
 def index_from_comment(attrs):
@@ -686,12 +724,12 @@ class BaseMarineMicrobesAmpliconsMetadata(BaseMarineMicrobesMetadata):
     organization = 'australian-microbiome'
     ckan_data_type = 'mm-genomics-amplicon'
     omics = 'genomics'
-    contextual_classes = common_context
+    contextual_classes = marine_common_context
     metadata_patterns = [r'^.*\.md5', r'^.*_metadata.*.*\.xlsx']
-    resource_linkage = ('bpa_id', 'mm_amplicon_linkage')
+    resource_linkage = ('sample_id', 'mm_amplicon_linkage')
     spreadsheet = {
         'fields': [
-            fld("bpa_id", re.compile(r'^.*sample unique id$'), coerce=ingest_utils.extract_bpa_id),
+            fld("sample_id", re.compile(r'^.*sample unique id$'), coerce=ingest_utils.extract_ands_id),
             fld("sample_extraction_id", "Sample extraction ID"),
             fld("target", "Target"),
             fld("dilution_used", "Dilution used", coerce=ingest_utils.fix_date_interval),
@@ -748,26 +786,26 @@ class BaseMarineMicrobesAmpliconsMetadata(BaseMarineMicrobesMetadata):
             # the GOSHIP data has flowcells in the comments field
             use_flowid_from_comment = base_fname in self.flowcell_comment_spreadsheets
             for row in BaseMarineMicrobesAmpliconsMetadata.parse_spreadsheet(fname, self.metadata_info):
-                bpa_id = row.bpa_id
-                if bpa_id is None:
+                sample_id = row.sample_id
+                if sample_id is None:
                     continue
                 if use_flowid_from_comment:
                     flow_id = get_flow_id_from_comment(row.comments)
-                track_meta = self.track_meta.get(bpa_id)
+                track_meta = self.track_meta.get(sample_id)
                 google_track_meta = self.google_track_meta.get(row.ticket)
                 obj = self.extract_bpam_metadata(track_meta)
                 index = index_from_comment([row.comments, row.sample_name_on_sample_sheet])
                 mm_amplicon_linkage = build_mm_amplicon_linkage(use_index_linkage, flow_id, index)
-                name = bpa_id_to_ckan_name(bpa_id.split('.')[-1], self.ckan_data_type + '-' + self.amplicon.lower(), mm_amplicon_linkage)
+                name = sample_id_to_ckan_name(sample_id.split('.')[-1], self.ckan_data_type + '-' + self.amplicon.lower(), mm_amplicon_linkage)
                 archive_ingestion_date = ingest_utils.get_date_isoformat(google_track_meta.date_of_transfer_to_archive)
 
                 obj.update({
                     'name': name,
                     'id': name,
-                    'bpa_id': bpa_id,
+                    'sample_id': sample_id,
                     'flow_id': flow_id,
                     'mm_amplicon_linkage': mm_amplicon_linkage,
-                    'sample_extraction_id': ingest_utils.make_sample_extraction_id(row.sample_extraction_id, bpa_id),
+                    'sample_extraction_id': ingest_utils.make_sample_extraction_id(row.sample_extraction_id, sample_id),
                     'read_length': mm_amplicon_read_length(self.amplicon),
                     'target': row.target,
                     'pass_fail': ingest_utils.merge_pass_fail(row),
@@ -775,8 +813,8 @@ class BaseMarineMicrobesAmpliconsMetadata(BaseMarineMicrobesMetadata):
                     'reads': row.reads,
                     'analysis_software_version': row.analysis_software_version,
                     'amplicon': self.amplicon,
-                    'notes': 'Marine Microbes Amplicons %s %s %s' % (self.amplicon, bpa_id, flow_id),
-                    'title': 'Marine Microbes Amplicons %s %s %s' % (self.amplicon, bpa_id, flow_id),
+                    'notes': 'Marine Microbes Amplicons %s %s %s' % (self.amplicon, sample_id, flow_id),
+                    'title': 'Marine Microbes Amplicons %s %s %s' % (self.amplicon, sample_id, flow_id),
                     'omics': 'Genomics',
                     'analytical_platform': 'MiSeq',
                     'date_of_transfer': ingest_utils.get_date_isoformat(google_track_meta.date_of_transfer),
@@ -795,7 +833,7 @@ class BaseMarineMicrobesAmpliconsMetadata(BaseMarineMicrobesMetadata):
                     'private': True,
                 })
                 for contextual_source in self.contextual_metadata:
-                    obj.update(contextual_source.get(bpa_id))
+                    obj.update(contextual_source.get(sample_id))
                 ingest_utils.add_spatial_extra(obj)
                 tag_names = ['amplicons', self.amplicon]
                 if obj.get('sample_type'):
@@ -817,10 +855,10 @@ class BaseMarineMicrobesAmpliconsMetadata(BaseMarineMicrobesMetadata):
                 resource['resource_type'] = self.ckan_data_type
                 for contextual_source in self.contextual_metadata:
                     resource.update(contextual_source.filename_metadata(filename))
-                bpa_id = ingest_utils.extract_bpa_id(file_info.get('id'))
+                sample_id = ingest_utils.extract_ands_id(file_info.get('id'))
                 xlsx_info = self.metadata_info[os.path.basename(md5_file)]
                 legacy_url = urljoin(xlsx_info['base_url'], filename)
-                resources.append(((bpa_id, build_mm_amplicon_linkage(use_index_linkage, resource['flow_id'], resource['index'])), legacy_url, resource))
+                resources.append(((sample_id, build_mm_amplicon_linkage(use_index_linkage, resource['flow_id'], resource['index'])), legacy_url, resource))
         return resources
 
 
@@ -893,7 +931,7 @@ class BaseMarineMicrobesAmpliconsControlMetadata(BaseMarineMicrobesMetadata):
         packages = []
         for flow_id, info in sorted(flow_id_ticket.items()):
             obj = {}
-            name = bpa_id_to_ckan_name('control', self.ckan_data_type + '-' + self.amplicon, flow_id).lower()
+            name = sample_id_to_ckan_name('control', self.ckan_data_type + '-' + self.amplicon, flow_id).lower()
             google_track_meta = self.google_track_meta.get(info['ticket'])
 
             archive_ingestion_date = ingest_utils.get_date_isoformat(google_track_meta.date_of_transfer_to_archive)
@@ -976,7 +1014,7 @@ class MarineMicrobesMetagenomicsMetadata(BaseMarineMicrobesMetadata):
     organization = 'australian-microbiome'
     ckan_data_type = 'mm-metagenomics'
     omics = 'metagenomics'
-    contextual_classes = common_context
+    contextual_classes = marine_common_context
     metadata_patterns = [r'^.*\.md5', r'^.*_metadata.*\.xlsx']
     metadata_urls = [
         'https://downloads-qcif.bioplatforms.com/bpa/marine_microbes/raw/metagenomics/'
@@ -985,7 +1023,7 @@ class MarineMicrobesMetagenomicsMetadata(BaseMarineMicrobesMetadata):
     tracker_filename = 'MetagenomicsTrack'
     spreadsheet = {
         'fields': [
-            fld("bpa_id", re.compile(r'^.*sample unique id$'), coerce=ingest_utils.extract_bpa_id),
+            fld("sample_id", re.compile(r'^.*sample unique id$'), coerce=ingest_utils.extract_ands_id),
             fld("sample_extraction_id", "Sample extraction ID"),
             fld("insert_size_range", "Insert size range"),
             fld("library_construction_protocol", "Library construction protocol"),
@@ -1014,21 +1052,21 @@ class MarineMicrobesMetagenomicsMetadata(BaseMarineMicrobesMetadata):
         for fname in unique_spreadsheets(glob(self.path + '/*.xlsx')):
             logger.info("Processing Marine Microbes metadata file {0}".format(os.path.basename(fname)))
             for row in MarineMicrobesMetagenomicsMetadata.parse_spreadsheet(fname, self.metadata_info):
-                bpa_id = row.bpa_id
-                if bpa_id is None:
+                sample_id = row.sample_id
+                if sample_id is None:
                     continue
-                track_meta = self.track_meta.get(bpa_id)
+                track_meta = self.track_meta.get(sample_id)
                 google_track_meta = self.google_track_meta.get(row.ticket)
                 obj = self.extract_bpam_metadata(track_meta)
-                name = bpa_id_to_ckan_name(bpa_id.split('.')[-1], self.ckan_data_type)
+                name = sample_id_to_ckan_name(sample_id.split('.')[-1], self.ckan_data_type)
                 archive_ingestion_date = ingest_utils.get_date_isoformat(google_track_meta.date_of_transfer_to_archive)
 
                 obj.update({
                     'name': name,
                     'id': name,
-                    'bpa_id': bpa_id,
-                    'notes': 'Marine Microbes Metagenomics %s' % (bpa_id),
-                    'title': 'Marine Microbes Metagenomics %s' % (bpa_id),
+                    'sample_id': sample_id,
+                    'notes': 'Marine Microbes Metagenomics %s' % (sample_id),
+                    'title': 'Marine Microbes Metagenomics %s' % (sample_id),
                     'omics': 'metagenomics',
                     'analytical_platform': 'HiSeq',
                     'read_length': '250bp',
@@ -1041,7 +1079,7 @@ class MarineMicrobesMetagenomicsMetadata(BaseMarineMicrobesMetadata):
                     'archive_ingestion_date': archive_ingestion_date,
                     'license_id': apply_license(archive_ingestion_date),
                     'dataset_url': google_track_meta.download,
-                    'sample_extraction_id': ingest_utils.make_sample_extraction_id(row.sample_extraction_id, bpa_id),
+                    'sample_extraction_id': ingest_utils.make_sample_extraction_id(row.sample_extraction_id, sample_id),
                     'insert_size_range': row.insert_size_range,
                     'library_construction_protocol': row.library_construction_protocol,
                     'sequencer': row.sequencer,
@@ -1052,7 +1090,7 @@ class MarineMicrobesMetagenomicsMetadata(BaseMarineMicrobesMetadata):
                     'private': True,
                 })
                 for contextual_source in self.contextual_metadata:
-                    obj.update(contextual_source.get(bpa_id))
+                    obj.update(contextual_source.get(sample_id))
                 ingest_utils.add_spatial_extra(obj)
                 tag_names = ['metagenomics', 'raw']
                 if obj.get('sample_type'):
@@ -1073,10 +1111,10 @@ class MarineMicrobesMetagenomicsMetadata(BaseMarineMicrobesMetadata):
                 resource['resource_type'] = self.ckan_data_type
                 for contextual_source in self.contextual_metadata:
                     resource.update(contextual_source.filename_metadata(filename))
-                bpa_id = ingest_utils.extract_bpa_id(file_info.get('id'))
+                sample_id = ingest_utils.extract_ands_id(file_info.get('id'))
                 xlsx_info = self.metadata_info[os.path.basename(md5_file)]
                 legacy_url = urljoin(xlsx_info['base_url'], filename)
-                resources.append(((bpa_id,), legacy_url, resource))
+                resources.append(((sample_id,), legacy_url, resource))
         return resources
 
 
@@ -1084,7 +1122,7 @@ class MarineMicrobesMetatranscriptomeMetadata(BaseMarineMicrobesMetadata):
     auth = ('marine', 'marine')
     organization = 'australian-microbiome'
     ckan_data_type = 'mm-metatranscriptome'
-    contextual_classes = common_context
+    contextual_classes = marine_common_context
     omics = 'metatranscriptomics'
     metadata_patterns = [r'^.*\.md5', r'^.*_metadata.*\.xlsx']
     metadata_urls = [
@@ -1094,7 +1132,7 @@ class MarineMicrobesMetatranscriptomeMetadata(BaseMarineMicrobesMetadata):
     tracker_filename = 'MetatranscriptomeTrack'
     spreadsheet = {
         'fields': [
-            fld("bpa_id", re.compile(r'^.*sample unique id$'), coerce=ingest_utils.extract_bpa_id),
+            fld("sample_id", re.compile(r'^.*sample unique id$'), coerce=ingest_utils.extract_ands_id),
             fld("sample_extraction_id", "Sample extraction ID"),
             fld("insert_size_range", "Insert size range"),
             fld("library_construction_protocol", "Library construction protocol"),
@@ -1121,28 +1159,28 @@ class MarineMicrobesMetatranscriptomeMetadata(BaseMarineMicrobesMetadata):
         logger.info("Ingesting Marine Microbes Transcriptomics metadata from {0}".format(self.path))
         packages = []
         # duplicate rows are an issue in this project. we filter them out by uniquifying
-        # this is harmless as they have to precisly match, and BPA_ID is the primary key
+        # this is harmless as they have to precisly match, and sample_id is the primary key
         all_rows = set()
         for fname in unique_spreadsheets(glob(self.path + '/*.xlsx')):
             logger.info("Processing Marine Microbes Transcriptomics metadata file {0}".format(os.path.basename(fname)))
             for row in MarineMicrobesMetatranscriptomeMetadata.parse_spreadsheet(fname, self.metadata_info):
                 all_rows.add(row)
         for row in all_rows:
-            bpa_id = row.bpa_id
-            if bpa_id is None:
+            sample_id = row.sample_id
+            if sample_id is None:
                 continue
-            track_meta = self.track_meta.get(bpa_id)
+            track_meta = self.track_meta.get(sample_id)
             google_track_meta = self.google_track_meta.get(row.ticket)
             obj = self.extract_bpam_metadata(track_meta)
-            name = bpa_id_to_ckan_name(bpa_id.split('.')[-1], self.ckan_data_type)
+            name = sample_id_to_ckan_name(sample_id.split('.')[-1], self.ckan_data_type)
             archive_ingestion_date = ingest_utils.get_date_isoformat(google_track_meta.date_of_transfer_to_archive)
 
             obj.update({
                 'name': name,
                 'id': name,
-                'bpa_id': bpa_id,
-                'notes': 'Marine Microbes Metatranscriptome %s' % (bpa_id),
-                'title': 'Marine Microbes Metatranscriptome %s' % (bpa_id),
+                'sample_id': sample_id,
+                'notes': 'Marine Microbes Metatranscriptome %s' % (sample_id),
+                'title': 'Marine Microbes Metatranscriptome %s' % (sample_id),
                 'omics': 'metatranscriptomics',
                 'analytical_platform': 'HiSeq',
                 'read_length': '250bp',  # to be confirmed by Jason Koval
@@ -1155,7 +1193,7 @@ class MarineMicrobesMetatranscriptomeMetadata(BaseMarineMicrobesMetadata):
                 'archive_ingestion_date': archive_ingestion_date,
                 'license_id': apply_license(archive_ingestion_date),
                 'dataset_url': google_track_meta.download,
-                'sample_extraction_id': ingest_utils.make_sample_extraction_id(row.sample_extraction_id, bpa_id),
+                'sample_extraction_id': ingest_utils.make_sample_extraction_id(row.sample_extraction_id, sample_id),
                 'insert_size_range': row.insert_size_range,
                 'library_construction_protocol': row.library_construction_protocol,
                 'sequencer': row.sequencer,
@@ -1166,7 +1204,7 @@ class MarineMicrobesMetatranscriptomeMetadata(BaseMarineMicrobesMetadata):
                 'private': True,
             })
             for contextual_source in self.contextual_metadata:
-                obj.update(contextual_source.get(bpa_id))
+                obj.update(contextual_source.get(sample_id))
             ingest_utils.add_spatial_extra(obj)
             tag_names = ['metatranscriptome', 'raw']
             if obj.get('sample_type'):
@@ -1187,8 +1225,8 @@ class MarineMicrobesMetatranscriptomeMetadata(BaseMarineMicrobesMetadata):
                 resource['resource_type'] = self.ckan_data_type
                 for contextual_source in self.contextual_metadata:
                     resource.update(contextual_source.filename_metadata(filename))
-                bpa_id = ingest_utils.extract_bpa_id(file_info.get('id'))
+                sample_id = ingest_utils.extract_ands_id(file_info.get('id'))
                 xlsx_info = self.metadata_info[os.path.basename(md5_file)]
                 legacy_url = urljoin(xlsx_info['base_url'], filename)
-                resources.append(((bpa_id,), legacy_url, resource))
+                resources.append(((sample_id,), legacy_url, resource))
         return resources

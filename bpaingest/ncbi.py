@@ -37,7 +37,7 @@ class NCBISRAContextual:
         if not os.access(fname, os.R_OK):
             return {}
         _, biosample_rows = csv_to_named_tuple('BioSample', fname, mode='rU')
-        return dict((ingest_utils.extract_bpa_id(t.sample_name), t.accession.strip()) for t in biosample_rows)
+        return dict((ingest_utils.extract_ands_id(t.sample_name), t.accession.strip()) for t in biosample_rows)
 
     def _read_accessions(self):
         """
@@ -48,7 +48,7 @@ class NCBISRAContextual:
         accessions = {}
         for fname in sample_objects:
             _, rows = csv_to_named_tuple('SRARow', fname, mode='rU', dialect='excel-tab')
-            accessions.update(dict((ingest_utils.extract_bpa_id(t.sample_name), t.accession) for t in rows))
+            accessions.update(dict((ingest_utils.extract_ands_id(t.sample_name), t.accession) for t in rows))
         return accessions
 
     def _read_ncbi_sra(self):
@@ -76,12 +76,15 @@ class NCBISRAContextual:
         _, upload_rows = csv_to_named_tuple('BioProject', fname, mode='rU')
         return {t.filename for t in upload_rows}
 
-    def get(self, bpa_id):
+    def sample_ids(self):
+        return list(self.bpaid_biosample.keys())
+
+    def get(self, sample_id):
         obj = {
             'ncbi_bioproject_accession': self.bioproject_accession,
         }
-        if bpa_id in self.bpaid_biosample:
-            obj['ncbi_biosample_accession'] = self.bpaid_biosample[bpa_id]
+        if sample_id in self.bpaid_biosample:
+            obj['ncbi_biosample_accession'] = self.bpaid_biosample[sample_id]
         return obj
 
     def filename_metadata(self, filename):

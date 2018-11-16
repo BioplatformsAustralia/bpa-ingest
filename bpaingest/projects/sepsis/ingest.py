@@ -6,7 +6,7 @@ from urllib.parse import urljoin
 from hashlib import md5 as md5hash
 
 from ...libs import ingest_utils
-from ...util import make_logger, bpa_id_to_ckan_name, csv_to_named_tuple, common_values, clean_tag_name
+from ...util import make_logger, sample_id_to_ckan_name, csv_to_named_tuple, common_values, clean_tag_name
 from ...abstract import BaseMetadata
 from ...libs.excel_wrapper import make_field_definition as fld
 from glob import glob
@@ -35,15 +35,15 @@ def fix_version(s):
     return str(s)
 
 
-def parse_pooled_bpa_id(s):
+def parse_pooled_sample_id(s):
     if isinstance(s, str) and ',' in s:
-        return tuple([ingest_utils.extract_bpa_id(t.strip()) for t in s.split(',')])
+        return tuple([ingest_utils.extract_ands_id(t.strip()) for t in s.split(',')])
     else:
-        return ingest_utils.extract_bpa_id(s)
+        return ingest_utils.extract_ands_id(s)
 
 
-def make_bpa_id_list(s):
-    return tuple([ingest_utils.extract_bpa_id(t.strip()) for t in s.split(',')])
+def make_sample_id_list(s):
+    return tuple([ingest_utils.extract_ands_id(t.strip()) for t in s.split(',')])
 
 
 expanded_names = {
@@ -51,6 +51,7 @@ expanded_names = {
     '2dlibrary': '2D Library',
     'proteindatabase': 'protein database'
 }
+
 
 def expanded_tag_name(tag_name):
     '''
@@ -119,7 +120,7 @@ class SepsisGenomicsMiseqMetadata(BaseSepsisMetadata):
     technology = 'miseq'
     spreadsheet = {
         'fields': [
-            fld("bpa_id", "Bacterial sample unique ID", coerce=ingest_utils.extract_bpa_id),
+            fld("sample_id", "Bacterial sample unique ID", coerce=ingest_utils.extract_ands_id),
             fld("insert_size_range", "Insert size range"),
             fld("library_construction_protocol", "Library construction protocol"),
             fld("sequencer", "Sequencer"),
@@ -152,17 +153,17 @@ class SepsisGenomicsMiseqMetadata(BaseSepsisMetadata):
             ticket = xlsx_info['ticket']
             google_track_meta = self.google_track_meta.get(ticket)
             for row in rows:
-                bpa_id = row.bpa_id
-                track_meta = self.bpam_track_meta.get(bpa_id)
+                sample_id = row.sample_id
+                track_meta = self.bpam_track_meta.get(sample_id)
                 obj = track_meta.copy()
-                name = bpa_id_to_ckan_name(bpa_id.split('.')[-1], self.ckan_data_type)
+                name = sample_id_to_ckan_name(sample_id.split('.')[-1], self.ckan_data_type)
                 obj.update({
                     'name': name,
                     'id': name,
-                    'bpa_id': bpa_id,
+                    'sample_id': sample_id,
                     'archive_ingestion_date': ingest_utils.get_date_isoformat(google_track_meta.date_of_transfer_to_archive),
                     'notes': 'ARP Genomics Miseq Raw Data: %s %s %s Replicate %s' % (track_meta['taxon_or_organism'], track_meta['strain_or_isolate'], obj['growth_media'], obj['replicate']),
-                    'title': 'Sepsis Genomics Miseq %s' % (bpa_id.split('.')[-1]),
+                    'title': 'Sepsis Genomics Miseq %s' % (sample_id.split('.')[-1]),
                     'ticket': row.ticket,
                     'facility': row.facility_code.upper(),
                     'insert_size_range': row.insert_size_range,
@@ -174,7 +175,7 @@ class SepsisGenomicsMiseqMetadata(BaseSepsisMetadata):
                     'private': True,
                 })
                 for contextual_source in self.contextual_metadata:
-                    obj.update(contextual_source.get(bpa_id, track_meta))
+                    obj.update(contextual_source.get(sample_id, track_meta))
                 tag_names = sepsis_contextual_tags(self, obj)
                 obj['tags'] = [{'name': t} for t in tag_names]
                 packages.append(obj)
@@ -192,10 +193,10 @@ class SepsisGenomicsMiseqMetadata(BaseSepsisMetadata):
                 resource['md5'] = resource['id'] = md5
                 resource['name'] = filename
                 resource['resource_type'] = self.ckan_data_type
-                bpa_id = ingest_utils.extract_bpa_id(file_info.get('id'))
+                sample_id = ingest_utils.extract_ands_id(file_info.get('id'))
                 xlsx_info = self.metadata_info[os.path.basename(md5_file)]
                 legacy_url = urljoin(xlsx_info['base_url'], filename)
-                resources.append(((bpa_id,), legacy_url, resource))
+                resources.append(((sample_id,), legacy_url, resource))
         return resources
 
 
@@ -210,7 +211,7 @@ class SepsisGenomicsPacbioMetadata(BaseSepsisMetadata):
     technology = 'pacbio'
     spreadsheet = {
         'fields': [
-            fld("bpa_id", "Bacterial sample unique ID", coerce=ingest_utils.extract_bpa_id),
+            fld("sample_id", "Bacterial sample unique ID", coerce=ingest_utils.extract_ands_id),
             fld("insert_size_range", "Insert size range"),
             fld("library_construction_protocol", "Library construction protocol"),
             fld("sequencer", "Sequencer"),
@@ -238,7 +239,7 @@ class SepsisGenomicsPacbioMetadata(BaseSepsisMetadata):
 
     def read_track_csv(self, fname):
         header, rows = csv_to_named_tuple('SepsisGenomicsPacbioTrack', fname)
-        return dict((ingest_utils.extract_bpa_id(t.five_digit_bpa_id), t) for t in rows)
+        return dict((ingest_utils.extract_ands_id(t.five_digit_bpa_id), t) for t in rows)
 
     def _get_packages(self):
         logger.info("Ingesting Sepsis Genomics Pacbio metadata from {0}".format(self.path))
@@ -250,16 +251,16 @@ class SepsisGenomicsPacbioMetadata(BaseSepsisMetadata):
             ticket = xlsx_info['ticket']
             google_track_meta = self.google_track_meta.get(ticket)
             for row in rows:
-                bpa_id = row.bpa_id
-                track_meta = self.bpam_track_meta.get(bpa_id)
+                sample_id = row.sample_id
+                track_meta = self.bpam_track_meta.get(sample_id)
                 obj = track_meta.copy()
-                name = bpa_id_to_ckan_name(bpa_id.split('.')[-1], self.ckan_data_type)
+                name = sample_id_to_ckan_name(sample_id.split('.')[-1], self.ckan_data_type)
                 obj.update({
                     'name': name,
                     'id': name,
-                    'bpa_id': bpa_id,
+                    'sample_id': sample_id,
                     'archive_ingestion_date': ingest_utils.get_date_isoformat(google_track_meta.date_of_transfer_to_archive),
-                    'title': 'Sepsis Genomics Pacbio %s' % (bpa_id.split('.')[-1]),
+                    'title': 'Sepsis Genomics Pacbio %s' % (sample_id.split('.')[-1]),
                     'ticket': row.ticket,
                     'facility': row.facility_code.upper(),
                     'notes': 'ARP Genomics Pacbio Raw Data: %s %s %s Replicate %s' % (track_meta['taxon_or_organism'], track_meta['strain_or_isolate'], obj['growth_media'], obj['replicate']),
@@ -275,7 +276,7 @@ class SepsisGenomicsPacbioMetadata(BaseSepsisMetadata):
                     'data_generated': True,
                 })
                 for contextual_source in self.contextual_metadata:
-                    obj.update(contextual_source.get(bpa_id, track_meta))
+                    obj.update(contextual_source.get(sample_id, track_meta))
                 tag_names = sepsis_contextual_tags(self, obj)
                 obj['tags'] = [{'name': t} for t in tag_names]
                 packages.append(obj)
@@ -291,10 +292,10 @@ class SepsisGenomicsPacbioMetadata(BaseSepsisMetadata):
                 resource['md5'] = resource['id'] = md5
                 resource['name'] = filename
                 resource['resource_type'] = self.ckan_data_type
-                bpa_id = ingest_utils.extract_bpa_id(file_info.get('id'))
+                sample_id = ingest_utils.extract_ands_id(file_info.get('id'))
                 xlsx_info = self.metadata_info[os.path.basename(md5_file)]
                 legacy_url = urljoin(xlsx_info['base_url'], filename)
-                resources.append(((bpa_id,), legacy_url, resource))
+                resources.append(((sample_id,), legacy_url, resource))
         return resources
 
 
@@ -309,7 +310,7 @@ class SepsisTranscriptomicsHiseqMetadata(BaseSepsisMetadata):
     technology = 'hiseq'
     spreadsheet = {
         'fields': [
-            fld("bpa_id", "Antibiotic Resistant Pathogen sample unique ID", coerce=ingest_utils.extract_bpa_id),
+            fld("sample_id", "Antibiotic Resistant Pathogen sample unique ID", coerce=ingest_utils.extract_ands_id),
             fld("sample", "Sample (MGR code)"),
             fld("library_construction_protocol", "Library construction protocol"),
             fld("barcode_tag", "Barcode tag"),
@@ -337,7 +338,7 @@ class SepsisTranscriptomicsHiseqMetadata(BaseSepsisMetadata):
         if fname is None:
             return {}
         header, rows = csv_to_named_tuple('SepsisGenomicsHiseqTrack', fname)
-        return dict((ingest_utils.extract_bpa_id(t.five_digit_bpa_id), t) for t in rows)
+        return dict((ingest_utils.extract_ands_id(t.five_digit_bpa_id), t) for t in rows)
 
     def _get_packages(self):
         logger.info("Ingesting Sepsis Transcriptomics Hiseq metadata from {0}".format(self.path))
@@ -347,7 +348,7 @@ class SepsisTranscriptomicsHiseqMetadata(BaseSepsisMetadata):
         # for these to be combined together, into a single package, with two flow-cells.
         # Should be an uncommon case, only in AGRF data.
 
-        bpa_id_info = defaultdict(list)
+        sample_id_info = defaultdict(list)
         for fname in glob(self.path + '/*.xlsx'):
             logger.info("Processing Sepsis Transcriptomics metadata file {0}".format(fname))
 
@@ -357,31 +358,31 @@ class SepsisTranscriptomicsHiseqMetadata(BaseSepsisMetadata):
             google_track_meta = self.google_track_meta.get(ticket)
 
             for row in rows:
-                bpa_id = row.bpa_id
-                if bpa_id is None:
+                sample_id = row.sample_id
+                if sample_id is None:
                     continue
-                bpa_id_info[bpa_id].append([row, xlsx_info, google_track_meta])
+                sample_id_info[sample_id].append([row, xlsx_info, google_track_meta])
 
         # collate together the flow cell IDs
-        bpa_id_flowcells = defaultdict(set)
+        sample_id_flowcells = defaultdict(set)
         for md5_file in glob(self.path + '/*.md5'):
             for filename, md5, file_info in self.parse_md5file(md5_file):
-                bpa_id = ingest_utils.extract_bpa_id(file_info.get('id'))
-                bpa_id_flowcells[bpa_id].add(file_info['flow_cell_id'])
+                sample_id = ingest_utils.extract_ands_id(file_info.get('id'))
+                sample_id_flowcells[sample_id].add(file_info['flow_cell_id'])
 
-        for bpa_id, info in bpa_id_info.items():
+        for sample_id, info in sample_id_info.items():
             tickets = ', '.join(sorted(set(xlsx_info['ticket'] for _, xlsx_info, _ in info)))
             archive_ingestion_dates = ', '.join(
                 sorted(set(google_track_meta.date_of_transfer_to_archive for _, _, google_track_meta in info)))
-            name = bpa_id_to_ckan_name(bpa_id.split('.')[-1], self.ckan_data_type)
-            track_meta = self.bpam_track_meta.get(bpa_id)
+            name = sample_id_to_ckan_name(sample_id.split('.')[-1], self.ckan_data_type)
+            track_meta = self.bpam_track_meta.get(sample_id)
             obj = track_meta.copy()
             obj.update({
                 'name': name,
                 'id': name,
-                'bpa_id': bpa_id,
-                'flow_cell_ids': ', '.join(sorted(bpa_id_flowcells[bpa_id])),
-                'title': 'ARP Transcriptomics Hiseq %s' % (bpa_id.split('.')[-1]),
+                'sample_id': sample_id,
+                'flow_cell_ids': ', '.join(sorted(sample_id_flowcells[sample_id])),
+                'title': 'ARP Transcriptomics Hiseq %s' % (sample_id.split('.')[-1]),
                 'archive_ingestion_dates': archive_ingestion_dates,
                 'ticket': tickets,
                 'facility': row.facility_code.upper(),
@@ -396,7 +397,7 @@ class SepsisTranscriptomicsHiseqMetadata(BaseSepsisMetadata):
                 'data_generated': True,
             })
             for contextual_source in self.contextual_metadata:
-                obj.update(contextual_source.get(bpa_id, track_meta))
+                obj.update(contextual_source.get(sample_id, track_meta))
             tag_names = sepsis_contextual_tags(self, obj)
             obj['tags'] = [{'name': t} for t in tag_names]
             packages.append(obj)
@@ -414,10 +415,10 @@ class SepsisTranscriptomicsHiseqMetadata(BaseSepsisMetadata):
                 resource['md5'] = resource['id'] = md5
                 resource['name'] = filename
                 resource['resource_type'] = self.ckan_data_type
-                bpa_id = ingest_utils.extract_bpa_id(file_info.get('id'))
+                sample_id = ingest_utils.extract_ands_id(file_info.get('id'))
                 xlsx_info = self.metadata_info[os.path.basename(md5_file)]
                 legacy_url = urljoin(xlsx_info['base_url'], filename)
-                resources.append(((bpa_id,), legacy_url, resource))
+                resources.append(((sample_id,), legacy_url, resource))
         return resources
 
 
@@ -432,7 +433,7 @@ class SepsisMetabolomicsGCMSMetadata(BaseSepsisMetadata):
     technology = 'gcms'
     spreadsheet = {
         'fields': [
-            fld('bpa_id', 'bacterial sample unique id', coerce=ingest_utils.extract_bpa_id),
+            fld('sample_id', 'bacterial sample unique id', coerce=ingest_utils.extract_ands_id),
             fld('sample_fractionation_extract_solvent', 'sample fractionation / extraction solvent'),
             fld('gc_column_type', 'gc/column type'),
             fld('gradient_time_min_flow', 'gradient time (min) / flow'),
@@ -461,7 +462,7 @@ class SepsisMetabolomicsGCMSMetadata(BaseSepsisMetadata):
         if fname is None:
             return {}
         header, rows = csv_to_named_tuple('SepsisMetabolomicsGCMSTrack', fname)
-        return dict((ingest_utils.extract_bpa_id(t.five_digit_bpa_id), t) for t in rows)
+        return dict((ingest_utils.extract_ands_id(t.five_digit_bpa_id), t) for t in rows)
 
     def _get_packages(self):
         packages = []
@@ -472,18 +473,18 @@ class SepsisMetabolomicsGCMSMetadata(BaseSepsisMetadata):
             ticket = xlsx_info['ticket']
             google_track_meta = self.google_track_meta.get(ticket)
             for row in rows:
-                bpa_id = row.bpa_id
-                if bpa_id is None:
+                sample_id = row.sample_id
+                if sample_id is None:
                     continue
-                track_meta = self.bpam_track_meta.get(bpa_id)
+                track_meta = self.bpam_track_meta.get(sample_id)
                 obj = track_meta.copy()
-                name = bpa_id_to_ckan_name(bpa_id.split('.')[-1], self.ckan_data_type)
+                name = sample_id_to_ckan_name(sample_id.split('.')[-1], self.ckan_data_type)
                 obj.update({
                     'name': name,
                     'id': name,
-                    'bpa_id': bpa_id,
+                    'sample_id': sample_id,
                     'archive_ingestion_date': ingest_utils.get_date_isoformat(google_track_meta.date_of_transfer_to_archive),
-                    'title': 'ARP Metabolomics GCMS %s' % (bpa_id.split('.')[-1]),
+                    'title': 'ARP Metabolomics GCMS %s' % (sample_id.split('.')[-1]),
                     'ticket': row.ticket,
                     'facility': row.facility_code.upper(),
                     'notes': 'ARP Metabolomics GCMS Raw Data: %s %s %s Replicate %s' % (track_meta['taxon_or_organism'], track_meta['strain_or_isolate'], obj['growth_media'], obj['replicate']),
@@ -498,7 +499,7 @@ class SepsisMetabolomicsGCMSMetadata(BaseSepsisMetadata):
                     'data_generated': True,
                 })
                 for contextual_source in self.contextual_metadata:
-                    obj.update(contextual_source.get(bpa_id, track_meta))
+                    obj.update(contextual_source.get(sample_id, track_meta))
                 tag_names = sepsis_contextual_tags(self, obj)
                 obj['tags'] = [{'name': t} for t in tag_names]
                 packages.append(obj)
@@ -514,10 +515,10 @@ class SepsisMetabolomicsGCMSMetadata(BaseSepsisMetadata):
                 resource['md5'] = resource['id'] = md5
                 resource['name'] = filename
                 resource['resource_type'] = self.ckan_data_type
-                bpa_id = ingest_utils.extract_bpa_id(file_info.get('id'))
+                sample_id = ingest_utils.extract_ands_id(file_info.get('id'))
                 xlsx_info = self.metadata_info[os.path.basename(md5_file)]
                 legacy_url = urljoin(xlsx_info['base_url'], filename)
-                resources.append(((bpa_id,), legacy_url, resource))
+                resources.append(((sample_id,), legacy_url, resource))
         return resources
 
 
@@ -532,7 +533,7 @@ class SepsisMetabolomicsLCMSMetadata(BaseSepsisMetadata):
     technology = 'lcms'
     spreadsheet = {
         'fields': [
-            fld("bpa_id", "Bacterial sample unique ID", coerce=ingest_utils.extract_bpa_id),
+            fld("sample_id", "Bacterial sample unique ID", coerce=ingest_utils.extract_ands_id),
             fld("sample_fractionation_extract_solvent", "Sample fractionation / Extraction Solvent"),
             fld("lc_column_type", "LC/column type"),
             fld("gradient_time_min_flow", "Gradient time (min) / flow"),
@@ -561,7 +562,7 @@ class SepsisMetabolomicsLCMSMetadata(BaseSepsisMetadata):
         if fname is None:
             return {}
         header, rows = csv_to_named_tuple('SepsisMetabolomicsLCMSTrack', fname)
-        return dict((ingest_utils.extract_bpa_id(t.five_digit_bpa_id), t) for t in rows)
+        return dict((ingest_utils.extract_ands_id(t.five_digit_bpa_id), t) for t in rows)
 
     def _get_packages(self):
         packages = []
@@ -572,18 +573,18 @@ class SepsisMetabolomicsLCMSMetadata(BaseSepsisMetadata):
             ticket = xlsx_info['ticket']
             google_track_meta = self.google_track_meta.get(ticket)
             for row in rows:
-                bpa_id = row.bpa_id
-                if bpa_id is None:
+                sample_id = row.sample_id
+                if sample_id is None:
                     continue
-                track_meta = self.bpam_track_meta.get(bpa_id)
+                track_meta = self.bpam_track_meta.get(sample_id)
                 obj = track_meta.copy()
-                name = bpa_id_to_ckan_name(bpa_id.split('.')[-1], self.ckan_data_type)
+                name = sample_id_to_ckan_name(sample_id.split('.')[-1], self.ckan_data_type)
                 obj.update({
                     'name': name,
                     'id': name,
-                    'bpa_id': bpa_id,
+                    'sample_id': sample_id,
                     'archive_ingestion_date': ingest_utils.get_date_isoformat(google_track_meta.date_of_transfer_to_archive),
-                    'title': 'ARP Metabolomics LCMS %s' % (bpa_id.split('.')[-1]),
+                    'title': 'ARP Metabolomics LCMS %s' % (sample_id.split('.')[-1]),
                     'ticket': row.ticket,
                     'facility': row.facility_code.upper(),
                     'notes': 'ARP Metabolomics LCMS Raw Data: %s %s %s Replicate %s' % (track_meta['taxon_or_organism'], track_meta['strain_or_isolate'], obj['growth_media'], obj['replicate']),
@@ -598,7 +599,7 @@ class SepsisMetabolomicsLCMSMetadata(BaseSepsisMetadata):
                     'data_generated': True,
                 })
                 for contextual_source in self.contextual_metadata:
-                    obj.update(contextual_source.get(bpa_id, track_meta))
+                    obj.update(contextual_source.get(sample_id, track_meta))
                 tag_names = sepsis_contextual_tags(self, obj)
                 obj['tags'] = [{'name': t} for t in tag_names]
                 packages.append(obj)
@@ -614,10 +615,10 @@ class SepsisMetabolomicsLCMSMetadata(BaseSepsisMetadata):
                 resource['md5'] = resource['id'] = md5
                 resource['name'] = filename
                 resource['resource_type'] = self.ckan_data_type
-                bpa_id = ingest_utils.extract_bpa_id(file_info.get('id'))
+                sample_id = ingest_utils.extract_ands_id(file_info.get('id'))
                 xlsx_info = self.metadata_info[os.path.basename(md5_file)]
                 legacy_url = urljoin(xlsx_info['base_url'], filename)
-                resources.append(((bpa_id,), legacy_url, resource))
+                resources.append(((sample_id,), legacy_url, resource))
         return resources
 
 
@@ -632,7 +633,7 @@ class SepsisProteomicsMS1QuantificationMetadata(BaseSepsisMetadata):
     technology = 'ms1quantification'
     spreadsheet = {
         'fields': [
-            fld("bpa_id", "Bacterial sample unique ID", coerce=ingest_utils.extract_bpa_id),
+            fld("sample_id", "Bacterial sample unique ID", coerce=ingest_utils.extract_ands_id),
             fld("facility", "Facility"),
             fld("sample_fractionation_none_number", "Sample fractionation (none/number)"),
             fld("lc_column_type", "LC/column type"),
@@ -663,7 +664,7 @@ class SepsisProteomicsMS1QuantificationMetadata(BaseSepsisMetadata):
         if fname is None:
             return {}
         header, rows = csv_to_named_tuple('SepsisProteomicsMS1QuantificationTrack', fname)
-        return dict((ingest_utils.extract_bpa_id(t.five_digit_bpa_id), t) for t in rows)
+        return dict((ingest_utils.extract_ands_id(t.five_digit_bpa_id), t) for t in rows)
 
     def _get_packages(self):
         packages = []
@@ -674,21 +675,21 @@ class SepsisProteomicsMS1QuantificationMetadata(BaseSepsisMetadata):
             ticket = xlsx_info['ticket']
             google_track_meta = self.google_track_meta.get(ticket)
             for row in rows:
-                bpa_id = row.bpa_id
-                if bpa_id is None:
+                sample_id = row.sample_id
+                if sample_id is None:
                     continue
-                bpam_track_meta = self.bpam_track_meta.get(bpa_id)
+                bpam_track_meta = self.bpam_track_meta.get(sample_id)
                 if 'taxon_or_organism' not in bpam_track_meta:
                     continue
                 obj = bpam_track_meta.copy()
-                name = bpa_id_to_ckan_name(bpa_id.split('.')[-1], self.ckan_data_type)
+                name = sample_id_to_ckan_name(sample_id.split('.')[-1], self.ckan_data_type)
                 for contextual_source in self.contextual_metadata:
-                    obj.update(contextual_source.get(bpa_id, bpam_track_meta))
+                    obj.update(contextual_source.get(sample_id, bpam_track_meta))
                 obj.update({
                     'name': name,
                     'id': name,
-                    'bpa_id': bpa_id,
-                    'title': 'ARP Proteomics MS1Quantification %s' % (bpa_id.split('.')[-1]),
+                    'sample_id': sample_id,
+                    'title': 'ARP Proteomics MS1Quantification %s' % (sample_id.split('.')[-1]),
                     'ticket': row.ticket,
                     'facility': row.facility_code.upper(),
                     'archive_ingestion_date': ingest_utils.get_date_isoformat(google_track_meta.date_of_transfer_to_archive),
@@ -705,7 +706,7 @@ class SepsisProteomicsMS1QuantificationMetadata(BaseSepsisMetadata):
                     'data_generated': True,
                 })
                 tag_names = sepsis_contextual_tags(self, obj)
-                obj['tags']=[{'name': expanded_tag_name(t)} for t in tag_names]
+                obj['tags'] = [{'name': expanded_tag_name(t)} for t in tag_names]
                 packages.append(obj)
         return packages
 
@@ -719,10 +720,10 @@ class SepsisProteomicsMS1QuantificationMetadata(BaseSepsisMetadata):
                 resource['md5'] = resource['id'] = md5
                 resource['name'] = filename
                 resource['resource_type'] = self.ckan_data_type
-                bpa_id = ingest_utils.extract_bpa_id(file_info.get('id'))
+                sample_id = ingest_utils.extract_ands_id(file_info.get('id'))
                 xlsx_info = self.metadata_info[os.path.basename(md5_file)]
                 legacy_url = urljoin(xlsx_info['base_url'], filename)
-                resources.append(((bpa_id,), legacy_url, resource))
+                resources.append(((sample_id,), legacy_url, resource))
         return resources
 
 
@@ -737,7 +738,7 @@ class SepsisProteomicsSwathMSBaseSepsisMetadata(BaseSepsisMetadata):
     technology = 'swathms'
     spreadsheet = {
         'fields': [
-            fld("bpa_id", "Bacterial sample unique ID", coerce=parse_pooled_bpa_id),
+            fld("sample_id", "Bacterial sample unique ID", coerce=parse_pooled_sample_id),
             fld("facility", "Facility"),
             fld("sample_fractionation_none_number", "Sample fractionation (none/number)"),
             fld("lc_column_type", "LC/column type"),
@@ -765,13 +766,13 @@ class SepsisProteomicsSwathMSBaseSepsisMetadata(BaseSepsisMetadata):
         if fname is None:
             return {}
         header, rows = csv_to_named_tuple('SepsisProteomicsSwathMSTrack', fname)
-        return dict((ingest_utils.extract_bpa_id(t.five_digit_bpa_id), t) for t in rows)
+        return dict((ingest_utils.extract_ands_id(t.five_digit_bpa_id), t) for t in rows)
 
     def get_spreadsheet_data(self):
         """
         proteomics SWATH is a bit different, the spreadsheets might have dupes by `bpa id`,
         so some data in the sheet is per-file and some is per-ID. the only way to go from
-        filename back to the pool/bpa_id is via the spreadsheet, so we also need to build
+        filename back to the pool/sample_id is via the spreadsheet, so we also need to build
         that mapping
         """
         package_data = {}
@@ -783,24 +784,24 @@ class SepsisProteomicsSwathMSBaseSepsisMetadata(BaseSepsisMetadata):
             ticket = xlsx_info['ticket']
             google_track_meta = self.google_track_meta.get(ticket)
             for row in rows:
-                bpa_id = row.bpa_id
-                if bpa_id is None:
+                sample_id = row.sample_id
+                if sample_id is None:
                     continue
                 contextual_meta = {}
-                # if `bpa_id` is a tuple, we've got a pooled sample
-                if type(bpa_id) is tuple:
+                # if `sample_id` is a tuple, we've got a pooled sample
+                if type(sample_id) is tuple:
                     data_type = '2d'
-                    printable_bpa_id = '_'.join([t.split('.')[-1] for t in sorted(bpa_id)])
-                    track_meta = common_values([self.bpam_track_meta.get(t) for t in bpa_id])
+                    printable_sample_id = '_'.join([t.split('.')[-1] for t in sorted(sample_id)])
+                    track_meta = common_values([self.bpam_track_meta.get(t) for t in sample_id])
                     for contextual_source in self.contextual_metadata:
-                        contextual_meta.update(common_values([contextual_source.get(t, track_meta) for t in bpa_id]))
+                        contextual_meta.update(common_values([contextual_source.get(t, track_meta) for t in sample_id]))
                 else:
                     data_type = '1d'
-                    printable_bpa_id = bpa_id
-                    track_meta = self.bpam_track_meta.get(bpa_id)
+                    printable_sample_id = sample_id
+                    track_meta = self.bpam_track_meta.get(sample_id)
                     for contextual_source in self.contextual_metadata:
-                        contextual_meta.update(contextual_source.get(bpa_id, track_meta))
-                name = bpa_id_to_ckan_name(printable_bpa_id.split('.')[-1], self.ckan_data_type)
+                        contextual_meta.update(contextual_source.get(sample_id, track_meta))
+                name = sample_id_to_ckan_name(printable_sample_id.split('.')[-1], self.ckan_data_type)
                 package_meta = {
                     'facility': row.facility_code.upper(),
                     'ticket': row.ticket,
@@ -810,9 +811,9 @@ class SepsisProteomicsSwathMSBaseSepsisMetadata(BaseSepsisMetadata):
                     'archive_ingestion_date': ingest_utils.get_date_isoformat(google_track_meta.date_of_transfer_to_archive),
                 }
                 package_meta.update(contextual_meta)
-                package_data[name] = (name, data_type, printable_bpa_id, track_meta, package_meta)
+                package_data[name] = (name, data_type, printable_sample_id, track_meta, package_meta)
                 file_data[row.raw_file_name] = {
-                    'package_name': printable_bpa_id,
+                    'package_name': printable_sample_id,
                     'sample_fractionation_none_number': row.sample_fractionation_none_number,
                     'sample_on_column': row.sample_on_column,
                     'acquisition_mode_fragmentation': row.acquisition_mode_fragmentation,
@@ -821,7 +822,7 @@ class SepsisProteomicsSwathMSBaseSepsisMetadata(BaseSepsisMetadata):
 
     def get_swath_packages(self, data_type):
         packages = []
-        for package_name, (name, package_data_type, printable_bpa_id, track_meta, submission_meta) in list(self.package_data.items()):
+        for package_name, (name, package_data_type, printable_sample_id, track_meta, submission_meta) in list(self.package_data.items()):
             if package_data_type != data_type:
                 continue
             obj = track_meta.copy()
@@ -829,22 +830,22 @@ class SepsisProteomicsSwathMSBaseSepsisMetadata(BaseSepsisMetadata):
             pool = ''
             if data_type == '1d':
                 obj.update({
-                    'bpa_id': printable_bpa_id,
+                    'sample_id': printable_sample_id,
                 })
             if data_type == '2d':
                 pool = 'Pool '
                 obj.update({
-                    'pool_bpa_ids': printable_bpa_id,
+                    'pool_sample_ids': printable_sample_id,
                 })
             # package won't get replicate number if datatype is 2d, because it's getting common values. see code above.
             if 'replicate' in obj:
-                replicate = ' Replicate %s'% obj['replicate']
+                replicate = ' Replicate %s' % obj['replicate']
             else:
                 replicate = ''
             obj.update({
                 'name': name,
                 'id': name,
-                'title': 'ARP Proteomics SwathMS %s%s' % (pool, printable_bpa_id.split('.')[-1]),
+                'title': 'ARP Proteomics SwathMS %s%s' % (pool, printable_sample_id.split('.')[-1]),
                 'notes': 'ARP Proteomics SwathMS %sRaw Data: %s %s %s%s' % (pool, track_meta['taxon_or_organism'], track_meta['strain_or_isolate'], obj['growth_media'], replicate),
                 'type': self.ckan_data_type,
                 'private': True,
@@ -874,7 +875,7 @@ class SepsisProteomicsSwathMSBaseSepsisMetadata(BaseSepsisMetadata):
                 resource.update(file_meta)
                 resource['name'] = filename
                 if data_type == '1d':
-                    package_id = ingest_utils.extract_bpa_id(file_info.get('id'))
+                    package_id = ingest_utils.extract_ands_id(file_info.get('id'))
                 elif data_type == '2d':
                     package_id = package_name
 
@@ -902,7 +903,7 @@ class SepsisProteomicsSwathMSCombinedSampleMetadata(BaseSepsisMetadata):
     technology = 'swathms-combined-sample'
     spreadsheet = {
         'fields': [
-            fld('bpa_id_list', 'bacterial sample unique id', coerce=make_bpa_id_list),
+            fld('sample_id_list', 'bacterial sample unique id', coerce=make_sample_id_list),
             fld('facility', 'facility'),
             fld('sample_fractionation_none_number', 'sample fractionation (none/number)'),
             fld('lc_column_type', 'lc/column type'),
@@ -949,7 +950,7 @@ class SepsisProteomicsSwathMSCombinedSampleMetadata(BaseSepsisMetadata):
             # we're hitting the 100-char limit, so we have to hash the folder name when
             # generating the CKAN name
             folder_name_md5 = md5hash(folder_name.encode('utf8')).hexdigest()
-            name = bpa_id_to_ckan_name(folder_name_md5, self.ckan_data_type)
+            name = sample_id_to_ckan_name(folder_name_md5, self.ckan_data_type)
             track_meta = self.google_track_meta.get(ticket)
             taxons, strains = self.google_track_meta.get_taxons_strains(ticket)
             obj.update({
@@ -1011,7 +1012,7 @@ class SepsisProteomics2DLibraryMetadata(BaseSepsisMetadata):
     technology = '2dlibrary'
     spreadsheet = {
         'fields': [
-            fld('bpa_id_list', 'bacterial sample unique id', coerce=make_bpa_id_list),
+            fld('sample_id_list', 'bacterial sample unique id', coerce=make_sample_id_list),
             fld('facility', 'facility'),
             fld('sample_fractionation_none_number', 'sample fractionation (none/number)'),
             fld('lc_column_type', 'lc/column type'),
@@ -1058,7 +1059,7 @@ class SepsisProteomics2DLibraryMetadata(BaseSepsisMetadata):
             # we're hitting the 100-char limit, so we have to hash the folder name when
             # generating the CKAN name
             folder_name_md5 = md5hash(folder_name.encode('utf8')).hexdigest()
-            name = bpa_id_to_ckan_name(folder_name_md5, self.ckan_data_type)
+            name = sample_id_to_ckan_name(folder_name_md5, self.ckan_data_type)
             track_meta = self.google_track_meta.get(ticket)
             obj.update({
                 'name': name,
@@ -1133,7 +1134,7 @@ class SepsisProteomicsSwathMSMetadata(SepsisProteomicsSwathMSBaseSepsisMetadata)
 class SepsisProteomicsSwathMSPoolMetadata(SepsisProteomicsSwathMSBaseSepsisMetadata):
     ckan_data_type = 'arp-proteomics-swathms-pool'
     pool = True
-    resource_linkage = ('pool_bpa_ids',)
+    resource_linkage = ('pool_sample_ids',)
     md5 = {
         'match': [
             files.proteomics_swathms_lib_filename_re,
@@ -1156,21 +1157,21 @@ class SepsisProteomicsSwathMSPoolMetadata(SepsisProteomicsSwathMSBaseSepsisMetad
 
 
 class BaseSepsisAnalysedMetadata(BaseSepsisMetadata):
-    def apply_common_context(self, obj, bpa_ids):
+    def apply_common_context(self, obj, sample_ids):
         # find the contextual metadata in common between these BPA IDs
         context_objs = []
-        for bpa_id in bpa_ids:
+        for sample_id in sample_ids:
             context_obj = {}
             for contextual_source in self.contextual_metadata:
-                context_obj.update(contextual_source.get(bpa_id, obj))
+                context_obj.update(contextual_source.get(sample_id, obj))
             context_objs.append(context_obj)
         obj.update(common_values(context_objs))
         # find the tracking metadata in common between these BPA IDs
         tracking_objs = []
-        for bpa_id in bpa_ids:
+        for sample_id in sample_ids:
             tracking_obj = {}
             for bpam_source in self.bpam_track_meta:
-                tracking_obj.update(bpam_source.get(bpa_id))
+                tracking_obj.update(bpam_source.get(sample_id))
             tracking_objs.append(tracking_obj)
         obj.update(common_values(tracking_objs))
         return obj
@@ -1206,7 +1207,7 @@ class SepsisProteomicsAnalysedMetadata(BaseSepsisAnalysedMetadata):
         'fields': [
             fld('data_analysis_date', 'data analysis date (yyyy-mm-dd)', coerce=ingest_utils.get_date_isoformat),
             fld('facility_project_code_experiment_code', 'facility project code_facility experiment code'),
-            fld('bpa_id', 'sample name (5 digit bpa id)', coerce=ingest_utils.extract_bpa_id),
+            fld('sample_id', 'sample name (5 digit bpa id)', coerce=ingest_utils.extract_ands_id),
             fld('taxon_or_organism', 'taxon_or_organism'),
             fld('strain_or_isolate', 'strain_or_isolate'),
             fld('serovar', 'serovar'),
@@ -1267,18 +1268,18 @@ class SepsisProteomicsAnalysedMetadata(BaseSepsisAnalysedMetadata):
             # we're hitting the 100-char limit, so we have to hash the folder name when
             # generating the CKAN name
             folder_name_md5 = md5hash(folder_name.encode('utf8')).hexdigest()
-            name = bpa_id_to_ckan_name(folder_name_md5, self.ckan_data_type)
+            name = sample_id_to_ckan_name(folder_name_md5, self.ckan_data_type)
             track_meta = self.google_track_meta.get(ticket)
-            bpa_ids = list(sorted(set([t.bpa_id for t in rows if t.bpa_id])))
+            sample_ids = list(sorted(set([t.sample_id for t in rows if t.sample_id])))
             obj.update(self.google_drive_track_to_object(track_meta))
-            self.apply_common_context(obj, bpa_ids)
+            self.apply_common_context(obj, sample_ids)
             obj.update({
                 'name': name,
                 'id': name,
                 'notes': '%s' % (folder_name),
                 'title': '%s' % (folder_name),
                 'omics': 'proteomics',
-                'bpa_ids': ', '.join(bpa_ids),
+                'sample_ids': ', '.join(sample_ids),
                 'data_generated': 'True',
                 'type': self.ckan_data_type,
                 'date_of_transfer': ingest_utils.get_date_isoformat(track_meta.date_of_transfer),
@@ -1339,7 +1340,7 @@ class SepsisTranscriptomicsAnalysedMetadata(BaseSepsisAnalysedMetadata):
     spreadsheet = {
         'fields': [
             fld('data_analysis_date', 'data analysis date (yyyy-mm-dd)', coerce=ingest_utils.get_date_isoformat),
-            fld('bpa_id', 'sample name (5 digit bpa id)', coerce=ingest_utils.extract_bpa_id),
+            fld('sample_id', 'sample name (5 digit bpa id)', coerce=ingest_utils.extract_ands_id),
             fld('taxon_or_organism', 'taxon_or_organism'),
             fld('strain_or_isolate', 'strain_or_isolate'),
             fld('serovar', 'serovar'),
@@ -1398,18 +1399,18 @@ class SepsisTranscriptomicsAnalysedMetadata(BaseSepsisAnalysedMetadata):
             # we're hitting the 100-char limit, so we have to hash the folder name when
             # generating the CKAN name
             folder_name_md5 = md5hash(folder_name.encode('utf8')).hexdigest()
-            name = bpa_id_to_ckan_name(folder_name_md5, self.ckan_data_type)
+            name = sample_id_to_ckan_name(folder_name_md5, self.ckan_data_type)
             track_meta = self.google_track_meta.get(ticket)
-            bpa_ids = list(sorted(set([t.bpa_id for t in rows])))
+            sample_ids = list(sorted(set([t.sample_id for t in rows])))
             obj.update(self.google_drive_track_to_object(track_meta))
-            self.apply_common_context(obj, bpa_ids)
+            self.apply_common_context(obj, sample_ids)
             obj.update({
                 'name': name,
                 'id': name,
                 'notes': '%s' % (folder_name),
                 'title': '%s' % (folder_name),
                 'omics': 'transcriptomics',
-                'bpa_ids': ', '.join(bpa_ids),
+                'sample_ids': ', '.join(sample_ids),
                 'data_generated': 'True',
                 'type': self.ckan_data_type,
                 'date_of_transfer': ingest_utils.get_date_isoformat(track_meta.date_of_transfer),
@@ -1464,7 +1465,7 @@ class SepsisMetabolomicsAnalysedMetadata(BaseSepsisAnalysedMetadata):
     spreadsheet = {
         'fields': [
             fld('data_analysis_date', 'data analysis date (yyyy-mm-dd)', coerce=ingest_utils.get_date_isoformat),
-            fld('bpa_id', 'sample name (5 digit bpa id)', coerce=ingest_utils.extract_bpa_id),
+            fld('sample_id', 'sample name (5 digit bpa id)', coerce=ingest_utils.extract_ands_id),
             fld('taxon_or_organism', 'taxon_or_organism'),
             fld('strain_or_isolate', 'strain_or_isolate'),
             fld('serovar', 'serovar'),
@@ -1520,19 +1521,19 @@ class SepsisMetabolomicsAnalysedMetadata(BaseSepsisAnalysedMetadata):
             # we're hitting the 100-char limit, so we have to hash the folder name when
             # generating the CKAN name
             folder_name_md5 = md5hash(folder_name.encode('utf8')).hexdigest()
-            name = bpa_id_to_ckan_name(folder_name_md5, self.ckan_data_type)
+            name = sample_id_to_ckan_name(folder_name_md5, self.ckan_data_type)
             track_meta = self.google_track_meta.get(ticket)
-            bpa_ids = list(sorted(set([t.bpa_id for t in rows if t.bpa_id])))
+            sample_ids = list(sorted(set([t.sample_id for t in rows if t.sample_id])))
             analytical_platform = list(sorted(set([t.analytical_platform for t in rows if t.analytical_platform])))
             obj.update(self.google_drive_track_to_object(track_meta))
-            self.apply_common_context(obj, bpa_ids)
+            self.apply_common_context(obj, sample_ids)
             obj.update({
                 'name': name,
                 'id': name,
                 'notes': '%s' % (folder_name),
                 'title': '%s' % (folder_name),
                 'omics': 'metabolomics',
-                'bpa_ids': ', '.join(bpa_ids),
+                'sample_ids': ', '.join(sample_ids),
                 'analytical_platform': ', '.join(analytical_platform),
                 'data_generated': 'True',
                 'type': self.ckan_data_type,
@@ -1589,7 +1590,7 @@ class SepsisGenomicsAnalysedMetadata(BaseSepsisAnalysedMetadata):
     spreadsheet = {
         'fields': [
             fld('data_analysis_date', 'data analysis date (yyyy-mm-dd)', coerce=ingest_utils.get_date_isoformat),
-            fld('bpa_id', 'sample name (5 digit bpa id)', coerce=ingest_utils.extract_bpa_id),
+            fld('sample_id', 'sample name (5 digit bpa id)', coerce=ingest_utils.extract_ands_id),
             fld('taxon_or_organism', 'taxon_or_organism'),
             fld('strain_or_isolate', 'strain_or_isolate'),
             fld('serovar', 'serovar'),
@@ -1642,11 +1643,11 @@ class SepsisGenomicsAnalysedMetadata(BaseSepsisAnalysedMetadata):
             # we're hitting the 100-char limit, so we have to hash the folder name when
             # generating the CKAN name
             folder_name_md5 = md5hash(folder_name.encode('utf8')).hexdigest()
-            name = bpa_id_to_ckan_name(folder_name_md5, self.ckan_data_type)
+            name = sample_id_to_ckan_name(folder_name_md5, self.ckan_data_type)
             track_meta = self.google_track_meta.get(ticket)
-            bpa_ids = list(sorted(set([t.bpa_id for t in rows if t.bpa_id])))
+            sample_ids = list(sorted(set([t.sample_id for t in rows if t.sample_id])))
             obj.update(self.google_drive_track_to_object(track_meta))
-            self.apply_common_context(obj, bpa_ids)
+            self.apply_common_context(obj, sample_ids)
             analytical_platform = list(sorted(set([t.analytical_platform for t in rows if t.analytical_platform])))
             obj.update({
                 'name': name,
@@ -1654,7 +1655,7 @@ class SepsisGenomicsAnalysedMetadata(BaseSepsisAnalysedMetadata):
                 'notes': '%s' % (folder_name),
                 'title': '%s' % (folder_name),
                 'omics': 'genomics',
-                'bpa_ids': ', '.join(bpa_ids),
+                'sample_ids': ', '.join(sample_ids),
                 'data_generated': 'True',
                 'type': self.ckan_data_type,
                 'date_of_transfer': ingest_utils.get_date_isoformat(track_meta.date_of_transfer),
@@ -1711,7 +1712,7 @@ class SepsisProteomicsProteinDatabaseMetadata(BaseSepsisAnalysedMetadata):
     spreadsheet = {
         'fields': [
             fld('database_generation_date', 'database generation date (yyyy-mm-dd)', coerce=ingest_utils.get_date_isoformat),
-            fld('bpa_id', 'sample name (5 digit bpa id)', coerce=ingest_utils.extract_bpa_id),
+            fld('sample_id', 'sample name (5 digit bpa id)', coerce=ingest_utils.extract_ands_id),
             fld('taxon_or_organism', 'taxon_or_organism'),
             fld('strain_or_isolate', 'strain_or_isolate'),
             fld('serovar', 'serovar'),
@@ -1761,9 +1762,9 @@ class SepsisProteomicsProteinDatabaseMetadata(BaseSepsisAnalysedMetadata):
             # we're hitting the 100-char limit, so we have to hash the folder name when
             # generating the CKAN name
             folder_name_md5 = md5hash(folder_name.encode('utf8')).hexdigest()
-            name = bpa_id_to_ckan_name(folder_name_md5, self.ckan_data_type)
+            name = sample_id_to_ckan_name(folder_name_md5, self.ckan_data_type)
             track_meta = self.google_track_meta.get(ticket)
-            bpa_ids = list(sorted(set([t.bpa_id for t in rows if t.bpa_id])))
+            sample_ids = list(sorted(set([t.sample_id for t in rows if t.sample_id])))
             obj.update(self.google_drive_track_to_object(track_meta))
             obj.update({
                 'name': name,
@@ -1771,7 +1772,7 @@ class SepsisProteomicsProteinDatabaseMetadata(BaseSepsisAnalysedMetadata):
                 'notes': '%s' % (folder_name),
                 'title': '%s' % (folder_name),
                 'omics': 'proteomics',
-                'bpa_ids': ', '.join(bpa_ids),
+                'sample_ids': ', '.join(sample_ids),
                 'data_generated': 'True',
                 'type': self.ckan_data_type,
                 'date_of_transfer': ingest_utils.get_date_isoformat(track_meta.date_of_transfer),

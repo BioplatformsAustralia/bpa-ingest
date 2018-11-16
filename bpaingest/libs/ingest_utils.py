@@ -7,11 +7,11 @@ import datetime
 
 logger = make_logger(__name__)
 
-bpa_id_re = re.compile(r'^102\.100\.100[/\.](\d+)$')
-bpa_id_abbrev_re = re.compile(r'^(\d+)$')
+ands_id_re = re.compile(r'^102\.100\.100[/\.](\d+)$')
+ands_id_abbrev_re = re.compile(r'^(\d+)$')
 # this format of BPA ID has been used in older projects (e.g. BASE)
-bpa_id_abbrev_2_re = re.compile(r'^102\.100\.\.100[/\.](\d+)$')
-# <BPA_ID>_<extraction>
+ands_id_abbrev_2_re = re.compile(r'^102\.100\.\.100[/\.](\d+)$')
+# <sample_id>_<extraction>
 sample_extraction_id_re = re.compile(r'^\d{4,6}_\d')
 
 
@@ -57,10 +57,10 @@ def fix_sample_extraction_id(val):
     return val
 
 
-def make_sample_extraction_id(extraction_id, bpa_id):
+def make_sample_extraction_id(extraction_id, sample_id):
     # instructions from project manager: if no extraction_id in the spreadsheet,
-    # append _1 to the bpa_id_to_ckan_name
-    return extraction_id or (bpa_id.split('.')[-1] + "_1")
+    # append _1 to the sample_id_to_ckan_name
+    return extraction_id or (sample_id.split('.')[-1] + "_1")
 
 
 def fix_date_interval(val):
@@ -96,7 +96,7 @@ def merge_pass_fail(row):
     raise Exception("more than one amplicon pass_fail column value: %s" % (vals))
 
 
-def extract_bpa_id(s, silent=False):
+def extract_ands_id(s, silent=False):
     "parse a BPA ID, with or without the prefix, returning with the prefix"
     if isinstance(s, float):
         s = int(s)
@@ -114,13 +114,13 @@ def extract_bpa_id(s, silent=False):
     # handle a sample extraction id tacked on the end with an underscore
     if '_' in s:
         s = s.rsplit('_', 1)[0]
-    m = bpa_id_re.match(s)
+    m = ands_id_re.match(s)
     if m:
         return BPA_PREFIX + m.groups()[0]
-    m = bpa_id_abbrev_re.match(s)
+    m = ands_id_abbrev_re.match(s)
     if m:
         return BPA_PREFIX + m.groups()[0]
-    m = bpa_id_abbrev_2_re.match(s)
+    m = ands_id_abbrev_2_re.match(s)
     if m:
         return BPA_PREFIX + m.groups()[0]
     if not silent:
@@ -128,12 +128,12 @@ def extract_bpa_id(s, silent=False):
     return None
 
 
-def extract_bpa_id_silent(s):
-    return extract_bpa_id(s, silent=True)
+def extract_ands_id_silent(s):
+    return extract_ands_id(s, silent=True)
 
 
-def short_bpa_id(s):
-    return extract_bpa_id(s).split('.')[-1]
+def short_ands_id(s):
+    return extract_ands_id(s).split('.')[-1]
 
 
 def get_int(val, default=None):

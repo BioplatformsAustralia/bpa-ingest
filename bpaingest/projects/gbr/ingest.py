@@ -5,7 +5,7 @@ from . import files
 from ...libs.excel_wrapper import make_field_definition as fld
 from unipath import Path
 from glob import glob
-from ...util import make_logger, bpa_id_to_ckan_name
+from ...util import make_logger, sample_id_to_ckan_name
 from ...libs import ingest_utils
 from urllib.parse import urljoin
 from ...abstract import BaseMetadata
@@ -42,10 +42,10 @@ class GbrPacbioMetadata(BaseMetadata):
     omics = 'genomics'
     technology = 'pacbio'
     auth = ("bpa", "gbr")
-    resource_linkage = ('ticket', 'bpa_id', 'pacbio_linkage')
+    resource_linkage = ('ticket', 'sample_id', 'pacbio_linkage')
     spreadsheet = {
         'fields': [
-            fld('bpa_id', 'Sample unique ID', coerce=ingest_utils.extract_bpa_id),
+            fld('sample_id', 'Sample unique ID', coerce=ingest_utils.extract_ands_id),
             fld('sequencing_facility', 'Sequencing facility'),
             fld('index', 'index'),
             fld('pacbio', 'Library'),
@@ -80,22 +80,22 @@ class GbrPacbioMetadata(BaseMetadata):
             logger.info("Processing Pacbio metadata file {0}".format(fname))
             for row in self.parse_spreadsheet(fname, self.metadata_info):
                 xlsx_info = self.metadata_info[os.path.basename(fname)]
-                bpa_id = row.bpa_id
-                if bpa_id is None:
+                sample_id = row.sample_id
+                if sample_id is None:
                     continue
 
                 pacbio_linkage = make_pacbio_linkage(row.flow_cell_id, row.run_number)
-                name = bpa_id_to_ckan_name(ingest_utils.short_bpa_id(bpa_id), self.ckan_data_type, pacbio_linkage)
+                name = sample_id_to_ckan_name(ingest_utils.short_ands_id(sample_id), self.ckan_data_type, pacbio_linkage)
 
                 obj = {
                     'name': name,
                     'id': name,
-                    'title': 'Pacbio {} {}'.format(bpa_id, row.flow_cell_id),
-                    'notes': 'Pacbio {} {}'.format(bpa_id, row.flow_cell_id),
+                    'title': 'Pacbio {} {}'.format(sample_id, row.flow_cell_id),
+                    'notes': 'Pacbio {} {}'.format(sample_id, row.flow_cell_id),
                     'tags': [{'name': 'Pacbio'}],
                     'type': GbrPacbioMetadata.ckan_data_type,
                     'private': True,
-                    'bpa_id': bpa_id,
+                    'sample_id': sample_id,
                     'sequencing_facility': row.sequencing_facility,
                     'ticket': xlsx_info['ticket'],
                     'run_number': row.run_number,
@@ -121,11 +121,11 @@ class GbrPacbioMetadata(BaseMetadata):
                 resource = file_info.copy()
                 resource['md5'] = resource['id'] = md5
                 resource['name'] = filename
-                bpa_id = ingest_utils.extract_bpa_id(file_info['bpa_id'])
+                sample_id = ingest_utils.extract_ands_id(file_info['sample_id'])
                 xlsx_info = self.metadata_info[os.path.basename(md5_file)]
                 legacy_url = urljoin(xlsx_info['base_url'], filename)
                 pacbio_linkage = make_pacbio_linkage(file_info['flow_cell_id'], file_info['run_number'])
-                resources.append(((xlsx_info['ticket'], bpa_id, pacbio_linkage), legacy_url, resource))
+                resources.append(((xlsx_info['ticket'], sample_id, pacbio_linkage), legacy_url, resource))
         return resources
 
 
@@ -137,11 +137,11 @@ class GbrAmpliconsMetadata(BaseMetadata):
     omics = 'genomics'
     technology = 'amplicons'
     auth = ("bpa", "gbr")
-    resource_linkage = ('bpa_id', 'amplicon', 'index')
+    resource_linkage = ('sample_id', 'amplicon', 'index')
     extract_index_re = re.compile('^.*_([GATC]{8}_[GATC]{8})$')
     spreadsheet = {
         'fields': [
-            fld('bpa_id', 'Sample unique ID', coerce=ingest_utils.extract_bpa_id),
+            fld('sample_id', 'Sample unique ID', coerce=ingest_utils.extract_ands_id),
             fld('sample_extraction_id', 'Sample extraction ID', coerce=ingest_utils.fix_sample_extraction_id),
             fld('sequencing_facility', 'Sequencing facility'),
             fld('target_range', 'Target Range'),
@@ -181,18 +181,18 @@ class GbrAmpliconsMetadata(BaseMetadata):
         for fname in glob(self.path + '/*.xlsx'):
             logger.info("Processing Stemcells Transcriptomics metadata file {0}".format(fname))
             for row in self.parse_spreadsheet(fname, self.metadata_info):
-                bpa_id = row.bpa_id
-                if bpa_id is None:
+                sample_id = row.sample_id
+                if sample_id is None:
                     continue
                 index = self.extract_index_re.match(row.name).groups()[0].upper()
                 amplicon = row.amplicon.upper()
-                name = bpa_id_to_ckan_name(bpa_id, self.ckan_data_type + '-' + amplicon, index)
+                name = sample_id_to_ckan_name(sample_id, self.ckan_data_type + '-' + amplicon, index)
                 obj = {
                     'name': name,
                     'id': name,
-                    'bpa_id': bpa_id,
-                    'title': 'Amplicon {} {}'.format(bpa_id, index),
-                    'notes': 'Amplicon {} {}'.format(bpa_id, index),
+                    'sample_id': sample_id,
+                    'title': 'Amplicon {} {}'.format(sample_id, index),
+                    'notes': 'Amplicon {} {}'.format(sample_id, index),
                     'tags': [{'name': 'Amplicon'}],
                     'type': GbrAmpliconsMetadata.ckan_data_type,
                     'private': True,
@@ -227,8 +227,8 @@ class GbrAmpliconsMetadata(BaseMetadata):
                 resource = file_info.copy()
                 resource['md5'] = resource['id'] = md5
                 resource['name'] = filename
-                bpa_id = ingest_utils.extract_bpa_id(file_info['bpa_id'])
+                sample_id = ingest_utils.extract_ands_id(file_info['sample_id'])
                 xlsx_info = self.metadata_info[os.path.basename(md5_file)]
                 legacy_url = urljoin(xlsx_info['base_url'], filename)
-                resources.append(((bpa_id, file_info['amplicon'], file_info['index']), legacy_url, resource))
+                resources.append(((sample_id, file_info['amplicon'], file_info['index']), legacy_url, resource))
         return resources
