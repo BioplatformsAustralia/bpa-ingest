@@ -10,7 +10,6 @@ logger = make_logger(__name__)
 
 class MelanomaMetadata(BaseMetadata):
     metadata_urls = ['https://downloads-qcif.bioplatforms.com/bpa/melanoma/tracking/']
-    auth = ('melanoma', 'melanoma')
     organization = 'bpa-melanoma'
 
     def __init__(self, metadata_path):

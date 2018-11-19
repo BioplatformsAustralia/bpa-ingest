@@ -59,11 +59,8 @@ class DownloadMetadata(object):
             json.dump(metadata_info, fd)
 
     def _set_auth(self, project_class):
-        if hasattr(project_class, 'auth'):
-            auth_user, auth_env_name = project_class.auth
-            self.auth = (auth_user, get_password(auth_env_name))
-        else:
-            self.auth = None
+        auth_user, auth_env_name = project_class.auth
+        self.auth = (auth_user, get_password(auth_env_name))
 
     def _set_path(self, path):
         if path is not None:

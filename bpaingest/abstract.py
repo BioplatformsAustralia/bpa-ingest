@@ -9,6 +9,7 @@ logger = make_logger(__name__)
 
 
 class BaseMetadata:
+    auth = ('bpaingest', 'bpaingest')
     resource_linkage = ('sample_id',)
 
     @classmethod

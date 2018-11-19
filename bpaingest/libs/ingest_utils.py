@@ -27,6 +27,12 @@ def fix_pcr(pcr):
     return val
 
 
+def to_uppercase(s):
+    if s is None:
+        return
+    return str(s).upper()
+
+
 def add_spatial_extra(package):
     "add a ckanext-spatial extra to the package which has a longitude and latitude"
     lat = get_clean_number(package.get('latitude'))
@@ -211,7 +217,7 @@ def _get_date(dt):
     if dt is None:
         return None
 
-    if dt == 'unknown' or dt == 'Unknown':
+    if dt == 'unknown' or dt == 'Unknown' or dt == '(null)':
         return None
 
     if isinstance(dt, datetime.date):

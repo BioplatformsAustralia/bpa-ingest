@@ -12,16 +12,21 @@ as mangled by the provided method.
 '''
 
 import datetime
-from collections import namedtuple, Counter
+from collections import namedtuple, Counter, OrderedDict
 
+import re
 import os
 import xlrd
+import string
 
-from ..util import strip_to_ascii
+from ..util import make_logger
 
 
-FieldDefinition = namedtuple('FieldSpec', ['attribute', 'column_name', 'coerce', 'optional'])
-field_definition_default = FieldDefinition('<replace>', '<replace>', None, False)
+logger = make_logger(__name__)
+
+SkipColumn = namedtuple('SkipColumn', ['column_name'])
+FieldDefinition = namedtuple('FieldSpec', ['attribute', 'column_name', 'coerce', 'optional', 'units'])
+field_definition_default = FieldDefinition('<replace>', '<replace>', None, False, None)
 
 
 def make_field_definition(attribute, column_name, **kwargs):
@@ -77,21 +82,24 @@ class ExcelWrapper(object):
         return self._log.copy()
 
     def _set_field_names(self):
-        names = [spec.attribute for spec in self.field_spec]
-        if len(set(names)) != len(self.field_spec):
+        defs = [t for t in self.field_spec if isinstance(t, FieldDefinition)]
+        names = list([spec.attribute for spec in defs])
+        if len(list(names)) != len(defs):
             # this is a problem in the bpa-ingest code, not in the passed-in spreadsheet,
             # so we can fail hard here
-            raise Exception("duplicate `attribute` in field definition: %s" % [t for (t, c) in Counter(names).items() if c > 1])
+            raise Exception("duplicate attribute in field definition: %s" % [t for (t, c) in Counter(names).items() if c > 1])
         return names
 
     def set_name_to_column_map(self):
-        ''' maps the named field to the actual column in the spreadsheet '''
+        """
+        maps the named field to the actual column in the spreadsheet
+        """
 
         def coerce_header(s):
             if type(s) is not str:
                 self._error("header is not a string: %s `%s'" % (type(s), repr(s)))
                 return str(s)
-            return strip_to_ascii(s)
+            return s.strip()
 
         header = [coerce_header(t).strip().lower() for t in self.sheet.row_values(self.column_name_row_index)]
 
@@ -113,8 +121,15 @@ class ExcelWrapper(object):
             return -1
 
         cmap = {}
+        skip_columns = set()
+
         missing_columns = False
         for spec in self.field_spec:
+            if isinstance(spec, SkipColumn):
+                col_index = find_column(spec.column_name)
+                skip_columns.add(col_index)
+                continue
+
             col_index = -1
             col_descr = spec.column_name
             if hasattr(spec.column_name, 'match'):
@@ -136,19 +151,119 @@ class ExcelWrapper(object):
                     missing_columns = True
                 cmap[spec.attribute] = None
 
-        if missing_columns and self.suggest_template:
-            template = ['[']
-            for header in (str(t) for t in header):
-                template.append("    fld('%s', '%s')," % (header.lower().replace(' ', '_'), header))
-            template.append(']')
-            self._error('Missing columns -- template for columns in spreadsheet is:\n%s' % ('\n'.join(template)))
-
+        mapped_columns = set(cmap.values())
+        unmapped_columns = []
+        for idx, s in enumerate(header):
+            if s != '' and idx not in mapped_columns and idx not in skip_columns:
+                unmapped_columns.append(idx)
+                self._error("Column `{}' not mapped to an output field".format(s))
+        if (len(unmapped_columns) > 0 or missing_columns) and self.suggest_template:
+            self.print_template(header)
         return header, cmap
+
+    def print_template(self, header):
+        acceptable = set(string.ascii_letters + string.digits + '_')
+        skip_fields = (
+            # these are unknown
+            'id',
+            'tax_id',
+            # portal is authoritative on these
+            'ncbi_submission',
+            'ncbi_bioproject',
+            'ncbi_sample_accession')
+        float_fields = (
+            'latitude',
+            'longitude',
+            'depth')
+
+        def get_field_name(s):
+            s = s.lower()
+            # delete any (...) comment off the end
+            if '(' in s:
+                s = s[:s.index('(')]
+            # delete any [...] comment off the end
+            if '[' in s:
+                s = s[:s.index('[')]
+            s = s.strip()
+            s = s.replace(' ', '_')
+            s = s.replace('/', '_')
+            s = ''.join(t for t in s if t in acceptable)
+            s = s.strip('_')
+            s = re.sub('_+', '_', s)
+            if s == 'bpa_id':
+                return 'sample_id'
+            return s
+
+        parens = OrderedDict([
+            (']', '['),
+            (')', '('),
+        ])
+        exclude_units = (
+            'yyyy-mm-dd',
+            'hh:mm')
+
+        def guess_units(s):
+            s = s.strip()
+            if s == '':
+                return
+            if '%' in s:
+                return '%'
+            last_char = None
+            for p in parens:
+                if p in s:
+                    last_char = p
+                    break
+            if last_char is None:
+                return
+            first_char = parens[last_char]
+            if first_char not in s:
+                return
+            units = s[s.index(first_char) + 1:s.index(last_char)].strip()
+            if 'free text' in units:
+                return
+            if units in exclude_units:
+                return
+            if units == '':
+                return
+            return units
+
+        template = ['[']
+        indent = ' ' * 12
+        for column in (str(t) for t in header):
+            field_name = get_field_name(column)
+            if field_name == '':
+                continue
+            if field_name in skip_fields:
+                template.append("{}skip('{}'),".format(indent, column))
+                continue
+            args = [
+                "'{}'".format(field_name),
+                "'{}'".format(column),
+            ]
+            cleanup = None
+            units = guess_units(column)
+            if units is not None:
+                args.append("units='{}'".format(units))
+            if field_name == 'sample_id':
+                cleanup = 'ingest_utils.extract_ands_id'
+            elif field_name in float_fields or units is not None:
+                cleanup = 'ingest_utils.get_clean_number'
+            elif 'date' in field_name:
+                cleanup = 'ingest_utils.get_date_isoformat'
+            elif 'time' in field_name:
+                cleanup = 'ingest_utils.get_time'
+            if cleanup is not None:
+                args.append('coerce=' + cleanup)
+            template.append("{}fld({}),".format(
+                indent, ', '.join(args)))
+        template.append(']')
+        self._error('{} - suggested template is:\n{}'.format(
+            self.sheet.name, '\n'.join(template)))
 
     def set_name_to_func_map(self):
         ''' Map the spec fields to their corresponding functions '''
 
-        return dict((t.attribute, t.coerce) for t in self.field_spec)
+        return dict((t.attribute, t.coerce) for t in self.field_spec if isinstance(t, FieldDefinition))
 
     def get_date_mode(self):
         assert (self.workbook is not None)

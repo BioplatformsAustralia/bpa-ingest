@@ -41,7 +41,6 @@ class GbrPacbioMetadata(BaseMetadata):
     ckan_data_type = 'great-barrier-reef-pacbio'
     omics = 'genomics'
     technology = 'pacbio'
-    auth = ("bpa", "gbr")
     resource_linkage = ('ticket', 'sample_id', 'pacbio_linkage')
     spreadsheet = {
         'fields': [
@@ -136,7 +135,6 @@ class GbrAmpliconsMetadata(BaseMetadata):
     ckan_data_type = 'great-barrier-reef-amplicon'
     omics = 'genomics'
     technology = 'amplicons'
-    auth = ("bpa", "gbr")
     resource_linkage = ('sample_id', 'amplicon', 'index')
     extract_index_re = re.compile('^.*_([GATC]{8}_[GATC]{8})$')
     spreadsheet = {

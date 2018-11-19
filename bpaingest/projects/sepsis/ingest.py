@@ -114,7 +114,6 @@ class SepsisGenomicsMiseqMetadata(BaseSepsisMetadata):
     metadata_urls = ['https://downloads-qcif.bioplatforms.com/bpa/sepsis/genomics/raw/miseq/']
     metadata_url_components = ('facility_code', 'ticket')
     organization = 'bpa-sepsis'
-    auth = ('sepsis', 'sepsis')
     ckan_data_type = 'arp-genomics-miseq'
     omics = 'genomics'
     technology = 'miseq'
@@ -205,7 +204,6 @@ class SepsisGenomicsPacbioMetadata(BaseSepsisMetadata):
     metadata_urls = ['https://downloads-qcif.bioplatforms.com/bpa/sepsis/genomics/raw/pacbio/']
     metadata_url_components = ('facility_code', 'ticket')
     organization = 'bpa-sepsis'
-    auth = ('sepsis', 'sepsis')
     ckan_data_type = 'arp-genomics-pacbio'
     omics = 'genomics'
     technology = 'pacbio'
@@ -304,7 +302,6 @@ class SepsisTranscriptomicsHiseqMetadata(BaseSepsisMetadata):
     metadata_urls = ['https://downloads-qcif.bioplatforms.com/bpa/sepsis/transcriptomics/raw/hiseq/']
     metadata_url_components = ('facility_code', 'ticket')
     organization = 'bpa-sepsis'
-    auth = ('sepsis', 'sepsis')
     ckan_data_type = 'arp-transcriptomics-hiseq'
     omics = 'transcriptomics'
     technology = 'hiseq'
@@ -427,7 +424,6 @@ class SepsisMetabolomicsGCMSMetadata(BaseSepsisMetadata):
     metadata_urls = ['https://downloads-qcif.bioplatforms.com/bpa/sepsis/metabolomics/raw/gcms/']
     metadata_url_components = ('facility_code', 'ticket')
     organization = 'bpa-sepsis'
-    auth = ('sepsis', 'sepsis')
     ckan_data_type = 'arp-metabolomics-gcms'
     omics = 'metabolomics'
     technology = 'gcms'
@@ -527,7 +523,6 @@ class SepsisMetabolomicsLCMSMetadata(BaseSepsisMetadata):
     metadata_urls = ['https://downloads-qcif.bioplatforms.com/bpa/sepsis/metabolomics/raw/lcms/']
     metadata_url_components = ('facility_code', 'ticket')
     organization = 'bpa-sepsis'
-    auth = ('sepsis', 'sepsis')
     ckan_data_type = 'arp-metabolomics-lcms'
     omics = 'metabolomics'
     technology = 'lcms'
@@ -627,21 +622,20 @@ class SepsisProteomicsMS1QuantificationMetadata(BaseSepsisMetadata):
     metadata_urls = ['https://downloads-qcif.bioplatforms.com/bpa/sepsis/proteomics/raw/ms1quantification/']
     metadata_url_components = ('facility_code', 'ticket')
     organization = 'bpa-sepsis'
-    auth = ('sepsis', 'sepsis')
     ckan_data_type = 'arp-proteomics-ms1quantification'
     omics = 'proteomics'
     technology = 'ms1quantification'
     spreadsheet = {
         'fields': [
-            fld("sample_id", "Bacterial sample unique ID", coerce=ingest_utils.extract_ands_id),
-            fld("facility", "Facility"),
-            fld("sample_fractionation_none_number", "Sample fractionation (none/number)"),
-            fld("lc_column_type", "LC/column type"),
-            fld("gradient_time_per_acn", "Gradient time (min)  /  % ACN (start-finish main gradient) / flow"),
-            fld("sample_on_column", "sample on column (g)"),  # Note: unicode micro stripped out
-            fld("mass_spectrometer", "Mass Spectrometer"),
-            fld("acquisition_mode_fragmentation", "Acquisition Mode / fragmentation"),
-            fld("raw_file_name", "Raw file name"),
+            fld('sample_id', 'bacterial sample unique id', coerce=ingest_utils.extract_ands_id),
+            fld('facility', 'facility', coerce=ingest_utils.to_uppercase),
+            fld('sample_fractionation', 'sample fractionation (none/number)', units='none/number', coerce=ingest_utils.get_clean_number),
+            fld('lc_column_type', 'lc/column type'),
+            fld('gradient_time', 'gradient time (min)  /  % acn (start-finish main gradient) / flow', units='%', coerce=ingest_utils.get_clean_number),
+            fld('sample_on_column', 'sample on column (µg)', units='µg', coerce=ingest_utils.get_clean_number),
+            fld('mass_spectrometer', 'mass spectrometer'),
+            fld('acquisition_mode_fragmentation', 'acquisition mode / fragmentation'),
+            fld('raw_file_name', 'raw file name'),
         ],
         'options': {
             'header_length': 1,
@@ -682,6 +676,7 @@ class SepsisProteomicsMS1QuantificationMetadata(BaseSepsisMetadata):
                 if 'taxon_or_organism' not in bpam_track_meta:
                     continue
                 obj = bpam_track_meta.copy()
+                obj.update(row._asdict())
                 name = sample_id_to_ckan_name(sample_id.split('.')[-1], self.ckan_data_type)
                 for contextual_source in self.contextual_metadata:
                     obj.update(contextual_source.get(sample_id, bpam_track_meta))
@@ -690,17 +685,8 @@ class SepsisProteomicsMS1QuantificationMetadata(BaseSepsisMetadata):
                     'id': name,
                     'sample_id': sample_id,
                     'title': 'ARP Proteomics MS1Quantification %s' % (sample_id.split('.')[-1]),
-                    'ticket': row.ticket,
-                    'facility': row.facility_code.upper(),
                     'archive_ingestion_date': ingest_utils.get_date_isoformat(google_track_meta.date_of_transfer_to_archive),
                     'notes': 'ARP Proteomics MS1Quantification Raw Data: %s %s %s Replicate %s' % (bpam_track_meta['taxon_or_organism'], bpam_track_meta['strain_or_isolate'], obj['growth_media'], obj['replicate']),
-                    'sample_fractionation_none_number': row.sample_fractionation_none_number,
-                    'lc_column_type': row.lc_column_type,
-                    'gradient_time_per_acn': row.gradient_time_per_acn,
-                    'sample_on_column': row.sample_on_column,
-                    'mass_spectrometer': row.mass_spectrometer,
-                    'acquisition_mode_fragmentation': row.acquisition_mode_fragmentation,
-                    'raw_file_name': row.raw_file_name,
                     'type': self.ckan_data_type,
                     'private': True,
                     'data_generated': True,
@@ -733,7 +719,6 @@ class SepsisProteomicsSwathMSBaseSepsisMetadata(BaseSepsisMetadata):
     metadata_url_components = ('facility_code', 'ticket')
     metadata_patterns = [r'^.*\.md5$', r'^.*_metadata\.xlsx']
     organization = 'bpa-sepsis'
-    auth = ('sepsis', 'sepsis')
     omics = 'proteomics'
     technology = 'swathms'
     spreadsheet = {
@@ -896,7 +881,6 @@ class SepsisProteomicsSwathMSCombinedSampleMetadata(BaseSepsisMetadata):
     metadata_url_components = ('facility_code', 'ticket')
     metadata_patterns = [r'^.*\.md5$', r'^.*_metadata\.xlsx$']
     organization = 'bpa-sepsis'
-    auth = ('sepsis', 'sepsis')
     ckan_data_type = 'arp-proteomics-swathms-combined-sample'
     resource_linkage = ('folder_name',)
     omics = 'proteomics'
@@ -1005,7 +989,6 @@ class SepsisProteomics2DLibraryMetadata(BaseSepsisMetadata):
     metadata_url_components = ('facility_code', 'ticket')
     metadata_patterns = [r'^.*\.md5$', r'^.*_metadata\.xlsx$']
     organization = 'bpa-sepsis'
-    auth = ('sepsis', 'sepsis')
     ckan_data_type = 'arp-proteomics-2dlibrary'
     resource_linkage = ('folder_name',)
     omics = 'proteomics'
@@ -1198,7 +1181,6 @@ class SepsisProteomicsAnalysedMetadata(BaseSepsisAnalysedMetadata):
     metadata_url_components = ('facility_code', 'ticket')
     metadata_patterns = [r'^.*\.md5$', r'^.*_metadata\.xlsx$']
     organization = 'bpa-sepsis'
-    auth = ('sepsis', 'sepsis')
     ckan_data_type = 'arp-proteomics-analysed'
     resource_linkage = ('folder_name',)
     omics = 'proteomics'
@@ -1332,7 +1314,6 @@ class SepsisTranscriptomicsAnalysedMetadata(BaseSepsisAnalysedMetadata):
     metadata_url_components = ('facility_code', 'ticket')
     metadata_patterns = [r'^.*\.md5$', r'^.*_metadata\.xlsx$']
     organization = 'bpa-sepsis'
-    auth = ('sepsis', 'sepsis')
     ckan_data_type = 'arp-transcriptomics-analysed'
     resource_linkage = ('folder_name',)
     omics = 'transcriptomics'
@@ -1457,7 +1438,6 @@ class SepsisMetabolomicsAnalysedMetadata(BaseSepsisAnalysedMetadata):
     metadata_url_components = ('facility_code', 'ticket')
     metadata_patterns = [r'^.*\.md5$', r'^.*_metadata\.xlsx$']
     organization = 'bpa-sepsis'
-    auth = ('sepsis', 'sepsis')
     ckan_data_type = 'arp-metabolomics-analysed'
     resource_linkage = ('folder_name',)
     omics = 'metabolomics'
@@ -1582,7 +1562,6 @@ class SepsisGenomicsAnalysedMetadata(BaseSepsisAnalysedMetadata):
     metadata_url_components = ('facility_code', 'ticket')
     metadata_patterns = [r'^.*\.md5$', r'^.*_metadata\.xlsx$']
     organization = 'bpa-sepsis'
-    auth = ('sepsis', 'sepsis')
     ckan_data_type = 'arp-genomics-analysed'
     resource_linkage = ('folder_name',)
     omics = 'genomics'
@@ -1703,7 +1682,6 @@ class SepsisProteomicsProteinDatabaseMetadata(BaseSepsisAnalysedMetadata):
     metadata_url_components = ('facility_code', 'ticket')
     metadata_patterns = [r'^.*\.md5$', r'^.*_metadata\.xlsx$']
     organization = 'bpa-sepsis'
-    auth = ('sepsis', 'sepsis')
     ckan_data_type = 'arp-proteomics-database'
     resource_linkage = ('folder_name',)
     omics = 'proteomics'

@@ -43,7 +43,6 @@ class OMG10XRawIlluminaMetadata(OMGBaseMetadata):
     for each tar file and present the metadata for each to the user.
     """
 
-    auth = ('omg', 'omg')
     organization = 'bpa-omg'
     ckan_data_type = 'omg-10x-raw-illumina'
     technology = '10x-raw-agrf'
@@ -223,7 +222,6 @@ class OMG10XRawMetadata(OMGBaseMetadata):
     this data conforms to the BPA 10X raw workflow. future data
     will use this ingest class.
     """
-    auth = ('omg', 'omg')
     organization = 'bpa-omg'
     ckan_data_type = 'omg-10x-raw'
     technology = '10xraw'
@@ -367,7 +365,6 @@ class OMG10XRawMetadata(OMGBaseMetadata):
 
 
 class OMG10XProcessedIlluminaMetadata(OMGBaseMetadata):
-    auth = ('omg', 'omg')
     organization = 'bpa-omg'
     ckan_data_type = 'omg-10x-processed-illumina'
     technology = '10xprocessed'
@@ -515,7 +512,6 @@ class OMG10XProcessedIlluminaMetadata(OMGBaseMetadata):
 
 
 class OMGExonCaptureMetadata(OMGBaseMetadata):
-    auth = ('omg', 'omg')
     organization = 'bpa-omg'
     ckan_data_type = 'omg-exon-capture'
     technology = 'exoncapture'
@@ -650,7 +646,6 @@ class OMGExonCaptureMetadata(OMGBaseMetadata):
 
 
 class OMGGenomicsHiSeqMetadata(OMGBaseMetadata):
-    auth = ('omg', 'omg')
     organization = 'bpa-omg'
     ckan_data_type = 'omg-genomics-hiseq'
     omics = 'genomics'
@@ -803,7 +798,6 @@ class OMGGenomicsDDRADMetadata(OMGBaseMetadata):
     will use this ingest class.
     Issue: bpa-archive-ops#699
     """
-    auth = ('omg', 'omg')
     organization = 'bpa-omg'
     ckan_data_type = 'omg-genomics-ddrad'
     omics = 'genomics'

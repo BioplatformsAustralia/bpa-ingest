@@ -11,7 +11,6 @@ logger = make_logger(__name__)
 class WheatPathogensTranscriptMetadata(BaseMetadata):
     metadata_urls = ['https://downloads-qcif.bioplatforms.com/bpa/wheat_pathogens/tracking/']
     organization = 'bpa-wheat-pathogens-transcript'
-    auth = ('marine', 'mm')
     omics = 'transcriptomics'
 
     def __init__(self, metadata_path):
