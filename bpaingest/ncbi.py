@@ -91,6 +91,10 @@ class NCBISRAContextual:
         return {}
 
     def filename_metadata(self, filename):
-        return {
-            'ncbi_file_uploaded': filename in self.file_submitted
-        }
+        # as a sample might be part of the Soil or non-Soil projects,
+        # we must return {} here if we don't have a definite match
+        if filename in self.file_submitted:
+            return {
+                'ncbi_file_uploaded': filename in self.file_submitted
+            }
+        return {}
