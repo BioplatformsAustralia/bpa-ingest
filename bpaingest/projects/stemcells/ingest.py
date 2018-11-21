@@ -43,7 +43,6 @@ class StemcellsTranscriptomeMetadata(BaseMetadata):
     metadata_patterns = [r'^.*\.md5', r'^.*_metadata\.xlsx']
     omics = 'transcriptomics'
     organization = 'bpa-stemcells'
-    auth = ('stemcell', 'stemcell')
     ckan_data_type = 'stemcells-transcriptomics'
     spreadsheet = {
         'fields': [
@@ -144,7 +143,6 @@ class StemcellsSmallRNAMetadata(BaseMetadata):
     metadata_patterns = [r'^.*\.md5', r'^.*_metadata\.xlsx']
     organization = 'bpa-stemcells'
     technology = 'smallrna'
-    auth = ('stemcell', 'stemcell')
     ckan_data_type = 'stemcells-smallrna'
     spreadsheet = {
         'fields': [
@@ -245,7 +243,6 @@ class StemcellsSingleCellRNASeqMetadata(BaseMetadata):
     metadata_patterns = [r'^.*\.md5', r'^.*_metadata\.xlsx']
     organization = 'bpa-stemcells'
     technology = 'singlecellrna'
-    auth = ('stemcell', 'stemcell')
     ckan_data_type = 'stemcells-singlecellrnaseq'
     resource_linkage = ('sample_id_range',)
     spreadsheet = {
@@ -358,7 +355,6 @@ class StemcellsMetabolomicsMetadata(BaseMetadata):
     metadata_patterns = [r'^.*\.md5', r'^.*_metadata.*\.xlsx']
     organization = 'bpa-stemcells'
     omics = 'metabolomics'
-    auth = ('stemcell', 'stemcell')
     resource_linkage = ('sample_id', 'analytical_platform')
     ckan_data_type = 'stemcells-metabolomic'
     spreadsheet = {
@@ -465,7 +461,6 @@ class StemcellsProteomicsBaseMetadata(BaseMetadata):
     metadata_patterns = [r'^.*\.md5', r'^.*_metadata\.xlsx']
     omics = 'proteomics'
     organization = 'bpa-stemcells'
-    auth = ('stemcell', 'stemcell')
 
     def __init__(self, *args, **kwargs):
         super(StemcellsProteomicsBaseMetadata, self).__init__()
@@ -698,7 +693,6 @@ class StemcellsProteomicsAnalysedMetadata(BaseMetadata):
     organization = 'bpa-stemcells'
     omics = 'proteomics'
     analysed = True
-    auth = ('stemcell', 'stemcell')
     ckan_data_type = 'stemcells-proteomics-analysed'
     resource_linkage = ('ticket',)
     spreadsheet = {
@@ -815,7 +809,6 @@ class StemcellsMetabolomicsAnalysedMetadata(BaseMetadata):
     metadata_url_components = ('facility_code', 'ticket')
     metadata_patterns = [r'^.*\.md5', r'^.*_metadata\.xlsx$']
     organization = 'bpa-stemcells'
-    auth = ('stemcell', 'stemcell')
     ckan_data_type = 'stemcells-metabolomics-analysed'
     omics = 'metabolomics'
     analysed = True
@@ -931,7 +924,6 @@ class StemcellsTranscriptomeAnalysedMetadata(BaseMetadata):
     metadata_url_components = ('facility_code', 'ticket')
     metadata_patterns = [r'^.*\.md5', r'^.*_metadata\.xlsx$']
     organization = 'bpa-stemcells'
-    auth = ('stemcell', 'stemcell')
     ckan_data_type = 'stemcells-transcriptome-analysed'
     omics = 'transcriptome'
     analysed = True

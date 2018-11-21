@@ -11,16 +11,18 @@ from ...libs import ingest_utils
 from ...libs.excel_wrapper import make_field_definition as fld
 from ...util import (apply_license, sample_id_to_ckan_name, common_values,
                      make_logger, one)
-from .contextual import (BASENCBIContextual, BASESampleContextual,
-                         MarineMicrobesNCBIContextual,
-                         MarineMicrobesSampleContextual)
-from .tracking import (BASETrackMetadata, MarineMicrobesGoogleTrackMetadata,
-                       MarineMicrobesTrackMetadata)
+from .contextual import (
+    AustralianMicrobiomeSampleContextual,
+    BASENCBIContextual,
+    MarineMicrobesNCBIContextual)
+from .tracking import (
+    BASETrackMetadata,
+    MarineMicrobesGoogleTrackMetadata,
+    MarineMicrobesTrackMetadata)
 
 logger = make_logger(__name__)
 
-base_common_context = [BASESampleContextual, BASENCBIContextual]
-marine_common_context = [MarineMicrobesSampleContextual, MarineMicrobesNCBIContextual]
+common_context = [AustralianMicrobiomeSampleContextual, BASENCBIContextual, MarineMicrobesNCBIContextual]
 
 
 # fixed read lengths provided by AB at CSIRO
@@ -50,11 +52,13 @@ def build_base_amplicon_linkage(index_linkage, flow_id, index):
     return flow_id
 
 
-class BaseContextualAccessMetadata():
+class AccessAMDContextualMetadata(BaseMetadata):
     """
     for use by tools (e.g. bpaotu) which need access to the contextual metadata for all
     AMD data, but not package or resource metadata
     """
+    contextual_classes = common_context
+    metadata_urls = []
 
     def __init__(self, metadata_path, contextual_metadata=None, metadata_info=None):
         super().__init__()
@@ -67,33 +71,12 @@ class BaseContextualAccessMetadata():
         return []
 
 
-class AccessBASEContextualMetadata(BaseContextualAccessMetadata):
-    auth = ('base', 'base')
-    """
-    for use by tools (e.g. bpaotu) which need access to the contextual metadata for all
-    AMD data
-    """
-    contextual_classes = base_common_context
-    metadata_urls = []
-
-
-class AccessMarineMicrobesContextualMetadata(BaseContextualAccessMetadata):
-    auth = ('marine', 'marine')
-    """
-    for use by tools (e.g. bpaotu) which need access to the contextual metadata for all
-    AMD data
-    """
-    contextual_classes = marine_common_context
-    metadata_urls = []
-
-
 class BASEAmpliconsMetadata(BaseMetadata):
-    auth = ('base', 'base')
     organization = 'australian-microbiome'
     ckan_data_type = 'base-genomics-amplicon'
     omics = 'genomics'
     technology = 'amplicons'
-    contextual_classes = base_common_context
+    contextual_classes = common_context
     metadata_patterns = [r'^.*\.md5$', r'^.*_metadata.*.*\.xlsx$']
     metadata_urls = [
         'https://downloads-qcif.bioplatforms.com/bpa/base/raw/amplicons/',
@@ -275,12 +258,11 @@ class BASEAmpliconsMetadata(BaseMetadata):
 
 
 class BASEAmpliconsControlMetadata(BaseMetadata):
-    auth = ('base', 'base')
     organization = 'australian-microbiome'
     ckan_data_type = 'base-genomics-amplicon-control'
     omics = 'genomics'
     technology = 'amplicons-control'
-    contextual_classes = base_common_context
+    contextual_classes = common_context
     metadata_patterns = [r'^.*\.md5$', r'^.*_metadata.*.*\.xlsx$']
     metadata_urls = [
         'https://downloads-qcif.bioplatforms.com/bpa/base/raw/amplicons/',
@@ -367,11 +349,10 @@ class BASEAmpliconsControlMetadata(BaseMetadata):
 
 
 class BASEMetagenomicsMetadata(BaseMetadata):
-    auth = ('base', 'base')
     organization = 'australian-microbiome'
     ckan_data_type = 'base-metagenomics'
     omics = 'metagenomics'
-    contextual_classes = base_common_context
+    contextual_classes = common_context
     metadata_patterns = [r'^.*\.md5$', r'^.*_metadata.*.*\.xlsx$']
     metadata_urls = [
         'https://downloads-qcif.bioplatforms.com/bpa/base/raw/metagenomics/',
@@ -563,10 +544,9 @@ class BASEMetagenomicsMetadata(BaseMetadata):
 
 
 class BASESiteImagesMetadata(BaseMetadata):
-    auth = ('base', 'base')
     organization = 'australian-microbiome'
     ckan_data_type = 'base-site-image'
-    contextual_classes = base_common_context
+    contextual_classes = common_context
     metadata_patterns = [r'^.*\.md5$']
     omics = None
     technology = 'site-images'
@@ -720,11 +700,10 @@ class BaseMarineMicrobesMetadata(BaseMetadata):
 
 
 class BaseMarineMicrobesAmpliconsMetadata(BaseMarineMicrobesMetadata):
-    auth = ('marine', 'marine')
     organization = 'australian-microbiome'
     ckan_data_type = 'mm-genomics-amplicon'
     omics = 'genomics'
-    contextual_classes = marine_common_context
+    contextual_classes = common_context
     metadata_patterns = [r'^.*\.md5', r'^.*_metadata.*.*\.xlsx']
     resource_linkage = ('sample_id', 'mm_amplicon_linkage')
     spreadsheet = {
@@ -902,7 +881,6 @@ class MarineMicrobesGenomicsAmplicons18SMetadata(BaseMarineMicrobesAmpliconsMeta
 
 
 class BaseMarineMicrobesAmpliconsControlMetadata(BaseMarineMicrobesMetadata):
-    auth = ('marine', 'marine')
     organization = 'australian-microbiome'
     ckan_data_type = 'mm-genomics-amplicon-control'
     omics = 'genomics'
@@ -1010,11 +988,10 @@ class MarineMicrobesGenomicsAmplicons18SControlMetadata(BaseMarineMicrobesAmplic
 
 
 class MarineMicrobesMetagenomicsMetadata(BaseMarineMicrobesMetadata):
-    auth = ('marine', 'marine')
     organization = 'australian-microbiome'
     ckan_data_type = 'mm-metagenomics'
     omics = 'metagenomics'
-    contextual_classes = marine_common_context
+    contextual_classes = common_context
     metadata_patterns = [r'^.*\.md5', r'^.*_metadata.*\.xlsx']
     metadata_urls = [
         'https://downloads-qcif.bioplatforms.com/bpa/marine_microbes/raw/metagenomics/'
@@ -1119,10 +1096,9 @@ class MarineMicrobesMetagenomicsMetadata(BaseMarineMicrobesMetadata):
 
 
 class MarineMicrobesMetatranscriptomeMetadata(BaseMarineMicrobesMetadata):
-    auth = ('marine', 'marine')
     organization = 'australian-microbiome'
     ckan_data_type = 'mm-metatranscriptome'
-    contextual_classes = marine_common_context
+    contextual_classes = common_context
     omics = 'metatranscriptomics'
     metadata_patterns = [r'^.*\.md5', r'^.*_metadata.*\.xlsx']
     metadata_urls = [
