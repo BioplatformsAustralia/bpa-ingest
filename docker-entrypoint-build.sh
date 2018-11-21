@@ -22,6 +22,7 @@ if [ "$1" = 'releaselambdazip' ]; then
     git clone --depth=1 --branch="${GIT_BRANCH}" "${PROJECT_SOURCE}" .
     git rev-parse HEAD > .version
     cat .version
+    pip install -r requirements.txt
     set +x
 
     # vars for creating release lambda zip
