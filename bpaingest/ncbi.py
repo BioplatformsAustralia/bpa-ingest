@@ -80,12 +80,15 @@ class NCBISRAContextual:
         return list(self.bpaid_biosample.keys())
 
     def get(self, sample_id):
+        # as a sample might be part of the Soil or non-Soil projects,
+        # we must return None here if we don't have a definite match
         obj = {
             'ncbi_bioproject_accession': self.bioproject_accession,
         }
         if sample_id in self.bpaid_biosample:
             obj['ncbi_biosample_accession'] = self.bpaid_biosample[sample_id]
-        return obj
+            return obj
+        return None
 
     def filename_metadata(self, filename):
         return {

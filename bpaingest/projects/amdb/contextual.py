@@ -594,10 +594,6 @@ class AustralianMicrobiomeSampleContextual(object):
             sample_metadata[row.sample_id] = row_meta = {}
             for field in row._fields:
                 val = getattr(row, field)
-                if field == 'latitude':
-                    if val and type(val) is float and val > 0:
-                        logger.warning("Positioned in northern hemisphere, inverting: %s / %s" % (row.sample_id, val))
-                        val *= -1
                 if field != 'sample_id':
                     row_meta[field] = val
             ontology_cleanups = self.ontology_cleanups.get(row_meta['environment'])
