@@ -26,9 +26,6 @@ ENV PATH $VIRTUAL_ENV/bin:$PATH
 
 WORKDIR /app
 
-COPY requirements.txt /app/
-RUN pip install --upgrade -r requirements.txt
-        
 # Copy code and install the app
 COPY . /app
 RUN pip install --upgrade -e .
