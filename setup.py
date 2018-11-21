@@ -7,7 +7,7 @@ setup(author="CCG, Murdoch University",
       keywords="",
       url="https://github.com/muccg/bpa-ingest",
       name="bpaingest",
-      version="5.2.2",
+      version="5.2.3",
       packages=find_packages(exclude=["*.tests", "*.tests.*", "tests.*", "tests"]),
       install_requires=[
           'unipath==1.1',
@@ -23,10 +23,10 @@ setup(author="CCG, Murdoch University",
           'python-dateutil==2.6.1',
           'shapely==1.6.4',
           'fiona==1.7.13',
-          ],
+      ],
       dependency_links=[
           'git+https://github.com/muccg/ckanapi.git@streaming-uploads#egg=ckanapi-4.0',
-      ]
+      ],
       entry_points={
           'console_scripts': [
               'bpa-ingest=bpaingest.cli:main',
