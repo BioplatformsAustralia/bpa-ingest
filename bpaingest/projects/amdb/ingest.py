@@ -52,7 +52,21 @@ def build_base_amplicon_linkage(index_linkage, flow_id, index):
     return flow_id
 
 
-class AccessAMDContextualMetadata(BaseMetadata):
+def build_contextual_field_names():
+    field_names = {}
+    lookup = AustralianMicrobiomeSampleContextual.units_for_fields()
+    for field, units in lookup.items():
+        if units is None:
+            continue
+        field_names[field] = '{} ({})'.format(field, units.strip())
+    return field_names
+
+
+class AMDBaseMetadata(BaseMetadata):
+    package_field_names = build_contextual_field_names()
+
+
+class AccessAMDContextualMetadata(AMDBaseMetadata):
     """
     for use by tools (e.g. bpaotu) which need access to the contextual metadata for all
     AMD data, but not package or resource metadata
@@ -71,7 +85,7 @@ class AccessAMDContextualMetadata(BaseMetadata):
         return []
 
 
-class BASEAmpliconsMetadata(BaseMetadata):
+class BASEAmpliconsMetadata(AMDBaseMetadata):
     organization = 'australian-microbiome'
     ckan_data_type = 'base-genomics-amplicon'
     omics = 'genomics'
@@ -257,7 +271,7 @@ class BASEAmpliconsMetadata(BaseMetadata):
         return resources
 
 
-class BASEAmpliconsControlMetadata(BaseMetadata):
+class BASEAmpliconsControlMetadata(AMDBaseMetadata):
     organization = 'australian-microbiome'
     ckan_data_type = 'base-genomics-amplicon-control'
     omics = 'genomics'
@@ -348,7 +362,7 @@ class BASEAmpliconsControlMetadata(BaseMetadata):
         return resources
 
 
-class BASEMetagenomicsMetadata(BaseMetadata):
+class BASEMetagenomicsMetadata(AMDBaseMetadata):
     organization = 'australian-microbiome'
     ckan_data_type = 'base-metagenomics'
     omics = 'metagenomics'
@@ -543,7 +557,7 @@ class BASEMetagenomicsMetadata(BaseMetadata):
         return resources
 
 
-class BASESiteImagesMetadata(BaseMetadata):
+class BASESiteImagesMetadata(AMDBaseMetadata):
     organization = 'australian-microbiome'
     ckan_data_type = 'base-site-image'
     contextual_classes = common_context
@@ -688,7 +702,7 @@ def unique_spreadsheets(fnames):
     return [t for t in fnames if t not in skip_files]
 
 
-class BaseMarineMicrobesMetadata(BaseMetadata):
+class BaseMarineMicrobesMetadata(AMDBaseMetadata):
     def __init__(self, *args, **kwargs):
         super(BaseMarineMicrobesMetadata, self).__init__(*args, **kwargs)
         self.google_track_meta = MarineMicrobesGoogleTrackMetadata()
