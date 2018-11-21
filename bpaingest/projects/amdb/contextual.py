@@ -571,7 +571,6 @@ class AustralianMicrobiomeSampleContextual(object):
                 if field.attribute in r and r[field.attribute] != field.units:
                     raise Exception("units inconsistent for field: {}", field.attribute)
                 r[field.attribute] = field.units
-        logger.debug(r)
         return r
 
     def sample_ids(self):
