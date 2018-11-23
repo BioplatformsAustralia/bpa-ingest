@@ -15,7 +15,7 @@ class NCBISRAContextual:
     currently used by the BASE and MM projects
     all subclasses must set a `bioproject_accession` class variable
     """
-    metadata_patterns = [r'^.*\.(txt|csv)$']
+    metadata_patterns = [r'^.*\.(txt|csv|tsv)$']
 
     def __init__(self, path):
         self._path = path
@@ -62,7 +62,7 @@ class NCBISRAContextual:
                     if k.startswith('filename'):
                         yield v
 
-        templates = glob(self._path + '/' + 'SRA_subtemplate*.txt')
+        templates = glob(self._path + '/' + 'SRA_subtemplate*.txt') + glob(self._path + '/' + 'SRA_subtemplate*.tsv')
         files = set()
         for fname in templates:
             _, rows = csv_to_named_tuple('SRARow', fname, mode='rU', dialect='excel-tab')
