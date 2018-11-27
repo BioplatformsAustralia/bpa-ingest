@@ -7,7 +7,7 @@ setup(author="CCG, Murdoch University",
       keywords="",
       url="https://github.com/muccg/bpa-ingest",
       name="bpaingest",
-      version="5.3.8",
+      version="5.3.9",
       packages=find_packages(exclude=["*.tests", "*.tests.*", "tests.*", "tests"]),
       dependency_links=[
           'git+https://github.com/muccg/ckanapi.git@streaming-uploads#egg=ckanapi-4.0',

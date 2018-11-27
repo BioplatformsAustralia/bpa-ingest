@@ -674,6 +674,7 @@ class SepsisProteomicsMS1QuantificationMetadata(BaseSepsisMetadata):
                     continue
                 bpam_track_meta = self.bpam_track_meta.get(sample_id)
                 if 'taxon_or_organism' not in bpam_track_meta:
+                    logger.error("package for {} excluded due to missing BPAM metadata".format(sample_id))
                     continue
                 obj = bpam_track_meta.copy()
                 obj.update(row._asdict())
