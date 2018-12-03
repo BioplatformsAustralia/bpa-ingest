@@ -264,7 +264,7 @@ class BASEAmpliconsMetadata(AMDBaseMetadata):
                 resource['resource_type'] = self.ckan_data_type
                 for contextual_source in self.contextual_metadata:
                     resource.update(contextual_source.filename_metadata(filename))
-                sample_extraction_id = sample_id.split('.')[-1] + '_' + file_info.get('extraction')
+                sample_extraction_id = sample_id.split('/')[-1] + '_' + file_info.get('extraction')
                 xlsx_info = self.metadata_info[os.path.basename(md5_file)]
                 legacy_url = urljoin(xlsx_info['base_url'], filename)
                 resources.append(((sample_extraction_id, resource['amplicon'], build_base_amplicon_linkage(index_linkage, resource['flow_id'], resource['index'])), legacy_url, resource))
@@ -550,7 +550,7 @@ class BASEMetagenomicsMetadata(AMDBaseMetadata):
                 resource['resource_type'] = self.ckan_data_type
                 for contextual_source in self.contextual_metadata:
                     resource.update(contextual_source.filename_metadata(filename))
-                sample_extraction_id = sample_id.split('.')[-1] + '_' + file_info.get('extraction')
+                sample_extraction_id = sample_id.split('/')[-1] + '_' + file_info.get('extraction')
                 xlsx_info = self.metadata_info[os.path.basename(md5_file)]
                 legacy_url = urljoin(xlsx_info['base_url'], filename)
                 resources.append(((sample_extraction_id, resource['flow_id']), legacy_url, resource))
@@ -789,7 +789,7 @@ class BaseMarineMicrobesAmpliconsMetadata(BaseMarineMicrobesMetadata):
                 obj = self.extract_bpam_metadata(track_meta)
                 index = index_from_comment([row.comments, row.sample_name_on_sample_sheet])
                 mm_amplicon_linkage = build_mm_amplicon_linkage(use_index_linkage, flow_id, index)
-                name = sample_id_to_ckan_name(sample_id.split('.')[-1], self.ckan_data_type + '-' + self.amplicon.lower(), mm_amplicon_linkage)
+                name = sample_id_to_ckan_name(sample_id.split('/')[-1], self.ckan_data_type + '-' + self.amplicon.lower(), mm_amplicon_linkage)
                 archive_ingestion_date = ingest_utils.get_date_isoformat(google_track_meta.date_of_transfer_to_archive)
 
                 obj.update({
@@ -1049,7 +1049,7 @@ class MarineMicrobesMetagenomicsMetadata(BaseMarineMicrobesMetadata):
                 track_meta = self.track_meta.get(sample_id)
                 google_track_meta = self.google_track_meta.get(row.ticket)
                 obj = self.extract_bpam_metadata(track_meta)
-                name = sample_id_to_ckan_name(sample_id.split('.')[-1], self.ckan_data_type)
+                name = sample_id_to_ckan_name(sample_id.split('/')[-1], self.ckan_data_type)
                 archive_ingestion_date = ingest_utils.get_date_isoformat(google_track_meta.date_of_transfer_to_archive)
 
                 obj.update({
@@ -1162,7 +1162,7 @@ class MarineMicrobesMetatranscriptomeMetadata(BaseMarineMicrobesMetadata):
             track_meta = self.track_meta.get(sample_id)
             google_track_meta = self.google_track_meta.get(row.ticket)
             obj = self.extract_bpam_metadata(track_meta)
-            name = sample_id_to_ckan_name(sample_id.split('.')[-1], self.ckan_data_type)
+            name = sample_id_to_ckan_name(sample_id.split('/')[-1], self.ckan_data_type)
             archive_ingestion_date = ingest_utils.get_date_isoformat(google_track_meta.date_of_transfer_to_archive)
 
             obj.update({
