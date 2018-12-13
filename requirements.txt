@@ -9,5 +9,8 @@ boto3==1.4.7
 botocore==1.7.41
 google-api-python-client
 python-dateutil==2.6.1
-shapely==1.6.4
-fiona==1.7.13
+#shapely==1.6.4
+#fiona==1.7.13
+#/home/kpatel/ccg_projects/BioplatformsAustralia/location-generalisation-utils
+git+https://github.com/muccg/location-generalisation-utils.git
+

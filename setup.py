@@ -11,6 +11,7 @@ setup(author="CCG, Murdoch University",
       packages=find_packages(exclude=["*.tests", "*.tests.*", "tests.*", "tests"]),
       dependency_links=[
           'git+https://github.com/muccg/ckanapi.git@streaming-uploads#egg=ckanapi-4.0',
+          'git+https://github.com/muccg/location-generalisation-utils.git'
       ],
       entry_points={
           'console_scripts': [
