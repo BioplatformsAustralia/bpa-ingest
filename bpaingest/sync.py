@@ -189,7 +189,10 @@ def sync_package_resources(ckan, package_obj, resource_id_legacy_url, resources,
     current_resources = package_obj['resources']
     for current_ckan_obj in current_resources:
         obj_id = current_ckan_obj['id']
-        resource_obj = needed_resources[obj_id]
+        resource_obj = needed_resources.get(obj_id)
+        if resource_obj is None:
+            logger.debug("skipping patch of unknown resource: {}".format(obj_id))
+            continue
         legacy_url = resource_id_legacy_url[obj_id]
         was_patched, ckan_obj = patch_if_required(ckan, 'resource', current_ckan_obj, resource_obj)
         if was_patched:
