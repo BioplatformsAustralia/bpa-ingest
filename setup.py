@@ -9,10 +9,6 @@ setup(author="CCG, Murdoch University",
       name="bpaingest",
       version="5.3.10",
       packages=find_packages(exclude=["*.tests", "*.tests.*", "tests.*", "tests"]),
-      dependency_links=[
-          'git+https://github.com/muccg/ckanapi.git@streaming-uploads#egg=ckanapi-4.0',
-          'git+https://github.com/muccg/location-generalisation-utils.git'
-      ],
       entry_points={
           'console_scripts': [
               'bpa-ingest=bpaingest.cli:main',
