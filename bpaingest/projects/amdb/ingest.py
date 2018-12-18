@@ -651,15 +651,15 @@ class BASESiteImagesMetadata(AMDBaseMetadata):
         return resources
 
 
-read_lengths = {
-    '16S': '300bp',
-    'A16S': '300bp',
-    '18S': '250bp'
+marine_read_lengths = {
+    '16s': '300bp',
+    'a16s': '300bp',
+    '18s': '250bp'
 }
 
 
 def mm_amplicon_read_length(amplicon):
-    return read_lengths[amplicon]
+    return marine_read_lengths[amplicon]
 
 
 index_from_comment_re = re.compile(r'([G|A|T|C|-]{6,}_[G|A|T|C|-]{6,})')
@@ -702,24 +702,23 @@ def unique_spreadsheets(fnames):
     return [t for t in fnames if t not in skip_files]
 
 
-class BaseMarineMicrobesMetadata(AMDBaseMetadata):
-    def __init__(self, *args, **kwargs):
-        super(BaseMarineMicrobesMetadata, self).__init__(*args, **kwargs)
-        self.google_track_meta = MarineMicrobesGoogleTrackMetadata()
-        self.track_meta = MarineMicrobesTrackMetadata(self.tracker_filename)
-
-    def extract_bpam_metadata(self, track_meta):
-        fields = ('archive_ingestion_date', 'contextual_data_submission_date', 'data_generated', 'sample_submission_date', 'submitter', 'work_order')
-        return dict((t, track_meta.get(t, '')) for t in fields)
+def base_extract_bpam_metadata(track_meta):
+    fields = ('archive_ingestion_date', 'contextual_data_submission_date', 'data_generated', 'sample_submission_date', 'submitter', 'work_order')
+    return dict((t, track_meta.get(t, '')) for t in fields)
 
 
-class BaseMarineMicrobesAmpliconsMetadata(BaseMarineMicrobesMetadata):
+class MarineMicrobesAmpliconsMetadata(AMDBaseMetadata):
     organization = 'australian-microbiome'
     ckan_data_type = 'mm-genomics-amplicon'
     omics = 'genomics'
     contextual_classes = common_context
     metadata_patterns = [r'^.*\.md5', r'^.*_metadata.*.*\.xlsx']
     resource_linkage = ('sample_id', 'mm_amplicon_linkage')
+    amplicon_tracker = {
+        '16s': 'Amplicon16STrack',
+        'a16s': 'AmpliconA16STrack',
+        '18s': 'Amplicon18STrack',
+    }
     spreadsheet = {
         'fields': [
             fld("sample_id", re.compile(r'^.*sample unique id$'), coerce=ingest_utils.extract_ands_id),
@@ -741,16 +740,40 @@ class BaseMarineMicrobesAmpliconsMetadata(BaseMarineMicrobesMetadata):
             'column_name_row_index': 1,
         }
     }
+    technology = 'amplicons'
+    index_linkage_spreadsheets = (
+        'MM_Pilot_1_16S_UNSW_AFGB7_metadata.xlsx',
+        'MM-Pilot_A16S_UNSW_AG27L_metadata_UPDATE.xlsx',
+        'MM_Pilot_18S_UNSW_AGGNB_metadata.xlsx',
+    )
+    index_linkage_md5s = (
+        'MM_1_16S_UNSW_AFGB7_checksums.md5',
+        'MM_Pilot_A16S_UNSW_AG27L_checksums.md5',
+        'MM_18S_UNSW_AGGNB_checksums.md5',
+    )
+    flowcell_comment_spreadsheets = (
+        'MM_16S_preBPA2_UNSW_metadata.xlsx',
+        'MM_A16S_preBPA2_UNSW_metadata.xlsx',
+        'MM_18S_preBPA2_UNSW_metadata.xlsx',
+    )
+    metadata_urls = [
+        'https://downloads-qcif.bioplatforms.com/bpa/marine_microbes/raw/amplicons/'
+    ]
+    metadata_url_components = ('amplicon', 'facility_code', 'ticket')
     md5 = {
         'match': [files.mm_amplicon_filename_re],
         'skip': [files.mm_amplicon_control_filename_re],
     }
 
     def __init__(self, metadata_path, contextual_metadata=None, metadata_info=None):
-        super(BaseMarineMicrobesAmpliconsMetadata, self).__init__()
+        super().__init__()
+        self.google_track_meta = MarineMicrobesGoogleTrackMetadata()
         self.path = Path(metadata_path)
         self.contextual_metadata = contextual_metadata
         self.metadata_info = metadata_info
+        self.track_meta = {
+            amplicon: MarineMicrobesTrackMetadata(fname)
+            for (amplicon, fname) in self.amplicon_tracker.items()}
 
     def _get_packages(self):
         xlsx_re = re.compile(r'^.*_(\w+)_metadata.*\.xlsx$')
@@ -778,20 +801,21 @@ class BaseMarineMicrobesAmpliconsMetadata(BaseMarineMicrobesMetadata):
             use_index_linkage = base_fname in self.index_linkage_spreadsheets
             # the GOSHIP data has flowcells in the comments field
             use_flowid_from_comment = base_fname in self.flowcell_comment_spreadsheets
-            for row in BaseMarineMicrobesAmpliconsMetadata.parse_spreadsheet(fname, self.metadata_info):
+            for row in self.parse_spreadsheet(fname, self.metadata_info):
                 sample_id = row.sample_id
                 if sample_id is None:
                     continue
                 if use_flowid_from_comment:
                     flow_id = get_flow_id_from_comment(row.comments)
-                track_meta = self.track_meta.get(sample_id)
+                track_meta = self.track_meta[row.amplicon].get(sample_id)
                 google_track_meta = self.google_track_meta.get(row.ticket)
-                obj = self.extract_bpam_metadata(track_meta)
+                obj = base_extract_bpam_metadata(track_meta)
                 index = index_from_comment([row.comments, row.sample_name_on_sample_sheet])
                 mm_amplicon_linkage = build_mm_amplicon_linkage(use_index_linkage, flow_id, index)
-                name = sample_id_to_ckan_name(sample_id.split('/')[-1], self.ckan_data_type + '-' + self.amplicon.lower(), mm_amplicon_linkage)
+                name = sample_id_to_ckan_name(sample_id.split('/')[-1], self.ckan_data_type + '-' + row.amplicon.lower(), mm_amplicon_linkage)
                 archive_ingestion_date = ingest_utils.get_date_isoformat(google_track_meta.date_of_transfer_to_archive)
 
+                amplicon = row.amplicon.upper()
                 obj.update({
                     'name': name,
                     'id': name,
@@ -799,15 +823,15 @@ class BaseMarineMicrobesAmpliconsMetadata(BaseMarineMicrobesMetadata):
                     'flow_id': flow_id,
                     'mm_amplicon_linkage': mm_amplicon_linkage,
                     'sample_extraction_id': ingest_utils.make_sample_extraction_id(row.sample_extraction_id, sample_id),
-                    'read_length': mm_amplicon_read_length(self.amplicon),
+                    'read_length': mm_amplicon_read_length(row.amplicon),
                     'target': row.target,
                     'pass_fail': ingest_utils.merge_pass_fail(row),
                     'dilution_used': row.dilution_used,
                     'reads': row.reads,
                     'analysis_software_version': row.analysis_software_version,
-                    'amplicon': self.amplicon,
-                    'notes': 'Marine Microbes Amplicons %s %s %s' % (self.amplicon, sample_id, flow_id),
-                    'title': 'Marine Microbes Amplicons %s %s %s' % (self.amplicon, sample_id, flow_id),
+                    'amplicon': amplicon,
+                    'notes': 'Marine Microbes Amplicons %s %s %s' % (amplicon, sample_id, flow_id),
+                    'title': 'Marine Microbes Amplicons %s %s %s' % (amplicon, sample_id, flow_id),
                     'omics': 'Genomics',
                     'analytical_platform': 'MiSeq',
                     'date_of_transfer': ingest_utils.get_date_isoformat(google_track_meta.date_of_transfer),
@@ -828,7 +852,7 @@ class BaseMarineMicrobesAmpliconsMetadata(BaseMarineMicrobesMetadata):
                 for contextual_source in self.contextual_metadata:
                     obj.update(contextual_source.get(sample_id))
                 ingest_utils.add_spatial_extra(obj)
-                tag_names = ['amplicons', self.amplicon]
+                tag_names = ['amplicons', amplicon]
                 if obj.get('sample_type'):
                     tag_names.append(obj['sample_type'])
                 obj['tags'] = [{'name': t} for t in tag_names]
@@ -855,46 +879,7 @@ class BaseMarineMicrobesAmpliconsMetadata(BaseMarineMicrobesMetadata):
         return resources
 
 
-class MarineMicrobesGenomicsAmplicons16SMetadata(BaseMarineMicrobesAmpliconsMetadata):
-    amplicon = '16S'
-    technology = 'amplicons-16s'
-    index_linkage_spreadsheets = ('MM_Pilot_1_16S_UNSW_AFGB7_metadata.xlsx',)
-    index_linkage_md5s = ('MM_1_16S_UNSW_AFGB7_checksums.md5',)
-    flowcell_comment_spreadsheets = ('MM_16S_preBPA2_UNSW_metadata.xlsx',)
-    metadata_urls = [
-        'https://downloads-qcif.bioplatforms.com/bpa/marine_microbes/raw/amplicons/16s/'
-    ]
-    metadata_url_components = ('facility_code', 'ticket')
-    tracker_filename = 'Amplicon16STrack'
-
-
-class MarineMicrobesGenomicsAmpliconsA16SMetadata(BaseMarineMicrobesAmpliconsMetadata):
-    amplicon = 'A16S'
-    technology = 'amplicons-a16s'
-    index_linkage_spreadsheets = ('MM-Pilot_A16S_UNSW_AG27L_metadata_UPDATE.xlsx',)
-    index_linkage_md5s = ('MM_Pilot_A16S_UNSW_AG27L_checksums.md5',)
-    flowcell_comment_spreadsheets = ('MM_A16S_preBPA2_UNSW_metadata.xlsx',)
-    metadata_urls = [
-        'https://downloads-qcif.bioplatforms.com/bpa/marine_microbes/raw/amplicons/a16s/'
-    ]
-    metadata_url_components = ('facility_code', 'ticket')
-    tracker_filename = 'AmpliconA16STrack'
-
-
-class MarineMicrobesGenomicsAmplicons18SMetadata(BaseMarineMicrobesAmpliconsMetadata):
-    amplicon = '18S'
-    technology = 'amplicons-18s'
-    index_linkage_spreadsheets = ('MM_Pilot_18S_UNSW_AGGNB_metadata.xlsx',)
-    index_linkage_md5s = ('MM_18S_UNSW_AGGNB_checksums.md5',)
-    flowcell_comment_spreadsheets = ('MM_18S_preBPA2_UNSW_metadata.xlsx',)
-    metadata_urls = [
-        'https://downloads-qcif.bioplatforms.com/bpa/marine_microbes/raw/amplicons/18s/'
-    ]
-    metadata_url_components = ('facility_code', 'ticket')
-    tracker_filename = 'Amplicon18STrack'
-
-
-class BaseMarineMicrobesAmpliconsControlMetadata(BaseMarineMicrobesMetadata):
+class MarineMicrobesAmpliconsControlMetadata(AMDBaseMetadata):
     organization = 'australian-microbiome'
     ckan_data_type = 'mm-genomics-amplicon-control'
     omics = 'genomics'
@@ -905,11 +890,16 @@ class BaseMarineMicrobesAmpliconsControlMetadata(BaseMarineMicrobesMetadata):
         'match': [files.mm_amplicon_control_filename_re],
         'skip': [files.mm_amplicon_filename_re],
     }
+    metadata_urls = [
+        'https://downloads-qcif.bioplatforms.com/bpa/marine_microbes/raw/amplicons/'
+    ]
+    metadata_url_components = ('amplicon', 'facility_code', 'ticket')
 
     def __init__(self, metadata_path, contextual_metadata=None, metadata_info=None):
-        super(BaseMarineMicrobesAmpliconsControlMetadata, self).__init__()
+        super().__init__()
         self.path = Path(metadata_path)
         self.metadata_info = metadata_info
+        self.google_track_meta = MarineMicrobesGoogleTrackMetadata()
 
     def md5_lines(self):
         logger.info("Ingesting MM md5 file information from {0}".format(self.path))
@@ -919,11 +909,14 @@ class BaseMarineMicrobesAmpliconsControlMetadata(BaseMarineMicrobesMetadata):
                 yield filename, md5, md5_file, file_info
 
     def _get_packages(self):
-        flow_id_ticket = dict((t['flow_id'], self.metadata_info[os.path.basename(fname)]) for _, _, fname, t in self.md5_lines())
+        flow_id_info = {
+            t['flow_id']: self.metadata_info[os.path.basename(fname)]
+            for _, _, fname, t in self.md5_lines()}
         packages = []
-        for flow_id, info in sorted(flow_id_ticket.items()):
+        for flow_id, info in sorted(flow_id_info.items()):
             obj = {}
-            name = sample_id_to_ckan_name('control', self.ckan_data_type + '-' + self.amplicon, flow_id).lower()
+            amplicon = info['amplicon']
+            name = sample_id_to_ckan_name('control', self.ckan_data_type + '-' + amplicon, flow_id).lower()
             google_track_meta = self.google_track_meta.get(info['ticket'])
 
             archive_ingestion_date = ingest_utils.get_date_isoformat(google_track_meta.date_of_transfer_to_archive)
@@ -932,11 +925,11 @@ class BaseMarineMicrobesAmpliconsControlMetadata(BaseMarineMicrobesMetadata):
                 'name': name,
                 'id': name,
                 'flow_id': flow_id,
-                'notes': 'Marine Microbes Amplicons Control %s %s' % (self.amplicon, flow_id),
-                'title': 'Marine Microbes Amplicons Control %s %s' % (self.amplicon, flow_id),
+                'notes': 'Marine Microbes Amplicons Control %s %s' % (amplicon, flow_id),
+                'title': 'Marine Microbes Amplicons Control %s %s' % (amplicon, flow_id),
                 'omics': 'Genomics',
                 'analytical_platform': 'MiSeq',
-                'read_length': mm_amplicon_read_length(self.amplicon),
+                'read_length': mm_amplicon_read_length(amplicon),
                 'date_of_transfer': ingest_utils.get_date_isoformat(google_track_meta.date_of_transfer),
                 'data_type': google_track_meta.data_type,
                 'description': google_track_meta.description,
@@ -948,12 +941,12 @@ class BaseMarineMicrobesAmpliconsControlMetadata(BaseMarineMicrobesMetadata):
                 'dataset_url': google_track_meta.download,
                 'ticket': info['ticket'],
                 'facility': info['facility_code'].upper(),
-                'amplicon': self.amplicon,
+                'amplicon': amplicon,
                 'type': self.ckan_data_type,
                 'private': True,
             })
             ingest_utils.add_spatial_extra(obj)
-            tag_names = ['amplicons-control', self.amplicon, 'raw']
+            tag_names = ['amplicons-control', amplicon, 'raw']
             obj['tags'] = [{'name': t} for t in tag_names]
             packages.append(obj)
         return packages
@@ -961,44 +954,23 @@ class BaseMarineMicrobesAmpliconsControlMetadata(BaseMarineMicrobesMetadata):
     def _get_resources(self):
         resources = []
         for filename, md5, md5_file, file_info in self.md5_lines():
+            xlsx_info = self.metadata_info[os.path.basename(md5_file)]
+            amplicon = xlsx_info['amplicon']
             resource = file_info.copy()
             resource['md5'] = resource['id'] = md5
             resource['name'] = filename
             resource['resource_type'] = self.ckan_data_type
-            xlsx_info = self.metadata_info[os.path.basename(md5_file)]
+            resource['amplicon'] = amplicon
             legacy_url = urljoin(xlsx_info['base_url'], filename)
-            resources.append(((self.amplicon, resource['flow_id']), legacy_url, resource))
+            resources.append(((amplicon, resource['flow_id']), legacy_url, resource))
         return resources
 
 
-class MarineMicrobesGenomicsAmplicons16SControlMetadata(BaseMarineMicrobesAmpliconsControlMetadata):
-    amplicon = '16S'
-    technology = 'amplicons-control-16s'
-    metadata_urls = [
-        'https://downloads-qcif.bioplatforms.com/bpa/marine_microbes/raw/amplicons/16s/'
-    ]
-    metadata_url_components = ('facility_code', 'ticket')
-    tracker_filename = 'Amplicon16STrack'
-
-
-class MarineMicrobesGenomicsAmpliconsA16SControlMetadata(BaseMarineMicrobesAmpliconsControlMetadata):
-    amplicon = 'A16S'
-    technology = 'amplicons-control-a16s'
-    metadata_urls = [
-        'https://downloads-qcif.bioplatforms.com/bpa/marine_microbes/raw/amplicons/a16s/'
-    ]
-    metadata_url_components = ('facility_code', 'ticket')
-    tracker_filename = 'AmpliconA16STrack'
-
-
-class MarineMicrobesGenomicsAmplicons18SControlMetadata(BaseMarineMicrobesAmpliconsControlMetadata):
-    amplicon = '18S'
-    technology = 'amplicons-control-18s'
-    metadata_urls = [
-        'https://downloads-qcif.bioplatforms.com/bpa/marine_microbes/raw/amplicons/18s/'
-    ]
-    metadata_url_components = ('facility_code', 'ticket')
-    tracker_filename = 'Amplicon18STrack'
+class BaseMarineMicrobesMetadata(AMDBaseMetadata):
+    def __init__(self, *args, **kwargs):
+        super(BaseMarineMicrobesMetadata, self).__init__(*args, **kwargs)
+        self.google_track_meta = MarineMicrobesGoogleTrackMetadata()
+        self.track_meta = MarineMicrobesTrackMetadata(self.tracker_filename)
 
 
 class MarineMicrobesMetagenomicsMetadata(BaseMarineMicrobesMetadata):
@@ -1048,7 +1020,7 @@ class MarineMicrobesMetagenomicsMetadata(BaseMarineMicrobesMetadata):
                     continue
                 track_meta = self.track_meta.get(sample_id)
                 google_track_meta = self.google_track_meta.get(row.ticket)
-                obj = self.extract_bpam_metadata(track_meta)
+                obj = base_extract_bpam_metadata(track_meta)
                 name = sample_id_to_ckan_name(sample_id.split('/')[-1], self.ckan_data_type)
                 archive_ingestion_date = ingest_utils.get_date_isoformat(google_track_meta.date_of_transfer_to_archive)
 
@@ -1161,7 +1133,7 @@ class MarineMicrobesMetatranscriptomeMetadata(BaseMarineMicrobesMetadata):
                 continue
             track_meta = self.track_meta.get(sample_id)
             google_track_meta = self.google_track_meta.get(row.ticket)
-            obj = self.extract_bpam_metadata(track_meta)
+            obj = base_extract_bpam_metadata(track_meta)
             name = sample_id_to_ckan_name(sample_id.split('/')[-1], self.ckan_data_type)
             archive_ingestion_date = ingest_utils.get_date_isoformat(google_track_meta.date_of_transfer_to_archive)
 

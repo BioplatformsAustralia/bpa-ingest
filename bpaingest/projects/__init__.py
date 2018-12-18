@@ -3,12 +3,8 @@ from .amdb.ingest import (
     BASEMetagenomicsMetadata,
     BASEAmpliconsControlMetadata,
     BASESiteImagesMetadata,
-    MarineMicrobesGenomicsAmplicons16SMetadata,
-    MarineMicrobesGenomicsAmpliconsA16SMetadata,
-    MarineMicrobesGenomicsAmplicons18SMetadata,
-    MarineMicrobesGenomicsAmplicons16SControlMetadata,
-    MarineMicrobesGenomicsAmpliconsA16SControlMetadata,
-    MarineMicrobesGenomicsAmplicons18SControlMetadata,
+    MarineMicrobesAmpliconsMetadata,
+    MarineMicrobesAmpliconsControlMetadata,
     MarineMicrobesMetagenomicsMetadata,
     MarineMicrobesMetatranscriptomeMetadata)
 from .gbr.ingest import (
@@ -64,12 +60,8 @@ class ProjectInfo:
             GbrPacbioMetadata,
         ],
         'marine-microbes': [
-            MarineMicrobesGenomicsAmplicons16SMetadata,
-            MarineMicrobesGenomicsAmpliconsA16SMetadata,
-            MarineMicrobesGenomicsAmplicons18SMetadata,
-            MarineMicrobesGenomicsAmplicons16SControlMetadata,
-            MarineMicrobesGenomicsAmpliconsA16SControlMetadata,
-            MarineMicrobesGenomicsAmplicons18SControlMetadata,
+            MarineMicrobesAmpliconsMetadata,
+            MarineMicrobesAmpliconsControlMetadata,
             MarineMicrobesMetagenomicsMetadata,
             MarineMicrobesMetatranscriptomeMetadata,
         ],
@@ -115,7 +107,7 @@ class ProjectInfo:
         'wheat-pathogens': [
             WheatPathogensGenomesMetadata,  # the first half of wheat pathogens
         ],
-    }
+   }
 
     def __init__(self):
         self.metadata_info = self._build_metadata_info()
