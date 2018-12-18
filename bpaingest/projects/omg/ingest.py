@@ -11,7 +11,7 @@ from urllib.parse import urljoin
 from glob import glob
 
 from ...libs import ingest_utils
-from locationgeneralisation.generaliser import SensitiveDataGeneraliser
+from sslh.handler import SensitiveDataGeneraliser
 from ...libs.excel_wrapper import make_field_definition as fld
 from . import files
 from .tracking import OMGTrackMetadata
