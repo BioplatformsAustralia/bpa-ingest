@@ -27,7 +27,7 @@ common_context = [OMGSampleContextual, OMGLibraryContextual]
 class OMGBaseMetadata(BaseMetadata):
     def __init__(self, *args, **kwargs):
         self.generaliser = SensitiveDataGeneraliser()
-        super(OMGBaseMetadata, self).__init__(*args, **kwargs)
+        super().__init__(*args, **kwargs)
 
 
 class OMG10XRawIlluminaMetadata(OMGBaseMetadata):
@@ -102,7 +102,7 @@ class OMG10XRawIlluminaMetadata(OMGBaseMetadata):
     }
 
     def __init__(self, metadata_path, contextual_metadata=None, metadata_info=None):
-        super(OMG10XRawIlluminaMetadata, self).__init__()
+        super().__init__()
         self.path = Path(metadata_path)
         self.contextual_metadata = contextual_metadata
         self.metadata_info = metadata_info
@@ -281,7 +281,7 @@ class OMG10XRawMetadata(OMGBaseMetadata):
     }
 
     def __init__(self, metadata_path, contextual_metadata=None, metadata_info=None):
-        super(OMG10XRawMetadata, self).__init__()
+        super().__init__()
         self.path = Path(metadata_path)
         self.contextual_metadata = contextual_metadata
         self.metadata_info = metadata_info
@@ -424,7 +424,7 @@ class OMG10XProcessedIlluminaMetadata(OMGBaseMetadata):
     }
 
     def __init__(self, metadata_path, contextual_metadata=None, metadata_info=None):
-        super(OMG10XProcessedIlluminaMetadata, self).__init__()
+        super().__init__()
         self.path = Path(metadata_path)
         self.contextual_metadata = contextual_metadata
         self.metadata_info = metadata_info
@@ -571,7 +571,7 @@ class OMGExonCaptureMetadata(OMGBaseMetadata):
     }
 
     def __init__(self, metadata_path, contextual_metadata=None, metadata_info=None):
-        super(OMGExonCaptureMetadata, self).__init__()
+        super().__init__()
         self.path = Path(metadata_path)
         self.contextual_metadata = contextual_metadata
         self.metadata_info = metadata_info
@@ -706,7 +706,7 @@ class OMGGenomicsHiSeqMetadata(OMGBaseMetadata):
     }
 
     def __init__(self, metadata_path, contextual_metadata=None, metadata_info=None):
-        super(OMGGenomicsHiSeqMetadata, self).__init__()
+        super().__init__()
         self.path = Path(metadata_path)
         self.contextual_metadata = contextual_metadata
         self.metadata_info = metadata_info
@@ -863,7 +863,7 @@ class OMGGenomicsDDRADMetadata(OMGBaseMetadata):
     }
 
     def __init__(self, metadata_path, contextual_metadata=None, metadata_info=None):
-        super(OMGGenomicsDDRADMetadata, self).__init__()
+        super().__init__()
         self.path = Path(metadata_path)
         self.contextual_metadata = contextual_metadata
         self.metadata_info = metadata_info

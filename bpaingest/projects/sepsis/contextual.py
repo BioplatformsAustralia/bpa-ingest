@@ -396,9 +396,9 @@ class SepsisProteomicsBaseContextual(object):
 
 class SepsisProteomicsMS1QuantificationContextual(SepsisProteomicsBaseContextual):
     def __init__(self, path):
-        super(SepsisProteomicsMS1QuantificationContextual, self).__init__(path, 'MS1 quantification')
+        super().__init__(path, 'MS1 quantification')
 
 
 class SepsisProteomicsSwathMSContextual(SepsisProteomicsBaseContextual):
     def __init__(self, path):
-        super(SepsisProteomicsSwathMSContextual, self).__init__(path, 'SWATH-MS')
+        super().__init__(path, 'SWATH-MS')

@@ -105,7 +105,7 @@ class BaseSepsisMetadata(BaseMetadata):
     }
 
     def __init__(self, *args, **kwargs):
-        super(BaseSepsisMetadata, self).__init__(*args, **kwargs)
+        super().__init__(*args, **kwargs)
         self.google_track_meta = SepsisGoogleTrackMetadata()
 
 
@@ -136,7 +136,7 @@ class SepsisGenomicsMiseqMetadata(BaseSepsisMetadata):
     }
 
     def __init__(self, metadata_path, contextual_metadata=None, metadata_info=None):
-        super(SepsisGenomicsMiseqMetadata, self).__init__()
+        super().__init__()
         self.path = Path(metadata_path)
         self.contextual_metadata = contextual_metadata
         self.bpam_track_meta = SepsisGenomicsTrackMetadata('GenomicsMiSeq')
@@ -229,7 +229,7 @@ class SepsisGenomicsPacbioMetadata(BaseSepsisMetadata):
     }
 
     def __init__(self, metadata_path, contextual_metadata=None, metadata_info=None):
-        super(SepsisGenomicsPacbioMetadata, self).__init__()
+        super().__init__()
         self.path = Path(metadata_path)
         self.contextual_metadata = contextual_metadata
         self.bpam_track_meta = SepsisGenomicsTrackMetadata('GenomicsPacBio')
@@ -325,7 +325,7 @@ class SepsisTranscriptomicsHiseqMetadata(BaseSepsisMetadata):
     }
 
     def __init__(self, metadata_path, contextual_metadata=None, metadata_info=None):
-        super(SepsisTranscriptomicsHiseqMetadata, self).__init__()
+        super().__init__()
         self.path = Path(metadata_path)
         self.contextual_metadata = contextual_metadata
         self.bpam_track_meta = SepsisTrackMetadata('TranscriptomicsHiSeq')
@@ -448,7 +448,7 @@ class SepsisMetabolomicsGCMSMetadata(BaseSepsisMetadata):
     }
 
     def __init__(self, metadata_path, contextual_metadata=None, metadata_info=None):
-        super(SepsisMetabolomicsGCMSMetadata, self).__init__()
+        super().__init__()
         self.path = Path(metadata_path)
         self.contextual_metadata = contextual_metadata
         self.bpam_track_meta = SepsisTrackMetadata('MetabolomicsGCMS')
@@ -547,7 +547,7 @@ class SepsisMetabolomicsLCMSMetadata(BaseSepsisMetadata):
     }
 
     def __init__(self, metadata_path, contextual_metadata=None, metadata_info=None):
-        super(SepsisMetabolomicsLCMSMetadata, self).__init__()
+        super().__init__()
         self.path = Path(metadata_path)
         self.contextual_metadata = contextual_metadata
         self.bpam_track_meta = SepsisTrackMetadata('MetabolomicsLCMS')
@@ -648,7 +648,7 @@ class SepsisProteomicsMS1QuantificationMetadata(BaseSepsisMetadata):
     }
 
     def __init__(self, metadata_path, contextual_metadata=None, metadata_info=None):
-        super(SepsisProteomicsMS1QuantificationMetadata, self).__init__()
+        super().__init__()
         self.path = Path(metadata_path)
         self.contextual_metadata = contextual_metadata
         self.bpam_track_meta = SepsisTrackMetadata('ProteomicsMS1Quantification')
@@ -741,7 +741,7 @@ class SepsisProteomicsSwathMSBaseSepsisMetadata(BaseSepsisMetadata):
     }
 
     def __init__(self, metadata_path, contextual_metadata=None, metadata_info=None):
-        super(SepsisProteomicsSwathMSBaseSepsisMetadata, self).__init__()
+        super().__init__()
         self.path = Path(metadata_path)
         self.metadata_info = metadata_info
         self.contextual_metadata = contextual_metadata
@@ -909,7 +909,7 @@ class SepsisProteomicsSwathMSCombinedSampleMetadata(BaseSepsisMetadata):
     }
 
     def __init__(self, metadata_path, contextual_metadata=None, metadata_info=None):
-        super(SepsisProteomicsSwathMSCombinedSampleMetadata, self).__init__()
+        super().__init__()
         self.path = Path(metadata_path)
         self.contextual_metadata = contextual_metadata
         self.metadata_info = metadata_info
@@ -1017,7 +1017,7 @@ class SepsisProteomics2DLibraryMetadata(BaseSepsisMetadata):
     }
 
     def __init__(self, metadata_path, contextual_metadata=None, metadata_info=None):
-        super(SepsisProteomics2DLibraryMetadata, self).__init__()
+        super().__init__()
         self.path = Path(metadata_path)
         self.contextual_metadata = contextual_metadata
         self.metadata_info = metadata_info
@@ -1223,7 +1223,7 @@ class SepsisProteomicsAnalysedMetadata(BaseSepsisAnalysedMetadata):
     }
 
     def __init__(self, metadata_path, contextual_metadata=None, metadata_info=None):
-        super(SepsisProteomicsAnalysedMetadata, self).__init__()
+        super().__init__()
         self.path = Path(metadata_path)
         self.contextual_metadata = contextual_metadata
         self.metadata_info = metadata_info
@@ -1354,7 +1354,7 @@ class SepsisTranscriptomicsAnalysedMetadata(BaseSepsisAnalysedMetadata):
     }
 
     def __init__(self, metadata_path, contextual_metadata=None, metadata_info=None):
-        super(SepsisTranscriptomicsAnalysedMetadata, self).__init__()
+        super().__init__()
         self.path = Path(metadata_path)
         self.contextual_metadata = contextual_metadata
         self.metadata_info = metadata_info
@@ -1475,7 +1475,7 @@ class SepsisMetabolomicsAnalysedMetadata(BaseSepsisAnalysedMetadata):
     }
 
     def __init__(self, metadata_path, contextual_metadata=None, metadata_info=None):
-        super(SepsisMetabolomicsAnalysedMetadata, self).__init__()
+        super().__init__()
         self.path = Path(metadata_path)
         self.contextual_metadata = contextual_metadata
         self.metadata_info = metadata_info
@@ -1596,7 +1596,7 @@ class SepsisGenomicsAnalysedMetadata(BaseSepsisAnalysedMetadata):
     }
 
     def __init__(self, metadata_path, contextual_metadata=None, metadata_info=None):
-        super(SepsisGenomicsAnalysedMetadata, self).__init__()
+        super().__init__()
         self.path = Path(metadata_path)
         self.contextual_metadata = contextual_metadata
         self.metadata_info = metadata_info
@@ -1714,7 +1714,7 @@ class SepsisProteomicsProteinDatabaseMetadata(BaseSepsisAnalysedMetadata):
     }
 
     def __init__(self, metadata_path, contextual_metadata=None, metadata_info=None):
-        super(SepsisProteomicsProteinDatabaseMetadata, self).__init__()
+        super().__init__()
         self.path = Path(metadata_path)
         self.contextual_metadata = contextual_metadata
         self.metadata_info = metadata_info

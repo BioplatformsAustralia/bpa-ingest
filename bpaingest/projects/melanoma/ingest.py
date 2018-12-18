@@ -13,7 +13,7 @@ class MelanomaMetadata(BaseMetadata):
     organization = 'bpa-melanoma'
 
     def __init__(self, metadata_path):
-        super(MelanomaMetadata, self).__init__()
+        super().__init__()
         self.path = Path(metadata_path)
 
     def _get_packages(self):

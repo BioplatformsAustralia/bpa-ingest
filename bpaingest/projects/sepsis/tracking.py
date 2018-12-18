@@ -38,7 +38,7 @@ class SepsisTrackMetadata(object):
 
 class SepsisGenomicsTrackMetadata(SepsisTrackMetadata):
     def get(self, sample_id):
-        obj = super(SepsisGenomicsTrackMetadata, self).get(sample_id)
+        obj = super().get(sample_id)
         track_meta = self.track_meta.get(sample_id)
         if track_meta:
             obj['growth_condition_notes'] = track_meta.growth_condition_notes

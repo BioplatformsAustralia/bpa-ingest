@@ -65,7 +65,7 @@ class WheatPathogensGenomesMetadata(BaseMetadata):
     }
 
     def __init__(self, metadata_path, metadata_info=None):
-        super(WheatPathogensGenomesMetadata, self).__init__()
+        super().__init__()
         self.path = Path(metadata_path)
         self.metadata_info = metadata_info
 

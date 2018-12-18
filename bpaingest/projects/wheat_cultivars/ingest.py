@@ -47,7 +47,7 @@ class WheatCultivarsMetadata(BaseMetadata):
     }
 
     def __init__(self, metadata_path, metadata_info=None):
-        super(WheatCultivarsMetadata, self).__init__()
+        super().__init__()
         self.metadata_info = metadata_info
         self.path = Path(metadata_path)
         self.runs = parse_run_data(self.path)

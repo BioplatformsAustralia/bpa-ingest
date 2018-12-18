@@ -66,7 +66,7 @@ class StemcellsTranscriptomeMetadata(BaseMetadata):
     }
 
     def __init__(self, metadata_path, contextual_metadata=None, metadata_info=None):
-        super(StemcellsTranscriptomeMetadata, self).__init__()
+        super().__init__()
         self.path = Path(metadata_path)
         self.contextual_metadata = contextual_metadata
         self.metadata_info = metadata_info
@@ -166,7 +166,7 @@ class StemcellsSmallRNAMetadata(BaseMetadata):
     }
 
     def __init__(self, metadata_path, contextual_metadata=None, metadata_info=None):
-        super(StemcellsSmallRNAMetadata, self).__init__()
+        super().__init__()
         self.path = Path(metadata_path)
         self.contextual_metadata = contextual_metadata
         self.metadata_info = metadata_info
@@ -268,7 +268,7 @@ class StemcellsSingleCellRNASeqMetadata(BaseMetadata):
     }
 
     def __init__(self, metadata_path, contextual_metadata=None, metadata_info=None):
-        super(StemcellsSingleCellRNASeqMetadata, self).__init__()
+        super().__init__()
         self.path = Path(metadata_path)
         self.contextual_metadata = contextual_metadata
         self.metadata_info = metadata_info
@@ -380,7 +380,7 @@ class StemcellsMetabolomicsMetadata(BaseMetadata):
     }
 
     def __init__(self, metadata_path, contextual_metadata=None, metadata_info=None):
-        super(StemcellsMetabolomicsMetadata, self).__init__()
+        super().__init__()
         self.path = Path(metadata_path)
         self.contextual_metadata = contextual_metadata
         self.metadata_info = metadata_info
@@ -463,7 +463,7 @@ class StemcellsProteomicsBaseMetadata(BaseMetadata):
     organization = 'bpa-stemcells'
 
     def __init__(self, *args, **kwargs):
-        super(StemcellsProteomicsBaseMetadata, self).__init__()
+        super().__init__()
         self.filename_metadata = {}
 
     def read_all_rows(self, mode):
@@ -526,7 +526,7 @@ class StemcellsProteomicsMetadata(StemcellsProteomicsBaseMetadata):
     }
 
     def __init__(self, metadata_path, contextual_metadata=None, metadata_info=None):
-        super(StemcellsProteomicsMetadata, self).__init__()
+        super().__init__()
         self.path = Path(metadata_path)
         self.contextual_metadata = contextual_metadata
         self.metadata_info = metadata_info
@@ -609,7 +609,7 @@ class StemcellsProteomicsPoolMetadata(StemcellsProteomicsBaseMetadata):
     }
 
     def __init__(self, metadata_path, contextual_metadata=None, metadata_info=None):
-        super(StemcellsProteomicsPoolMetadata, self).__init__()
+        super().__init__()
         self.path = Path(metadata_path)
         self.contextual_metadata = contextual_metadata
         self.metadata_info = metadata_info
@@ -733,7 +733,7 @@ class StemcellsProteomicsAnalysedMetadata(BaseMetadata):
     }
 
     def __init__(self, metadata_path, contextual_metadata=None, metadata_info=None):
-        super(StemcellsProteomicsAnalysedMetadata, self).__init__()
+        super().__init__()
         self.path = Path(metadata_path)
         self.contextual_metadata = contextual_metadata
         self.metadata_info = metadata_info
@@ -846,7 +846,7 @@ class StemcellsMetabolomicsAnalysedMetadata(BaseMetadata):
     }
 
     def __init__(self, metadata_path, contextual_metadata=None, metadata_info=None):
-        super(StemcellsMetabolomicsAnalysedMetadata, self).__init__()
+        super().__init__()
         self.path = Path(metadata_path)
         self.contextual_metadata = contextual_metadata
         self.metadata_info = metadata_info
@@ -969,7 +969,7 @@ class StemcellsTranscriptomeAnalysedMetadata(BaseMetadata):
     }
 
     def __init__(self, metadata_path, contextual_metadata=None, metadata_info=None):
-        super(StemcellsTranscriptomeAnalysedMetadata, self).__init__()
+        super().__init__()
         self.path = Path(metadata_path)
         self.contextual_metadata = contextual_metadata
         self.metadata_info = metadata_info

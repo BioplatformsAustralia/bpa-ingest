@@ -69,7 +69,7 @@ class GbrPacbioMetadata(BaseMetadata):
     }
 
     def __init__(self, metadata_path, metadata_info=None):
-        super(GbrPacbioMetadata, self).__init__()
+        super().__init__()
         self.path = Path(metadata_path)
         self.metadata_info = metadata_info
 
@@ -170,7 +170,7 @@ class GbrAmpliconsMetadata(BaseMetadata):
     }
 
     def __init__(self, metadata_path, metadata_info=None):
-        super(GbrAmpliconsMetadata, self).__init__()
+        super().__init__()
         self.path = Path(metadata_path)
         self.metadata_info = metadata_info
 

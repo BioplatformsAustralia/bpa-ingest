@@ -883,6 +883,7 @@ class MarineMicrobesAmpliconsControlMetadata(AMDBaseMetadata):
     organization = 'australian-microbiome'
     ckan_data_type = 'mm-genomics-amplicon-control'
     omics = 'genomics'
+    technology = 'amplicons-control'
     contextual_classes = []
     metadata_patterns = [r'^.*\.md5']
     resource_linkage = ('amplicon', 'flow_id')

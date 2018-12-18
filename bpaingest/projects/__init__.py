@@ -117,8 +117,8 @@ class ProjectInfo:
         slugs = set()
         for project_name, classes in ProjectInfo.projects.items():
             for cls in classes:
-                class_info = dict((t, getattr(cls, t, None)) for t in ('omics', 'technology', 'organization'))
-                class_info.update(dict((t, getattr(cls, t, False)) for t in ('analysed', 'pool')))
+                class_info = {t: getattr(cls, t, None) for t in ('omics', 'technology', 'organization')}
+                class_info.update({t: getattr(cls, t, False) for t in ('analysed', 'pool')})
                 class_info['project'] = project_name
                 class_info['cls'] = cls
                 class_info['slug'] = slug = self._make_slug(class_info)

@@ -14,7 +14,7 @@ class WheatPathogensTranscriptMetadata(BaseMetadata):
     omics = 'transcriptomics'
 
     def __init__(self, metadata_path):
-        super(WheatPathogensTranscriptMetadata, self).__init__()
+        super().__init__()
         self.path = Path(metadata_path)
 
     def _get_packages(self):
