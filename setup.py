@@ -9,9 +9,6 @@ setup(author="CCG, Murdoch University",
       name="bpaingest",
       version="5.4.0",
       packages=find_packages(exclude=["*.tests", "*.tests.*", "tests.*", "tests"]),
-      dependency_links=[
-          'git+https://github.com/muccg/ckanapi.git@streaming-uploads#egg=ckanapi-4.0',
-      ],
       entry_points={
           'console_scripts': [
               'bpa-ingest=bpaingest.cli:main',
