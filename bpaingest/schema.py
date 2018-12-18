@@ -171,8 +171,12 @@ def generate_schemas(args):
         with DownloadMetadata(project_cls, path=dlpath) as dlmeta:
             meta = dlmeta.meta
             data_type = meta.ckan_data_type
-            package_field_mapping[data_type].update(getattr(meta, 'package_field_names', {}))
-            resource_field_mapping[data_type].update(getattr(meta, 'resource_field_names', {}))
+            # multiple Metadata classes producing the same data type makes delete unsafe
+            # as it becomes difficult to assert that all packages of the type have been
+            # defined by a single bpa-ingest run
+            assert(data_type not in package_keys)
+            package_field_mapping[data_type] = getattr(meta, 'package_field_names', {})
+            resource_field_mapping[data_type] = getattr(meta, 'resource_field_names', {})
             for package in meta.get_packages():
                 package_keys[data_type].update(list(package.keys()))
             for _, _, resource in meta.get_resources():
