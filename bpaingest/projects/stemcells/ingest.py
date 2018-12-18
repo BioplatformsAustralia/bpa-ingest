@@ -86,7 +86,7 @@ class StemcellsTranscriptomeMetadata(BaseMetadata):
             if sample_id is None:
                 continue
             obj = {}
-            name = sample_id_to_ckan_name(sample_id.split('.')[-1], self.ckan_data_type)
+            name = sample_id_to_ckan_name(sample_id.split('/')[-1], self.ckan_data_type)
             track_meta = self.track_meta.get(row.ticket)
             obj.update({
                 'name': name,
@@ -186,7 +186,7 @@ class StemcellsSmallRNAMetadata(BaseMetadata):
             if sample_id is None:
                 continue
             obj = {}
-            name = sample_id_to_ckan_name(sample_id.split('.')[-1], self.ckan_data_type)
+            name = sample_id_to_ckan_name(sample_id.split('/')[-1], self.ckan_data_type)
             track_meta = self.track_meta.get(row.ticket)
             obj.update({
                 'name': name,
@@ -400,7 +400,7 @@ class StemcellsMetabolomicsMetadata(BaseMetadata):
             if sample_id is None:
                 continue
             obj = {}
-            name = sample_id_to_ckan_name(sample_id.split('.')[-1] + '-' + row.analytical_platform, self.ckan_data_type)
+            name = sample_id_to_ckan_name(sample_id.split('/')[-1] + '-' + row.analytical_platform, self.ckan_data_type)
             track_meta = self.track_meta.get(row.ticket)
             analytical_platform = fix_analytical_platform(row.analytical_platform)
             obj.update({
@@ -544,7 +544,7 @@ class StemcellsProteomicsMetadata(StemcellsProteomicsBaseMetadata):
         sample_id_ticket_facility = dict((t.sample_id, (t.ticket, t.facility_code)) for t in all_rows if t.sample_id)
         for sample_id, (ticket, facility_code) in sorted(sample_id_ticket_facility.items()):
             obj = {}
-            name = sample_id_to_ckan_name(sample_id.split('.')[-1], self.ckan_data_type)
+            name = sample_id_to_ckan_name(sample_id.split('/')[-1], self.ckan_data_type)
             track_meta = self.track_meta.get(ticket)
             obj.update({
                 'name': name,

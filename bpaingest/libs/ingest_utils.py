@@ -66,7 +66,7 @@ def fix_sample_extraction_id(val):
 def make_sample_extraction_id(extraction_id, sample_id):
     # instructions from project manager: if no extraction_id in the spreadsheet,
     # append _1 to the sample_id_to_ckan_name
-    return extraction_id or (sample_id.split('.')[-1] + "_1")
+    return extraction_id or (sample_id.split('/')[-1] + "_1")
 
 
 def fix_date_interval(val):
@@ -116,7 +116,7 @@ def extract_ands_id(s, silent=False):
     if s.startswith('e.g. '):
         return None
     # duplicated 102.100.100: e.g. 102.100.100.102.100.100.25977
-    s.replace('102.100.100.102.100.100.', '102.100.100.')
+    s.replace('102.100.100.102.100.100.', '102.100.100/')
     # handle a sample extraction id tacked on the end with an underscore
     if '_' in s:
         s = s.rsplit('_', 1)[0]
@@ -139,7 +139,7 @@ def extract_ands_id_silent(s):
 
 
 def short_ands_id(s):
-    return extract_ands_id(s).split('.')[-1]
+    return extract_ands_id(s).split('/')[-1]
 
 
 def get_int(val, default=None):

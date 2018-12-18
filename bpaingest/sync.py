@@ -110,7 +110,8 @@ def check_resources(ckan, current_resources, resource_id_legacy_url, auth, num_t
                 break
             current_ckan_obj, legacy_url, current_url = task
             obj_id = current_ckan_obj['id']
-            resource_issue = check_resource(ckan_address, archive_info, current_url, legacy_url, [current_ckan_obj.get(t) for t in S3_HASH_FIELDS], auth)
+            resource_issue = check_resource(ckan_address, archive_info, current_url, legacy_url, [
+                                            current_ckan_obj.get(t) for t in S3_HASH_FIELDS], auth)
             if resource_issue:
                 logger.error('resource check failed (%s) queued for re-upload: %s' % (resource_issue, obj_id))
                 to_reupload.append((current_ckan_obj, legacy_url))
@@ -188,7 +189,10 @@ def sync_package_resources(ckan, package_obj, resource_id_legacy_url, resources,
     current_resources = package_obj['resources']
     for current_ckan_obj in current_resources:
         obj_id = current_ckan_obj['id']
-        resource_obj = needed_resources[obj_id]
+        resource_obj = needed_resources.get(obj_id)
+        if resource_obj is None:
+            logger.debug("skipping patch of unknown resource: {}".format(obj_id))
+            continue
         legacy_url = resource_id_legacy_url[obj_id]
         was_patched, ckan_obj = patch_if_required(ckan, 'resource', current_ckan_obj, resource_obj)
         if was_patched:
@@ -241,7 +245,8 @@ def sync_resources(ckan, resources, resource_linkage_attrs, ckan_packages, auth,
     for resource_linkage, legacy_url, resource_obj in resources:
         package_id = resource_linkage_package_id.get(resource_linkage)
         if package_id is None:
-            logger.critical("Unable to find package for `%s', skipping resource (%s)" % (repr(resource_linkage), legacy_url))
+            logger.critical("Unable to find package for `%s', skipping resource (%s)" %
+                            (repr(resource_linkage), legacy_url))
         obj = resource_obj.copy()
         obj['package_id'] = package_id
         if package_id not in resource_idx:
@@ -262,7 +267,8 @@ def sync_resources(ckan, resources, resource_linkage_attrs, ckan_packages, auth,
         if package_resources is None:
             logger.warning("No resources for package `%s`" % (package_id))
             continue
-        to_reupload += sync_package_resources(ckan, package_obj, resource_id_legacy_url, package_resources, auth, do_delete)
+        to_reupload += sync_package_resources(ckan, package_obj, resource_id_legacy_url,
+                                              package_resources, auth, do_delete)
 
     if do_uploads:
         reupload_resources(ckan, to_reupload, resource_id_legacy_url, auth, num_threads)
@@ -286,4 +292,5 @@ def sync_metadata(ckan, meta, auth, num_threads, do_uploads, do_resource_checks,
     packages = list(unique_packages())
     ckan_packages = sync_packages(ckan, meta.ckan_data_type, packages, organization, None, do_delete)
     resources = meta.get_resources()
-    sync_resources(ckan, resources, meta.resource_linkage, ckan_packages, auth, num_threads, do_uploads, do_resource_checks, do_delete)
+    sync_resources(ckan, resources, meta.resource_linkage, ckan_packages, auth,
+                   num_threads, do_uploads, do_resource_checks, do_delete)
