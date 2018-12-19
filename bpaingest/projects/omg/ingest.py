@@ -189,7 +189,10 @@ class OMG10XRawIlluminaMetadata(OMGBaseMetadata):
                 'notes': notes,
             })
 
-            self.generaliser.apply(obj)
+            scientific_name = scientific_name = "{0} {1}".format(obj['genus'], obj['species']).strip().lower()
+            generalised_data = self.generaliser.apply(scientific_name, obj['latitude'], obj['longitude'])
+            if generalised_data:
+                    obj.update(generalised_data)
             ingest_utils.add_spatial_extra(obj)
             obj.update(common_values([make_row_metadata(row) for row in rows]))
 
@@ -337,7 +340,10 @@ class OMG10XRawMetadata(OMGBaseMetadata):
                 'private': True,
             })
             obj.update(context)
-            self.generaliser.apply(obj)
+            scientific_name = scientific_name = "{0} {1}".format(obj['genus'], obj['species']).strip().lower()
+            generalised_data = self.generaliser.apply(scientific_name, obj['latitude'], obj['longitude'])
+            if generalised_data:
+                    obj.update(generalised_data)
             ingest_utils.add_spatial_extra(obj)
             tag_names = ['10x-raw']
             obj['tags'] = [{'name': t} for t in tag_names]
@@ -485,7 +491,10 @@ class OMG10XProcessedIlluminaMetadata(OMGBaseMetadata):
                     'private': True,
                 })
                 obj.update(context)
-                self.generaliser.apply(obj)
+                scientific_name = scientific_name = "{0} {1}".format(obj['genus'], obj['species']).strip().lower()
+                generalised_data = self.generaliser.apply(scientific_name, obj['latitude'], obj['longitude'])
+                if generalised_data:
+                    obj.update(generalised_data)
                 ingest_utils.add_spatial_extra(obj)
                 tag_names = ['10x-processed']
                 obj['tags'] = [{'name': t} for t in tag_names]
@@ -621,7 +630,10 @@ class OMGExonCaptureMetadata(OMGBaseMetadata):
                     'private': True,
                 })
                 obj.update(context)
-                self.generaliser.apply(obj)
+                scientific_name = scientific_name = "{0} {1}".format(obj['genus'], obj['species']).strip().lower()
+                generalised_data = self.generaliser.apply(scientific_name, obj['latitude'], obj['longitude'])
+                if generalised_data:
+                    obj.update(generalised_data)
                 ingest_utils.add_spatial_extra(obj)
                 tag_names = ['exon-capture', 'raw']
                 obj['tags'] = [{'name': t} for t in tag_names]
@@ -768,7 +780,10 @@ class OMGGenomicsHiSeqMetadata(OMGBaseMetadata):
                     'private': True,
                 })
                 obj.update(context)
-                self.generaliser.apply(obj)
+                scientific_name = scientific_name = "{0} {1}".format(obj['genus'], obj['species']).strip().lower()
+                generalised_data = self.generaliser.apply(scientific_name, obj['latitude'], obj['longitude'])
+                if generalised_data:
+                    obj.update(generalised_data)
                 ingest_utils.add_spatial_extra(obj)
                 tag_names = ['genomics-hiseq']
                 obj['tags'] = [{'name': t} for t in tag_names]
@@ -914,7 +929,10 @@ class OMGGenomicsDDRADMetadata(OMGBaseMetadata):
                 'type': self.ckan_data_type,
                 'private': True,
             })
-            self.generaliser.apply(obj)
+            scientific_name = scientific_name = "{0} {1}".format(obj['genus'], obj['species']).strip().lower()
+            generalised_data = self.generaliser.apply(scientific_name, obj['latitude'], obj['longitude'])
+            if generalised_data:
+                    obj.update(generalised_data)
             ingest_utils.add_spatial_extra(obj)
             tag_names = ['genomics-ddrad']
             obj['tags'] = [{'name': t} for t in tag_names]
