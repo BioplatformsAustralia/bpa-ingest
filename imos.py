@@ -16,9 +16,10 @@ def main():
             typename=layer,
             outputFormat='csv-with-metadata-header',
             bbox=(
-                -43.6345972634, 113.338953078,
-                -10.6681857235, 153.569469029),
+                130, -13,
+                131, -12),  # Darwin
             srsname='urn:x-ogc:def:crs:EPSG:4326')
+
         print(response.read())
 
 
