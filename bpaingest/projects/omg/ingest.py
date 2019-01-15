@@ -42,7 +42,6 @@ class OMGBaseMetadata(BaseMetadata):
             package['latitude']), get_clean_number(package['longitude']))
 
         if generalised_data:
-            logger.debug(generalised_data._asdict())
             package.update(generalised_data._asdict())
 
 
