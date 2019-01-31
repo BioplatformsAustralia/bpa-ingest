@@ -1,4 +1,76 @@
 5 digit BPA ID,Data type,Taxon_OR_organism,Strain_OR_isolate,Serovar,Growth Media,Replicate,Omics,Analytical platform,Facility,Work order #,Contextual Data Submission Date,Sample submission date,Data generated,Archive Ingestion Date,Archive ID,id,curation_url,in_data_portal,last_modified
+102.100.100.51664,Main dataset,Klebsiella pneumoniae,04153260899A,,Pooled sera,6,Proteomics,SWATH-MS,APAF,,2018-08-17,2018-08-21,0,,,448,,0,2018-08-22 02:22:33
+102.100.100.51663,Main dataset,Klebsiella pneumoniae,04153260899A,,Pooled sera,5,Proteomics,SWATH-MS,APAF,,2018-08-17,2018-08-21,0,,,447,,0,2018-08-22 02:22:33
+102.100.100.51662,Main dataset,Klebsiella pneumoniae,04153260899A,,Pooled sera,4,Proteomics,SWATH-MS,APAF,,2018-08-17,2018-08-21,0,,,446,,0,2018-08-22 02:22:33
+102.100.100.51661,Main dataset,Klebsiella pneumoniae,04153260899A,,Pooled sera,3,Proteomics,SWATH-MS,APAF,,2018-08-17,2018-08-21,0,,,445,,0,2018-08-22 02:22:33
+102.100.100.51660,Main dataset,Klebsiella pneumoniae,04153260899A,,Pooled sera,2,Proteomics,SWATH-MS,APAF,,2018-08-17,2018-08-21,0,,,444,,0,2018-08-22 02:22:33
+102.100.100.51659,Main dataset,Klebsiella pneumoniae,04153260899A,,Pooled sera,1,Proteomics,SWATH-MS,APAF,,2018-08-17,2018-08-21,0,,,443,,0,2018-08-22 02:22:33
+102.100.100.51658,Main dataset,Klebsiella pneumoniae,04153260899A,,RPMI,6,Proteomics,SWATH-MS,APAF,,2018-08-17,2018-08-21,0,,,442,,0,2018-08-22 02:22:33
+102.100.100.51657,Main dataset,Klebsiella pneumoniae,04153260899A,,RPMI,5,Proteomics,SWATH-MS,APAF,,2018-08-17,2018-08-21,0,,,441,,0,2018-08-22 02:22:33
+102.100.100.51656,Main dataset,Klebsiella pneumoniae,04153260899A,,RPMI,4,Proteomics,SWATH-MS,APAF,,2018-08-17,2018-08-21,0,,,440,,0,2018-08-22 02:22:33
+102.100.100.51655,Main dataset,Klebsiella pneumoniae,04153260899A,,RPMI,3,Proteomics,SWATH-MS,APAF,,2018-08-17,2018-08-21,0,,,439,,0,2018-08-22 02:22:33
+102.100.100.51654,Main dataset,Klebsiella pneumoniae,04153260899A,,RPMI,2,Proteomics,SWATH-MS,APAF,,2018-08-17,2018-08-21,0,,,438,,0,2018-08-22 02:22:33
+102.100.100.51653,Main dataset,Klebsiella pneumoniae,04153260899A,,RPMI,1,Proteomics,SWATH-MS,APAF,,2018-08-17,2018-08-21,0,,,437,,0,2018-08-22 02:22:33
+102.100.100.51652,Main dataset,Klebsiella pneumoniae,03-311-0071,,Pooled sera,6,Proteomics,SWATH-MS,APAF,,2018-08-17,2018-08-21,0,,,436,,0,2018-08-22 02:22:33
+102.100.100.51651,Main dataset,Klebsiella pneumoniae,03-311-0071,,Pooled sera,5,Proteomics,SWATH-MS,APAF,,2018-08-17,2018-08-21,0,,,435,,0,2018-08-22 02:22:33
+102.100.100.51650,Main dataset,Klebsiella pneumoniae,03-311-0071,,Pooled sera,4,Proteomics,SWATH-MS,APAF,,2018-08-17,2018-08-21,0,,,434,,0,2018-08-22 02:22:33
+102.100.100.51649,Main dataset,Klebsiella pneumoniae,03-311-0071,,Pooled sera,3,Proteomics,SWATH-MS,APAF,,2018-08-17,2018-08-21,0,,,433,,0,2018-08-22 02:22:33
+102.100.100.51648,Main dataset,Klebsiella pneumoniae,03-311-0071,,Pooled sera,2,Proteomics,SWATH-MS,APAF,,2018-08-17,2018-08-21,0,,,432,,0,2018-08-22 02:22:33
+102.100.100.51647,Main dataset,Klebsiella pneumoniae,03-311-0071,,Pooled sera,1,Proteomics,SWATH-MS,APAF,,2018-08-17,2018-08-21,0,,,431,,0,2018-08-22 02:22:33
+102.100.100.51646,Main dataset,Klebsiella pneumoniae,03-311-0071,,RPMI,6,Proteomics,SWATH-MS,APAF,,2018-08-17,2018-08-21,0,,,430,,0,2018-08-22 02:22:33
+102.100.100.51645,Main dataset,Klebsiella pneumoniae,03-311-0071,,RPMI,5,Proteomics,SWATH-MS,APAF,,2018-08-17,2018-08-21,0,,,429,,0,2018-08-22 02:22:33
+102.100.100.51644,Main dataset,Klebsiella pneumoniae,03-311-0071,,RPMI,4,Proteomics,SWATH-MS,APAF,,2018-08-17,2018-08-21,0,,,428,,0,2018-08-22 02:22:33
+102.100.100.51643,Main dataset,Klebsiella pneumoniae,03-311-0071,,RPMI,3,Proteomics,SWATH-MS,APAF,,2018-08-17,2018-08-21,0,,,427,,0,2018-08-22 02:22:33
+102.100.100.51642,Main dataset,Klebsiella pneumoniae,03-311-0071,,RPMI,2,Proteomics,SWATH-MS,APAF,,2018-08-17,2018-08-21,0,,,426,,0,2018-08-22 02:22:33
+102.100.100.51641,Main dataset,Klebsiella pneumoniae,03-311-0071,,RPMI,1,Proteomics,SWATH-MS,APAF,,2018-08-17,2018-08-21,0,,,425,,0,2018-08-22 02:22:33
+102.100.100.51640,Main dataset,Klebsiella pneumoniae,KPC2,ethics embargo,Pooled sera,6,Proteomics,SWATH-MS,APAF,,2018-08-17,2018-08-21,0,,,424,,0,2018-08-22 02:22:33
+102.100.100.51639,Main dataset,Klebsiella pneumoniae,KPC2,ethics embargo,Pooled sera,5,Proteomics,SWATH-MS,APAF,,2018-08-17,2018-08-21,0,,,423,,0,2018-08-22 02:22:33
+102.100.100.51638,Main dataset,Klebsiella pneumoniae,KPC2,ethics embargo,Pooled sera,4,Proteomics,SWATH-MS,APAF,,2018-08-17,2018-08-21,0,,,422,,0,2018-08-22 02:22:33
+102.100.100.51637,Main dataset,Klebsiella pneumoniae,KPC2,ethics embargo,Pooled sera,3,Proteomics,SWATH-MS,APAF,,2018-08-17,2018-08-21,0,,,421,,0,2018-08-22 02:22:33
+102.100.100.51636,Main dataset,Klebsiella pneumoniae,KPC2,ethics embargo,Pooled sera,2,Proteomics,SWATH-MS,APAF,,2018-08-17,2018-08-21,0,,,420,,0,2018-08-22 02:22:33
+102.100.100.51635,Main dataset,Klebsiella pneumoniae,KPC2,ethics embargo,Pooled sera,1,Proteomics,SWATH-MS,APAF,,2018-08-17,2018-08-21,0,,,419,,0,2018-08-22 02:22:33
+102.100.100.51634,Main dataset,Klebsiella pneumoniae,KPC2,ethics embargo,RPMI,6,Proteomics,SWATH-MS,APAF,,2018-08-17,2018-08-21,0,,,418,,0,2018-08-22 02:22:33
+102.100.100.51633,Main dataset,Klebsiella pneumoniae,KPC2,ethics embargo,RPMI,5,Proteomics,SWATH-MS,APAF,,2018-08-17,2018-08-21,0,,,417,,0,2018-08-22 02:22:33
+102.100.100.51632,Main dataset,Klebsiella pneumoniae,KPC2,ethics embargo,RPMI,4,Proteomics,SWATH-MS,APAF,,2018-08-17,2018-08-21,0,,,416,,0,2018-08-22 02:22:33
+102.100.100.51631,Main dataset,Klebsiella pneumoniae,KPC2,ethics embargo,RPMI,3,Proteomics,SWATH-MS,APAF,,2018-08-17,2018-08-21,0,,,415,,0,2018-08-22 02:22:33
+102.100.100.51630,Main dataset,Klebsiella pneumoniae,KPC2,ethics embargo,RPMI,2,Proteomics,SWATH-MS,APAF,,2018-08-17,2018-08-21,0,,,414,,0,2018-08-22 02:22:33
+102.100.100.51629,Main dataset,Klebsiella pneumoniae,KPC2,ethics embargo,RPMI,1,Proteomics,SWATH-MS,APAF,,2018-08-17,2018-08-21,0,,,413,,0,2018-08-22 02:22:33
+102.100.100.51628,Main dataset,Klebsiella pneumoniae,AJ292,K61,Pooled sera,6,Proteomics,SWATH-MS,APAF,,2018-08-17,2018-08-21,0,,,412,,0,2018-08-22 02:22:33
+102.100.100.51627,Main dataset,Klebsiella pneumoniae,AJ292,K61,Pooled sera,5,Proteomics,SWATH-MS,APAF,,2018-08-17,2018-08-21,0,,,411,,0,2018-08-22 02:22:33
+102.100.100.51626,Main dataset,Klebsiella pneumoniae,AJ292,K61,Pooled sera,4,Proteomics,SWATH-MS,APAF,,2018-08-17,2018-08-21,0,,,410,,0,2018-08-22 02:22:33
+102.100.100.51625,Main dataset,Klebsiella pneumoniae,AJ292,K61,Pooled sera,3,Proteomics,SWATH-MS,APAF,,2018-08-17,2018-08-21,0,,,409,,0,2018-08-22 02:22:33
+102.100.100.51624,Main dataset,Klebsiella pneumoniae,AJ292,K61,Pooled sera,2,Proteomics,SWATH-MS,APAF,,2018-08-17,2018-08-21,0,,,408,,0,2018-08-22 02:22:33
+102.100.100.51623,Main dataset,Klebsiella pneumoniae,AJ292,K61,Pooled sera,1,Proteomics,SWATH-MS,APAF,,2018-08-17,2018-08-21,0,,,407,,0,2018-08-22 02:22:33
+102.100.100.51622,Main dataset,Klebsiella pneumoniae,AJ292,K61,RPMI,6,Proteomics,SWATH-MS,APAF,,2018-08-17,2018-08-21,0,,,406,,0,2018-08-22 02:22:33
+102.100.100.51621,Main dataset,Klebsiella pneumoniae,AJ292,K61,RPMI,5,Proteomics,SWATH-MS,APAF,,2018-08-17,2018-08-21,0,,,405,,0,2018-08-22 02:22:33
+102.100.100.51620,Main dataset,Klebsiella pneumoniae,AJ292,K61,RPMI,4,Proteomics,SWATH-MS,APAF,,2018-08-17,2018-08-21,0,,,404,,0,2018-08-22 02:22:33
+102.100.100.51619,Main dataset,Klebsiella pneumoniae,AJ292,K61,RPMI,3,Proteomics,SWATH-MS,APAF,,2018-08-17,2018-08-21,0,,,403,,0,2018-08-22 02:22:33
+102.100.100.51618,Main dataset,Klebsiella pneumoniae,AJ292,K61,RPMI,2,Proteomics,SWATH-MS,APAF,,2018-08-17,2018-08-21,0,,,402,,0,2018-08-22 02:22:33
+102.100.100.51617,Main dataset,Klebsiella pneumoniae,AJ292,K61,RPMI,1,Proteomics,SWATH-MS,APAF,,2018-08-17,2018-08-21,0,,,401,,0,2018-08-22 02:22:33
+102.100.100.51616,Main dataset,Klebsiella pneumoniae,AJ218,K54,Pooled sera,6,Proteomics,SWATH-MS,APAF,,2018-08-17,2018-08-21,0,,,400,,0,2018-08-22 02:22:33
+102.100.100.51615,Main dataset,Klebsiella pneumoniae,AJ218,K54,Pooled sera,5,Proteomics,SWATH-MS,APAF,,2018-08-17,2018-08-21,0,,,399,,0,2018-08-22 02:22:33
+102.100.100.51614,Main dataset,Klebsiella pneumoniae,AJ218,K54,Pooled sera,4,Proteomics,SWATH-MS,APAF,,2018-08-17,2018-08-21,0,,,398,,0,2018-08-22 02:22:33
+102.100.100.51613,Main dataset,Klebsiella pneumoniae,AJ218,K54,Pooled sera,3,Proteomics,SWATH-MS,APAF,,2018-08-17,2018-08-21,0,,,397,,0,2018-08-22 02:22:33
+102.100.100.51612,Main dataset,Klebsiella pneumoniae,AJ218,K54,Pooled sera,2,Proteomics,SWATH-MS,APAF,,2018-08-17,2018-08-21,0,,,396,,0,2018-08-22 02:22:33
+102.100.100.51611,Main dataset,Klebsiella pneumoniae,AJ218,K54,Pooled sera,1,Proteomics,SWATH-MS,APAF,,2018-08-17,2018-08-21,0,,,395,,0,2018-08-22 02:22:33
+102.100.100.51610,Main dataset,Klebsiella pneumoniae,AJ218,K54,RPMI,6,Proteomics,SWATH-MS,APAF,,2018-08-17,2018-08-21,0,,,394,,0,2018-08-22 02:22:33
+102.100.100.51609,Main dataset,Klebsiella pneumoniae,AJ218,K54,RPMI,5,Proteomics,SWATH-MS,APAF,,2018-08-17,2018-08-21,0,,,393,,0,2018-08-22 02:22:33
+102.100.100.51608,Main dataset,Klebsiella pneumoniae,AJ218,K54,RPMI,4,Proteomics,SWATH-MS,APAF,,2018-08-17,2018-08-21,0,,,392,,0,2018-08-22 02:22:33
+102.100.100.51607,Main dataset,Klebsiella pneumoniae,AJ218,K54,RPMI,3,Proteomics,SWATH-MS,APAF,,2018-08-17,2018-08-21,0,,,391,,0,2018-08-22 02:22:33
+102.100.100.51606,Main dataset,Klebsiella pneumoniae,AJ218,K54,RPMI,2,Proteomics,SWATH-MS,APAF,,2018-08-17,2018-08-21,0,,,390,,0,2018-08-22 02:22:33
+102.100.100.51605,Main dataset,Klebsiella pneumoniae,AJ218,K54,RPMI,1,Proteomics,SWATH-MS,APAF,,2018-08-17,2018-08-21,0,,,389,,0,2018-08-22 02:22:33
+102.100.100.51604,Main dataset,Klebsiella pneumoniae,AJ055,K0,Pooled sera,6,Proteomics,SWATH-MS,APAF,,2018-08-17,2018-08-21,0,,,388,,0,2018-08-22 02:22:33
+102.100.100.51603,Main dataset,Klebsiella pneumoniae,AJ055,K0,Pooled sera,5,Proteomics,SWATH-MS,APAF,,2018-08-17,2018-08-21,0,,,387,,0,2018-08-22 02:22:33
+102.100.100.51602,Main dataset,Klebsiella pneumoniae,AJ055,K0,Pooled sera,4,Proteomics,SWATH-MS,APAF,,2018-08-17,2018-08-21,0,,,386,,0,2018-08-22 02:22:33
+102.100.100.51601,Main dataset,Klebsiella pneumoniae,AJ055,K0,Pooled sera,3,Proteomics,SWATH-MS,APAF,,2018-08-17,2018-08-21,0,,,385,,0,2018-08-22 02:22:33
+102.100.100.51600,Main dataset,Klebsiella pneumoniae,AJ055,K0,Pooled sera,2,Proteomics,SWATH-MS,APAF,,2018-08-17,2018-08-21,0,,,384,,0,2018-08-22 02:22:33
+102.100.100.51599,Main dataset,Klebsiella pneumoniae,AJ055,K0,Pooled sera,1,Proteomics,SWATH-MS,APAF,,2018-08-17,2018-08-21,0,,,383,,0,2018-08-22 02:22:33
+102.100.100.51598,Main dataset,Klebsiella pneumoniae,AJ055,K0,RPMI,6,Proteomics,SWATH-MS,APAF,,2018-08-17,2018-08-21,0,,,382,,0,2018-08-22 02:22:33
+102.100.100.51597,Main dataset,Klebsiella pneumoniae,AJ055,K0,RPMI,5,Proteomics,SWATH-MS,APAF,,2018-08-17,2018-08-21,0,,,381,,0,2018-08-22 02:22:33
+102.100.100.51596,Main dataset,Klebsiella pneumoniae,AJ055,K0,RPMI,4,Proteomics,SWATH-MS,APAF,,2018-08-17,2018-08-21,0,,,380,,0,2018-08-22 02:22:33
+102.100.100.51595,Main dataset,Klebsiella pneumoniae,AJ055,K0,RPMI,3,Proteomics,SWATH-MS,APAF,,2018-08-17,2018-08-21,0,,,379,,0,2018-08-22 02:22:33
+102.100.100.51594,Main dataset,Klebsiella pneumoniae,AJ055,K0,RPMI,2,Proteomics,SWATH-MS,APAF,,2018-08-17,2018-08-21,0,,,378,,0,2018-08-22 02:22:33
+102.100.100.51593,Main dataset,Klebsiella pneumoniae,AJ055,K0,RPMI,1,Proteomics,SWATH-MS,APAF,,2018-08-17,2018-08-21,0,,,377,,0,2018-08-22 02:22:29
 102.100.100.51301,Main dataset,Streptococcus pyogenes,PS006,M28,Pooled sera,6,Proteomics,SWATH-MS,APAF,,2018-04-05,2018-04-05,0,,,376,,0,2018-05-09 07:19:12
 102.100.100.51300,Main dataset,Streptococcus pyogenes,PS006,M28,Pooled sera,5,Proteomics,SWATH-MS,APAF,,2018-04-05,2018-04-05,0,,,375,,0,2018-05-09 07:19:12
 102.100.100.51299,Main dataset,Streptococcus pyogenes,PS006,M28,Pooled sera,4,Proteomics,SWATH-MS,APAF,,2018-04-05,2018-04-05,0,,,374,,0,2018-05-09 07:19:12
