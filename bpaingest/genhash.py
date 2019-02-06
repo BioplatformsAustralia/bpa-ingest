@@ -1,13 +1,11 @@
 import urllib.parse
-import ckanapi
 import re
 import os
 
-from threading import Thread
-from queue import Queue
 from .ops import ckan_method
 from .util import make_logger
 from .libs.multihash import generate_hashes
+from .pkgcache import build_resource_cache
 
 logger = make_logger(__name__)
 
@@ -23,59 +21,54 @@ def localpath(mirror_path, legacy_url):
 size_re = re.compile(r'^[0-9]+$')
 
 
+def size_valid(resource):
+    size = resource.get('size', '')
+    return size is not None and size_re.match(size)
+
+
+def is_hashed(resource):
+    return size_valid(resource) and resource.get('s3etag_33554432')
+
+
+def calculate_hashes(ckan, mirror_path, legacy_url, resource):
+    fpath = localpath(mirror_path, legacy_url)
+    patch_obj = {}
+    resource_path = 'dataset/%s/resource/%s' % (resource['package_id'], resource['id'])
+
+    if not size_valid(resource):
+        patch_obj['size'] = str(os.stat(fpath).st_size)
+
+    if not resource.get('s3etag_33554432'):
+        hashes = generate_hashes(fpath)
+        if hashes['md5'] != resource['md5']:
+            logger.critical(
+                "MD5 hash mismatch of on-disk data. Have `{}' and expected `{}': {}".format(
+                    hashes['md5'], resource['md5'], fpath))
+            return
+        patch_obj.update(hashes)
+
+    if not patch_obj:
+        return
+
+    patch_obj['id'] = resource['id']
+    ckan_method(ckan, 'resource', 'patch')(**patch_obj)
+    logger.info("%s: hashes calculated and pushed" % (resource_path))
+
+
 def genhash(ckan, meta, mirror_path, num_threads):
-    def calculate_hashes(sample_id, legacy_url, resource):
-        fpath = localpath(mirror_path, legacy_url)
-        patch_obj = {}
+    cache = build_resource_cache(ckan, meta.ckan_data_type, meta.get_packages())
+    logger.info("%d resources of type %s" % (len(meta.get_resources()), meta.ckan_data_type))
 
-        try:
-            ckan_resource = ckan_method(ckan, 'resource', 'show')(id=resource['id'])
-        except ckanapi.errors.NotFound:
-            logger.error("%s: not in CKAN, skipping" % (resource['id']))
-            return
-        resource_path = 'dataset/%s/resource/%s' % (ckan_resource['package_id'], ckan_resource['id'])
+    queue = []
+    for _, legacy_url, target_resource in meta.get_resources():
+        resource_id = target_resource['id']
+        resource = cache.get(resource_id)
+        if resource is None:
+            logger.error("%s: not in CKAN, skipping" % (resource_id))
+            continue
+        if not is_hashed(resource):
+            queue.append((legacy_url, resource))
 
-        size = ckan_resource.get('size', '')
-        if size is None or not size_re.match(size):
-            patch_obj['size'] = str(os.stat(fpath).st_size)
-
-        if not ckan_resource.get('s3etag_33554432'):
-            hashes = generate_hashes(fpath)
-            if hashes['md5'] != resource['md5']:
-                logger.critical("MD5 hash mismatch of on-disk data. Have `%s' and expected `%s': %s" % (hashes['md5'], resource['md5'], fpath))
-                return
-            patch_obj.update(hashes)
-
-        if not patch_obj:
-            logger.info("%s: already hashed, continuing" % (resource_path))
-            return
-
-        patch_obj['id'] = ckan_resource['id']
-        ckan_method(ckan, 'resource', 'patch')(**patch_obj)
-        logger.info("%s: hashes calculated and pushed" % (resource_path))
-
-    def hash_worker():
-        while True:
-            task = q.get()
-            if task is None:
-                break
-            calculate_hashes(*task)
-            q.task_done()
-
-    q = Queue()
-    threads = []
-    for i in range(num_threads):
-        t = Thread(target=hash_worker)
-        threads.append(t)
-        t.start()
-
-    logger.info("%d resources to be checked" % (len(meta.get_resources())))
-    for tpl in meta.get_resources():
-        q.put(tpl)
-    q.join()
-
-    for thread in threads:
-        q.put(None)
-
-    for thread in threads:
-        thread.join()
+    logger.info("{} resources to be hashed".format(len(queue)))
+    for task in queue:
+        calculate_hashes(ckan, mirror_path, *task)
