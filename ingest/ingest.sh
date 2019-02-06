@@ -27,6 +27,7 @@
 
 apply()
 {
+
   project="$1"
   shift
 
@@ -49,32 +50,32 @@ apply()
 
 bootstrap()
 {
-  bpa-ingest bootstrap -k "$apikey" -u "$CKAN_URL"
+    bpa-ingest bootstrap -k "$apikey" -u "$CKAN_URL"
 }
 
 base()
 {
-    apply base-genomics-amplicons
-    apply base-genomics-amplicons-control
-    apply base-metagenomics
-    apply base-site-images
+    apply base-genomics-amplicons $*
+    apply base-genomics-amplicons-control $*
+    apply base-metagenomics $*
+    apply base-site-images $*
 }
 
 gbr() {
-  apply gbr-genomics-amplicons
-  apply gbr-genomics-pacbio
+  apply gbr-genomics-amplicons $*
+  apply gbr-genomics-pacbio $*
 }
 
 marine_microbes()
 {
-  apply marine-microbes-genomics-amplicons-16s
-  apply marine-microbes-genomics-amplicons-18s
-  apply marine-microbes-genomics-amplicons-a16s
-  apply marine-microbes-genomics-amplicons-control-16s
-  apply marine-microbes-genomics-amplicons-control-18s
-  apply marine-microbes-genomics-amplicons-control-a16s
-  apply marine-microbes-metagenomics
-  apply marine-microbes-metatranscriptomics
+  apply marine-microbes-genomics-amplicons-16s $*
+  apply marine-microbes-genomics-amplicons-18s $*
+  apply marine-microbes-genomics-amplicons-a16s $*
+  apply marine-microbes-genomics-amplicons-control-16s $*
+  apply marine-microbes-genomics-amplicons-control-18s $*
+  apply marine-microbes-genomics-amplicons-control-a16s $*
+  apply marine-microbes-metagenomics $*
+  apply marine-microbes-metatranscriptomics $*
 }
 
 omg()
@@ -82,51 +83,51 @@ omg()
   # disabled pending resolution of https://github.com/muccg/bpa-archive-ops/issues/329
   # NB: no future data of this type is expected
   # apply omg-10x-raw-agrf
-  apply omg-10xprocessed
-  apply omg-10xraw
-  apply omg-exoncapture
-  apply omg-genomics-hiseq
-  apply omg-genomics-ddrad
+  apply omg-10xprocessed $*
+  apply omg-10xraw $*
+  apply omg-exoncapture $*
+  apply omg-genomics-hiseq $*
+  apply omg-genomics-ddrad $*
 }
 
 sepsis()
 {
-  apply sepsis-genomics-analysed
-  apply sepsis-genomics-miseq
-  apply sepsis-genomics-pacbio
-  apply sepsis-metabolomics-analysed
-  apply sepsis-metabolomics-gcms
-  apply sepsis-metabolomics-lcms
-  apply sepsis-proteomics-2dlibrary
-  apply sepsis-proteomics-analysed
-  apply sepsis-proteomics-ms1quantification
-  apply sepsis-proteomics-proteindatabase-analysed
-  apply sepsis-proteomics-swathms
-  apply sepsis-proteomics-swathms-combined-sample
-  apply sepsis-proteomics-swathms-pool
-  apply sepsis-transcriptomics-analysed
-  apply sepsis-transcriptomics-hiseq
+  apply sepsis-genomics-analysed $*
+  apply sepsis-genomics-miseq $*
+  apply sepsis-genomics-pacbio $*
+  apply sepsis-metabolomics-analysed $*
+  apply sepsis-metabolomics-gcms $*
+  apply sepsis-metabolomics-lcms $*
+  apply sepsis-proteomics-2dlibrary $*
+  apply sepsis-proteomics-analysed $*
+  apply sepsis-proteomics-ms1quantification $*
+  apply sepsis-proteomics-proteindatabase-analysed $*
+  apply sepsis-proteomics-swathms $*
+  apply sepsis-proteomics-swathms-combined-sample $*
+  apply sepsis-proteomics-swathms-pool $*
+  apply sepsis-transcriptomics-analysed $*
+  apply sepsis-transcriptomics-hiseq $*
 }
 
 stemcell()
 {
-  apply stemcells-metabolomics
-  apply stemcells-metabolomics-analysed
-  apply stemcells-proteomics
-  apply stemcells-proteomics-analysed
-  apply stemcells-proteomics-pool
-  apply stemcells-singlecellrna
-  apply stemcells-smallrna
-  apply stemcells-transcriptomics
+  apply stemcells-metabolomics $*
+  apply stemcells-metabolomics-analysed $*
+  apply stemcells-proteomics $*
+  apply stemcells-proteomics-analysed $*
+  apply stemcells-proteomics-pool $*
+  apply stemcells-singlecellrna $*
+  apply stemcells-smallrna $*
+  apply stemcells-transcriptomics $*
 }
 
 wheat() {
-  apply wheat-cultivars
-  apply wheat-pathogens-genomics
+  apply wheat-cultivars $*
+  apply wheat-pathogens-genomics $*
 }
 
 run() {
-  apply "$1"
+  apply $*
 }
 
 all()
@@ -140,11 +141,14 @@ all()
   wheat
 }
 
-
 action="$1"
-apikey="$2"
-task="$3"
-taskarg="$4"
+shift
+apikey="$1"
+shift
+task="$1"
+shift
+taskarg="$1"
+shift
 
 usage()
 {
@@ -173,4 +177,5 @@ fi
 
 echo "ingest.sh: running task: $task"
 set -e
-"$task" "$taskarg"
+"$task" "$taskarg" $*
+exit
