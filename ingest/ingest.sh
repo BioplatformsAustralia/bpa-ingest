@@ -68,12 +68,8 @@ gbr() {
 
 marine_microbes()
 {
-  apply marine-microbes-genomics-amplicons-16s $*
-  apply marine-microbes-genomics-amplicons-18s $*
-  apply marine-microbes-genomics-amplicons-a16s $*
-  apply marine-microbes-genomics-amplicons-control-16s $*
-  apply marine-microbes-genomics-amplicons-control-18s $*
-  apply marine-microbes-genomics-amplicons-control-a16s $*
+  apply marine-microbes-genomics $*
+  apply marine-microbes-genomics-amplicons-controls $*
   apply marine-microbes-metagenomics $*
   apply marine-microbes-metatranscriptomics $*
 }
