@@ -1,14 +1,14 @@
 import re
 from glob import glob
 from ...libs import ingest_utils
-from ...libs.excel_wrapper import ExcelWrapper, make_field_definition as fld
+from ...libs.excel_wrapper import ExcelWrapper, make_field_definition as fld, SkipColumn
 from ...util import make_logger, one
 
 logger = make_logger(__name__)
 
 
 class OMGSampleContextual(object):
-    metadata_urls = ['https://downloads-qcif.bioplatforms.com/bpa/omg_staging/metadata/2018-07-20/']
+    metadata_urls = ['https://downloads-qcif.bioplatforms.com/bpa/omg_staging/metadata/2019-02-12/']
     metadata_patterns = [re.compile(r'^OMG_samples_metadata.*\.xlsx$')]
     name = 'omg-sample-contextual'
 
@@ -70,6 +70,12 @@ class OMGSampleContextual(object):
             fld('dna_extraction_method', 'dna_extraction_method'),
             fld('dna_conc_ng_ul', 'dna_conc_ng_ul'),
             fld('taxonomic_group', 'taxonomic_group'),
+            fld('genome_sample', 'genome_sample'),
+            fld('genome_status', 'genome_status'),
+            fld('phylogenomic_sample', 'phylogenomic_sample'),
+            fld('phylogenomic_status', 'phylogenomic_status'),
+            fld('conservation_sample', 'conservation_sample'),
+            fld('conservation_status', 'conservation_status'),
             fld('trace_lab', 'trace_lab'),
         ]
 
@@ -105,7 +111,7 @@ class OMGSampleContextual(object):
 
 
 class OMGLibraryContextual(object):
-    metadata_urls = ['https://downloads-qcif.bioplatforms.com/bpa/omg_staging/metadata/2018-07-20/']
+    metadata_urls = ['https://downloads-qcif.bioplatforms.com/bpa/omg_staging/metadata/2019-02-12/']
     metadata_patterns = [re.compile(r'^OMG_library_metadata.*\.xlsx$')]
     name = 'omg-library-contextual'
 
@@ -120,8 +126,12 @@ class OMGLibraryContextual(object):
 
     def _read_metadata(self, fname):
         field_spec = [
+            fld('genus', 'genus'),
+            fld('species', 'species'),
+            fld('voucher_id', 'voucher_id'),
             fld('bpa_library_id', 'bpa_library_id', coerce=ingest_utils.extract_ands_id),
             fld('bpa_sample_id', 'bpa_sample_id', coerce=ingest_utils.extract_ands_id),
+            fld('facility_sample_id', 'facility_sample_id'),
             fld('library_type', 'library_type'),
             fld('library_prep_date', 'library_prep_date', coerce=ingest_utils.get_date_isoformat),
             fld('library_prepared_by', 'library_prepared_by'),
@@ -130,15 +140,26 @@ class OMGLibraryContextual(object):
             fld('omg_project', 'omg_project'),
             fld('data_custodian', 'data_custodian'),
             fld('dna_treatment', 'dna_treatment'),
-            fld('library_index_id', 'library_index_id'),
-            fld('library_index_sequence', 'library_index_sequence'),
-            fld('library_oligo_sequence', 'library_oligo_sequence'),
+            fld('p7_library_index_id', 'p7_library_index_id'),
+            fld('p7_library_index_sequence', 'p7_library_index_sequence'),
+            fld('p7_library_oligo_sequence', 'p7_library_oligo_sequence'),
+            fld('p5_library_index_id', 'p5_library_index_id'),
+            fld('p5_library_index_sequence', 'p5_library_index_sequence'),
+            fld('p5_library_oligo_sequence', 'p5_library_oligo_sequence'),
             fld('library_pcr_reps', 'library_pcr_reps'),
             fld('library_pcr_cycles', 'library_pcr_cycles'),
             fld('library_ng_ul', 'library_ng_ul'),
             fld('library_comments', 'library_comments'),
             fld('library_location', 'library_location'),
             fld('library_status', 'library_status'),
+            fld('sequencing_facility', 'sequencing_facility'),
+            fld('n_libraries_pooled', 'n_libraries_pooled'),
+            fld('bpa_work_order', 'bpa_work_order'),
+            fld('sequencing_platform', 'sequencing_platform'),
+            fld('sequence_length', 'sequence_length'),
+            SkipColumn('flowcell_id'),
+            fld('software_version', 'software_version'),
+            fld('file', 'file'),
         ]
         wrapper = ExcelWrapper(
             field_spec,

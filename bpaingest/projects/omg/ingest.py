@@ -597,6 +597,7 @@ class OMGExonCaptureMetadata(OMGBaseMetadata):
                 library_id = row.bpa_library_id
                 if library_id is None:
                     continue
+                logger.debug([fname, row])
                 linkage = self.flow_cell_index_linkage(row.flowcell_id, row.library_index_sequence)
                 name = sample_id_to_ckan_name(library_id, self.ckan_data_type, linkage)
                 obj = row._asdict()
