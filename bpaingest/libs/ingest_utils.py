@@ -195,9 +195,9 @@ def strip_all(reader):
     return entries
 
 
-def get_date_isoformat(s):
+def get_date_isoformat(s, silent=False):
     "try to parse the date, if we can, return the date as an ISO format string"
-    dt = _get_date(s)
+    dt = _get_date(s, silent)
     if dt is None:
         return None
     return dt.strftime("%Y-%m-%d")
@@ -207,7 +207,7 @@ def get_time(s):
     return str(s)
 
 
-def _get_date(dt):
+def _get_date(dt, silent=False):
     '''
     convert `dt` into a datetime.date, returning `dt` if it is already an
     instance of datetime.date. only two string date formats are supported:
@@ -249,5 +249,6 @@ def _get_date(dt):
     except ValueError:
         pass
 
-    logger.error('Date `{}` is not in a supported format'.format(dt))
+    if not silent:
+        logger.error('Date `{}` is not in a supported format'.format(dt))
     return None
