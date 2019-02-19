@@ -521,7 +521,7 @@ class OMGExonCaptureMetadata(OMGBaseMetadata):
         'https://downloads-qcif.bioplatforms.com/bpa/omg_staging/exon_capture/',
     ]
     metadata_url_components = ('facility', 'ticket',)
-    resource_linkage = ('bpa_library_id', 'flowcell_id', 'library_index_sequence')
+    resource_linkage = ('bpa_library_id', 'flowcell_id', 'p7_library_index_sequence')
     spreadsheet = {
         'fields': [
             fld('genus', 'genus', optional=True),
@@ -631,6 +631,7 @@ class OMGExonCaptureMetadata(OMGBaseMetadata):
                 context = {}
                 for contextual_source in self.contextual_metadata:
                     context.update(contextual_source.get(row.bpa_sample_id, row.bpa_library_id))
+
                 obj.update({
                     'name': name,
                     'id': name,
@@ -649,6 +650,12 @@ class OMGExonCaptureMetadata(OMGBaseMetadata):
                     'private': True,
                 })
                 obj.update(context)
+
+                # remove obsoleted fields
+                obj.pop('library_index_id', False)
+                obj.pop('library_index_sequence', False)
+                obj.pop('library_oligo_sequence', False)
+
                 self.generaliser.apply(obj)
                 ingest_utils.add_spatial_extra(obj)
                 tag_names = ['exon-capture', 'raw']
