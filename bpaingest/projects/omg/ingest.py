@@ -16,6 +16,7 @@ from ...libs.excel_wrapper import make_field_definition as fld, SkipColumn as sk
 from . import files
 from .tracking import OMGTrackMetadata
 from .contextual import (OMGSampleContextual, OMGLibraryContextual)
+from ...libs.ingest_utils import get_clean_number
 
 import os
 import re
@@ -28,6 +29,20 @@ class OMGBaseMetadata(BaseMetadata):
     def __init__(self, *args, **kwargs):
         self.generaliser = SensitiveDataGeneraliser()
         super().__init__(*args, **kwargs)
+
+    def apply_location_generalisation(self, package):
+        "Apply location generalisation for sensitive species found from ALA"
+        scientific_name = scientific_name = "{0} {1}".format(package['genus'], package['species']).strip().lower()
+        
+        if get_clean_number(package['latitude']) is None or get_clean_number(package['longitude']) is None:
+            logger.error("Latitude or Longitude (or both) found 'None' for package=%s" % package['name'])
+            return
+
+        generalised_data = self.generaliser.apply(scientific_name, get_clean_number(
+            package['latitude']), get_clean_number(package['longitude']))
+
+        if generalised_data:
+            package.update(generalised_data._asdict())
 
 
 class OMG10XRawIlluminaMetadata(OMGBaseMetadata):
@@ -189,8 +204,8 @@ class OMG10XRawIlluminaMetadata(OMGBaseMetadata):
                 'notes': notes,
             })
 
-            self.generaliser.apply(obj)
             ingest_utils.add_spatial_extra(obj)
+            self.apply_location_generalisation(obj)
             obj.update(common_values([make_row_metadata(row) for row in rows]))
 
             tag_names = ['10x-raw']
@@ -337,8 +352,8 @@ class OMG10XRawMetadata(OMGBaseMetadata):
                 'private': True,
             })
             obj.update(context)
-            self.generaliser.apply(obj)
             ingest_utils.add_spatial_extra(obj)
+            self.apply_location_generalisation(obj)
             tag_names = ['10x-raw']
             obj['tags'] = [{'name': t} for t in tag_names]
             packages.append(obj)
@@ -485,8 +500,8 @@ class OMG10XProcessedIlluminaMetadata(OMGBaseMetadata):
                     'private': True,
                 })
                 obj.update(context)
-                self.generaliser.apply(obj)
                 ingest_utils.add_spatial_extra(obj)
+                self.apply_location_generalisation(obj)
                 tag_names = ['10x-processed']
                 obj['tags'] = [{'name': t} for t in tag_names]
                 packages.append(obj)
@@ -657,7 +672,9 @@ class OMGExonCaptureMetadata(OMGBaseMetadata):
                 obj.pop('library_oligo_sequence', False)
 
                 self.generaliser.apply(obj)
+
                 ingest_utils.add_spatial_extra(obj)
+                self.apply_location_generalisation(obj)
                 tag_names = ['exon-capture', 'raw']
                 obj['tags'] = [{'name': t} for t in tag_names]
                 packages.append(obj)
@@ -803,8 +820,8 @@ class OMGGenomicsHiSeqMetadata(OMGBaseMetadata):
                     'private': True,
                 })
                 obj.update(context)
-                self.generaliser.apply(obj)
                 ingest_utils.add_spatial_extra(obj)
+                self.apply_location_generalisation(obj)
                 tag_names = ['genomics-hiseq']
                 obj['tags'] = [{'name': t} for t in tag_names]
                 packages.append(obj)
@@ -949,8 +966,8 @@ class OMGGenomicsDDRADMetadata(OMGBaseMetadata):
                 'type': self.ckan_data_type,
                 'private': True,
             })
-            self.generaliser.apply(obj)
             ingest_utils.add_spatial_extra(obj)
+            self.apply_location_generalisation(obj)
             tag_names = ['genomics-ddrad']
             obj['tags'] = [{'name': t} for t in tag_names]
             packages.append(obj)
