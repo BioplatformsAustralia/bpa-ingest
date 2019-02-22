@@ -39,6 +39,7 @@ def test_fastq_filename_re():
 def test_exon():
     filenames = [
         '40109_BHLFLYBCXY_AAGGTCT_S41_L002_R1_001.fastq.gz',
+        '53921_HTVLWBCX2_ACCAACT_S9_L002_R2_001.fastq.gz',
     ]
 
     for filename in filenames:
@@ -68,7 +69,6 @@ def test_genomics_ddrad_fastq():
         '52588_HHVM5BGX7_GTGAAA_L002_R1.fastq.gz',
         '52588_HHVM5BGX7_GTGAAA_L003_R1.fastq.gz',
         '52588_HHVM5BGX7_GTGAAA_L004_R1.fastq.gz',
-
         '52588_HHYNNBGX7_ACAGTG_L001_R1.fastq.gz',
         '52588_HHYNNBGX7_ACAGTG_L002_R1.fastq.gz',
         '52588_HHYNNBGX7_ACAGTG_L003_R1.fastq.gz',

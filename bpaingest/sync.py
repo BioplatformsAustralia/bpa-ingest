@@ -1,6 +1,7 @@
 
 
 from .ops import ckan_method, patch_if_required, check_resource, create_resource, reupload_resource, get_organization, ArchiveInfo, diff_objects
+from .pkgcache import build_package_cache
 import ckanapi
 from queue import Queue
 from threading import Thread
@@ -42,23 +43,6 @@ def sync_package(ckan, obj, cached_obj):
     if was_patched:
         logger.info('patched package object: %s' % (obj['id']))
     return ckan_obj
-
-
-def build_package_cache(ckan, ckan_data_type, sync_packages):
-    """
-    build a cache of all the packages in `org`, to speed up comparison.
-    `sync_packages` is the packages we are aiming to set as our target
-    state
-    """
-    package_types = set(t['type'] for t in sync_packages)
-    package_types.add(ckan_data_type)
-    packages = []
-    for typ in package_types:
-        logger.info("Retrieving all extant packages of type: {}".format(typ))
-        results = ckan_method(ckan, 'package', 'search')(q='type:{}'.format(typ), include_private=True, rows=50000)
-        packages += results['results']
-    logger.info("{} packages cached.".format(len(packages)))
-    return {t['id']: t for t in packages}
 
 
 def delete_dangling_packages(ckan, packages, cache, do_delete):

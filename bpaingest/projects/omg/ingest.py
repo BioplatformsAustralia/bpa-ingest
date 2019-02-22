@@ -12,7 +12,7 @@ from glob import glob
 
 from ...libs import ingest_utils
 from sslh.handler import SensitiveDataGeneraliser
-from ...libs.excel_wrapper import make_field_definition as fld
+from ...libs.excel_wrapper import make_field_definition as fld, SkipColumn as skp
 from . import files
 from .tracking import OMGTrackMetadata
 from .contextual import (OMGSampleContextual, OMGLibraryContextual)
@@ -536,12 +536,17 @@ class OMGExonCaptureMetadata(OMGBaseMetadata):
         'https://downloads-qcif.bioplatforms.com/bpa/omg_staging/exon_capture/',
     ]
     metadata_url_components = ('facility', 'ticket',)
-    resource_linkage = ('bpa_library_id', 'flowcell_id', 'library_index_sequence')
+    resource_linkage = ('bpa_library_id', 'flowcell_id', 'p7_library_index_sequence')
     spreadsheet = {
         'fields': [
+            fld('genus', 'genus', optional=True),
+            fld('species', 'species', optional=True),
+            fld('voucher_id', 'voucher_id', optional=True),
             fld('bpa_dataset_id', 'bpa_dataset_id', coerce=ingest_utils.extract_ands_id),
             fld('bpa_library_id', 'bpa_library_id', coerce=ingest_utils.extract_ands_id),
             fld('bpa_sample_id', 'bpa_sample_id', coerce=ingest_utils.extract_ands_id),
+            skp('plate_name'),
+            skp('plate_well'),
             fld('facility_sample_id', 'facility_sample_id'),
             fld('library_type', 'library_type'),
             fld('library_prep_date', 'library_prep_date', coerce=ingest_utils.get_date_isoformat),
@@ -551,9 +556,15 @@ class OMGExonCaptureMetadata(OMGBaseMetadata):
             fld('omg_project', 'omg_project'),
             fld('data_custodian', 'data_custodian'),
             fld('dna_treatment', 'dna_treatment'),
-            fld('library_index_id', 'library_index_id'),
-            fld('library_index_sequence', 'library_index_sequence'),
-            fld('library_oligo_sequence', 'library_oligo_sequence'),
+            fld('library_index_id', 'library_index_id', optional=True),
+            fld('library_index_sequence', 'library_index_sequence', optional=True),
+            fld('library_oligo_sequence', 'library_oligo_sequence', optional=True),
+            fld('p7_library_index_id', 'p7_library_index_id', optional=True),
+            fld('p7_library_index_sequence', 'p7_library_index_sequence', optional=True),
+            fld('p7_library_oligo_sequence', 'p7_library_oligo_sequence', optional=True),
+            fld('p5_library_index_id', 'p5_library_index_id', optional=True),
+            fld('p5_library_index_sequence', 'p5_library_index_sequence', optional=True),
+            fld('p5_library_oligo_sequence', 'p5_library_oligo_sequence', optional=True),
             fld('library_pcr_reps', 'library_pcr_reps'),
             fld('library_pcr_cycles', 'library_pcr_cycles'),
             fld('library_ng_ul', 'library_ng_ul'),
@@ -612,12 +623,30 @@ class OMGExonCaptureMetadata(OMGBaseMetadata):
                 library_id = row.bpa_library_id
                 if library_id is None:
                     continue
-                linkage = self.flow_cell_index_linkage(row.flowcell_id, row.library_index_sequence)
-                name = sample_id_to_ckan_name(library_id, self.ckan_data_type, linkage)
+
                 obj = row._asdict()
+
+                def migrate_field(from_field, to_field):
+                    old_val = obj[from_field]
+                    new_val = obj[to_field]
+                    del obj[from_field]
+                    if old_val is not None and new_val is not None:
+                        raise Exception("field migration clash, {}->{}".format(from_field, to_field))
+                    if old_val:
+                        obj[to_field] = old_val
+
+                # library_index_sequence migrated into p7_library_index_sequence
+                migrate_field('library_index_id', 'p7_library_index_id'),
+                migrate_field('library_index_sequence', 'p7_library_index_sequence'),
+                migrate_field('library_oligo_sequence', 'p7_library_oligo_sequence'),
+
+                linkage = self.flow_cell_index_linkage(row.flowcell_id, obj['p7_library_index_sequence'])
+                name = sample_id_to_ckan_name(library_id, self.ckan_data_type, linkage)
+
                 context = {}
                 for contextual_source in self.contextual_metadata:
                     context.update(contextual_source.get(row.bpa_sample_id, row.bpa_library_id))
+
                 obj.update({
                     'name': name,
                     'id': name,
@@ -636,6 +665,14 @@ class OMGExonCaptureMetadata(OMGBaseMetadata):
                     'private': True,
                 })
                 obj.update(context)
+
+                # remove obsoleted fields
+                obj.pop('library_index_id', False)
+                obj.pop('library_index_sequence', False)
+                obj.pop('library_oligo_sequence', False)
+
+                self.generaliser.apply(obj)
+
                 ingest_utils.add_spatial_extra(obj)
                 self.apply_location_generalisation(obj)
                 tag_names = ['exon-capture', 'raw']

@@ -7,8 +7,15 @@ from ...util import make_logger, one
 logger = make_logger(__name__)
 
 
+def date_or_str(v):
+    d = ingest_utils.get_date_isoformat(v, silent=True)
+    if d is not None:
+        return d
+    return v
+
+
 class OMGSampleContextual(object):
-    metadata_urls = ['https://downloads-qcif.bioplatforms.com/bpa/omg_staging/metadata/2018-07-20/']
+    metadata_urls = ['https://downloads-qcif.bioplatforms.com/bpa/omg_staging/metadata/2019-02-12/']
     metadata_patterns = [re.compile(r'^OMG_samples_metadata.*\.xlsx$')]
     name = 'omg-sample-contextual'
 
@@ -35,7 +42,7 @@ class OMGSampleContextual(object):
             fld('sample_quality', 'sample_quality'),
             fld('taxon_id', 'taxon_id', coerce=ingest_utils.get_int),
             fld('phylum', 'phylum'),
-            fld('class_', 'class'),
+            fld('klass', 'class'),
             fld('order', 'order'),
             fld('family', 'family'),
             fld('genus', 'genus'),
@@ -43,7 +50,7 @@ class OMGSampleContextual(object):
             fld('subspecies', 'subspecies'),
             fld('common_name', 'common_name'),
             fld('identified_by', 'identified_by'),
-            fld('collection_date', 'collection_date', coerce=ingest_utils.get_date_isoformat),
+            fld('collection_date', 'collection_date', coerce=date_or_str),
             fld('collector', 'collector'),
             fld('collection_method', 'collection_method'),
             fld('collector_sample_id', 'collector_sample_id'),
@@ -58,18 +65,24 @@ class OMGSampleContextual(object):
             fld('coord_uncertainty_metres', 'coord_uncertainty_metres'),
             fld('sex', 'sex'),
             fld('life_stage', 'life-stage'),
-            fld('birth_date', 'birth_date', coerce=ingest_utils.get_date_isoformat),
-            fld('death_date', 'death_date', coerce=ingest_utils.get_date_isoformat),
+            fld('birth_date', 'birth_date', coerce=date_or_str),
+            fld('death_date', 'death_date', coerce=date_or_str),
             fld('associated_media', 'associated_media'),
             fld('ancilliary_notes', 'ancilliary_notes'),
             fld('barcode_id', 'barcode_id'),
             fld('ala_specimen_url', 'ala_specimen_url'),
             fld('prior_genetics', 'prior_genetics'),
-            fld('dna_extraction_date', 'dna_extraction_date', coerce=ingest_utils.get_date_isoformat),
+            fld('dna_extraction_date', 'dna_extraction_date', coerce=date_or_str),
             fld('dna_extracted_by', 'dna_extracted_by'),
             fld('dna_extraction_method', 'dna_extraction_method'),
             fld('dna_conc_ng_ul', 'dna_conc_ng_ul'),
             fld('taxonomic_group', 'taxonomic_group'),
+            fld('genome_sample', 'genome_sample'),
+            fld('genome_status', 'genome_status'),
+            fld('phylogenomic_sample', 'phylogenomic_sample'),
+            fld('phylogenomic_status', 'phylogenomic_status'),
+            fld('conservation_sample', 'conservation_sample'),
+            fld('conservation_status', 'conservation_status'),
             fld('trace_lab', 'trace_lab'),
         ]
 
@@ -86,7 +99,7 @@ class OMGSampleContextual(object):
         name_mapping = {
             'decimal_longitude': 'longitude',
             'decimal_latitude': 'latitude',
-            'class_': 'class',
+            'klass': 'class',
         }
 
         sample_metadata = {}
@@ -105,7 +118,7 @@ class OMGSampleContextual(object):
 
 
 class OMGLibraryContextual(object):
-    metadata_urls = ['https://downloads-qcif.bioplatforms.com/bpa/omg_staging/metadata/2018-07-20/']
+    metadata_urls = ['https://downloads-qcif.bioplatforms.com/bpa/omg_staging/metadata/2019-02-12/']
     metadata_patterns = [re.compile(r'^OMG_library_metadata.*\.xlsx$')]
     name = 'omg-library-contextual'
 

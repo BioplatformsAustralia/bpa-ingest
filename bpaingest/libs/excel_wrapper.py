@@ -54,7 +54,6 @@ class ExcelWrapper(object):
                  column_name_row_index=0,
                  suggest_template=False,
                  additional_context=None):
-
         self._log = []
         self.file_name = file_name
         self.header_length = header_length
@@ -257,8 +256,8 @@ class ExcelWrapper(object):
             template.append("{}fld({}),".format(
                 indent, ', '.join(args)))
         template.append(']')
-        self._error('{} - suggested template is:\n{}'.format(
-            self.sheet.name, '\n'.join(template)))
+        self._error('{}@{} - suggested template is:\n{}'.format(
+            self.file_name, self.sheet.name, '\n'.join(template)))
 
     def set_name_to_func_map(self):
         ''' Map the spec fields to their corresponding functions '''
