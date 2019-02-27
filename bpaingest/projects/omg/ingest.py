@@ -20,6 +20,7 @@ from ...libs.ingest_utils import get_clean_number
 
 import os
 import re
+import csv
 
 logger = make_logger(__name__)
 common_context = [OMGSampleContextual, OMGLibraryContextual]
@@ -32,17 +33,49 @@ class OMGBaseMetadata(BaseMetadata):
 
     def apply_location_generalisation(self, package):
         "Apply location generalisation for sensitive species found from ALA"
-        scientific_name = scientific_name = "{0} {1}".format(package['genus'], package['species']).strip().lower()
+        # skipping below datasets as given location points are invalid. I've send email to Anna.
+        if package['name'] in ['bpa-omg-exon-capture-102_100_100_54133-bhvwtkbcx2_cgacctg',
+                               'bpa-omg-exon-capture-102_100_100_54040-ahvwv3bcx2_tgcgtcc']:
+            return
+        logger.info("!!!!!!!!!!!!!!!!!! Location Generalisation START !!!!!!!!!!!!!!!!!!!!!!")
+        logger.info("Dataset Name: %s" % package['name'])
         
+        scientific_name = scientific_name = "{0} {1}".format(package['genus'], package['species']).strip().lower()
+
+        if 'latitude' not in package or 'longitude' not in package:
+            logger.error("Latitide or Longitude not found for package=%s" % package['name'])
+            return
+
         if get_clean_number(package['latitude']) is None or get_clean_number(package['longitude']) is None:
             logger.error("Latitude or Longitude (or both) found 'None' for package=%s" % package['name'])
             return
-
+        
         generalised_data = self.generaliser.apply(scientific_name, get_clean_number(
             package['latitude']), get_clean_number(package['longitude']))
 
+        # Write out data to csv files and append this header
+        # bpa_sample_id,type,latitude,longitude,genus+species,location_generalisation,update_latitude,updated_longitude,ala_species_name
+        # Uncomment below code to generate location generalisation list in csv
+        # data = [package['bpa_sample_id'], package['type'], package['latitude'],
+        #         package['longitude'], scientific_name]
+        # if generalised_data:
+        #     data.append(generalised_data.location_generalisation)
+        #     data.append(generalised_data.latitude)
+        #     data.append(generalised_data.longitude)
+        #     data.append(generalised_data.ala_species_name)
+        # else:
+        #     data.append("Location generalisation is not applied")
+        # with open('%s.csv' % package['type'], 'a') as csvfile:
+        #     filewriter = csv.writer(csvfile, delimiter=',', quotechar='|', quoting=csv.QUOTE_MINIMAL)
+        #     filewriter.writerow(data)
+        # csvfile.close()
+
+
+        # Updating lat/long on portal
         if generalised_data:
             package.update(generalised_data._asdict())
+
+        logger.info("!!!!!!!!!!!!!!!!!!! Location Generalisation END !!!!!!!!!!!!!!!!!!!!!!!")
 
 
 class OMG10XRawIlluminaMetadata(OMGBaseMetadata):
@@ -58,17 +91,17 @@ class OMG10XRawIlluminaMetadata(OMGBaseMetadata):
     for each tar file and present the metadata for each to the user.
     """
 
-    organization = 'bpa-omg'
-    ckan_data_type = 'omg-10x-raw-illumina'
-    technology = '10x-raw-agrf'
-    contextual_classes = common_context
-    metadata_patterns = [r'^.*\.md5$', r'^.*_metadata.*.*\.xlsx$']
-    metadata_urls = [
+    organization='bpa-omg'
+    ckan_data_type='omg-10x-raw-illumina'
+    technology='10x-raw-agrf'
+    contextual_classes=common_context
+    metadata_patterns=[r'^.*\.md5$', r'^.*_metadata.*.*\.xlsx$']
+    metadata_urls=[
         'https://downloads-qcif.bioplatforms.com/bpa/omg_staging/10x_raw_agrf/',
     ]
-    metadata_url_components = ('ticket',)
-    resource_linkage = ('archive_name',)
-    spreadsheet = {
+    metadata_url_components=('ticket',)
+    resource_linkage=('archive_name',)
+    spreadsheet={
         'fields': [
             fld('bpa_dataset_id', 'bpa_dataset_id', coerce=ingest_utils.extract_ands_id),
             fld('bpa_library_id', 'bpa_library_id', coerce=ingest_utils.extract_ands_id),
@@ -105,7 +138,7 @@ class OMG10XRawIlluminaMetadata(OMGBaseMetadata):
             'column_name_row_index': 0,
         }
     }
-    md5 = {
+    md5={
         'match': [
             files.tenxtar_filename_re
         ],
@@ -118,18 +151,18 @@ class OMG10XRawIlluminaMetadata(OMGBaseMetadata):
 
     def __init__(self, metadata_path, contextual_metadata=None, metadata_info=None):
         super().__init__()
-        self.path = Path(metadata_path)
-        self.contextual_metadata = contextual_metadata
-        self.metadata_info = metadata_info
-        self.track_meta = OMGTrackMetadata()
+        self.path=Path(metadata_path)
+        self.contextual_metadata=contextual_metadata
+        self.metadata_info=metadata_info
+        self.track_meta=OMGTrackMetadata()
         # each row in the spreadsheet maps through to a single tar file
-        self.file_package = {}
+        self.file_package={}
 
     def _get_packages(self):
-        xlsx_re = re.compile(r'^.*_(\w+)_metadata.*\.xlsx$')
+        xlsx_re=re.compile(r'^.*_(\w+)_metadata.*\.xlsx$')
 
         def get_flow_id(fname):
-            m = xlsx_re.match(fname)
+            m=xlsx_re.match(fname)
             if not m:
                 raise Exception("unable to find flowcell for filename: `%s'" % (fname))
             return m.groups()[0]
@@ -137,8 +170,8 @@ class OMG10XRawIlluminaMetadata(OMGBaseMetadata):
         logger.info("Ingesting OMG metadata from {0}".format(self.path))
 
         def make_row_metadata(row):
-            row_obj = {}
-            context = {}
+            row_obj={}
+            context={}
             for contextual_source in self.contextual_metadata:
                 context.update(contextual_source.get(row.bpa_sample_id, row.bpa_library_id))
             row_obj.update(row._asdict())
@@ -146,25 +179,25 @@ class OMG10XRawIlluminaMetadata(OMGBaseMetadata):
             return row_obj
 
         # glomp together the spreadsheet rows by filename
-        fname_rows = defaultdict(list)
+        fname_rows=defaultdict(list)
 
         for fname in glob(self.path + '/*.xlsx'):
             logger.info("Processing OMG metadata file {0}".format(os.path.basename(fname)))
             for row in self.parse_spreadsheet(fname, self.metadata_info):
                 fname_rows[(get_flow_id(fname), row.file)].append(row)
 
-        packages = []
+        packages=[]
         for (flow_id, fname), rows in fname_rows.items():
-            name = sample_id_to_ckan_name(fname, self.ckan_data_type, flow_id)
+            name=sample_id_to_ckan_name(fname, self.ckan_data_type, flow_id)
             assert(fname not in self.file_package)
-            self.file_package[fname] = fname
-            row_metadata = [make_row_metadata(row) for row in rows]
+            self.file_package[fname]=fname
+            row_metadata=[make_row_metadata(row) for row in rows]
 
-            bpa_sample_ids = ', '.join([t.bpa_sample_id for t in rows])
-            bpa_dataset_ids = ', '.join([t.bpa_dataset_id for t in rows])
-            bpa_library_ids = ', '.join([t.bpa_library_id for t in rows])
+            bpa_sample_ids=', '.join([t.bpa_sample_id for t in rows])
+            bpa_dataset_ids=', '.join([t.bpa_dataset_id for t in rows])
+            bpa_library_ids=', '.join([t.bpa_library_id for t in rows])
 
-            obj = {
+            obj={
                 'name': name,
                 'id': name,
                 'flow_id': flow_id,
@@ -179,16 +212,16 @@ class OMG10XRawIlluminaMetadata(OMGBaseMetadata):
             # there must be only one ticket
             assert(len(set(t.ticket for t in rows)) == 1)
 
-            ticket = rows[0].ticket
-            track_meta = self.track_meta.get(ticket)
+            ticket=rows[0].ticket
+            track_meta=self.track_meta.get(ticket)
 
             def track_get(k):
                 if track_meta is None:
                     return None
                 return getattr(track_meta, k)
 
-            notes = '\n'.join('%s. %s.' % (t.get('common_name', ''), t.get('institution_name', ''))
-                              for t in row_metadata)
+            notes='\n'.join('%s. %s.' % (t.get('common_name', ''), t.get('institution_name', ''))
+                            for t in row_metadata)
 
             obj.update({
                 'ticket': ticket,
@@ -208,26 +241,26 @@ class OMG10XRawIlluminaMetadata(OMGBaseMetadata):
             self.apply_location_generalisation(obj)
             obj.update(common_values([make_row_metadata(row) for row in rows]))
 
-            tag_names = ['10x-raw']
-            obj['tags'] = [{'name': t} for t in tag_names]
+            tag_names=['10x-raw']
+            obj['tags']=[{'name': t} for t in tag_names]
             packages.append(obj)
 
         return packages
 
     def _get_resources(self):
         logger.info("Ingesting OMG md5 file information from {0}".format(self.path))
-        resources = []
+        resources=[]
         for md5_file in glob(self.path + '/*.md5'):
             for filename, md5, file_info in self.parse_md5file(md5_file):
-                archive_name = self.file_package[filename]
-                resource = file_info.copy()
+                archive_name=self.file_package[filename]
+                resource=file_info.copy()
                 # waiting on filename convention from AGRF
                 del resource['basename']
-                resource['md5'] = resource['id'] = md5
-                resource['name'] = filename
-                resource['resource_type'] = self.ckan_data_type
-                xlsx_info = self.metadata_info[os.path.basename(md5_file)]
-                legacy_url = urljoin(xlsx_info['base_url'], filename)
+                resource['md5']=resource['id']=md5
+                resource['name']=filename
+                resource['resource_type']=self.ckan_data_type
+                xlsx_info=self.metadata_info[os.path.basename(md5_file)]
+                legacy_url=urljoin(xlsx_info['base_url'], filename)
                 resources.append(((archive_name,), legacy_url, resource))
         return resources
 
@@ -237,17 +270,17 @@ class OMG10XRawMetadata(OMGBaseMetadata):
     this data conforms to the BPA 10X raw workflow. future data
     will use this ingest class.
     """
-    organization = 'bpa-omg'
-    ckan_data_type = 'omg-10x-raw'
-    technology = '10xraw'
-    contextual_classes = common_context
-    metadata_patterns = [r'^.*\.md5$', r'^.*_metadata.*.*\.xlsx$']
-    metadata_urls = [
+    organization='bpa-omg'
+    ckan_data_type='omg-10x-raw'
+    technology='10xraw'
+    contextual_classes=common_context
+    metadata_patterns=[r'^.*\.md5$', r'^.*_metadata.*.*\.xlsx$']
+    metadata_urls=[
         'https://downloads-qcif.bioplatforms.com/bpa/omg_staging/10x_raw/',
     ]
-    metadata_url_components = ('ticket',)
-    resource_linkage = ('bpa_sample_id', 'flow_id')
-    spreadsheet = {
+    metadata_url_components=('ticket',)
+    resource_linkage=('bpa_sample_id', 'flow_id')
+    spreadsheet={
         'fields': [
             fld('bpa_dataset_id', 'bpa_dataset_id', coerce=ingest_utils.extract_ands_id),
             fld('bpa_library_id', 'bpa_library_id', coerce=ingest_utils.extract_ands_id),
@@ -284,7 +317,7 @@ class OMG10XRawMetadata(OMGBaseMetadata):
             'column_name_row_index': 0,
         }
     }
-    md5 = {
+    md5={
         'match': [
             files.tenxfastq_filename_re
         ],
@@ -297,36 +330,36 @@ class OMG10XRawMetadata(OMGBaseMetadata):
 
     def __init__(self, metadata_path, contextual_metadata=None, metadata_info=None):
         super().__init__()
-        self.path = Path(metadata_path)
-        self.contextual_metadata = contextual_metadata
-        self.metadata_info = metadata_info
-        self.track_meta = OMGTrackMetadata()
-        self.flow_lookup = {}
+        self.path=Path(metadata_path)
+        self.contextual_metadata=contextual_metadata
+        self.metadata_info=metadata_info
+        self.track_meta=OMGTrackMetadata()
+        self.flow_lookup={}
 
     def _get_packages(self):
         logger.info("Ingesting OMG metadata from {0}".format(self.path))
-        packages = []
+        packages=[]
         for fname in glob(self.path + '/*.xlsx'):
             logger.info("Processing OMG metadata file {0}".format(os.path.basename(fname)))
 
             # for this tech, each spreadsheet will only have a single BPA ID and flow cell
             # we grab the common values in the spreadsheet, then apply the flow cell ID
             # from the filename
-            obj = common_values([t._asdict() for t in self.parse_spreadsheet(fname, self.metadata_info)])
-            file_info = files.tenx_raw_xlsx_filename_re.match(os.path.basename(fname)).groupdict()
-            obj['flow_id'] = file_info['flow_id']
+            obj=common_values([t._asdict() for t in self.parse_spreadsheet(fname, self.metadata_info)])
+            file_info=files.tenx_raw_xlsx_filename_re.match(os.path.basename(fname)).groupdict()
+            obj['flow_id']=file_info['flow_id']
 
-            bpa_sample_id = obj['bpa_sample_id']
-            bpa_library_id = obj['bpa_library_id']
-            flow_id = obj['flow_id']
-            self.flow_lookup[obj['ticket']] = flow_id
+            bpa_sample_id=obj['bpa_sample_id']
+            bpa_library_id=obj['bpa_library_id']
+            flow_id=obj['flow_id']
+            self.flow_lookup[obj['ticket']]=flow_id
 
-            name = sample_id_to_ckan_name(bpa_sample_id, self.ckan_data_type, flow_id)
-            context = {}
+            name=sample_id_to_ckan_name(bpa_sample_id, self.ckan_data_type, flow_id)
+            context={}
             for contextual_source in self.contextual_metadata:
                 context.update(contextual_source.get(bpa_sample_id, bpa_library_id))
 
-            track_meta = self.track_meta.get(obj['ticket'])
+            track_meta=self.track_meta.get(obj['ticket'])
 
             def track_get(k):
                 if track_meta is None:
@@ -352,45 +385,48 @@ class OMG10XRawMetadata(OMGBaseMetadata):
                 'private': True,
             })
             obj.update(context)
+            logger.debug(obj['id'])
+            logger.debug(obj['latitude'])
+            logger.debug(obj['longitude'])
             ingest_utils.add_spatial_extra(obj)
             self.apply_location_generalisation(obj)
-            tag_names = ['10x-raw']
-            obj['tags'] = [{'name': t} for t in tag_names]
+            tag_names=['10x-raw']
+            obj['tags']=[{'name': t} for t in tag_names]
             packages.append(obj)
         return packages
 
     def _get_resources(self):
         logger.info("Ingesting OMG md5 file information from {0}".format(self.path))
-        resources = []
+        resources=[]
         for md5_file in glob(self.path + '/*.md5'):
             logger.info("Processing md5 file {}".format(md5_file))
             for filename, md5, file_info in self.parse_md5file(md5_file):
-                xlsx_info = self.metadata_info[os.path.basename(md5_file)]
-                ticket = xlsx_info['ticket']
-                flow_id = self.flow_lookup[ticket]
-                bpa_sample_id = ingest_utils.extract_ands_id(file_info['bpa_sample_id'])
+                xlsx_info=self.metadata_info[os.path.basename(md5_file)]
+                ticket=xlsx_info['ticket']
+                flow_id=self.flow_lookup[ticket]
+                bpa_sample_id=ingest_utils.extract_ands_id(file_info['bpa_sample_id'])
 
-                resource = file_info.copy()
-                resource['md5'] = resource['id'] = md5
-                resource['name'] = filename
-                resource['resource_type'] = self.ckan_data_type
-                legacy_url = urljoin(xlsx_info['base_url'], filename)
+                resource=file_info.copy()
+                resource['md5']=resource['id']=md5
+                resource['name']=filename
+                resource['resource_type']=self.ckan_data_type
+                legacy_url=urljoin(xlsx_info['base_url'], filename)
                 resources.append(((bpa_sample_id, flow_id), legacy_url, resource))
         return resources
 
 
 class OMG10XProcessedIlluminaMetadata(OMGBaseMetadata):
-    organization = 'bpa-omg'
-    ckan_data_type = 'omg-10x-processed-illumina'
-    technology = '10xprocessed'
-    contextual_classes = common_context
-    metadata_patterns = [r'^.*\.md5$', r'^.*_processed.*.*\.xlsx$']
-    metadata_urls = [
+    organization='bpa-omg'
+    ckan_data_type='omg-10x-processed-illumina'
+    technology='10xprocessed'
+    contextual_classes=common_context
+    metadata_patterns=[r'^.*\.md5$', r'^.*_processed.*.*\.xlsx$']
+    metadata_urls=[
         'https://downloads-qcif.bioplatforms.com/bpa/omg_staging/10x_processed/',
     ]
-    metadata_url_components = ('ticket',)
-    resource_linkage = ('bpa_sample_id', 'flow_id')
-    spreadsheet = {
+    metadata_url_components=('ticket',)
+    resource_linkage=('bpa_sample_id', 'flow_id')
+    spreadsheet={
         'fields': [
             fld('bpa_dataset_id', 'bpa_dataset_id', coerce=ingest_utils.extract_ands_id),
             fld('bpa_library_id', 'bpa_library_id', coerce=ingest_utils.extract_ands_id),
@@ -427,7 +463,7 @@ class OMG10XProcessedIlluminaMetadata(OMGBaseMetadata):
             'column_name_row_index': 0,
         }
     }
-    md5 = {
+    md5={
         'match': [
             files.tenxtar_filename_re
         ],
@@ -440,43 +476,43 @@ class OMG10XProcessedIlluminaMetadata(OMGBaseMetadata):
 
     def __init__(self, metadata_path, contextual_metadata=None, metadata_info=None):
         super().__init__()
-        self.path = Path(metadata_path)
-        self.contextual_metadata = contextual_metadata
-        self.metadata_info = metadata_info
-        self.track_meta = OMGTrackMetadata()
+        self.path=Path(metadata_path)
+        self.contextual_metadata=contextual_metadata
+        self.metadata_info=metadata_info
+        self.track_meta=OMGTrackMetadata()
         # each row in the spreadsheet maps through to a single tar file
-        self.file_package = {}
+        self.file_package={}
 
     def _get_packages(self):
-        xlsx_re = re.compile(r'^.*_(\w+)_processed.*\.xlsx$')
+        xlsx_re=re.compile(r'^.*_(\w+)_processed.*\.xlsx$')
 
         def get_flow_id(fname):
-            m = xlsx_re.match(fname)
+            m=xlsx_re.match(fname)
             if not m:
                 raise Exception("unable to find flowcell for filename: `%s'" % (fname))
             return m.groups()[0]
 
         logger.info("Ingesting OMG metadata from {0}".format(self.path))
-        packages = []
+        packages=[]
         for fname in glob(self.path + '/*.xlsx'):
             logger.info("Processing OMG metadata file {0}".format(os.path.basename(fname)))
             for row in self.parse_spreadsheet(fname, self.metadata_info):
-                track_meta = self.track_meta.get(row.ticket)
-                flow_id = get_flow_id(fname)
+                track_meta=self.track_meta.get(row.ticket)
+                flow_id=get_flow_id(fname)
 
                 def track_get(k):
                     if track_meta is None:
                         return None
                     return getattr(track_meta, k)
-                bpa_sample_id = row.bpa_sample_id
-                bpa_library_id = row.bpa_library_id
+                bpa_sample_id=row.bpa_sample_id
+                bpa_library_id=row.bpa_library_id
                 if bpa_sample_id is None:
                     continue
-                obj = {}
-                name = sample_id_to_ckan_name(bpa_sample_id, self.ckan_data_type, flow_id)
+                obj={}
+                name=sample_id_to_ckan_name(bpa_sample_id, self.ckan_data_type, flow_id)
                 assert(row.file not in self.file_package)
-                self.file_package[row.file] = bpa_sample_id, flow_id
-                context = {}
+                self.file_package[row.file]=bpa_sample_id, flow_id
+                context={}
                 for contextual_source in self.contextual_metadata:
                     context.update(contextual_source.get(bpa_sample_id, bpa_library_id))
                 obj.update(row._asdict())
@@ -502,42 +538,42 @@ class OMG10XProcessedIlluminaMetadata(OMGBaseMetadata):
                 obj.update(context)
                 ingest_utils.add_spatial_extra(obj)
                 self.apply_location_generalisation(obj)
-                tag_names = ['10x-processed']
-                obj['tags'] = [{'name': t} for t in tag_names]
+                tag_names=['10x-processed']
+                obj['tags']=[{'name': t} for t in tag_names]
                 packages.append(obj)
         return packages
 
     def _get_resources(self):
         logger.info("Ingesting OMG md5 file information from {0}".format(self.path))
-        resources = []
+        resources=[]
         for md5_file in glob(self.path + '/*.md5'):
             logger.info("Processing md5 file {}".format(md5_file))
             for filename, md5, file_info in self.parse_md5file(md5_file):
-                bpa_sample_id, flow_id = self.file_package[filename]
-                resource = file_info.copy()
+                bpa_sample_id, flow_id=self.file_package[filename]
+                resource=file_info.copy()
                 # waiting on filename convention from AGRF
                 del resource['basename']
-                resource['md5'] = resource['id'] = md5
-                resource['name'] = filename
-                resource['resource_type'] = self.ckan_data_type
-                xlsx_info = self.metadata_info[os.path.basename(md5_file)]
-                legacy_url = urljoin(xlsx_info['base_url'], filename)
+                resource['md5']=resource['id']=md5
+                resource['name']=filename
+                resource['resource_type']=self.ckan_data_type
+                xlsx_info=self.metadata_info[os.path.basename(md5_file)]
+                legacy_url=urljoin(xlsx_info['base_url'], filename)
                 resources.append(((bpa_sample_id, flow_id), legacy_url, resource))
         return resources
 
 
 class OMGExonCaptureMetadata(OMGBaseMetadata):
-    organization = 'bpa-omg'
-    ckan_data_type = 'omg-exon-capture'
-    technology = 'exoncapture'
-    contextual_classes = common_context
-    metadata_patterns = [r'^.*\.md5$', r'^.*_metadata.*.*\.xlsx$']
-    metadata_urls = [
+    organization='bpa-omg'
+    ckan_data_type='omg-exon-capture'
+    technology='exoncapture'
+    contextual_classes=common_context
+    metadata_patterns=[r'^.*\.md5$', r'^.*_metadata.*.*\.xlsx$']
+    metadata_urls=[
         'https://downloads-qcif.bioplatforms.com/bpa/omg_staging/exon_capture/',
     ]
-    metadata_url_components = ('facility', 'ticket',)
-    resource_linkage = ('bpa_library_id', 'flowcell_id', 'p7_library_index_sequence')
-    spreadsheet = {
+    metadata_url_components=('facility', 'ticket',)
+    resource_linkage=('bpa_library_id', 'flowcell_id', 'p7_library_index_sequence')
+    spreadsheet={
         'fields': [
             fld('genus', 'genus', optional=True),
             fld('species', 'species', optional=True),
@@ -585,7 +621,7 @@ class OMGExonCaptureMetadata(OMGBaseMetadata):
             'column_name_row_index': 0,
         }
     }
-    md5 = {
+    md5={
         'match': [
             files.exon_filename_re
         ],
@@ -598,10 +634,10 @@ class OMGExonCaptureMetadata(OMGBaseMetadata):
 
     def __init__(self, metadata_path, contextual_metadata=None, metadata_info=None):
         super().__init__()
-        self.path = Path(metadata_path)
-        self.contextual_metadata = contextual_metadata
-        self.metadata_info = metadata_info
-        self.track_meta = OMGTrackMetadata()
+        self.path=Path(metadata_path)
+        self.contextual_metadata=contextual_metadata
+        self.metadata_info=metadata_info
+        self.track_meta=OMGTrackMetadata()
 
     @classmethod
     def flow_cell_index_linkage(cls, flow_id, index):
@@ -609,41 +645,41 @@ class OMGExonCaptureMetadata(OMGBaseMetadata):
 
     def _get_packages(self):
         logger.info("Ingesting OMG metadata from {0}".format(self.path))
-        packages = []
+        packages=[]
         for fname in glob(self.path + '/*.xlsx'):
             logger.info("Processing OMG metadata file {0}".format(os.path.basename(fname)))
             for row in self.parse_spreadsheet(fname, self.metadata_info):
-                track_meta = self.track_meta.get(row.ticket)
+                track_meta=self.track_meta.get(row.ticket)
 
                 def track_get(k):
                     if track_meta is None:
                         return None
                     return getattr(track_meta, k)
 
-                library_id = row.bpa_library_id
+                library_id=row.bpa_library_id
                 if library_id is None:
                     continue
 
-                obj = row._asdict()
+                obj=row._asdict()
 
                 def migrate_field(from_field, to_field):
-                    old_val = obj[from_field]
-                    new_val = obj[to_field]
+                    old_val=obj[from_field]
+                    new_val=obj[to_field]
                     del obj[from_field]
                     if old_val is not None and new_val is not None:
                         raise Exception("field migration clash, {}->{}".format(from_field, to_field))
                     if old_val:
-                        obj[to_field] = old_val
+                        obj[to_field]=old_val
 
                 # library_index_sequence migrated into p7_library_index_sequence
                 migrate_field('library_index_id', 'p7_library_index_id'),
                 migrate_field('library_index_sequence', 'p7_library_index_sequence'),
                 migrate_field('library_oligo_sequence', 'p7_library_oligo_sequence'),
 
-                linkage = self.flow_cell_index_linkage(row.flowcell_id, obj['p7_library_index_sequence'])
-                name = sample_id_to_ckan_name(library_id, self.ckan_data_type, linkage)
+                linkage=self.flow_cell_index_linkage(row.flowcell_id, obj['p7_library_index_sequence'])
+                name=sample_id_to_ckan_name(library_id, self.ckan_data_type, linkage)
 
-                context = {}
+                context={}
                 for contextual_source in self.contextual_metadata:
                     context.update(contextual_source.get(row.bpa_sample_id, row.bpa_library_id))
 
@@ -671,45 +707,43 @@ class OMGExonCaptureMetadata(OMGBaseMetadata):
                 obj.pop('library_index_sequence', False)
                 obj.pop('library_oligo_sequence', False)
 
-                self.generaliser.apply(obj)
-
                 ingest_utils.add_spatial_extra(obj)
                 self.apply_location_generalisation(obj)
-                tag_names = ['exon-capture', 'raw']
-                obj['tags'] = [{'name': t} for t in tag_names]
+                tag_names=['exon-capture', 'raw']
+                obj['tags']=[{'name': t} for t in tag_names]
                 packages.append(obj)
         return packages
 
     def _get_resources(self):
         logger.info("Ingesting OMG md5 file information from {0}".format(self.path))
-        resources = []
+        resources=[]
         for md5_file in glob(self.path + '/*.md5'):
             logger.info("Processing md5 file {}".format(md5_file))
             for filename, md5, file_info in self.parse_md5file(md5_file):
-                resource = file_info.copy()
-                resource['md5'] = resource['id'] = md5
-                resource['name'] = filename
-                resource['resource_type'] = self.ckan_data_type
-                library_id = ingest_utils.extract_ands_id(resource['bpa_library_id'])
-                xlsx_info = self.metadata_info[os.path.basename(md5_file)]
-                legacy_url = urljoin(xlsx_info['base_url'], filename)
+                resource=file_info.copy()
+                resource['md5']=resource['id']=md5
+                resource['name']=filename
+                resource['resource_type']=self.ckan_data_type
+                library_id=ingest_utils.extract_ands_id(resource['bpa_library_id'])
+                xlsx_info=self.metadata_info[os.path.basename(md5_file)]
+                legacy_url=urljoin(xlsx_info['base_url'], filename)
                 resources.append(((library_id, resource['flow_cell_id'], resource['index']), legacy_url, resource))
         return resources
 
 
 class OMGGenomicsHiSeqMetadata(OMGBaseMetadata):
-    organization = 'bpa-omg'
-    ckan_data_type = 'omg-genomics-hiseq'
-    omics = 'genomics'
-    technology = 'hiseq'
-    contextual_classes = common_context
-    metadata_patterns = [r'^.*\.md5$', r'^.*_metadata.*.*\.xlsx$']
-    metadata_urls = [
+    organization='bpa-omg'
+    ckan_data_type='omg-genomics-hiseq'
+    omics='genomics'
+    technology='hiseq'
+    contextual_classes=common_context
+    metadata_patterns=[r'^.*\.md5$', r'^.*_metadata.*.*\.xlsx$']
+    metadata_urls=[
         'https://downloads-qcif.bioplatforms.com/bpa/omg_staging/genomics/raw/',
     ]
-    metadata_url_components = ('ticket',)
-    resource_linkage = ('bpa_sample_id', 'flowcell_id')
-    spreadsheet = {
+    metadata_url_components=('ticket',)
+    resource_linkage=('bpa_sample_id', 'flowcell_id')
+    spreadsheet={
         'fields': [
             fld('bpa_dataset_id', 'bpa_dataset_id', coerce=ingest_utils.extract_ands_id),
             fld('bpa_library_id', 'bpa_library_id', coerce=ingest_utils.extract_ands_id),
@@ -746,7 +780,7 @@ class OMGGenomicsHiSeqMetadata(OMGBaseMetadata):
             'column_name_row_index': 0,
         }
     }
-    md5 = {
+    md5={
         'match': [
             files.hiseq_filename_re
         ],
@@ -759,46 +793,46 @@ class OMGGenomicsHiSeqMetadata(OMGBaseMetadata):
 
     def __init__(self, metadata_path, contextual_metadata=None, metadata_info=None):
         super().__init__()
-        self.path = Path(metadata_path)
-        self.contextual_metadata = contextual_metadata
-        self.metadata_info = metadata_info
-        self.track_meta = OMGTrackMetadata()
+        self.path=Path(metadata_path)
+        self.contextual_metadata=contextual_metadata
+        self.metadata_info=metadata_info
+        self.track_meta=OMGTrackMetadata()
 
     def _get_packages(self):
-        xlsx_re = re.compile(r'^.*_(\w+)_metadata.*\.xlsx$')
+        xlsx_re=re.compile(r'^.*_(\w+)_metadata.*\.xlsx$')
 
         def get_flow_id(fname):
-            m = xlsx_re.match(fname)
+            m=xlsx_re.match(fname)
             if not m:
                 raise Exception("unable to find flowcell for filename: `%s'" % (fname))
             return m.groups()[0]
 
         logger.info("Ingesting OMG metadata from {0}".format(self.path))
-        packages = []
+        packages=[]
         for fname in glob(self.path + '/*.xlsx'):
             logger.info("Processing OMG metadata file {0}".format(os.path.basename(fname)))
-            flow_id = get_flow_id(fname)
+            flow_id=get_flow_id(fname)
 
-            objs = defaultdict(list)
+            objs=defaultdict(list)
             for row in self.parse_spreadsheet(fname, self.metadata_info):
-                obj = row._asdict()
+                obj=row._asdict()
                 obj.pop('file')
                 objs[obj['bpa_sample_id']].append(obj)
 
             for bpa_sample_id, row_objs in list(objs.items()):
-                obj = common_values(row_objs)
-                track_meta = self.track_meta.get(obj['ticket'])
+                obj=common_values(row_objs)
+                track_meta=self.track_meta.get(obj['ticket'])
 
                 def track_get(k):
                     if track_meta is None:
                         return None
                     return getattr(track_meta, k)
-                bpa_sample_id = obj['bpa_sample_id']
-                bpa_library_id = obj['bpa_library_id']
+                bpa_sample_id=obj['bpa_sample_id']
+                bpa_library_id=obj['bpa_library_id']
                 if bpa_sample_id is None:
                     continue
-                name = sample_id_to_ckan_name(bpa_sample_id, self.ckan_data_type, flow_id)
-                context = {}
+                name=sample_id_to_ckan_name(bpa_sample_id, self.ckan_data_type, flow_id)
+                context={}
                 for contextual_source in self.contextual_metadata:
                     context.update(contextual_source.get(bpa_sample_id, bpa_library_id))
                 obj.update({
@@ -822,23 +856,23 @@ class OMGGenomicsHiSeqMetadata(OMGBaseMetadata):
                 obj.update(context)
                 ingest_utils.add_spatial_extra(obj)
                 self.apply_location_generalisation(obj)
-                tag_names = ['genomics-hiseq']
-                obj['tags'] = [{'name': t} for t in tag_names]
+                tag_names=['genomics-hiseq']
+                obj['tags']=[{'name': t} for t in tag_names]
                 packages.append(obj)
         return packages
 
     def _get_resources(self):
         logger.info("Ingesting OMG md5 file information from {0}".format(self.path))
-        resources = []
+        resources=[]
         for md5_file in glob(self.path + '/*.md5'):
             logger.info("Processing md5 file {}".format(md5_file))
             for filename, md5, file_info in self.parse_md5file(md5_file):
-                resource = file_info.copy()
-                resource['md5'] = resource['id'] = md5
-                resource['name'] = filename
-                resource['resource_type'] = self.ckan_data_type
-                xlsx_info = self.metadata_info[os.path.basename(md5_file)]
-                legacy_url = urljoin(xlsx_info['base_url'], filename)
+                resource=file_info.copy()
+                resource['md5']=resource['id']=md5
+                resource['name']=filename
+                resource['resource_type']=self.ckan_data_type
+                xlsx_info=self.metadata_info[os.path.basename(md5_file)]
+                legacy_url=urljoin(xlsx_info['base_url'], filename)
                 resources.append(
                     ((ingest_utils.extract_ands_id(resource['bpa_sample_id']), resource['flow_cell_id']), legacy_url, resource))
         return resources
@@ -850,18 +884,18 @@ class OMGGenomicsDDRADMetadata(OMGBaseMetadata):
     will use this ingest class.
     Issue: bpa-archive-ops#699
     """
-    organization = 'bpa-omg'
-    ckan_data_type = 'omg-genomics-ddrad'
-    omics = 'genomics'
-    technology = 'ddrad'
-    contextual_classes = common_context
-    metadata_patterns = [r'^.*\.md5$', r'^.*_metadata.*.*\.xlsx$']
-    metadata_urls = [
+    organization='bpa-omg'
+    ckan_data_type='omg-genomics-ddrad'
+    omics='genomics'
+    technology='ddrad'
+    contextual_classes=common_context
+    metadata_patterns=[r'^.*\.md5$', r'^.*_metadata.*.*\.xlsx$']
+    metadata_urls=[
         'https://downloads-qcif.bioplatforms.com/bpa/omg_staging/nextseq_ddrad/',
     ]
-    metadata_url_components = ('ticket',)
-    resource_linkage = ('bpa_dataset_id', 'flowcell_id')
-    spreadsheet = {
+    metadata_url_components=('ticket',)
+    resource_linkage=('bpa_dataset_id', 'flowcell_id')
+    spreadsheet={
         'fields': [
             fld('genus', 'genus'),
             fld('species', 'species'),
@@ -906,7 +940,7 @@ class OMGGenomicsDDRADMetadata(OMGBaseMetadata):
             'column_name_row_index': 0,
         }
     }
-    md5 = {
+    md5={
         'match': [
             files.ddrad_fastq_filename_re,
             files.ddrad_metadata_sheet_re,
@@ -916,39 +950,39 @@ class OMGGenomicsDDRADMetadata(OMGBaseMetadata):
 
     def __init__(self, metadata_path, contextual_metadata=None, metadata_info=None):
         super().__init__()
-        self.path = Path(metadata_path)
-        self.contextual_metadata = contextual_metadata
-        self.metadata_info = metadata_info
-        self.track_meta = OMGTrackMetadata()
-        self.flow_lookup = {}
+        self.path=Path(metadata_path)
+        self.contextual_metadata=contextual_metadata
+        self.metadata_info=metadata_info
+        self.track_meta=OMGTrackMetadata()
+        self.flow_lookup={}
 
     def _get_packages(self):
-        xlsx_re = re.compile(r'^.*_(\w+)_metadata.*\.xlsx$')
+        xlsx_re=re.compile(r'^.*_(\w+)_metadata.*\.xlsx$')
 
         def get_flow_id(fname):
-            m = xlsx_re.match(fname)
+            m=xlsx_re.match(fname)
             if not m:
                 raise Exception("unable to find flowcell for filename: `%s'" % (fname))
             return m.groups()[0]
         logger.info("Ingesting OMG metadata from {0}".format(self.path))
-        packages = []
+        packages=[]
         for fname in glob(self.path + '/*.xlsx'):
             logger.info("Processing OMG metadata file {0}".format(os.path.basename(fname)))
-            flow_id = get_flow_id(fname)
-            objs = defaultdict(list)
+            flow_id=get_flow_id(fname)
+            objs=defaultdict(list)
             for row in self.parse_spreadsheet(fname, self.metadata_info):
-                obj = row._asdict()
+                obj=row._asdict()
                 obj.pop('file')
                 objs[(obj['bpa_dataset_id'], obj['flowcell_id'])].append(obj)
             for (bpa_dataset_id, flowcell_id), row_objs in list(objs.items()):
-                obj = common_values(row_objs)
-                track_meta = self.track_meta.get(obj['ticket'])
+                obj=common_values(row_objs)
+                track_meta=self.track_meta.get(obj['ticket'])
 
                 def track_get(k):
                     if track_meta is None:
                         return None
                     return getattr(track_meta, k)
-                name = sample_id_to_ckan_name(bpa_dataset_id, self.ckan_data_type, flowcell_id)
+                name=sample_id_to_ckan_name(bpa_dataset_id, self.ckan_data_type, flowcell_id)
             obj.update({
                 'name': name,
                 'id': name,
@@ -968,23 +1002,23 @@ class OMGGenomicsDDRADMetadata(OMGBaseMetadata):
             })
             ingest_utils.add_spatial_extra(obj)
             self.apply_location_generalisation(obj)
-            tag_names = ['genomics-ddrad']
-            obj['tags'] = [{'name': t} for t in tag_names]
+            tag_names=['genomics-ddrad']
+            obj['tags']=[{'name': t} for t in tag_names]
             packages.append(obj)
         return packages
 
     def _get_resources(self):
         logger.info("Ingesting OMG md5 file information from {0}".format(self.path))
-        resources = []
+        resources=[]
         for md5_file in glob(self.path + '/*.md5'):
             logger.info("Processing md5 file {}".format(md5_file))
             for filename, md5, file_info in self.parse_md5file(md5_file):
-                resource = file_info.copy()
-                resource['md5'] = resource['id'] = md5
-                resource['name'] = filename
-                resource['resource_type'] = self.ckan_data_type
-                xlsx_info = self.metadata_info[os.path.basename(md5_file)]
-                legacy_url = urljoin(xlsx_info['base_url'], filename)
+                resource=file_info.copy()
+                resource['md5']=resource['id']=md5
+                resource['name']=filename
+                resource['resource_type']=self.ckan_data_type
+                xlsx_info=self.metadata_info[os.path.basename(md5_file)]
+                legacy_url=urljoin(xlsx_info['base_url'], filename)
                 resources.append(
                     ((ingest_utils.extract_ands_id(resource['bpa_dataset_id']), resource['flowcell_id']), legacy_url, resource))
         return resources
