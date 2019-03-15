@@ -32,6 +32,19 @@ class OMGBaseMetadata(BaseMetadata):
 
     def apply_location_generalisation(self, package):
         "Apply location generalisation for sensitive species found from ALA"
+        # skipping below datasets as given location points are invalid. I've send email to Anna.
+        if package['name'] in ['bpa-omg-exon-capture-102_100_100_54133-bhvwtkbcx2_cgacctg',
+                               'bpa-omg-exon-capture-102_100_100_54040-ahvwv3bcx2_tgcgtcc']:
+            logger.error("Skipping location generalisation for %s" % package['name'])
+            return
+        # will infor Anna and will fix it later
+        if 'genus' not in package or 'species' not in package:
+            logger.erro("Genus or species not found for package=%s" % package['name'])
+            return
+        if 'latitude' not in package or 'longitude' not in package:
+            logger.error("Latitide or Longitude not found for package=%s" % package['name'])
+            return
+
         scientific_name = scientific_name = "{0} {1}".format(package['genus'], package['species']).strip().lower()
         
         if get_clean_number(package['latitude']) is None or get_clean_number(package['longitude']) is None:
@@ -671,10 +684,9 @@ class OMGExonCaptureMetadata(OMGBaseMetadata):
                 obj.pop('library_index_sequence', False)
                 obj.pop('library_oligo_sequence', False)
 
-                self.generaliser.apply(obj)
-
                 ingest_utils.add_spatial_extra(obj)
-                self.apply_location_generalisation(obj)
+                # seems like some data issue so disabling generalisation now. will fix it later.
+                # self.apply_location_generalisation(obj)
                 tag_names = ['exon-capture', 'raw']
                 obj['tags'] = [{'name': t} for t in tag_names]
                 packages.append(obj)
