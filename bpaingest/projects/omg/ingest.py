@@ -32,7 +32,12 @@ class OMGBaseMetadata(BaseMetadata):
 
     def apply_location_generalisation(self, package):
         "Apply location generalisation for sensitive species found from ALA"
-        
+
+        # check for latitude/longitude metadata field
+        if 'latitude' not in package or 'longitude' not in package:
+            logger.warning("Couldn't find latitude/longitude metadata for package %s" % package['name'])
+            return
+
         # check for location points before thinking about applying generalisation
         if get_clean_number(package['latitude']) is None or get_clean_number(package['longitude']) is None:
             logger.error("Latitude or Longitude (or both) found 'None' for package=%s" % package['name'])
