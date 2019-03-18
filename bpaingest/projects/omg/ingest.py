@@ -32,12 +32,14 @@ class OMGBaseMetadata(BaseMetadata):
 
     def apply_location_generalisation(self, package):
         "Apply location generalisation for sensitive species found from ALA"
-        scientific_name = scientific_name = "{0} {1}".format(package['genus'], package['species']).strip().lower()
         
+        # check for location points before thinking about applying generalisation
         if get_clean_number(package['latitude']) is None or get_clean_number(package['longitude']) is None:
             logger.error("Latitude or Longitude (or both) found 'None' for package=%s" % package['name'])
             return
 
+        scientific_name = scientific_name = "{0} {1}".format(package['genus'], package['species']).strip().lower()
+        
         generalised_data = self.generaliser.apply(scientific_name, get_clean_number(
             package['latitude']), get_clean_number(package['longitude']))
 
@@ -205,9 +207,8 @@ class OMG10XRawIlluminaMetadata(OMGBaseMetadata):
             })
 
             ingest_utils.add_spatial_extra(obj)
-            self.apply_location_generalisation(obj)
             obj.update(common_values([make_row_metadata(row) for row in rows]))
-
+            self.apply_location_generalisation(obj)
             tag_names = ['10x-raw']
             obj['tags'] = [{'name': t} for t in tag_names]
             packages.append(obj)
@@ -670,8 +671,6 @@ class OMGExonCaptureMetadata(OMGBaseMetadata):
                 obj.pop('library_index_id', False)
                 obj.pop('library_index_sequence', False)
                 obj.pop('library_oligo_sequence', False)
-
-                self.generaliser.apply(obj)
 
                 ingest_utils.add_spatial_extra(obj)
                 self.apply_location_generalisation(obj)
