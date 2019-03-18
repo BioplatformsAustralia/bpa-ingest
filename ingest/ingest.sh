@@ -70,8 +70,8 @@ gbr() {
 
 marine_microbes()
 {
-  apply marine-microbes-genomics $*
-  apply marine-microbes-genomics-amplicons-controls $*
+  apply marine-microbes-genomics-amplicons $*
+  apply marine-microbes-genomics-amplicons-control $*
   apply marine-microbes-metagenomics $*
   apply marine-microbes-metatranscriptomics $*
 }
