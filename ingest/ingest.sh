@@ -107,17 +107,17 @@ sepsis()
   apply sepsis-transcriptomics-hiseq $*
 }
 
-stemcell()
-{
-  apply stemcells-metabolomics $*
-  apply stemcells-metabolomics-analysed $*
-  apply stemcells-proteomics $*
-  apply stemcells-proteomics-analysed $*
-  apply stemcells-proteomics-pool $*
-  apply stemcells-singlecellrna $*
-  apply stemcells-smallrna $*
-  apply stemcells-transcriptomics $*
-}
+# stemcell()
+# {
+#   apply stemcells-metabolomics $*
+#   apply stemcells-metabolomics-analysed $*
+#   apply stemcells-proteomics $*
+#   apply stemcells-proteomics-analysed $*
+#   apply stemcells-proteomics-pool $*
+#   apply stemcells-singlecellrna $*
+#   apply stemcells-smallrna $*
+#   apply stemcells-transcriptomics $*
+# }
 
 wheat() {
   apply wheat-cultivars $*
@@ -135,7 +135,7 @@ all()
   marine_microbes
   omg
   sepsis
-  stemcell
+  # stemcell
   wheat
 }
 
