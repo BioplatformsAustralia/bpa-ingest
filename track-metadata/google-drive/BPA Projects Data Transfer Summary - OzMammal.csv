@@ -32,3 +32,6 @@ BRF,21/12/2018,HiSeq 2500 100bp PE - rodent exome DNA,SN877_0616_AMacDonald_OzMa
 BRF,11/1/2019,HiSeq 2500 100bp PE - rodent exome DNA,SN877_0619_AMacDonald_OzMammals_Rodent_gDNA_exome_capture,Illumina FASTQ,14/2/2019,,BPAOPS-785,(ingested)
 BRF,14/01/2019,HiSeq 2500 100bp PE - rodent exome DNA,SN877_0621_AMacDonald_OzMammals_Rodent_gDNA_exome_capture,Illumina FASTQ,14/2/2019,,BPAOPS-786,(ingested)
 BRF,14/01/2019,HiSeq 2500 100bp PE - rodent exome DNA,SN877_0622_AMacDonald_OzMammals_Rodent_gDNA_exome_capture,Illumina FASTQ,14/2/2019,,BPAOPS-787,(ingested)
+AGRF,20/03/2019,NovaSeq 6000- Whole Genome - 41193 and 41194,20190313_AGRF_BPA_OMG_HG2W3DSXX ,Illumina FASTQ,25/3/2019,,BPAOPS-815,(ingested)
+AGRF,20/03/2019,NovaSeq 6000- Whole Genome - 41193 and 41194,20190313_AGRF_BPA_OMG_HJKTTDSXX,Illumina FASTQ,25/3/2019,,BPAOPS-816,(ingested)
+UNSW,20/3/19,10X Genomics/NovaSeq 6000- 41196 Bilby DNA,41196_OMG_UNSW_10X_H3FFVDRXX,Illumina FASTQ,25/3/2019,,BPAOPS-797,(ingested)
