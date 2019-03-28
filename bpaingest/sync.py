@@ -140,6 +140,11 @@ def sync_package_resources(ckan, package_obj, resource_id_legacy_url, resources,
     current_resources = package_obj['resources']
     existing_resources = dict((t['id'], t) for t in current_resources)
     needed_resources = dict((t['id'], t) for t in resources)
+
+    if len(needed_resources) != len(resources):
+        raise Exception("duplicate MD5 hashes: {}".format(
+            sorted(set(resources) - set(needed_resources))))
+
     to_create = set(needed_resources) - set(existing_resources)
     to_delete = set(existing_resources) - set(needed_resources)
 
@@ -221,6 +226,8 @@ def sync_resources(ckan, resources, resource_linkage_attrs, ckan_packages, auth,
     resource_linkage_package_id = {}
     for package_obj in ckan_packages:
         linkage_tpl = tuple(package_obj[t] for t in resource_linkage_attrs)
+        if linkage_tpl in resource_linkage_package_id:
+            raise Exception("more than one package linked for tuple {}".format(linkage_tpl))
         resource_linkage_package_id[linkage_tpl] = package_obj['id']
 
     # wire the resources to their CKAN package
@@ -236,6 +243,8 @@ def sync_resources(ckan, resources, resource_linkage_attrs, ckan_packages, auth,
         if package_id not in resource_idx:
             resource_idx[package_id] = []
         resource_idx[package_id].append(obj)
+        if obj['id'] in resource_id_legacy_url:
+            raise Exception('duplicate resource ID: {}'.format(obj['id']))
         resource_id_legacy_url[obj['id']] = legacy_url
 
     if not do_resource_checks:
