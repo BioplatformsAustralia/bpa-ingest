@@ -709,18 +709,16 @@ class OMGGenomicsNovaseqMetadata(OMGBaseMetadata):
     metadata_urls = [
         'https://downloads-qcif.bioplatforms.com/bpa/omg_staging/genomics-novaseq/',
     ]
-    metadata_url_components = ('facility', 'ticket',)
-    resource_linkage = ('bpa_library_id', 'flowcell_id', 'p7_library_index_sequence')
+    metadata_url_components = ('ticket',)
+    resource_linkage = ('bpa_library_id', 'flowcell_id', 'library_index_id')
     spreadsheet = {
         'fields': [
-            fld('genus', 'genus', optional=True),
-            fld('species', 'species', optional=True),
-            fld('voucher_id', 'voucher_id', optional=True),
+            fld('genus', 'genus'),
+            fld('species', 'species'),
+            fld('voucher_id', 'voucher_id'),
             fld('bpa_dataset_id', 'bpa_dataset_id', coerce=ingest_utils.extract_ands_id),
             fld('bpa_library_id', 'bpa_library_id', coerce=ingest_utils.extract_ands_id),
             fld('bpa_sample_id', 'bpa_sample_id', coerce=ingest_utils.extract_ands_id),
-            skp('plate_name'),
-            skp('plate_well'),
             fld('facility_sample_id', 'facility_sample_id'),
             fld('library_type', 'library_type'),
             fld('library_prep_date', 'library_prep_date', coerce=ingest_utils.get_date_isoformat),
@@ -730,15 +728,9 @@ class OMGGenomicsNovaseqMetadata(OMGBaseMetadata):
             fld('omg_project', 'omg_project'),
             fld('data_custodian', 'data_custodian'),
             fld('dna_treatment', 'dna_treatment'),
-            fld('library_index_id', 'library_index_id', optional=True),
-            fld('library_index_sequence', 'library_index_sequence', optional=True),
-            fld('library_oligo_sequence', 'library_oligo_sequence', optional=True),
-            fld('p7_library_index_id', 'p7_library_index_id', optional=True),
-            fld('p7_library_index_sequence', 'p7_library_index_sequence', optional=True),
-            fld('p7_library_oligo_sequence', 'p7_library_oligo_sequence', optional=True),
-            fld('p5_library_index_id', 'p5_library_index_id', optional=True),
-            fld('p5_library_index_sequence', 'p5_library_index_sequence', optional=True),
-            fld('p5_library_oligo_sequence', 'p5_library_oligo_sequence', optional=True),
+            fld('library_index_id', 'library_index_id'),
+            fld('library_index_sequence', 'library_index_sequence'),
+            fld('library_oligo_sequence', 'library_oligo_sequence'),
             fld('library_pcr_reps', 'library_pcr_reps'),
             fld('library_pcr_cycles', 'library_pcr_cycles'),
             fld('library_ng_ul', 'library_ng_ul'),
@@ -747,7 +739,7 @@ class OMGGenomicsNovaseqMetadata(OMGBaseMetadata):
             fld('library_status', 'library_status'),
             fld('sequencing_facility', 'sequencing_facility'),
             fld('n_libraries_pooled', 'n_libraries_pooled'),
-            fld('bpa_work_order', 'bpa_work_order', coerce=ingest_utils.get_int),
+            fld('bpa_work_order', 'bpa_work_order'),
             fld('sequencing_platform', 'sequencing_platform'),
             fld('sequence_length', 'sequence_length'),
             fld('flowcell_id', 'flowcell_id'),
@@ -755,13 +747,14 @@ class OMGGenomicsNovaseqMetadata(OMGBaseMetadata):
             fld('file', 'file'),
         ],
         'options': {
+            'sheet_name': 'OMG_library_metadata',
             'header_length': 1,
             'column_name_row_index': 0,
         }
     }
     md5 = {
         'match': [
-            files.exon_filename_re
+            files.novaseq_filename_re
         ],
         'skip': [
             re.compile(r'^.*_metadata\.xlsx$'),
@@ -776,10 +769,6 @@ class OMGGenomicsNovaseqMetadata(OMGBaseMetadata):
         self.contextual_metadata = contextual_metadata
         self.metadata_info = metadata_info
         self.track_meta = OMGTrackMetadata()
-
-    @classmethod
-    def flow_cell_index_linkage(cls, flow_id, index):
-        return flow_id + '_' + index.replace('-', '').replace('_', '')
 
     def _get_packages(self):
         logger.info("Ingesting OMG metadata from {0}".format(self.path))
@@ -799,23 +788,7 @@ class OMGGenomicsNovaseqMetadata(OMGBaseMetadata):
                     continue
 
                 obj = row._asdict()
-
-                def migrate_field(from_field, to_field):
-                    old_val = obj[from_field]
-                    new_val = obj[to_field]
-                    del obj[from_field]
-                    if old_val is not None and new_val is not None:
-                        raise Exception("field migration clash, {}->{}".format(from_field, to_field))
-                    if old_val:
-                        obj[to_field] = old_val
-
-                # library_index_sequence migrated into p7_library_index_sequence
-                migrate_field('library_index_id', 'p7_library_index_id'),
-                migrate_field('library_index_sequence', 'p7_library_index_sequence'),
-                migrate_field('library_oligo_sequence', 'p7_library_oligo_sequence'),
-
-                linkage = self.flow_cell_index_linkage(row.flowcell_id, obj['p7_library_index_sequence'])
-                name = sample_id_to_ckan_name(library_id, self.ckan_data_type, linkage)
+                name = sample_id_to_ckan_name(library_id, self.ckan_data_type, row.flowcell_id)
 
                 context = {}
                 for contextual_source in self.contextual_metadata:
@@ -839,11 +812,6 @@ class OMGGenomicsNovaseqMetadata(OMGBaseMetadata):
                     'private': True,
                 })
                 obj.update(context)
-
-                # remove obsoleted fields
-                obj.pop('library_index_id', False)
-                obj.pop('library_index_sequence', False)
-                obj.pop('library_oligo_sequence', False)
 
                 ingest_utils.add_spatial_extra(obj)
                 self.apply_location_generalisation(obj)

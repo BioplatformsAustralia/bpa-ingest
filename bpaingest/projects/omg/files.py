@@ -8,7 +8,7 @@ logger = make_logger(__name__)
 tenxtar_filename_re = re.compile("""(?P<basename>.*)\.tar""")
 
 
-EXON_FILENAME_PATTERN = """
+EXON_FILENAME_PATTERN = r"""
     (?P<bpa_library_id>\d{4,6})_
     (?P<flow_cell_id>\w{9,10})_
     (?P<index>[G|A|T|C|-]*)_
@@ -21,7 +21,20 @@ EXON_FILENAME_PATTERN = """
 exon_filename_re = re.compile(EXON_FILENAME_PATTERN, re.VERBOSE)
 
 
-TENXFASTQ_FILENAME_PATTERN = """
+NOVASEQ_FILENAME_PATTERN = r"""
+    (?P<bpa_library_id>\d{4,6})_
+    (?P<voucher_id>\w+)_
+    pool_
+    (?P<flow_cell_id>\w{9,10})_
+    (?P<index>[G|A|T|C|-]*)_
+    (?P<lane>L\d{3})_
+    (?P<read>[R|I][1|2])
+    \.fastq\.gz
+"""
+novaseq_filename_re = re.compile(NOVASEQ_FILENAME_PATTERN, re.VERBOSE)
+
+
+TENXFASTQ_FILENAME_PATTERN = r"""
     (?P<bpa_sample_id>\d{4,6})_
     (?P<runsamplenum>S\d*)_
     (?P<lane>L\d{3})_
@@ -31,7 +44,7 @@ TENXFASTQ_FILENAME_PATTERN = """
 tenxfastq_filename_re = re.compile(TENXFASTQ_FILENAME_PATTERN, re.VERBOSE)
 
 
-TENX_RAW_XLSX_FILENAME_PATTERN = """
+TENX_RAW_XLSX_FILENAME_PATTERN = r"""
     (?P<bpa_sample_id>\d{4,6})_
     OMG_
     (?P<facility>UNSW)_
@@ -44,7 +57,7 @@ tenx_raw_xlsx_filename_re = re.compile(TENX_RAW_XLSX_FILENAME_PATTERN, re.VERBOS
 # For the short read data we should follow the new BPA file naming protocol that Mabel circulated fairly recently - I'm not sure if it reached you, but I've attached it here. Essentially it is:
 # <BPA sample ID>_<flowcell ID>_<index sequence>_<sample number>_<lane>_<read>_001.fastq.gz
 # If there is a missing field (eg if you have no index sequences), keep the field in the filename but use Ns instead.
-HISEQ_FILENAME_PATTERN = """
+HISEQ_FILENAME_PATTERN = r"""
     (?P<bpa_sample_id>\d{4,6})_
     (?P<flow_cell_id>\w{9})_
     (?P<index>[G|A|T|C|-]*|N)_
@@ -56,7 +69,7 @@ hiseq_filename_re = re.compile(HISEQ_FILENAME_PATTERN, re.VERBOSE)
 
 sample_sheet_re = re.compile(r'^SampleSheet\.csv$')
 
-DDRAD_FASTQ_FILENAME_PATTERN = """
+DDRAD_FASTQ_FILENAME_PATTERN = r"""
     (?P<bpa_dataset_id>\d{4,6})_
     (?P<flowcell_id>\w{9})_
     (?P<index>[G|A|T|C|-]*|N)_
@@ -64,7 +77,8 @@ DDRAD_FASTQ_FILENAME_PATTERN = """
     (?P<read>[R|I][1|2])\.fastq\.gz
 """
 ddrad_fastq_filename_re = re.compile(DDRAD_FASTQ_FILENAME_PATTERN, re.VERBOSE)
-DDRAD_METADATA_SHEET_PATTERN = """
+
+DDRAD_METADATA_SHEET_PATTERN = r"""
     OMG_
     NGS_
     AGRF_

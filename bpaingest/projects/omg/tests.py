@@ -3,6 +3,7 @@ from .files import (
     tenx_raw_xlsx_filename_re,
     tenxfastq_filename_re,
     exon_filename_re,
+    novaseq_filename_re,
     hiseq_filename_re,
     ddrad_fastq_filename_re,
     ddrad_metadata_sheet_re)
@@ -44,6 +45,15 @@ def test_exon():
 
     for filename in filenames:
         assert(exon_filename_re.match(filename) is not None)
+
+
+def test_novaseq():
+    filenames = [
+        '53911_ABTC50957_pool_HJKTTDSXX_CCAAGTCT-AAGGATGA_L001_R1.fastq.gz',
+    ]
+
+    for filename in filenames:
+        assert(novaseq_filename_re.match(filename) is not None)
 
 
 def test_hiseq():
