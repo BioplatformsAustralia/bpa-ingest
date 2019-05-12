@@ -10,8 +10,8 @@ botocore==1.12.65
 google-api-python-client
 python-dateutil==2.7.5
 # replace below line with pip packagename and version when registered with pypi
-https://github.com/BioplatformsAustralia/sensitive-species-location-handler/archive/1.0.5.tar.gz
+https://github.com/BioplatformsAustralia/sensitive-species-location-handler/archive/1.0.8.tar.gz
 # bug prevents pip install; see https://github.com/jswhit/pyproj/issues/136
-Cython==0.29.2
-git+https://github.com/jswhit/pyproj.git
+#Cython==0.29.2
+#git+https://github.com/jswhit/pyproj.git
 OWSLib==0.17.0
