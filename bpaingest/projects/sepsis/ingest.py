@@ -1310,7 +1310,7 @@ class SepsisProteomicsAnalysedMetadata(BaseSepsisAnalysedMetadata):
 
 
 class SepsisTranscriptomicsAnalysedMetadata(BaseSepsisAnalysedMetadata):
-    contextual_classes = [SepsisBacterialContextual, SepsisProteomicsSwathMSContextual]
+    contextual_classes = [SepsisBacterialContextual]
     metadata_urls = ['https://downloads-qcif.bioplatforms.com/bpa/sepsis/transcriptomics/analysed/']
     metadata_url_components = ('facility_code', 'ticket')
     metadata_patterns = [r'^.*\.md5$', r'^.*_metadata\.xlsx$']
