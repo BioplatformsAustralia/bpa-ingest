@@ -6,7 +6,8 @@ from .files import (
     novaseq_filename_re,
     hiseq_filename_re,
     ddrad_fastq_filename_re,
-    ddrad_metadata_sheet_re)
+    ddrad_metadata_sheet_re,
+    pacbio_filename_re)
 
 
 def test_tenxtar_raw_xlsx_filename_re():
@@ -105,3 +106,12 @@ def test_genomics_ddrad_metadata_sheet():
 
     for filename in filenames:
         assert(ddrad_metadata_sheet_re.match(filename) is not None)
+
+
+def test_pacbio():
+    filenames = [
+        '53816_UNSW_PAC_20190321_A01.tar.gz',
+    ]
+
+    for filename in filenames:
+        assert(pacbio_filename_re.match(filename) is not None)

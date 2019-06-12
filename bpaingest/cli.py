@@ -63,6 +63,7 @@ def setup_hash(subparser):
 
 def setup_dump(subparser):
     subparser.add_argument('filename', help='output target')
+    subparser.add_argument('--dump-re', help='restrict dump by slug', default='')
 
 
 @register_command

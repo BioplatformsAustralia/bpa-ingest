@@ -1128,3 +1128,149 @@ class OMGGenomicsDDRADMetadata(OMGBaseMetadata):
                 resources.append(
                     ((ingest_utils.extract_ands_id(resource['bpa_dataset_id']), resource['flowcell_id']), legacy_url, resource))
         return resources
+
+
+class OMGGenomicsPacbioMetadata(OMGBaseMetadata):
+    organization = 'bpa-omg'
+    ckan_data_type = 'omg-pacbio'
+    technology = 'pacbio'
+    contextual_classes = common_context
+    metadata_patterns = [r'^.*\.md5$', r'^.*_metadata.*.*\.xlsx$']
+    metadata_urls = [
+        'https://downloads-qcif.bioplatforms.com/bpa/omg_staging/pacbio/',
+    ]
+    metadata_url_components = ('ticket',)
+    resource_linkage = ('bpa_library_id', 'run_date')
+    spreadsheet = {
+        'fields': [
+            fld('genus', 'genus'),
+            fld('species', 'species'),
+            fld('voucher_id', 'voucher_id'),
+            fld('bpa_dataset_id', 'bpa_dataset_id', coerce=ingest_utils.extract_ands_id),
+            fld('bpa_library_id', 'bpa_library_id', coerce=ingest_utils.extract_ands_id),
+            fld('bpa_sample_id', 'bpa_sample_id', coerce=ingest_utils.extract_ands_id),
+            fld('facility_sample_id', 'facility_sample_id'),
+            fld('library_type', 'library_type'),
+            fld('library_prep_date', 'library_prep_date', coerce=ingest_utils.get_date_isoformat),
+            fld('library_prepared_by', 'library_prepared_by'),
+            fld('library_prep_method', 'library_prep_method'),
+            fld('experimental_design', 'experimental_design'),
+            fld('omg_project', 'omg_project'),
+            fld('data_custodian', 'data_custodian'),
+            fld('dna_treatment', 'dna_treatment'),
+            fld('library_index_id', 'library_index_id'),
+            fld('library_index_sequence', 'library_index_sequence'),
+            fld('library_oligo_sequence', 'library_oligo_sequence'),
+            fld('library_pcr_reps', 'library_pcr_reps'),
+            fld('library_pcr_cycles', 'library_pcr_cycles'),
+            fld('library_ng_ul', 'library_ng_ul'),
+            fld('library_comments', 'library_comments'),
+            fld('library_location', 'library_location'),
+            fld('library_status', 'library_status'),
+            fld('sequencing_facility', 'sequencing_facility'),
+            fld('n_libraries_pooled', 'n_libraries_pooled'),
+            fld('bpa_work_order', 'bpa_work_order'),
+            fld('sequencing_platform', 'sequencing_platform'),
+            fld('sequence_length', 'sequence_length'),
+            fld('flowcell_id', 'flowcell_id'),
+            fld('software_version', 'software_version'),
+            fld('file', 'file'),
+        ],
+        'options': {
+            'sheet_name': 'OMG_library_metadata',
+            'header_length': 1,
+            'column_name_row_index': 0,
+        }
+    }
+    md5 = {
+        'match': [
+            files.pacbio_filename_re
+        ],
+        'skip': [
+            re.compile(r'^.*_metadata\.xlsx$'),
+            re.compile(r'^.*SampleSheet.*'),
+            re.compile(r'^.*TestFiles\.exe.*'),
+        ]
+    }
+
+    def __init__(self, metadata_path, contextual_metadata=None, metadata_info=None):
+        super().__init__()
+        self.path = Path(metadata_path)
+        self.contextual_metadata = contextual_metadata
+        self.metadata_info = metadata_info
+        self.track_meta = OMGTrackMetadata()
+
+    def _get_packages(self):
+        logger.info("Ingesting OMG metadata from {0}".format(self.path))
+        packages = []
+
+        filename_re = re.compile(r'^OMG_.*_(\d{8})_metadata\.xlsx')
+        for fname in glob(self.path + '/*.xlsx'):
+            logger.info("Processing OMG metadata file {0}".format(os.path.basename(fname)))
+
+            print(fname)
+            xlsx_date = filename_re.match(
+                os.path.basename(fname)).groups()[0]
+
+            for row in self.parse_spreadsheet(fname, self.metadata_info):
+                track_meta = self.track_meta.get(row.ticket)
+
+                def track_get(k):
+                    if track_meta is None:
+                        return None
+                    return getattr(track_meta, k)
+
+                library_id = row.bpa_library_id
+                if library_id is None:
+                    continue
+
+                obj = row._asdict()
+                name = sample_id_to_ckan_name(library_id, self.ckan_data_type, row.flowcell_id)
+
+                context = {}
+                for contextual_source in self.contextual_metadata:
+                    context.update(contextual_source.get(row.bpa_sample_id, row.bpa_library_id))
+
+                obj['run_date'] = xlsx_date
+
+                obj.update({
+                    'name': name,
+                    'id': name,
+                    'title': 'OMG Novaseq Raw %s %s %s' % (library_id, row.flowcell_id, row.library_index_sequence),
+                    'notes': '%s. %s.' % (context.get('common_name', ''), context.get('institution_name', '')),
+                    'date_of_transfer': ingest_utils.get_date_isoformat(track_get('date_of_transfer')),
+                    'data_type': track_get('data_type'),
+                    'description': track_get('description'),
+                    'folder_name': track_get('folder_name'),
+                    'sample_submission_date': ingest_utils.get_date_isoformat(track_get('date_of_transfer')),
+                    'contextual_data_submission_date': None,
+                    'data_generated': ingest_utils.get_date_isoformat(track_get('date_of_transfer_to_archive')),
+                    'archive_ingestion_date': ingest_utils.get_date_isoformat(track_get('date_of_transfer_to_archive')),
+                    'dataset_url': track_get('download'),
+                    'type': self.ckan_data_type,
+                    'private': True,
+                })
+                obj.update(context)
+
+                ingest_utils.add_spatial_extra(obj)
+                self.apply_location_generalisation(obj)
+                tag_names = ['novaseq', 'genomics', 'raw']
+                obj['tags'] = [{'name': t} for t in tag_names]
+                packages.append(obj)
+        return packages
+
+    def _get_resources(self):
+        logger.info("Ingesting OMG md5 file information from {0}".format(self.path))
+        resources = []
+        for md5_file in glob(self.path + '/*.md5'):
+            logger.info("Processing md5 file {}".format(md5_file))
+            for filename, md5, file_info in self.parse_md5file(md5_file):
+                resource = file_info.copy()
+                resource['md5'] = resource['id'] = md5
+                resource['name'] = filename
+                resource['resource_type'] = self.ckan_data_type
+                library_id = ingest_utils.extract_ands_id(resource['bpa_library_id'])
+                xlsx_info = self.metadata_info[os.path.basename(md5_file)]
+                legacy_url = urljoin(xlsx_info['base_url'], filename)
+                resources.append(((library_id, resource['run_date']), legacy_url, resource))
+        return resources

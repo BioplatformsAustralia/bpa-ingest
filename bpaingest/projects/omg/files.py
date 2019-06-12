@@ -87,3 +87,23 @@ DDRAD_METADATA_SHEET_PATTERN = r"""
     _metadata.xlsx
 """
 ddrad_metadata_sheet_re = re.compile(DDRAD_METADATA_SHEET_PATTERN, re.VERBOSE)
+
+PACBIO_PATTERN = r"""
+    (?P<bpa_library_id>\d{4,6})_
+    (?P<facility>UNSW)_
+    PAC_
+    (?P<run_date>\d{8})_
+    (?P<run_code>.{3})
+    \.tar\.gz
+"""
+pacbio_filename_re = re.compile(PACBIO_PATTERN, re.VERBOSE)
+
+PACBIO_PATTERN = r"""
+    (?P<bpa_library_id>\d{4,6})_
+    (?P<facility>UNSW)_
+    PAC_
+    (?P<run_date>\d{8})_
+    (?P<run_code>.{3})
+    \.tar\.gz
+"""
+pacbio_filename_re = re.compile(PACBIO_PATTERN, re.VERBOSE)

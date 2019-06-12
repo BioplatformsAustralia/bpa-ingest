@@ -1,5 +1,6 @@
 import json
 import os
+import re
 from collections import defaultdict
 from .projects import ProjectInfo
 from .metadata import DownloadMetadata
@@ -12,9 +13,16 @@ logger = make_logger(__name__)
 def dump_state(args):
     state = defaultdict(lambda: defaultdict(list))
 
-    # download metadata for all project types and aggregate metadata keys
     project_info = ProjectInfo()
-    for class_info in sorted(project_info.metadata_info, key=lambda t: t['slug']):
+    classes = sorted(project_info.metadata_info, key=lambda t: t['slug'])
+    if args.dump_re:
+        r = re.compile(args.dump_re, re.IGNORECASE)
+        classes = list(
+            filter(lambda x: r.match(x['slug']), classes))
+    logger.info('dumping: {}'.format(', '.join(t['slug'] for t in classes)))
+
+    # download metadata for all project types and aggregate metadata keys
+    for class_info in classes:
         logger.info("Dumping state generation: %s / %s" % (class_info['project'], class_info['slug']))
         dlpath = os.path.join(args.download_path, class_info['slug'])
         with DownloadMetadata(class_info['cls'], path=dlpath) as dlmeta:
