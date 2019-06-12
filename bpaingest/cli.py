@@ -65,6 +65,8 @@ def setup_dump(subparser):
     subparser.add_argument('filename', help='output target')
     subparser.add_argument('--dump-re', help='restrict dump by slug', default='')
 
+def setup_makeschema(subparser):
+    subparser.add_argument('--dump-re', help='restrict dump by slug', default='')
 
 @register_command
 def sync(args):
@@ -101,6 +103,7 @@ sync.setup = setup_sync
 bootstrap.setup = setup_ckan
 dumpstate.setup = setup_dump
 genhash.setup = setup_hash
+makeschema.setup = setup_makeschema
 
 
 def version():

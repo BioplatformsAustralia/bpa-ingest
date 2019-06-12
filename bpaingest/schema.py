@@ -1,6 +1,7 @@
 
 import json
 import os
+import re
 from collections import defaultdict
 from .projects import ProjectInfo
 from .metadata import DownloadMetadata
@@ -164,7 +165,13 @@ def generate_schemas(args):
 
     # download metadata for all project types and aggregate metadata keys
     project_info = ProjectInfo()
-    for class_info in sorted(project_info.metadata_info, key=lambda t: t['slug']):
+    classes = sorted(project_info.metadata_info, key=lambda t: t['slug'])
+    if args.dump_re:
+        r = re.compile(args.dump_re, re.IGNORECASE)
+        classes = list(
+            filter(lambda x: r.match(x['slug']), classes))
+
+    for class_info in classes:
         project_cls = class_info['cls']
         logger.info("Schema generation: %s / %s" % (class_info['project'], class_info['slug']))
         dlpath = os.path.join(args.download_path, class_info['slug'])
