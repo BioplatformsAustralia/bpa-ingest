@@ -260,7 +260,7 @@ class OMG10XRawMetadata(OMGBaseMetadata):
             fld('bpa_sample_id', 'bpa_sample_id', coerce=ingest_utils.extract_ands_id),
             fld('facility_sample_id', 'facility_sample_id'),
             fld('library_type', 'library_type'),
-            fld('library_prep_date', 'library_prep_date'),
+            fld('library_prep_date', 'library_prep_date', coerce=ingest_utils.get_date_isoformat),
             fld('library_prepared_by', 'library_prepared_by'),
             fld('library_prep_method', 'library_prep_method'),
             fld('experimental_design', 'experimental_design'),
@@ -286,6 +286,7 @@ class OMG10XRawMetadata(OMGBaseMetadata):
             fld('file', 'file'),
         ],
         'options': {
+            'sheet_name': 'OMG_library_metadata',
             'header_length': 1,
             'column_name_row_index': 0,
         }
