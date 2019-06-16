@@ -15,7 +15,7 @@ def date_or_str(v):
 
 
 class OMGSampleContextual(object):
-    metadata_urls = ['https://downloads-qcif.bioplatforms.com/bpa/omg_staging/metadata/2019-02-28/']
+    metadata_urls = ['https://downloads-qcif.bioplatforms.com/bpa/omg_staging/metadata/2019-06-16/']
     metadata_patterns = [re.compile(r'^OMG_samples_metadata.*\.xlsx$')]
     name = 'omg-sample-contextual'
 
@@ -118,7 +118,7 @@ class OMGSampleContextual(object):
 
 
 class OMGLibraryContextual(object):
-    metadata_urls = ['https://downloads-qcif.bioplatforms.com/bpa/omg_staging/metadata/2019-02-28/']
+    metadata_urls = ['https://downloads-qcif.bioplatforms.com/bpa/omg_staging/metadata/2019-06-16/']
     metadata_patterns = [re.compile(r'^OMG_library_metadata.*\.xlsx$')]
     name = 'omg-library-contextual'
 
