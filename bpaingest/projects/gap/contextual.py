@@ -22,7 +22,7 @@ class GAPSampleContextual(object):
     def __init__(self, path):
         self.sample_metadata = self._read_metadata(one(glob(path + '/*.xlsx')))
 
-    def get(self, sample_id, bpa_library_id):
+    def get(self, sample_id):
         if sample_id in self.sample_metadata:
             return self.sample_metadata[sample_id]
         logger.warning("no %s metadata available for: %s" % (type(self).__name__, repr(sample_id)))

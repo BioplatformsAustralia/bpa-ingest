@@ -26,10 +26,6 @@ common_context = [GAPSampleContextual]
 
 
 class GAPIlluminaShortreadMetadata(BaseMetadata):
-    """
-    this data conforms to the BPA 10X raw workflow. future data
-    will use this ingest class.
-    """
     organization = 'bpa-plants'
     ckan_data_type = 'gap-illumina-shortread'
     technology = 'illumina-shortread'
@@ -39,7 +35,7 @@ class GAPIlluminaShortreadMetadata(BaseMetadata):
         'https://downloads-qcif.bioplatforms.com/bpa/plants_staging/genomics-illumina-shortread/',
     ]
     metadata_url_components = ('ticket',)
-    resource_linkage = ('bpa_sample_id', 'flow_id')
+    resource_linkage = ('sample_id', 'flow_id')
     spreadsheet = {
         'fields': [
             fld('sample_id', 'plant sample unique id', coerce=ingest_utils.extract_ands_id),
@@ -95,7 +91,7 @@ class GAPIlluminaShortreadMetadata(BaseMetadata):
                     'data_generated': True,
                 })
                 for contextual_source in self.contextual_metadata:
-                    obj.update(contextual_source.get(sample_id, track_meta))
+                    obj.update(contextual_source.get(sample_id))
                 tag_names = []
                 obj['tags'] = [{'name': t} for t in tag_names]
                 packages.append(obj)
