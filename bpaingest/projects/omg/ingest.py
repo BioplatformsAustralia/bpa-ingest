@@ -260,7 +260,7 @@ class OMG10XRawMetadata(OMGBaseMetadata):
             fld('bpa_sample_id', 'bpa_sample_id', coerce=ingest_utils.extract_ands_id),
             fld('facility_sample_id', 'facility_sample_id'),
             fld('library_type', 'library_type'),
-            fld('library_prep_date', 'library_prep_date'),
+            fld('library_prep_date', 'library_prep_date', coerce=ingest_utils.get_date_isoformat),
             fld('library_prepared_by', 'library_prepared_by'),
             fld('library_prep_method', 'library_prep_method'),
             fld('experimental_design', 'experimental_design'),
@@ -286,6 +286,7 @@ class OMG10XRawMetadata(OMGBaseMetadata):
             fld('file', 'file'),
         ],
         'options': {
+            'sheet_name': 'OMG_library_metadata',
             'header_length': 1,
             'column_name_row_index': 0,
         }
@@ -308,6 +309,7 @@ class OMG10XRawMetadata(OMGBaseMetadata):
         self.metadata_info = metadata_info
         self.track_meta = OMGTrackMetadata()
         self.flow_lookup = {}
+        self.library_to_sample = {}
 
     def _get_packages(self):
         logger.info("Ingesting OMG metadata from {0}".format(self.path))
@@ -357,6 +359,7 @@ class OMG10XRawMetadata(OMGBaseMetadata):
                 'type': self.ckan_data_type,
                 'private': True,
             })
+            self.library_to_sample[obj['bpa_library_id']] = obj['bpa_sample_id']
             obj.update(context)
             ingest_utils.add_spatial_extra(obj)
             self.apply_location_generalisation(obj)
@@ -374,7 +377,13 @@ class OMG10XRawMetadata(OMGBaseMetadata):
                 xlsx_info = self.metadata_info[os.path.basename(md5_file)]
                 ticket = xlsx_info['ticket']
                 flow_id = self.flow_lookup[ticket]
+
+                # FIXME: we have inconsistently named files, raise with Anna M after
+                # urgent ingest complete.
                 bpa_sample_id = ingest_utils.extract_ands_id(file_info['bpa_sample_id'])
+                if bpa_sample_id.split('/', 1)[1].startswith('5'):
+                    # actually a library ID, map back
+                    bpa_sample_id = file_info['bpa_sample_id'] = self.library_to_sample[bpa_sample_id]
 
                 resource = file_info.copy()
                 resource['md5'] = resource['id'] = md5

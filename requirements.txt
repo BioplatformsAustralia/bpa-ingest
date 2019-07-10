@@ -10,4 +10,4 @@ botocore==1.12.65
 google-api-python-client
 python-dateutil==2.7.5
 # replace below line with pip packagename and version when registered with pypi
-https://github.com/BioplatformsAustralia/sensitive-species-location-handler/archive/1.0.8.tar.gz
+https://github.com/BioplatformsAustralia/sensitive-species-location-handler/archive/1.0.9.tar.gz

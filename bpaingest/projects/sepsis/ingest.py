@@ -75,6 +75,9 @@ def add_taxons_strains_meta(cls, obj):
     This function adds taxons and strains metadata.
     '''
     taxons, strains = cls.google_track_meta.get_taxons_strains(obj['ticket'])
+    mapped = [SepsisBacterialContextual.map_taxon_strain(*t) for t in zip(taxons, strains)]
+    taxons = [t[0] for t in mapped]
+    strains = [t[1] for t in mapped]
     obj.update({
         'taxon_or_organism': ', '.join(list(sorted(set(taxons)))),
         'strain_or_isolate': ', '.join(list(sorted(set(strains)))),
@@ -84,8 +87,8 @@ def add_taxons_strains_meta(cls, obj):
 
 def sepsis_contextual_tags(cls, obj):
     tags = [cls.omics, cls.technology]
-    taxon = obj.get('taxon_or_organism')
-    strain = obj.get('strain_or_isolate')
+    taxon, strain = SepsisBacterialContextual.map_taxon_strain(
+        obj.get('taxon_or_organism'), obj.get('strain_or_isolate'))
     if taxon and strain:
         tags.append(clean_tag_name(('%s_%s' % (taxon, strain)).replace(' ', '_')))
     data_type = obj.get('data_type')
@@ -156,12 +159,14 @@ class SepsisGenomicsMiseqMetadata(BaseSepsisMetadata):
                 track_meta = self.bpam_track_meta.get(sample_id)
                 obj = track_meta.copy()
                 name = sample_id_to_ckan_name(sample_id.split('/')[-1], self.ckan_data_type)
+                taxon, strain = SepsisBacterialContextual.map_taxon_strain(
+                    track_meta['taxon_or_organism'], track_meta['strain_or_isolate'])
                 obj.update({
                     'name': name,
                     'id': name,
                     'sample_id': sample_id,
                     'archive_ingestion_date': ingest_utils.get_date_isoformat(google_track_meta.date_of_transfer_to_archive),
-                    'notes': 'ARP Genomics Miseq Raw Data: %s %s %s Replicate %s' % (track_meta['taxon_or_organism'], track_meta['strain_or_isolate'], obj['growth_media'], obj['replicate']),
+                    'notes': 'ARP Genomics Miseq Raw Data: %s %s %s Replicate %s' % (taxon, strain, obj['growth_media'], obj['replicate']),
                     'title': 'Sepsis Genomics Miseq %s' % (sample_id.split('/')[-1]),
                     'ticket': row.ticket,
                     'facility': row.facility_code.upper(),
@@ -253,6 +258,8 @@ class SepsisGenomicsPacbioMetadata(BaseSepsisMetadata):
                 track_meta = self.bpam_track_meta.get(sample_id)
                 obj = track_meta.copy()
                 name = sample_id_to_ckan_name(sample_id.split('/')[-1], self.ckan_data_type)
+                taxon, strain = SepsisBacterialContextual.map_taxon_strain(
+                    track_meta['taxon_or_organism'], track_meta['strain_or_isolate'])
                 obj.update({
                     'name': name,
                     'id': name,
@@ -261,7 +268,7 @@ class SepsisGenomicsPacbioMetadata(BaseSepsisMetadata):
                     'title': 'Sepsis Genomics Pacbio %s' % (sample_id.split('/')[-1]),
                     'ticket': row.ticket,
                     'facility': row.facility_code.upper(),
-                    'notes': 'ARP Genomics Pacbio Raw Data: %s %s %s Replicate %s' % (track_meta['taxon_or_organism'], track_meta['strain_or_isolate'], obj['growth_media'], obj['replicate']),
+                    'notes': 'ARP Genomics Pacbio Raw Data: %s %s %s Replicate %s' % (taxon, strain, obj['growth_media'], obj['replicate']),
                     'insert_size_range': row.insert_size_range,
                     'library_construction_protocol': row.library_construction_protocol,
                     'sequencer': row.sequencer,
@@ -373,6 +380,8 @@ class SepsisTranscriptomicsHiseqMetadata(BaseSepsisMetadata):
                 sorted(set(google_track_meta.date_of_transfer_to_archive for _, _, google_track_meta in info)))
             name = sample_id_to_ckan_name(sample_id.split('/')[-1], self.ckan_data_type)
             track_meta = self.bpam_track_meta.get(sample_id)
+            taxon, strain = SepsisBacterialContextual.map_taxon_strain(
+                track_meta['taxon_or_organism'], track_meta['strain_or_isolate'])
             obj = track_meta.copy()
             obj.update({
                 'name': name,
@@ -383,7 +392,7 @@ class SepsisTranscriptomicsHiseqMetadata(BaseSepsisMetadata):
                 'archive_ingestion_dates': archive_ingestion_dates,
                 'ticket': tickets,
                 'facility': row.facility_code.upper(),
-                'notes': 'ARP Transcriptomics Hiseq Raw Data: %s %s %s Replicate %s' % (track_meta['taxon_or_organism'], track_meta['strain_or_isolate'], obj['growth_media'], obj['replicate']),
+                'notes': 'ARP Transcriptomics Hiseq Raw Data: %s %s %s Replicate %s' % (taxon, strain, obj['growth_media'], obj['replicate']),
                 'sample': row.sample,
                 'library_construction_protocol': row.library_construction_protocol,
                 'barcode_tag': row.barcode_tag,
@@ -475,6 +484,8 @@ class SepsisMetabolomicsGCMSMetadata(BaseSepsisMetadata):
                 track_meta = self.bpam_track_meta.get(sample_id)
                 obj = track_meta.copy()
                 name = sample_id_to_ckan_name(sample_id.split('/')[-1], self.ckan_data_type)
+                taxon, strain = SepsisBacterialContextual.map_taxon_strain(
+                    track_meta['taxon_or_organism'], track_meta['strain_or_isolate'])
                 obj.update({
                     'name': name,
                     'id': name,
@@ -483,7 +494,7 @@ class SepsisMetabolomicsGCMSMetadata(BaseSepsisMetadata):
                     'title': 'ARP Metabolomics GCMS %s' % (sample_id.split('/')[-1]),
                     'ticket': row.ticket,
                     'facility': row.facility_code.upper(),
-                    'notes': 'ARP Metabolomics GCMS Raw Data: %s %s %s Replicate %s' % (track_meta['taxon_or_organism'], track_meta['strain_or_isolate'], obj['growth_media'], obj['replicate']),
+                    'notes': 'ARP Metabolomics GCMS Raw Data: %s %s %s Replicate %s' % (taxon, strain, obj['growth_media'], obj['replicate']),
                     'sample_fractionation_extract_solvent': row.sample_fractionation_extract_solvent,
                     'gc_column_type': row.gc_column_type,
                     'gradient_time_min_flow': row.gradient_time_min_flow,
@@ -574,6 +585,8 @@ class SepsisMetabolomicsLCMSMetadata(BaseSepsisMetadata):
                 track_meta = self.bpam_track_meta.get(sample_id)
                 obj = track_meta.copy()
                 name = sample_id_to_ckan_name(sample_id.split('/')[-1], self.ckan_data_type)
+                taxon, strain = SepsisBacterialContextual.map_taxon_strain(
+                    track_meta['taxon_or_organism'], track_meta['strain_or_isolate'])
                 obj.update({
                     'name': name,
                     'id': name,
@@ -582,7 +595,7 @@ class SepsisMetabolomicsLCMSMetadata(BaseSepsisMetadata):
                     'title': 'ARP Metabolomics LCMS %s' % (sample_id.split('/')[-1]),
                     'ticket': row.ticket,
                     'facility': row.facility_code.upper(),
-                    'notes': 'ARP Metabolomics LCMS Raw Data: %s %s %s Replicate %s' % (track_meta['taxon_or_organism'], track_meta['strain_or_isolate'], obj['growth_media'], obj['replicate']),
+                    'notes': 'ARP Metabolomics LCMS Raw Data: %s %s %s Replicate %s' % (taxon, strain, obj['growth_media'], obj['replicate']),
                     'sample_fractionation_extract_solvent': row.sample_fractionation_extract_solvent,
                     'lc_column_type': row.lc_column_type,
                     'gradient_time_min_flow': row.gradient_time_min_flow,
@@ -681,13 +694,15 @@ class SepsisProteomicsMS1QuantificationMetadata(BaseSepsisMetadata):
                 name = sample_id_to_ckan_name(sample_id.split('/')[-1], self.ckan_data_type)
                 for contextual_source in self.contextual_metadata:
                     obj.update(contextual_source.get(sample_id, bpam_track_meta))
+                taxon, strain = SepsisBacterialContextual.map_taxon_strain(
+                    bpam_track_meta['taxon_or_organism'], bpam_track_meta['strain_or_isolate'])
                 obj.update({
                     'name': name,
                     'id': name,
                     'sample_id': sample_id,
                     'title': 'ARP Proteomics MS1Quantification %s' % (sample_id.split('/')[-1]),
                     'archive_ingestion_date': ingest_utils.get_date_isoformat(google_track_meta.date_of_transfer_to_archive),
-                    'notes': 'ARP Proteomics MS1Quantification Raw Data: %s %s %s Replicate %s' % (bpam_track_meta['taxon_or_organism'], bpam_track_meta['strain_or_isolate'], obj['growth_media'], obj['replicate']),
+                    'notes': 'ARP Proteomics MS1Quantification Raw Data: %s %s %s Replicate %s' % (taxon, strain, obj['growth_media'], obj['replicate']),
                     'type': self.ckan_data_type,
                     'private': True,
                     'data_generated': True,
