@@ -38,6 +38,8 @@ from .sepsis.ingest import (
 #     StemcellsTranscriptomeAnalysedMetadata)
 from .wheat_cultivars.ingest import WheatCultivarsMetadata
 from .wheat_pathogens_genomes.ingest import WheatPathogensGenomesMetadata
+from .gap.ingest import (
+    GAPIlluminaShortreadMetadata)
 from .omg.ingest import (
     OMG10XProcessedIlluminaMetadata,
     OMG10XRawIlluminaMetadata,
@@ -56,6 +58,9 @@ class ProjectInfo:
             BASEAmpliconsControlMetadata,
             BASEMetagenomicsMetadata,
             BASESiteImagesMetadata,
+        ],
+        'gap': [
+            GAPIlluminaShortreadMetadata,
         ],
         'gbr': [
             GbrAmpliconsMetadata,
