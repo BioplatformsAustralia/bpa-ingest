@@ -35,7 +35,7 @@ class GAPIlluminaShortreadMetadata(BaseMetadata):
         'https://downloads-qcif.bioplatforms.com/bpa/plants_staging/genomics-illumina-shortread/',
     ]
     metadata_url_components = ('ticket',)
-    resource_linkage = ('sample_id', 'flow_id')
+    resource_linkage = ('sample_id', 'flow_cell_id')
     spreadsheet = {
         'fields': [
             fld('sample_id', 'plant sample unique id', coerce=ingest_utils.extract_ands_id),
@@ -74,6 +74,7 @@ class GAPIlluminaShortreadMetadata(BaseMetadata):
         packages = []
         for fname in glob(self.path + '/*.xlsx'):
             logger.info("Processing GAP metadata file {0}".format(fname))
+            flow_cell_id = re.match(r'^.*_([^_]+)_metadata.xlsx', fname).groups()[0]
             rows = self.parse_spreadsheet(fname, self.metadata_info)
             xlsx_info = self.metadata_info[os.path.basename(fname)]
             ticket = xlsx_info['ticket']
@@ -87,6 +88,7 @@ class GAPIlluminaShortreadMetadata(BaseMetadata):
                     'name': name,
                     'id': name,
                     'type': self.ckan_data_type,
+                    'flow_cell_id': flow_cell_id,
                     'private': True,
                     'data_generated': True,
                 })
