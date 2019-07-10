@@ -30,7 +30,7 @@ class GAPIlluminaShortreadMetadata(BaseMetadata):
     this data conforms to the BPA 10X raw workflow. future data
     will use this ingest class.
     """
-    organization = 'bpa-'
+    organization = 'bpa-plants'
     ckan_data_type = 'gap-illumina-shortread'
     technology = 'illumina-shortread'
     contextual_classes = common_context
