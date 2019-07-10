@@ -31,7 +31,7 @@ class GAPIlluminaShortreadMetadata(BaseMetadata):
     will use this ingest class.
     """
     organization = 'bpa-'
-    ckan_data_type = 'gap-illumni-shortread'
+    ckan_data_type = 'gap-illumina-shortread'
     technology = 'illumina-shortread'
     contextual_classes = common_context
     metadata_patterns = [r'^.*\.md5$', r'^.*_metadata.*.*\.xlsx$']
