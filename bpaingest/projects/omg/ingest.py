@@ -1236,7 +1236,7 @@ class OMGGenomicsPacbioMetadata(OMGBaseMetadata):
                 obj.update({
                     'name': name,
                     'id': name,
-                    'title': 'OMG Novaseq Raw %s %s %s' % (library_id, row.flowcell_id, row.library_index_sequence),
+                    'title': 'OMG Pacbio Raw %s %s %s' % (library_id, row.flowcell_id, row.library_index_sequence),
                     'notes': '%s. %s.' % (context.get('common_name', ''), context.get('institution_name', '')),
                     'date_of_transfer': ingest_utils.get_date_isoformat(track_get('date_of_transfer')),
                     'data_type': track_get('data_type'),
@@ -1254,7 +1254,7 @@ class OMGGenomicsPacbioMetadata(OMGBaseMetadata):
 
                 ingest_utils.add_spatial_extra(obj)
                 self.apply_location_generalisation(obj)
-                tag_names = ['novaseq', 'genomics', 'raw']
+                tag_names = ['pacbio', 'genomics', 'raw']
                 obj['tags'] = [{'name': t} for t in tag_names]
                 packages.append(obj)
         return packages
