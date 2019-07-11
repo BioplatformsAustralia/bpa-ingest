@@ -96,7 +96,7 @@ class GAPIlluminaShortreadMetadata(BaseMetadata):
                 })
                 for contextual_source in self.contextual_metadata:
                     obj.update(contextual_source.get(sample_id))
-                tag_names = []
+                tag_names = ['genomics', 'illumina-shortread']
                 obj['tags'] = [{'name': t} for t in tag_names]
                 packages.append(obj)
         return packages
