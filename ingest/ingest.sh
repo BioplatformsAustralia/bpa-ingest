@@ -124,6 +124,10 @@ wheat() {
   apply wheat-pathogens-genomics $*
 }
 
+gap() {
+  apply gap-illumina-shortread $*
+}
+
 run() {
   apply $*
 }

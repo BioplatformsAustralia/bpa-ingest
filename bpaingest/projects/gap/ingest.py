@@ -85,6 +85,8 @@ class GAPIlluminaShortreadMetadata(BaseMetadata):
                 obj.update(track_meta._asdict())
                 name = sample_id_to_ckan_name(sample_id.split('/')[-1], self.ckan_data_type)
                 obj.update({
+                    'title': 'GAP {} {}'.format(sample_id, flow_cell_id),
+                    'sample_id': sample_id,
                     'name': name,
                     'id': name,
                     'type': self.ckan_data_type,
@@ -106,11 +108,11 @@ class GAPIlluminaShortreadMetadata(BaseMetadata):
             logger.info("Processing md5 file {0}".format(md5_file))
             for filename, md5, file_info in self.parse_md5file(md5_file):
                 resource = file_info.copy()
+                resource['sample_id'] = ingest_utils.extract_ands_id(resource['sample_id'])
                 resource['md5'] = resource['id'] = md5
                 resource['name'] = filename
                 resource['resource_type'] = self.ckan_data_type
-                sample_id = ingest_utils.extract_ands_id(file_info.get('sample_id'))
                 xlsx_info = self.metadata_info[os.path.basename(md5_file)]
                 legacy_url = urljoin(xlsx_info['base_url'], filename)
-                resources.append(((sample_id,), legacy_url, resource))
+                resources.append(((resource['sample_id'], resource['flow_cell_id']), legacy_url, resource))
         return resources
