@@ -38,4 +38,6 @@ AGRF,20/03/2019,NovaSeq 6000- Whole Genome - 41193 and 41194,20190313_AGRF_BPA_O
 UNSW,28/03/19,PacBio data- 60045 Dunnart,OMG_UNSW_PAC_20190321,PacBio subreads.bam,08/03/2019,,BPAOPS-817,(ingested)
 UNSW,09/04/19,PacBio data- 60045 Dunnart,OMG_UNSW_PAC_20190401,PacBio subreads.bam,9/4/2019,,BPAOPS-818,(ingested)
 UNSW,09/04/19,PacBio data- 60045 Dunnart,OMG_UNSW_PAC_20190405,PacBio subreads.bam,9/4/2019,,BPAOPS-819,(ingested)
-UNSW,16/04/19,PacBio data- 60045 Dunnart,OMG_UNSW_PAC_20190411,PacBio subreads.bam,14/6/2019,,BPAOPS-826,(ingested)
+UNSW,16/04/19,PacBio data- 60045 Dunnart,OMG_UNSW_PAC_20190411,PacBio subreads.bam,16/7/2019,,BPAOPS-831,(ingested)
+UNSW,12/6/19,10X Genomics/NovaSeq 6000- Numbat DNA,52610_OMG_UNSW_10X_H7L7YDRXX,Illumina FASTQ,14/06/2019,,BPAOPS-826,(ingested)
+UNSW,14/6/19,10X Genomics/NovaSeq 6000- Leadbeateri DNA,40133_OMG_UNSW_10X_H7WTTDRXX,Illumina FASTQ,15/07/2019,,BPAOPS-829,(ingested)
