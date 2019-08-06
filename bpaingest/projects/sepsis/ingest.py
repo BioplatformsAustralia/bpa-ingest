@@ -1398,7 +1398,7 @@ class SepsisTranscriptomicsAnalysedMetadata(BaseSepsisAnalysedMetadata):
             folder_name_md5 = md5hash(folder_name.encode('utf8')).hexdigest()
             name = sample_id_to_ckan_name(folder_name_md5, self.ckan_data_type)
             track_meta = self.google_track_meta.get(ticket)
-            sample_ids = list(sorted(set([t.sample_id for t in rows])))
+            sample_ids = list(sorted(set([t.sample_id for t in rows if t.sample_id is not None])))
             obj.update(self.google_drive_track_to_object(track_meta))
             self.apply_common_context(obj, sample_ids)
             obj.update({
@@ -1425,7 +1425,7 @@ class SepsisTranscriptomicsAnalysedMetadata(BaseSepsisAnalysedMetadata):
             obj['tags'] = [{'name': t} for t in tag_names]
             # Update analysed package notes(showings as description)
             obj.update({
-                'notes': 'ARP %s %s analysed data: %s, %s' % (obj['omics'], obj['analytical_platform'], ', '.join(
+                'notes': 'ARP %s %s analysed data: %s, %s' % (obj['omics'], obj.get('analytical_platform', ''), ', '.join(
                     [taxons + ' ' + strains for taxons, strains in zip(taxons, strains)]), obj['growth_media'])
             })
             packages.append(obj)
