@@ -144,6 +144,8 @@ def common_values(dicts):
     given a list of dicts, return a dict with only the values shared
     in common between those dicts
     """
+    # bullet-proof this against being handed an iterator
+    dicts = list(dicts)
     all_keys = set()
     for d in dicts:
         all_keys = all_keys.union(set(d.keys()))

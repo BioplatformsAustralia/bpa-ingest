@@ -1214,58 +1214,60 @@ class OMGGenomicsPacbioMetadata(OMGBaseMetadata):
         packages = []
 
         filename_re = re.compile(r'^OMG_.*_(\d{8})_metadata\.xlsx')
+        objs = []
+        # this is a folder-oriented ingest, so we crush each xlsx down into a single row
         for fname in glob(self.path + '/*.xlsx'):
             logger.info("Processing OMG metadata file {0}".format(os.path.basename(fname)))
 
-            print(fname)
             xlsx_date = filename_re.match(
                 os.path.basename(fname)).groups()[0]
 
-            for row in self.parse_spreadsheet(fname, self.metadata_info):
-                track_meta = self.track_meta.get(row.ticket)
+            fname_obj = common_values(t._asdict() for t in self.parse_spreadsheet(fname, self.metadata_info))
+            fname_obj['run_date'] = xlsx_date
+            objs.append(fname_obj)
 
-                def track_get(k):
-                    if track_meta is None:
-                        return None
-                    return getattr(track_meta, k)
+        for obj in objs:
+            track_meta = self.track_meta.get(obj['ticket'])
 
-                library_id = row.bpa_library_id
-                if library_id is None:
-                    continue
+            def track_get(k):
+                if track_meta is None:
+                    return None
+                return getattr(track_meta, k)
 
-                obj = row._asdict()
-                name = sample_id_to_ckan_name(library_id, self.ckan_data_type, row.flowcell_id)
+            library_id = obj['bpa_library_id']
+            if library_id is None:
+                continue
 
-                context = {}
-                for contextual_source in self.contextual_metadata:
-                    context.update(contextual_source.get(row.bpa_sample_id, row.bpa_library_id))
+            name = sample_id_to_ckan_name(library_id, self.ckan_data_type, obj['run_date'])
 
-                obj['run_date'] = xlsx_date
+            context = {}
+            for contextual_source in self.contextual_metadata:
+                context.update(contextual_source.get(obj['bpa_sample_id'], obj['bpa_library_id']))
 
-                obj.update({
-                    'name': name,
-                    'id': name,
-                    'title': 'OMG Pacbio Raw %s %s %s' % (library_id, row.flowcell_id, row.library_index_sequence),
-                    'notes': '%s. %s.' % (context.get('common_name', ''), context.get('institution_name', '')),
-                    'date_of_transfer': ingest_utils.get_date_isoformat(track_get('date_of_transfer')),
-                    'data_type': track_get('data_type'),
-                    'description': track_get('description'),
-                    'folder_name': track_get('folder_name'),
-                    'sample_submission_date': ingest_utils.get_date_isoformat(track_get('date_of_transfer')),
-                    'contextual_data_submission_date': None,
-                    'data_generated': ingest_utils.get_date_isoformat(track_get('date_of_transfer_to_archive')),
-                    'archive_ingestion_date': ingest_utils.get_date_isoformat(track_get('date_of_transfer_to_archive')),
-                    'dataset_url': track_get('download'),
-                    'type': self.ckan_data_type,
-                    'private': True,
-                })
-                obj.update(context)
+            obj.update({
+                'name': name,
+                'id': name,
+                'title': 'OMG Pacbio Raw {} {}'.format(library_id, obj['run_date']),
+                'notes': '{}. {}.'.format(context.get('common_name', ''), context.get('institution_name', '')),
+                'date_of_transfer': ingest_utils.get_date_isoformat(track_get('date_of_transfer')),
+                'data_type': track_get('data_type'),
+                'description': track_get('description'),
+                'folder_name': track_get('folder_name'),
+                'sample_submission_date': ingest_utils.get_date_isoformat(track_get('date_of_transfer')),
+                'contextual_data_submission_date': None,
+                'data_generated': ingest_utils.get_date_isoformat(track_get('date_of_transfer_to_archive')),
+                'archive_ingestion_date': ingest_utils.get_date_isoformat(track_get('date_of_transfer_to_archive')),
+                'dataset_url': track_get('download'),
+                'type': self.ckan_data_type,
+                'private': True,
+            })
+            obj.update(context)
 
-                ingest_utils.add_spatial_extra(obj)
-                self.apply_location_generalisation(obj)
-                tag_names = ['pacbio', 'genomics', 'raw']
-                obj['tags'] = [{'name': t} for t in tag_names]
-                packages.append(obj)
+            ingest_utils.add_spatial_extra(obj)
+            self.apply_location_generalisation(obj)
+            tag_names = ['pacbio', 'genomics', 'raw']
+            obj['tags'] = [{'name': t} for t in tag_names]
+            packages.append(obj)
         return packages
 
     def _get_resources(self):
@@ -1281,5 +1283,5 @@ class OMGGenomicsPacbioMetadata(OMGBaseMetadata):
                 library_id = ingest_utils.extract_ands_id(resource['bpa_library_id'])
                 xlsx_info = self.metadata_info[os.path.basename(md5_file)]
                 legacy_url = urljoin(xlsx_info['base_url'], filename)
-                resources.append(((library_id, resource['run_date']), legacy_url, resource))
+                resources.append(((ingest_utils.extract_ands_id(library_id), resource['run_date']), legacy_url, resource))
         return resources

@@ -35,5 +35,18 @@ def dump_state(args):
         state[data_type]['packages'].sort(key=lambda x: x['id'])
         state[data_type]['resources'].sort(key=lambda x: x[2]['id'])
 
+    # QC resource linkage
+    for data_type in state:
+        resource_linkage_package_id = {}
+        for package_obj in state[data_type]['packages']:
+            linkage_tpl = tuple(package_obj[t] for t in meta.resource_linkage)
+            if linkage_tpl in resource_linkage_package_id:
+                logger.error("more than one package linked for tuple {}".format(linkage_tpl))
+            resource_linkage_package_id[linkage_tpl] = package_obj['id']
+        for resource_linkage, legacy_url, resource_obj in state[data_type]['resources']:
+            if resource_linkage not in resource_linkage_package_id:
+                logger.error("dangling resource: {}".format(resource_linkage))
+
     with open(args.filename, 'w') as fd:
         json.dump(state, fd, sort_keys=True, indent=2, separators=(',', ': '))
+

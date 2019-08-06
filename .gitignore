@@ -13,3 +13,4 @@ ref/
 venv/
 .#*
 tags
+test.json
