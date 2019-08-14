@@ -1,25 +1,17 @@
-
-
-from unipath import Path
-from collections import defaultdict
-
-from ...abstract import BaseMetadata
-
-from ...util import make_logger, sample_id_to_ckan_name, common_values
-from urllib.parse import urljoin
-
-from glob import glob
-
-from ...libs import ingest_utils
-from sslh.handler import SensitiveDataGeneraliser
-from ...libs.excel_wrapper import make_field_definition as fld, SkipColumn as skp
-from . import files
-from .tracking import GAPTrackMetadata
-from .contextual import (GAPSampleContextual)
-from ...libs.ingest_utils import get_clean_number
-
 import os
 import re
+from glob import glob
+from urllib.parse import urljoin
+
+from unipath import Path
+
+from ...abstract import BaseMetadata
+from ...libs import ingest_utils
+from ...libs.excel_wrapper import make_field_definition as fld
+from ...util import make_logger, sample_id_to_ckan_name
+from . import files
+from .contextual import GAPSampleContextual
+from .tracking import GAPTrackMetadata
 
 logger = make_logger(__name__)
 common_context = [GAPSampleContextual]

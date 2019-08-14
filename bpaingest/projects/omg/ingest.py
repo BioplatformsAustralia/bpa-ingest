@@ -30,26 +30,23 @@ class OMGBaseMetadata(BaseMetadata):
         self.generaliser = SensitiveDataGeneraliser()
         super().__init__(*args, **kwargs)
 
-    def apply_location_generalisation(self, package):
+    def apply_location_generalisation(self, packages):
         "Apply location generalisation for sensitive species found from ALA"
 
-        # check for latitude/longitude metadata field
-        if 'latitude' not in package or 'longitude' not in package:
-            logger.warning("Couldn't find latitude/longitude metadata for package %s" % package['name'])
-            return
+        def species_name(package):
+            return "{} {}".format(package['genus'], package['species'])
 
-        # check for location points before thinking about applying generalisation
-        if get_clean_number(package['latitude']) is None or get_clean_number(package['longitude']) is None:
-            logger.error("Latitude or Longitude (or both) found 'None' for package=%s" % package['name'])
-            return
+        # prime the cache of responses
+        names = sorted(set(species_name(p) for p in packages))
+        self.generaliser.ala_lookup.get_bulk(names)
 
-        scientific_name = scientific_name = "{0} {1}".format(package['genus'], package['species']).strip().lower()
-        
-        generalised_data = self.generaliser.apply(scientific_name, get_clean_number(
-            package['latitude']), get_clean_number(package['longitude']))
+        for package in packages:
+            lat, lng = get_clean_number(package.get('longitude')), get_clean_number(package.get('latitude'))
+            generalised = self.generaliser.apply(species_name(package), lat, lng)
+            if generalised:
+                package.update(generalised._asdict())
 
-        if generalised_data:
-            package.update(generalised_data._asdict())
+        return packages
 
 
 class OMG10XRawIlluminaMetadata(OMGBaseMetadata):
@@ -213,12 +210,11 @@ class OMG10XRawIlluminaMetadata(OMGBaseMetadata):
 
             ingest_utils.add_spatial_extra(obj)
             obj.update(common_values([make_row_metadata(row) for row in rows]))
-            self.apply_location_generalisation(obj)
             tag_names = ['10x-raw']
             obj['tags'] = [{'name': t} for t in tag_names]
             packages.append(obj)
 
-        return packages
+        return self.apply_location_generalisation(packages)
 
     def _get_resources(self):
         logger.info("Ingesting OMG md5 file information from {0}".format(self.path))
@@ -362,11 +358,10 @@ class OMG10XRawMetadata(OMGBaseMetadata):
             self.library_to_sample[obj['bpa_library_id']] = obj['bpa_sample_id']
             obj.update(context)
             ingest_utils.add_spatial_extra(obj)
-            self.apply_location_generalisation(obj)
             tag_names = ['10x-raw']
             obj['tags'] = [{'name': t} for t in tag_names]
             packages.append(obj)
-        return packages
+        return self.apply_location_generalisation(packages)
 
     def _get_resources(self):
         logger.info("Ingesting OMG md5 file information from {0}".format(self.path))
@@ -516,11 +511,10 @@ class OMG10XProcessedIlluminaMetadata(OMGBaseMetadata):
                 })
                 obj.update(context)
                 ingest_utils.add_spatial_extra(obj)
-                self.apply_location_generalisation(obj)
                 tag_names = ['10x-processed']
                 obj['tags'] = [{'name': t} for t in tag_names]
                 packages.append(obj)
-        return packages
+        return self.apply_location_generalisation(packages)
 
     def _get_resources(self):
         logger.info("Ingesting OMG md5 file information from {0}".format(self.path))
@@ -687,11 +681,10 @@ class OMGExonCaptureMetadata(OMGBaseMetadata):
                 obj.pop('library_oligo_sequence', False)
 
                 ingest_utils.add_spatial_extra(obj)
-                self.apply_location_generalisation(obj)
                 tag_names = ['exon-capture', 'raw']
                 obj['tags'] = [{'name': t} for t in tag_names]
                 packages.append(obj)
-        return packages
+        return self.apply_location_generalisation(packages)
 
     def _get_resources(self):
         logger.info("Ingesting OMG md5 file information from {0}".format(self.path))
@@ -823,11 +816,10 @@ class OMGGenomicsNovaseqMetadata(OMGBaseMetadata):
                 obj.update(context)
 
                 ingest_utils.add_spatial_extra(obj)
-                self.apply_location_generalisation(obj)
                 tag_names = ['novaseq', 'genomics', 'raw']
                 obj['tags'] = [{'name': t} for t in tag_names]
                 packages.append(obj)
-        return packages
+        return self.apply_location_generalisation(packages)
 
     def _get_resources(self):
         logger.info("Ingesting OMG md5 file information from {0}".format(self.path))
@@ -970,11 +962,10 @@ class OMGGenomicsHiSeqMetadata(OMGBaseMetadata):
                 })
                 obj.update(context)
                 ingest_utils.add_spatial_extra(obj)
-                self.apply_location_generalisation(obj)
                 tag_names = ['genomics-hiseq']
                 obj['tags'] = [{'name': t} for t in tag_names]
                 packages.append(obj)
-        return packages
+        return self.apply_location_generalisation(packages)
 
     def _get_resources(self):
         logger.info("Ingesting OMG md5 file information from {0}".format(self.path))
@@ -1116,11 +1107,10 @@ class OMGGenomicsDDRADMetadata(OMGBaseMetadata):
                 'private': True,
             })
             ingest_utils.add_spatial_extra(obj)
-            self.apply_location_generalisation(obj)
             tag_names = ['genomics-ddrad']
             obj['tags'] = [{'name': t} for t in tag_names]
             packages.append(obj)
-        return packages
+        return self.apply_location_generalisation(packages)
 
     def _get_resources(self):
         logger.info("Ingesting OMG md5 file information from {0}".format(self.path))
@@ -1268,7 +1258,8 @@ class OMGGenomicsPacbioMetadata(OMGBaseMetadata):
             tag_names = ['pacbio', 'genomics', 'raw']
             obj['tags'] = [{'name': t} for t in tag_names]
             packages.append(obj)
-        return packages
+
+        return self.apply_location_generalisation(packages)
 
     def _get_resources(self):
         logger.info("Ingesting OMG md5 file information from {0}".format(self.path))
