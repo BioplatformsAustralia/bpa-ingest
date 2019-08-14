@@ -41,7 +41,7 @@ class OMGBaseMetadata(BaseMetadata):
         self.generaliser.ala_lookup.get_bulk(names)
 
         for package in packages:
-            lat, lng = get_clean_number(package.get('longitude')), get_clean_number(package.get('latitude'))
+            lat, lng = get_clean_number(package.get('latitude')), get_clean_number(package.get('longitude'))
             generalised = self.generaliser.apply(species_name(package), lat, lng)
             if generalised:
                 package.update(generalised._asdict())
