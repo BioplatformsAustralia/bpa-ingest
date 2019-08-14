@@ -41,3 +41,4 @@ UNSW,09/04/19,PacBio data- 60045 Dunnart,OMG_UNSW_PAC_20190405,PacBio subreads.b
 UNSW,16/04/19,PacBio data- 60045 Dunnart,OMG_UNSW_PAC_20190411,PacBio subreads.bam,16/7/2019,,BPAOPS-831,(ingested)
 UNSW,12/6/19,10X Genomics/NovaSeq 6000- Numbat DNA,52610_OMG_UNSW_10X_H7L7YDRXX,Illumina FASTQ,14/06/2019,,BPAOPS-826,(ingested)
 UNSW,14/6/19,10X Genomics/NovaSeq 6000- Leadbeateri DNA,40133_OMG_UNSW_10X_H7WTTDRXX,Illumina FASTQ,15/07/2019,,BPAOPS-829,(ingested)
+BRF,14/08/2019,HiSeq 2500 100bp PE - bat exome DNA,SN877_0632_AMacDonald_OzMammals_Bat_gDNA_exome_capture,Illumina FASTQ,14/08/2019,,BPAOPS-840,(ingested)
