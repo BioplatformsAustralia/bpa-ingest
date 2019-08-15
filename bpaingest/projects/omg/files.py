@@ -5,7 +5,7 @@ import re
 logger = make_logger(__name__)
 
 
-tenxtar_filename_re = re.compile("""(?P<basename>.*)\.tar""")
+tenxtar_filename_re = re.compile(r"""(?P<basename>.*)\.tar""")
 
 
 EXON_FILENAME_PATTERN = r"""

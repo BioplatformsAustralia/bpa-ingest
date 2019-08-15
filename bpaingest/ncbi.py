@@ -30,7 +30,8 @@ class NCBISRAContextual:
             self._read_2016_submitted())
         self.file_submitted.update(
             self._read_ncbi_sra())
-        logger.info("NCBI upload metadata: %d files uploaded, %d biosample accessions" % (len(self.file_submitted), len(self.bpaid_biosample)))
+        logger.info("NCBI upload metadata: %d files uploaded, %d biosample accessions" %
+                    (len(self.file_submitted), len(self.bpaid_biosample)))
 
     def _read_2016_accessions(self):
         accessions = {}

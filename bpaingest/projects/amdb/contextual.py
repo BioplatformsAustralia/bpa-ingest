@@ -162,7 +162,7 @@ class LandUseEnforcement(BaseOntologyEnforcement):
             norm_path = tuple([self._normalise(t) for t in path])
             tree[norm_path] = ' - '.join(path)
             for value in values[1:]:
-                if type(value) is tuple:
+                if isinstance(value, tuple):
                     # a tuple is a sub-tree which we recurse into
                     if value:
                         expand_tree(value, tree, prefix=path)
@@ -202,7 +202,7 @@ class LandUseEnforcement(BaseOntologyEnforcement):
 
 def fix_sometimes_date(val):
     "mix of dates and free-text, make into strings"
-    if type(val) is datetime.date or type(val) is datetime.datetime:
+    if isinstance(val, datetime.date) or isinstance(val, datetime.datetime):
         return ingest_utils.get_date_isoformat(val)
     val = val.strip()
     if val == '':
@@ -256,11 +256,18 @@ class AustralianMicrobiomeSampleContextual(object):
             fld('ammonium', 'ammonium (μmol/l)', units='μmol/l', coerce=ingest_utils.get_clean_number),
             fld('total_co2', 'total co2 (μmol/kg)', units='μmol/kg', coerce=ingest_utils.get_clean_number),
             fld('total_alkalinity', 'total alkalinity (μmol/kg)', units='μmol/kg', coerce=ingest_utils.get_clean_number),
-            fld('temperature', 'temperature [its-90, deg c]', units='its-90, deg c', coerce=ingest_utils.get_clean_number),
+            fld('temperature',
+                'temperature [its-90, deg c]',
+                units='its-90, deg c',
+                coerce=ingest_utils.get_clean_number),
             fld('conductivity_sm', 'conductivity [s/m]', units='s/m', coerce=ingest_utils.get_clean_number),
-            fld('turbidity', 'turbidity (upoly 0, wet labs flnturt)', units='upoly 0, wet labs flnturt', coerce=ingest_utils.get_clean_number),
+            fld('turbidity',
+                'turbidity (upoly 0, wet labs flnturt)',
+                units='upoly 0, wet labs flnturt',
+                coerce=ingest_utils.get_clean_number),
             fld('salinity_lab', 'salinity [psu] laboratory', units='psu', coerce=ingest_utils.get_clean_number),
-            fld('microbial_abundance', 'microbial abundance (cells per ml)', units='cells per ml', coerce=ingest_utils.get_clean_number),
+            fld('microbial_abundance', 'microbial abundance (cells per ml)',
+                units='cells per ml', coerce=ingest_utils.get_clean_number),
             fld('chlorophyll_a', 'chlorophyll a (μg/l)', units='μg/l', coerce=ingest_utils.get_clean_number),
             fld('total_carbon', '%total carbon', units='%', coerce=ingest_utils.get_clean_number),
             fld('total_inorganc_carbon', '% total inorganc carbon', units='%', coerce=ingest_utils.get_clean_number),
@@ -292,9 +299,11 @@ class AustralianMicrobiomeSampleContextual(object):
             fld('coastal_id', 'coastal_id'),
             fld('host_species', 'host species'),
             fld('notes', 'notes'),
-            fld('pam_fluorometer', 'pulse amplitude modulated (pam) fluorometer measurement', units='pam', coerce=ingest_utils.get_clean_number),
+            fld('pam_fluorometer', 'pulse amplitude modulated (pam) fluorometer measurement',
+                units='pam', coerce=ingest_utils.get_clean_number),
             fld('host_state', 'host state (free text field)'),
-            fld('host_abundance', 'host abundance (individuals per m2)', units='individuals per m2', coerce=ingest_utils.get_clean_number),
+            fld('host_abundance', 'host abundance (individuals per m2)',
+                units='individuals per m2', coerce=ingest_utils.get_clean_number),
         ],
         'Pelagic_Public': [
             fld('sample_id', 'bpa_id', coerce=ingest_utils.extract_ands_id),
@@ -322,11 +331,16 @@ class AustralianMicrobiomeSampleContextual(object):
             fld('secchi_depth', 'secchi depth (m)', units='m', coerce=ingest_utils.get_clean_number),
             fld('bottom_depth', 'bottom depth', coerce=ingest_utils.get_clean_number),
             fld('pressure_bottle', 'pressure bottle', coerce=ingest_utils.get_clean_number),
-            fld('temperature_ctd', 'temperature: ctd [its-90, deg c]', units='its-90, deg c', coerce=ingest_utils.get_clean_number),
+            fld('temperature_ctd', 'temperature: ctd [its-90, deg c]',
+                units='its-90, deg c', coerce=ingest_utils.get_clean_number),
             fld('salinity_ctd', 'salinity [psu] ctd', units='psu', coerce=ingest_utils.get_clean_number),
             fld('oxygen_ctd_pelagic', 'oxygen (μmol/kg) ctd', units='μmol/kg', coerce=ingest_utils.get_clean_number),
-            fld('density_ctd', 'density [density, kg/m^3] ctd', units='density, kg/m^3', coerce=ingest_utils.get_clean_number),
-            fld('turbidity_ctd', 'turbidity (nephelometric turbidity units) ctd', units='nephelometric turbidity units', coerce=ingest_utils.get_clean_number),
+            fld('density_ctd',
+                'density [density, kg/m^3] ctd',
+                units='density, kg/m^3',
+                coerce=ingest_utils.get_clean_number),
+            fld('turbidity_ctd', 'turbidity (nephelometric turbidity units) ctd',
+                units='nephelometric turbidity units', coerce=ingest_utils.get_clean_number),
             fld('chlf_ctd', 'chlf: ctd', coerce=ingest_utils.get_clean_number),
             fld('silicate', 'silicate (μmol/l)', units='μmol/l', coerce=ingest_utils.get_clean_number),
             fld('nitrate_nitrite', 'nitrate/nitrite (μmol/l)', units='μmol/l', coerce=ingest_utils.get_clean_number),
@@ -359,9 +373,11 @@ class AustralianMicrobiomeSampleContextual(object):
             fld('diadino', 'diadino [mg/m3]', units='mg/m3', coerce=ingest_utils.get_clean_number),
             fld('diato', 'diato [mg/m3]', units='mg/m3', coerce=ingest_utils.get_clean_number),
             fld('dino', 'dino [mg/m3]', units='mg/m3', coerce=ingest_utils.get_clean_number),
-            fld('dv_cphl_a_and_cphl_a', 'dv_cphl_a_and_cphl_a [mg/m3]', units='mg/m3', coerce=ingest_utils.get_clean_number),
+            fld('dv_cphl_a_and_cphl_a', 'dv_cphl_a_and_cphl_a [mg/m3]',
+                units='mg/m3', coerce=ingest_utils.get_clean_number),
             fld('dv_cphl_a', 'dv_cphl_a [mg/m3]', units='mg/m3', coerce=ingest_utils.get_clean_number),
-            fld('dv_cphl_b_and_cphl_b', 'dv_cphl_b_and_cphl_b [mg/m3]', units='mg/m3', coerce=ingest_utils.get_clean_number),
+            fld('dv_cphl_b_and_cphl_b', 'dv_cphl_b_and_cphl_b [mg/m3]',
+                units='mg/m3', coerce=ingest_utils.get_clean_number),
             fld('dv_cphl_b', 'dv_cphl_b [mg/m3]', units='mg/m3', coerce=ingest_utils.get_clean_number),
             fld('echin', 'echin [mg/m3]', units='mg/m3', coerce=ingest_utils.get_clean_number),
             fld('fuco', 'fuco [mg/m3]', units='mg/m3', coerce=ingest_utils.get_clean_number),
@@ -401,11 +417,19 @@ class AustralianMicrobiomeSampleContextual(object):
             fld('coastal_id', 'coastal_id'),
             fld('host_species', 'host species'),
             fld('notes', 'notes'),
-            fld('pam_fluorometer', 'pulse amplitude modulated (pam) fluorometer measurement', units='pam', coerce=ingest_utils.get_clean_number),
+            fld('pam_fluorometer', 'pulse amplitude modulated (pam) fluorometer measurement',
+                units='pam', coerce=ingest_utils.get_clean_number),
             fld('host_state', 'host state (free text field)'),
-            fld('host_abundance', 'host abundance (individuals per m2)', units='individuals per m2', coerce=ingest_utils.get_clean_number),
-            fld('light_intensity_surface', 'light intensity (surface) [µmol/m²/s¯¹]', units='µmol/m²/s¯¹', coerce=ingest_utils.get_clean_number),
-            fld('light_intensity_meadow', 'light intensity (meadow) [µmol/m²/s¯¹]', units='µmol/m²/s¯¹', coerce=ingest_utils.get_clean_number),
+            fld('host_abundance', 'host abundance (individuals per m2)',
+                units='individuals per m2', coerce=ingest_utils.get_clean_number),
+            fld('light_intensity_surface',
+                'light intensity (surface) [µmol/m²/s¯¹]',
+                units='µmol/m²/s¯¹',
+                coerce=ingest_utils.get_clean_number),
+            fld('light_intensity_meadow',
+                'light intensity (meadow) [µmol/m²/s¯¹]',
+                units='µmol/m²/s¯¹',
+                coerce=ingest_utils.get_clean_number),
         ],
         'Seaweed': [
             fld('sample_id', 'bpa_id', coerce=ingest_utils.extract_ands_id),
@@ -426,10 +450,13 @@ class AustralianMicrobiomeSampleContextual(object):
             fld('coastal_id', 'coastal_id'),
             fld('host_species', 'host species'),
             fld('notes', 'notes'),
-            fld('pam_fluorometer', 'pulse amplitude modulated (pam) fluorometer measurement', units='pam', coerce=ingest_utils.get_clean_number),
+            fld('pam_fluorometer', 'pulse amplitude modulated (pam) fluorometer measurement',
+                units='pam', coerce=ingest_utils.get_clean_number),
             fld('host_state', 'host state (free text field)'),
-            fld('average_host_abundance', 'average host abundance (% of individuals per m2)', units='%', coerce=ingest_utils.get_clean_number),
-            fld('host_abundance_seaweed', 'host abundance (mean number ind per m2 +/- se)', units='mean number ind per m2 +/- se', coerce=ingest_utils.get_clean_number),
+            fld('average_host_abundance', 'average host abundance (% of individuals per m2)',
+                units='%', coerce=ingest_utils.get_clean_number),
+            fld('host_abundance_seaweed', 'host abundance (mean number ind per m2 +/- se)',
+                units='mean number ind per m2 +/- se', coerce=ingest_utils.get_clean_number),
             fld('length', 'length(cm)', units='cm', coerce=ingest_utils.get_clean_number),
             fld('fouling', 'fouling (%)', units='%', coerce=ingest_utils.get_clean_number),
             fld('fouling_organisms', 'fouling_organisms'),
@@ -461,7 +488,8 @@ class AustralianMicrobiomeSampleContextual(object):
             fld('fine_sediment', '% fine sediment', units='%', coerce=ingest_utils.get_clean_number),
             fld('total_nitrogen', '% total nitrogen', units='%', coerce=ingest_utils.get_clean_number),
             fld('total_phosphorous', '% total phosphorous', units='%', coerce=ingest_utils.get_clean_number),
-            fld('sedimentation_rate', 'sedimentation rate (g /(cm2 x y)r)', units='g /(cm2 x y', coerce=ingest_utils.get_clean_number),
+            fld('sedimentation_rate', 'sedimentation rate (g /(cm2 x y)r)',
+                units='g /(cm2 x y', coerce=ingest_utils.get_clean_number),
         ],
         'Soil': [
             fld('sample_id', 'sample_id', coerce=ingest_utils.extract_ands_id),
@@ -477,7 +505,8 @@ class AustralianMicrobiomeSampleContextual(object):
             fld('vegetation_type', 'vegetation type'),
             fld('elevation', 'elevation ()', coerce=ingest_utils.get_clean_number),
             fld('slope', 'slope (%)', units='%', coerce=ingest_utils.get_clean_number),
-            fld('slope_aspect', 'slope aspect (direction or degrees; e.g., nw or 315°)', units='direction or degrees; e.g., nw or 315°', coerce=ingest_utils.get_clean_number),
+            fld('slope_aspect', 'slope aspect (direction or degrees; e.g., nw or 315°)',
+                units='direction or degrees; e.g., nw or 315°', coerce=ingest_utils.get_clean_number),
             fld('australian_soil_classification', 'australian soil classification controlled vocab (6)'),
             fld('soil_moisture', 'soil moisture (%)', units='%', coerce=ingest_utils.get_clean_number),
             fld('color', 'color controlled vocab (10)'),
@@ -528,7 +557,8 @@ class AustralianMicrobiomeSampleContextual(object):
             fld('host_species', 'host species'),
             fld('notes', 'notes'),
             fld('host_state', 'host state (free text field)'),
-            fld('host_abundance', 'host abundance (individuals per m2)', units='individuals per m2', coerce=ingest_utils.get_clean_number),
+            fld('host_abundance', 'host abundance (individuals per m2)',
+                units='individuals per m2', coerce=ingest_utils.get_clean_number),
         ]
     }
     ontology_cleanups = {

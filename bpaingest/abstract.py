@@ -98,7 +98,7 @@ class BaseMetadata:
         """
         for obj in objs:
             for k, v in obj.items():
-                if type(v) is float:
+                if isinstance(v, float):
                     obj[k] = str(round(v, 10))
 
     def __init__(self):

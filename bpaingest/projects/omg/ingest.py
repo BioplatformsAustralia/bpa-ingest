@@ -1274,5 +1274,6 @@ class OMGGenomicsPacbioMetadata(OMGBaseMetadata):
                 library_id = ingest_utils.extract_ands_id(resource['bpa_library_id'])
                 xlsx_info = self.metadata_info[os.path.basename(md5_file)]
                 legacy_url = urljoin(xlsx_info['base_url'], filename)
-                resources.append(((ingest_utils.extract_ands_id(library_id), resource['run_date']), legacy_url, resource))
+                resources.append(
+                    ((ingest_utils.extract_ands_id(library_id), resource['run_date']), legacy_url, resource))
         return resources

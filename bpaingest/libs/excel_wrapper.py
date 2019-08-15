@@ -59,7 +59,7 @@ class ExcelWrapper(object):
         self.header_length = header_length
         self.column_name_row_index = column_name_row_index
         self.field_spec = field_spec
-        assert(type(self.field_spec[0]) is FieldDefinition)
+        assert(isinstance(self.field_spec[0], FieldDefinition))
         self.additional_context = additional_context
         self.suggest_template = suggest_template
 
@@ -86,7 +86,8 @@ class ExcelWrapper(object):
         if len(list(names)) != len(defs):
             # this is a problem in the bpa-ingest code, not in the passed-in spreadsheet,
             # so we can fail hard here
-            raise Exception("duplicate attribute in field definition: %s" % [t for (t, c) in Counter(names).items() if c > 1])
+            raise Exception("duplicate attribute in field definition: %s" %
+                            [t for (t, c) in Counter(names).items() if c > 1])
         return names
 
     def set_name_to_column_map(self):
@@ -95,7 +96,7 @@ class ExcelWrapper(object):
         """
 
         def coerce_header(s):
-            if type(s) is not str:
+            if not isinstance(s, str):
                 self._error("header is not a string: %s `%s'" % (type(s), repr(s)))
                 return str(s)
             return s.strip()
@@ -133,7 +134,7 @@ class ExcelWrapper(object):
             col_descr = spec.column_name
             if hasattr(spec.column_name, 'match'):
                 col_descr = spec.column_name.pattern
-            if type(spec.column_name) == tuple:
+            if isinstance(spec.column_name, tuple):
                 for c, _name in enumerate(spec.column_name):
                     col_index = find_column(_name)
                     if col_index != -1:
@@ -146,7 +147,10 @@ class ExcelWrapper(object):
             else:
                 self.missing_headers.append(spec.column_name)
                 if not spec.optional:
-                    self._error("Column `{}' not found in `{}' `{}'".format(col_descr, os.path.basename(self.file_name), self.sheet.name))
+                    self._error(
+                        "Column `{}' not found in `{}' `{}'".format(
+                            col_descr, os.path.basename(
+                                self.file_name), self.sheet.name))
                     missing_columns = True
                 cmap[spec.attribute] = None
 

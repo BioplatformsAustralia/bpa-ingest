@@ -156,7 +156,12 @@ class Metadata:
         if self.last_processed_at is None:
             self.last_processed_at = datetime.now()
         try:
-            s3.put_object(Bucket=self.bucket_name, Key=self._s3_key_name, Body=json.dumps(self.data, default=json_converter))
+            s3.put_object(
+                Bucket=self.bucket_name,
+                Key=self._s3_key_name,
+                Body=json.dumps(
+                    self.data,
+                    default=json_converter))
         except s3.exceptions.NoSuchBucket:
             raise ValueError('Bucket "%s" does not exist' % self.bucket_name)
 

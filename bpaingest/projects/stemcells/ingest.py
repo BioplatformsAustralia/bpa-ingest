@@ -588,7 +588,8 @@ class StemcellsProteomicsMetadata(StemcellsProteomicsBaseMetadata):
                 resource['md5'] = resource['id'] = md5
                 resource['name'] = filename
                 resource_meta = self.filename_metadata.get(filename, {})
-                for k in ("sample_fractionation", "lc_column_type", "gradient_time", "sample_on_column", "mass_spectrometer", "acquisition_mode", "database", "database_size"):
+                for k in ("sample_fractionation", "lc_column_type", "gradient_time", "sample_on_column",
+                          "mass_spectrometer", "acquisition_mode", "database", "database_size"):
                     resource[k] = getattr(resource_meta, k)
                 sample_id = ingest_utils.extract_ands_id(file_info.get('id'))
                 xlsx_info = self.metadata_info[os.path.basename(md5_file)]
@@ -671,7 +672,8 @@ class StemcellsProteomicsPoolMetadata(StemcellsProteomicsBaseMetadata):
                 resource['md5'] = resource['id'] = md5
                 resource['name'] = filename
                 resource_meta = self.filename_metadata.get(filename, {})
-                for k in ("sample_fractionation", "lc_column_type", "gradient_time", "sample_on_column", "mass_spectrometer", "acquisition_mode", "database", "database_size"):
+                for k in ("sample_fractionation", "lc_column_type", "gradient_time", "sample_on_column",
+                          "mass_spectrometer", "acquisition_mode", "database", "database_size"):
                     resource[k] = getattr(resource_meta, k)
                 pool_id = file_info['pool_id']
                 xlsx_info = self.metadata_info[os.path.basename(md5_file)]
@@ -796,7 +798,8 @@ class StemcellsProteomicsAnalysedMetadata(BaseMetadata):
                 resource['md5'] = md5
                 xlsx_info = self.metadata_info[os.path.basename(md5_file)]
                 # analysed data has duplicate PNG images in it -- we need to keep the ID unique
-                resource['id'] = 'u-' + md5hash((self.ckan_data_type + xlsx_info['ticket'] + md5).encode('utf8')).hexdigest()
+                resource['id'] = 'u-' + \
+                    md5hash((self.ckan_data_type + xlsx_info['ticket'] + md5).encode('utf8')).hexdigest()
                 resource['name'] = filename
                 legacy_url = urljoin(xlsx_info['base_url'], filename)
                 resources.append(((xlsx_info['ticket'],), legacy_url, resource))
@@ -910,7 +913,8 @@ class StemcellsMetabolomicsAnalysedMetadata(BaseMetadata):
                 resource['md5'] = md5
                 xlsx_info = self.metadata_info[os.path.basename(md5_file)]
                 # analysed data has duplicate PNG images in it - we need to keep the id unique
-                resource['id'] = 'u-' + md5hash((self.ckan_data_type + xlsx_info['base_url'] + md5).encode('utf8')).hexdigest()
+                resource['id'] = 'u-' + \
+                    md5hash((self.ckan_data_type + xlsx_info['base_url'] + md5).encode('utf8')).hexdigest()
                 resource['name'] = filename
                 folder_name = self.track_meta.get(xlsx_info['ticket']).folder_name
                 legacy_url = urljoin(xlsx_info['base_url'], filename)
@@ -1033,7 +1037,8 @@ class StemcellsTranscriptomeAnalysedMetadata(BaseMetadata):
                 resource['md5'] = md5
                 xlsx_info = self.metadata_info[os.path.basename(md5_file)]
                 # analysed data has duplicate PNG images in it - we need to keep the id unique
-                resource['id'] = 'u-' + md5hash((self.ckan_data_type + xlsx_info['base_url'] + md5).encode('utf8')).hexdigest()
+                resource['id'] = 'u-' + \
+                    md5hash((self.ckan_data_type + xlsx_info['base_url'] + md5).encode('utf8')).hexdigest()
                 resource['name'] = filename
                 folder_name = self.track_meta.get(xlsx_info['ticket']).folder_name
                 legacy_url = urljoin(xlsx_info['base_url'], filename)

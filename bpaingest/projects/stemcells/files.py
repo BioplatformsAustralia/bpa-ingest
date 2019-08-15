@@ -1,7 +1,7 @@
 import re
 
 
-transcriptome_filename_re = re.compile("""
+transcriptome_filename_re = re.compile(r"""
     (?P<id>\d{4,6})_
     (?P<library>PE|MP)_
     (?P<insert_size>\d*bp)_
@@ -15,7 +15,7 @@ transcriptome_filename_re = re.compile("""
 
 
 # FIXME: we need the full convention from BPA / MA
-metabolomics_filename_re = re.compile("""
+metabolomics_filename_re = re.compile(r"""
     (?P<id>\d{4,6})_
     SC_
     (?P<vendor>MA)_
@@ -25,7 +25,7 @@ metabolomics_filename_re = re.compile("""
 """, re.VERBOSE)
 
 
-proteomics_filename_re = re.compile("""
+proteomics_filename_re = re.compile(r"""
     (?P<id>\d{4,6})_
     SC_
     (?P<vendor>APAF|MBPF|QIMR)_
@@ -34,20 +34,20 @@ proteomics_filename_re = re.compile("""
 """, re.VERBOSE)
 
 
-proteomics_pool_filename_re = re.compile("""
+proteomics_pool_filename_re = re.compile(r"""
     (?P<pool_id>P\d+_\d+_Exp\d+_Pool\d+)_
     .*
     (\.raw)$
 """, re.VERBOSE)
 
 
-proteomics_analysed_filename_re = re.compile("""
+proteomics_analysed_filename_re = re.compile(r"""
     (?P<zip_file_name>.*)
     (\.zip)$
 """, re.VERBOSE)
 
 
-singlecell_filename_re = re.compile("""
+singlecell_filename_re = re.compile(r"""
     (?P<id>\d{4,6}-\d{4,6})_
     (?P<library>PE|MP)_
     (?P<insert_size>\d*bp)_
@@ -60,7 +60,7 @@ singlecell_filename_re = re.compile("""
 """, re.VERBOSE)
 
 
-singlecell_index_info_filename_re = re.compile("""
+singlecell_index_info_filename_re = re.compile(r"""
     Stemcells_
     (?P<vendor>WEHI|UNSW)_
     (?P<flow_id>\w{9})_
@@ -69,7 +69,7 @@ singlecell_index_info_filename_re = re.compile("""
 """, re.VERBOSE)
 
 
-smallrna_filename_re = re.compile("""
+smallrna_filename_re = re.compile(r"""
     (?P<id>\d{4,6})_
     (?P<insert_size>[\d-]+nt)_
     smRNA_

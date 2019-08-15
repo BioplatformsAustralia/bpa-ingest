@@ -118,6 +118,7 @@ class CKANService:
                 raise Exception('Get package list with resourses call returned success False')
             return json_resp.get('result', ())
         except Exception as exc:
-            msg = 'Get package list with resources call (%s) was NOT successful! ' % (resp.request.url if resp else self.urls.packages_with_resources)
+            msg = 'Get package list with resources call (%s) was NOT successful! ' % (
+                resp.request.url if resp else self.urls.packages_with_resources)
             print(msg)
             raise Exception(msg) from exc

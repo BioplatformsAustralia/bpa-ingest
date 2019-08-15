@@ -30,7 +30,7 @@ logger = make_logger(__name__)
 
 
 def fix_version(s):
-    if type(s) is datetime:
+    if isinstance(s, datetime):
         return ingest_utils.get_date_isoformat(s)
     return str(s)
 
@@ -642,9 +642,11 @@ class SepsisProteomicsMS1QuantificationMetadata(BaseSepsisMetadata):
         'fields': [
             fld('sample_id', 'bacterial sample unique id', coerce=ingest_utils.extract_ands_id),
             fld('facility', 'facility', coerce=ingest_utils.to_uppercase),
-            fld('sample_fractionation', 'sample fractionation (none/number)', units='none/number', coerce=ingest_utils.get_clean_number),
+            fld('sample_fractionation', 'sample fractionation (none/number)',
+                units='none/number', coerce=ingest_utils.get_clean_number),
             fld('lc_column_type', 'lc/column type'),
-            fld('gradient_time', 'gradient time (min)  /  % acn (start-finish main gradient) / flow', units='%', coerce=ingest_utils.get_clean_number),
+            fld('gradient_time', 'gradient time (min)  /  % acn (start-finish main gradient) / flow',
+                units='%', coerce=ingest_utils.get_clean_number),
             fld('sample_on_column', 'sample on column (µg)', units='µg', coerce=ingest_utils.get_clean_number),
             fld('mass_spectrometer', 'mass spectrometer'),
             fld('acquisition_mode_fragmentation', 'acquisition mode / fragmentation'),
@@ -790,7 +792,7 @@ class SepsisProteomicsSwathMSBaseSepsisMetadata(BaseSepsisMetadata):
                     continue
                 contextual_meta = {}
                 # if `sample_id` is a tuple, we've got a pooled sample
-                if type(sample_id) is tuple:
+                if isinstance(sample_id, tuple):
                     data_type = '2d'
                     printable_sample_id = '_'.join([t.split('/')[-1] for t in sorted(sample_id)])
                     track_meta = common_values([self.bpam_track_meta.get(t) for t in sample_id])
@@ -823,7 +825,8 @@ class SepsisProteomicsSwathMSBaseSepsisMetadata(BaseSepsisMetadata):
 
     def get_swath_packages(self, data_type):
         packages = []
-        for package_name, (name, package_data_type, printable_sample_id, track_meta, submission_meta) in list(self.package_data.items()):
+        for package_name, (name, package_data_type, printable_sample_id, track_meta,
+                           submission_meta) in list(self.package_data.items()):
             if package_data_type != data_type:
                 continue
             obj = track_meta.copy()
@@ -1183,7 +1186,8 @@ class BaseSepsisAnalysedMetadata(BaseSepsisMetadata):
             'data_type': trk.data_type_pre_pilot_pilot_or_main_dataset,
             'ticket': trk.ccg_jira_ticket
         }
-        for field in ('date_of_transfer', 'taxon_or_organism', 'strain_or_isolate', 'growth_media', 'folder_name', 'date_of_transfer_to_archive', 'file_count'):
+        for field in ('date_of_transfer', 'taxon_or_organism', 'strain_or_isolate',
+                      'growth_media', 'folder_name', 'date_of_transfer_to_archive', 'file_count'):
             if field in exclude:
                 continue
             if hasattr(trk, field):
@@ -1705,7 +1709,9 @@ class SepsisProteomicsProteinDatabaseMetadata(BaseSepsisAnalysedMetadata):
     analysed = True
     spreadsheet = {
         'fields': [
-            fld('database_generation_date', 'database generation date (yyyy-mm-dd)', coerce=ingest_utils.get_date_isoformat),
+            fld('database_generation_date',
+                'database generation date (yyyy-mm-dd)',
+                coerce=ingest_utils.get_date_isoformat),
             fld('sample_id', 'sample name (5 digit bpa id)', coerce=ingest_utils.extract_ands_id),
             fld('taxon_or_organism', 'taxon_or_organism'),
             fld('strain_or_isolate', 'strain_or_isolate'),

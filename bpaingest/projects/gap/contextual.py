@@ -53,8 +53,10 @@ class GAPSampleContextual(object):
             fld('genomic_material_preparation_process', 'genomic_material_preparation_process'),
             fld('genomic_material_preparation_materials', 'genomic_material_preparation_materials'),
             fld('genomic_material_prepared_by', 'genomic_material_prepared_by'),
-            fld('genomic_material_preparation_date', 'genomic_material_preparation_date', coerce=ingest_utils.get_date_isoformat),
-]
+            fld('genomic_material_preparation_date',
+                'genomic_material_preparation_date',
+                coerce=ingest_utils.get_date_isoformat),
+        ]
 
         wrapper = ExcelWrapper(
             field_spec,
@@ -85,4 +87,3 @@ class GAPSampleContextual(object):
                     continue
                 row_meta[name_mapping.get(field, field)] = value
         return sample_metadata
-

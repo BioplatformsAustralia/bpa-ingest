@@ -84,7 +84,8 @@ class GbrPacbioMetadata(BaseMetadata):
                     continue
 
                 pacbio_linkage = make_pacbio_linkage(row.flow_cell_id, row.run_number)
-                name = sample_id_to_ckan_name(ingest_utils.short_ands_id(sample_id), self.ckan_data_type, pacbio_linkage)
+                name = sample_id_to_ckan_name(ingest_utils.short_ands_id(sample_id),
+                                              self.ckan_data_type, pacbio_linkage)
 
                 obj = {
                     'name': name,

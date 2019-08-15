@@ -197,7 +197,10 @@ class BASEAmpliconsMetadata(AMDBaseMetadata):
                     note_extra = flow_id
                 obj = {}
                 amplicon = row.amplicon.upper()
-                name = sample_id_to_ckan_name(sample_extraction_id, self.ckan_data_type + '-' + amplicon, base_amplicon_linkage)
+                name = sample_id_to_ckan_name(
+                    sample_extraction_id,
+                    self.ckan_data_type + '-' + amplicon,
+                    base_amplicon_linkage)
                 archive_ingestion_date = ingest_utils.get_date_isoformat(track_get('date_of_transfer_to_archive'))
 
                 obj.update({
@@ -267,7 +270,15 @@ class BASEAmpliconsMetadata(AMDBaseMetadata):
                 sample_extraction_id = sample_id.split('/')[-1] + '_' + file_info.get('extraction')
                 xlsx_info = self.metadata_info[os.path.basename(md5_file)]
                 legacy_url = urljoin(xlsx_info['base_url'], filename)
-                resources.append(((sample_extraction_id, resource['amplicon'], build_base_amplicon_linkage(index_linkage, resource['flow_id'], resource['index'])), legacy_url, resource))
+                resources.append(
+                    ((sample_extraction_id,
+                      resource['amplicon'],
+                        build_base_amplicon_linkage(
+                          index_linkage,
+                          resource['flow_id'],
+                          resource['index'])),
+                        legacy_url,
+                        resource))
         return resources
 
 
@@ -302,7 +313,8 @@ class BASEAmpliconsControlMetadata(AMDBaseMetadata):
                 yield filename, md5, md5_file, file_info
 
     def _get_packages(self):
-        flow_id_ticket = dict(((t['amplicon'], t['flow_id']), self.metadata_info[os.path.basename(fname)]) for _, _, fname, t in self.md5_lines())
+        flow_id_ticket = dict(((t['amplicon'], t['flow_id']), self.metadata_info[os.path.basename(fname)])
+                              for _, _, fname, t in self.md5_lines())
         packages = []
         for (amplicon, flow_id), info in sorted(flow_id_ticket.items()):
             obj = {}
@@ -502,7 +514,13 @@ class BASEMetagenomicsMetadata(AMDBaseMetadata):
             sample_extraction_id = ingest_utils.make_sample_extraction_id(sample_extraction_id, sample_id)
             md5_file = one(glob(self.path + '/*%s*.md5' % (flow_id)))
             xlsx_info = self.metadata_info[os.path.basename(md5_file)]
-            packages.append(self.assemble_obj(sample_id, sample_extraction_id, flow_id, FakePilotRow(xlsx_info), FakePilotTrackMeta()))
+            packages.append(
+                self.assemble_obj(
+                    sample_id,
+                    sample_extraction_id,
+                    flow_id,
+                    FakePilotRow(xlsx_info),
+                    FakePilotTrackMeta()))
 
         # the generated package IDs will have duplicates, due to data issues in the pilot data
         # we simply skip over the duplicates, which don't have any significant data differences
@@ -703,7 +721,13 @@ def unique_spreadsheets(fnames):
 
 
 def base_extract_bpam_metadata(track_meta):
-    fields = ('archive_ingestion_date', 'contextual_data_submission_date', 'data_generated', 'sample_submission_date', 'submitter', 'work_order')
+    fields = (
+        'archive_ingestion_date',
+        'contextual_data_submission_date',
+        'data_generated',
+        'sample_submission_date',
+        'submitter',
+        'work_order')
     return dict((t, track_meta.get(t, '')) for t in fields)
 
 
@@ -812,7 +836,8 @@ class MarineMicrobesAmpliconsMetadata(AMDBaseMetadata):
                 obj = base_extract_bpam_metadata(track_meta)
                 index = index_from_comment([row.comments, row.sample_name_on_sample_sheet])
                 mm_amplicon_linkage = build_mm_amplicon_linkage(use_index_linkage, flow_id, index)
-                name = sample_id_to_ckan_name(sample_id.split('/')[-1], self.ckan_data_type + '-' + row.amplicon.lower(), mm_amplicon_linkage)
+                name = sample_id_to_ckan_name(sample_id.split(
+                    '/')[-1], self.ckan_data_type + '-' + row.amplicon.lower(), mm_amplicon_linkage)
                 archive_ingestion_date = ingest_utils.get_date_isoformat(google_track_meta.date_of_transfer_to_archive)
 
                 amplicon = row.amplicon.upper()
@@ -875,7 +900,14 @@ class MarineMicrobesAmpliconsMetadata(AMDBaseMetadata):
                 sample_id = ingest_utils.extract_ands_id(file_info.get('id'))
                 xlsx_info = self.metadata_info[os.path.basename(md5_file)]
                 legacy_url = urljoin(xlsx_info['base_url'], filename)
-                resources.append(((sample_id, build_mm_amplicon_linkage(use_index_linkage, resource['flow_id'], resource['index'])), legacy_url, resource))
+                resources.append(
+                    ((sample_id,
+                      build_mm_amplicon_linkage(
+                          use_index_linkage,
+                          resource['flow_id'],
+                          resource['index'])),
+                        legacy_url,
+                        resource))
         return resources
 
 

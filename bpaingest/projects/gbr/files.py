@@ -5,7 +5,7 @@ from ...libs.md5lines import md5lines
 
 logger = make_logger(__name__)
 
-AMPLICON_FILE_PATTERN = """
+AMPLICON_FILE_PATTERN = r"""
     (?P<sample_id>\d{4,6})_
     GBR_
     (?P<vendor>AGRF|UNSW)_
@@ -18,7 +18,7 @@ AMPLICON_FILE_PATTERN = """
 amplicon_filename_re = re.compile(AMPLICON_FILE_PATTERN, re.VERBOSE)
 
 
-PACBIO_FILE_PATTERN = """
+PACBIO_FILE_PATTERN = r"""
     ^(?P<sample_id>\d{4,6})_
     GBR_
     (?P<vendor>AGRF|UNSW)_
@@ -30,7 +30,7 @@ PACBIO_FILE_PATTERN = """
 pacbio_filename_re = re.compile(PACBIO_FILE_PATTERN, re.VERBOSE)
 
 
-PACBIO_FILE_PATTERN2 = """
+PACBIO_FILE_PATTERN2 = r"""
     ^(?P<sample_id>\d{4,6})_
     GBR_
     (?P<vendor>AGRF|UNSW)_

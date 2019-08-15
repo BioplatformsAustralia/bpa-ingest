@@ -6,7 +6,7 @@ import re
 logger = make_logger(__name__)
 
 
-base_amplicon_control_tech_vendor_filename_re = re.compile("""
+base_amplicon_control_tech_vendor_filename_re = re.compile(r"""
     ^(?P<control_type>Arc_mock_community|Arch_mock_community|Bac_mock_community|Fungal_mock_community|Fungal-mock-community|Fungal__mock_Community|Soil_DNA|Soil-DNA||STAN|NEG1|NEG2|Neg|Neg1|Neg2|NEG_1|NEG_2|Undetermined)_
     (?P<amplicon>ITS|16S|18S|A16S)_
     (?P<vendor>AGRF|UNSW)_
@@ -16,7 +16,7 @@ base_amplicon_control_tech_vendor_filename_re = re.compile("""
 """, re.VERBOSE)
 
 
-base_amplicon_control_tech_vendor_flow_filename_re = re.compile("""
+base_amplicon_control_tech_vendor_flow_filename_re = re.compile(r"""
     ^(?P<control_type>Arc_mock_community|Arch_mock_community|Bac_mock_community|Fungal_mock_community|Fungal-mock-community|Fungal__mock_Community|Soil_DNA|Soil-DNA||STAN|NEG1|NEG2|Neg|Neg1|Neg2|NEG_1|NEG_2|Undetermined)_
     (?P<amplicon>ITS|16S|18S|A16S)_
     (?P<vendor>AGRF|UNSW)_
@@ -25,9 +25,11 @@ base_amplicon_control_tech_vendor_flow_filename_re = re.compile("""
 """, re.VERBOSE)
 
 
-base_amplicon_control_regexps = [base_amplicon_control_tech_vendor_filename_re, base_amplicon_control_tech_vendor_flow_filename_re]
+base_amplicon_control_regexps = [
+    base_amplicon_control_tech_vendor_filename_re,
+    base_amplicon_control_tech_vendor_flow_filename_re]
 
-base_amplicon_filename_re = re.compile("""
+base_amplicon_filename_re = re.compile(r"""
     (?P<id>\d{4,6})_
     (?P<extraction>\d)_
     (?P<amplicon>ITS|16S|18S|A16S)_
@@ -40,7 +42,7 @@ base_amplicon_filename_re = re.compile("""
 """, re.VERBOSE)
 
 
-base_amplicon_filename_flow_index_swapped_re = re.compile("""
+base_amplicon_filename_flow_index_swapped_re = re.compile(r"""
     (?P<id>\d{4,6})_
     (?P<extraction>\d)_
     (?P<amplicon>ITS|16S|18S|A16S)_
@@ -52,7 +54,7 @@ base_amplicon_filename_flow_index_swapped_re = re.compile("""
 """, re.VERBOSE)
 
 
-base_amplicon_index2_filename_re = re.compile("""
+base_amplicon_index2_filename_re = re.compile(r"""
     (?P<id>\d{4,6})_
     (?P<extraction>\d)_
     (?P<amplicon>ITS|16S|18S|A16S)_
@@ -66,7 +68,7 @@ base_amplicon_index2_filename_re = re.compile("""
 """, re.VERBOSE)
 
 
-base_amplicon_index3_filename_re = re.compile("""
+base_amplicon_index3_filename_re = re.compile(r"""
     (?P<id>\d{4,6})_
     (?P<extraction>\d)_
     (?P<amplicon>ITS|16S|18S|A16S)_
@@ -87,7 +89,7 @@ base_amplicon_regexps = [
     base_amplicon_index3_filename_re]
 
 
-base_metagenomics_filename_re = re.compile("""
+base_metagenomics_filename_re = re.compile(r"""
     (?P<id>\d{4,6})_
     (?P<extraction>\d)_
     (?P<library>PE|MP)_
@@ -101,7 +103,7 @@ base_metagenomics_filename_re = re.compile("""
 """, re.VERBOSE)
 
 
-base_metagenomics_run_filename_re = re.compile("""
+base_metagenomics_run_filename_re = re.compile(r"""
     (?P<id>\d{4,6})_
     (?P<extraction>\d)_
     (?P<library>PE|MP)_
@@ -119,13 +121,13 @@ base_metagenomics_run_filename_re = re.compile("""
 base_metagenomics_regexps = [base_metagenomics_filename_re, base_metagenomics_run_filename_re]
 
 
-base_site_image_filename_re = re.compile("""
+base_site_image_filename_re = re.compile(r"""
     (?P<id1>\d{4,6})-
     (?P<id2>\d{4,6}).jpg
 """, re.VERBOSE)
 
 
-mm_amplicon_control_filename_re = re.compile("""
+mm_amplicon_control_filename_re = re.compile(r"""
     ^(?P<control_type>Arc_mock_community|Bac_mock_community|Fungal_mock_community|Soil_DNA|STAN)_
     (?P<extra_descriptor>).*
     (?P<vendor>AGRF|UNSW)_
@@ -137,7 +139,7 @@ mm_amplicon_control_filename_re = re.compile("""
 """, re.VERBOSE)
 
 
-mm_amplicon_filename_re = re.compile("""
+mm_amplicon_filename_re = re.compile(r"""
     (?P<id>\d{4,6})_
     (?P<extraction>\d)_
     (?P<amplicon>16S|18S|A16S)_
@@ -150,7 +152,7 @@ mm_amplicon_filename_re = re.compile("""
 """, re.VERBOSE)
 
 
-mm_transcriptome_filename_re = re.compile("""
+mm_transcriptome_filename_re = re.compile(r"""
     (?P<id>\d{4,6})_
     (?P<library>PE|MP)_
     (?P<insert_size>\d*bp)_
@@ -163,7 +165,7 @@ mm_transcriptome_filename_re = re.compile("""
 """, re.VERBOSE)
 
 
-mm_metatranscriptome_filename_re = re.compile("""
+mm_metatranscriptome_filename_re = re.compile(r"""
     (?P<id>\d{4,6})_
     (?P<extraction>\d+)_
     (?P<unknown>\w{3})_
@@ -178,7 +180,7 @@ mm_metatranscriptome_filename_re = re.compile("""
 """, re.VERBOSE)
 
 
-mm_metatranscriptome_filename2_re = re.compile("""
+mm_metatranscriptome_filename2_re = re.compile(r"""
     (?P<id>\d{4,6})_
     (?P<extraction>\d+)_
     (?P<library>PE|MP)_
@@ -192,7 +194,7 @@ mm_metatranscriptome_filename2_re = re.compile("""
 """, re.VERBOSE)
 
 
-mm_metagenomics_filename_re = re.compile("""
+mm_metagenomics_filename_re = re.compile(r"""
     (?P<id>\d{4,6})_
     (?P<extraction>\d)_
     (?P<library>PE|MP)_
@@ -206,7 +208,7 @@ mm_metagenomics_filename_re = re.compile("""
 """, re.VERBOSE)
 
 
-mm_metagenomics_filename_v2_re = re.compile("""
+mm_metagenomics_filename_v2_re = re.compile(r"""
     (?P<id>\d{4,6})_
     (?P<extraction>\d)_
     (?P<library>PE|MP)_

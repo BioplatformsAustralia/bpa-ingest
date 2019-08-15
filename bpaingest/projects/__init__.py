@@ -116,7 +116,7 @@ class ProjectInfo:
         'wheat-pathogens': [
             WheatPathogensGenomesMetadata,  # the first half of wheat pathogens
         ],
-   }
+    }
 
     def __init__(self):
         self.metadata_info = self._build_metadata_info()

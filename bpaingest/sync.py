@@ -220,7 +220,8 @@ def reupload_resources(ckan, to_reupload, resource_id_legacy_url, auth, num_thre
         thread.join()
 
 
-def sync_resources(ckan, resources, resource_linkage_attrs, ckan_packages, auth, num_threads, do_uploads, do_resource_checks, do_delete):
+def sync_resources(ckan, resources, resource_linkage_attrs, ckan_packages, auth,
+                   num_threads, do_uploads, do_resource_checks, do_delete):
     logger.info('syncing %d resources' % (len(resources)))
 
     resource_linkage_package_id = {}

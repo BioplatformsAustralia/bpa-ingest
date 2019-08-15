@@ -36,7 +36,7 @@ def date_or_comment(val):
 
 
 def get_gram_stain(val):
-    if val and val is not '':
+    if val and val != '':
         val = val.lower()
         if 'positive' in val:
             return 'POS'
@@ -60,7 +60,7 @@ def get_sex(val):
 
 
 def get_strain_or_isolate(val):
-    if val and val is not '':
+    if val and val != '':
         # convert floats to str
         if isinstance(val, float):
             val = int(val)
@@ -77,7 +77,7 @@ class SepsisBacterialContextual(object):
     name = 'sepsis-bacterial'
 
     # taxon_or_organism and strain_or_isolate had some corrections
-    # late in the project. the old values appear in a large number of 
+    # late in the project. the old values appear in a large number of
     # spreadsheets, so we re-map them to correct values
     mapping = {
         ("Klebsiella pneumoniae", "AJ055"): ("Klebsiella variicola", "AJ055"),
@@ -177,7 +177,9 @@ class SepsisGenomicsContextual(object):
             if not row.sample_id:
                 continue
             if row.sample_id in sample_metadata:
-                logger.warning("{}: duplicate sample metadata row for {}".format(self.__class__.__name__, row.sample_id))
+                logger.warning(
+                    "{}: duplicate sample metadata row for {}".format(
+                        self.__class__.__name__, row.sample_id))
             sample_metadata[row.sample_id] = row_meta = {}
             for field in row._fields:
                 if field != 'taxon_or_organism' and field != 'strain_or_isolate':
@@ -235,7 +237,9 @@ class SepsisTranscriptomicsHiseqContextual(object):
             if not row.sample_id:
                 continue
             if row.sample_id in sample_metadata:
-                logger.warning("{}: duplicate sample metadata row for {}".format(self.__class__.__name__, row.sample_id))
+                logger.warning(
+                    "{}: duplicate sample metadata row for {}".format(
+                        self.__class__.__name__, row.sample_id))
             sample_metadata[row.sample_id] = row_meta = {}
             for field in row._fields:
                 if field != 'taxon_or_organism' and field != 'strain_or_isolate':
@@ -304,7 +308,9 @@ class SepsisMetabolomicsLCMSContextual(object):
             if not row.sample_id:
                 continue
             if row.sample_id in sample_metadata:
-                logger.warning("{}: duplicate sample metadata row for {}".format(self.__class__.__name__, row.sample_id))
+                logger.warning(
+                    "{}: duplicate sample metadata row for {}".format(
+                        self.__class__.__name__, row.sample_id))
             sample_metadata[row.sample_id] = row_meta = {}
             for field in row._fields:
                 if field != 'taxon_or_organism' and field != 'strain_or_isolate':
@@ -370,7 +376,9 @@ class SepsisProteomicsBaseContextual(object):
             if row.analytical_platform.lower() != self.analytical_platform.lower():
                 continue
             if row.sample_id in sample_metadata:
-                logger.warning("{}: duplicate sample metadata row for {}".format(self.__class__.__name__, row.sample_id))
+                logger.warning(
+                    "{}: duplicate sample metadata row for {}".format(
+                        self.__class__.__name__, row.sample_id))
             sample_metadata[row.sample_id] = row_meta = {}
             for field in row._fields:
                 if field != 'taxon_or_organism' and field != 'strain_or_isolate':
@@ -382,7 +390,8 @@ class SepsisProteomicsBaseContextual(object):
             fld('sample_submission_date', 'Sample submission date (YYYY-MM-DD)', coerce=ingest_utils.get_date_isoformat),
             fld('sample_id', 'Sample name i.e. 5 digit BPA ID', coerce=ingest_utils.extract_ands_id),
             fld('sample_type', 'Sample type'),
-            fld('protein_yield_total_ug', 'protein yield - total (g)'),  # it really is ug, just unicode stripping drops the 'u'
+            # it really is ug, just unicode stripping drops the 'u'
+            fld('protein_yield_total_ug', 'protein yield - total (g)'),
             fld('protein_yield_facility_ug', 'Protein Yield / Facility (g)'),
             fld('treatment', 'Treatment'),
             fld('peptide_resuspension_protocol', 'Peptide resuspension protocol'),

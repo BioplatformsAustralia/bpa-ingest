@@ -49,7 +49,7 @@ def add_spatial_extra(package):
 def fix_sample_extraction_id(val):
     if val is None:
         return val
-    if type(val) is float or type(val) is int:
+    if isinstance(val, float) or isinstance(val, int):
         return '%s_1' % (int(val))
     val = str(val).strip().replace('-', '_')
     if val == '':

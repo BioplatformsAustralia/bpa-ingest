@@ -50,15 +50,23 @@ def setup_sync(subparser):
     setup_ckan(subparser)
     subparser.add_argument('project_name', choices=sorted(project_cli_options.keys()), help='path to metadata')
     subparser.add_argument('--uploads', type=int, default=4, help='number of parallel uploads')
-    subparser.add_argument('--metadata-only', '-m', action='store_const', const=True, default=False, help='set metadata only, no data uploads')
-    subparser.add_argument('--skip-resource-checks', action='store_const', const=True, default=False, help='skip resource checks')
-    subparser.add_argument('--delete', action='store_const', const=True, default=False, help='enable package and resource deletion (dangerous: only enable after a dry-run)')
+    subparser.add_argument('--metadata-only', '-m', action='store_const', const=True,
+                           default=False, help='set metadata only, no data uploads')
+    subparser.add_argument(
+        '--skip-resource-checks',
+        action='store_const',
+        const=True,
+        default=False,
+        help='skip resource checks')
+    subparser.add_argument('--delete', action='store_const', const=True, default=False,
+                           help='enable package and resource deletion (dangerous: only enable after a dry-run)')
 
 
 def setup_hash(subparser):
     setup_ckan(subparser)
     subparser.add_argument('project_name', choices=sorted(project_cli_options.keys()), help='path to metadata')
-    subparser.add_argument('mirror_path', help='path to locally mounted mirror', nargs='?', default=os.environ.get('MIRROR_PATH'))
+    subparser.add_argument('mirror_path', help='path to locally mounted mirror',
+                           nargs='?', default=os.environ.get('MIRROR_PATH'))
 
 
 def setup_dump(subparser):
@@ -73,7 +81,14 @@ def sync(args):
     """sync a project"""
     ckan = make_ckan_api(args)
     with DownloadMetadata(project_cli_options[args.project_name], path=args.download_path) as dlmeta:
-        sync_metadata(ckan, dlmeta.meta, dlmeta.auth, args.uploads, not args.metadata_only, not args.skip_resource_checks, args.delete)
+        sync_metadata(
+            ckan,
+            dlmeta.meta,
+            dlmeta.auth,
+            args.uploads,
+            not args.metadata_only,
+            not args.skip_resource_checks,
+            args.delete)
         print_accounts()
 
 

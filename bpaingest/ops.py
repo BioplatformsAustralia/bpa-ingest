@@ -44,7 +44,7 @@ def print_accounts():
 
 def diff_objects(obj1, obj2, desc, skip_differences=None):
     def sort_if_list(v):
-        if type(v) is list:
+        if isinstance(v, list):
             return list(sorted(v, key=lambda v: repr(v)))
         return v
     differences = []
@@ -203,7 +203,9 @@ def check_resource(ckan_address, archive_info, current_url, legacy_url, metadata
         return 'error-getting-size'
 
     if current_size != legacy_size:
-        logger.error("CKAN resource %s has incorrect size: %d (should be %d)" % (current_url, current_size, legacy_size))
+        logger.error(
+            "CKAN resource %s has incorrect size: %d (should be %d)" %
+            (current_url, current_size, legacy_size))
         return 'wrong-size'
 
     # if we have a pre-calculated s3etag in metadata, check it matches
@@ -212,7 +214,9 @@ def check_resource(ckan_address, archive_info, current_url, legacy_url, metadata
         if None in metadata_etags:
             logger.warning("CKAN resource %s has no metadata etag: run genhash for this project." % (legacy_url))
         else:
-            logger.error("CKAN resource %s has incorrect etag: %s (should be one of %s)" % (current_url, current_etag, metadata_etags))
+            logger.error(
+                "CKAN resource %s has incorrect etag: %s (should be one of %s)" %
+                (current_url, current_etag, metadata_etags))
             return 'wrong-etag'
 
     return None
