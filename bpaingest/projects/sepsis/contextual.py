@@ -1,6 +1,7 @@
 from ...util import make_logger, one
 from ...libs import ingest_utils
 from ...libs.excel_wrapper import ExcelWrapper, make_field_definition as fld
+from .strains import get_taxon_strain, map_taxon_strain_rows
 from glob import glob
 
 
@@ -76,37 +77,16 @@ class SepsisBacterialContextual(object):
     metadata_urls = ['https://downloads-qcif.bioplatforms.com/bpa/sepsis/projectdata/2019-06-13/bacterial/']
     name = 'sepsis-bacterial'
 
-    # taxon_or_organism and strain_or_isolate had some corrections
-    # late in the project. the old values appear in a large number of
-    # spreadsheets, so we re-map them to correct values
-    mapping = {
-        ("Klebsiella pneumoniae", "AJ055"): ("Klebsiella variicola", "AJ055"),
-        ("Klebsiella pneumoniae", "AJ292"): ("Klebsiella variicola", "AJ292"),
-        ("Klebsiella pneumoniae", "03-311-0071"): ("Klebsiella variicola", "03-311-0071"),
-        ("Klebsiella pneumoniae", "04153260899A"): ("Klebsiella variicola", "04153260899A"),
-    }
-
     def __init__(self, path):
         xlsx_path = one(glob(path + '/*.xlsx'))
         self.sample_metadata = self._package_metadata(self._read_metadata(xlsx_path))
 
-    @classmethod
-    def map_taxon_strain(cls, old_taxon, old_strain):
-        tpl = (old_taxon, old_strain)
-        # return the mapping, or otherwise the original value
-        return cls.mapping.get(tpl, tpl)
-
     def get(self, sample_id, submission_obj):
-        if 'taxon_or_organism' in submission_obj and 'strain_or_isolate' in submission_obj:
-            tpl = (submission_obj['taxon_or_organism'], submission_obj['strain_or_isolate'])
-            # map the lookup to current metadata values
-            tpl = self.map_taxon_strain(*tpl)
-            if tpl in self.sample_metadata:
-                return self.sample_metadata[tpl]
-            logger.warning("no %s metadata available for: %s" % (type(self).__name__, repr(tpl)))
+        tpl = get_taxon_strain(submission_obj)
+        if None in tpl:
             return {}
-        else:
-            return {}
+        # deliberate hard failure if the tuple isn't in our metadata: this simply shouldn't happen
+        return self.sample_metadata[tpl]
 
     def _package_metadata(self, rows):
         sample_metadata = {}
@@ -150,7 +130,7 @@ class SepsisBacterialContextual(object):
             column_name_row_index=4)
         for error in wrapper.get_errors():
             logger.error(error)
-        return wrapper.get_all()
+        return map_taxon_strain_rows(wrapper.get_all())
 
 
 class SepsisGenomicsContextual(object):

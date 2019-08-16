@@ -4,7 +4,10 @@ from unipath import Path
 from collections import defaultdict
 from urllib.parse import urljoin
 from hashlib import md5 as md5hash
-
+from .strains import (
+    get_taxon_strain,
+    map_taxon_strain,
+    map_taxon_strain_rows)
 from ...libs import ingest_utils
 from ...util import make_logger, sample_id_to_ckan_name, csv_to_named_tuple, common_values, clean_tag_name
 from ...abstract import BaseMetadata
@@ -72,10 +75,12 @@ def add_taxons_strains_tags(taxons, strains, tag_names):
 
 def add_taxons_strains_meta(cls, obj):
     '''
-    This function adds taxons and strains metadata.
+    Build package level package and strains metadata (noting that package might
+    contain data for more than one taxon/strain pair) from the Google Drive
+    tracking metadata.
     '''
     taxons, strains = cls.google_track_meta.get_taxons_strains(obj['ticket'])
-    mapped = [SepsisBacterialContextual.map_taxon_strain(*t) for t in zip(taxons, strains)]
+    mapped = [map_taxon_strain(*t) for t in zip(taxons, strains)]
     taxons = [t[0] for t in mapped]
     strains = [t[1] for t in mapped]
     obj.update({
@@ -87,10 +92,9 @@ def add_taxons_strains_meta(cls, obj):
 
 def sepsis_contextual_tags(cls, obj):
     tags = [cls.omics, cls.technology]
-    taxon, strain = SepsisBacterialContextual.map_taxon_strain(
-        obj.get('taxon_or_organism'), obj.get('strain_or_isolate'))
-    if taxon and strain:
-        tags.append(clean_tag_name(('%s_%s' % (taxon, strain)).replace(' ', '_')))
+    taxon_tpl = get_taxon_strain(obj)
+    if None not in taxon_tpl:
+        tags.append(clean_tag_name(('{}_{}'.format(*taxon_tpl).replace(' ', '_'))))
     data_type = obj.get('data_type')
     if data_type:
         tags.append(clean_tag_name(data_type))
@@ -110,6 +114,9 @@ class BaseSepsisMetadata(BaseMetadata):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.google_track_meta = SepsisGoogleTrackMetadata()
+
+    def parse_spreadsheet(self, *args, **kwargs):
+        return map_taxon_strain_rows(super().parse_spreadsheet(*args, **kwargs))
 
 
 class SepsisGenomicsMiseqMetadata(BaseSepsisMetadata):
@@ -157,10 +164,9 @@ class SepsisGenomicsMiseqMetadata(BaseSepsisMetadata):
             for row in rows:
                 sample_id = row.sample_id
                 track_meta = self.bpam_track_meta.get(sample_id)
+                taxon, strain = get_taxon_strain(track_meta)
                 obj = track_meta.copy()
                 name = sample_id_to_ckan_name(sample_id.split('/')[-1], self.ckan_data_type)
-                taxon, strain = SepsisBacterialContextual.map_taxon_strain(
-                    track_meta['taxon_or_organism'], track_meta['strain_or_isolate'])
                 obj.update({
                     'name': name,
                     'id': name,
@@ -256,10 +262,9 @@ class SepsisGenomicsPacbioMetadata(BaseSepsisMetadata):
             for row in rows:
                 sample_id = row.sample_id
                 track_meta = self.bpam_track_meta.get(sample_id)
+                taxon, strain = get_taxon_strain(track_meta)
                 obj = track_meta.copy()
                 name = sample_id_to_ckan_name(sample_id.split('/')[-1], self.ckan_data_type)
-                taxon, strain = SepsisBacterialContextual.map_taxon_strain(
-                    track_meta['taxon_or_organism'], track_meta['strain_or_isolate'])
                 obj.update({
                     'name': name,
                     'id': name,
@@ -380,8 +385,7 @@ class SepsisTranscriptomicsHiseqMetadata(BaseSepsisMetadata):
                 sorted(set(google_track_meta.date_of_transfer_to_archive for _, _, google_track_meta in info)))
             name = sample_id_to_ckan_name(sample_id.split('/')[-1], self.ckan_data_type)
             track_meta = self.bpam_track_meta.get(sample_id)
-            taxon, strain = SepsisBacterialContextual.map_taxon_strain(
-                track_meta['taxon_or_organism'], track_meta['strain_or_isolate'])
+            taxon, strain = get_taxon_strain(track_meta)
             obj = track_meta.copy()
             obj.update({
                 'name': name,
@@ -482,10 +486,9 @@ class SepsisMetabolomicsGCMSMetadata(BaseSepsisMetadata):
                 if sample_id is None:
                     continue
                 track_meta = self.bpam_track_meta.get(sample_id)
+                taxon, strain = get_taxon_strain(track_meta)
                 obj = track_meta.copy()
                 name = sample_id_to_ckan_name(sample_id.split('/')[-1], self.ckan_data_type)
-                taxon, strain = SepsisBacterialContextual.map_taxon_strain(
-                    track_meta['taxon_or_organism'], track_meta['strain_or_isolate'])
                 obj.update({
                     'name': name,
                     'id': name,
@@ -583,10 +586,9 @@ class SepsisMetabolomicsLCMSMetadata(BaseSepsisMetadata):
                 if sample_id is None:
                     continue
                 track_meta = self.bpam_track_meta.get(sample_id)
+                taxon, strain = get_taxon_strain(track_meta)
                 obj = track_meta.copy()
                 name = sample_id_to_ckan_name(sample_id.split('/')[-1], self.ckan_data_type)
-                taxon, strain = SepsisBacterialContextual.map_taxon_strain(
-                    track_meta['taxon_or_organism'], track_meta['strain_or_isolate'])
                 obj.update({
                     'name': name,
                     'id': name,
@@ -688,6 +690,7 @@ class SepsisProteomicsMS1QuantificationMetadata(BaseSepsisMetadata):
                 if sample_id is None:
                     continue
                 bpam_track_meta = self.bpam_track_meta.get(sample_id)
+                taxon, strain = get_taxon_strain(bpam_track_meta)
                 if 'taxon_or_organism' not in bpam_track_meta:
                     logger.error("package for {} excluded due to missing BPAM metadata".format(sample_id))
                     continue
@@ -696,8 +699,6 @@ class SepsisProteomicsMS1QuantificationMetadata(BaseSepsisMetadata):
                 name = sample_id_to_ckan_name(sample_id.split('/')[-1], self.ckan_data_type)
                 for contextual_source in self.contextual_metadata:
                     obj.update(contextual_source.get(sample_id, bpam_track_meta))
-                taxon, strain = SepsisBacterialContextual.map_taxon_strain(
-                    bpam_track_meta['taxon_or_organism'], bpam_track_meta['strain_or_isolate'])
                 obj.update({
                     'name': name,
                     'id': name,

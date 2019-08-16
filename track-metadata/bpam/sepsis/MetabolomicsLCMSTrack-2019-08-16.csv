@@ -131,7 +131,6 @@
 102.100.100.51184,Main dataset,Streptococcus pyogenes,5448,M1T1 clone,RPMI_modified,3,Metabolomics,LC-MS,MA,,2018-04-05,2018-04-05,0,,,3,,0,2018-05-09 07:13:28
 102.100.100.51183,Main dataset,Streptococcus pyogenes,5448,M1T1 clone,RPMI_modified,2,Metabolomics,LC-MS,MA,,2018-04-05,2018-04-05,0,,,2,,0,2018-05-09 07:13:28
 102.100.100.51182,Main dataset,Streptococcus pyogenes,5448,M1T1 clone,RPMI_modified,1,Metabolomics,LC-MS,MA,,2018-04-05,2018-04-05,0,,,1,,0,2018-05-09 07:13:28
-5 digit BPA ID,Data type,Taxon_OR_organism,Strain_OR_isolate,Serovar,Growth Media,Replicate,Omics,Analytical platform,Facility,Work order #,Contextual Data Submission Date,Sample submission date,Data generated,Archive Ingestion Date,Archive ID,id,curation_url,in_data_portal,last_modified
 102.100.100.50972,Main dataset,Escherichia coli,MS14387,,Pooled sera,6,Metabolomics,LC-MS,MA,,2017-11-14,2017-11-13,0,,,374,,0,2017-11-14 08:00:56
 102.100.100.50971,Main dataset,Escherichia coli,MS14387,,Pooled sera,5,Metabolomics,LC-MS,MA,,2017-11-14,2017-11-13,0,,,373,,0,2017-11-14 08:00:56
 102.100.100.50970,Main dataset,Escherichia coli,MS14387,,Pooled sera,4,Metabolomics,LC-MS,MA,,2017-11-14,2017-11-13,0,,,372,,0,2017-11-14 08:00:56

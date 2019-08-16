@@ -1,6 +1,7 @@
 from ...util import make_logger, csv_to_named_tuple, common_values
 from ...libs import ingest_utils
 from ...tracking import get_track_csv
+from .strains import map_taxon_strain_rows
 from collections import namedtuple, defaultdict
 
 logger = make_logger(__name__)
@@ -9,10 +10,11 @@ logger = make_logger(__name__)
 class SepsisTrackMetadata(object):
     def __init__(self, name):
         fname = get_track_csv('bpam', '*' + name + '*.csv', project='sepsis')
-        self.track_meta = self.read_track_csv(fname)
+        self.track_meta = self._read_track_csv(fname)
 
-    def read_track_csv(self, fname):
+    def _read_track_csv(self, fname):
         header, rows = csv_to_named_tuple('SepsisTrack', fname)
+        rows = map_taxon_strain_rows(rows)
         return dict((ingest_utils.extract_ands_id(t.five_digit_bpa_id), t) for t in rows)
 
     def get(self, sample_id):

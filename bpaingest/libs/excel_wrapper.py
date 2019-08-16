@@ -260,7 +260,7 @@ class ExcelWrapper(object):
             template.append("{}fld({}),".format(
                 indent, ', '.join(args)))
         template.append(']')
-        self._error('{}@{} - suggested template is:\n{}'.format(
+        self._error('{} @ {} - suggested template is:\n{}'.format(
             self.file_name, self.sheet.name, '\n'.join(template)))
 
     def set_name_to_func_map(self):

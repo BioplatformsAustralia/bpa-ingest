@@ -131,7 +131,78 @@
 102.100.100.51184,Main dataset,Streptococcus pyogenes,5448,M1T1 clone,RPMI_modified,3,Metabolomics,GC-MS,MA,,2018-04-05,2018-04-05,0,,,3,,0,2018-05-09 07:16:18
 102.100.100.51183,Main dataset,Streptococcus pyogenes,5448,M1T1 clone,RPMI_modified,2,Metabolomics,GC-MS,MA,,2018-04-05,2018-04-05,0,,,2,,0,2018-05-09 07:16:18
 102.100.100.51182,Main dataset,Streptococcus pyogenes,5448,M1T1 clone,RPMI_modified,1,Metabolomics,GC-MS,MA,,2018-04-05,2018-04-05,0,,,1,,0,2018-05-09 07:16:18
-5 digit BPA ID,Data type,Taxon_OR_organism,Strain_OR_isolate,Serovar,Growth Media,Replicate,Omics,Analytical platform,Facility,Work order #,Contextual Data Submission Date,Sample submission date,Data generated,Archive Ingestion Date,Archive ID,id,curation_url,in_data_portal,last_modified
+102.100.100.51592,Main dataset,Klebsiella pneumoniae,04153260899A,,Pooled sera,6,Metabolomics,GC-MS,MA,,2018-08-17,2018-08-21,0,,,282,,0,2018-08-22 02:21:48
+102.100.100.51591,Main dataset,Klebsiella pneumoniae,04153260899A,,Pooled sera,5,Metabolomics,GC-MS,MA,,2018-08-17,2018-08-21,0,,,281,,0,2018-08-22 02:21:48
+102.100.100.51590,Main dataset,Klebsiella pneumoniae,04153260899A,,Pooled sera,4,Metabolomics,GC-MS,MA,,2018-08-17,2018-08-21,0,,,280,,0,2018-08-22 02:21:48
+102.100.100.51589,Main dataset,Klebsiella pneumoniae,04153260899A,,Pooled sera,3,Metabolomics,GC-MS,MA,,2018-08-17,2018-08-21,0,,,279,,0,2018-08-22 02:21:48
+102.100.100.51588,Main dataset,Klebsiella pneumoniae,04153260899A,,Pooled sera,2,Metabolomics,GC-MS,MA,,2018-08-17,2018-08-21,0,,,278,,0,2018-08-22 02:21:48
+102.100.100.51587,Main dataset,Klebsiella pneumoniae,04153260899A,,Pooled sera,1,Metabolomics,GC-MS,MA,,2018-08-17,2018-08-21,0,,,277,,0,2018-08-22 02:21:48
+102.100.100.51586,Main dataset,Klebsiella pneumoniae,04153260899A,,RPMI,6,Metabolomics,GC-MS,MA,,2018-08-17,2018-08-21,0,,,276,,0,2018-08-22 02:21:48
+102.100.100.51585,Main dataset,Klebsiella pneumoniae,04153260899A,,RPMI,5,Metabolomics,GC-MS,MA,,2018-08-17,2018-08-21,0,,,275,,0,2018-08-22 02:21:48
+102.100.100.51584,Main dataset,Klebsiella pneumoniae,04153260899A,,RPMI,4,Metabolomics,GC-MS,MA,,2018-08-17,2018-08-21,0,,,274,,0,2018-08-22 02:21:48
+102.100.100.51583,Main dataset,Klebsiella pneumoniae,04153260899A,,RPMI,3,Metabolomics,GC-MS,MA,,2018-08-17,2018-08-21,0,,,273,,0,2018-08-22 02:21:48
+102.100.100.51582,Main dataset,Klebsiella pneumoniae,04153260899A,,RPMI,2,Metabolomics,GC-MS,MA,,2018-08-17,2018-08-21,0,,,272,,0,2018-08-22 02:21:48
+102.100.100.51581,Main dataset,Klebsiella pneumoniae,04153260899A,,RPMI,1,Metabolomics,GC-MS,MA,,2018-08-17,2018-08-21,0,,,271,,0,2018-08-22 02:21:48
+102.100.100.51580,Main dataset,Klebsiella pneumoniae,03-311-0071,,Pooled sera,6,Metabolomics,GC-MS,MA,,2018-08-17,2018-08-21,0,,,270,,0,2018-08-22 02:21:48
+102.100.100.51579,Main dataset,Klebsiella pneumoniae,03-311-0071,,Pooled sera,5,Metabolomics,GC-MS,MA,,2018-08-17,2018-08-21,0,,,269,,0,2018-08-22 02:21:48
+102.100.100.51578,Main dataset,Klebsiella pneumoniae,03-311-0071,,Pooled sera,4,Metabolomics,GC-MS,MA,,2018-08-17,2018-08-21,0,,,268,,0,2018-08-22 02:21:48
+102.100.100.51577,Main dataset,Klebsiella pneumoniae,03-311-0071,,Pooled sera,3,Metabolomics,GC-MS,MA,,2018-08-17,2018-08-21,0,,,267,,0,2018-08-22 02:21:48
+102.100.100.51576,Main dataset,Klebsiella pneumoniae,03-311-0071,,Pooled sera,2,Metabolomics,GC-MS,MA,,2018-08-17,2018-08-21,0,,,266,,0,2018-08-22 02:21:48
+102.100.100.51575,Main dataset,Klebsiella pneumoniae,03-311-0071,,Pooled sera,1,Metabolomics,GC-MS,MA,,2018-08-17,2018-08-21,0,,,265,,0,2018-08-22 02:21:48
+102.100.100.51574,Main dataset,Klebsiella pneumoniae,03-311-0071,,RPMI,6,Metabolomics,GC-MS,MA,,2018-08-17,2018-08-21,0,,,264,,0,2018-08-22 02:21:48
+102.100.100.51573,Main dataset,Klebsiella pneumoniae,03-311-0071,,RPMI,5,Metabolomics,GC-MS,MA,,2018-08-17,2018-08-21,0,,,263,,0,2018-08-22 02:21:48
+102.100.100.51572,Main dataset,Klebsiella pneumoniae,03-311-0071,,RPMI,4,Metabolomics,GC-MS,MA,,2018-08-17,2018-08-21,0,,,262,,0,2018-08-22 02:21:48
+102.100.100.51571,Main dataset,Klebsiella pneumoniae,03-311-0071,,RPMI,3,Metabolomics,GC-MS,MA,,2018-08-17,2018-08-21,0,,,261,,0,2018-08-22 02:21:48
+102.100.100.51570,Main dataset,Klebsiella pneumoniae,03-311-0071,,RPMI,2,Metabolomics,GC-MS,MA,,2018-08-17,2018-08-21,0,,,260,,0,2018-08-22 02:21:48
+102.100.100.51569,Main dataset,Klebsiella pneumoniae,03-311-0071,,RPMI,1,Metabolomics,GC-MS,MA,,2018-08-17,2018-08-21,0,,,259,,0,2018-08-22 02:21:48
+102.100.100.51568,Main dataset,Klebsiella pneumoniae,KPC2,ethics embargo,Pooled sera,6,Metabolomics,GC-MS,MA,,2018-08-17,2018-08-21,0,,,258,,0,2018-08-22 02:21:48
+102.100.100.51567,Main dataset,Klebsiella pneumoniae,KPC2,ethics embargo,Pooled sera,5,Metabolomics,GC-MS,MA,,2018-08-17,2018-08-21,0,,,257,,0,2018-08-22 02:21:48
+102.100.100.51566,Main dataset,Klebsiella pneumoniae,KPC2,ethics embargo,Pooled sera,4,Metabolomics,GC-MS,MA,,2018-08-17,2018-08-21,0,,,256,,0,2018-08-22 02:21:48
+102.100.100.51565,Main dataset,Klebsiella pneumoniae,KPC2,ethics embargo,Pooled sera,3,Metabolomics,GC-MS,MA,,2018-08-17,2018-08-21,0,,,255,,0,2018-08-22 02:21:48
+102.100.100.51564,Main dataset,Klebsiella pneumoniae,KPC2,ethics embargo,Pooled sera,2,Metabolomics,GC-MS,MA,,2018-08-17,2018-08-21,0,,,254,,0,2018-08-22 02:21:48
+102.100.100.51563,Main dataset,Klebsiella pneumoniae,KPC2,ethics embargo,Pooled sera,1,Metabolomics,GC-MS,MA,,2018-08-17,2018-08-21,0,,,253,,0,2018-08-22 02:21:48
+102.100.100.51562,Main dataset,Klebsiella pneumoniae,KPC2,ethics embargo,RPMI,6,Metabolomics,GC-MS,MA,,2018-08-17,2018-08-21,0,,,252,,0,2018-08-22 02:21:48
+102.100.100.51561,Main dataset,Klebsiella pneumoniae,KPC2,ethics embargo,RPMI,5,Metabolomics,GC-MS,MA,,2018-08-17,2018-08-21,0,,,251,,0,2018-08-22 02:21:48
+102.100.100.51560,Main dataset,Klebsiella pneumoniae,KPC2,ethics embargo,RPMI,4,Metabolomics,GC-MS,MA,,2018-08-17,2018-08-21,0,,,250,,0,2018-08-22 02:21:48
+102.100.100.51559,Main dataset,Klebsiella pneumoniae,KPC2,ethics embargo,RPMI,3,Metabolomics,GC-MS,MA,,2018-08-17,2018-08-21,0,,,249,,0,2018-08-22 02:21:48
+102.100.100.51558,Main dataset,Klebsiella pneumoniae,KPC2,ethics embargo,RPMI,2,Metabolomics,GC-MS,MA,,2018-08-17,2018-08-21,0,,,248,,0,2018-08-22 02:21:48
+102.100.100.51557,Main dataset,Klebsiella pneumoniae,KPC2,ethics embargo,RPMI,1,Metabolomics,GC-MS,MA,,2018-08-17,2018-08-21,0,,,247,,0,2018-08-22 02:21:48
+102.100.100.51556,Main dataset,Klebsiella pneumoniae,AJ292,K61,Pooled sera,6,Metabolomics,GC-MS,MA,,2018-08-17,2018-08-21,0,,,246,,0,2018-08-22 02:21:48
+102.100.100.51555,Main dataset,Klebsiella pneumoniae,AJ292,K61,Pooled sera,5,Metabolomics,GC-MS,MA,,2018-08-17,2018-08-21,0,,,245,,0,2018-08-22 02:21:48
+102.100.100.51554,Main dataset,Klebsiella pneumoniae,AJ292,K61,Pooled sera,4,Metabolomics,GC-MS,MA,,2018-08-17,2018-08-21,0,,,244,,0,2018-08-22 02:21:48
+102.100.100.51553,Main dataset,Klebsiella pneumoniae,AJ292,K61,Pooled sera,3,Metabolomics,GC-MS,MA,,2018-08-17,2018-08-21,0,,,243,,0,2018-08-22 02:21:48
+102.100.100.51552,Main dataset,Klebsiella pneumoniae,AJ292,K61,Pooled sera,2,Metabolomics,GC-MS,MA,,2018-08-17,2018-08-21,0,,,242,,0,2018-08-22 02:21:48
+102.100.100.51551,Main dataset,Klebsiella pneumoniae,AJ292,K61,Pooled sera,1,Metabolomics,GC-MS,MA,,2018-08-17,2018-08-21,0,,,241,,0,2018-08-22 02:21:48
+102.100.100.51550,Main dataset,Klebsiella pneumoniae,AJ292,K61,RPMI,6,Metabolomics,GC-MS,MA,,2018-08-17,2018-08-21,0,,,240,,0,2018-08-22 02:21:48
+102.100.100.51549,Main dataset,Klebsiella pneumoniae,AJ292,K61,RPMI,5,Metabolomics,GC-MS,MA,,2018-08-17,2018-08-21,0,,,239,,0,2018-08-22 02:21:48
+102.100.100.51548,Main dataset,Klebsiella pneumoniae,AJ292,K61,RPMI,4,Metabolomics,GC-MS,MA,,2018-08-17,2018-08-21,0,,,238,,0,2018-08-22 02:21:48
+102.100.100.51547,Main dataset,Klebsiella pneumoniae,AJ292,K61,RPMI,3,Metabolomics,GC-MS,MA,,2018-08-17,2018-08-21,0,,,237,,0,2018-08-22 02:21:48
+102.100.100.51546,Main dataset,Klebsiella pneumoniae,AJ292,K61,RPMI,2,Metabolomics,GC-MS,MA,,2018-08-17,2018-08-21,0,,,236,,0,2018-08-22 02:21:48
+102.100.100.51545,Main dataset,Klebsiella pneumoniae,AJ292,K61,RPMI,1,Metabolomics,GC-MS,MA,,2018-08-17,2018-08-21,0,,,235,,0,2018-08-22 02:21:48
+102.100.100.51544,Main dataset,Klebsiella pneumoniae,AJ218,K54,Pooled sera,6,Metabolomics,GC-MS,MA,,2018-08-17,2018-08-21,0,,,234,,0,2018-08-22 02:21:48
+102.100.100.51543,Main dataset,Klebsiella pneumoniae,AJ218,K54,Pooled sera,5,Metabolomics,GC-MS,MA,,2018-08-17,2018-08-21,0,,,233,,0,2018-08-22 02:21:48
+102.100.100.51542,Main dataset,Klebsiella pneumoniae,AJ218,K54,Pooled sera,4,Metabolomics,GC-MS,MA,,2018-08-17,2018-08-21,0,,,232,,0,2018-08-22 02:21:48
+102.100.100.51541,Main dataset,Klebsiella pneumoniae,AJ218,K54,Pooled sera,3,Metabolomics,GC-MS,MA,,2018-08-17,2018-08-21,0,,,231,,0,2018-08-22 02:21:48
+102.100.100.51540,Main dataset,Klebsiella pneumoniae,AJ218,K54,Pooled sera,2,Metabolomics,GC-MS,MA,,2018-08-17,2018-08-21,0,,,230,,0,2018-08-22 02:21:48
+102.100.100.51539,Main dataset,Klebsiella pneumoniae,AJ218,K54,Pooled sera,1,Metabolomics,GC-MS,MA,,2018-08-17,2018-08-21,0,,,229,,0,2018-08-22 02:21:48
+102.100.100.51538,Main dataset,Klebsiella pneumoniae,AJ218,K54,RPMI,6,Metabolomics,GC-MS,MA,,2018-08-17,2018-08-21,0,,,228,,0,2018-08-22 02:21:48
+102.100.100.51537,Main dataset,Klebsiella pneumoniae,AJ218,K54,RPMI,5,Metabolomics,GC-MS,MA,,2018-08-17,2018-08-21,0,,,227,,0,2018-08-22 02:21:48
+102.100.100.51536,Main dataset,Klebsiella pneumoniae,AJ218,K54,RPMI,4,Metabolomics,GC-MS,MA,,2018-08-17,2018-08-21,0,,,226,,0,2018-08-22 02:21:48
+102.100.100.51535,Main dataset,Klebsiella pneumoniae,AJ218,K54,RPMI,3,Metabolomics,GC-MS,MA,,2018-08-17,2018-08-21,0,,,225,,0,2018-08-22 02:21:48
+102.100.100.51534,Main dataset,Klebsiella pneumoniae,AJ218,K54,RPMI,2,Metabolomics,GC-MS,MA,,2018-08-17,2018-08-21,0,,,224,,0,2018-08-22 02:21:48
+102.100.100.51533,Main dataset,Klebsiella pneumoniae,AJ218,K54,RPMI,1,Metabolomics,GC-MS,MA,,2018-08-17,2018-08-21,0,,,223,,0,2018-08-22 02:21:48
+102.100.100.51532,Main dataset,Klebsiella pneumoniae,AJ055,K0,Pooled sera,6,Metabolomics,GC-MS,MA,,2018-08-17,2018-08-21,0,,,222,,0,2018-08-22 02:21:48
+102.100.100.51531,Main dataset,Klebsiella pneumoniae,AJ055,K0,Pooled sera,5,Metabolomics,GC-MS,MA,,2018-08-17,2018-08-21,0,,,221,,0,2018-08-22 02:21:48
+102.100.100.51530,Main dataset,Klebsiella pneumoniae,AJ055,K0,Pooled sera,4,Metabolomics,GC-MS,MA,,2018-08-17,2018-08-21,0,,,220,,0,2018-08-22 02:21:48
+102.100.100.51529,Main dataset,Klebsiella pneumoniae,AJ055,K0,Pooled sera,3,Metabolomics,GC-MS,MA,,2018-08-17,2018-08-21,0,,,219,,0,2018-08-22 02:21:48
+102.100.100.51528,Main dataset,Klebsiella pneumoniae,AJ055,K0,Pooled sera,2,Metabolomics,GC-MS,MA,,2018-08-17,2018-08-21,0,,,218,,0,2018-08-22 02:21:48
+102.100.100.51527,Main dataset,Klebsiella pneumoniae,AJ055,K0,Pooled sera,1,Metabolomics,GC-MS,MA,,2018-08-17,2018-08-21,0,,,217,,0,2018-08-22 02:21:48
+102.100.100.51526,Main dataset,Klebsiella pneumoniae,AJ055,K0,RPMI,6,Metabolomics,GC-MS,MA,,2018-08-17,2018-08-21,0,,,216,,0,2018-08-22 02:21:48
+102.100.100.51525,Main dataset,Klebsiella pneumoniae,AJ055,K0,RPMI,5,Metabolomics,GC-MS,MA,,2018-08-17,2018-08-21,0,,,215,,0,2018-08-22 02:21:48
+102.100.100.51524,Main dataset,Klebsiella pneumoniae,AJ055,K0,RPMI,4,Metabolomics,GC-MS,MA,,2018-08-17,2018-08-21,0,,,214,,0,2018-08-22 02:21:48
+102.100.100.51523,Main dataset,Klebsiella pneumoniae,AJ055,K0,RPMI,3,Metabolomics,GC-MS,MA,,2018-08-17,2018-08-21,0,,,213,,0,2018-08-22 02:21:48
+102.100.100.51522,Main dataset,Klebsiella pneumoniae,AJ055,K0,RPMI,2,Metabolomics,GC-MS,MA,,2018-08-17,2018-08-21,0,,,212,,0,2018-08-22 02:21:48
+102.100.100.51521,Main dataset,Klebsiella pneumoniae,AJ055,K0,RPMI,1,Metabolomics,GC-MS,MA,,2018-08-17,2018-08-21,0,,,211,,0,2018-08-22 02:21:48
 102.100.100.50972,Main dataset,Escherichia coli,MS14387,,Pooled sera,6,Metabolomics,GC-MS,MA,,2017-11-14,2017-11-13,0,,,210,,0,2017-11-14 08:00:25
 102.100.100.50971,Main dataset,Escherichia coli,MS14387,,Pooled sera,5,Metabolomics,GC-MS,MA,,2017-11-14,2017-11-13,0,,,209,,0,2017-11-14 08:00:25
 102.100.100.50970,Main dataset,Escherichia coli,MS14387,,Pooled sera,4,Metabolomics,GC-MS,MA,,2017-11-14,2017-11-13,0,,,208,,0,2017-11-14 08:00:25
