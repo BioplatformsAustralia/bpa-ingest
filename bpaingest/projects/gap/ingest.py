@@ -8,7 +8,7 @@ from unipath import Path
 from ...abstract import BaseMetadata
 from ...libs import ingest_utils
 from ...libs.excel_wrapper import make_field_definition as fld
-from ...util import make_logger, sample_id_to_ckan_name
+from ...util import make_logger, sample_id_to_ckan_name, clean_tag_name
 from . import files
 from .contextual import GAPSampleContextual
 from .tracking import GAPTrackMetadata
@@ -76,8 +76,11 @@ class GAPIlluminaShortreadMetadata(BaseMetadata):
                 obj = row._asdict()
                 obj.update(track_meta._asdict())
                 name = sample_id_to_ckan_name(sample_id.split('/')[-1], self.ckan_data_type)
+                for contextual_source in self.contextual_metadata:
+                    obj.update(contextual_source.get(sample_id))
                 obj.update({
-                    'title': 'GAP {} {}'.format(sample_id, flow_cell_id),
+                    'title': 'GAP Illumina short read {} {}'.format(sample_id, flow_cell_id),
+                    'notes': '{}, {}'.format(obj['scientific_name'], obj['sample_submitter_name']),
                     'sample_id': sample_id,
                     'name': name,
                     'id': name,
@@ -86,9 +89,7 @@ class GAPIlluminaShortreadMetadata(BaseMetadata):
                     'private': True,
                     'data_generated': True,
                 })
-                for contextual_source in self.contextual_metadata:
-                    obj.update(contextual_source.get(sample_id))
-                tag_names = ['genomics', 'illumina-shortread']
+                tag_names = ['genomics', 'illumina-shortread', clean_tag_name(obj['scientific_name'])]
                 obj['tags'] = [{'name': t} for t in tag_names]
                 packages.append(obj)
         return packages
