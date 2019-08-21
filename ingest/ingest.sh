@@ -78,7 +78,7 @@ marine_microbes()
 
 omg()
 {
-  # disabled pending resolution of https://github.com/muccg/bpa-archive-ops/issues/329
+  # disabled pending resolution of https://github.com/BioplatformsAustralia/bpa-archive-ops/issues/329
   # NB: no future data of this type is expected
   # apply omg-10x-raw-agrf
   apply omg-10xprocessed $*

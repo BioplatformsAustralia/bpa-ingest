@@ -892,7 +892,7 @@ class SepsisProteomicsSwathMSBaseSepsisMetadata(BaseSepsisMetadata):
 
 class SepsisProteomicsSwathMSCombinedSampleMetadata(BaseSepsisMetadata):
     """
-    see https://github.com/muccg/bpa-archive-ops/issues/163
+    see https://github.com/BioplatformsAustralia/bpa-archive-ops/issues/163
     this is a one-off, for a single dataset that was inadvertantly produced in this way
     as such, this ingest is deliberately minimal
     """

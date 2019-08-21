@@ -406,7 +406,7 @@ class BASEMetagenomicsMetadata(AMDBaseMetadata):
     }
     # these are packages from the pilot, which have missing metadata
     # we synthethise minimal packages for this data - see
-    # https://github.com/muccg/bpa-archive-ops/issues/140
+    # https://github.com/BioplatformsAustralia/bpa-archive-ops/issues/140
     missing_packages = [
         ('8154_2', 'H9BB6ADXX'),
         ('8158_2', 'H9BB6ADXX'),
