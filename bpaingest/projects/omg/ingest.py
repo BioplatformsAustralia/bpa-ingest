@@ -34,7 +34,7 @@ class OMGBaseMetadata(BaseMetadata):
         "Apply location generalisation for sensitive species found from ALA"
 
         def species_name(package):
-            return "{} {}".format(package['genus'], package['species'])
+            return "{} {}".format(package.get('genus', ''), package.get('species', ''))
 
         # prime the cache of responses
         names = sorted(set(species_name(p) for p in packages))
@@ -1084,7 +1084,12 @@ class OMGGenomicsDDRADMetadata(OMGBaseMetadata):
                 obj = row._asdict()
                 obj.pop('file')
                 objs[(obj['bpa_dataset_id'], obj['flowcell_id'])].append(obj)
+
             for (bpa_dataset_id, flowcell_id), row_objs in list(objs.items()):
+
+                if bpa_dataset_id is None:
+                    continue
+
                 obj = common_values(row_objs)
                 track_meta = self.track_meta.get(obj['ticket'])
 
@@ -1092,28 +1097,29 @@ class OMGGenomicsDDRADMetadata(OMGBaseMetadata):
                     if track_meta is None:
                         return None
                     return getattr(track_meta, k)
+
                 name = sample_id_to_ckan_name(bpa_dataset_id, self.ckan_data_type, flowcell_id)
-            obj.update({
-                'name': name,
-                'id': name,
-                'bpa_dataset_id': bpa_dataset_id,
-                'title': 'OMG Genomics ddRAD %s %s' % (bpa_dataset_id, flow_id),
-                'date_of_transfer': ingest_utils.get_date_isoformat(track_get('date_of_transfer')),
-                'data_type': track_get('data_type'),
-                'description': track_get('description'),
-                'folder_name': track_get('folder_name'),
-                'sample_submission_date': ingest_utils.get_date_isoformat(track_get('date_of_transfer')),
-                'contextual_data_submission_date': None,
-                'data_generated': ingest_utils.get_date_isoformat(track_get('date_of_transfer_to_archive')),
-                'archive_ingestion_date': ingest_utils.get_date_isoformat(track_get('date_of_transfer_to_archive')),
-                'dataset_url': track_get('download'),
-                'type': self.ckan_data_type,
-                'private': True,
-            })
-            ingest_utils.add_spatial_extra(obj)
-            tag_names = ['genomics-ddrad']
-            obj['tags'] = [{'name': t} for t in tag_names]
-            packages.append(obj)
+                obj.update({
+                    'name': name,
+                    'id': name,
+                    'bpa_dataset_id': bpa_dataset_id,
+                    'title': 'OMG Genomics ddRAD %s %s' % (bpa_dataset_id, flow_id),
+                    'date_of_transfer': ingest_utils.get_date_isoformat(track_get('date_of_transfer')),
+                    'data_type': track_get('data_type'),
+                    'description': track_get('description'),
+                    'folder_name': track_get('folder_name'),
+                    'sample_submission_date': ingest_utils.get_date_isoformat(track_get('date_of_transfer')),
+                    'contextual_data_submission_date': None,
+                    'data_generated': ingest_utils.get_date_isoformat(track_get('date_of_transfer_to_archive')),
+                    'archive_ingestion_date': ingest_utils.get_date_isoformat(track_get('date_of_transfer_to_archive')),
+                    'dataset_url': track_get('download'),
+                    'type': self.ckan_data_type,
+                    'private': True,
+                })
+                ingest_utils.add_spatial_extra(obj)
+                tag_names = ['genomics-ddrad']
+                obj['tags'] = [{'name': t} for t in tag_names]
+                packages.append(obj)
         return self.apply_location_generalisation(packages)
 
     def _get_resources(self):
@@ -1258,7 +1264,6 @@ class OMGGenomicsPacbioMetadata(OMGBaseMetadata):
             obj.update(context)
 
             ingest_utils.add_spatial_extra(obj)
-            self.apply_location_generalisation(obj)
             tag_names = ['pacbio', 'genomics', 'raw']
             obj['tags'] = [{'name': t} for t in tag_names]
             packages.append(obj)

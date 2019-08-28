@@ -104,7 +104,7 @@ digit_words = {
 }
 
 
-def csv_to_named_tuple(typname, fname, mode='r', additional_context=None, cleanup=None, dialect='excel'):
+def csv_to_named_tuple(typname, fname, mode='r', additional_context=None, cleanup=None, name_fn=None, dialect='excel'):
     if fname is None:
         return [], []
 
@@ -120,12 +120,17 @@ def csv_to_named_tuple(typname, fname, mode='r', additional_context=None, cleanu
             s = 'class_'
         return s
 
+    def default_name_fn(s):
+        return s
+
     additional_keys = []
     if additional_context is not None:
         additional_keys += list(sorted(additional_context.keys()))
+    if name_fn is None:
+        name_fn = default_name_fn
     with open(fname, mode) as fd:
         r = csv.reader(fd, dialect=dialect)
-        header = [clean_name(t) for t in next(r)] + additional_keys
+        header = [name_fn(clean_name(t)) for t in next(r)] + additional_keys
         typ = namedtuple(typname, header)
         rows = []
         for row in r:
