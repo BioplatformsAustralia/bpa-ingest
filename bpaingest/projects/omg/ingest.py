@@ -40,9 +40,13 @@ class OMGBaseMetadata(BaseMetadata):
         names = sorted(set(species_name(p) for p in packages))
         self.generaliser.ala_lookup.get_bulk(names)
 
+        cache = {}
         for package in packages:
             lat, lng = get_clean_number(package.get('latitude')), get_clean_number(package.get('longitude'))
-            generalised = self.generaliser.apply(species_name(package), lat, lng)
+            args = (species_name(package), lat, lng)
+            if args not in cache:
+                cache[args] = self.generaliser.apply(*args)
+            generalised = cache[args]
             if generalised:
                 package.update(generalised._asdict())
 
