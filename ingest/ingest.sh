@@ -134,13 +134,13 @@ run() {
 
 all()
 {
-  base
-  gbr
-  marine_microbes
-  omg
-  sepsis
-  # stemcell
-  wheat
+  base $*
+  gbr $*
+  marine_microbes $*
+  omg $*
+  sepsis $*
+  # stemcell $*
+  wheat $*
 }
 
 action="$1"
