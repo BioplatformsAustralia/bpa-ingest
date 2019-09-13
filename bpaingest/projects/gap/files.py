@@ -24,6 +24,8 @@ ONT_MINION_PATTERN= r"""
     (?P<run_id>FAK\d{5})_
     GAP_
     (?P<facility_id>(AGRF))_
-    ONTMinion\.tar
+    ONTMinion_
+    (?P<archive_type>\w+)
+    \.tar
 """
 ont_minion_re = re.compile(ONT_MINION_PATTERN, re.VERBOSE)

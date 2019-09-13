@@ -13,7 +13,9 @@ def test_illumina_shortread():
 
 def test_ont_minion_re():
     filenames = [
-        '79648_FAK90583_GAP_AGRF_ONTMinion.tar',
+        '79638_FAK90583_GAP_AGRF_ONTMinion_fast5.tar',
+        '79638_FAK90583_GAP_AGRF_ONTMinion_fastq_pass.tar',
+        '79638_FAK90583_GAP_AGRF_ONTMinion_sequencing_summary.tar',
     ]
     for filename in filenames:
         assert(ont_minion_re.match(filename) is not None)
