@@ -44,3 +44,4 @@ UNSW,14/6/19,10X Genomics/NovaSeq 6000- Leadbeateri DNA,40133_OMG_UNSW_10X_H7WTT
 BRF,14/08/2019,HiSeq 2500 100bp PE - bat exome DNA,SN877_0632_AMacDonald_OzMammals_Bat_gDNA_exome_capture,Illumina FASTQ,14/08/2019,,BPAOPS-840,(ingested)
 AGRF,28/08/2019,NextSeq ddRAD- data set ID 52611,AGRF_OMG_52611_H237FBGXC,Illumina FASTQ,29/08/2019,,BPAOPS-851,https://data.bioplatforms.com/dataset/bpa-omg-genomics-ddrad-102_100_100_52611-h237fbgxc
 ANU,28/08/2019,HiSeq 2500 100bp PE - exon capture marsupial,52583_60marsupials_fastq,Illumina FASTQ,28/08/2019,234,BPAOPS-849,(ingested)
+AGRF,17/09/2019,NovaSeq 6000- Whole Genome - 41600 and  41597,20190912_AGRF_BPA_OMG_HT25VDSXX,Illumian FASTQ,17/09/2019,,BPAOPS-856,(ingested)
