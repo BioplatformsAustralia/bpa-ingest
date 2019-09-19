@@ -1,6 +1,7 @@
 from .files import (
     illumina_shortread_re,
-    ont_minion_re)
+    ont_minion_re,
+    ont_promethion_re)
 
 
 def test_illumina_shortread():
@@ -19,3 +20,12 @@ def test_ont_minion_re():
     ]
     for filename in filenames:
         assert(ont_minion_re.match(filename) is not None)
+
+
+def test_ont_promethion_re():
+    filenames = [
+        '79638_PAD92744_GAP_AGRF_ONTPromethION_fast5_fail.tar',
+        '79638_PAD92744_GAP_AGRF_ONTPromethION_sequencing_summary.tar',
+    ]
+    for filename in filenames:
+        assert(ont_promethion_re.match(filename) is not None)

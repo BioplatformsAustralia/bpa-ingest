@@ -29,3 +29,14 @@ ONT_MINION_PATTERN= r"""
     \.tar
 """
 ont_minion_re = re.compile(ONT_MINION_PATTERN, re.VERBOSE)
+
+ONT_PROMETHION_PATTERN= r"""
+    (?P<sample_id>\d{4,6})_
+    (?P<run_id>PAD\d{5})_
+    GAP_
+    (?P<facility_id>(AGRF))_
+    ONTPromethION_
+    (?P<archive_type>\w+)
+    \.tar
+"""
+ont_promethion_re = re.compile(ONT_PROMETHION_PATTERN, re.VERBOSE)
