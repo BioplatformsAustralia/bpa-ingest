@@ -95,7 +95,7 @@ class GAPIlluminaShortreadMetadata(BaseMetadata):
         return packages
 
     def _get_resources(self):
-        logger.info("Ingesting Sepsis md5 file information from {0}".format(self.path))
+        logger.info("Ingesting md5 file information from {0}".format(self.path))
         resources = []
         for md5_file in glob(self.path + '/*.md5'):
             logger.info("Processing md5 file {0}".format(md5_file))
@@ -191,7 +191,7 @@ class GAPONTMinionMetadata(BaseMetadata):
         return packages
 
     def _get_resources(self):
-        logger.info("Ingesting Sepsis md5 file information from {0}".format(self.path))
+        logger.info("Ingesting md5 file information from {0}".format(self.path))
         resources = []
         for md5_file in glob(self.path + '/*.md5'):
             logger.info("Processing md5 file {0}".format(md5_file))
@@ -287,7 +287,7 @@ class GAPONTPromethionMetadata(BaseMetadata):
         return packages
 
     def _get_resources(self):
-        logger.info("Ingesting Sepsis md5 file information from {0}".format(self.path))
+        logger.info("Ingesting md5 file information from {0}".format(self.path))
         resources = []
         for md5_file in glob(self.path + '/*.md5'):
             logger.info("Processing md5 file {0}".format(md5_file))

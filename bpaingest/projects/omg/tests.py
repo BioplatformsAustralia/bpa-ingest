@@ -7,7 +7,8 @@ from .files import (
     hiseq_filename_re,
     ddrad_fastq_filename_re,
     ddrad_metadata_sheet_re,
-    pacbio_filename_re)
+    pacbio_filename_re,
+    ont_promethion_re)
 
 
 def test_tenxtar_raw_xlsx_filename_re():
@@ -115,3 +116,11 @@ def test_pacbio():
 
     for filename in filenames:
         assert(pacbio_filename_re.match(filename) is not None)
+
+def test_ont_promethion_re():
+    filenames = [
+        '79638_PAD92744_GAP_AGRF_ONTPromethION_fast5_fail.tar',
+        '79638_PAD92744_GAP_AGRF_ONTPromethION_sequencing_summary.tar',
+    ]
+    for filename in filenames:
+        assert(ont_promethion_re.match(filename) is not None)

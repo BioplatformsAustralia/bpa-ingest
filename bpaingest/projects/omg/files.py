@@ -107,3 +107,14 @@ PACBIO_PATTERN = r"""
     \.tar\.gz
 """
 pacbio_filename_re = re.compile(PACBIO_PATTERN, re.VERBOSE)
+
+ONT_PROMETHION_PATTERN= r"""
+    (?P<bpa_library_id>\d{4,6})_
+    (?P<run_id>PAD\d{5})_
+    GAP_
+    (?P<facility_id>(AGRF))_
+    ONTPromethION_
+    (?P<archive_type>\w+)
+    \.tar
+"""
+ont_promethion_re = re.compile(ONT_PROMETHION_PATTERN, re.VERBOSE)

@@ -1286,3 +1286,113 @@ class OMGGenomicsPacbioMetadata(OMGBaseMetadata):
                 resources.append(
                     ((ingest_utils.extract_ands_id(library_id), resource['run_date']), legacy_url, resource))
         return resources
+
+
+class OMGONTPromethionMetadata(OMGBaseMetadata):
+    organization = 'bpa-omg'
+    ckan_data_type = 'omg-ont-promethion'
+    technology = 'ont-promethion'
+    contextual_classes = common_context
+    metadata_patterns = [r'^.*\.md5$', r'^.*_metadata.*.*\.xlsx$']
+    metadata_urls = [
+        'https://downloads-qcif.bioplatforms.com/bpa/plants_staging/ont-promethion/',
+    ]
+    metadata_url_components = ('ticket',)
+    resource_linkage = ('bpa_library_id', 'run_id')
+    spreadsheet = {
+        'fields': [
+            fld('bpa_sample_id', 'bioplatforms_sample_id', coerce=ingest_utils.extract_ands_id),
+            fld('bpa_library_id', 'bioplatforms_library_id', coerce=ingest_utils.extract_ands_id),
+            fld('bpa_dataset_id', 'bioplatforms_dataset_id', coerce=ingest_utils.extract_ands_id),
+            fld('insert_size_range', 'insert size range'),
+            fld('library_construction_protocol', 'library construction protocol'),
+            fld('sequencer', 'sequencer'),
+            fld('flow_cell_type', 'flow cell type'),
+            fld('run_id', 'run id'),
+            fld('cell_postion', 'cell postion'),
+            fld('nanopore_software_version', 'nanopore software version'),
+        ],
+        'options': {
+            'sheet_name': None,
+            'header_length': 2,
+            'column_name_row_index': 1,
+        }
+    }
+    md5 = {
+        'match': [
+            files.ont_promethion_re
+        ],
+        'skip': [
+            re.compile(r'^.*_metadata\.xlsx$'),
+            re.compile(r'^.*SampleSheet.*'),
+            re.compile(r'^.*TestFiles\.exe.*'),
+        ]
+    }
+
+    def __init__(self, metadata_path, contextual_metadata=None, metadata_info=None):
+        super().__init__()
+        self.path = Path(metadata_path)
+        self.contextual_metadata = contextual_metadata
+        self.metadata_info = metadata_info
+        self.track_meta = OMGTrackMetadata()
+
+    def _get_packages(self):
+        logger.info("Ingesting OMG metadata from {0}".format(self.path))
+        packages = []
+        for fname in glob(self.path + '/*.xlsx'):
+            logger.info("Processing OMG metadata file {0}".format(fname))
+            rows = self.parse_spreadsheet(fname, self.metadata_info)
+
+            def track_get(k):
+                if track_meta is None:
+                    return None
+                return getattr(track_meta, k)
+
+            for row in rows:
+                track_meta = self.track_meta.get(row.ticket)
+                bpa_library_id = row.bpa_library_id
+                obj = row._asdict()
+                name = sample_id_to_ckan_name(bpa_library_id.split('/')[-1], self.ckan_data_type)
+
+                print(obj)
+
+                for contextual_source in self.contextual_metadata:
+                    obj.update(contextual_source.get(obj['bpa_sample_id'], obj['bpa_library_id']))
+
+                obj.update({
+                    'title': 'OMG ONT PromethION {} {}'.format(obj['bpa_sample_id'], row.run_id),
+                    'notes': '%s. %s.' % (obj.get('common_name', ''), obj.get('institution_name', '')),
+                    'date_of_transfer': ingest_utils.get_date_isoformat(track_get('date_of_transfer')),
+                    'data_type': track_get('data_type'),
+                    'description': track_get('description'),
+                    'folder_name': track_get('folder_name'),
+                    'sample_submission_date': ingest_utils.get_date_isoformat(track_get('date_of_transfer')),
+                    'contextual_data_submission_date': None,
+                    'data_generated': ingest_utils.get_date_isoformat(track_get('date_of_transfer_to_archive')),
+                    'archive_ingestion_date': ingest_utils.get_date_isoformat(track_get('date_of_transfer_to_archive')),
+                    'dataset_url': track_get('download'),
+                    'name': name,
+                    'id': name,
+                    'type': self.ckan_data_type,
+                    'private': True,
+                })
+                tag_names = ['ont-promethion']
+                obj['tags'] = [{'name': t} for t in tag_names]
+                packages.append(obj)
+        return self.apply_location_generalisation(packages)
+
+    def _get_resources(self):
+        logger.info("Ingesting md5 file information from {0}".format(self.path))
+        resources = []
+        for md5_file in glob(self.path + '/*.md5'):
+            logger.info("Processing md5 file {0}".format(md5_file))
+            for filename, md5, file_info in self.parse_md5file(md5_file):
+                resource = file_info.copy()
+                resource['bpa_library_id'] = ingest_utils.extract_ands_id(resource['bpa_library_id'])
+                resource['md5'] = resource['id'] = md5
+                resource['name'] = filename
+                resource['resource_type'] = self.ckan_data_type
+                xlsx_info = self.metadata_info[os.path.basename(md5_file)]
+                legacy_url = urljoin(xlsx_info['base_url'], filename)
+                resources.append(((resource['bpa_library_id'], resource['run_id']), legacy_url, resource))
+        return resources

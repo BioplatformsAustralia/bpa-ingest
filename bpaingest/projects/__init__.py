@@ -50,7 +50,8 @@ from .omg.ingest import (
     OMGGenomicsNovaseqMetadata,
     OMGGenomicsHiSeqMetadata,
     OMGGenomicsDDRADMetadata,
-    OMGGenomicsPacbioMetadata)
+    OMGGenomicsPacbioMetadata,
+    OMGONTPromethionMetadata)
 
 
 class ProjectInfo:
@@ -85,6 +86,7 @@ class ProjectInfo:
             OMGGenomicsHiSeqMetadata,
             OMGGenomicsDDRADMetadata,
             OMGGenomicsPacbioMetadata,
+            OMGONTPromethionMetadata,
         ],
         'sepsis': [
             SepsisGenomicsMiseqMetadata,
