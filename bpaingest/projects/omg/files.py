@@ -24,7 +24,7 @@ exon_filename_re = re.compile(EXON_FILENAME_PATTERN, re.VERBOSE)
 NOVASEQ_FILENAME_PATTERN = r"""
     (?P<bpa_library_id>\d{4,6})_
     (?P<voucher_id>\w+)_
-    pool_
+    (pool_)?
     (?P<flow_cell_id>\w{9,10})_
     (?P<index>[G|A|T|C|-]*)_
     (?P<lane>L\d{3})_

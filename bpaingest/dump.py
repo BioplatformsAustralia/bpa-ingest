@@ -27,9 +27,17 @@ def linkage_qc(state, data_type_meta):
                 logger.error("{}: more than one package linked for tuple {}".format(data_type, linkage_tpl))
             resource_linkage_package_id[linkage_tpl] = package_obj['id']
 
+        linked_tuples = set()
         for resource_linkage, legacy_url, resource_obj in resources:
+            linked_tuples.add(resource_linkage)
             if resource_linkage not in resource_linkage_package_id:
                 logger.error("{}: dangling resource: {}".format(data_type, resource_linkage))
+
+        for linkage_tpl, package_id in resource_linkage_package_id.items():
+            if linkage_tpl not in linked_tuples:
+                logger.error("{}: package has no linked resources, tuple: {}".format(
+                    package_id,
+                    linkage_tpl))
 
     for data_type, (p, r) in counts.items():
         logger.debug("{}: {} packages, {} resources".format(data_type, p, r))

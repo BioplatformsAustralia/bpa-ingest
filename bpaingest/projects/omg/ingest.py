@@ -716,7 +716,7 @@ class OMGGenomicsNovaseqMetadata(OMGBaseMetadata):
         'https://downloads-qcif.bioplatforms.com/bpa/omg_staging/genomics-novaseq/',
     ]
     metadata_url_components = ('ticket',)
-    resource_linkage = ('bpa_library_id', 'flowcell_id', 'library_index_id')
+    resource_linkage = ('bpa_library_id', 'flowcell_id', 'library_index_sequence')
     spreadsheet = {
         'fields': [
             fld('genus', 'genus'),

@@ -191,33 +191,9 @@ def sync_package_resources(ckan, package_obj, resource_id_legacy_url, resources,
 
 
 def reupload_resources(ckan, to_reupload, resource_id_legacy_url, auth, num_threads):
-    # this is not a lot of code, but it's a lot of the time we spend in
-    # this script. hence, the uploads run in parallel.
-    def upload_worker():
-        while True:
-            task = q.get()
-            if task is None:
-                break
-            reupload_obj, legacy_url = task
-            reupload_resource(ckan, reupload_obj, legacy_url, auth)
-            q.task_done()
-
-    q = Queue()
-    threads = []
-    for i in range(num_threads):
-        t = Thread(target=upload_worker)
-        threads.append(t)
-        t.start()
-
     logger.info("%d objects to be re-uploaded" % (len(to_reupload)))
-    for item in to_reupload:
-        q.put(item)
-    q.join()
-
-    for thread in threads:
-        q.put(None)
-    for thread in threads:
-        thread.join()
+    for reupload_obj, legacy_url in to_reupload:
+        reupload_resource(ckan, reupload_obj, legacy_url, auth)
 
 
 def sync_resources(ckan, resources, resource_linkage_attrs, ckan_packages, auth,

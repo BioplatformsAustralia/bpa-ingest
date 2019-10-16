@@ -263,17 +263,33 @@ def reupload_resource(ckan, ckan_obj, legacy_url, auth=None):
         return
     try:
         logger.debug("re-uploading from tempfile: %s" % (path))
-        upload_obj = ckan_obj.copy()
-        upload_obj['url'] = 'dummy-value'  # required by CKAN < 2.5
-        for i in range(UPLOAD_RETRY):
-            try:
-                with open(path, "rb") as fd:
-                    updated_obj = ckan_method(ckan, 'resource', 'update')(upload=fd, id=upload_obj['id'])
-                logger.debug("upload successful: %s" % (updated_obj['url']))
-                break
-            except Exception as e:
-                logger.error("attempt %d/%d - upload failed: %s" % (i + 1, UPLOAD_RETRY, str(e)))
-        return True
+
+        # FIXME: paramaterise the target bucket name
+        filename = path.split('/')[-1]
+        s3_destination = 's3://bpa-ckan-prod/prodenv/resources/{}/{}'.format(
+            ckan_obj['id'],
+            filename)
+        s3cmd_args = [
+            'aws',
+            's3',
+            'cp',
+            path,
+            s3_destination,
+        ]
+        logger.debug(s3cmd_args)
+        status = subprocess.call(s3cmd_args)
+        if status == 0:
+            # patch the object in CKAN to have full URL
+            resource_url = "{}/dataset/{}/resource/{}/download/{}".format(
+                ckan.address,
+                ckan_obj['package_id'],
+                ckan_obj['id'],
+                filename)
+            ckan.action.resource_patch(
+                id=ckan_obj['id'],
+                url=resource_url)
+        else:
+            logger.error("upload failed: status {}".format(status))
     finally:
         os.unlink(path)
         os.rmdir(tempdir)

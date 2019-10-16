@@ -52,6 +52,7 @@ def test_exon():
 def test_novaseq():
     filenames = [
         '53911_ABTC50957_pool_HJKTTDSXX_CCAAGTCT-AAGGATGA_L001_R1.fastq.gz',
+        '54311_NMVC37546_HT25VDSXX_TGGATCGA-GTGCGATA_L003_R2.fastq.gz',
     ]
 
     for filename in filenames:
