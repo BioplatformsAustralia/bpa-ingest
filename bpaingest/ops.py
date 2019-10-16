@@ -287,7 +287,9 @@ def reupload_resource(ckan, ckan_obj, legacy_url, auth=None):
                 filename)
             ckan.action.resource_patch(
                 id=ckan_obj['id'],
-                url=resource_url)
+                url=resource_url,
+                url_type='upload',
+                size=os.path.getsize(path))
         else:
             logger.error("upload failed: status {}".format(status))
     finally:
