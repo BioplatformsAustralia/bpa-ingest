@@ -110,10 +110,10 @@ pacbio_filename_re = re.compile(PACBIO_PATTERN, re.VERBOSE)
 
 ONT_PROMETHION_PATTERN= r"""
     (?P<bpa_library_id>\d{4,6})_
-    (?P<run_id>PAD\d{5})_
-    GAP_
+    (?P<flowcell_id>PAD\d{5})_
+    OMG_
     (?P<facility_id>(AGRF))_
-    ONTPromethION_
+    ONTPromethion_
     (?P<archive_type>\w+)
     \.tar
 """

@@ -120,8 +120,7 @@ def test_pacbio():
 
 def test_ont_promethion_re():
     filenames = [
-        '79638_PAD92744_GAP_AGRF_ONTPromethION_fast5_fail.tar',
-        '79638_PAD92744_GAP_AGRF_ONTPromethION_sequencing_summary.tar',
+        '54312_PAD87066_OMG_AGRF_ONTPromethion_fast5_pass.tar'
     ]
     for filename in filenames:
         assert(ont_promethion_re.match(filename) is not None)

@@ -1295,27 +1295,49 @@ class OMGONTPromethionMetadata(OMGBaseMetadata):
     contextual_classes = common_context
     metadata_patterns = [r'^.*\.md5$', r'^.*_metadata.*.*\.xlsx$']
     metadata_urls = [
-        'https://downloads-qcif.bioplatforms.com/bpa/plants_staging/ont-promethion/',
+        'https://downloads-qcif.bioplatforms.com/bpa/omg_staging/ont-promethion/',
     ]
     metadata_url_components = ('ticket',)
-    resource_linkage = ('bpa_library_id', 'run_id')
+    resource_linkage = ('bpa_library_id', 'flowcell_id')
     spreadsheet = {
         'fields': [
-            fld('bpa_sample_id', 'bioplatforms_sample_id', coerce=ingest_utils.extract_ands_id),
-            fld('bpa_library_id', 'bioplatforms_library_id', coerce=ingest_utils.extract_ands_id),
-            fld('bpa_dataset_id', 'bioplatforms_dataset_id', coerce=ingest_utils.extract_ands_id),
-            fld('insert_size_range', 'insert size range'),
-            fld('library_construction_protocol', 'library construction protocol'),
-            fld('sequencer', 'sequencer'),
-            fld('flow_cell_type', 'flow cell type'),
-            fld('run_id', 'run id'),
-            fld('cell_postion', 'cell postion'),
-            fld('nanopore_software_version', 'nanopore software version'),
+            fld('genus', 'genus'),
+            fld('species', 'species'),
+            fld('voucher_id', 'voucher_id'),
+            fld('bpa_dataset_id', 'bpa_dataset_id', coerce=ingest_utils.extract_ands_id),
+            fld('bpa_library_id', 'bpa_library_id', coerce=ingest_utils.extract_ands_id),
+            fld('bpa_sample_id', 'bpa_sample_id', coerce=ingest_utils.extract_ands_id),
+            fld('facility_sample_id', 'facility_sample_id'),
+            fld('library_type', 'library_type'),
+            fld('library_prep_date', 'library_prep_date', coerce=ingest_utils.get_date_isoformat),
+            fld('library_prepared_by', 'library_prepared_by'),
+            fld('library_prep_method', 'library_prep_method'),
+            fld('experimental_design', 'experimental_design'),
+            fld('omg_project', 'omg_project'),
+            fld('data_custodian', 'data_custodian'),
+            fld('dna_treatment', 'dna_treatment'),
+            fld('library_index_id', 'library_index_id'),
+            fld('library_index_sequence', 'library_index_sequence'),
+            fld('library_oligo_sequence', 'library_oligo_sequence'),
+            fld('library_pcr_reps', 'library_pcr_reps'),
+            fld('library_pcr_cycles', 'library_pcr_cycles'),
+            fld('library_ng_ul', 'library_ng_ul'),
+            fld('library_comments', 'library_comments'),
+            fld('library_location', 'library_location'),
+            fld('library_status', 'library_status'),
+            fld('sequencing_facility', 'sequencing_facility'),
+            fld('n_libraries_pooled', 'n_libraries_pooled'),
+            fld('bpa_work_order', 'bpa_work_order', coerce=ingest_utils.get_int),
+            fld('sequencing_platform', 'sequencing_platform'),
+            fld('sequence_length', 'sequence_length'),
+            fld('flowcell_id', 'flowcell_id'),
+            fld('software_version', 'software_version'),
+            fld('file', 'file'),
         ],
         'options': {
-            'sheet_name': None,
-            'header_length': 2,
-            'column_name_row_index': 1,
+            'sheet_name': 'OMG_library_metadata',
+            'header_length': 1,
+            'column_name_row_index': 0,
         }
     }
     md5 = {
@@ -1354,13 +1376,11 @@ class OMGONTPromethionMetadata(OMGBaseMetadata):
                 obj = row._asdict()
                 name = sample_id_to_ckan_name(bpa_library_id.split('/')[-1], self.ckan_data_type)
 
-                print(obj)
-
                 for contextual_source in self.contextual_metadata:
                     obj.update(contextual_source.get(obj['bpa_sample_id'], obj['bpa_library_id']))
 
                 obj.update({
-                    'title': 'OMG ONT PromethION {} {}'.format(obj['bpa_sample_id'], row.run_id),
+                    'title': 'OMG ONT PromethION {} {}'.format(obj['bpa_sample_id'], row.flowcell_id),
                     'notes': '%s. %s.' % (obj.get('common_name', ''), obj.get('institution_name', '')),
                     'date_of_transfer': ingest_utils.get_date_isoformat(track_get('date_of_transfer')),
                     'data_type': track_get('data_type'),
@@ -1394,5 +1414,5 @@ class OMGONTPromethionMetadata(OMGBaseMetadata):
                 resource['resource_type'] = self.ckan_data_type
                 xlsx_info = self.metadata_info[os.path.basename(md5_file)]
                 legacy_url = urljoin(xlsx_info['base_url'], filename)
-                resources.append(((resource['bpa_library_id'], resource['run_id']), legacy_url, resource))
+                resources.append(((resource['bpa_library_id'], resource['flowcell_id']), legacy_url, resource))
         return resources
