@@ -27,7 +27,7 @@ def size_valid(resource):
 
 
 def is_hashed(resource):
-    return size_valid(resource) and resource.get('s3etag_33554432')
+    return size_valid(resource) and resource.get('s3etag_134217728')
 
 
 def calculate_hashes(ckan, mirror_path, legacy_url, resource):
@@ -38,7 +38,7 @@ def calculate_hashes(ckan, mirror_path, legacy_url, resource):
     if not size_valid(resource):
         patch_obj['size'] = str(os.stat(fpath).st_size)
 
-    if not resource.get('s3etag_33554432'):
+    if not resource.get('s3etag_134217728'):
         hashes = generate_hashes(fpath)
         if hashes['md5'] != resource['md5']:
             logger.critical(
