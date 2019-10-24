@@ -8,7 +8,7 @@ logger = make_logger(__name__)
 # maximum of 10k chunks in an object, so the chunk size necessarily
 # increases from the default of 8MB to 16MB to 32MB as the file size
 # increases. almost all objects BPA have will fit in 8MB chunks
-S3_CHUNK_SIZES = [(t * (1 << 20)) for t in (8, 16, 32)]
+S3_CHUNK_SIZES = [(t * (1 << 20)) for t in (8, 16, 32, 64, 128)]
 S3_HASH_FIELDS = ['s3etag_%d' % t for t in S3_CHUNK_SIZES]
 
 
