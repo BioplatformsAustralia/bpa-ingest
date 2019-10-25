@@ -1336,7 +1336,7 @@ class SepsisTranscriptomicsAnalysedMetadata(BaseSepsisAnalysedMetadata):
     metadata_patterns = [r'^.*\.md5$', r'^.*_metadata\.xlsx$']
     organization = 'bpa-sepsis'
     ckan_data_type = 'arp-transcriptomics-analysed'
-    resource_linkage = ('folder_name',)
+    resource_linkage = ('ticket',)
     omics = 'transcriptomics'
     technology = 'analysed'
     spreadsheet = {
@@ -1385,23 +1385,22 @@ class SepsisTranscriptomicsAnalysedMetadata(BaseSepsisAnalysedMetadata):
         logger.info("Ingesting Sepsis metadata from {0}".format(self.path))
         # we have one package per Zip of analysed data, and we take the common
         # meta-data for each bpa-id
-        folder_rows = defaultdict(list)
+        ticket_rows = defaultdict(list)
         for fname in glob(self.path + '/*.xlsx'):
             logger.info("Processing Sepsis metadata file {0}".format(fname))
             xlsx_info = self.metadata_info[os.path.basename(fname)]
             ticket = xlsx_info['ticket']
             if not ticket:
                 continue
-            folder_name = self.google_track_meta.get(ticket).folder_name
             for row in self.parse_spreadsheet(fname, self.metadata_info):
-                folder_rows[(ticket, folder_name)].append(row)
+                ticket_rows[ticket].append(row)
         packages = []
-        for (ticket, folder_name), rows in list(folder_rows.items()):
+        for ticket, rows in list(ticket_rows.items()):
             obj = common_values([t._asdict() for t in rows])
             # we're hitting the 100-char limit, so we have to hash the folder name when
             # generating the CKAN name
-            folder_name_md5 = md5hash(folder_name.encode('utf8')).hexdigest()
-            name = sample_id_to_ckan_name(folder_name_md5, self.ckan_data_type)
+            ticket_md5 = md5hash(ticket.encode('utf8')).hexdigest()
+            name = sample_id_to_ckan_name(ticket_md5, self.ckan_data_type)
             track_meta = self.google_track_meta.get(ticket)
             sample_ids = list(sorted(set([t.sample_id for t in rows if t.sample_id is not None])))
             obj.update(self.google_drive_track_to_object(track_meta))
@@ -1409,8 +1408,8 @@ class SepsisTranscriptomicsAnalysedMetadata(BaseSepsisAnalysedMetadata):
             obj.update({
                 'name': name,
                 'id': name,
-                'notes': '%s' % (folder_name),
-                'title': '%s' % (folder_name),
+                'notes': '%s' % (ticket),
+                'title': '%s' % (ticket),
                 'omics': 'transcriptomics',
                 'sample_ids': ', '.join(sample_ids),
                 'data_generated': 'True',
@@ -1418,7 +1417,7 @@ class SepsisTranscriptomicsAnalysedMetadata(BaseSepsisAnalysedMetadata):
                 'date_of_transfer': ingest_utils.get_date_isoformat(track_meta.date_of_transfer),
                 'data_type': track_meta.data_type,
                 'description': track_meta.description,
-                'folder_name': track_meta.folder_name,
+                'ticket': ticket,
                 'sample_submission_date': ingest_utils.get_date_isoformat(track_meta.date_of_transfer),
                 'archive_ingestion_date': ingest_utils.get_date_isoformat(track_meta.date_of_transfer_to_archive),
                 'dataset_url': track_meta.download,
@@ -1447,9 +1446,9 @@ class SepsisTranscriptomicsAnalysedMetadata(BaseSepsisAnalysedMetadata):
                 resource['md5'] = resource['id'] = md5
                 resource['name'] = filename
                 xlsx_info = self.metadata_info[os.path.basename(md5_file)]
-                folder_name = self.google_track_meta.get(xlsx_info['ticket']).folder_name
+                ticket = xlsx_info['ticket']
                 legacy_url = urljoin(xlsx_info['base_url'], filename)
-                resources.append(((folder_name,), legacy_url, resource))
+                resources.append(((ticket,), legacy_url, resource))
         return resources
 
 
