@@ -1402,14 +1402,16 @@ class SepsisTranscriptomicsAnalysedMetadata(BaseSepsisAnalysedMetadata):
             ticket_md5 = md5hash(ticket.encode('utf8')).hexdigest()
             name = sample_id_to_ckan_name(ticket_md5, self.ckan_data_type)
             track_meta = self.google_track_meta.get(ticket)
+            folder_name = track_meta.folder_name
             sample_ids = list(sorted(set([t.sample_id for t in rows if t.sample_id is not None])))
             obj.update(self.google_drive_track_to_object(track_meta))
             self.apply_common_context(obj, sample_ids)
             obj.update({
                 'name': name,
                 'id': name,
-                'notes': '%s' % (ticket),
-                'title': '%s' % (ticket),
+                'notes': '%s' % (folder_name),
+                'title': '%s' % (folder_name),
+                'folder_name': '%s' % (folder_name),
                 'omics': 'transcriptomics',
                 'sample_ids': ', '.join(sample_ids),
                 'data_generated': 'True',
