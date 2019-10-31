@@ -41,7 +41,8 @@ from .wheat_pathogens_genomes.ingest import WheatPathogensGenomesMetadata
 from .gap.ingest import (
     GAPIlluminaShortreadMetadata,
     GAPONTPromethionMetadata,
-    GAPONTMinionMetadata)
+    GAPONTMinionMetadata,
+    GAPGenomics10XMetadata)
 from .omg.ingest import (
     OMG10XProcessedIlluminaMetadata,
     OMG10XRawIlluminaMetadata,
@@ -66,6 +67,7 @@ class ProjectInfo:
             GAPIlluminaShortreadMetadata,
             GAPONTMinionMetadata,
             GAPONTPromethionMetadata,
+            GAPGenomics10XMetadata,
         ],
         'gbr': [
             GbrAmpliconsMetadata,

@@ -1,7 +1,8 @@
 from .files import (
     illumina_shortread_re,
     ont_minion_re,
-    ont_promethion_re)
+    ont_promethion_re,
+    genomics_10x_re)
 
 
 def test_illumina_shortread():
@@ -29,3 +30,12 @@ def test_ont_promethion_re():
     ]
     for filename in filenames:
         assert(ont_promethion_re.match(filename) is not None)
+
+
+def test_genomics_10x_re():
+    filenames = [
+        '79638_GAP_AGRF_10X_HFLC3DRXX_processed.tar',
+        '79638_GAP_AGRF_HFLC3DRXX_bcl.tar',
+    ]
+    for filename in filenames:
+        assert(genomics_10x_re.match(filename) is not None)

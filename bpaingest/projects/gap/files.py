@@ -40,3 +40,10 @@ ONT_PROMETHION_PATTERN= r"""
     \.tar
 """
 ont_promethion_re = re.compile(ONT_PROMETHION_PATTERN, re.VERBOSE)
+
+GENOMICS_10X_PATTERN= r"""
+    (?P<sample_id>\d{4,6})_
+    .*
+    \.tar
+"""
+genomics_10x_re = re.compile(GENOMICS_10X_PATTERN, re.VERBOSE)
