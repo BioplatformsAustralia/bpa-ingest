@@ -365,7 +365,7 @@ class GAPGenomics10XMetadata(BaseMetadata):
                 for contextual_source in self.contextual_metadata:
                     obj.update(contextual_source.get(sample_id))
                 obj.update({
-                    'title': 'GAP Illumina short read {} {}'.format(sample_id, flow_cell_id),
+                    'title': 'GAP Genomics 10X {} {}'.format(sample_id, flow_cell_id),
                     'notes': '{}, {}'.format(obj['scientific_name'], obj['sample_submitter_name']),
                     'sample_id': sample_id,
                     'name': name,
@@ -375,7 +375,7 @@ class GAPGenomics10XMetadata(BaseMetadata):
                     'private': True,
                     'data_generated': True,
                 })
-                tag_names = ['genomics', 'illumina-shortread', clean_tag_name(obj['scientific_name'])]
+                tag_names = ['genomics', '10x', clean_tag_name(obj['scientific_name'])]
                 obj['tags'] = [{'name': t} for t in tag_names]
                 packages.append(obj)
         return packages
