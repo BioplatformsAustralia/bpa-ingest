@@ -159,7 +159,8 @@ class ExcelWrapper(object):
         for idx, s in enumerate(header):
             if s != '' and idx not in mapped_columns and idx not in skip_columns:
                 unmapped_columns.append(idx)
-                self._error("Column `{}' not mapped to an output field".format(s))
+                self._error("Column `{}' not mapped to an output field in `{}` `{}`".format(
+                    s, os.path.basename(self.file_name), self.sheet.name))
         if (len(unmapped_columns) > 0 or missing_columns) and self.suggest_template:
             self.print_template(header)
         return header, cmap
