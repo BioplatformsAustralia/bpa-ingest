@@ -497,6 +497,7 @@ class AustralianMicrobiomeSampleContextual(object):
             fld('latitude', 'latitude', units='decimal degrees', coerce=ingest_utils.get_clean_number),
             fld('longitude', 'longitude', units='decimal degrees', coerce=ingest_utils.get_clean_number),
             fld('depth', 'depth', units='m', coerce=ingest_utils.get_clean_number),
+            fld('sample_storage_method', 'sample_storage_method'),
             fld('geo_loc', 'geo_loc', units='country:subregion'),
             fld('location_description', 'location description'),
             fld('broad_land_use', 'broad land use'),

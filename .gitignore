@@ -14,3 +14,4 @@ venv/
 .#*
 tags
 test.json
+test.log
