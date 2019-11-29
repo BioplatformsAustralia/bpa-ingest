@@ -50,3 +50,5 @@ AGRF,20/09/2019,"NexteSeq ddRAD, data sets data sets 52588 & 52589",20190920_AGR
 AGRF,26/09/2019,"ONT-Promethion data- sample ID:41599, library ID:54310, data set ID:52612",20190919_OMG_AGRF_PAD87618 ,ONT fast5 and fastq,26/05/2019,,BPAOPS-861,(ingested)
 AGRF,26/09/2019,"ONT-Promethion data- sample ID:41595, library ID:54312, data set ID:52614",20190919_OMG_AGRF_PAD87066,ONT fast5 and fastq,26/05/2019,,BPAOPS-860,(ingested)
 AGRF,24/10/2019,NextSeq ddRAD- data set ID 52617,AGRF_OMG_52617_H7VWWBGXC,Illumina FASTQ,24/10/2019,,BPAOPS-871,(ingested)
+AGRF,24/10/2019,NextSeq ddRAD- data set ID 52618,AGRF_OMG_H7VHWBGXC_52618,Illumina FASTQ,24/10/2019,,BPAOPS-870,(ingested)
+UNSW,25/11/19,10X Genomics/NovaSeq 6000- Dasyurus DNA,54608_OMG_UNSW_10X_HGYCLDRXX,Illumina FASTQ,25/11/19,,BPAOPS-874,(ingested)
