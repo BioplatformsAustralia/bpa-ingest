@@ -15,7 +15,7 @@ def date_or_str(v):
 
 
 class OMGSampleContextual(object):
-    metadata_urls = ['https://downloads-qcif.bioplatforms.com/bpa/omg_staging/metadata/2019-08-28/']
+    metadata_urls = ['https://downloads-qcif.bioplatforms.com/bpa/omg_staging/metadata/2019-11-19/']
     metadata_patterns = [re.compile(r'^OMG_samples_metadata.*\.xlsx$')]
     name = 'omg-sample-contextual'
 
@@ -68,7 +68,7 @@ class OMGSampleContextual(object):
             fld('birth_date', 'birth_date', coerce=date_or_str),
             fld('death_date', 'death_date', coerce=date_or_str),
             fld('associated_media', 'associated_media'),
-            fld('ancilliary_notes', 'ancilliary_notes'),
+            fld('ancillary_notes', 'ancillary_notes'),
             fld('barcode_id', 'barcode_id'),
             fld('ala_specimen_url', 'ala_specimen_url'),
             fld('prior_genetics', 'prior_genetics'),
@@ -84,6 +84,7 @@ class OMGSampleContextual(object):
             fld('conservation_sample', 'conservation_sample'),
             fld('conservation_status', 'conservation_status'),
             fld('trace_lab', 'trace_lab'),
+            fld('type_status', 'type_status'),
         ]
 
         wrapper = ExcelWrapper(
@@ -120,7 +121,7 @@ class OMGSampleContextual(object):
 class OMGLibraryContextual(object):
     # this spreadsheet was only used for early data.
     # for more recent data, it is included in the transfer metadata
-    metadata_urls = ['https://downloads-qcif.bioplatforms.com/bpa/omg_staging/metadata/2019-08-28/']
+    metadata_urls = ['https://downloads-qcif.bioplatforms.com/bpa/omg_staging/metadata/2019-11-19/']
     metadata_patterns = [re.compile(r'^OMG_library_metadata.*\.xlsx$')]
     name = 'omg-library-contextual'
 
