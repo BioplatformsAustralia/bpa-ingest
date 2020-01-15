@@ -10,11 +10,11 @@ from ...libs import ingest_utils
 from ...libs.excel_wrapper import make_field_definition as fld
 from ...util import make_logger, sample_id_to_ckan_name, clean_tag_name
 from . import files
-from .contextual import GAPSampleContextual
+from .contextual import GAPLibraryContextual
 from .tracking import GAPTrackMetadata
 
 logger = make_logger(__name__)
-common_context = [GAPSampleContextual]
+common_context = [GAPLibraryContextual]
 
 
 class GAPIlluminaShortreadMetadata(BaseMetadata):
@@ -73,11 +73,12 @@ class GAPIlluminaShortreadMetadata(BaseMetadata):
             track_meta = self.google_track_meta.get(ticket)
             for row in rows:
                 sample_id = row.sample_id
+                library_id = row.library_id
                 obj = row._asdict()
                 obj.update(track_meta._asdict())
                 name = sample_id_to_ckan_name(sample_id.split('/')[-1], self.ckan_data_type)
                 for contextual_source in self.contextual_metadata:
-                    obj.update(contextual_source.get(sample_id))
+                    obj.update(contextual_source.get(library_id))
                 obj.update({
                     'title': 'GAP Illumina short read {} {}'.format(sample_id, flow_cell_id),
                     'notes': '{}, {}'.format(obj['scientific_name'], obj['sample_submitter_name']),
@@ -170,11 +171,12 @@ class GAPONTMinionMetadata(BaseMetadata):
             track_meta = self.google_track_meta.get(ticket)
             for row in rows:
                 sample_id = row.sample_id
+                library_id = row.library_id
                 obj = row._asdict()
                 obj.update(track_meta._asdict())
                 name = sample_id_to_ckan_name(sample_id.split('/')[-1], self.ckan_data_type)
                 for contextual_source in self.contextual_metadata:
-                    obj.update(contextual_source.get(sample_id))
+                    obj.update(contextual_source.get(library_id))
                 obj.update({
                     'title': 'GAP ONT MinION {} {}'.format(sample_id, row.run_id),
                     'notes': '{}, {}'.format(obj['scientific_name'], obj['sample_submitter_name']),
@@ -266,11 +268,12 @@ class GAPONTPromethionMetadata(BaseMetadata):
             track_meta = self.google_track_meta.get(ticket)
             for row in rows:
                 sample_id = row.sample_id
+                library_id = row.library_id
                 obj = row._asdict()
                 obj.update(track_meta._asdict())
                 name = sample_id_to_ckan_name(sample_id.split('/')[-1], self.ckan_data_type)
                 for contextual_source in self.contextual_metadata:
-                    obj.update(contextual_source.get(sample_id))
+                    obj.update(contextual_source.get(library_id))
                 obj.update({
                     'title': 'GAP ONT PromethION {} {}'.format(sample_id, row.run_id),
                     'notes': '{}, {}'.format(obj['scientific_name'], obj['sample_submitter_name']),
@@ -359,11 +362,12 @@ class GAPGenomics10XMetadata(BaseMetadata):
             track_meta = self.google_track_meta.get(ticket)
             for row in rows:
                 sample_id = row.sample_id
+                library_id = row.library_id
                 obj = row._asdict()
                 obj.update(track_meta._asdict())
                 name = sample_id_to_ckan_name(sample_id.split('/')[-1], self.ckan_data_type)
                 for contextual_source in self.contextual_metadata:
-                    obj.update(contextual_source.get(sample_id))
+                    obj.update(contextual_source.get(library_id))
                 obj.update({
                     'title': 'GAP Genomics 10X {} {}'.format(sample_id, flow_cell_id),
                     'notes': '{}, {}'.format(obj['scientific_name'], obj['sample_submitter_name']),
