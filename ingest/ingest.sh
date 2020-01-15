@@ -126,6 +126,9 @@ wheat() {
 
 gap() {
   apply gap-illumina-shortread $*
+  apply gap-ont-minion $*
+  apply gap-ont-promethion $*
+  apply gap-genomics-10x $*
 }
 
 run() {
