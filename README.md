@@ -61,3 +61,32 @@ To store encrypted data at a key, this pattern works
     $ aws s3 cp config.enc s3://bucket/key
 
 
+## Local development:
+For the development environment, you will need to have your local dev environment for bpa-ckan (consider dockercompose-bpa-ckan to do this).
+
+Before you start, ensure you have installed Python 3.7
+
+Bpa-ingest, atm, is just a python virtualenv (on command line),so to initialise a dev working environment:
+```
+cd bpa-ingest
+git checkout next_release
+git pull origin next_release
+python3 -m venv ~/.virtual/bpa-ingest
+. ~/.virtual/bpa-ingest/bin/activate
+pip install -r requirements.txt
+python setup.py install
+python setup.py develop
+```
+
+Then source the environment variables (including API key):
+
+
+```
+. /path/to/your/bpa.env
+
+# dump the target state of the data portal to a JSON file for one data type
+bpa-ingest -p /tmp/dump-metadata/ dumpstate test.json --dump-re 'omg-genomics-ddrad'
+
+```
+
+Look in /tmp/dump-metadata/ and you will see the working set of metadata sources used by the tool.
