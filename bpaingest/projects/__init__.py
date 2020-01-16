@@ -26,16 +26,16 @@ from .sepsis.ingest import (
     SepsisTranscriptomicsAnalysedMetadata,
     SepsisMetabolomicsAnalysedMetadata,
     SepsisGenomicsAnalysedMetadata)
-# from .stemcells.ingest import (
-#     StemcellsTranscriptomeMetadata,
-#     StemcellsSmallRNAMetadata,
-#     StemcellsSingleCellRNASeqMetadata,
-#     StemcellsMetabolomicsMetadata,
-#     StemcellsProteomicsMetadata,
-#     StemcellsProteomicsPoolMetadata,
-#     StemcellsProteomicsAnalysedMetadata,
-#     StemcellsMetabolomicsAnalysedMetadata,
-#     StemcellsTranscriptomeAnalysedMetadata)
+from .stemcells.ingest import (
+    StemcellsTranscriptomeMetadata,
+    StemcellsSmallRNAMetadata,
+    StemcellsSingleCellRNASeqMetadata,
+    StemcellsMetabolomicsMetadata,
+    StemcellsProteomicsMetadata,
+    StemcellsProteomicsPoolMetadata,
+    StemcellsProteomicsAnalysedMetadata,
+    StemcellsMetabolomicsAnalysedMetadata,
+    StemcellsTranscriptomeAnalysedMetadata)
 from .wheat_cultivars.ingest import WheatCultivarsMetadata
 from .wheat_pathogens_genomes.ingest import WheatPathogensGenomesMetadata
 from .gap.ingest import (
@@ -107,17 +107,17 @@ class ProjectInfo:
             SepsisProteomicsAnalysedMetadata,
             SepsisProteomicsProteinDatabaseMetadata,
         ],
-        # 'stemcells': [
-        #     StemcellsTranscriptomeMetadata,
-        #     StemcellsSmallRNAMetadata,
-        #     StemcellsSingleCellRNASeqMetadata,
-        #     StemcellsMetabolomicsMetadata,
-        #     StemcellsProteomicsMetadata,
-        #     StemcellsProteomicsPoolMetadata,
-        #     StemcellsProteomicsAnalysedMetadata,
-        #     StemcellsMetabolomicsAnalysedMetadata,
-        #     StemcellsTranscriptomeAnalysedMetadata,
-        # ],
+        'stemcells': [
+            StemcellsTranscriptomeMetadata,
+            StemcellsSmallRNAMetadata,
+            StemcellsSingleCellRNASeqMetadata,
+            StemcellsMetabolomicsMetadata,
+            StemcellsProteomicsMetadata,
+            StemcellsProteomicsPoolMetadata,
+            StemcellsProteomicsAnalysedMetadata,
+            StemcellsMetabolomicsAnalysedMetadata,
+            StemcellsTranscriptomeAnalysedMetadata,
+        ],
         'wheat-cultivars': [
             WheatCultivarsMetadata,
         ],
