@@ -78,10 +78,12 @@ python setup.py install
 python setup.py develop
 ```
 
-Then source the environment variables (including API key):
-
-
+Then (ensuring that you are still in python virtual env) source the environment variables (including API key), before running the ingest:
 ```
+# if not already in virtual env:
+. ~/.virtual/bpa-ingest/bin/activate
+
+# source the environment variables
 . /path/to/your/bpa.env
 
 # dump the target state of the data portal to a JSON file for one data type
@@ -90,3 +92,7 @@ bpa-ingest -p /tmp/dump-metadata/ dumpstate test.json --dump-re 'omg-genomics-dd
 ```
 
 Look in /tmp/dump-metadata/ and you will see the working set of metadata sources used by the tool.
+Remember to delete the contents of /tmp (or subdirectory you are dumping too), when re-running command:
+```
+rm -Rf ./tmp/
+```
