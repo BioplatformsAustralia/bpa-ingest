@@ -226,7 +226,7 @@ class BASENCBIContextual(NCBISRAContextual):
 class AustralianMicrobiomeSampleContextual(object):
     # we smash together the tabs, because there is one tab per sample type
     # each BPA ID should have only one entry (if it has one at all)
-    metadata_urls = ['https://downloads-qcif.bioplatforms.com/bpa/amd/metadata/contextual/2020-01-22/']
+    metadata_urls = ['https://downloads-qcif.bioplatforms.com/bpa/amd/metadata/contextual/2020-01-29/']
     metadata_patterns = [re.compile(r'^.*\.xlsx$')]
     name = 'amd-samplecontextual'
     field_specs = {
