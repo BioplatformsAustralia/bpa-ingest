@@ -7,7 +7,7 @@ setup(author="CCG, Murdoch University",
       keywords="",
       url="https://github.com/BioplatformsAustralia/bpa-ingest",
       name="bpaingest",
-      version="6.2.3",
+      version="6.2.4",
       packages=find_packages(exclude=["*.tests", "*.tests.*", "tests.*", "tests"]),
       entry_points={
           'console_scripts': [
