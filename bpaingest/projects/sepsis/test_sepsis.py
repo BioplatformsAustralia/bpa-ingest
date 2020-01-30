@@ -46,6 +46,7 @@ def test_metabolomics_lcms_gcms():
     filenames = [
         '25835_SEP_MA_LC-MS_SA2760-1-813-28029_Bio21-LC-QTOF-001.tar.gz',
         '50534_SEP_MA_LCMS_2900M-5-906-30612_Bio21-LC-QTOF-6545.tar.gz',
+        '51564_Sep_MA_LCMS_KPC2S-2-612-35212_Bio21_LC_QTOF_6545.d.tar.gz',
         '50557_SEP_MA_GCMS_2986M-4-907-30689_Bio21-GC-QQQ-Shimadzu.qgd',
         '51193_Sep_MA_GCMS_5448_6_594_34684_BIO21_GCQQQ_Shimadzu.qgd',
     ]
