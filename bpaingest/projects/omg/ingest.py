@@ -1046,6 +1046,7 @@ class OMGGenomicsDDRADMetadata(OMGBaseMetadata):
             fld('library_pool_oligo_sequence', 'library_pool_oligo_sequence'),
         ],
         'options': {
+            'sheet_name': 'OMG_library_metadata',
             'header_length': 1,
             'column_name_row_index': 0,
         }
