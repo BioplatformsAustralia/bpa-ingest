@@ -179,7 +179,7 @@ class GAPONTMinionMetadata(BaseMetadata):
                     obj.update(contextual_source.get(library_id))
                 obj.update({
                     'title': 'GAP ONT MinION {} {}'.format(sample_id, row.run_id),
-                    'notes': '{}, {}'.format(obj['scientific_name'], obj['sample_submitter_name']),
+                    'notes': '{}, {}'.format(obj.get('scientific_name', ''), obj.get('sample_submitter_name', '')),
                     'sample_id': sample_id,
                     'name': name,
                     'id': name,
