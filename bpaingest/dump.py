@@ -50,8 +50,11 @@ def dump_state(args):
     classes = sorted(project_info.metadata_info, key=lambda t: t['slug'])
     if args.dump_re:
         r = re.compile(args.dump_re, re.IGNORECASE)
-        classes = list(
+        new_classes = list(
             filter(lambda x: r.match(x['slug']), classes))
+        if len(new_classes) == 0:
+            logger.error('No matches, possibilities: {}'.format([t['slug'] for t in classes]))
+        classes = new_classes
     logger.info('dumping: {}'.format(', '.join(t['slug'] for t in classes)))
 
     data_type_meta = {}
