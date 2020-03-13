@@ -28,6 +28,7 @@ def test_ont_promethion_re():
     filenames = [
         '79638_PAD92744_GAP_AGRF_ONTPromethION_fast5_fail.tar',
         '79638_PAD92744_GAP_AGRF_ONTPromethION_sequencing_summary.tar',
+        '79639_PAE47351_GAP_AGRF_ONTPromethION_fast5_pass.tar',
     ]
     for filename in filenames:
         assert(ont_promethion_re.match(filename) is not None)
