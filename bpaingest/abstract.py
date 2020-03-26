@@ -1,6 +1,6 @@
 import os
-from .util import make_logger
-from urllib.parse import urlparse
+from .util import make_logger, xlsx_resource
+from urllib.parse import urlparse, urljoin
 from .libs.md5lines import MD5Parser
 from .libs.excel_wrapper import ExcelWrapper
 
@@ -103,6 +103,26 @@ class BaseMetadata:
 
     def __init__(self):
         self._packages = self._resources = None
+        self._linkage_xlsx = {}
+
+    def track_xlsx_resource(self, obj, fname):
+        """
+        track a spreadsheet that needs to be uploaded into the packages generated from it
+        """
+        linkage_key = tuple([obj[t] for t in self.resource_linkage])
+        assert(linkage_key not in self._linkage_xlsx)
+        self._linkage_xlsx[linkage_key] = fname
+
+    def generate_xlsx_resources(self):
+        if len(self._linkage_xlsx) == 0:
+            logger.error('no XLSX resources, likely a bug in the ingest class')
+        resources = []
+        for linkage, fname in self._linkage_xlsx.items():
+            resource = xlsx_resource(linkage, fname)
+            xlsx_info = self.metadata_info[os.path.basename(fname)]
+            legacy_url = urljoin(xlsx_info['base_url'], fname)
+            resources.append((linkage, legacy_url, resource))
+        return resources
 
     def _get_packages_and_resources(self):
         # ensure that each class can expect to have _get_packages() called first,

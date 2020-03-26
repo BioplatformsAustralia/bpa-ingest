@@ -53,7 +53,7 @@ def dump_state(args):
         new_classes = list(
             filter(lambda x: r.match(x['slug']), classes))
         if len(new_classes) == 0:
-            logger.error('No matches, possibilities: {}'.format([t['slug'] for t in classes]))
+            logger.error('No matches, possibilities:\n{}'.format('\n'.join([t['slug'] for t in classes])))
         classes = new_classes
     logger.info('dumping: {}'.format(', '.join(t['slug'] for t in classes)))
 
