@@ -120,7 +120,7 @@ class BaseMetadata:
         for linkage, fname in self._linkage_xlsx.items():
             resource = xlsx_resource(linkage, fname)
             xlsx_info = self.metadata_info[os.path.basename(fname)]
-            legacy_url = urljoin(xlsx_info['base_url'], fname)
+            legacy_url = urljoin(xlsx_info['base_url'], os.path.basename(fname))
             resources.append((linkage, legacy_url, resource))
         return resources
 
