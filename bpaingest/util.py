@@ -184,5 +184,6 @@ def xlsx_resource(linkage, fname):
         data = fd.read()
     return {
         'id': md5((str(linkage) + "||" + os.path.basename(fname)).encode('utf8')).hexdigest(),
+        'name': os.path.basename(fname),
         'md5': md5(data).hexdigest(),
     }
