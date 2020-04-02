@@ -1,5 +1,3 @@
-
-
 from unipath import Path
 from urllib.parse import urljoin
 from collections import defaultdict
@@ -24,7 +22,6 @@ import os
 import re
 
 logger = make_logger(__name__)
-
 
 common_skip = [
     re.compile(r'^._metadata\.xlsx$'),
@@ -490,19 +487,22 @@ class StemcellsProteomicsBaseMetadata(BaseMetadata):
             field_spec = [
                 fld("pool_id", 'raw file name', coerce=files.proteomics_raw_extract_pool_id),
             ]
+        # allow for various unit symbols or none to be used (in this case: micrograms symbol)
+        units_regex = '[' + b'\xc2\xb5'.decode('utf-8') + ']?'
         field_spec += [
             fld("facility", 'facility'),
             fld("sample_fractionation", 'sample fractionation (none/number)'),
             fld("lc_column_type", 'lc/column type'),
             fld("gradient_time", re.compile(r'gradient time \(min\).*')),
-            fld("sample_on_column", 'sample on column (g)'),
+            fld("sample_on_column", re.compile(r'sample on column \(' + units_regex + 'g\)'), optional=True),
             fld("mass_spectrometer", 'mass spectrometer'),
             fld("acquisition_mode", 'acquisition mode / fragmentation'),
             fld("raw_filename", 'raw file name'),
-            fld("protein_result_filename", 'protein result filename'),
-            fld("peptide_result_filename", 'peptide result filename'),
-            fld("database", 'database'),
-            fld("database_size", 'database size'),
+            fld("protein_result_filename", 'protein result filename', optional=True),
+            fld("peptide_result_filename", 'peptide result filename', optional=True),
+            fld("database", 'database', optional=True),
+            fld("database_size", 'database size', optional=True),
+            fld("sample_unique_id", 'sample unique id'),
         ]
         wrapper = ExcelWrapper(
             field_spec,
@@ -520,7 +520,8 @@ class StemcellsProteomicsMetadata(StemcellsProteomicsBaseMetadata):
     ckan_data_type = 'stemcells-proteomic'
     md5 = {
         'match': [
-            files.proteomics_filename_re
+            files.proteomics_filename_re,
+            files.proteomics_filename2_re
         ],
         'skip': common_skip
     }
@@ -584,6 +585,7 @@ class StemcellsProteomicsMetadata(StemcellsProteomicsBaseMetadata):
                     if not files.proteomics_pool_filename_re.match(filename):
                         raise Exception("unhandled file: %s" % (filename))
                     continue
+                logger.debug("file name is: {0}".format(filename))
                 resource = file_info.copy()
                 resource['md5'] = resource['id'] = md5
                 resource['name'] = filename
@@ -594,7 +596,7 @@ class StemcellsProteomicsMetadata(StemcellsProteomicsBaseMetadata):
                 sample_id = ingest_utils.extract_ands_id(file_info.get('id'))
                 xlsx_info = self.metadata_info[os.path.basename(md5_file)]
                 legacy_url = urljoin(xlsx_info['base_url'], filename)
-                resources.append(((sample_id, ), legacy_url, resource))
+                resources.append(((sample_id,), legacy_url, resource))
         return resources
 
 
@@ -678,7 +680,7 @@ class StemcellsProteomicsPoolMetadata(StemcellsProteomicsBaseMetadata):
                 pool_id = file_info['pool_id']
                 xlsx_info = self.metadata_info[os.path.basename(md5_file)]
                 legacy_url = urljoin(xlsx_info['base_url'], filename)
-                resources.append(((pool_id, ), legacy_url, resource))
+                resources.append(((pool_id,), legacy_url, resource))
         return resources
 
 
@@ -796,10 +798,11 @@ class StemcellsProteomicsAnalysedMetadata(BaseMetadata):
             for filename, md5, file_info in self.parse_md5file(md5_file):
                 resource = {}
                 resource['md5'] = md5
+                logger.debug("file name is: {0}".format(filename))
                 xlsx_info = self.metadata_info[os.path.basename(md5_file)]
                 # analysed data has duplicate PNG images in it -- we need to keep the ID unique
                 resource['id'] = 'u-' + \
-                    md5hash((self.ckan_data_type + xlsx_info['ticket'] + md5).encode('utf8')).hexdigest()
+                                 md5hash((self.ckan_data_type + xlsx_info['ticket'] + md5).encode('utf8')).hexdigest()
                 resource['name'] = filename
                 legacy_url = urljoin(xlsx_info['base_url'], filename)
                 resources.append(((xlsx_info['ticket'],), legacy_url, resource))
@@ -914,7 +917,7 @@ class StemcellsMetabolomicsAnalysedMetadata(BaseMetadata):
                 xlsx_info = self.metadata_info[os.path.basename(md5_file)]
                 # analysed data has duplicate PNG images in it - we need to keep the id unique
                 resource['id'] = 'u-' + \
-                    md5hash((self.ckan_data_type + xlsx_info['base_url'] + md5).encode('utf8')).hexdigest()
+                                 md5hash((self.ckan_data_type + xlsx_info['base_url'] + md5).encode('utf8')).hexdigest()
                 resource['name'] = filename
                 folder_name = self.track_meta.get(xlsx_info['ticket']).folder_name
                 legacy_url = urljoin(xlsx_info['base_url'], filename)
@@ -1038,7 +1041,7 @@ class StemcellsTranscriptomeAnalysedMetadata(BaseMetadata):
                 xlsx_info = self.metadata_info[os.path.basename(md5_file)]
                 # analysed data has duplicate PNG images in it - we need to keep the id unique
                 resource['id'] = 'u-' + \
-                    md5hash((self.ckan_data_type + xlsx_info['base_url'] + md5).encode('utf8')).hexdigest()
+                                 md5hash((self.ckan_data_type + xlsx_info['base_url'] + md5).encode('utf8')).hexdigest()
                 resource['name'] = filename
                 folder_name = self.track_meta.get(xlsx_info['ticket']).folder_name
                 legacy_url = urljoin(xlsx_info['base_url'], filename)

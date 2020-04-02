@@ -1,6 +1,5 @@
 import re
 
-
 transcriptome_filename_re = re.compile(r"""
     (?P<id>\d{4,6})_
     (?P<library>PE|MP)_
@@ -13,7 +12,6 @@ transcriptome_filename_re = re.compile(r"""
     (?P<read>[R|I][1|2])\.fastq\.gz
 """, re.VERBOSE)
 
-
 # FIXME: we need the full convention from BPA / MA
 metabolomics_filename_re = re.compile(r"""
     (?P<id>\d{4,6})_
@@ -24,7 +22,6 @@ metabolomics_filename_re = re.compile(r"""
     (\.tar\.gz|\.mzML)$
 """, re.VERBOSE)
 
-
 proteomics_filename_re = re.compile(r"""
     (?P<id>\d{4,6})_
     SC_
@@ -33,6 +30,13 @@ proteomics_filename_re = re.compile(r"""
     (\.wiff|\.wiff\.scan|\.txt|\.raw)$
 """, re.VERBOSE)
 
+proteomics_filename2_re = re.compile(r"""
+ (P\d{2}_\d{4}_Exp\d_|)(?P<id>\d{4,6})_([a-zA-Z]+?_[a-zA-z]+?_|)(F\d{1,2}_|)
+    SC_
+    (?P<vendor>APAF|MBPF|QIMR)_
+    .*
+    (\.wiff|\.wiff\.scan|\.txt|\.raw)$
+""", re.VERBOSE)
 
 proteomics_pool_filename_re = re.compile(r"""
     (?P<pool_id>P\d+_\d+_Exp\d+_Pool\d+)_
@@ -40,12 +44,16 @@ proteomics_pool_filename_re = re.compile(r"""
     (\.raw)$
 """, re.VERBOSE)
 
+proteomics_pool_filename2_re = re.compile(r"""
+    (P\d{2}_\d{4}_Exp\d_|)(?P<pool_id>P\d+_\d+_Exp\d+_Pool\d+)_
+    .*
+    (\.raw)$
+""", re.VERBOSE)
 
 proteomics_analysed_filename_re = re.compile(r"""
     (?P<zip_file_name>.*)
     (\.zip)$
 """, re.VERBOSE)
-
 
 singlecell_filename_re = re.compile(r"""
     (?P<id>\d{4,6}-\d{4,6})_
@@ -59,7 +67,6 @@ singlecell_filename_re = re.compile(r"""
     (?P<read>[R|I][1|2])\.fastq\.gz
 """, re.VERBOSE)
 
-
 singlecell_index_info_filename_re = re.compile(r"""
     Stemcells_
     (?P<vendor>WEHI|UNSW)_
@@ -67,7 +74,6 @@ singlecell_index_info_filename_re = re.compile(r"""
     index_info_
     BPA(?P<id>\d{4,6}-\d{4,6})\.xlsx$
 """, re.VERBOSE)
-
 
 smallrna_filename_re = re.compile(r"""
     (?P<id>\d{4,6})_
@@ -80,7 +86,6 @@ smallrna_filename_re = re.compile(r"""
     (?P<lane>L\d{3})_
     (?P<read>[R|I][1|2])\.fastq\.gz
 """, re.VERBOSE)
-
 
 xlsx_filename_re = re.compile(r'^.*\.xlsx')
 pdf_filename_re = re.compile(r'^.*\.pdf')
