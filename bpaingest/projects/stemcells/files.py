@@ -67,6 +67,29 @@ singlecell_filename_re = re.compile(r"""
     (?P<read>[R|I][1|2])\.fastq\.gz
 """, re.VERBOSE)
 
+singlecell_filename2_re = re.compile(r"""
+    (?P<id>\d{4,6}[-_]\d{4,6})
+    _?(?P<library>PE|MP)_
+    (?P<insert_size>\d*bp)_
+    (?P<project>\w+)_
+    (?P<vendor>WEHI|UNSW)_
+    (?P<flow_id>\w{9,10})_
+    (?P<index>[G|A|T|C|-]*|NoIndex)_
+    (?P<read>[R|I][1|2])_
+    (?P<lane>L?\d{3})
+    \.fastq\.gz
+""", re.VERBOSE)
+
+SINGLECELL_RAW_XLSX_FILENAME_PATTERN = r"""
+    .*
+    (?P<vendor>WEHI|UNSW)_
+    (?P<flow_id>\w{9,10})_
+    metadata.xlsx$
+"""
+
+singlecell_raw_xlsx_filename_re = re.compile(
+    SINGLECELL_RAW_XLSX_FILENAME_PATTERN, re.VERBOSE)
+
 singlecell_index_info_filename_re = re.compile(r"""
     Stemcells_
     (?P<vendor>WEHI|UNSW)_

@@ -6,6 +6,8 @@ from .files import (
     proteomics_pool_filename2_re,
     proteomics_analysed_filename_re,
     singlecell_filename_re,
+    singlecell_filename2_re,
+    singlecell_raw_xlsx_filename_re,
     singlecell_index_info_filename_re,
     smallrna_filename_re)
 
@@ -29,7 +31,6 @@ def test_metabolomics():
     for filename in filenames:
         assert (metabolomics_filename_re.match(filename) is not None)
 
-
 def test_proteomics():
     filenames = [
         '29614_SC_APAF_MS_1D_IDA_161102_P19598_025e6_01.wiff',
@@ -38,7 +39,8 @@ def test_proteomics():
         '29614_SC_APAF_MS_1D_IDA_161102_P19598_05e6_01_ProteinSummary.txt',
         '29613_SC_APAF_MS_2D_IDA_161102_P19598_1e6_All_DistinctPeptideSummary.txt',
         '29707_SC_MBPF_MS_DIA1_P16_0064_Exp2_Fusion.raw',
-        '24717_SC_QIMR_20160414_VelosPro_BPAstem_Positive_2_5ug_300m_T1_R1.raw'
+        '24717_SC_QIMR_20160414_VelosPro_BPAstem_Positive_2_5ug_300m_T1_R1.raw',
+        '33223_SC_MBPF_DIA_Phos_P16_0064_Exp7_QEPlus.htrms'
     ]
     for filename in filenames:
         assert (proteomics_filename_re.match(filename) is not None)
@@ -80,6 +82,24 @@ def test_singlecell():
     ]
     for filename in filenames:
         assert (singlecell_filename_re.match(filename) is not None)
+
+
+def test_singlecell2():
+    filenames = [
+        '32395_32778_PE_471bp_Stemcells_UNSW_HLVK7BGX5_NoIndex_R1_001.fastq.gz',
+        '32395_32778PE_471bp_Stemcells_UNSW_HW5L5BGX5_NoIndex_R1_001.fastq.gz'
+    ]
+    for filename in filenames:
+        assert (singlecell_filename2_re.match(filename) is not None)
+
+
+def test_singlecell_raw_xlsx():
+    filenames = [
+        'Stemcells_UNSW_HK7LHBGX5_metadata.xlsx',
+        'Stemcells_UNSW_HLVK7HBGX5_metadata.xlsx'
+    ]
+    for filename in filenames:
+        assert (singlecell_raw_xlsx_filename_re.match(filename) is not None)
 
 
 def test_singlecell_index_info():

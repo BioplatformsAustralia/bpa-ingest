@@ -6,7 +6,6 @@ from .projects import ProjectInfo
 from .metadata import DownloadMetadata
 from .util import make_logger
 
-
 logger = make_logger(__name__)
 
 
@@ -30,6 +29,7 @@ def linkage_qc(state, data_type_meta):
         linked_tuples = set()
         for resource_linkage, legacy_url, resource_obj in resources:
             linked_tuples.add(resource_linkage)
+            # logger.debug('next linked tuples is: resource_linkage: {}  legacy_url: {} resource_obj: {}'.format(resource_linkage, legacy_url, resource_obj))
             if resource_linkage not in resource_linkage_package_id:
                 logger.error("{}: dangling resource: {}".format(data_type, resource_linkage))
 
