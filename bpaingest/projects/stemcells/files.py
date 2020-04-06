@@ -61,7 +61,7 @@ singlecell_filename_re = re.compile(r"""
     (?P<insert_size>\d*bp)_
     (?P<project>\w+)_
     (?P<vendor>WEHI|UNSW)_
-    (?P<flow_id>\w{9})_
+    (?P<flow_id>\w{9,10})_
     (?P<index>[G|A|T|C|-]*|NoIndex)_
     (?P<lane>L\d{3})_
     (?P<read>[R|I][1|2])\.fastq\.gz

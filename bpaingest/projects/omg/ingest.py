@@ -12,7 +12,7 @@ from glob import glob
 
 from ...libs import ingest_utils
 from sslh.handler import SensitiveDataGeneraliser
-from ...libs.excel_wrapper import make_field_definition as fld, SkipColumn as skp
+from ...libs.excel_wrapper import make_field_definition as fld, make_skip_column as skp
 from . import files
 from .tracking import OMGTrackMetadata
 from .contextual import (OMGSampleContextual, OMGLibraryContextual)

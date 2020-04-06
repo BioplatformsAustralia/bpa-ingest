@@ -24,13 +24,18 @@ from ..util import make_logger
 
 logger = make_logger(__name__)
 
-SkipColumn = namedtuple('SkipColumn', ['column_name'])
+SkipColumn = namedtuple('SkipColumn', ['column_name', 'skip_all'])
+skip_column_default = SkipColumn('column_name', False)
 FieldDefinition = namedtuple('FieldSpec', ['attribute', 'column_name', 'coerce', 'optional', 'units'])
 field_definition_default = FieldDefinition('<replace>', '<replace>', None, False, None)
 
 
 def make_field_definition(attribute, column_name, **kwargs):
     return field_definition_default._replace(attribute=attribute, column_name=column_name, **kwargs)
+
+
+def make_skip_column(column_name, **kwargs):
+    return skip_column_default._replace(column_name=column_name, **kwargs)
 
 
 class ExcelWrapper(object):
@@ -120,14 +125,26 @@ class ExcelWrapper(object):
                     return idx
             return -1
 
+        def find_all_columns_re(column_name_re):
+            all_idx = []
+            if not hasattr(column_name_re, 'match'):
+                raise Exception("Column name must be a regex for find all")
+            for idx, name in enumerate(header):
+                if column_name_re.match(name):
+                    all_idx.append(idx)
+            return all_idx
+
         cmap = {}
         skip_columns = set()
 
         missing_columns = False
         for spec in self.field_spec:
             if isinstance(spec, SkipColumn):
-                col_index = find_column(spec.column_name)
-                skip_columns.add(col_index)
+                if spec.skip_all:
+                    skip_columns.update(find_all_columns_re(spec.column_name))
+                else:
+                    col_index = find_column(spec.column_name)
+                    skip_columns.add(col_index)
                 continue
 
             col_index = -1

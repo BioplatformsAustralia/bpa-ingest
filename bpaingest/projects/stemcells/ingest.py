@@ -6,7 +6,7 @@ from hashlib import md5 as md5hash
 from ...libs import ingest_utils
 from ...util import make_logger, sample_id_to_ckan_name, common_values, clean_tag_name
 from ...abstract import BaseMetadata
-from ...libs.excel_wrapper import ExcelWrapper, make_field_definition as fld
+from ...libs.excel_wrapper import ExcelWrapper, make_field_definition as fld, make_skip_column as skp
 from .tracking import StemcellsTrackMetadata
 from .contextual import (
     StemcellsTranscriptomeContextual,
@@ -379,6 +379,9 @@ class StemcellsMetabolomicsMetadata(BaseMetadata):
             fld("method", "Method"),
             fld("mass_spectrometer", "Mass Spectrometer"),
             fld("acquisition_mode", "acquisition mode"),
+            fld('sample_submission_date', 'sample submission date', coerce=ingest_utils.get_date_isoformat),
+            fld('raw_file_name', 'raw file name (available in .d and .mzml format)',
+                units='available in .d and .mzml format', coerce=ingest_utils.get_clean_number)
         ],
         'options': {
             'header_length': 2,
@@ -854,6 +857,7 @@ class StemcellsMetabolomicsAnalysedMetadata(BaseMetadata):
             fld('data_type', 'data type'),
             fld('analysis_file_name', 'file name of analysed data (folder or zip file) file name'),
             fld('additional_comments', 'additional comments'),
+            skp(re.compile(r'^x{4,6}$'), skip_all=True)
         ],
         'options': {
             'header_length': 8,
@@ -930,16 +934,18 @@ class StemcellsMetabolomicsAnalysedMetadata(BaseMetadata):
                 resource = file_info.copy()
                 resource = {}
                 resource['md5'] = md5
+                logger.debug("file name is: {0}".format(filename))
                 xlsx_info = self.metadata_info[os.path.basename(md5_file)]
                 # analysed data has duplicate PNG images in it - we need to keep the id unique
                 resource['id'] = 'u-' + \
                                  md5hash((self.ckan_data_type + xlsx_info['base_url'] + md5).encode('utf8')).hexdigest()
                 resource['name'] = filename
-                folder_name = self.track_meta.get(xlsx_info['ticket']).folder_name
+                ticket_name = xlsx_info['ticket']
+                tracking_ticket_folder = self.track_meta.get(ticket_name)
+                folder_name = tracking_ticket_folder.folder_name if tracking_ticket_folder else ''
                 legacy_url = urljoin(xlsx_info['base_url'], filename)
                 resources.append(((folder_name,), legacy_url, resource))
         return resources
-
 
 class StemcellsTranscriptomeAnalysedMetadata(BaseMetadata):
     contextual_classes = []

@@ -1,8 +1,4 @@
-import re
-
-
-bsd_md5_re = re.compile(r'^MD5 \(([^\)]+)\) = ([0-9a-f]{32})$')
-linux_md5_re = re.compile(r'^([0-9a-f]{32}) [\* ]?(.*)$')
+from bpaingest.libs.common_resources import bsd_md5_re, linux_md5_re
 
 
 class MD5Parser:
