@@ -9,7 +9,7 @@ from bpaingest.util import make_logger
 logger = make_logger(__name__)
 
 # 27146_AHYFU_R1.fastq.gz
-external_re = re.compile("""
+external_re = re.compile(r"""
     (?P<id>\d{4,6}|STAN)_
     (?P<flow>\w{5})_
     (?P<read>[R|I][1|2])\.fastq\.gz
@@ -34,7 +34,8 @@ def main():
                 'runsamplenum': 'UNKNOWN',
                 'lane': 'L001',
             })
-            target = '{id}_{extraction}_{amplicon}_{vendor}_{index}_{flow}_{runsamplenum}_{lane}_{read}.fastq.gz'.format(**obj)
+            target = '{id}_{extraction}_{amplicon}_{vendor}_{index}_{flow}_{runsamplenum}_{lane}_{read}.fastq.gz'.format(
+                **obj)
             print([path, target])
             os.rename(path, target)
 

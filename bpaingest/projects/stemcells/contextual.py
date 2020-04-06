@@ -32,7 +32,7 @@ class StemcellsTranscriptomeContextual(object):
         for row in rows:
             if row.sample_id is None:
                 continue
-            assert(row.sample_id not in sample_metadata)
+            assert (row.sample_id not in sample_metadata)
             sample_metadata[row.sample_id] = row_meta = {}
             for field in row._fields:
                 if field != 'sample_id':
@@ -73,12 +73,11 @@ class StemcellsTranscriptomeContextual(object):
             fld('library_strategy', 'library strategy'),
         ]
 
-        wrapper = ExcelWrapper(
-            field_spec,
-            metadata_path,
-            sheet_name=self.sheet_name,
-            header_length=3,
-            column_name_row_index=2)
+        wrapper = ExcelWrapper(field_spec,
+                               metadata_path,
+                               sheet_name=self.sheet_name,
+                               header_length=3,
+                               column_name_row_index=2)
         for error in wrapper.get_errors():
             logger.error(error)
         return wrapper.get_all()
@@ -104,7 +103,7 @@ class StemcellsSmallRNAContextual(object):
         for row in rows:
             if row.sample_id is None:
                 continue
-            assert(row.sample_id not in sample_metadata)
+            assert (row.sample_id not in sample_metadata)
             sample_metadata[row.sample_id] = row_meta = {}
             for field in row._fields:
                 if field != 'sample_id':
@@ -145,12 +144,11 @@ class StemcellsSmallRNAContextual(object):
             fld('library_strategy', 'library strategy'),
         ]
 
-        wrapper = ExcelWrapper(
-            field_spec,
-            metadata_path,
-            sheet_name=self.sheet_name,
-            header_length=3,
-            column_name_row_index=2)
+        wrapper = ExcelWrapper(field_spec,
+                               metadata_path,
+                               sheet_name=self.sheet_name,
+                               header_length=3,
+                               column_name_row_index=2)
         for error in wrapper.get_errors():
             logger.error(error)
         return wrapper.get_all()
@@ -176,7 +174,7 @@ class StemcellsSingleCellRNASeq(object):
         for row in rows:
             if row.sample_id is None:
                 continue
-            assert(row.sample_id not in sample_metadata)
+            assert (row.sample_id not in sample_metadata)
             sample_metadata[row.sample_id] = row_meta = {}
             for field in row._fields:
                 if field != 'sample_id':
@@ -217,12 +215,11 @@ class StemcellsSingleCellRNASeq(object):
             fld('library_strategy', 'library strategy'),
         ]
 
-        wrapper = ExcelWrapper(
-            field_spec,
-            metadata_path,
-            sheet_name=self.sheet_name,
-            header_length=3,
-            column_name_row_index=2)
+        wrapper = ExcelWrapper(field_spec,
+                               metadata_path,
+                               sheet_name=self.sheet_name,
+                               header_length=3,
+                               column_name_row_index=2)
         for error in wrapper.get_errors():
             logger.error(error)
         return wrapper.get_all()
@@ -251,7 +248,7 @@ class StemcellsMetabolomicsContextual(object):
             if row.sample_id is None:
                 continue
             tpl = (row.sample_id, row.analytical_platform)
-            assert(tpl not in sample_metadata)
+            assert (tpl not in sample_metadata)
             sample_metadata[tpl] = row_meta = {}
             for field in row._fields:
                 if field != 'sample_id' and field != 'analytical_platform':
@@ -289,12 +286,11 @@ class StemcellsMetabolomicsContextual(object):
             fld('extract_protocol', 'extract protocol'),
         ]
 
-        wrapper = ExcelWrapper(
-            field_spec,
-            metadata_path,
-            sheet_name=self.sheet_name,
-            header_length=3,
-            column_name_row_index=2)
+        wrapper = ExcelWrapper(field_spec,
+                               metadata_path,
+                               sheet_name=self.sheet_name,
+                               header_length=3,
+                               column_name_row_index=2)
         for error in wrapper.get_errors():
             logger.error(error)
         return wrapper.get_all()
@@ -310,7 +306,6 @@ class StemcellsProteomicsContextual(object):
         # logger.debug("xlsx path is: %s" % xlsx_path)
         self.sample_metadata = self._package_metadata(self._read_metadata(xlsx_path))
         logger.debug('xlsx path is: %s', xlsx_path)
-        logger.debug('have sample metadata: %s', self.sample_metadata)
 
     def get(self, sample_id):
         if sample_id in self.sample_metadata:
@@ -326,7 +321,7 @@ class StemcellsProteomicsContextual(object):
                 if field != 'sample_id':
                     row_meta[field] = getattr(row, field)
             if row.sample_id:
-                assert(row.sample_id not in sample_metadata)
+                assert (row.sample_id not in sample_metadata)
                 sample_metadata[row.sample_id] = row_meta
         return sample_metadata
 
@@ -368,12 +363,11 @@ class StemcellsProteomicsContextual(object):
         ]
         rows = []
         for sheet_name in self.sheet_names:
-            wrapper = ExcelWrapper(
-                field_spec,
-                metadata_path,
-                sheet_name=sheet_name,
-                header_length=3,
-                column_name_row_index=2)
+            wrapper = ExcelWrapper(field_spec,
+                                   metadata_path,
+                                   sheet_name=sheet_name,
+                                   header_length=3,
+                                   column_name_row_index=2)
             for error in wrapper.get_errors():
                 logger.error(error)
             rows += list(wrapper.get_all())
