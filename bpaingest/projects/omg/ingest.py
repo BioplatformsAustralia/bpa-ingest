@@ -609,7 +609,7 @@ class OMGExonCaptureMetadata(OMGBaseMetadata):
             files.exon_filename_re
         ],
         'skip': [
-            re.compile(r'^.*_metadata\.xlsx$'),
+            re.compile(r'^.*\.xlsx$'),
             re.compile(r'^.*SampleSheet.*'),
             re.compile(r'^.*TestFiles\.exe.*'),
         ]

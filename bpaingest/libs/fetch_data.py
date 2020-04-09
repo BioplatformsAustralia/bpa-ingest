@@ -55,11 +55,15 @@ class Fetcher():
         if not os.path.exists(self.target_folder):
             mkpath(self.target_folder)
 
-    def _fetch(self, session, url, name):
-        logger.info('Fetching {0} from {1}'.format(name, url))
-        r = session.get(url + name, stream=True, auth=self.auth, verify=False)
-        full_url = self.target_folder + '/' + name
-        with open(full_url, 'wb') as f:
+    def _fetch(self, session, base_url, name):
+        logger.info('Fetching {} from {}'.format(name, base_url))
+        url = base_url + name
+        r = session.get(url, stream=True, auth=self.auth, verify=False)
+        if r.status_code != 200:
+            logger.critical('status code {} for: {}'.format(r.status_code, url))
+            raise Exception("download failed")
+        output_file = self.target_folder + '/' + name
+        with open(output_file, 'wb') as f:
             for chunk in r.iter_content(chunk_size=1024):
                 if chunk:
                     f.write(chunk)
