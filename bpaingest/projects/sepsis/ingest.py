@@ -457,7 +457,7 @@ class SepsisMetabolomicsGCMSMetadata(BaseSepsisMetadata):
     }
     md5 = {
         'match': [files.metabolomics_lcms_gcms_filename_re],
-        'skip': None
+        'skip': [re.compile(r'^.*_metadata\.xlsx$')],
     }
 
     def __init__(self, metadata_path, contextual_metadata=None, metadata_info=None):
@@ -557,7 +557,7 @@ class SepsisMetabolomicsLCMSMetadata(BaseSepsisMetadata):
     }
     md5 = {
         'match': [files.metabolomics_lcms_gcms_filename_re],
-        'skip': None,
+        'skip': [re.compile(r'^.*_metadata\.xlsx$')],
     }
 
     def __init__(self, metadata_path, contextual_metadata=None, metadata_info=None):
@@ -597,7 +597,7 @@ class SepsisMetabolomicsLCMSMetadata(BaseSepsisMetadata):
                     'title': 'ARP Metabolomics LCMS %s' % (sample_id.split('/')[-1]),
                     'ticket': row.ticket,
                     'facility': row.facility_code.upper(),
-                    'notes': 'ARP Metabolomics LCMS Raw Data: %s %s %s Replicate %s' % (taxon, strain, obj['growth_media'], obj['replicate']),
+                    'notes': 'ARP Metabolomics LCMS Raw Data: %s %s %s Replicate %s' % (taxon, strain, obj.get('growth_media'), obj.get('replicate')),
                     'sample_fractionation_extract_solvent': row.sample_fractionation_extract_solvent,
                     'lc_column_type': row.lc_column_type,
                     'gradient_time_min_flow': row.gradient_time_min_flow,

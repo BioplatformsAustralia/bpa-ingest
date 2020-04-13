@@ -17,6 +17,7 @@ def test_ont_minion_re():
     filenames = [
         '79638_FAK90583_GAP_AGRF_ONTMinion_fast5.tar',
         '79638_FAK90583_GAP_AGRF_ONTMinion_fastq_pass.tar',
+        '79639_FAL87718_GAP_AGRF_ONTMinion_fast5_pass.tar',
         '79638_FAK90583_GAP_AGRF_ONTMinion_sequencing_summary.tar',
     ]
     for filename in filenames:
@@ -27,6 +28,7 @@ def test_ont_promethion_re():
     filenames = [
         '79638_PAD92744_GAP_AGRF_ONTPromethION_fast5_fail.tar',
         '79638_PAD92744_GAP_AGRF_ONTPromethION_sequencing_summary.tar',
+        '79639_PAE47351_GAP_AGRF_ONTPromethION_fast5_pass.tar',
     ]
     for filename in filenames:
         assert(ont_promethion_re.match(filename) is not None)

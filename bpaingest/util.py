@@ -9,6 +9,7 @@ import requests
 
 from collections import namedtuple
 from dateutil.relativedelta import relativedelta
+from hashlib import md5
 import datetime
 
 
@@ -172,3 +173,17 @@ def apply_license(archive_ingestion_date):
         return "other-closed"
     else:
         return "CC-BY-3.0-AU"
+
+
+def xlsx_resource(linkage, fname):
+    """
+    the same XLSX file might be on multiple packages, so we generate an ID
+    which is the MD5(str(linkage) || fname)
+    """
+    with open(fname, 'rb') as fd:
+        data = fd.read()
+    return {
+        'id': md5((str(linkage) + "||" + os.path.basename(fname)).encode('utf8')).hexdigest(),
+        'name': os.path.basename(fname),
+        'md5': md5(data).hexdigest(),
+    }

@@ -55,7 +55,7 @@ METABOLOMICS_LCMS_GCMS_FILENAME_PATTERN = r"""
     (?P<platform>LC-MS|LCMS|GCMS|GC-MS)_
     (?P<mastr_ms_id>[A-Z0-9-]+)_
     (?P<machine_data>[^\.]+)\.
-    (tar\.gz|qgd)
+    (tar\.gz|qgd|d\.tar\.gz)
 """
 metabolomics_lcms_gcms_filename_re = re.compile(METABOLOMICS_LCMS_GCMS_FILENAME_PATTERN, re.VERBOSE)
 

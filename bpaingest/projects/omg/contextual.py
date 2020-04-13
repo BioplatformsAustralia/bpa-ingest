@@ -15,7 +15,7 @@ def date_or_str(v):
 
 
 class OMGSampleContextual(object):
-    metadata_urls = ['https://downloads-qcif.bioplatforms.com/bpa/omg_staging/metadata/2019-11-19/']
+    metadata_urls = ['https://downloads-qcif.bioplatforms.com/bpa/omg_staging/metadata/2020-04-07/']
     metadata_patterns = [re.compile(r'^OMG_samples_metadata.*\.xlsx$')]
     name = 'omg-sample-contextual'
 
@@ -107,6 +107,9 @@ class OMGSampleContextual(object):
         for row in wrapper.get_all():
             if not row.bpa_sample_id:
                 continue
+            # DO NOT COMMIT THIS GRAHAME
+            if row.bpa_sample_id in sample_metadata:
+                continue
             assert(row.bpa_sample_id not in sample_metadata)
             bpa_sample_id = ingest_utils.extract_ands_id(row.bpa_sample_id)
             sample_metadata[bpa_sample_id] = row_meta = {}
@@ -121,7 +124,7 @@ class OMGSampleContextual(object):
 class OMGLibraryContextual(object):
     # this spreadsheet was only used for early data.
     # for more recent data, it is included in the transfer metadata
-    metadata_urls = ['https://downloads-qcif.bioplatforms.com/bpa/omg_staging/metadata/2019-11-19/']
+    metadata_urls = ['https://downloads-qcif.bioplatforms.com/bpa/omg_staging/metadata/2020-04-07/']
     metadata_patterns = [re.compile(r'^OMG_library_metadata.*\.xlsx$')]
     name = 'omg-library-contextual'
 

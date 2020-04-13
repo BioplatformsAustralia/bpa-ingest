@@ -5,7 +5,7 @@ from collections import defaultdict
 
 from ...abstract import BaseMetadata
 
-from ...util import make_logger, sample_id_to_ckan_name, common_values
+from ...util import make_logger, sample_id_to_ckan_name, common_values, xlsx_resource
 from urllib.parse import urljoin
 
 from glob import glob
@@ -159,10 +159,10 @@ class OMG10XRawIlluminaMetadata(OMGBaseMetadata):
         for fname in glob(self.path + '/*.xlsx'):
             logger.info("Processing OMG metadata file {0}".format(os.path.basename(fname)))
             for row in self.parse_spreadsheet(fname, self.metadata_info):
-                fname_rows[(get_flow_id(fname), row.file)].append(row)
+                fname_rows[(get_flow_id(fname), row.file, fname)].append(row)
 
         packages = []
-        for (flow_id, fname), rows in fname_rows.items():
+        for (flow_id, fname, xlsx_fname), rows in fname_rows.items():
             name = sample_id_to_ckan_name(fname, self.ckan_data_type, flow_id)
             assert(fname not in self.file_package)
             self.file_package[fname] = fname
@@ -216,6 +216,7 @@ class OMG10XRawIlluminaMetadata(OMGBaseMetadata):
             obj.update(common_values([make_row_metadata(row) for row in rows]))
             tag_names = ['10x-raw']
             obj['tags'] = [{'name': t} for t in tag_names]
+            self.track_xlsx_resource(obj, xlsx_fname)
             packages.append(obj)
 
         return self.apply_location_generalisation(packages)
@@ -235,7 +236,8 @@ class OMG10XRawIlluminaMetadata(OMGBaseMetadata):
                 xlsx_info = self.metadata_info[os.path.basename(md5_file)]
                 legacy_url = urljoin(xlsx_info['base_url'], filename)
                 resources.append(((archive_name,), legacy_url, resource))
-        return resources
+
+        return resources + self.generate_xlsx_resources()
 
 
 class OMG10XRawMetadata(OMGBaseMetadata):
@@ -364,6 +366,7 @@ class OMG10XRawMetadata(OMGBaseMetadata):
             ingest_utils.add_spatial_extra(obj)
             tag_names = ['10x-raw']
             obj['tags'] = [{'name': t} for t in tag_names]
+            self.track_xlsx_resource(obj, fname)
             packages.append(obj)
         return self.apply_location_generalisation(packages)
 
@@ -390,7 +393,8 @@ class OMG10XRawMetadata(OMGBaseMetadata):
                 resource['resource_type'] = self.ckan_data_type
                 legacy_url = urljoin(xlsx_info['base_url'], filename)
                 resources.append(((bpa_sample_id, flow_id), legacy_url, resource))
-        return resources
+
+        return resources + self.generate_xlsx_resources()
 
 
 class OMG10XProcessedIlluminaMetadata(OMGBaseMetadata):
@@ -517,6 +521,7 @@ class OMG10XProcessedIlluminaMetadata(OMGBaseMetadata):
                 ingest_utils.add_spatial_extra(obj)
                 tag_names = ['10x-processed']
                 obj['tags'] = [{'name': t} for t in tag_names]
+                self.track_xlsx_resource(obj, fname)
                 packages.append(obj)
         return self.apply_location_generalisation(packages)
 
@@ -536,7 +541,8 @@ class OMG10XProcessedIlluminaMetadata(OMGBaseMetadata):
                 xlsx_info = self.metadata_info[os.path.basename(md5_file)]
                 legacy_url = urljoin(xlsx_info['base_url'], filename)
                 resources.append(((bpa_sample_id, flow_id), legacy_url, resource))
-        return resources
+
+        return resources + self.generate_xlsx_resources()
 
 
 class OMGExonCaptureMetadata(OMGBaseMetadata):
@@ -603,7 +609,7 @@ class OMGExonCaptureMetadata(OMGBaseMetadata):
             files.exon_filename_re
         ],
         'skip': [
-            re.compile(r'^.*_metadata\.xlsx$'),
+            re.compile(r'^.*\.xlsx$'),
             re.compile(r'^.*SampleSheet.*'),
             re.compile(r'^.*TestFiles\.exe.*'),
         ]
@@ -615,6 +621,7 @@ class OMGExonCaptureMetadata(OMGBaseMetadata):
         self.contextual_metadata = contextual_metadata
         self.metadata_info = metadata_info
         self.track_meta = OMGTrackMetadata()
+        self.linkage_xlsx = {}
 
     @classmethod
     def flow_cell_index_linkage(cls, flow_id, index):
@@ -687,6 +694,9 @@ class OMGExonCaptureMetadata(OMGBaseMetadata):
                 ingest_utils.add_spatial_extra(obj)
                 tag_names = ['exon-capture', 'raw']
                 obj['tags'] = [{'name': t} for t in tag_names]
+
+                self.track_xlsx_resource(obj, fname)
+
                 packages.append(obj)
         return self.apply_location_generalisation(packages)
 
@@ -704,7 +714,8 @@ class OMGExonCaptureMetadata(OMGBaseMetadata):
                 xlsx_info = self.metadata_info[os.path.basename(md5_file)]
                 legacy_url = urljoin(xlsx_info['base_url'], filename)
                 resources.append(((library_id, resource['flow_cell_id'], resource['index']), legacy_url, resource))
-        return resources
+
+        return resources + self.generate_xlsx_resources()
 
 class OMGGenomicsNovaseqMetadata(OMGBaseMetadata):
     organization = 'bpa-omg'
@@ -822,6 +833,8 @@ class OMGGenomicsNovaseqMetadata(OMGBaseMetadata):
                 ingest_utils.add_spatial_extra(obj)
                 tag_names = ['novaseq', 'genomics', 'raw']
                 obj['tags'] = [{'name': t} for t in tag_names]
+                self.track_xlsx_resource(obj, fname)
+
                 packages.append(obj)
         return self.apply_location_generalisation(packages)
 
@@ -839,7 +852,7 @@ class OMGGenomicsNovaseqMetadata(OMGBaseMetadata):
                 xlsx_info = self.metadata_info[os.path.basename(md5_file)]
                 legacy_url = urljoin(xlsx_info['base_url'], filename)
                 resources.append(((library_id, resource['flow_cell_id'], resource['index']), legacy_url, resource))
-        return resources
+        return resources + self.generate_xlsx_resources()
 
 
 class OMGGenomicsHiSeqMetadata(OMGBaseMetadata):
@@ -968,6 +981,7 @@ class OMGGenomicsHiSeqMetadata(OMGBaseMetadata):
                 ingest_utils.add_spatial_extra(obj)
                 tag_names = ['genomics-hiseq']
                 obj['tags'] = [{'name': t} for t in tag_names]
+                self.track_xlsx_resource(obj, fname)
                 packages.append(obj)
         return self.apply_location_generalisation(packages)
 
@@ -985,7 +999,7 @@ class OMGGenomicsHiSeqMetadata(OMGBaseMetadata):
                 legacy_url = urljoin(xlsx_info['base_url'], filename)
                 resources.append(
                     ((ingest_utils.extract_ands_id(resource['bpa_sample_id']), resource['flow_cell_id']), legacy_url, resource))
-        return resources
+        return resources + self.generate_xlsx_resources()
 
 
 class OMGGenomicsDDRADMetadata(OMGBaseMetadata):
@@ -1046,6 +1060,7 @@ class OMGGenomicsDDRADMetadata(OMGBaseMetadata):
             fld('library_pool_oligo_sequence', 'library_pool_oligo_sequence'),
         ],
         'options': {
+            'sheet_name': 'OMG_library_metadata',
             'header_length': 1,
             'column_name_row_index': 0,
         }
@@ -1119,6 +1134,7 @@ class OMGGenomicsDDRADMetadata(OMGBaseMetadata):
                 ingest_utils.add_spatial_extra(obj)
                 tag_names = ['genomics-ddrad']
                 obj['tags'] = [{'name': t} for t in tag_names]
+                self.track_xlsx_resource(obj, fname)
                 packages.append(obj)
         return self.apply_location_generalisation(packages)
 
@@ -1136,7 +1152,7 @@ class OMGGenomicsDDRADMetadata(OMGBaseMetadata):
                 legacy_url = urljoin(xlsx_info['base_url'], filename)
                 resources.append(
                     ((ingest_utils.extract_ands_id(resource['bpa_dataset_id']), resource['flowcell_id']), legacy_url, resource))
-        return resources
+        return resources + self.generate_xlsx_resources()
 
 
 class OMGGenomicsPacbioMetadata(OMGBaseMetadata):
@@ -1224,9 +1240,9 @@ class OMGGenomicsPacbioMetadata(OMGBaseMetadata):
 
             fname_obj = common_values(t._asdict() for t in self.parse_spreadsheet(fname, self.metadata_info))
             fname_obj['run_date'] = xlsx_date
-            objs.append(fname_obj)
+            objs.append((fname, fname_obj))
 
-        for obj in objs:
+        for (fname, obj) in objs:
             track_meta = self.track_meta.get(obj['ticket'])
 
             def track_get(k):
@@ -1266,6 +1282,7 @@ class OMGGenomicsPacbioMetadata(OMGBaseMetadata):
             ingest_utils.add_spatial_extra(obj)
             tag_names = ['pacbio', 'genomics', 'raw']
             obj['tags'] = [{'name': t} for t in tag_names]
+            self.track_xlsx_resource(obj, fname)
             packages.append(obj)
 
         return self.apply_location_generalisation(packages)
@@ -1285,7 +1302,7 @@ class OMGGenomicsPacbioMetadata(OMGBaseMetadata):
                 legacy_url = urljoin(xlsx_info['base_url'], filename)
                 resources.append(
                     ((ingest_utils.extract_ands_id(library_id), resource['run_date']), legacy_url, resource))
-        return resources
+        return resources + self.generate_xlsx_resources()
 
 
 class OMGONTPromethionMetadata(OMGBaseMetadata):
@@ -1398,6 +1415,7 @@ class OMGONTPromethionMetadata(OMGBaseMetadata):
                 })
                 tag_names = ['ont-promethion']
                 obj['tags'] = [{'name': t} for t in tag_names]
+                self.track_xlsx_resource(obj, fname)
                 packages.append(obj)
         return self.apply_location_generalisation(packages)
 
@@ -1415,4 +1433,4 @@ class OMGONTPromethionMetadata(OMGBaseMetadata):
                 xlsx_info = self.metadata_info[os.path.basename(md5_file)]
                 legacy_url = urljoin(xlsx_info['base_url'], filename)
                 resources.append(((resource['bpa_library_id'], resource['flowcell_id']), legacy_url, resource))
-        return resources
+        return resources + self.generate_xlsx_resources()
