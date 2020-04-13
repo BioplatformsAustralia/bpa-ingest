@@ -303,7 +303,6 @@ class StemcellsProteomicsContextual(object):
 
     def __init__(self, path):
         xlsx_path = one(glob(path + '/*.xlsx'))
-        # logger.debug("xlsx path is: %s" % xlsx_path)
         self.sample_metadata = self._package_metadata(self._read_metadata(xlsx_path))
         logger.debug('xlsx path is: %s', xlsx_path)
 

@@ -15,7 +15,7 @@ def date_or_str(v):
 
 
 class OMGSampleContextual(object):
-    metadata_urls = ['https://downloads-qcif.bioplatforms.com/bpa/omg_staging/metadata/2019-11-19/']
+    metadata_urls = ['https://downloads-qcif.bioplatforms.com/bpa/omg_staging/metadata/2020-04-07/']
     metadata_patterns = [re.compile(r'^OMG_samples_metadata.*\.xlsx$')]
     name = 'omg-sample-contextual'
 
@@ -87,13 +87,12 @@ class OMGSampleContextual(object):
             fld('type_status', 'type_status'),
         ]
 
-        wrapper = ExcelWrapper(
-            field_spec,
-            fname,
-            sheet_name=None,
-            header_length=1,
-            column_name_row_index=0,
-            suggest_template=True)
+        wrapper = ExcelWrapper(field_spec,
+                               fname,
+                               sheet_name=None,
+                               header_length=1,
+                               column_name_row_index=0,
+                               suggest_template=True)
         for error in wrapper.get_errors():
             logger.error(error)
 
@@ -107,7 +106,10 @@ class OMGSampleContextual(object):
         for row in wrapper.get_all():
             if not row.bpa_sample_id:
                 continue
-            assert(row.bpa_sample_id not in sample_metadata)
+            # DO NOT COMMIT THIS GRAHAME
+            if row.bpa_sample_id in sample_metadata:
+                continue
+            assert (row.bpa_sample_id not in sample_metadata)
             bpa_sample_id = ingest_utils.extract_ands_id(row.bpa_sample_id)
             sample_metadata[bpa_sample_id] = row_meta = {}
             for field in row._fields:
@@ -121,7 +123,7 @@ class OMGSampleContextual(object):
 class OMGLibraryContextual(object):
     # this spreadsheet was only used for early data.
     # for more recent data, it is included in the transfer metadata
-    metadata_urls = ['https://downloads-qcif.bioplatforms.com/bpa/omg_staging/metadata/2019-11-19/']
+    metadata_urls = ['https://downloads-qcif.bioplatforms.com/bpa/omg_staging/metadata/2020-04-07/']
     metadata_patterns = [re.compile(r'^OMG_library_metadata.*\.xlsx$')]
     name = 'omg-library-contextual'
 
@@ -155,13 +157,12 @@ class OMGLibraryContextual(object):
             fld('library_location', 'library_location'),
             fld('library_status', 'library_status'),
         ]
-        wrapper = ExcelWrapper(
-            field_spec,
-            fname,
-            sheet_name=None,
-            header_length=1,
-            column_name_row_index=0,
-            suggest_template=True)
+        wrapper = ExcelWrapper(field_spec,
+                               fname,
+                               sheet_name=None,
+                               header_length=1,
+                               column_name_row_index=0,
+                               suggest_template=True)
         for error in wrapper.get_errors():
             logger.error(error)
 
@@ -169,7 +170,7 @@ class OMGLibraryContextual(object):
         for row in wrapper.get_all():
             if not row.bpa_library_id:
                 continue
-            assert(row.bpa_library_id not in library_metadata)
+            assert (row.bpa_library_id not in library_metadata)
             bpa_library_id = ingest_utils.extract_ands_id(row.bpa_library_id)
             library_metadata[bpa_library_id] = row_meta = {}
             for field in row._fields:

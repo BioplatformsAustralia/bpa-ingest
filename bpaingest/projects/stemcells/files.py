@@ -39,7 +39,7 @@ proteomics_filename2_re = re.compile(
     SC_
     (?P<vendor>APAF|MBPF|QIMR)_
     .*
-    (\.wiff|\.wiff\.scan|\.txt|\.raw)$
+    (\.wiff|\.wiff\.scan|\.txt|\.raw|\.htrms)$
 """, re.VERBOSE)
 
 proteomics_pool_filename_re = re.compile(r"""
