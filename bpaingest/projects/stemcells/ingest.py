@@ -1,3 +1,5 @@
+import logging
+
 from unipath import Path
 from urllib.parse import urljoin
 from collections import defaultdict
@@ -17,7 +19,7 @@ from glob import glob
 import os
 import re
 
-logger = make_logger(__name__)
+logger = make_logger(__name__, logging.INFO)
 
 common_skip = [
     re.compile(r'^._metadata\.xlsx$'),

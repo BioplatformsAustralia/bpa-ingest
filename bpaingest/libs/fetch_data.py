@@ -13,6 +13,7 @@ from urllib.parse import urljoin
 from ..util import make_logger
 
 import requests.packages.urllib3
+
 requests.packages.urllib3.disable_warnings()
 
 logger = make_logger(__name__)

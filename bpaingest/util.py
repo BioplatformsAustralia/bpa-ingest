@@ -57,9 +57,9 @@ def make_registration_decorator():
     return _register, registered
 
 
-def make_logger(name):
+def make_logger(name, level=logging.DEBUG):
     logger = logging.getLogger(name)
-    logger.setLevel(logging.DEBUG)
+    logger.setLevel(level)
     handler = logging.StreamHandler()
     fmt = logging.Formatter("%(asctime)s [%(levelname)-7s] [%(threadName)s]  %(message)s")
     handler.setFormatter(fmt)
@@ -72,10 +72,7 @@ def make_ckan_api(args):
     return ckan
 
 
-CKAN_AUTH = {
-    'login': 'CKAN_USERNAME',
-    'password': 'CKAN_PASSWORD'
-}
+CKAN_AUTH = {'login': 'CKAN_USERNAME', 'password': 'CKAN_PASSWORD'}
 
 
 # http://stackoverflow.com/questions/38271351/download-resources-from-private-ckan-datasets
