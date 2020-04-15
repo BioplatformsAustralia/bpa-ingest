@@ -153,7 +153,7 @@ def _write_schemas(package_keys, resource_keys, package_field_mapping, resource_
                 "label": mapping.get(k, k),
             })
         schema['dataset_type'] = data_type
-        outf = '/tmp/{}.json'.format(data_type.replace('-', '_'))
+        outf = './tmp/{}.json'.format(data_type.replace('-', '_'))
         with open(outf, 'w') as fd:
             json.dump(schema, fd, sort_keys=True, indent=4, separators=(',', ': '))
             fd.write('\n')
