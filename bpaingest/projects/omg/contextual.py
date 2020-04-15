@@ -107,9 +107,6 @@ class OMGSampleContextual(object):
         for row in wrapper.get_all():
             if not row.bpa_sample_id:
                 continue
-            # DO NOT COMMIT THIS GRAHAME
-            if row.bpa_sample_id in sample_metadata:
-                continue
             assert(row.bpa_sample_id not in sample_metadata)
             bpa_sample_id = ingest_utils.extract_ands_id(row.bpa_sample_id)
             sample_metadata[bpa_sample_id] = row_meta = {}
