@@ -15,7 +15,7 @@ def date_or_str(v):
 
 
 class OMGSampleContextual(object):
-    metadata_urls = ['https://downloads-qcif.bioplatforms.com/bpa/omg_staging/metadata/2020-04-07/']
+    metadata_urls = ['https://downloads-qcif.bioplatforms.com/bpa/omg_staging/metadata/2020-04-09/']
     metadata_patterns = [re.compile(r'^OMG_samples_metadata.*\.xlsx$')]
     name = 'omg-sample-contextual'
 
@@ -31,7 +31,8 @@ class OMGSampleContextual(object):
     def _read_metadata(self, fname):
         field_spec = [
             fld('bpa_sample_id', 'bpa_sample_id', coerce=ingest_utils.extract_ands_id),
-            fld('voucher_id', 'voucher_id'),
+            fld('voucher_number', 'voucher_number'),
+            fld('voucher_or_tissue_number', 'voucher_or_tissue_number'),
             fld('tissue_number', 'tissue_number'),
             fld('institution_name', 'institution_name'),
             fld('tissue_collection', 'tissue_ collection'),
@@ -60,8 +61,8 @@ class OMGSampleContextual(object):
             fld('state_or_region', 'state_or_region'),
             fld('location_text', 'location_text'),
             fld('habitat', 'habitat'),
-            fld('decimal_latitude', 'decimal_latitude'),
-            fld('decimal_longitude', 'decimal_longitude'),
+            fld('decimal_latitude', re.compile(r'^decimal_latitude.*$')),
+            fld('decimal_longitude', re.compile(r'^decimal_longitude.*$')),
             fld('coord_uncertainty_metres', 'coord_uncertainty_metres'),
             fld('sex', 'sex'),
             fld('life_stage', 'life-stage'),
@@ -121,7 +122,7 @@ class OMGSampleContextual(object):
 class OMGLibraryContextual(object):
     # this spreadsheet was only used for early data.
     # for more recent data, it is included in the transfer metadata
-    metadata_urls = ['https://downloads-qcif.bioplatforms.com/bpa/omg_staging/metadata/2020-04-07/']
+    metadata_urls = ['https://downloads-qcif.bioplatforms.com/bpa/omg_staging/metadata/2020-04-09/']
     metadata_patterns = [re.compile(r'^OMG_library_metadata.*\.xlsx$')]
     name = 'omg-library-contextual'
 
