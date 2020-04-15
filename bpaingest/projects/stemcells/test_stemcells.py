@@ -1,15 +1,7 @@
-from .files import (
-    transcriptome_filename_re,
-    metabolomics_filename_re,
-    proteomics_filename_re,
-    proteomics_filename2_re,
-    proteomics_pool_filename2_re,
-    proteomics_analysed_filename_re,
-    singlecell_filename_re,
-    singlecell_filename2_re,
-    singlecell_raw_xlsx_filename_re,
-    singlecell_index_info_filename_re,
-    smallrna_filename_re)
+from .files import (transcriptome_filename_re, metabolomics_filename_re, proteomics_filename_re,
+                    proteomics_filename2_re, proteomics_pool_filename2_re, proteomics_analysed_filename_re,
+                    singlecell_filename_re, singlecell_filename2_re, singlecell_raw_xlsx_filename_re,
+                    singlecell_index_info_filename_re, smallrna_filename_re)
 
 
 def test_transcriptome():
@@ -31,6 +23,7 @@ def test_metabolomics():
     for filename in filenames:
         assert (metabolomics_filename_re.match(filename) is not None)
 
+
 def test_proteomics():
     filenames = [
         '29614_SC_APAF_MS_1D_IDA_161102_P19598_025e6_01.wiff',
@@ -48,8 +41,7 @@ def test_proteomics():
 
 def test_proteomics2():
     filenames = [
-        'P16_0064_Exp5_68667_F1_SC_MBPF_MS_2D_DDA_QEPlus.raw',
-        'P16_0064_Exp5_68667_F2_SC_MBPF_MS_2D_DDA_QEPlus.raw',
+        'P16_0064_Exp5_68667_F1_SC_MBPF_MS_2D_DDA_QEPlus.raw', 'P16_0064_Exp5_68667_F2_SC_MBPF_MS_2D_DDA_QEPlus.raw',
         'P16_0064_Exp7_52075_Human_Phos_F10_SC_MBPF_MS_2D_DDA_QEPlus.raw'
     ]
     for filename in filenames:
@@ -58,8 +50,7 @@ def test_proteomics2():
 
 def test_proteomics_pool2():
     filenames = [
-        'P16_0064_Exp2_Pool1_F1_SC_MBPF_MS_2D_DDA_Fusion.raw',
-        'P16_0064_Exp2_Pool2_F1_SC_MBPF_MS_2D_DDA_Fusion.raw',
+        'P16_0064_Exp2_Pool1_F1_SC_MBPF_MS_2D_DDA_Fusion.raw', 'P16_0064_Exp2_Pool2_F1_SC_MBPF_MS_2D_DDA_Fusion.raw',
         'P16_0064_Exp2_Pool1_F1_SC_MBPF_MS_2D_DDA_Fusion.raw'
     ]
     for filename in filenames:
@@ -94,10 +85,7 @@ def test_singlecell2():
 
 
 def test_singlecell_raw_xlsx():
-    filenames = [
-        'Stemcells_UNSW_HK7LHBGX5_metadata.xlsx',
-        'Stemcells_UNSW_HLVK7HBGX5_metadata.xlsx'
-    ]
+    filenames = ['Stemcells_UNSW_HK7LHBGX5_metadata.xlsx', 'Stemcells_UNSW_HLVK7HBGX5_metadata.xlsx']
     for filename in filenames:
         assert (singlecell_raw_xlsx_filename_re.match(filename) is not None)
 

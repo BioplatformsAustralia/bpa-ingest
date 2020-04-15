@@ -39,10 +39,7 @@ def add_spatial_extra(package):
     lng = get_clean_number(package.get('longitude'))
     if not lat or not lng:
         return
-    geo = {
-        "type": "Point",
-        "coordinates": [lng, lat]
-    }
+    geo = {"type": "Point", "coordinates": [lng, lat]}
     package['spatial'] = json.dumps(geo, sort_keys=True)
 
 
@@ -87,7 +84,7 @@ def merge_pass_fail(row):
     elif dilution == '1:100':
         pass_fail_attrs = ('pass_fail', 'pass_fail_100')
     elif dilution == '2 x template' or dilution == 'weak' or dilution == '2x':
-        pass_fail_attrs = ('pass_fail',)
+        pass_fail_attrs = ('pass_fail', )
     else:
         raise Exception('unknown dilution: %s' % (dilution))
     vals = []
@@ -130,7 +127,7 @@ def extract_ands_id(s, silent=False):
     if m:
         return BPA_PREFIX + m.groups()[0]
     if not silent:
-        logger.warning("unable to parse BPA ID: `%s'" % s)
+        logger.warning("Unable to parse BPA ID: `%s'." % s)
     return None
 
 

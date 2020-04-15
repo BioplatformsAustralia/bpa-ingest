@@ -19,7 +19,7 @@ from glob import glob
 import os
 import re
 
-logger = make_logger(__name__, logging.INFO)
+logger = make_logger(__name__, logging.DEBUG)
 
 common_skip = [
     re.compile(r'^._metadata\.xlsx$'),
@@ -444,6 +444,7 @@ class StemcellsMetabolomicsMetadata(BaseMetadata):
         for md5_file in glob(self.path + '/*.md5'):
             logger.info("Processing md5 file {0}".format(md5_file))
             for filename, md5, file_info in self.parse_md5file(md5_file):
+                logger.debug("file name is: {0}".format(filename))
                 resource = file_info.copy()
                 resource['md5'] = resource['id'] = md5
                 resource['name'] = filename
@@ -911,7 +912,15 @@ class StemcellsMetabolomicsAnalysedMetadata(BaseMetadata):
                                  md5hash((self.ckan_data_type + xlsx_info['base_url'] + md5).encode('utf8')).hexdigest()
                 resource['name'] = filename
                 ticket_name = xlsx_info['ticket']
+                # logger.debug("Ticket name is: {0}".format(ticket_name))
                 tracking_ticket_folder = self.track_meta.get(ticket_name)
+                if not tracking_ticket_folder:
+                    logger.warn(
+                        "No tracking ticket folder found. Consider checking the tracking metadata to ensure it contains ticket_name: {0}."
+                        .format(ticket_name))
+                else:
+                    if ticket_name == next:
+                        logger.debug("Tracking ticket folder is: {0}".format(tracking_ticket_folder))
                 folder_name = tracking_ticket_folder.folder_name if tracking_ticket_folder else ''
                 legacy_url = urljoin(xlsx_info['base_url'], filename)
                 resources.append(((folder_name, ), legacy_url, resource))
@@ -955,6 +964,7 @@ class StemcellsTranscriptomeAnalysedMetadata(BaseMetadata):
             fld('facility', 'facility'),
             fld('data_type', 'data type'),
             fld('folder_name', 'file name of analysed data (folder or zip file)'),
+            skp(re.compile(r'relevant heading\??$'), skip_all=True)
         ],
         'options': {
             'header_length': 9,
