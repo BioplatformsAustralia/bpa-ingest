@@ -546,7 +546,8 @@ class StemcellsProteomicsMetadata(StemcellsProteomicsBaseMetadata):
     ckan_data_type = 'stemcells-proteomic'
     md5 = {
         'match': [
-            files.proteomics_filename_re
+            files.proteomics_filename_re,
+            files.proteomics_filename2_re
         ],
         'skip': common_skip
     }
