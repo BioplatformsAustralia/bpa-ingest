@@ -6,6 +6,7 @@ from .projects import ProjectInfo
 from .metadata import DownloadMetadata
 from .util import make_logger
 
+
 logger = make_logger(__name__)
 
 
@@ -37,7 +38,9 @@ def linkage_qc(state, data_type_meta):
 
         for linkage_tpl, package_id in resource_linkage_package_id.items():
             if linkage_tpl not in linked_tuples:
-                logger.error("{}: package has no linked resources, tuple: {}".format(package_id, linkage_tpl))
+                logger.error("{}: package has no linked resources, tuple: {}".format(
+                    package_id,
+                    linkage_tpl))
 
     for data_type, (p, r) in counts.items():
         logger.debug("{}: {} packages, {} resources".format(data_type, p, r))
@@ -50,7 +53,8 @@ def dump_state(args):
     classes = sorted(project_info.metadata_info, key=lambda t: t['slug'])
     if args.dump_re:
         r = re.compile(args.dump_re, re.IGNORECASE)
-        new_classes = list(filter(lambda x: r.match(x['slug']), classes))
+        new_classes = list(
+            filter(lambda x: r.match(x['slug']), classes))
         if len(new_classes) == 0:
             logger.error('No matches, possibilities:\n{}'.format('\n'.join([t['slug'] for t in classes])))
         classes = new_classes

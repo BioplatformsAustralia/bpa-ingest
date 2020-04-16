@@ -34,8 +34,7 @@ def main():
                 'runsamplenum': 'UNKNOWN',
                 'lane': 'L001',
             })
-            target = '{id}_{extraction}_{amplicon}_{vendor}_{index}_{flow}_{runsamplenum}_{lane}_{read}.fastq.gz'.format(
-                **obj)
+            target = '{id}_{extraction}_{amplicon}_{vendor}_{index}_{flow}_{runsamplenum}_{lane}_{read}.fastq.gz'.format(**obj)
             print([path, target])
             os.rename(path, target)
 

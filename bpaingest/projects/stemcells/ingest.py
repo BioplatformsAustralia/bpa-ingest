@@ -11,8 +11,11 @@ from ...abstract import BaseMetadata
 from ...libs.excel_wrapper import ExcelWrapper, make_field_definition as fld, make_skip_column as skp
 from .tracking import StemcellsTrackMetadata
 from .contextual import (
-    StemcellsTranscriptomeContextual, StemcellsSmallRNAContextual, StemcellsSingleCellRNASeq,
-    StemcellsMetabolomicsContextual, StemcellsProteomicsContextual)
+    StemcellsTranscriptomeContextual,
+    StemcellsSmallRNAContextual,
+    StemcellsSingleCellRNASeq,
+    StemcellsMetabolomicsContextual,
+    StemcellsProteomicsContextual)
 from . import files
 from .util import fix_analytical_platform
 from glob import glob
@@ -21,6 +24,7 @@ import os
 import re
 
 logger = make_logger(__name__, logging.DEBUG)
+
 
 common_skip = [
     re.compile(r'^._metadata\.xlsx$'),
@@ -54,7 +58,12 @@ class StemcellsTranscriptomeMetadata(BaseMetadata):
             'column_name_row_index': 1,
         }
     }
-    md5 = {'match': [files.transcriptome_filename_re], 'skip': common_skip}
+    md5 = {
+        'match': [
+            files.transcriptome_filename_re
+        ],
+        'skip': common_skip
+    }
 
     def __init__(self, metadata_path, contextual_metadata=None, metadata_info=None):
         super().__init__()
@@ -123,7 +132,7 @@ class StemcellsTranscriptomeMetadata(BaseMetadata):
                 sample_id = ingest_utils.extract_ands_id(file_info.get('id'))
                 xlsx_info = self.metadata_info[os.path.basename(md5_file)]
                 legacy_url = urljoin(xlsx_info['base_url'], filename)
-                resources.append(((sample_id, ), legacy_url, resource))
+                resources.append(((sample_id,), legacy_url, resource))
         return resources
 
 
@@ -149,7 +158,12 @@ class StemcellsSmallRNAMetadata(BaseMetadata):
             'column_name_row_index': 1,
         }
     }
-    md5 = {'match': [files.smallrna_filename_re], 'skip': common_skip}
+    md5 = {
+        'match': [
+            files.smallrna_filename_re
+        ],
+        'skip': common_skip
+    }
 
     def __init__(self, metadata_path, contextual_metadata=None, metadata_info=None):
         super().__init__()
@@ -218,7 +232,7 @@ class StemcellsSmallRNAMetadata(BaseMetadata):
                 sample_id = ingest_utils.extract_ands_id(file_info.get('id'))
                 xlsx_info = self.metadata_info[os.path.basename(md5_file)]
                 legacy_url = urljoin(xlsx_info['base_url'], filename)
-                resources.append(((sample_id, ), legacy_url, resource))
+                resources.append(((sample_id,), legacy_url, resource))
         return resources
 
 
@@ -380,7 +394,12 @@ class StemcellsMetabolomicsMetadata(BaseMetadata):
             'column_name_row_index': 1,
         }
     }
-    md5 = {'match': [files.metabolomics_filename_re], 'skip': common_skip}
+    md5 = {
+        'match': [
+            files.metabolomics_filename_re
+        ],
+        'skip': common_skip
+    }
 
     def __init__(self, metadata_path, contextual_metadata=None, metadata_info=None):
         super().__init__()
@@ -476,9 +495,12 @@ class StemcellsProteomicsBaseMetadata(BaseMetadata):
             logger.info("Processing Stemcells Proteomics metadata file {0}".format(fname))
             xlsx_info = self.metadata_info[os.path.basename(fname)]
             all_rows.update(StemcellsProteomicsMetadata.parse_spreadsheet(fname, xlsx_info, mode))
-        self.filename_metadata.update(dict((t.raw_filename, t) for t in all_rows))
-        self.filename_metadata.update(dict((t.protein_result_filename, t) for t in all_rows))
-        self.filename_metadata.update(dict((t.peptide_result_filename, t) for t in all_rows))
+        self.filename_metadata.update(
+            dict((t.raw_filename, t) for t in all_rows))
+        self.filename_metadata.update(
+            dict((t.protein_result_filename, t) for t in all_rows))
+        self.filename_metadata.update(
+            dict((t.peptide_result_filename, t) for t in all_rows))
         return all_rows
 
     @classmethod
@@ -509,7 +531,11 @@ class StemcellsProteomicsBaseMetadata(BaseMetadata):
             fld("sample_unique_id", 'sample unique id'),
         ]
         wrapper = ExcelWrapper(
-            field_spec, fname, header_length=2, column_name_row_index=1, additional_context=additional_context)
+            field_spec,
+            fname,
+            header_length=2,
+            column_name_row_index=1,
+            additional_context=additional_context)
         for error in wrapper.get_errors():
             logger.error(error)
         rows = list(wrapper.get_all())
@@ -518,7 +544,12 @@ class StemcellsProteomicsBaseMetadata(BaseMetadata):
 
 class StemcellsProteomicsMetadata(StemcellsProteomicsBaseMetadata):
     ckan_data_type = 'stemcells-proteomic'
-    md5 = {'match': [files.proteomics_filename_re, files.proteomics_filename2_re], 'skip': common_skip}
+    md5 = {
+        'match': [
+            files.proteomics_filename_re
+        ],
+        'skip': common_skip
+    }
 
     def __init__(self, metadata_path, contextual_metadata=None, metadata_info=None):
         super().__init__()
@@ -596,9 +627,14 @@ class StemcellsProteomicsMetadata(StemcellsProteomicsBaseMetadata):
 
 class StemcellsProteomicsPoolMetadata(StemcellsProteomicsBaseMetadata):
     ckan_data_type = 'stemcells-proteomic-pool'
-    resource_linkage = ('pool_id', )
+    resource_linkage = ('pool_id',)
     pool = True
-    md5 = {'match': [files.proteomics_pool_filename_re], 'skip': common_skip}
+    md5 = {
+        'match': [
+            files.proteomics_pool_filename_re
+        ],
+        'skip': common_skip
+    }
 
     def __init__(self, metadata_path, contextual_metadata=None, metadata_info=None):
         super().__init__()
@@ -687,7 +723,7 @@ class StemcellsProteomicsAnalysedMetadata(BaseMetadata):
     omics = 'proteomics'
     analysed = True
     ckan_data_type = 'stemcells-proteomics-analysed'
-    resource_linkage = ('ticket', )
+    resource_linkage = ('ticket',)
     spreadsheet = {
         'fields': [
             fld('date_submission', 'date submission yy/mm/dd', coerce=ingest_utils.get_date_isoformat),
@@ -794,7 +830,7 @@ class StemcellsProteomicsAnalysedMetadata(BaseMetadata):
                     md5hash((self.ckan_data_type + xlsx_info['ticket'] + md5).encode('utf8')).hexdigest()
                 resource['name'] = filename
                 legacy_url = urljoin(xlsx_info['base_url'], filename)
-                resources.append(((xlsx_info['ticket'], ), legacy_url, resource))
+                resources.append(((xlsx_info['ticket'],), legacy_url, resource))
         return resources
 
 
@@ -807,7 +843,7 @@ class StemcellsMetabolomicsAnalysedMetadata(BaseMetadata):
     ckan_data_type = 'stemcells-metabolomics-analysed'
     omics = 'metabolomics'
     analysed = True
-    resource_linkage = ('folder_name', )
+    resource_linkage = ('folder_name',)
     spreadsheet = {
         'fields': [
             fld('data_analysis_date', 'data analysis date'),
@@ -908,7 +944,7 @@ class StemcellsMetabolomicsAnalysedMetadata(BaseMetadata):
                 xlsx_info = self.metadata_info[os.path.basename(md5_file)]
                 # analysed data has duplicate PNG images in it - we need to keep the id unique
                 resource['id'] = 'u-' + \
-                                 md5hash((self.ckan_data_type + xlsx_info['base_url'] + md5).encode('utf8')).hexdigest()
+                    md5hash((self.ckan_data_type + xlsx_info['base_url'] + md5).encode('utf8')).hexdigest()
                 resource['name'] = filename
                 ticket_name = xlsx_info['ticket']
                 tracking_ticket_folder = self.track_meta.get(ticket_name)
@@ -921,7 +957,7 @@ class StemcellsMetabolomicsAnalysedMetadata(BaseMetadata):
                         logger.debug("Tracking ticket folder is: {0}".format(tracking_ticket_folder))
                 folder_name = tracking_ticket_folder.folder_name if tracking_ticket_folder else ''
                 legacy_url = urljoin(xlsx_info['base_url'], filename)
-                resources.append(((folder_name, ), legacy_url, resource))
+                resources.append(((folder_name,), legacy_url, resource))
         return resources
 
 
@@ -934,7 +970,7 @@ class StemcellsTranscriptomeAnalysedMetadata(BaseMetadata):
     ckan_data_type = 'stemcells-transcriptome-analysed'
     omics = 'transcriptome'
     analysed = True
-    resource_linkage = ('folder_name', )
+    resource_linkage = ('folder_name',)
     spreadsheet = {
         'fields': [
             fld('date', 'date (yyyy-mm-dd)', coerce=ingest_utils.get_date_isoformat),
@@ -1042,9 +1078,9 @@ class StemcellsTranscriptomeAnalysedMetadata(BaseMetadata):
                 xlsx_info = self.metadata_info[os.path.basename(md5_file)]
                 # analysed data has duplicate PNG images in it - we need to keep the id unique
                 resource['id'] = 'u-' + \
-                                 md5hash((self.ckan_data_type + xlsx_info['base_url'] + md5).encode('utf8')).hexdigest()
+                    md5hash((self.ckan_data_type + xlsx_info['base_url'] + md5).encode('utf8')).hexdigest()
                 resource['name'] = filename
                 folder_name = self.track_meta.get(xlsx_info['ticket']).folder_name
                 legacy_url = urljoin(xlsx_info['base_url'], filename)
-                resources.append(((folder_name, ), legacy_url, resource))
+                resources.append(((folder_name,), legacy_url, resource))
         return resources

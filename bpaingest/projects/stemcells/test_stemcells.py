@@ -1,7 +1,15 @@
-from .files import (transcriptome_filename_re, metabolomics_filename_re, proteomics_filename_re,
-                    proteomics_filename2_re, proteomics_pool_filename2_re, proteomics_analysed_filename_re,
-                    singlecell_filename_re, singlecell_filename2_re, singlecell_raw_xlsx_filename_re,
-                    singlecell_index_info_filename_re, smallrna_filename_re)
+from .files import (
+    transcriptome_filename_re,
+    metabolomics_filename_re,
+    proteomics_filename_re,
+    proteomics_filename2_re,
+    proteomics_pool_filename2_re,
+    proteomics_analysed_filename_re,
+    singlecell_filename_re,
+    singlecell_filename2_re,
+    singlecell_raw_xlsx_filename_re,
+    singlecell_index_info_filename_re,
+    smallrna_filename_re)
 
 
 def test_transcriptome():
@@ -10,7 +18,7 @@ def test_transcriptome():
         '29586_PE_200bp_STEMCELLS_AGRF_CAGCTANXX_CGATGT_L001_R1.fastq.gz',
     ]
     for filename in filenames:
-        assert (transcriptome_filename_re.match(filename) is not None)
+        assert(transcriptome_filename_re.match(filename) is not None)
 
 
 def test_metabolomics():
@@ -21,7 +29,7 @@ def test_metabolomics():
         '24721_SC_MA_LCMS_Pos-1-859-29065_Bio21-LC-QTOF-6545.mzML',
     ]
     for filename in filenames:
-        assert (metabolomics_filename_re.match(filename) is not None)
+        assert(metabolomics_filename_re.match(filename) is not None)
 
 
 def test_proteomics():
@@ -36,7 +44,7 @@ def test_proteomics():
         '33223_SC_MBPF_DIA_Phos_P16_0064_Exp7_QEPlus.htrms'
     ]
     for filename in filenames:
-        assert (proteomics_filename_re.match(filename) is not None)
+        assert(proteomics_filename_re.match(filename) is not None)
 
 
 def test_proteomics2():
@@ -62,7 +70,7 @@ def test_proteomics_analysed():
         'P16_0064_Exp1_SC_MBPF_MS_Analysed_20161213.zip',
     ]
     for filename in filenames:
-        assert (proteomics_analysed_filename_re.match(filename) is not None)
+        assert(proteomics_analysed_filename_re.match(filename) is not None)
 
 
 def test_singlecell():
@@ -72,7 +80,7 @@ def test_singlecell():
         '24732-25115_PE_550bp_Stemcells_WEHI_HHMYYBGXY_NoIndex_L001_R1.fastq.gz',
     ]
     for filename in filenames:
-        assert (singlecell_filename_re.match(filename) is not None)
+        assert(singlecell_filename_re.match(filename) is not None)
 
 
 def test_singlecell2():
@@ -96,7 +104,7 @@ def test_singlecell_index_info():
         'Stemcells_WEHI_HHMYYBGXY_index_info_BPA24732-25115.xlsx',
     ]
     for filename in filenames:
-        assert (singlecell_index_info_filename_re.match(filename) is not None)
+        assert(singlecell_index_info_filename_re.match(filename) is not None)
 
 
 def test_smallrna():
@@ -105,4 +113,4 @@ def test_smallrna():
         '29572_15-35nt_smRNA_STEMCELLS_AGRF_CA7VCANXX_AGTTCC_L008_R1.fastq.gz',
     ]
     for filename in filenames:
-        assert (smallrna_filename_re.match(filename) is not None)
+        assert(smallrna_filename_re.match(filename) is not None)

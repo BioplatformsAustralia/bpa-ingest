@@ -72,7 +72,10 @@ def make_ckan_api(args):
     return ckan
 
 
-CKAN_AUTH = {'login': 'CKAN_USERNAME', 'password': 'CKAN_PASSWORD'}
+CKAN_AUTH = {
+    'login': 'CKAN_USERNAME',
+    'password': 'CKAN_PASSWORD'
+}
 
 
 # http://stackoverflow.com/questions/38271351/download-resources-from-private-ckan-datasets

@@ -1,7 +1,7 @@
 import re
 
-transcriptome_filename_re = re.compile(
-    r"""
+
+transcriptome_filename_re = re.compile(r"""
     (?P<id>\d{4,6})_
     (?P<library>PE|MP)_
     (?P<insert_size>\d*bp)_
@@ -13,9 +13,9 @@ transcriptome_filename_re = re.compile(
     (?P<read>[R|I][1|2])\.fastq\.gz
 """, re.VERBOSE)
 
+
 # FIXME: we need the full convention from BPA / MA
-metabolomics_filename_re = re.compile(
-    r"""
+metabolomics_filename_re = re.compile(r"""
     (?P<id>\d{4,6})_
     SC_
     (?P<vendor>MA)_
@@ -24,8 +24,8 @@ metabolomics_filename_re = re.compile(
     (\.tar\.gz|\.mzML)$
 """, re.VERBOSE)
 
-proteomics_filename_re = re.compile(
-    r"""
+
+proteomics_filename_re = re.compile(r"""
     (?P<id>\d{4,6})_
     SC_
     (?P<vendor>APAF|MBPF|QIMR)_
@@ -33,8 +33,7 @@ proteomics_filename_re = re.compile(
     (\.wiff|\.wiff\.scan|\.txt|\.raw|\.htrms)$
 """, re.VERBOSE)
 
-proteomics_filename2_re = re.compile(
-    r"""
+proteomics_filename2_re = re.compile(r"""
  (P\d{2}_\d{4}_Exp\d_|)(?P<id>\d{4,6})_([a-zA-Z]+?_[a-zA-z]+?_|)(F\d{1,2}_|)
     SC_
     (?P<vendor>APAF|MBPF|QIMR)_
@@ -42,27 +41,27 @@ proteomics_filename2_re = re.compile(
     (\.wiff|\.wiff\.scan|\.txt|\.raw|\.htrms)$
 """, re.VERBOSE)
 
-proteomics_pool_filename_re = re.compile(
-    r"""
+
+proteomics_pool_filename_re = re.compile(r"""
     (?P<pool_id>P\d+_\d+_Exp\d+_Pool\d+)_
     .*
     (\.raw)$
 """, re.VERBOSE)
 
-proteomics_pool_filename2_re = re.compile(
-    r"""
+proteomics_pool_filename2_re = re.compile(r"""
     (P\d{2}_\d{4}_Exp\d_|)(?P<pool_id>P\d+_\d+_Exp\d+_Pool\d+)_
     .*
     (\.raw)$
 """, re.VERBOSE)
+
 
 proteomics_analysed_filename_re = re.compile(r"""
     (?P<zip_file_name>.*)
     (\.zip)$
 """, re.VERBOSE)
 
-singlecell_filename_re = re.compile(
-    r"""
+
+singlecell_filename_re = re.compile(r"""
     (?P<id>\d{4,6}-\d{4,6})_
     (?P<library>PE|MP)_
     (?P<insert_size>\d*bp)_
@@ -74,8 +73,7 @@ singlecell_filename_re = re.compile(
     (?P<read>[R|I][1|2])\.fastq\.gz
 """, re.VERBOSE)
 
-singlecell_filename2_re = re.compile(
-    r"""
+singlecell_filename2_re = re.compile(r"""
     (?P<id>\d{4,6}[-_]\d{4,6})
     _?(?P<library>PE|MP)_
     (?P<insert_size>\d*bp)_
@@ -106,8 +104,8 @@ singlecell_index_info_filename_re = re.compile(
     BPA(?P<id>\d{4,6}-\d{4,6})\.xlsx$
 """, re.VERBOSE)
 
-smallrna_filename_re = re.compile(
-    r"""
+
+smallrna_filename_re = re.compile(r"""
     (?P<id>\d{4,6})_
     (?P<insert_size>[\d-]+nt)_
     smRNA_
@@ -118,6 +116,7 @@ smallrna_filename_re = re.compile(
     (?P<lane>L\d{3})_
     (?P<read>[R|I][1|2])\.fastq\.gz
 """, re.VERBOSE)
+
 
 xlsx_filename_re = re.compile(r'^.*\.xlsx')
 pdf_filename_re = re.compile(r'^.*\.pdf')
