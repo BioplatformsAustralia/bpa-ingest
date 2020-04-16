@@ -15,3 +15,4 @@ venv/
 tags
 test.json
 test.log
+ingest.log

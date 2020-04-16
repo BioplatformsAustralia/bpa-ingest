@@ -118,7 +118,7 @@ class BaseMetadata:
             logger.error('no XLSX resources, likely a bug in the ingest class')
         resources = []
         for linkage, fname in self._linkage_xlsx.items():
-            resource = xlsx_resource(linkage, fname)
+            resource = xlsx_resource(linkage, fname, self.ckan_data_type)
             xlsx_info = self.metadata_info[os.path.basename(fname)]
             legacy_url = urljoin(xlsx_info['base_url'], os.path.basename(fname))
             resources.append((linkage, legacy_url, resource))

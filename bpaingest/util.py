@@ -175,7 +175,7 @@ def apply_license(archive_ingestion_date):
         return "CC-BY-3.0-AU"
 
 
-def xlsx_resource(linkage, fname):
+def xlsx_resource(linkage, fname, resource_type):
     """
     the same XLSX file might be on multiple packages, so we generate an ID
     which is the MD5(str(linkage) || fname)
@@ -185,5 +185,6 @@ def xlsx_resource(linkage, fname):
     return {
         'id': md5((str(linkage) + "||" + os.path.basename(fname)).encode('utf8')).hexdigest(),
         'name': os.path.basename(fname),
+        'resource_type': resource_type,
         'md5': md5(data).hexdigest(),
     }
