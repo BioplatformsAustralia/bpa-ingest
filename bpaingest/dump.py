@@ -32,7 +32,7 @@ def linkage_qc(state, data_type_meta):
             linked_tuples.add(resource_linkage)
             if resource_linkage not in resource_linkage_package_id:
                 dirname1, resource_name = os.path.split(legacy_url)
-                dirname2, ticket = os.path.split(dirname1)
+                _dirname2, ticket = os.path.split(dirname1)
                 logger.error(
                     "dangling resource: {} (ticket: {}, linkage: {})".format(resource_name, ticket, resource_linkage))
 

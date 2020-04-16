@@ -1,4 +1,4 @@
-import logging
+
 
 from unipath import Path
 from urllib.parse import urljoin
@@ -23,7 +23,7 @@ from glob import glob
 import os
 import re
 
-logger = make_logger(__name__, logging.DEBUG)
+logger = make_logger(__name__)
 
 
 common_skip = [
@@ -350,7 +350,6 @@ class StemcellsSingleCellRNASeqMetadata(BaseMetadata):
             for filename, md5, file_info in self.parse_md5file(md5_file):
                 if file_info is None:
                     raise Exception("cannot parse filename: %s" % filename)
-                logger.debug("file name is: {0}".format(filename))
                 resource = file_info.copy()
                 resource['md5'] = resource['id'] = md5
                 resource['name'] = filename
@@ -465,7 +464,6 @@ class StemcellsMetabolomicsMetadata(BaseMetadata):
         for md5_file in glob(self.path + '/*.md5'):
             logger.info("Processing md5 file {0}".format(md5_file))
             for filename, md5, file_info in self.parse_md5file(md5_file):
-                logger.debug("file name is: {0}".format(filename))
                 resource = file_info.copy()
                 resource['md5'] = resource['id'] = md5
                 resource['name'] = filename
@@ -611,7 +609,6 @@ class StemcellsProteomicsMetadata(StemcellsProteomicsBaseMetadata):
                     if not files.proteomics_pool_filename_re.match(filename):
                         raise Exception("unhandled file: %s" % (filename))
                     continue
-                logger.debug("file name is: {0}".format(filename))
                 resource = file_info.copy()
                 resource['md5'] = resource['id'] = md5
                 resource['name'] = filename
@@ -824,7 +821,6 @@ class StemcellsProteomicsAnalysedMetadata(BaseMetadata):
             for filename, md5, file_info in self.parse_md5file(md5_file):
                 resource = {}
                 resource['md5'] = md5
-                logger.debug("file name is: {0}".format(filename))
                 xlsx_info = self.metadata_info[os.path.basename(md5_file)]
                 # analysed data has duplicate PNG images in it -- we need to keep the ID unique
                 resource['id'] = 'u-' + \
@@ -941,7 +937,6 @@ class StemcellsMetabolomicsAnalysedMetadata(BaseMetadata):
                 resource = file_info.copy()
                 resource = {}
                 resource['md5'] = md5
-                logger.debug("file name is: {0}".format(filename))
                 xlsx_info = self.metadata_info[os.path.basename(md5_file)]
                 # analysed data has duplicate PNG images in it - we need to keep the id unique
                 resource['id'] = 'u-' + \
