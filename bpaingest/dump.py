@@ -29,12 +29,11 @@ def linkage_qc(state, data_type_meta):
         linked_tuples = set()
         for resource_linkage, legacy_url, resource_obj in resources:
             linked_tuples.add(resource_linkage)
-            # logger.debug('next linked tuples is: resource_linkage: {}  legacy_url: {} resource_obj: {}'.format(resource_linkage, legacy_url, resource_obj))
             if resource_linkage not in resource_linkage_package_id:
                 dirname1, resource_name = os.path.split(legacy_url)
                 dirname2, ticket = os.path.split(dirname1)
-                logger.error("dangling resource: {} (ticket: {}, linkage: {})".format(
-                    resource_name, ticket, resource_linkage))
+                logger.error(
+                    "dangling resource: {} (ticket: {}, linkage: {})".format(resource_name, ticket, resource_linkage))
 
         for linkage_tpl, package_id in resource_linkage_package_id.items():
             if linkage_tpl not in linked_tuples:

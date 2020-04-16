@@ -45,7 +45,8 @@ class StemcellsTranscriptomeContextual(object):
             fld('research_group', 'research group'),
             fld('stem_cell_line', 'stem cell line'),
             fld('stem_cell_state', 'stem cell state'),
-            fld('contextual_data_submission_date',
+            fld(
+                'contextual_data_submission_date',
                 'contextual data submission date',
                 coerce=ingest_utils.get_date_isoformat),
             fld('sample_submission_date', 'sample submission date', coerce=ingest_utils.get_date_isoformat),
@@ -73,11 +74,8 @@ class StemcellsTranscriptomeContextual(object):
             fld('library_strategy', 'library strategy'),
         ]
 
-        wrapper = ExcelWrapper(field_spec,
-                               metadata_path,
-                               sheet_name=self.sheet_name,
-                               header_length=3,
-                               column_name_row_index=2)
+        wrapper = ExcelWrapper(
+            field_spec, metadata_path, sheet_name=self.sheet_name, header_length=3, column_name_row_index=2)
         for error in wrapper.get_errors():
             logger.error(error)
         return wrapper.get_all()
@@ -116,7 +114,8 @@ class StemcellsSmallRNAContextual(object):
             fld('research_group', 'research group'),
             fld('stem_cell_line', 'stem cell line'),
             fld('stem_cell_state', 'stem cell state'),
-            fld('contextual_data_submission_date',
+            fld(
+                'contextual_data_submission_date',
                 'contextual data submission date',
                 coerce=ingest_utils.get_date_isoformat),
             fld('sample_submission_date', 'sample submission date', coerce=ingest_utils.get_date_isoformat),
@@ -144,11 +143,8 @@ class StemcellsSmallRNAContextual(object):
             fld('library_strategy', 'library strategy'),
         ]
 
-        wrapper = ExcelWrapper(field_spec,
-                               metadata_path,
-                               sheet_name=self.sheet_name,
-                               header_length=3,
-                               column_name_row_index=2)
+        wrapper = ExcelWrapper(
+            field_spec, metadata_path, sheet_name=self.sheet_name, header_length=3, column_name_row_index=2)
         for error in wrapper.get_errors():
             logger.error(error)
         return wrapper.get_all()
@@ -187,7 +183,8 @@ class StemcellsSingleCellRNASeq(object):
             fld('research_group', 'research group'),
             fld('stem_cell_line', 'stem cell line'),
             fld('stem_cell_state', 'stem cell state'),
-            fld('contextual_data_submission_date',
+            fld(
+                'contextual_data_submission_date',
                 'contextual data submission date',
                 coerce=ingest_utils.get_date_isoformat),
             fld('sample_submission_date', 'sample submission date', coerce=ingest_utils.get_date_isoformat),
@@ -215,11 +212,8 @@ class StemcellsSingleCellRNASeq(object):
             fld('library_strategy', 'library strategy'),
         ]
 
-        wrapper = ExcelWrapper(field_spec,
-                               metadata_path,
-                               sheet_name=self.sheet_name,
-                               header_length=3,
-                               column_name_row_index=2)
+        wrapper = ExcelWrapper(
+            field_spec, metadata_path, sheet_name=self.sheet_name, header_length=3, column_name_row_index=2)
         for error in wrapper.get_errors():
             logger.error(error)
         return wrapper.get_all()
@@ -261,7 +255,8 @@ class StemcellsMetabolomicsContextual(object):
             fld('research_group', 'research group'),
             fld('stem_cell_line', 'stem cell line'),
             fld('stem_cell_state', 'stem cell state'),
-            fld('contextual_data_submission_date',
+            fld(
+                'contextual_data_submission_date',
                 'contextual data submission date',
                 coerce=ingest_utils.get_date_isoformat),
             fld('sample_submission_date', 'sample submission date', coerce=ingest_utils.get_date_isoformat),
@@ -286,11 +281,8 @@ class StemcellsMetabolomicsContextual(object):
             fld('extract_protocol', 'extract protocol'),
         ]
 
-        wrapper = ExcelWrapper(field_spec,
-                               metadata_path,
-                               sheet_name=self.sheet_name,
-                               header_length=3,
-                               column_name_row_index=2)
+        wrapper = ExcelWrapper(
+            field_spec, metadata_path, sheet_name=self.sheet_name, header_length=3, column_name_row_index=2)
         for error in wrapper.get_errors():
             logger.error(error)
         return wrapper.get_all()
@@ -332,7 +324,8 @@ class StemcellsProteomicsContextual(object):
             fld('research_group', 'research group'),
             fld('stem_cell_line', 'stem cell line'),
             fld('stem_cell_state', 'stem cell state'),
-            fld('contextual_data_submission_date',
+            fld(
+                'contextual_data_submission_date',
                 'contextual data submission date',
                 coerce=ingest_utils.get_date_isoformat),
             fld('sample_submission_date', 'sample submission date', coerce=ingest_utils.get_date_isoformat),
@@ -362,11 +355,8 @@ class StemcellsProteomicsContextual(object):
         ]
         rows = []
         for sheet_name in self.sheet_names:
-            wrapper = ExcelWrapper(field_spec,
-                                   metadata_path,
-                                   sheet_name=sheet_name,
-                                   header_length=3,
-                                   column_name_row_index=2)
+            wrapper = ExcelWrapper(
+                field_spec, metadata_path, sheet_name=sheet_name, header_length=3, column_name_row_index=2)
             for error in wrapper.get_errors():
                 logger.error(error)
             rows += list(wrapper.get_all())

@@ -10,8 +10,9 @@ from ...util import make_logger, sample_id_to_ckan_name, common_values, clean_ta
 from ...abstract import BaseMetadata
 from ...libs.excel_wrapper import ExcelWrapper, make_field_definition as fld, make_skip_column as skp
 from .tracking import StemcellsTrackMetadata
-from .contextual import (StemcellsTranscriptomeContextual, StemcellsSmallRNAContextual, StemcellsSingleCellRNASeq,
-                         StemcellsMetabolomicsContextual, StemcellsProteomicsContextual)
+from .contextual import (
+    StemcellsTranscriptomeContextual, StemcellsSmallRNAContextual, StemcellsSingleCellRNASeq,
+    StemcellsMetabolomicsContextual, StemcellsProteomicsContextual)
 from . import files
 from .util import fix_analytical_platform
 from glob import glob
@@ -368,7 +369,8 @@ class StemcellsMetabolomicsMetadata(BaseMetadata):
             fld("mass_spectrometer", "Mass Spectrometer"),
             fld("acquisition_mode", "acquisition mode"),
             fld('sample_submission_date', 'sample submission date', coerce=ingest_utils.get_date_isoformat),
-            fld('raw_file_name',
+            fld(
+                'raw_file_name',
                 'raw file name (available in .d and .mzml format)',
                 units='available in .d and .mzml format',
                 coerce=ingest_utils.get_clean_number)
@@ -506,11 +508,8 @@ class StemcellsProteomicsBaseMetadata(BaseMetadata):
             fld("database_size", 'database size', optional=True),
             fld("sample_unique_id", 'sample unique id'),
         ]
-        wrapper = ExcelWrapper(field_spec,
-                               fname,
-                               header_length=2,
-                               column_name_row_index=1,
-                               additional_context=additional_context)
+        wrapper = ExcelWrapper(
+            field_spec, fname, header_length=2, column_name_row_index=1, additional_context=additional_context)
         for error in wrapper.get_errors():
             logger.error(error)
         rows = list(wrapper.get_all())
@@ -792,7 +791,7 @@ class StemcellsProteomicsAnalysedMetadata(BaseMetadata):
                 xlsx_info = self.metadata_info[os.path.basename(md5_file)]
                 # analysed data has duplicate PNG images in it -- we need to keep the ID unique
                 resource['id'] = 'u-' + \
-                                 md5hash((self.ckan_data_type + xlsx_info['ticket'] + md5).encode('utf8')).hexdigest()
+                    md5hash((self.ckan_data_type + xlsx_info['ticket'] + md5).encode('utf8')).hexdigest()
                 resource['name'] = filename
                 legacy_url = urljoin(xlsx_info['base_url'], filename)
                 resources.append(((xlsx_info['ticket'], ), legacy_url, resource))
@@ -912,7 +911,6 @@ class StemcellsMetabolomicsAnalysedMetadata(BaseMetadata):
                                  md5hash((self.ckan_data_type + xlsx_info['base_url'] + md5).encode('utf8')).hexdigest()
                 resource['name'] = filename
                 ticket_name = xlsx_info['ticket']
-                # logger.debug("Ticket name is: {0}".format(ticket_name))
                 tracking_ticket_folder = self.track_meta.get(ticket_name)
                 if not tracking_ticket_folder:
                     logger.warn(

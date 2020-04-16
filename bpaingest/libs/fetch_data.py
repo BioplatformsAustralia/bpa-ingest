@@ -13,7 +13,6 @@ from urllib.parse import urljoin
 from ..util import make_logger
 
 import requests.packages.urllib3
-
 requests.packages.urllib3.disable_warnings()
 
 logger = make_logger(__name__)
@@ -21,9 +20,10 @@ logger = make_logger(__name__)
 
 def get_password(project_name=None):
     '''Get downloads password for legacy auth username from environment '''
+
     def complain_and_quit():
-        logger.error('Please set shell variable {} to current BPA {} project password'.format(
-            password_env, project_name))
+        logger.error('Please set shell variable {} to current BPA {} project password'.format(password_env,
+                                                                                              project_name))
         sys.exit()
 
     password_env = 'BPA_%s_DOWNLOADS_PASSWORD' % (project_name.upper())
@@ -69,13 +69,8 @@ class Fetcher():
                     f.write(chunk)
                     f.flush()
 
-    def fetch_metadata_from_folder(self,
-                                   metadata_patterns,
-                                   metadata_info,
-                                   url_components,
-                                   _target_depth=-1,
-                                   _url=None,
-                                   _session=None):
+    def fetch_metadata_from_folder(self, metadata_patterns, metadata_info, url_components,
+                                   _target_depth=-1, _url=None, _session=None):
         """
         walk a directory structure, grabbing files matching `metadata_patterns`.
         `url_components` gives an expected minimum level of recursing to find matching files,
@@ -103,31 +98,34 @@ class Fetcher():
             # we need to descend directory tree further in order to find all `url_components`
             if _target_depth > 0:
                 if Fetcher.recurse_re.match(link_target):
-                    self.fetch_metadata_from_folder(metadata_patterns,
-                                                    metadata_info,
-                                                    url_components,
-                                                    _session=_session,
-                                                    _target_depth=_target_depth - 1,
-                                                    _url=urljoin(_url, link_target))
+                    self.fetch_metadata_from_folder(
+                        metadata_patterns,
+                        metadata_info,
+                        url_components,
+                        _session=_session,
+                        _target_depth=_target_depth - 1,
+                        _url=urljoin(_url, link_target))
             else:
                 # descend anyway, to find whatever is there, but we've already hit target_depth
                 if Fetcher.recurse_re.match(link_target):
-                    self.fetch_metadata_from_folder(metadata_patterns,
-                                                    metadata_info,
-                                                    url_components,
-                                                    _session=_session,
-                                                    _target_depth=_target_depth,
-                                                    _url=urljoin(_url, link_target))
+                    self.fetch_metadata_from_folder(
+                        metadata_patterns,
+                        metadata_info,
+                        url_components,
+                        _session=_session,
+                        _target_depth=_target_depth,
+                        _url=urljoin(_url, link_target))
                 elif not any(re.match(pattern, link_target) for pattern in metadata_patterns):
                     continue
                 else:
                     # download the actual file
                     subdir = _url[len(self.metadata_source_url):].strip('/')
                     meta_parts = subdir.split('/')[:len(url_components)]
-                    assert (len(meta_parts) == len(url_components))
+                    assert(len(meta_parts) == len(url_components))
                     if link_target in metadata_info:
-                        raise Exception("Legacy archive contains non-unique filename: %s (%s)" %
-                                        (link_target, metadata_info[link_target]))
+                        raise Exception(
+                            "Legacy archive contains non-unique filename: %s (%s)" %
+                            (link_target, metadata_info[link_target]))
                     metadata_info[link_target] = dict(list(zip(url_components, meta_parts)))
                     metadata_info[link_target]['base_url'] = _url
                     self._fetch(_session, _url, link_target)

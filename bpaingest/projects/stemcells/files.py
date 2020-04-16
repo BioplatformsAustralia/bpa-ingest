@@ -42,7 +42,8 @@ proteomics_filename2_re = re.compile(
     (\.wiff|\.wiff\.scan|\.txt|\.raw|\.htrms)$
 """, re.VERBOSE)
 
-proteomics_pool_filename_re = re.compile(r"""
+proteomics_pool_filename_re = re.compile(
+    r"""
     (?P<pool_id>P\d+_\d+_Exp\d+_Pool\d+)_
     .*
     (\.raw)$

@@ -191,32 +191,21 @@ class OMG10XRawIlluminaMetadata(OMGBaseMetadata):
                     return None
                 return getattr(track_meta, k)
 
-            notes = '\n'.join('%s. %s.' % (t.get('common_name', ''), t.get('institution_name', ''))
-                              for t in row_metadata)
+            notes = '\n'.join(
+                '%s. %s.' % (t.get('common_name', ''), t.get('institution_name', '')) for t in row_metadata)
 
             obj.update({
-                'ticket':
-                ticket,
-                'date_of_transfer':
-                ingest_utils.get_date_isoformat(track_get('date_of_transfer')),
-                'data_type':
-                track_get('data_type'),
-                'description':
-                track_get('description'),
-                'folder_name':
-                track_get('folder_name'),
-                'sample_submission_date':
-                ingest_utils.get_date_isoformat(track_get('date_of_transfer')),
-                'contextual_data_submission_date':
-                None,
-                'data_generated':
-                ingest_utils.get_date_isoformat(track_get('date_of_transfer_to_archive')),
-                'archive_ingestion_date':
-                ingest_utils.get_date_isoformat(track_get('date_of_transfer_to_archive')),
-                'dataset_url':
-                track_get('download'),
-                'notes':
-                notes,
+                'ticket': ticket,
+                'date_of_transfer': ingest_utils.get_date_isoformat(track_get('date_of_transfer')),
+                'data_type': track_get('data_type'),
+                'description': track_get('description'),
+                'folder_name': track_get('folder_name'),
+                'sample_submission_date': ingest_utils.get_date_isoformat(track_get('date_of_transfer')),
+                'contextual_data_submission_date': None,
+                'data_generated': ingest_utils.get_date_isoformat(track_get('date_of_transfer_to_archive')),
+                'archive_ingestion_date': ingest_utils.get_date_isoformat(track_get('date_of_transfer_to_archive')),
+                'dataset_url': track_get('download'),
+                'notes': notes,
             })
 
             ingest_utils.add_spatial_extra(obj)
@@ -349,38 +338,22 @@ class OMG10XRawMetadata(OMGBaseMetadata):
                 return getattr(track_meta, k)
 
             obj.update({
-                'name':
-                name,
-                'id':
-                name,
-                'bpa_sample_id':
-                bpa_sample_id,
-                'title':
-                'OMG 10x Raw %s %s' % (bpa_sample_id, flow_id),
-                'notes':
-                '%s. %s.' % (context.get('common_name', ''), context.get('institution_name', '')),
-                'date_of_transfer':
-                ingest_utils.get_date_isoformat(track_get('date_of_transfer')),
-                'data_type':
-                track_get('data_type'),
-                'description':
-                track_get('description'),
-                'folder_name':
-                track_get('folder_name'),
-                'sample_submission_date':
-                ingest_utils.get_date_isoformat(track_get('date_of_transfer')),
-                'contextual_data_submission_date':
-                None,
-                'data_generated':
-                ingest_utils.get_date_isoformat(track_get('date_of_transfer_to_archive')),
-                'archive_ingestion_date':
-                ingest_utils.get_date_isoformat(track_get('date_of_transfer_to_archive')),
-                'dataset_url':
-                track_get('download'),
-                'type':
-                self.ckan_data_type,
-                'private':
-                True,
+                'name': name,
+                'id': name,
+                'bpa_sample_id': bpa_sample_id,
+                'title': 'OMG 10x Raw %s %s' % (bpa_sample_id, flow_id),
+                'notes': '%s. %s.' % (context.get('common_name', ''), context.get('institution_name', '')),
+                'date_of_transfer': ingest_utils.get_date_isoformat(track_get('date_of_transfer')),
+                'data_type': track_get('data_type'),
+                'description': track_get('description'),
+                'folder_name': track_get('folder_name'),
+                'sample_submission_date': ingest_utils.get_date_isoformat(track_get('date_of_transfer')),
+                'contextual_data_submission_date': None,
+                'data_generated': ingest_utils.get_date_isoformat(track_get('date_of_transfer_to_archive')),
+                'archive_ingestion_date': ingest_utils.get_date_isoformat(track_get('date_of_transfer_to_archive')),
+                'dataset_url': track_get('download'),
+                'type': self.ckan_data_type,
+                'private': True,
             })
             self.library_to_sample[obj['bpa_library_id']] = obj['bpa_sample_id']
             obj.update(context)
@@ -519,40 +492,23 @@ class OMG10XProcessedIlluminaMetadata(OMGBaseMetadata):
                     context.update(contextual_source.get(bpa_sample_id, bpa_library_id))
                 obj.update(row._asdict())
                 obj.update({
-                    'name':
-                    name,
-                    'id':
-                    name,
-                    'flow_id':
-                    flow_id,
-                    'title':
-                    'OMG 10x Illumina Processed %s %s' % (bpa_sample_id, flow_id),
-                    'notes':
-                    '%s. %s.' % (context.get('common_name', ''), context.get('institution_name', '')),
-                    'date_of_transfer':
-                    ingest_utils.get_date_isoformat(track_get('date_of_transfer')),
-                    'data_type':
-                    track_get('data_type'),
-                    'description':
-                    track_get('description'),
-                    'folder_name':
-                    track_get('folder_name'),
-                    'sample_submission_date':
-                    ingest_utils.get_date_isoformat(track_get('date_of_transfer')),
-                    'contextual_data_submission_date':
-                    None,
-                    'data_generated':
-                    ingest_utils.get_date_isoformat(track_get('date_of_transfer_to_archive')),
-                    'archive_ingestion_date':
-                    ingest_utils.get_date_isoformat(track_get('date_of_transfer_to_archive')),
-                    'dataset_url':
-                    track_get('download'),
-                    'ticket':
-                    row.ticket,
-                    'type':
-                    self.ckan_data_type,
-                    'private':
-                    True,
+                    'name': name,
+                    'id': name,
+                    'flow_id': flow_id,
+                    'title': 'OMG 10x Illumina Processed %s %s' % (bpa_sample_id, flow_id),
+                    'notes': '%s. %s.' % (context.get('common_name', ''), context.get('institution_name', '')),
+                    'date_of_transfer': ingest_utils.get_date_isoformat(track_get('date_of_transfer')),
+                    'data_type': track_get('data_type'),
+                    'description': track_get('description'),
+                    'folder_name': track_get('folder_name'),
+                    'sample_submission_date': ingest_utils.get_date_isoformat(track_get('date_of_transfer')),
+                    'contextual_data_submission_date': None,
+                    'data_generated': ingest_utils.get_date_isoformat(track_get('date_of_transfer_to_archive')),
+                    'archive_ingestion_date': ingest_utils.get_date_isoformat(track_get('date_of_transfer_to_archive')),
+                    'dataset_url': track_get('download'),
+                    'ticket': row.ticket,
+                    'type': self.ckan_data_type,
+                    'private': True,
                 })
                 obj.update(context)
                 ingest_utils.add_spatial_extra(obj)
@@ -706,36 +662,22 @@ class OMGExonCaptureMetadata(OMGBaseMetadata):
                     context.update(contextual_source.get(row.bpa_sample_id, row.bpa_library_id))
 
                 obj.update({
-                    'name':
-                    name,
-                    'id':
-                    name,
-                    'title':
-                    'OMG Exon Capture Raw %s %s %s' % (library_id, row.flowcell_id, row.library_index_sequence),
-                    'notes':
-                    '%s. %s.' % (context.get('common_name', ''), context.get('institution_name', '')),
-                    'date_of_transfer':
-                    ingest_utils.get_date_isoformat(track_get('date_of_transfer')),
-                    'data_type':
-                    track_get('data_type'),
-                    'description':
-                    track_get('description'),
-                    'folder_name':
-                    track_get('folder_name'),
-                    'sample_submission_date':
-                    ingest_utils.get_date_isoformat(track_get('date_of_transfer')),
-                    'contextual_data_submission_date':
-                    None,
-                    'data_generated':
-                    ingest_utils.get_date_isoformat(track_get('date_of_transfer_to_archive')),
-                    'archive_ingestion_date':
-                    ingest_utils.get_date_isoformat(track_get('date_of_transfer_to_archive')),
-                    'dataset_url':
-                    track_get('download'),
-                    'type':
-                    self.ckan_data_type,
-                    'private':
-                    True,
+                    'name': name,
+                    'id': name,
+                    'title': 'OMG Exon Capture Raw %s %s %s' %
+                    (library_id, row.flowcell_id, row.library_index_sequence),
+                    'notes': '%s. %s.' % (context.get('common_name', ''), context.get('institution_name', '')),
+                    'date_of_transfer': ingest_utils.get_date_isoformat(track_get('date_of_transfer')),
+                    'data_type': track_get('data_type'),
+                    'description': track_get('description'),
+                    'folder_name': track_get('folder_name'),
+                    'sample_submission_date': ingest_utils.get_date_isoformat(track_get('date_of_transfer')),
+                    'contextual_data_submission_date': None,
+                    'data_generated': ingest_utils.get_date_isoformat(track_get('date_of_transfer_to_archive')),
+                    'archive_ingestion_date': ingest_utils.get_date_isoformat(track_get('date_of_transfer_to_archive')),
+                    'dataset_url': track_get('download'),
+                    'type': self.ckan_data_type,
+                    'private': True,
                 })
                 obj.update(context)
 
@@ -864,36 +806,21 @@ class OMGGenomicsNovaseqMetadata(OMGBaseMetadata):
                     context.update(contextual_source.get(row.bpa_sample_id, row.bpa_library_id))
 
                 obj.update({
-                    'name':
-                    name,
-                    'id':
-                    name,
-                    'title':
-                    'OMG Novaseq Raw %s %s %s' % (library_id, row.flowcell_id, row.library_index_sequence),
-                    'notes':
-                    '%s. %s.' % (context.get('common_name', ''), context.get('institution_name', '')),
-                    'date_of_transfer':
-                    ingest_utils.get_date_isoformat(track_get('date_of_transfer')),
-                    'data_type':
-                    track_get('data_type'),
-                    'description':
-                    track_get('description'),
-                    'folder_name':
-                    track_get('folder_name'),
-                    'sample_submission_date':
-                    ingest_utils.get_date_isoformat(track_get('date_of_transfer')),
-                    'contextual_data_submission_date':
-                    None,
-                    'data_generated':
-                    ingest_utils.get_date_isoformat(track_get('date_of_transfer_to_archive')),
-                    'archive_ingestion_date':
-                    ingest_utils.get_date_isoformat(track_get('date_of_transfer_to_archive')),
-                    'dataset_url':
-                    track_get('download'),
-                    'type':
-                    self.ckan_data_type,
-                    'private':
-                    True,
+                    'name': name,
+                    'id': name,
+                    'title': 'OMG Novaseq Raw %s %s %s' % (library_id, row.flowcell_id, row.library_index_sequence),
+                    'notes': '%s. %s.' % (context.get('common_name', ''), context.get('institution_name', '')),
+                    'date_of_transfer': ingest_utils.get_date_isoformat(track_get('date_of_transfer')),
+                    'data_type': track_get('data_type'),
+                    'description': track_get('description'),
+                    'folder_name': track_get('folder_name'),
+                    'sample_submission_date': ingest_utils.get_date_isoformat(track_get('date_of_transfer')),
+                    'contextual_data_submission_date': None,
+                    'data_generated': ingest_utils.get_date_isoformat(track_get('date_of_transfer_to_archive')),
+                    'archive_ingestion_date': ingest_utils.get_date_isoformat(track_get('date_of_transfer_to_archive')),
+                    'dataset_url': track_get('download'),
+                    'type': self.ckan_data_type,
+                    'private': True,
                 })
                 obj.update(context)
 
@@ -1026,38 +953,22 @@ class OMGGenomicsHiSeqMetadata(OMGBaseMetadata):
                 for contextual_source in self.contextual_metadata:
                     context.update(contextual_source.get(bpa_sample_id, bpa_library_id))
                 obj.update({
-                    'name':
-                    name,
-                    'id':
-                    name,
-                    'flow_id':
-                    flow_id,
-                    'title':
-                    'OMG Genomics HiSeq Raw %s %s' % (bpa_sample_id, flow_id),
-                    'notes':
-                    '%s. %s.' % (context.get('common_name', ''), context.get('institution_name', '')),
-                    'date_of_transfer':
-                    ingest_utils.get_date_isoformat(track_get('date_of_transfer')),
-                    'data_type':
-                    track_get('data_type'),
-                    'description':
-                    track_get('description'),
-                    'folder_name':
-                    track_get('folder_name'),
-                    'sample_submission_date':
-                    ingest_utils.get_date_isoformat(track_get('date_of_transfer')),
-                    'contextual_data_submission_date':
-                    None,
-                    'data_generated':
-                    ingest_utils.get_date_isoformat(track_get('date_of_transfer_to_archive')),
-                    'archive_ingestion_date':
-                    ingest_utils.get_date_isoformat(track_get('date_of_transfer_to_archive')),
-                    'dataset_url':
-                    track_get('download'),
-                    'type':
-                    self.ckan_data_type,
-                    'private':
-                    True,
+                    'name': name,
+                    'id': name,
+                    'flow_id': flow_id,
+                    'title': 'OMG Genomics HiSeq Raw %s %s' % (bpa_sample_id, flow_id),
+                    'notes': '%s. %s.' % (context.get('common_name', ''), context.get('institution_name', '')),
+                    'date_of_transfer': ingest_utils.get_date_isoformat(track_get('date_of_transfer')),
+                    'data_type': track_get('data_type'),
+                    'description': track_get('description'),
+                    'folder_name': track_get('folder_name'),
+                    'sample_submission_date': ingest_utils.get_date_isoformat(track_get('date_of_transfer')),
+                    'contextual_data_submission_date': None,
+                    'data_generated': ingest_utils.get_date_isoformat(track_get('date_of_transfer_to_archive')),
+                    'archive_ingestion_date': ingest_utils.get_date_isoformat(track_get('date_of_transfer_to_archive')),
+                    'dataset_url': track_get('download'),
+                    'type': self.ckan_data_type,
+                    'private': True,
                 })
                 obj.update(context)
                 ingest_utils.add_spatial_extra(obj)
@@ -1198,36 +1109,21 @@ class OMGGenomicsDDRADMetadata(OMGBaseMetadata):
 
                 name = sample_id_to_ckan_name(bpa_dataset_id, self.ckan_data_type, flowcell_id)
                 obj.update({
-                    'name':
-                    name,
-                    'id':
-                    name,
-                    'bpa_dataset_id':
-                    bpa_dataset_id,
-                    'title':
-                    'OMG Genomics ddRAD %s %s' % (bpa_dataset_id, flow_id),
-                    'date_of_transfer':
-                    ingest_utils.get_date_isoformat(track_get('date_of_transfer')),
-                    'data_type':
-                    track_get('data_type'),
-                    'description':
-                    track_get('description'),
-                    'folder_name':
-                    track_get('folder_name'),
-                    'sample_submission_date':
-                    ingest_utils.get_date_isoformat(track_get('date_of_transfer')),
-                    'contextual_data_submission_date':
-                    None,
-                    'data_generated':
-                    ingest_utils.get_date_isoformat(track_get('date_of_transfer_to_archive')),
-                    'archive_ingestion_date':
-                    ingest_utils.get_date_isoformat(track_get('date_of_transfer_to_archive')),
-                    'dataset_url':
-                    track_get('download'),
-                    'type':
-                    self.ckan_data_type,
-                    'private':
-                    True,
+                    'name': name,
+                    'id': name,
+                    'bpa_dataset_id': bpa_dataset_id,
+                    'title': 'OMG Genomics ddRAD %s %s' % (bpa_dataset_id, flow_id),
+                    'date_of_transfer': ingest_utils.get_date_isoformat(track_get('date_of_transfer')),
+                    'data_type': track_get('data_type'),
+                    'description': track_get('description'),
+                    'folder_name': track_get('folder_name'),
+                    'sample_submission_date': ingest_utils.get_date_isoformat(track_get('date_of_transfer')),
+                    'contextual_data_submission_date': None,
+                    'data_generated': ingest_utils.get_date_isoformat(track_get('date_of_transfer_to_archive')),
+                    'archive_ingestion_date': ingest_utils.get_date_isoformat(track_get('date_of_transfer_to_archive')),
+                    'dataset_url': track_get('download'),
+                    'type': self.ckan_data_type,
+                    'private': True,
                 })
                 ingest_utils.add_spatial_extra(obj)
                 tag_names = ['genomics-ddrad']
@@ -1356,36 +1252,21 @@ class OMGGenomicsPacbioMetadata(OMGBaseMetadata):
                 context.update(contextual_source.get(obj['bpa_sample_id'], obj['bpa_library_id']))
 
             obj.update({
-                'name':
-                name,
-                'id':
-                name,
-                'title':
-                'OMG Pacbio Raw {} {}'.format(library_id, obj['run_date']),
-                'notes':
-                '{}. {}.'.format(context.get('common_name', ''), context.get('institution_name', '')),
-                'date_of_transfer':
-                ingest_utils.get_date_isoformat(track_get('date_of_transfer')),
-                'data_type':
-                track_get('data_type'),
-                'description':
-                track_get('description'),
-                'folder_name':
-                track_get('folder_name'),
-                'sample_submission_date':
-                ingest_utils.get_date_isoformat(track_get('date_of_transfer')),
-                'contextual_data_submission_date':
-                None,
-                'data_generated':
-                ingest_utils.get_date_isoformat(track_get('date_of_transfer_to_archive')),
-                'archive_ingestion_date':
-                ingest_utils.get_date_isoformat(track_get('date_of_transfer_to_archive')),
-                'dataset_url':
-                track_get('download'),
-                'type':
-                self.ckan_data_type,
-                'private':
-                True,
+                'name': name,
+                'id': name,
+                'title': 'OMG Pacbio Raw {} {}'.format(library_id, obj['run_date']),
+                'notes': '{}. {}.'.format(context.get('common_name', ''), context.get('institution_name', '')),
+                'date_of_transfer': ingest_utils.get_date_isoformat(track_get('date_of_transfer')),
+                'data_type': track_get('data_type'),
+                'description': track_get('description'),
+                'folder_name': track_get('folder_name'),
+                'sample_submission_date': ingest_utils.get_date_isoformat(track_get('date_of_transfer')),
+                'contextual_data_submission_date': None,
+                'data_generated': ingest_utils.get_date_isoformat(track_get('date_of_transfer_to_archive')),
+                'archive_ingestion_date': ingest_utils.get_date_isoformat(track_get('date_of_transfer_to_archive')),
+                'dataset_url': track_get('download'),
+                'type': self.ckan_data_type,
+                'private': True,
             })
             obj.update(context)
 
@@ -1505,36 +1386,21 @@ class OMGONTPromethionMetadata(OMGBaseMetadata):
                     obj.update(contextual_source.get(obj['bpa_sample_id'], obj['bpa_library_id']))
 
                 obj.update({
-                    'title':
-                    'OMG ONT PromethION {} {}'.format(obj['bpa_sample_id'], row.flowcell_id),
-                    'notes':
-                    '%s. %s.' % (obj.get('common_name', ''), obj.get('institution_name', '')),
-                    'date_of_transfer':
-                    ingest_utils.get_date_isoformat(track_get('date_of_transfer')),
-                    'data_type':
-                    track_get('data_type'),
-                    'description':
-                    track_get('description'),
-                    'folder_name':
-                    track_get('folder_name'),
-                    'sample_submission_date':
-                    ingest_utils.get_date_isoformat(track_get('date_of_transfer')),
-                    'contextual_data_submission_date':
-                    None,
-                    'data_generated':
-                    ingest_utils.get_date_isoformat(track_get('date_of_transfer_to_archive')),
-                    'archive_ingestion_date':
-                    ingest_utils.get_date_isoformat(track_get('date_of_transfer_to_archive')),
-                    'dataset_url':
-                    track_get('download'),
-                    'name':
-                    name,
-                    'id':
-                    name,
-                    'type':
-                    self.ckan_data_type,
-                    'private':
-                    True,
+                    'title': 'OMG ONT PromethION {} {}'.format(obj['bpa_sample_id'], row.flowcell_id),
+                    'notes': '%s. %s.' % (obj.get('common_name', ''), obj.get('institution_name', '')),
+                    'date_of_transfer': ingest_utils.get_date_isoformat(track_get('date_of_transfer')),
+                    'data_type': track_get('data_type'),
+                    'description': track_get('description'),
+                    'folder_name': track_get('folder_name'),
+                    'sample_submission_date': ingest_utils.get_date_isoformat(track_get('date_of_transfer')),
+                    'contextual_data_submission_date': None,
+                    'data_generated': ingest_utils.get_date_isoformat(track_get('date_of_transfer_to_archive')),
+                    'archive_ingestion_date': ingest_utils.get_date_isoformat(track_get('date_of_transfer_to_archive')),
+                    'dataset_url': track_get('download'),
+                    'name': name,
+                    'id': name,
+                    'type': self.ckan_data_type,
+                    'private': True,
                 })
                 tag_names = ['ont-promethion']
                 obj['tags'] = [{'name': t} for t in tag_names]
