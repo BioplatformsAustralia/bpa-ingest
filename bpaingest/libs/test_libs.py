@@ -2,7 +2,7 @@ from io import BytesIO
 
 from .ingest_utils import get_clean_number
 from .multihash import _generate_hashes
-
+from bpaingest.libs.common_resources import bsd_md5_re, linux_md5_re
 
 TEST_CHUNK_SIZE = 8 * (1 << 20)
 
@@ -69,3 +69,26 @@ def test_multihash_huge_chunks():
         's3etag_67108864': '84acd225412524e1706e97655fb068d6',
         'sha256': '38acde04302e7136c04eddde7b04b03084abd415a5d1e2433b17243153ef8d4a'
     })
+
+
+def test_md5lines():
+    filenames = [
+        'MD5 (24721-24724_and_24726-24729_SC_MA_Bio21-GCMS-001_857_PCA_median_normalised.png) = 8f819a7635f192212300cd64d1e34f10',
+        'MD5 (24721-24724_and_24726-24729_SC_MA_Bio21-GCMS-001_857_PCA_median_normalised.png) =8f819a7635f192212300cd64d1e34f10',
+        'MD5 (24721-24724_and_24726-24729_SC_MA_Bio21-GCMS-001_857_PCA_median_normalised.png)= 8f819a7635f192212300cd64d1e34f10',
+        'MD5(24721-24724_and_24726-24729_SC_MA_Bio21-GCMS-001_857_PCA_median_normalised.png) = 8f819a7635f192212300cd64d1e34f10',
+        'MD5(24721-24724_and_24726-24729_SC_MA_Bio21-GCMS-001_857_PCA_median_normalised.png)= 8f819a7635f192212300cd64d1e34f10',
+        'MD5(24721-24724_and_24726-24729_SC_MA_Bio21-GCMS-001_857_PCA_median_normalised.png) =8f819a7635f192212300cd64d1e34f10',
+        'MD5(33163-33189_SC_MA_LCMS_Bio21_LCQTOF-Agilent_623_20190620.xlsx)= 0a9d6f39f6f36b3984e9e31d8ff5819e',
+    ]
+    for filename in filenames:
+        assert (bsd_md5_re.match(filename) is not None)
+
+
+def test_md5lines2():
+    filenames = [
+        '8f819a7635f192212300cd64d1e34f10 24726-24729_SC_MA_Bio21-GCMS-001_857_PCA_median_normalised.png',
+        '0a9d6f39f6f36b3984e9e31d8ff5819e 33163-33189_SC_MA_LCMS_Bio21_LCQTOF-Agilent_623_20190620.xlsx',
+    ]
+    for filename in filenames:
+        assert (linux_md5_re.match(filename) is not None)

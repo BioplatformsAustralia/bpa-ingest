@@ -30,12 +30,26 @@ proteomics_filename_re = re.compile(r"""
     SC_
     (?P<vendor>APAF|MBPF|QIMR)_
     .*
-    (\.wiff|\.wiff\.scan|\.txt|\.raw)$
+    (\.wiff|\.wiff\.scan|\.txt|\.raw|\.htrms)$
+""", re.VERBOSE)
+
+proteomics_filename2_re = re.compile(r"""
+ (P\d{2}_\d{4}_Exp\d_|)(?P<id>\d{4,6})_([a-zA-Z]+?_[a-zA-z]+?_|)(F\d{1,2}_|)
+    SC_
+    (?P<vendor>APAF|MBPF|QIMR)_
+    .*
+    (\.wiff|\.wiff\.scan|\.txt|\.raw|\.htrms)$
 """, re.VERBOSE)
 
 
 proteomics_pool_filename_re = re.compile(r"""
     (?P<pool_id>P\d+_\d+_Exp\d+_Pool\d+)_
+    .*
+    (\.raw)$
+""", re.VERBOSE)
+
+proteomics_pool_filename2_re = re.compile(r"""
+    (P\d{2}_\d{4}_Exp\d_|)(?P<pool_id>P\d+_\d+_Exp\d+_Pool\d+)_
     .*
     (\.raw)$
 """, re.VERBOSE)
@@ -53,14 +67,36 @@ singlecell_filename_re = re.compile(r"""
     (?P<insert_size>\d*bp)_
     (?P<project>\w+)_
     (?P<vendor>WEHI|UNSW)_
-    (?P<flow_id>\w{9})_
+    (?P<flow_id>\w{9,10})_
     (?P<index>[G|A|T|C|-]*|NoIndex)_
     (?P<lane>L\d{3})_
     (?P<read>[R|I][1|2])\.fastq\.gz
 """, re.VERBOSE)
 
+singlecell_filename2_re = re.compile(r"""
+    (?P<id>\d{4,6}[-_]\d{4,6})
+    _?(?P<library>PE|MP)_
+    (?P<insert_size>\d*bp)_
+    (?P<project>\w+)_
+    (?P<vendor>WEHI|UNSW)_
+    (?P<flow_id>\w{9,10})_
+    (?P<index>[G|A|T|C|-]*|NoIndex)_
+    (?P<read>[R|I][1|2])_
+    (?P<lane>L?\d{3})
+    \.fastq\.gz
+""", re.VERBOSE)
 
-singlecell_index_info_filename_re = re.compile(r"""
+SINGLECELL_RAW_XLSX_FILENAME_PATTERN = r"""
+    .*
+    (?P<vendor>WEHI|UNSW)_
+    (?P<flow_id>\w{9,10})_
+    metadata.xlsx$
+"""
+
+singlecell_raw_xlsx_filename_re = re.compile(SINGLECELL_RAW_XLSX_FILENAME_PATTERN, re.VERBOSE)
+
+singlecell_index_info_filename_re = re.compile(
+    r"""
     Stemcells_
     (?P<vendor>WEHI|UNSW)_
     (?P<flow_id>\w{9})_

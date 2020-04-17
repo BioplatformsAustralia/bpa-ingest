@@ -26,7 +26,10 @@ VALID_PLATFORMS = (
     'DIA mass spec',
     'MS1 quantification',
     'DIA quantification',
-    'Negative Ion (25 - 1200 mz; 0.9 spectra')
+    'Negative Ion (25 - 1200 mz; 0.9 spectra)',
+    'DDA library generation',
+    'DIA mass spec & Phosphoproteomics'
+)
 
 
 def fix_analytical_platform(s):

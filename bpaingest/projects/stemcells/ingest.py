@@ -8,7 +8,7 @@ from hashlib import md5 as md5hash
 from ...libs import ingest_utils
 from ...util import make_logger, sample_id_to_ckan_name, common_values, clean_tag_name
 from ...abstract import BaseMetadata
-from ...libs.excel_wrapper import ExcelWrapper, make_field_definition as fld
+from ...libs.excel_wrapper import ExcelWrapper, make_field_definition as fld, make_skip_column as skp
 from .tracking import StemcellsTrackMetadata
 from .contextual import (
     StemcellsTranscriptomeContextual,
@@ -239,12 +239,13 @@ class StemcellsSmallRNAMetadata(BaseMetadata):
 class StemcellsSingleCellRNASeqMetadata(BaseMetadata):
     contextual_classes = [StemcellsSingleCellRNASeq]
     metadata_urls = ['https://downloads-qcif.bioplatforms.com/bpa/stemcell/raw/single_cell_rnaseq/']
+    # //this is based on splitting of subdirs ( so cannot be used for anything else e.g., flow_id) as they appear in downloads
     metadata_url_components = ('facility_code', 'ticket')
     metadata_patterns = [r'^.*\.md5', r'^.*_metadata\.xlsx']
     organization = 'bpa-stemcells'
     technology = 'singlecellrna'
     ckan_data_type = 'stemcells-singlecellrnaseq'
-    resource_linkage = ('sample_id_range',)
+    resource_linkage = ('sample_id_range', 'flow_id')
     spreadsheet = {
         'fields': [
             fld("sample_id_range", re.compile(r'^.*sample unique id$'), coerce=parse_sample_id_range),
@@ -252,7 +253,9 @@ class StemcellsSingleCellRNASeqMetadata(BaseMetadata):
             fld("insert_size_range", "Insert size range"),
             fld("library_construction_protocol", "Library construction protocol"),
             fld("sequencer", "Sequencer"),
-            fld("fastq_generation", "Fastq generation"),
+            fld("fastq_generation", "Fastq generation", optional=True),
+            fld("bcl_to_fastq_generation", "Bcl to Fastq generation", optional=True),
+            fld("casava_version", "casava version", optional=True)
         ],
         'options': {
             'header_length': 2,
@@ -262,6 +265,7 @@ class StemcellsSingleCellRNASeqMetadata(BaseMetadata):
     md5 = {
         'match': [
             files.singlecell_filename_re,
+            files.singlecell_filename2_re,
             files.singlecell_index_info_filename_re,
         ],
         'skip': common_skip
@@ -273,6 +277,7 @@ class StemcellsSingleCellRNASeqMetadata(BaseMetadata):
         self.contextual_metadata = contextual_metadata
         self.metadata_info = metadata_info
         self.track_meta = StemcellsTrackMetadata()
+        self.flow_lookup = {}
 
     def _get_packages(self):
         logger.info("Ingesting Stemcells SingleCellRNASeq metadata from {0}".format(self.path))
@@ -282,13 +287,19 @@ class StemcellsSingleCellRNASeqMetadata(BaseMetadata):
         all_rows = set()
         for fname in glob(self.path + '/*.xlsx'):
             logger.info("Processing Stemcells SingleCellRNASeq metadata file {0}".format(fname))
-            all_rows.update(StemcellsSingleCellRNASeqMetadata.parse_spreadsheet(fname, self.metadata_info))
+            next_rows = StemcellsSingleCellRNASeqMetadata.parse_spreadsheet(fname, self.metadata_info)
+            file_info = files.singlecell_raw_xlsx_filename_re.match(os.path.basename(fname)).groupdict()
+            self.flow_lookup[next_rows[0].ticket] = file_info['flow_id']
+            all_rows.update(next_rows)
         for row in all_rows:
             sample_id_range = row.sample_id_range
             if sample_id_range is None:
                 continue
             obj = {}
-            name = sample_id_to_ckan_name(sample_id_range, self.ckan_data_type)
+            flow_id = self.flow_lookup.get(row.ticket)
+            if not flow_id:
+                raise Exception("Unable to find flow id for: %s" % row.ticket)
+            name = sample_id_to_ckan_name(sample_id_range, self.ckan_data_type, flow_id)
             track_meta = self.track_meta.get(row.ticket)
             # check that it really is a range
             if '-' not in sample_id_range:
@@ -301,6 +312,7 @@ class StemcellsSingleCellRNASeqMetadata(BaseMetadata):
                 'id': name,
                 'sample_id': sample_id,
                 'sample_id_range': sample_id_range,
+                'flow_id': flow_id,
                 'notes': 'Stemcell SingleCellRNASeq %s' % (sample_id_range),
                 'title': 'Stemcell SingleCellRNASeq %s' % (sample_id_range),
                 'insert_size_range': row.insert_size_range,
@@ -341,10 +353,13 @@ class StemcellsSingleCellRNASeqMetadata(BaseMetadata):
                 resource = file_info.copy()
                 resource['md5'] = resource['id'] = md5
                 resource['name'] = filename
-                sample_id_range = file_info.get('id')
+                linked_resources = (file_info.get('id'), file_info.get('flow_id'))
+                # resources object should align itself to class' resource_linkage property
+                if len(linked_resources) != len(self.resource_linkage):
+                    raise Exception("Linked resources length should be: %i", len(self.resource_linkage))
                 xlsx_info = self.metadata_info[os.path.basename(md5_file)]
                 legacy_url = urljoin(xlsx_info['base_url'], filename)
-                resources.append(((sample_id_range,), legacy_url, resource))
+                resources.append((linked_resources, legacy_url, resource))
         return resources
 
 
@@ -366,6 +381,12 @@ class StemcellsMetabolomicsMetadata(BaseMetadata):
             fld("method", "Method"),
             fld("mass_spectrometer", "Mass Spectrometer"),
             fld("acquisition_mode", "acquisition mode"),
+            fld('sample_submission_date', 'sample submission date', coerce=ingest_utils.get_date_isoformat),
+            fld(
+                'raw_file_name',
+                'raw file name (available in .d and .mzml format)',
+                units='available in .d and .mzml format',
+                coerce=ingest_utils.get_clean_number)
         ],
         'options': {
             'header_length': 2,
@@ -490,19 +511,22 @@ class StemcellsProteomicsBaseMetadata(BaseMetadata):
             field_spec = [
                 fld("pool_id", 'raw file name', coerce=files.proteomics_raw_extract_pool_id),
             ]
+
         field_spec += [
             fld("facility", 'facility'),
             fld("sample_fractionation", 'sample fractionation (none/number)'),
             fld("lc_column_type", 'lc/column type'),
             fld("gradient_time", re.compile(r'gradient time \(min\).*')),
-            fld("sample_on_column", 'sample on column (g)'),
+            # allow for various unit symbols or none to be used (in this case: micrograms symbol)
+            fld("sample_on_column", re.compile(r'sample on column \(' + '[' + b'\xc2\xb5'.decode('utf-8') + ']?' + re.escape('g)')), optional=True),
             fld("mass_spectrometer", 'mass spectrometer'),
             fld("acquisition_mode", 'acquisition mode / fragmentation'),
             fld("raw_filename", 'raw file name'),
-            fld("protein_result_filename", 'protein result filename'),
-            fld("peptide_result_filename", 'peptide result filename'),
-            fld("database", 'database'),
-            fld("database_size", 'database size'),
+            fld("protein_result_filename", 'protein result filename', optional=True),
+            fld("peptide_result_filename", 'peptide result filename', optional=True),
+            fld("database", 'database', optional=True),
+            fld("database_size", 'database size', optional=True),
+            fld("sample_unique_id", 'sample unique id'),
         ]
         wrapper = ExcelWrapper(
             field_spec,
@@ -520,7 +544,8 @@ class StemcellsProteomicsMetadata(StemcellsProteomicsBaseMetadata):
     ckan_data_type = 'stemcells-proteomic'
     md5 = {
         'match': [
-            files.proteomics_filename_re
+            files.proteomics_filename_re,
+            files.proteomics_filename2_re
         ],
         'skip': common_skip
     }
@@ -835,6 +860,7 @@ class StemcellsMetabolomicsAnalysedMetadata(BaseMetadata):
             fld('data_type', 'data type'),
             fld('analysis_file_name', 'file name of analysed data (folder or zip file) file name'),
             fld('additional_comments', 'additional comments'),
+            skp(re.compile(r'^x{4,6}$'), skip_all=True)
         ],
         'options': {
             'header_length': 8,
@@ -916,7 +942,16 @@ class StemcellsMetabolomicsAnalysedMetadata(BaseMetadata):
                 resource['id'] = 'u-' + \
                     md5hash((self.ckan_data_type + xlsx_info['base_url'] + md5).encode('utf8')).hexdigest()
                 resource['name'] = filename
-                folder_name = self.track_meta.get(xlsx_info['ticket']).folder_name
+                ticket_name = xlsx_info['ticket']
+                tracking_ticket_folder = self.track_meta.get(ticket_name)
+                if not tracking_ticket_folder:
+                    logger.warn(
+                        "No tracking ticket folder found. Consider checking the tracking metadata to ensure it contains ticket_name: {0}."
+                        .format(ticket_name))
+                else:
+                    if ticket_name == next:
+                        logger.debug("Tracking ticket folder is: {0}".format(tracking_ticket_folder))
+                folder_name = tracking_ticket_folder.folder_name if tracking_ticket_folder else ''
                 legacy_url = urljoin(xlsx_info['base_url'], filename)
                 resources.append(((folder_name,), legacy_url, resource))
         return resources
@@ -959,6 +994,7 @@ class StemcellsTranscriptomeAnalysedMetadata(BaseMetadata):
             fld('facility', 'facility'),
             fld('data_type', 'data type'),
             fld('folder_name', 'file name of analysed data (folder or zip file)'),
+            skp(re.compile(r'relevant heading\??$'), skip_all=True)
         ],
         'options': {
             'header_length': 9,

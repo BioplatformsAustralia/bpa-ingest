@@ -1,18 +1,16 @@
-
-
 from unipath import Path
 from collections import defaultdict
 
 from ...abstract import BaseMetadata
 
-from ...util import make_logger, sample_id_to_ckan_name, common_values, xlsx_resource
+from ...util import make_logger, sample_id_to_ckan_name, common_values
 from urllib.parse import urljoin
 
 from glob import glob
 
 from ...libs import ingest_utils
 from sslh.handler import SensitiveDataGeneraliser
-from ...libs.excel_wrapper import make_field_definition as fld, SkipColumn as skp
+from ...libs.excel_wrapper import make_field_definition as fld, make_skip_column as skp
 from . import files
 from .tracking import OMGTrackMetadata
 from .contextual import (OMGSampleContextual, OMGLibraryContextual)
@@ -185,7 +183,7 @@ class OMG10XRawIlluminaMetadata(OMGBaseMetadata):
                 'private': True,
             }
             # there must be only one ticket
-            assert(len(set(t.ticket for t in rows)) == 1)
+            assert (len(set(t.ticket for t in rows)) == 1)
 
             ticket = rows[0].ticket
             track_meta = self.track_meta.get(ticket)
@@ -195,8 +193,8 @@ class OMG10XRawIlluminaMetadata(OMGBaseMetadata):
                     return None
                 return getattr(track_meta, k)
 
-            notes = '\n'.join('%s. %s.' % (t.get('common_name', ''), t.get('institution_name', ''))
-                              for t in row_metadata)
+            notes = '\n'.join(
+                '%s. %s.' % (t.get('common_name', ''), t.get('institution_name', '')) for t in row_metadata)
 
             obj.update({
                 'ticket': ticket,
@@ -235,7 +233,7 @@ class OMG10XRawIlluminaMetadata(OMGBaseMetadata):
                 resource['resource_type'] = self.ckan_data_type
                 xlsx_info = self.metadata_info[os.path.basename(md5_file)]
                 legacy_url = urljoin(xlsx_info['base_url'], filename)
-                resources.append(((archive_name,), legacy_url, resource))
+                resources.append(((archive_name, ), legacy_url, resource))
 
         return resources + self.generate_xlsx_resources()
 

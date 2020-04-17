@@ -4,7 +4,7 @@ from glob import glob
 from ...libs import ingest_utils
 from ...libs.excel_wrapper import (
     ExcelWrapper,
-    SkipColumn as skip,
+    make_skip_column as skip,
     FieldDefinition,
     make_field_definition as fld)
 from ...util import make_logger, one
