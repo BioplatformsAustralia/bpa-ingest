@@ -511,14 +511,14 @@ class StemcellsProteomicsBaseMetadata(BaseMetadata):
             field_spec = [
                 fld("pool_id", 'raw file name', coerce=files.proteomics_raw_extract_pool_id),
             ]
-        # allow for various unit symbols or none to be used (in this case: micrograms symbol)
-        units_regex = '[' + b'\xc2\xb5'.decode('utf-8') + ']?'
+
         field_spec += [
             fld("facility", 'facility'),
             fld("sample_fractionation", 'sample fractionation (none/number)'),
             fld("lc_column_type", 'lc/column type'),
             fld("gradient_time", re.compile(r'gradient time \(min\).*')),
-            fld("sample_on_column", re.compile(r'sample on column \(' + units_regex + re.escape('g)')), optional=True),
+            # allow for various unit symbols or none to be used (in this case: micrograms symbol)
+            fld("sample_on_column", re.compile(r'sample on column \(' + '[' + b'\xc2\xb5'.decode('utf-8') + ']?' + re.escape('g)')), optional=True),
             fld("mass_spectrometer", 'mass spectrometer'),
             fld("acquisition_mode", 'acquisition mode / fragmentation'),
             fld("raw_filename", 'raw file name'),
