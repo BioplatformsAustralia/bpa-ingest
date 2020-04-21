@@ -27,6 +27,7 @@ def test_metabolomics():
         '24729_SC_MA_GCMS_NegC-4-857-29046_Bio21-GCMS-001.mzML',
         '24721_SC_MA_LCMS_Pos-1-859-29065_Bio21-LC-QTOF-6545.tar.gz',
         '24721_SC_MA_LCMS_Pos-1-859-29065_Bio21-LC-QTOF-6545.mzML',
+        '33163_SC_MA_GCMS_PHH-1-623-35620_Bio21_GC-QQQ-Shimadzu.qgd'
     ]
     for filename in filenames:
         assert(metabolomics_filename_re.match(filename) is not None)

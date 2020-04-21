@@ -242,7 +242,7 @@ class StemcellsMetabolomicsContextual(object):
         if tpl in self.sample_metadata:
             return self.sample_metadata[tpl]
         logger.warning("no %s metadata available for: %s" % (type(self).__name__, tpl))
-        logger.warning(list(sorted(self.sample_metadata.keys())))
+        # logger.debug(list(sorted(self.sample_metadata.keys())))
         return {}
 
     def _package_metadata(self, rows):

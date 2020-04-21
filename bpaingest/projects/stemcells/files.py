@@ -21,7 +21,7 @@ metabolomics_filename_re = re.compile(r"""
     (?P<vendor>MA)_
     (?P<analytical_platform>GCMS|LCMS)_
     .*
-    (\.tar\.gz|\.mzML)$
+    (\.tar\.gz|\.mzML|\.qgd)$
 """, re.VERBOSE)
 
 
