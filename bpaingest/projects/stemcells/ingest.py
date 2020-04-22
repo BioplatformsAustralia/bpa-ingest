@@ -374,19 +374,19 @@ class StemcellsMetabolomicsMetadata(BaseMetadata):
     ckan_data_type = 'stemcells-metabolomic'
     spreadsheet = {
         'fields': [
-            fld("sample_id", re.compile(r'^.*sample unique id$'), coerce=ingest_utils.extract_ands_id),
+            fld("sample_id", re.compile(r'^.*(sample unique id|bpa unique[\s]+identifier \*\*)$'), coerce=ingest_utils.extract_ands_id),
             fld("sample_fractionation_extraction_solvent", "sample fractionation / extraction solvent"),
             fld("analytical_platform", "platform", coerce=fix_analytical_platform),
             fld("instrument_column_type", "instrument/column type"),
             fld("method", "Method"),
             fld("mass_spectrometer", "Mass Spectrometer"),
             fld("acquisition_mode", "acquisition mode"),
-            fld('sample_submission_date', 'sample submission date', coerce=ingest_utils.get_date_isoformat),
-            fld(
-                'raw_file_name',
-                'raw file name (available in .d and .mzml format)',
-                units='available in .d and .mzml format',
-                coerce=ingest_utils.get_clean_number)
+            fld('sample_submission_date', re.compile(r'^(sample submission date|date submission)$'), coerce=ingest_utils.get_date_isoformat),
+            fld('raw_file_name',
+                re.compile(r'^raw file name \(available in (.d and .mzml|.qgd) format\)'),
+                units='available in .d,.qgd and .mzml format',
+                coerce=ingest_utils.get_clean_number),
+            skp('sample name **')
         ],
         'options': {
             'header_length': 2,
@@ -900,7 +900,7 @@ class StemcellsMetabolomicsAnalysedMetadata(BaseMetadata):
             obj = common_values([t._asdict() for t in rows])
             name = sample_id_to_ckan_name(folder_name, self.ckan_data_type)
             track_meta = self.track_meta.get(ticket)
-            sample_ids = sorted(set([t.sample_id_range.strip() for t in rows]))
+            sample_ids = sorted(set([str(t.sample_id_range).strip() for t in rows]))
             obj.update({
                 'name': name,
                 'id': name,
