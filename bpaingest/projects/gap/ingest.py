@@ -75,13 +75,14 @@ class GAPIlluminaShortreadMetadata(BaseMetadata):
                 sample_id = row.sample_id
                 library_id = row.library_id
                 obj = row._asdict()
-                obj.update(track_meta._asdict())
-                name = sample_id_to_ckan_name(sample_id.split('/')[-1], self.ckan_data_type)
+                if track_meta is not None:
+                    obj.update(track_meta._asdict())
+                name = sample_id_to_ckan_name(library_id.split('/')[-1], self.ckan_data_type)
                 for contextual_source in self.contextual_metadata:
                     obj.update(contextual_source.get(library_id))
                 obj.update({
                     'title': 'GAP Illumina short read {} {}'.format(sample_id, flow_cell_id),
-                    'notes': '{}, {}'.format(obj['scientific_name'], obj['sample_submitter_name']),
+                    'notes': '{}, {}'.format(obj.get('scientific_name', ''), obj.get('sample_submitter_name', '')),
                     'sample_id': sample_id,
                     'name': name,
                     'id': name,
@@ -90,7 +91,9 @@ class GAPIlluminaShortreadMetadata(BaseMetadata):
                     'private': True,
                     'data_generated': True,
                 })
-                tag_names = ['genomics', 'illumina-shortread', clean_tag_name(obj['scientific_name'])]
+                tag_names = ['genomics', 'illumina-shortread']
+                if 'scientific_name' in obj:
+                    tag_names.append(clean_tag_name(obj['scientific_name']))
                 obj['tags'] = [{'name': t} for t in tag_names]
                 packages.append(obj)
         return packages
@@ -173,8 +176,9 @@ class GAPONTMinionMetadata(BaseMetadata):
                 sample_id = row.sample_id
                 library_id = row.library_id
                 obj = row._asdict()
-                obj.update(track_meta._asdict())
-                name = sample_id_to_ckan_name(sample_id.split('/')[-1], self.ckan_data_type)
+                if track_meta is not None:
+                    obj.update(track_meta._asdict())
+                name = sample_id_to_ckan_name(library_id.split('/')[-1], self.ckan_data_type)
                 for contextual_source in self.contextual_metadata:
                     obj.update(contextual_source.get(library_id))
                 obj.update({
@@ -187,7 +191,9 @@ class GAPONTMinionMetadata(BaseMetadata):
                     'private': True,
                     'data_generated': True,
                 })
-                tag_names = ['ont-minion', clean_tag_name(obj['scientific_name'])]
+                tag_names = ['ont-minion']
+                if 'scientific_name' in obj:
+                    tag_names.append(clean_tag_name(obj['scientific_name']))
                 obj['tags'] = [{'name': t} for t in tag_names]
                 packages.append(obj)
         return packages
@@ -270,13 +276,14 @@ class GAPONTPromethionMetadata(BaseMetadata):
                 sample_id = row.sample_id
                 library_id = row.library_id
                 obj = row._asdict()
-                obj.update(track_meta._asdict())
-                name = sample_id_to_ckan_name(sample_id.split('/')[-1], self.ckan_data_type)
+                if track_meta is not None:
+                    obj.update(track_meta._asdict())
+                name = sample_id_to_ckan_name(library_id.split('/')[-1], self.ckan_data_type)
                 for contextual_source in self.contextual_metadata:
                     obj.update(contextual_source.get(library_id))
                 obj.update({
                     'title': 'GAP ONT PromethION {} {}'.format(sample_id, row.run_id),
-                    'notes': '{}, {}'.format(obj['scientific_name'], obj['sample_submitter_name']),
+                    'notes': '{}, {}'.format(obj.get('scientific_name', ''), obj.get('sample_submitter_name', '')),
                     'sample_id': sample_id,
                     'name': name,
                     'id': name,
@@ -284,7 +291,9 @@ class GAPONTPromethionMetadata(BaseMetadata):
                     'private': True,
                     'data_generated': True,
                 })
-                tag_names = ['ont-promethion', clean_tag_name(obj['scientific_name'])]
+                tag_names = ['ont-promethion']
+                if 'scientific_name' in obj:
+                    tag_names.append(clean_tag_name(obj['scientific_name']))
                 obj['tags'] = [{'name': t} for t in tag_names]
                 packages.append(obj)
         return packages
@@ -364,13 +373,14 @@ class GAPGenomics10XMetadata(BaseMetadata):
                 sample_id = row.sample_id
                 library_id = row.library_id
                 obj = row._asdict()
-                obj.update(track_meta._asdict())
-                name = sample_id_to_ckan_name(sample_id.split('/')[-1], self.ckan_data_type)
+                if track_meta is not None:
+                    obj.update(track_meta._asdict())
+                name = sample_id_to_ckan_name(library_id.split('/')[-1], self.ckan_data_type)
                 for contextual_source in self.contextual_metadata:
                     obj.update(contextual_source.get(library_id))
                 obj.update({
                     'title': 'GAP Genomics 10X {} {}'.format(sample_id, flow_cell_id),
-                    'notes': '{}, {}'.format(obj['scientific_name'], obj['sample_submitter_name']),
+                    'notes': '{}, {}'.format(obj.get('scientific_name', ''), obj.get('sample_submitter_name', '')),
                     'sample_id': sample_id,
                     'name': name,
                     'id': name,
@@ -379,7 +389,9 @@ class GAPGenomics10XMetadata(BaseMetadata):
                     'private': True,
                     'data_generated': True,
                 })
-                tag_names = ['genomics', '10x', clean_tag_name(obj['scientific_name'])]
+                tag_names = ['genomics', '10x']
+                if 'scientific_name' in obj:
+                    tag_names.append(clean_tag_name(obj['scientific_name']))
                 obj['tags'] = [{'name': t} for t in tag_names]
                 packages.append(obj)
         return packages
