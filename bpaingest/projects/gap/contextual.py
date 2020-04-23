@@ -15,7 +15,7 @@ def date_or_str(v):
 
 
 class GAPLibraryContextual(object):
-    metadata_urls = ['https://downloads-qcif.bioplatforms.com/bpa/plants_staging/metadata/2020-02-14/']
+    metadata_urls = ['https://downloads-qcif.bioplatforms.com/bpa/plants_staging/metadata/2020-04-16/']
     metadata_patterns = [re.compile(r'^.*\.xlsx$')]
     name = 'gap-library-contextual'
 
