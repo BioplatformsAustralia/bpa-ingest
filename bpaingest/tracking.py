@@ -8,13 +8,10 @@ logger = make_logger(__name__)
 
 def get_track_dir(platform, project=None):
     if project is not None:
-        rel_path = '../track-metadata/' + platform + '/' + project + '/'
+        rel_path = "../track-metadata/" + platform + "/" + project + "/"
     else:
-        rel_path = '../track-metadata/' + platform + '/'
-    return os.path.abspath(
-        os.path.join(
-            os.path.dirname(__file__),
-            rel_path))
+        rel_path = "../track-metadata/" + platform + "/"
+    return os.path.abspath(os.path.join(os.path.dirname(__file__), rel_path))
 
 
 def get_track_csv(platform, glob_pattern, project=None):
@@ -22,15 +19,15 @@ def get_track_csv(platform, glob_pattern, project=None):
 
 
 class GoogleDriveTrackMetadata(object):
-    platform = 'google-drive'
+    platform = "google-drive"
 
     def __init__(self):
-        fname = get_track_csv(self.platform, '*' + self.name + '*.csv')
+        fname = get_track_csv(self.platform, "*" + self.name + "*.csv")
         logger.info("Reading track CSV file: " + fname)
         self.track_meta = self.read_track_csv(fname)
 
     def read_track_csv(self, fname):
-        header, rows = csv_to_named_tuple('GoogleDriveTrack', fname)
+        header, rows = csv_to_named_tuple("GoogleDriveTrack", fname)
         return dict((t.ccg_jira_ticket.strip().lower(), t) for t in rows)
 
     def get(self, ticket):

@@ -1,0 +1,60 @@
+[build-system]
+requires = ["poetry"]
+build-backend = "poetry.masonry.api"
+
+[tool.poetry]
+name = "bpaingest"
+version = "6.4.2"
+authors = ["Grahame Bowland <grahame.bowland@qcif.edu.au>"]
+description = "Data management for Bioplatforms Australia projects"
+readme = "README.md"
+
+[tool.poetry.scripts]
+bpa-ingest = 'bpaingest.cli:main'
+
+[tool.poetry.dependencies]
+python = ">=3.6"
+unipath = "^1.1"
+xlrd = "^1.2.0"
+xlwt = "^1.3.0"
+beautifulsoup4 = "^4.9.0"
+requests = "^2.23.0"
+boto3 = "^1.12.45"
+python-dateutil = "^2.8.1"
+google-api-python-client = "^1.8.2"
+sslh = {url = "https://github.com/BioplatformsAustralia/sslh/archive/2.0.3.tar.gz"}
+ckanapi = "^4.3"
+
+[tool.poetry.dev-dependencies]
+black = "^19.10b0"
+tox = "^3.14.6"
+
+[tool.tox]
+legacy_tox_ini = """
+[tox]
+envlist = py38
+isolated_build = True
+
+[testenv]
+deps=pytest
+commands=pytest
+"""
+
+[tool.black]
+line-length = 88
+include = '\.pyi?$'
+exclude = '''
+/(
+    \.eggs
+  | \.git
+  | \.hg
+  | \.mypy_cache
+  | \.tox
+  | \.venv
+  | _build
+  | buck-out
+  | build
+  | dist
+  | tests/.*/setup.py
+)/
+'''

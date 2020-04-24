@@ -45,29 +45,32 @@ pacbio_filename2_re = re.compile(PACBIO_FILE_PATTERN2, re.VERBOSE)
 
 def _file_from_line(line):
     obj = {
-        'filename': line.filename,
-        'name': line.filename,
-        'md5': line.md5,
-        'amplicon': line.md5data['amplicon'],
-        'reach': line.md5data['reach'],
-        'flow_id': line.md5data['flow_id'],
-        'index': line.md5data['index']
+        "filename": line.filename,
+        "name": line.filename,
+        "md5": line.md5,
+        "amplicon": line.md5data["amplicon"],
+        "reach": line.md5data["reach"],
+        "flow_id": line.md5data["flow_id"],
+        "index": line.md5data["index"],
     }
-    return line.md5data['id'], obj
+    return line.md5data["id"], obj
 
 
 def _get_parsed_lines(path):
     """
     Return list of parsed md5parsedline objects
     """
+
     def is_md5(path):
-        if path.isfile() and path.ext == '.md5':
+        if path.isfile() and path.ext == ".md5":
             return True
 
-    logger.info('Ingesting GBR Amplicon File data from md5 files found in {0}'.format(path))
+    logger.info(
+        "Ingesting GBR Amplicon File data from md5 files found in {0}".format(path)
+    )
     md5parsedlines = []
     for md5_file in path.walk(filter=is_md5):
-        logger.info('Processing GBR md5 checksum file {0}'.format(md5_file))
+        logger.info("Processing GBR md5 checksum file {0}".format(md5_file))
         with open(md5_file) as md5_fd:
             for md5, path in md5lines(md5_fd):
                 m = re.match(AMPLICON_FILE_PATTERN, path)

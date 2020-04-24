@@ -12,11 +12,11 @@ logger = logging.getLogger()
 logger.setLevel(logging.INFO)
 
 
-sns = boto3.client('sns')
+sns = boto3.client("sns")
 
 
 class Handler(GenericHandler):
-    '''Applies BASE contextual metadata values to packages with a given BPA ID.
+    """Applies BASE contextual metadata values to packages with a given BPA ID.
 
     The function should be set up to be triggered by SNS messages that have the sample_id and values
     to apply in them.
@@ -25,28 +25,31 @@ class Handler(GenericHandler):
     The SNS message will be created only if the package doesn't have the values already applied.
     Also only the values that aren't already set on the package will be in the outgoing SNS message.
     The sns_ckan_patch_package should be set to the SNS topic arn that will receive the outgoing messages.
-    '''
+    """
 
     ENV_VAR_DEFS = {
-        'names': (
-            's3_bucket', 's3_config_key', 'ckan_base_url', 'ckan_timeout',
-            'sns_ckan_patch_package',
-            'sns_on_success', 'sns_on_error'),
-        'optional': ('sns_on_success', ),
-        'conversions': {
-            'ckan_timeout': float,
-        },
+        "names": (
+            "s3_bucket",
+            "s3_config_key",
+            "ckan_base_url",
+            "ckan_timeout",
+            "sns_ckan_patch_package",
+            "sns_on_success",
+            "sns_on_error",
+        ),
+        "optional": ("sns_on_success",),
+        "conversions": {"ckan_timeout": float,},
     }
-    SNS_ON_ERROR_SUBJECT = 'ERROR: BASE Contextual Metadata Apply'
+    SNS_ON_ERROR_SUBJECT = "ERROR: BASE Contextual Metadata Apply"
 
     def handler(self, event, context):
         sample_id, metadata = self._extract_data(event)
-        logger.info('Processing BPA ID %s', sample_id)
+        logger.info("Processing BPA ID %s", sample_id)
 
         ckan_service = set_up_ckan_service(self.env)
 
         packages = ckan_service.get_packages_by_sample_id(sample_id)
-        pids_and_changes = [(p['id'], changes(p, metadata)) for p in packages]
+        pids_and_changes = [(p["id"], changes(p, metadata)) for p in packages]
         packages_with_changes = [x for x in pids_and_changes if len(x[1]) > 0]
         for pid, updates in packages_with_changes:
             self.sns_ckan_patch_package(pid, updates)
@@ -55,40 +58,42 @@ class Handler(GenericHandler):
         self.sns_success(sample_id, packages_with_changes, unchanged_package_ids)
 
     def sns_success(self, sample_id, packages_with_changes, unchanged_package_ids):
-        subject = shorten('BASE Apply Contextual Metadata - Sample ID %s' % sample_id)
+        subject = shorten("BASE Apply Contextual Metadata - Sample ID %s" % sample_id)
         changed_count = len(packages_with_changes)
         unchanged_count = len(unchanged_package_ids)
-        msg = 'Processed BPA ID %s, found %d packages, %d already up-to-date, sent SNS patch requests for %d.' % (
-            sample_id, changed_count + unchanged_count, unchanged_count, changed_count)
+        msg = (
+            "Processed BPA ID %s, found %d packages, %d already up-to-date, sent SNS patch requests for %d."
+            % (
+                sample_id,
+                changed_count + unchanged_count,
+                unchanged_count,
+                changed_count,
+            )
+        )
 
         logger.info(msg)
         if not self.env.sns_on_success:
             return
-        sns.publish(
-            TopicArn=self.env.sns_on_success,
-            Subject=subject,
-            Message=msg)
+        sns.publish(TopicArn=self.env.sns_on_success, Subject=subject, Message=msg)
 
     def sns_ckan_patch_package(self, package_id, updates):
-        default = 'Patch CKAN package %s' % package_id
-        json_data = json.dumps({
-            'package_id': package_id,
-            'updates': updates,
-        })
+        default = "Patch CKAN package %s" % package_id
+        json_data = json.dumps({"package_id": package_id, "updates": updates,})
         data = {
-            'default': default,
-            'lambda': json_data,
-            'email-json': json_data,
+            "default": default,
+            "lambda": json_data,
+            "email-json": json_data,
         }
 
         sns.publish(
             TopicArn=self.env.sns_ckan_patch_package,
-            MessageStructure='json',
-            Message=json.dumps(data))
+            MessageStructure="json",
+            Message=json.dumps(data),
+        )
 
     def _extract_data(self, event):
-        message = json.loads(event['Records'][0]['Sns']['Message'])
-        return (message['sample_id'], message['metadata'])
+        message = json.loads(event["Records"][0]["Sns"]["Message"])
+        return (message["sample_id"], message["metadata"])
 
 
 handler = Handler(logger)

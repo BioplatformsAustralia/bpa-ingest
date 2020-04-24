@@ -37,12 +37,12 @@ def date_or_comment(val):
 
 
 def get_gram_stain(val):
-    if val and val != '':
+    if val and val != "":
         val = val.lower()
-        if 'positive' in val:
-            return 'POS'
-        elif 'negative' in val:
-            return 'NEG'
+        if "positive" in val:
+            return "POS"
+        elif "negative" in val:
+            return "NEG"
     return None
 
 
@@ -51,17 +51,17 @@ def get_sex(val):
         return None
     val = val.lower()
     # order of these statements is significant
-    if 'female' in val:
-        return 'F'
-    if 'male' in val:
-        return 'M'
-    if 'ethics embargo' in val:
-        return 'ethics embargo'
+    if "female" in val:
+        return "F"
+    if "male" in val:
+        return "M"
+    if "ethics embargo" in val:
+        return "ethics embargo"
     return None
 
 
 def get_strain_or_isolate(val):
-    if val and val != '':
+    if val and val != "":
         # convert floats to str
         if isinstance(val, float):
             val = int(val)
@@ -74,11 +74,13 @@ class SepsisBacterialContextual(object):
     Bacterial sample metadata: used by each of the -omics classes below.
     """
 
-    metadata_urls = ['https://downloads-qcif.bioplatforms.com/bpa/sepsis/projectdata/2019-06-13/bacterial/']
-    name = 'sepsis-bacterial'
+    metadata_urls = [
+        "https://downloads-qcif.bioplatforms.com/bpa/sepsis/projectdata/2019-06-13/bacterial/"
+    ]
+    name = "sepsis-bacterial"
 
     def __init__(self, path):
-        xlsx_path = one(glob(path + '/*.xlsx'))
+        xlsx_path = one(glob(path + "/*.xlsx"))
         self.sample_metadata = self._package_metadata(self._read_metadata(xlsx_path))
 
     def get(self, sample_id, submission_obj):
@@ -94,40 +96,49 @@ class SepsisBacterialContextual(object):
             if row.taxon_or_organism is None or row.strain_or_isolate is None:
                 continue
             strain_tuple = (row.taxon_or_organism, row.strain_or_isolate)
-            assert(strain_tuple not in sample_metadata)
+            assert strain_tuple not in sample_metadata
             sample_metadata[strain_tuple] = row_meta = {}
             for field in row._fields:
-                if field != 'taxon_or_organism' and field != 'strain_or_isolate':
+                if field != "taxon_or_organism" and field != "strain_or_isolate":
                     row_meta[field] = getattr(row, field)
         return sample_metadata
 
     def _read_metadata(self, metadata_path):
         field_spec = [
-            fld('gram_stain', 'Gram_staining_(positive_or_negative)', coerce=get_gram_stain),
-            fld('taxon_or_organism', 'Taxon_OR_organism'),
-            fld('strain_or_isolate', 'Strain_OR_isolate', coerce=get_strain_or_isolate),
-            fld('serovar', 'Serovar', coerce=int_or_comment),
-            fld('key_virulence_genes', 'Key_virulence_genes'),
-            fld('isolation_source', 'Isolation_source'),
-            fld('strain_description', 'Strain_description'),
-            fld('publication_reference', 'Publication_reference'),
-            fld('contact_researcher', 'Contact_researcher'),
-            fld('culture_collection_id', 'Culture_collection_ID (alternative name[s])'),
+            fld(
+                "gram_stain",
+                "Gram_staining_(positive_or_negative)",
+                coerce=get_gram_stain,
+            ),
+            fld("taxon_or_organism", "Taxon_OR_organism"),
+            fld("strain_or_isolate", "Strain_OR_isolate", coerce=get_strain_or_isolate),
+            fld("serovar", "Serovar", coerce=int_or_comment),
+            fld("key_virulence_genes", "Key_virulence_genes"),
+            fld("isolation_source", "Isolation_source"),
+            fld("strain_description", "Strain_description"),
+            fld("publication_reference", "Publication_reference"),
+            fld("contact_researcher", "Contact_researcher"),
+            fld("culture_collection_id", "Culture_collection_ID (alternative name[s])"),
             # note: these are free-text dates, there are comments mixed in
-            fld('culture_collection_date', 'Culture_collection_date (YYYY-MM-DD)', coerce=date_or_comment),
-            fld('host_location', 'Host_location (state, country)'),
-            fld('host_age', 'Host_age', coerce=int_or_comment),
-            fld('host_dob', 'Host_DOB (YYYY-MM-DD)', coerce=date_or_comment),
-            fld('host_sex', 'Host_sex (F/M)', coerce=get_sex),
-            fld('host_disease_outcome', 'Host_disease_outcome'),
-            fld('host_description', 'Host_description'),
+            fld(
+                "culture_collection_date",
+                "Culture_collection_date (YYYY-MM-DD)",
+                coerce=date_or_comment,
+            ),
+            fld("host_location", "Host_location (state, country)"),
+            fld("host_age", "Host_age", coerce=int_or_comment),
+            fld("host_dob", "Host_DOB (YYYY-MM-DD)", coerce=date_or_comment),
+            fld("host_sex", "Host_sex (F/M)", coerce=get_sex),
+            fld("host_disease_outcome", "Host_disease_outcome"),
+            fld("host_description", "Host_description"),
         ]
         wrapper = ExcelWrapper(
             field_spec,
             metadata_path,
             sheet_name=None,
             header_length=5,
-            column_name_row_index=4)
+            column_name_row_index=4,
+        )
         for error in wrapper.get_errors():
             logger.error(error)
         return map_taxon_strain_rows(wrapper.get_all())
@@ -138,17 +149,21 @@ class SepsisGenomicsContextual(object):
     Genomics sample metadata: used by the genomics classes.
     """
 
-    metadata_urls = ['https://downloads-qcif.bioplatforms.com/bpa/sepsis/projectdata/2019-06-13/sample/']
-    name = 'sepsis-genomics'
+    metadata_urls = [
+        "https://downloads-qcif.bioplatforms.com/bpa/sepsis/projectdata/2019-06-13/sample/"
+    ]
+    name = "sepsis-genomics"
 
     def __init__(self, path):
-        xlsx_path = one(glob(path + '/*.xlsx'))
+        xlsx_path = one(glob(path + "/*.xlsx"))
         self.sample_metadata = self._package_metadata(self._read_metadata(xlsx_path))
 
     def get(self, sample_id, submission_obj):
         if sample_id in self.sample_metadata:
             return self.sample_metadata[sample_id]
-        logger.warning("no %s metadata available for: %s" % (type(self).__name__, repr(sample_id)))
+        logger.warning(
+            "no %s metadata available for: %s" % (type(self).__name__, repr(sample_id))
+        )
         return {}
 
     def _package_metadata(self, rows):
@@ -159,34 +174,48 @@ class SepsisGenomicsContextual(object):
             if row.sample_id in sample_metadata:
                 logger.warning(
                     "{}: duplicate sample metadata row for {}".format(
-                        self.__class__.__name__, row.sample_id))
+                        self.__class__.__name__, row.sample_id
+                    )
+                )
             sample_metadata[row.sample_id] = row_meta = {}
             for field in row._fields:
-                if field != 'taxon_or_organism' and field != 'strain_or_isolate':
+                if field != "taxon_or_organism" and field != "strain_or_isolate":
                     row_meta[field] = getattr(row, field)
         return sample_metadata
 
     def _read_metadata(self, metadata_path):
         field_spec = [
-            fld('sample_id', "BPA_sample_ID", coerce=ingest_utils.extract_ands_id),
-            fld('taxon_or_organism', "Taxon_OR_organism"),
-            fld('strain_or_isolate', "Strain_OR_isolate"),
-            fld('serovar', "Serovar", coerce=int_or_comment),
-            fld('growth_condition_time', "Growth_condition_time"),
-            fld('growth_condition_temperature', "Growth_condition_temperature", coerce=ingest_utils.get_clean_number),
-            fld('growth_condition_media', "Growth_condition_media"),
-            fld('growth_condition_notes', "Growth_condition_notes"),
-            fld('experimental_replicate', "Experimental_replicate", coerce=ingest_utils.get_int),
-            fld('analytical_facility', "Analytical_facility"),
-            fld('experimental_sample_preparation_method', "Experimental_sample_preparation_method"),
-            fld('data_type', "Data type"),
+            fld("sample_id", "BPA_sample_ID", coerce=ingest_utils.extract_ands_id),
+            fld("taxon_or_organism", "Taxon_OR_organism"),
+            fld("strain_or_isolate", "Strain_OR_isolate"),
+            fld("serovar", "Serovar", coerce=int_or_comment),
+            fld("growth_condition_time", "Growth_condition_time"),
+            fld(
+                "growth_condition_temperature",
+                "Growth_condition_temperature",
+                coerce=ingest_utils.get_clean_number,
+            ),
+            fld("growth_condition_media", "Growth_condition_media"),
+            fld("growth_condition_notes", "Growth_condition_notes"),
+            fld(
+                "experimental_replicate",
+                "Experimental_replicate",
+                coerce=ingest_utils.get_int,
+            ),
+            fld("analytical_facility", "Analytical_facility"),
+            fld(
+                "experimental_sample_preparation_method",
+                "Experimental_sample_preparation_method",
+            ),
+            fld("data_type", "Data type"),
         ]
         wrapper = ExcelWrapper(
             field_spec,
             metadata_path,
-            sheet_name='Genomics',
+            sheet_name="Genomics",
             header_length=4,
-            column_name_row_index=3)
+            column_name_row_index=3,
+        )
         for error in wrapper.get_errors():
             logger.error(error)
         return wrapper.get_all()
@@ -197,18 +226,24 @@ class SepsisTranscriptomicsHiseqContextual(object):
     Transcriptomics sample metadata: used by the genomics classes.
     """
 
-    metadata_urls = ['https://downloads-qcif.bioplatforms.com/bpa/sepsis/projectdata/2019-06-13/sample/']
-    name = 'sepsis-transcriptomics-hiseq'
+    metadata_urls = [
+        "https://downloads-qcif.bioplatforms.com/bpa/sepsis/projectdata/2019-06-13/sample/"
+    ]
+    name = "sepsis-transcriptomics-hiseq"
 
     def __init__(self, path):
         self.sample_metadata = {}
-        for xlsx_path in glob(path + '/*.xlsx'):
-            self.sample_metadata.update(self._package_metadata(self._read_metadata(xlsx_path)))
+        for xlsx_path in glob(path + "/*.xlsx"):
+            self.sample_metadata.update(
+                self._package_metadata(self._read_metadata(xlsx_path))
+            )
 
     def get(self, sample_id, submission_obj):
         if sample_id in self.sample_metadata:
             return self.sample_metadata[sample_id]
-        logger.warning("no %s metadata available for: %s" % (type(self).__name__, repr(sample_id)))
+        logger.warning(
+            "no %s metadata available for: %s" % (type(self).__name__, repr(sample_id))
+        )
         return {}
 
     def _package_metadata(self, rows):
@@ -219,45 +254,56 @@ class SepsisTranscriptomicsHiseqContextual(object):
             if row.sample_id in sample_metadata:
                 logger.warning(
                     "{}: duplicate sample metadata row for {}".format(
-                        self.__class__.__name__, row.sample_id))
+                        self.__class__.__name__, row.sample_id
+                    )
+                )
             sample_metadata[row.sample_id] = row_meta = {}
             for field in row._fields:
-                if field != 'taxon_or_organism' and field != 'strain_or_isolate':
+                if field != "taxon_or_organism" and field != "strain_or_isolate":
                     row_meta[field] = getattr(row, field)
         return sample_metadata
 
     def _read_metadata(self, metadata_path):
         field_spec = [
-            fld('sample_submission_date', 'sample submission date (yyyy-mm-dd)', coerce=ingest_utils.get_date_isoformat),
-            fld('sample_id', 'sample name i.e. 5 digit bpa id', coerce=ingest_utils.extract_ands_id),
-            fld('sample_type', 'sample type'),
-            fld('volume_ul', 'volume (ul)'),
-            fld('concentration_ng_per_ul', 'concentration (ng/ul)'),
-            fld('quantification_method', 'quantification method'),
-            fld('either_260_280', '260/280'),
-            fld('taxon_or_organism', 'taxon_or_organism'),
-            fld('strain_or_isolate', 'strain_or_isolate'),
-            fld('serovar', 'serovar', coerce=int_or_comment),
-            fld('growth_media', 'growth media'),
-            fld('replicate', 'replicate', coerce=ingest_utils.get_int),
-            fld('growth_condition_time', 'growth_condition_time (h)'),
-            fld('growth_condition_growth_phase', 'growth_condition_growth phase'),
-            fld('growth_condition_od600_reading', 'growth_condition_od600 reading'),
-            fld('growth_condition_temperature', 'growth_condition_temperature (c)'),
-            fld('growth_condition_media', 'growth_condition_media'),
-            fld('omics', 'omics'),
-            fld('analytical_platform', 'analytical platform'),
-            fld('facility', 'facility'),
-            fld('data_type', 'data type'),
-            fld('additional_notes', 'additional notes'),
+            fld(
+                "sample_submission_date",
+                "sample submission date (yyyy-mm-dd)",
+                coerce=ingest_utils.get_date_isoformat,
+            ),
+            fld(
+                "sample_id",
+                "sample name i.e. 5 digit bpa id",
+                coerce=ingest_utils.extract_ands_id,
+            ),
+            fld("sample_type", "sample type"),
+            fld("volume_ul", "volume (ul)"),
+            fld("concentration_ng_per_ul", "concentration (ng/ul)"),
+            fld("quantification_method", "quantification method"),
+            fld("either_260_280", "260/280"),
+            fld("taxon_or_organism", "taxon_or_organism"),
+            fld("strain_or_isolate", "strain_or_isolate"),
+            fld("serovar", "serovar", coerce=int_or_comment),
+            fld("growth_media", "growth media"),
+            fld("replicate", "replicate", coerce=ingest_utils.get_int),
+            fld("growth_condition_time", "growth_condition_time (h)"),
+            fld("growth_condition_growth_phase", "growth_condition_growth phase"),
+            fld("growth_condition_od600_reading", "growth_condition_od600 reading"),
+            fld("growth_condition_temperature", "growth_condition_temperature (c)"),
+            fld("growth_condition_media", "growth_condition_media"),
+            fld("omics", "omics"),
+            fld("analytical_platform", "analytical platform"),
+            fld("facility", "facility"),
+            fld("data_type", "data type"),
+            fld("additional_notes", "additional notes"),
         ]
 
         wrapper = ExcelWrapper(
             field_spec,
             metadata_path,
-            sheet_name='RNA HiSeq',
+            sheet_name="RNA HiSeq",
             header_length=4,
-            column_name_row_index=3)
+            column_name_row_index=3,
+        )
         for error in wrapper.get_errors():
             logger.error(error)
         return wrapper.get_all()
@@ -268,18 +314,24 @@ class SepsisMetabolomicsLCMSContextual(object):
     Metabolomics sample metadata: used by the genomics classes.
     """
 
-    metadata_urls = ['https://downloads-qcif.bioplatforms.com/bpa/sepsis/projectdata/2019-06-13/sample/']
-    name = 'sepsis-metabolomics-lcms'
+    metadata_urls = [
+        "https://downloads-qcif.bioplatforms.com/bpa/sepsis/projectdata/2019-06-13/sample/"
+    ]
+    name = "sepsis-metabolomics-lcms"
 
     def __init__(self, path):
         self.sample_metadata = {}
-        xlsx_path = one(glob(path + '/*.xlsx'))
-        self.sample_metadata.update(self._package_metadata(self._read_metadata(xlsx_path)))
+        xlsx_path = one(glob(path + "/*.xlsx"))
+        self.sample_metadata.update(
+            self._package_metadata(self._read_metadata(xlsx_path))
+        )
 
     def get(self, sample_id, submission_obj):
         if sample_id in self.sample_metadata:
             return self.sample_metadata[sample_id]
-        logger.warning("no %s metadata available for: %s" % (type(self).__name__, repr(sample_id)))
+        logger.warning(
+            "no %s metadata available for: %s" % (type(self).__name__, repr(sample_id))
+        )
         return {}
 
     def _package_metadata(self, rows):
@@ -290,40 +342,51 @@ class SepsisMetabolomicsLCMSContextual(object):
             if row.sample_id in sample_metadata:
                 logger.warning(
                     "{}: duplicate sample metadata row for {}".format(
-                        self.__class__.__name__, row.sample_id))
+                        self.__class__.__name__, row.sample_id
+                    )
+                )
             sample_metadata[row.sample_id] = row_meta = {}
             for field in row._fields:
-                if field != 'taxon_or_organism' and field != 'strain_or_isolate':
+                if field != "taxon_or_organism" and field != "strain_or_isolate":
                     row_meta[field] = getattr(row, field)
         return sample_metadata
 
     def _read_metadata(self, metadata_path):
         field_spec = [
-            fld('sample_submission_date', 'sample submission date (yyyy-mm-dd)', coerce=ingest_utils.get_date_isoformat),
-            fld('sample_id', 'sample name i.e. 5 digit bpa id', coerce=ingest_utils.extract_ands_id),
-            fld('taxon_or_organism', 'taxon_or_organism'),
-            fld('strain_or_isolate', 'strain_or_isolate'),
-            fld('serovar', 'serovar', coerce=int_or_comment),
-            fld('growth_media', 'growth media'),
-            fld('replicate', 'replicate', coerce=ingest_utils.get_int),
-            fld('growth_condition_time', 'growth_condition_time (h)'),
-            fld('growth_condition_growth_phase', 'growth_condition_growth phase'),
-            fld('growth_condition_od600_reading', 'growth_condition_od600 reading'),
-            fld('growth_condition_temperature', 'growth_condition_temperature (c)'),
-            fld('growth_condition_media', 'growth_condition_media'),
-            fld('omics', 'omics'),
-            fld('analytical_platform', 'analytical platform'),
-            fld('facility', 'facility'),
-            fld('data_type', 'data type'),
-            fld('additional_notes', 'additional notes'),
+            fld(
+                "sample_submission_date",
+                "sample submission date (yyyy-mm-dd)",
+                coerce=ingest_utils.get_date_isoformat,
+            ),
+            fld(
+                "sample_id",
+                "sample name i.e. 5 digit bpa id",
+                coerce=ingest_utils.extract_ands_id,
+            ),
+            fld("taxon_or_organism", "taxon_or_organism"),
+            fld("strain_or_isolate", "strain_or_isolate"),
+            fld("serovar", "serovar", coerce=int_or_comment),
+            fld("growth_media", "growth media"),
+            fld("replicate", "replicate", coerce=ingest_utils.get_int),
+            fld("growth_condition_time", "growth_condition_time (h)"),
+            fld("growth_condition_growth_phase", "growth_condition_growth phase"),
+            fld("growth_condition_od600_reading", "growth_condition_od600 reading"),
+            fld("growth_condition_temperature", "growth_condition_temperature (c)"),
+            fld("growth_condition_media", "growth_condition_media"),
+            fld("omics", "omics"),
+            fld("analytical_platform", "analytical platform"),
+            fld("facility", "facility"),
+            fld("data_type", "data type"),
+            fld("additional_notes", "additional notes"),
         ]
 
         wrapper = ExcelWrapper(
             field_spec,
             metadata_path,
-            sheet_name='Metabolomics',
+            sheet_name="Metabolomics",
             header_length=4,
-            column_name_row_index=3)
+            column_name_row_index=3,
+        )
         for error in wrapper.get_errors():
             logger.error(error)
         return wrapper.get_all()
@@ -334,18 +397,22 @@ class SepsisProteomicsBaseContextual(object):
     Proteomics sample metadata: used by both proteomics classes.
     """
 
-    metadata_urls = ['https://downloads-qcif.bioplatforms.com/bpa/sepsis/projectdata/2019-06-13/sample/']
-    name = 'sepsis-proteomics'
+    metadata_urls = [
+        "https://downloads-qcif.bioplatforms.com/bpa/sepsis/projectdata/2019-06-13/sample/"
+    ]
+    name = "sepsis-proteomics"
 
     def __init__(self, path, analytical_platform):
         self.analytical_platform = analytical_platform
-        xlsx_path = one(glob(path + '/*.xlsx'))
+        xlsx_path = one(glob(path + "/*.xlsx"))
         self.sample_metadata = self._package_metadata(self._read_metadata(xlsx_path))
 
     def get(self, sample_id, submission_obj):
         if sample_id in self.sample_metadata:
             return self.sample_metadata[sample_id]
-        logger.warning("no %s metadata available for: %s" % (type(self).__name__, repr(sample_id)))
+        logger.warning(
+            "no %s metadata available for: %s" % (type(self).__name__, repr(sample_id))
+        )
         return {}
 
     def _package_metadata(self, rows):
@@ -358,44 +425,59 @@ class SepsisProteomicsBaseContextual(object):
             if row.sample_id in sample_metadata:
                 logger.warning(
                     "{}: duplicate sample metadata row for {}".format(
-                        self.__class__.__name__, row.sample_id))
+                        self.__class__.__name__, row.sample_id
+                    )
+                )
             sample_metadata[row.sample_id] = row_meta = {}
             for field in row._fields:
-                if field != 'taxon_or_organism' and field != 'strain_or_isolate':
+                if field != "taxon_or_organism" and field != "strain_or_isolate":
                     row_meta[field] = getattr(row, field)
         return sample_metadata
 
     def _read_metadata(self, metadata_path):
         field_spec = [
-            fld('sample_submission_date', 'Sample submission date (YYYY-MM-DD)', coerce=ingest_utils.get_date_isoformat),
-            fld('sample_id', 'Sample name i.e. 5 digit BPA ID', coerce=ingest_utils.extract_ands_id),
-            fld('sample_type', 'Sample type'),
+            fld(
+                "sample_submission_date",
+                "Sample submission date (YYYY-MM-DD)",
+                coerce=ingest_utils.get_date_isoformat,
+            ),
+            fld(
+                "sample_id",
+                "Sample name i.e. 5 digit BPA ID",
+                coerce=ingest_utils.extract_ands_id,
+            ),
+            fld("sample_type", "Sample type"),
             # it really is ug, just unicode stripping drops the 'u'
-            fld('protein_yield_total_ug', 'protein yield - total (g)'),
-            fld('protein_yield_facility_ug', 'Protein Yield / Facility (g)'),
-            fld('treatment', 'Treatment'),
-            fld('peptide_resuspension_protocol', 'Peptide resuspension protocol'),
-            fld('taxon_or_organism', 'Taxon_OR_organism'),
-            fld('strain_or_isolate', 'Strain_OR_isolate'),
-            fld('serovar', 'Serovar', coerce=int_or_comment),
-            fld('growth_media', 'Growth Media'),
-            fld('replicate', 'Replicate', coerce=ingest_utils.get_int),
-            fld('growth_condition_time', 'Growth_condition_time'),
-            fld('growth_condition_growth_phase', 'Growth_condition_growth phase'),
-            fld('growth_condition_od600_reading', 'Growth_condition_OD600 reading'),
-            fld('growth_condition_temperature', 'Growth_condition_temperature', coerce=ingest_utils.get_clean_number),
-            fld('growth_condition_media', 'Growth_condition_media'),
-            fld('omics', 'Omics'),
-            fld('analytical_platform', 'Analytical platform'),
-            fld('facility', 'Facility'),
-            fld('data_type', 'Data type'),
+            fld("protein_yield_total_ug", "protein yield - total (g)"),
+            fld("protein_yield_facility_ug", "Protein Yield / Facility (g)"),
+            fld("treatment", "Treatment"),
+            fld("peptide_resuspension_protocol", "Peptide resuspension protocol"),
+            fld("taxon_or_organism", "Taxon_OR_organism"),
+            fld("strain_or_isolate", "Strain_OR_isolate"),
+            fld("serovar", "Serovar", coerce=int_or_comment),
+            fld("growth_media", "Growth Media"),
+            fld("replicate", "Replicate", coerce=ingest_utils.get_int),
+            fld("growth_condition_time", "Growth_condition_time"),
+            fld("growth_condition_growth_phase", "Growth_condition_growth phase"),
+            fld("growth_condition_od600_reading", "Growth_condition_OD600 reading"),
+            fld(
+                "growth_condition_temperature",
+                "Growth_condition_temperature",
+                coerce=ingest_utils.get_clean_number,
+            ),
+            fld("growth_condition_media", "Growth_condition_media"),
+            fld("omics", "Omics"),
+            fld("analytical_platform", "Analytical platform"),
+            fld("facility", "Facility"),
+            fld("data_type", "Data type"),
         ]
         wrapper = ExcelWrapper(
             field_spec,
             metadata_path,
-            sheet_name='Proteomics',
+            sheet_name="Proteomics",
             header_length=4,
-            column_name_row_index=3)
+            column_name_row_index=3,
+        )
         for error in wrapper.get_errors():
             logger.error(error)
         return wrapper.get_all()
@@ -403,9 +485,9 @@ class SepsisProteomicsBaseContextual(object):
 
 class SepsisProteomicsMS1QuantificationContextual(SepsisProteomicsBaseContextual):
     def __init__(self, path):
-        super().__init__(path, 'MS1 quantification')
+        super().__init__(path, "MS1 quantification")
 
 
 class SepsisProteomicsSwathMSContextual(SepsisProteomicsBaseContextual):
     def __init__(self, path):
-        super().__init__(path, 'SWATH-MS')
+        super().__init__(path, "SWATH-MS")

@@ -1,5 +1,3 @@
-
-
 from unipath import Path
 
 from ...util import make_logger
@@ -9,8 +7,8 @@ logger = make_logger(__name__)
 
 
 class MelanomaMetadata(BaseMetadata):
-    metadata_urls = ['https://downloads-qcif.bioplatforms.com/bpa/melanoma/tracking/']
-    organization = 'bpa-melanoma'
+    metadata_urls = ["https://downloads-qcif.bioplatforms.com/bpa/melanoma/tracking/"]
+    organization = "bpa-melanoma"
 
     def __init__(self, metadata_path):
         super().__init__()

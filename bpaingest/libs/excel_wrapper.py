@@ -1,5 +1,5 @@
 # _*_ coding: utf-8 _*_
-'''
+"""
 Tool to manage the import of rows from Excel workbooks.
 
 Pass a filename, a sheet_name, a mapping (fieldspec)
@@ -9,7 +9,7 @@ functions associated with each column type that must be used to massage the data
 It returns a iterator providing named tuples, each tuple contains key/value pairs, the keys
 being the fist column of the fieldspec, the value are found in the column specisied in the second fieldspec field
 as mangled by the provided method.
-'''
+"""
 
 import datetime
 from collections import namedtuple, Counter, OrderedDict
@@ -24,14 +24,18 @@ from ..util import make_logger
 
 logger = make_logger(__name__)
 
-SkipColumn = namedtuple('SkipColumn', ['column_name', 'skip_all'])
-skip_column_default = SkipColumn('column_name', False)
-FieldDefinition = namedtuple('FieldSpec', ['attribute', 'column_name', 'coerce', 'optional', 'units'])
-field_definition_default = FieldDefinition('<replace>', '<replace>', None, False, None)
+SkipColumn = namedtuple("SkipColumn", ["column_name", "skip_all"])
+skip_column_default = SkipColumn("column_name", False)
+FieldDefinition = namedtuple(
+    "FieldSpec", ["attribute", "column_name", "coerce", "optional", "units"]
+)
+field_definition_default = FieldDefinition("<replace>", "<replace>", None, False, None)
 
 
 def make_field_definition(attribute, column_name, **kwargs):
-    return field_definition_default._replace(attribute=attribute, column_name=column_name, **kwargs)
+    return field_definition_default._replace(
+        attribute=attribute, column_name=column_name, **kwargs
+    )
 
 
 def make_skip_column(column_name, **kwargs):
@@ -39,7 +43,7 @@ def make_skip_column(column_name, **kwargs):
 
 
 class ExcelWrapper(object):
-    '''
+    """
     Parse a excel file and yields namedtuples.
     fieldspec specifies the columns  to be read in, and the name
     of the attribute to map them to on the new type
@@ -49,22 +53,24 @@ class ExcelWrapper(object):
     sheet_name: sheet in workbook
     header_length: first number of lines to ignore
     column_name_row_index: row in which column names are found, typically 0
-    '''
+    """
 
-    def __init__(self,
-                 field_spec,
-                 file_name,
-                 sheet_name=None,
-                 header_length=0,
-                 column_name_row_index=0,
-                 suggest_template=False,
-                 additional_context=None):
+    def __init__(
+        self,
+        field_spec,
+        file_name,
+        sheet_name=None,
+        header_length=0,
+        column_name_row_index=0,
+        suggest_template=False,
+        additional_context=None,
+    ):
         self._log = []
         self.file_name = file_name
         self.header_length = header_length
         self.column_name_row_index = column_name_row_index
         self.field_spec = field_spec
-        assert(isinstance(self.field_spec[0], FieldDefinition))
+        assert isinstance(self.field_spec[0], FieldDefinition)
         self.additional_context = additional_context
         self.suggest_template = suggest_template
 
@@ -91,8 +97,10 @@ class ExcelWrapper(object):
         if len(list(names)) != len(defs):
             # this is a problem in the bpa-ingest code, not in the passed-in spreadsheet,
             # so we can fail hard here
-            raise Exception("duplicate attribute in field definition: %s" %
-                            [t for (t, c) in Counter(names).items() if c > 1])
+            raise Exception(
+                "duplicate attribute in field definition: %s"
+                % [t for (t, c) in Counter(names).items() if c > 1]
+            )
         return names
 
     def set_name_to_column_map(self):
@@ -106,11 +114,14 @@ class ExcelWrapper(object):
                 return str(s)
             return s.strip()
 
-        header = [coerce_header(t).strip().lower() for t in self.sheet.row_values(self.column_name_row_index)]
+        header = [
+            coerce_header(t).strip().lower()
+            for t in self.sheet.row_values(self.column_name_row_index)
+        ]
 
         def find_column(column_name):
             # if has the 'match' attribute, it's a regexp
-            if hasattr(column_name, 'match'):
+            if hasattr(column_name, "match"):
                 return find_column_re(column_name)
             col_index = -1
             try:
@@ -127,7 +138,7 @@ class ExcelWrapper(object):
 
         def find_all_columns_re(column_name_re):
             all_idx = []
-            if not hasattr(column_name_re, 'match'):
+            if not hasattr(column_name_re, "match"):
                 raise Exception("Column name must be a regex for find all")
             for idx, name in enumerate(header):
                 if column_name_re.match(name):
@@ -149,7 +160,7 @@ class ExcelWrapper(object):
 
             col_index = -1
             col_descr = spec.column_name
-            if hasattr(spec.column_name, 'match'):
+            if hasattr(spec.column_name, "match"):
                 col_descr = spec.column_name.pattern
             if isinstance(spec.column_name, tuple):
                 for c, _name in enumerate(spec.column_name):
@@ -166,69 +177,66 @@ class ExcelWrapper(object):
                 if not spec.optional:
                     self._error(
                         "Column `{}' not found in `{}' `{}'".format(
-                            col_descr, os.path.basename(
-                                self.file_name), self.sheet.name))
+                            col_descr, os.path.basename(self.file_name), self.sheet.name
+                        )
+                    )
                     missing_columns = True
                 cmap[spec.attribute] = None
 
         mapped_columns = set(cmap.values())
         unmapped_columns = []
         for idx, s in enumerate(header):
-            if s != '' and idx not in mapped_columns and idx not in skip_columns:
+            if s != "" and idx not in mapped_columns and idx not in skip_columns:
                 unmapped_columns.append(idx)
-                self._error("Column `{}' not mapped to an output field in `{}` `{}`".format(
-                    s, os.path.basename(self.file_name), self.sheet.name))
+                self._error(
+                    "Column `{}' not mapped to an output field in `{}` `{}`".format(
+                        s, os.path.basename(self.file_name), self.sheet.name
+                    )
+                )
         if (len(unmapped_columns) > 0 or missing_columns) and self.suggest_template:
             self.print_template(header)
         return header, cmap
 
     def print_template(self, header):
-        acceptable = set(string.ascii_letters + string.digits + '_')
+        acceptable = set(string.ascii_letters + string.digits + "_")
         skip_fields = (
             # these are unknown
-            'id',
-            'tax_id',
+            "id",
+            "tax_id",
             # portal is authoritative on these
-            'ncbi_submission',
-            'ncbi_bioproject',
-            'ncbi_sample_accession')
-        float_fields = (
-            'latitude',
-            'longitude',
-            'depth')
+            "ncbi_submission",
+            "ncbi_bioproject",
+            "ncbi_sample_accession",
+        )
+        float_fields = ("latitude", "longitude", "depth")
 
         def get_field_name(s):
             s = s.lower()
             # delete any (...) comment off the end
-            if '(' in s:
-                s = s[:s.index('(')]
+            if "(" in s:
+                s = s[: s.index("(")]
             # delete any [...] comment off the end
-            if '[' in s:
-                s = s[:s.index('[')]
+            if "[" in s:
+                s = s[: s.index("[")]
             s = s.strip()
-            s = s.replace(' ', '_')
-            s = s.replace('/', '_')
-            s = ''.join(t for t in s if t in acceptable)
-            s = s.strip('_')
-            s = re.sub('_+', '_', s)
-            if s == 'bpa_id':
-                return 'sample_id'
+            s = s.replace(" ", "_")
+            s = s.replace("/", "_")
+            s = "".join(t for t in s if t in acceptable)
+            s = s.strip("_")
+            s = re.sub("_+", "_", s)
+            if s == "bpa_id":
+                return "sample_id"
             return s
 
-        parens = OrderedDict([
-            (']', '['),
-            (')', '('),
-        ])
-        exclude_units = (
-            'yyyy-mm-dd',
-            'hh:mm')
+        parens = OrderedDict([("]", "["), (")", "("),])
+        exclude_units = ("yyyy-mm-dd", "hh:mm")
 
         def guess_units(s):
             s = s.strip()
-            if s == '':
+            if s == "":
                 return
-            if '%' in s:
-                return '%'
+            if "%" in s:
+                return "%"
             last_char = None
             for p in parens:
                 if p in s:
@@ -239,20 +247,20 @@ class ExcelWrapper(object):
             first_char = parens[last_char]
             if first_char not in s:
                 return
-            units = s[s.index(first_char) + 1:s.index(last_char)].strip()
-            if 'free text' in units:
+            units = s[s.index(first_char) + 1 : s.index(last_char)].strip()
+            if "free text" in units:
                 return
             if units in exclude_units:
                 return
-            if units == '':
+            if units == "":
                 return
             return units
 
-        template = ['[']
-        indent = ' ' * 12
+        template = ["["]
+        indent = " " * 12
         for column in (str(t) for t in header):
             field_name = get_field_name(column)
-            if field_name == '':
+            if field_name == "":
                 continue
             if field_name in skip_fields:
                 template.append("{}skip('{}'),".format(indent, column))
@@ -265,41 +273,47 @@ class ExcelWrapper(object):
             units = guess_units(column)
             if units is not None:
                 args.append("units='{}'".format(units))
-            if field_name == 'sample_id':
-                cleanup = 'ingest_utils.extract_ands_id'
+            if field_name == "sample_id":
+                cleanup = "ingest_utils.extract_ands_id"
             elif field_name in float_fields or units is not None:
-                cleanup = 'ingest_utils.get_clean_number'
-            elif 'date' in field_name:
-                cleanup = 'ingest_utils.get_date_isoformat'
-            elif 'time' in field_name:
-                cleanup = 'ingest_utils.get_time'
+                cleanup = "ingest_utils.get_clean_number"
+            elif "date" in field_name:
+                cleanup = "ingest_utils.get_date_isoformat"
+            elif "time" in field_name:
+                cleanup = "ingest_utils.get_time"
             if cleanup is not None:
-                args.append('coerce=' + cleanup)
-            template.append("{}fld({}),".format(
-                indent, ', '.join(args)))
-        template.append(']')
-        self._error('{} @ {} - suggested template is:\n{}'.format(
-            self.file_name, self.sheet.name, '\n'.join(template)))
+                args.append("coerce=" + cleanup)
+            template.append("{}fld({}),".format(indent, ", ".join(args)))
+        template.append("]")
+        self._error(
+            "{} @ {} - suggested template is:\n{}".format(
+                self.file_name, self.sheet.name, "\n".join(template)
+            )
+        )
 
     def set_name_to_func_map(self):
-        ''' Map the spec fields to their corresponding functions '''
+        """ Map the spec fields to their corresponding functions """
 
-        return dict((t.attribute, t.coerce) for t in self.field_spec if isinstance(t, FieldDefinition))
+        return dict(
+            (t.attribute, t.coerce)
+            for t in self.field_spec
+            if isinstance(t, FieldDefinition)
+        )
 
     def get_date_mode(self):
-        assert (self.workbook is not None)
+        assert self.workbook is not None
         return self.workbook.datemode
 
     def date_to_string(self, s):
         try:
             date_val = float(s)
             tpl = xlrd.xldate_as_tuple(date_val, self.workbook.datemode)
-            return datetime.datetime(*tpl).strftime('%d/%m/%Y')
+            return datetime.datetime(*tpl).strftime("%d/%m/%Y")
         except ValueError:
             return s
 
     def _get_rows(self):
-        ''' Yields sequence of cells '''
+        """ Yields sequence of cells """
 
         merge_redirect = {}
         for crange in self.sheet.merged_cells:
@@ -324,22 +338,28 @@ class ExcelWrapper(object):
             yield merged_row
 
     def get_date_time(self, i, cell):
-        ''' the cell contains a float and pious hope, get a date, if you dare. '''
+        """ the cell contains a float and pious hope, get a date, if you dare. """
 
         val = cell.value
         try:
             date_time_tup = xlrd.xldate_as_tuple(val, self.get_date_mode())
             # well ok...
-            if date_time_tup[0] == 0 and date_time_tup[1] == 0 and date_time_tup[2] == 0:
+            if (
+                date_time_tup[0] == 0
+                and date_time_tup[1] == 0
+                and date_time_tup[2] == 0
+            ):
                 val = datetime.time(*date_time_tup[3:])
             else:
                 val = datetime.datetime(*date_time_tup)
         except ValueError:
-            self._error('column: `%s\' -- value `%s\' cannot be converted to a date' % (i, val))
+            self._error(
+                "column: `%s' -- value `%s' cannot be converted to a date" % (i, val)
+            )
         return val
 
-    def get_all(self, typname='DataRow'):
-        '''Returns all rows for the sheet as namedtuple instances. Filters out any exact duplicates.'''
+    def get_all(self, typname="DataRow"):
+        """Returns all rows for the sheet as namedtuple instances. Filters out any exact duplicates."""
 
         # row is added so we know where in the spreadsheet this came from
         typ_attrs = [n for n in self.field_names]
