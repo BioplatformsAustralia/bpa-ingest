@@ -16,3 +16,4 @@ tags
 test.json
 test.log
 ingest.log
+**/ingest-debug.sh
