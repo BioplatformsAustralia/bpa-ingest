@@ -20,12 +20,12 @@ def one(l):
 
 
 def sample_id_to_ckan_name(sample_id, suborg=None, postfix=None):
-    r = 'bpa-'
+    r = "bpa-"
     if suborg is not None:
-        r += suborg + '-'
-    r += sample_id.replace('/', '_').replace('.', '_').replace(' ', '')
+        r += suborg + "-"
+    r += sample_id.replace("/", "_").replace(".", "_").replace(" ", "")
     if postfix is not None:
-        r += '-' + postfix
+        r += "-" + postfix
     # CKAN insists upon lowercase
     return r.lower()
 
@@ -38,9 +38,11 @@ def prune_dict(d, keys):
 
 def clean_tag_name(s):
     "reduce s to strings acceptable in a tag name"
-    s = s.replace('+', '_')
+    s = s.replace("+", "_")
     s = s.rstrip()
-    return ''.join(t for t in s if t in string.digits or t in string.ascii_letters or t in '-_. ')
+    return "".join(
+        t for t in s if t in string.digits or t in string.ascii_letters or t in "-_. "
+    )
 
 
 def make_registration_decorator():
@@ -61,21 +63,22 @@ def make_logger(name):
     logger = logging.getLogger(name)
     logger.setLevel(logging.DEBUG)
     handler = logging.StreamHandler()
-    fmt = logging.Formatter("%(asctime)s [%(levelname)-7s] [%(threadName)s]  %(message)s")
+    fmt = logging.Formatter(
+        "%(asctime)s [%(levelname)-7s] [%(threadName)s]  %(message)s"
+    )
     handler.setFormatter(fmt)
     logger.addHandler(handler)
     return logger
 
 
 def make_ckan_api(args):
-    ckan = ckanapi.RemoteCKAN(args.ckan_url, apikey=args.api_key, verify_ssl=args.verify_ssl)
+    ckan = ckanapi.RemoteCKAN(
+        args.ckan_url, apikey=args.api_key, verify_ssl=args.verify_ssl
+    )
     return ckan
 
 
-CKAN_AUTH = {
-    'login': 'CKAN_USERNAME',
-    'password': 'CKAN_PASSWORD'
-}
+CKAN_AUTH = {"login": "CKAN_USERNAME", "password": "CKAN_PASSWORD"}
 
 
 # http://stackoverflow.com/questions/38271351/download-resources-from-private-ckan-datasets
@@ -83,42 +86,56 @@ def authenticated_ckan_session(ckan):
     s = requests.Session()
     data = dict((k, os.environ.get(v)) for k, v in list(CKAN_AUTH.items()))
     if any(t is None for t in list(data.values())):
-        raise Exception('please set %s' % (', '.join(list(CKAN_AUTH.values()))))
-    url = ckan.address + '/login_generic'
+        raise Exception("please set %s" % (", ".join(list(CKAN_AUTH.values()))))
+    url = ckan.address + "/login_generic"
     r = s.post(url, data=data)
-    if 'field-login' in r.text:
-        raise RuntimeError('Login failed.')
+    if "field-login" in r.text:
+        raise RuntimeError("Login failed.")
     return s
 
 
 digit_words = {
-    '0': 'zero',
-    '1': 'one',
-    '2': 'two',
-    '3': 'three',
-    '4': 'four',
-    '5': 'five',
-    '6': 'six',
-    '7': 'seven',
-    '8': 'eight',
-    '9': 'nine',
+    "0": "zero",
+    "1": "one",
+    "2": "two",
+    "3": "three",
+    "4": "four",
+    "5": "five",
+    "6": "six",
+    "7": "seven",
+    "8": "eight",
+    "9": "nine",
 }
 
 
-def csv_to_named_tuple(typname, fname, mode='r', additional_context=None, cleanup=None, name_fn=None, dialect='excel'):
+def csv_to_named_tuple(
+    typname,
+    fname,
+    mode="r",
+    additional_context=None,
+    cleanup=None,
+    name_fn=None,
+    dialect="excel",
+):
     if fname is None:
         return [], []
 
     def clean_name(s):
-        s = s.lower().strip().replace('-', '_').replace(' ', '_')
-        s = ''.join([t for t in s if t in string.ascii_letters or t in string.digits or t == '_'])
+        s = s.lower().strip().replace("-", "_").replace(" ", "_")
+        s = "".join(
+            [
+                t
+                for t in s
+                if t in string.ascii_letters or t in string.digits or t == "_"
+            ]
+        )
         if s[0] in string.digits:
             s = digit_words[s[0]] + s[1:]
-        s = s.strip('_')
-        s = re.sub(r'__+', '_', s).strip('_')
+        s = s.strip("_")
+        s = re.sub(r"__+", "_", s).strip("_")
         # reserved words aren't permitted
-        if s == 'class':
-            s = 'class_'
+        if s == "class":
+            s = "class_"
         return s
 
     def default_name_fn(s):
@@ -142,7 +159,7 @@ def csv_to_named_tuple(typname, fname, mode='r', additional_context=None, cleanu
 
 
 def strip_to_ascii(s):
-    return ''.join([t for t in s if ord(t) < 128])
+    return "".join([t for t in s if ord(t) < 128])
 
 
 def common_values(dicts):
@@ -167,7 +184,9 @@ def apply_license(archive_ingestion_date):
     if not archive_ingestion_date:
         return "notspecified"
 
-    archive_ingestion_date = datetime.datetime.strptime(archive_ingestion_date, "%Y-%m-%d").date()
+    archive_ingestion_date = datetime.datetime.strptime(
+        archive_ingestion_date, "%Y-%m-%d"
+    ).date()
 
     if archive_ingestion_date + relativedelta(months=3) > datetime.date.today():
         return "other-closed"
@@ -180,11 +199,13 @@ def xlsx_resource(linkage, fname, resource_type):
     the same XLSX file might be on multiple packages, so we generate an ID
     which is the MD5(str(linkage) || fname)
     """
-    with open(fname, 'rb') as fd:
+    with open(fname, "rb") as fd:
         data = fd.read()
     return {
-        'id': md5((str(linkage) + "||" + os.path.basename(fname)).encode('utf8')).hexdigest(),
-        'name': os.path.basename(fname),
-        'resource_type': resource_type,
-        'md5': md5(data).hexdigest(),
+        "id": md5(
+            (str(linkage) + "||" + os.path.basename(fname)).encode("utf8")
+        ).hexdigest(),
+        "name": os.path.basename(fname),
+        "resource_type": resource_type,
+        "md5": md5(data).hexdigest(),
     }

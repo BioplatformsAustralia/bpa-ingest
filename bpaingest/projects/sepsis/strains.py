@@ -1,4 +1,3 @@
-
 #
 # late in the project, several (taxon_or_organism, strain_or_isolate) tuples were
 # renamed. as there are a large number of metadata sources with the old names, and
@@ -33,13 +32,15 @@ TAXON_STRAIN_MAPPING = {
 
 
 def empty_to_null(s):
-    if s == '':
+    if s == "":
         return None
     return s
 
 
 def get_taxon_strain(obj):
-    tpl = tuple(map(empty_to_null, (obj.get('taxon_or_organism'), obj.get('strain_or_isolate'))))
+    tpl = tuple(
+        map(empty_to_null, (obj.get("taxon_or_organism"), obj.get("strain_or_isolate")))
+    )
     # see (1) above
     if None in tpl:
         return None, None
@@ -60,10 +61,10 @@ def map_taxon_strain_dict(obj):
     modify a dict (in-place), updating the 'strain_or_isolate' and 'taxon_or_organism'
     fields (if present)
     """
-    assert(type(obj) is dict or type(obj) is OrderedDict)
+    assert type(obj) is dict or type(obj) is OrderedDict
     taxon, strain = map_taxon_strain(*get_taxon_strain(obj))
-    obj['taxon_or_organism'] = taxon
-    obj['strain_or_isolate'] = strain
+    obj["taxon_or_organism"] = taxon
+    obj["strain_or_isolate"] = strain
 
 
 def map_taxon_strain_rows(row_iter):
@@ -72,7 +73,9 @@ def map_taxon_strain_rows(row_iter):
     """
     mapped = []
     for row in row_iter:
-        if not hasattr(row, 'strain_or_isolate') or not hasattr(row, 'taxon_or_organism'):
+        if not hasattr(row, "strain_or_isolate") or not hasattr(
+            row, "taxon_or_organism"
+        ):
             mapped.append(row)
             continue
         obj = row._asdict()

@@ -9,18 +9,19 @@ logger = make_logger(__name__)
 
 
 class BaseMetadata:
-    auth = ('bpaingest', 'bpaingest')
-    resource_linkage = ('sample_id',)
+    auth = ("bpaingest", "bpaingest")
+    resource_linkage = ("sample_id",)
 
     @classmethod
     def parse_spreadsheet(cls, fname, metadata_info):
-        kwargs = cls.spreadsheet['options']
+        kwargs = cls.spreadsheet["options"]
         wrapper = ExcelWrapper(
-            cls.spreadsheet['fields'],
+            cls.spreadsheet["fields"],
             fname,
             additional_context=metadata_info[os.path.basename(fname)],
             suggest_template=True,
-            **kwargs)
+            **kwargs
+        )
         for error in wrapper.get_errors():
             logger.error(error)
         rows = list(wrapper.get_all())
@@ -28,8 +29,8 @@ class BaseMetadata:
 
     @classmethod
     def parse_md5file_unwrapped(cls, fname):
-        match = cls.md5['match']
-        skip = cls.md5['skip']
+        match = cls.md5["match"]
+        skip = cls.md5["skip"]
         return MD5Parser(fname, match, skip)
 
     @classmethod
@@ -71,23 +72,44 @@ class BaseMetadata:
         alone
         """
         extension_map = {
-            'JPG': 'JPEG',
-            'TGZ': 'TAR',
+            "JPG": "JPEG",
+            "TGZ": "TAR",
         }
         for resource_linkage, legacy_url, resource_obj in resources:
-            if 'format' in resource_obj:
+            if "format" in resource_obj:
                 continue
-            filename = urlparse(legacy_url).path.split('/')[-1]
-            if '.' not in filename:
+            filename = urlparse(legacy_url).path.split("/")[-1]
+            if "." not in filename:
                 continue
-            extension = filename.rsplit('.', 1)[-1].upper()
+            extension = filename.rsplit(".", 1)[-1].upper()
             extension = extension_map.get(extension, extension)
-            if filename.lower().endswith('.fastq.gz'):
-                resource_obj['format'] = 'FASTQ'
-            elif filename.lower().endswith('.fasta.gz'):
-                resource_obj['format'] = 'FASTA'
-            elif extension in ('PNG', 'XLSX', 'XLS', 'PPTX', 'ZIP', 'TAR', 'GZ', 'DOC', 'DOCX', 'PDF', 'CSV', 'JPEG', 'XML', 'BZ2', 'EXE', 'EXF', 'FASTA', 'FASTQ', 'SCAN', 'WIFF'):
-                resource_obj['format'] = extension
+            if filename.lower().endswith(".fastq.gz"):
+                resource_obj["format"] = "FASTQ"
+            elif filename.lower().endswith(".fasta.gz"):
+                resource_obj["format"] = "FASTA"
+            elif extension in (
+                "PNG",
+                "XLSX",
+                "XLS",
+                "PPTX",
+                "ZIP",
+                "TAR",
+                "GZ",
+                "DOC",
+                "DOCX",
+                "PDF",
+                "CSV",
+                "JPEG",
+                "XML",
+                "BZ2",
+                "EXE",
+                "EXF",
+                "FASTA",
+                "FASTQ",
+                "SCAN",
+                "WIFF",
+            ):
+                resource_obj["format"] = extension
 
     @classmethod
     def obj_round_floats_and_stringify(cls, objs):
@@ -110,17 +132,17 @@ class BaseMetadata:
         track a spreadsheet that needs to be uploaded into the packages generated from it
         """
         linkage_key = tuple([obj[t] for t in self.resource_linkage])
-        assert(linkage_key not in self._linkage_xlsx)
+        assert linkage_key not in self._linkage_xlsx
         self._linkage_xlsx[linkage_key] = fname
 
     def generate_xlsx_resources(self):
         if len(self._linkage_xlsx) == 0:
-            logger.error('no XLSX resources, likely a bug in the ingest class')
+            logger.error("no XLSX resources, likely a bug in the ingest class")
         resources = []
         for linkage, fname in self._linkage_xlsx.items():
             resource = xlsx_resource(linkage, fname, self.ckan_data_type)
             xlsx_info = self.metadata_info[os.path.basename(fname)]
-            legacy_url = urljoin(xlsx_info['base_url'], os.path.basename(fname))
+            legacy_url = urljoin(xlsx_info["base_url"], os.path.basename(fname))
             resources.append((linkage, legacy_url, resource))
         return resources
 
@@ -132,7 +154,9 @@ class BaseMetadata:
             self._resources = self._get_resources()
             BaseMetadata.resources_add_format(self._resources)
             BaseMetadata.obj_round_floats_and_stringify(self._packages)
-            BaseMetadata.obj_round_floats_and_stringify(t for _, _, t in self._resources)
+            BaseMetadata.obj_round_floats_and_stringify(
+                t for _, _, t in self._resources
+            )
         return self._packages, self._resources
 
     def get_packages(self):

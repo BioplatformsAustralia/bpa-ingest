@@ -67,7 +67,7 @@ HISEQ_FILENAME_PATTERN = r"""
 """
 hiseq_filename_re = re.compile(HISEQ_FILENAME_PATTERN, re.VERBOSE)
 
-sample_sheet_re = re.compile(r'^SampleSheet\.csv$')
+sample_sheet_re = re.compile(r"^SampleSheet\.csv$")
 
 DDRAD_FASTQ_FILENAME_PATTERN = r"""
     (?P<bpa_dataset_id>\d{4,6})_
@@ -108,7 +108,7 @@ PACBIO_PATTERN = r"""
 """
 pacbio_filename_re = re.compile(PACBIO_PATTERN, re.VERBOSE)
 
-ONT_PROMETHION_PATTERN= r"""
+ONT_PROMETHION_PATTERN = r"""
     (?P<bpa_library_id>\d{4,6})_
     (?P<flowcell_id>PAD\d{5})_
     OMG_

@@ -22,18 +22,23 @@ def make_file_metadata(md5_lines):
         if sample_id is None:
             continue
 
-        run_key = md5_line.sample_id + md5_line.flowcell + md5_line.lib_type + md5_line.lib_size
+        run_key = (
+            md5_line.sample_id
+            + md5_line.flowcell
+            + md5_line.lib_type
+            + md5_line.lib_size
+        )
         yield {
-            'run': run_key,
-            'sample_id': sample_id,
-            'library_type': md5_line.lib_type,
-            'base_pairs': parse_base_pair(md5_line.lib_size),
-            'flowcell': md5_line.flowcell,
-            'barcode': md5_line.barcode,
-            'read_number': md5_line.read,
-            'lane_number': md5_line.lane,
-            'md5': md5_line.md5,
-            'name': md5_line.filename
+            "run": run_key,
+            "sample_id": sample_id,
+            "library_type": md5_line.lib_type,
+            "base_pairs": parse_base_pair(md5_line.lib_size),
+            "flowcell": md5_line.flowcell,
+            "barcode": md5_line.barcode,
+            "read_number": md5_line.read,
+            "lane_number": md5_line.lane,
+            "md5": md5_line.md5,
+            "name": md5_line.filename,
         }
 
 
@@ -44,24 +49,24 @@ def cultivars_parse_md5_file(md5_file):
     """
 
     class MD5ParsedLine(object):
-        Cultivar = namedtuple('Cultivar', 'desc sample_id')
+        Cultivar = namedtuple("Cultivar", "desc sample_id")
         cultivars = {
-            'DRY': Cultivar('Drysdale', '102.100.100.13703'),
-            'GLA': Cultivar('Gladius', '102.100.100.13704'),
-            'RAC': Cultivar('RAC 875', '102.100.100.13705'),
-            'EXC': Cultivar('Excalibur', '102.100.100.13706'),
-            'KUK': Cultivar('Kukri', '102.100.100.13707'),
-            'ACB': Cultivar('AC Barry', '102.100.100.13708'),
-            'BAX': Cultivar('Baxter', '102.100.100.13709'),
-            'CH7': Cultivar('Chara', '102.100.100.13710'),
-            'VOL': Cultivar('Volcani DD1', '102.100.100.13711'),
-            'WES': Cultivar('Westonia', '102.100.100.13712'),
-            'PAS': Cultivar('Pastor', '102.100.100.13713'),
-            'XIA': Cultivar('Xiaoyan 54', '102.100.100.13714'),
-            'YIT': Cultivar('Yitpi', '102.100.100.13715'),
-            'ALS': Cultivar('Alsen', '102.100.100.13716'),
-            'WYA': Cultivar('Wyalcatchem', '102.100.100.13717'),
-            'H45': Cultivar('H45', '102.100.100.13718'),
+            "DRY": Cultivar("Drysdale", "102.100.100.13703"),
+            "GLA": Cultivar("Gladius", "102.100.100.13704"),
+            "RAC": Cultivar("RAC 875", "102.100.100.13705"),
+            "EXC": Cultivar("Excalibur", "102.100.100.13706"),
+            "KUK": Cultivar("Kukri", "102.100.100.13707"),
+            "ACB": Cultivar("AC Barry", "102.100.100.13708"),
+            "BAX": Cultivar("Baxter", "102.100.100.13709"),
+            "CH7": Cultivar("Chara", "102.100.100.13710"),
+            "VOL": Cultivar("Volcani DD1", "102.100.100.13711"),
+            "WES": Cultivar("Westonia", "102.100.100.13712"),
+            "PAS": Cultivar("Pastor", "102.100.100.13713"),
+            "XIA": Cultivar("Xiaoyan 54", "102.100.100.13714"),
+            "YIT": Cultivar("Yitpi", "102.100.100.13715"),
+            "ALS": Cultivar("Alsen", "102.100.100.13716"),
+            "WYA": Cultivar("Wyalcatchem", "102.100.100.13717"),
+            "H45": Cultivar("H45", "102.100.100.13718"),
         }
 
         def __init__(self, line):
@@ -108,7 +113,7 @@ def cultivars_parse_md5_file(md5_file):
             """ unpack the md5 line """
             self.md5, self.filename = self._line.split()
 
-            filename_parts = self.filename.split('.')[0].split('_')
+            filename_parts = self.filename.split(".")[0].split("_")
             self.cultivar_key = filename_parts[0]
 
             # there are some files with an unknown cultivar code
@@ -122,7 +127,15 @@ def cultivars_parse_md5_file(md5_file):
             # WYA_PE_300bp_AD0ALYACXX_ATCACG_L003_R2.fastq.gz
             # [Cultivar_key]_[Library_Type]_[Library_Size]_[FLowcel]_[Barcode]_L[Lane_number]_R[Read_Number].
             if len(filename_parts) == 7:
-                _key, self.lib_type, self.lib_size, self.flowcell, self.barcode, self.lane, self.read = filename_parts
+                (
+                    _key,
+                    self.lib_type,
+                    self.lib_size,
+                    self.flowcell,
+                    self.barcode,
+                    self.lane,
+                    self.read,
+                ) = filename_parts
                 self._ok = True
             else:
                 self._ok = False  # be explicit
@@ -132,7 +145,7 @@ def cultivars_parse_md5_file(md5_file):
     with open(md5_file) as f:
         for line in f.read().splitlines():
             line = line.strip()
-            if line == '':
+            if line == "":
                 continue
 
             parsed_line = MD5ParsedLine(line)
@@ -145,4 +158,4 @@ def cultivars_parse_md5_file(md5_file):
 def parse_md5_file(md5_file):
     data = cultivars_parse_md5_file(md5_file)
     for file_info in make_file_metadata(data):
-        yield file_info['name'], file_info['md5'], file_info
+        yield file_info["name"], file_info["md5"], file_info

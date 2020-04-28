@@ -20,42 +20,48 @@ class DownloadMetadata(object):
         if metadata_info is None:
             metadata_info = {}
 
-        contextual_classes = getattr(project_class, 'contextual_classes', [])
+        contextual_classes = getattr(project_class, "contextual_classes", [])
         contextual = [(os.path.join(self.path, c.name), c) for c in contextual_classes]
 
-        info_json = os.path.join(self.path, 'bpa-ingest.json')
+        info_json = os.path.join(self.path, "bpa-ingest.json")
         if self.fetch or force_fetch:
             self._fetch_metadata(project_class, contextual, info_json, metadata_info)
 
         meta_kwargs = {}
-        with open(info_json, 'r') as fd:
-            meta_kwargs['metadata_info'] = json.load(fd)
+        with open(info_json, "r") as fd:
+            meta_kwargs["metadata_info"] = json.load(fd)
         if contextual:
-            meta_kwargs['contextual_metadata'] = [c(p) for (p, c) in contextual]
+            meta_kwargs["contextual_metadata"] = [c(p) for (p, c) in contextual]
         self.meta = project_class(self.path, **meta_kwargs)
 
     def _fetch_metadata(self, project_class, contextual, info_json, metadata_info):
         for metadata_url in project_class.metadata_urls:
-            logger.info("fetching submission metadata: %s" % (project_class.metadata_urls))
+            logger.info(
+                "fetching submission metadata: %s" % (project_class.metadata_urls)
+            )
             fetcher = Fetcher(self.path, metadata_url, self.auth)
             fetcher.fetch_metadata_from_folder(
-                getattr(project_class, 'metadata_patterns', None),
+                getattr(project_class, "metadata_patterns", None),
                 metadata_info,
-                getattr(project_class, 'metadata_url_components', []))
+                getattr(project_class, "metadata_url_components", []),
+            )
 
         with suppress(FileExistsError):
             os.mkdir(self.path)
 
         for contextual_path, contextual_cls in contextual:
             os.mkdir(contextual_path)
-            logger.info("fetching contextual metadata: %s" % (contextual_cls.metadata_urls))
+            logger.info(
+                "fetching contextual metadata: %s" % (contextual_cls.metadata_urls)
+            )
             for metadata_url in contextual_cls.metadata_urls:
                 fetcher = Fetcher(contextual_path, metadata_url, self.auth)
                 fetcher.fetch_metadata_from_folder(
-                    getattr(contextual_cls, 'metadata_patterns', None),
+                    getattr(contextual_cls, "metadata_patterns", None),
                     metadata_info,
-                    getattr(contextual_cls, 'metadata_url_components', []))
-        with open(info_json, 'w') as fd:
+                    getattr(contextual_cls, "metadata_url_components", []),
+                )
+        with open(info_json, "w") as fd:
             json.dump(metadata_info, fd)
 
     def _set_auth(self, project_class):
@@ -67,10 +73,12 @@ class DownloadMetadata(object):
             self.path = path
             self.cleanup = False
             if os.access(path, os.R_OK):
-                logger.info("skipping metadata download, specified directory `%s' exists" % path)
+                logger.info(
+                    "skipping metadata download, specified directory `%s' exists" % path
+                )
                 self.fetch = False
         else:
-            self.path = tempfile.mkdtemp(prefix='bpaingest-metadata-')
+            self.path = tempfile.mkdtemp(prefix="bpaingest-metadata-")
 
     def __enter__(self):
         return self

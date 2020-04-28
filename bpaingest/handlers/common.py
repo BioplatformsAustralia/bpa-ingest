@@ -10,15 +10,15 @@ import boto3
 import requests
 
 
-METADATA_FILE_NAME = 'metadata.json'
-UNSAFE_CHARS = re.compile(r'[^a-zA-Z0-9 !.-]')
+METADATA_FILE_NAME = "metadata.json"
+UNSAFE_CHARS = re.compile(r"[^a-zA-Z0-9 !.-]")
 
-TS_FORMAT = '%Y-%m-%dT%H:%M:%S.%fZ'
-ISO_TS_FORMAT = '%Y-%m-%dT%H:%M:%S.%f'
+TS_FORMAT = "%Y-%m-%dT%H:%M:%S.%fZ"
+ISO_TS_FORMAT = "%Y-%m-%dT%H:%M:%S.%f"
 
-s3 = boto3.client('s3')
-sns = boto3.client('sns')
-kms = boto3.client('kms')
+s3 = boto3.client("s3")
+sns = boto3.client("sns")
+kms = boto3.client("kms")
 
 
 # Async calls of Lambdas will be auto-retried twice with a timeout before giving up
@@ -30,7 +30,9 @@ class UnrecoverableError(Exception):
 
 def set_up_credentials(env):
     config = s3.get_object(Bucket=env.s3_bucket, Key=env.s3_config_key)
-    credentials = json.loads(kms.decrypt(CiphertextBlob=config['Body'].read())['Plaintext'])
+    credentials = json.loads(
+        kms.decrypt(CiphertextBlob=config["Body"].read())["Plaintext"]
+    )
     return credentials
 
 
@@ -48,34 +50,38 @@ class RequestsSession(requests.Session):
 
     def request(self, *args, **kwargs):
         if self.default_timeout:
-            kwargs.setdefault('timeout', self.default_timeout)
+            kwargs.setdefault("timeout", self.default_timeout)
 
         if self.referrer is not None:
-            headers = kwargs.setdefault('headers', {})
-            if 'Referer' not in headers:
-                headers['Referer'] = self.referrer
+            headers = kwargs.setdefault("headers", {})
+            if "Referer" not in headers:
+                headers["Referer"] = self.referrer
 
         resp = super().request(*args, **kwargs)
         return self.process_response(resp)
 
 
 class GenericHandler:
-    SNS_ON_ERROR_SUBJECT = 'ERROR'
+    SNS_ON_ERROR_SUBJECT = "ERROR"
 
     def __init__(self, logger=None):
         self.env = None
         self.logger = logger or logging.getLogger()
 
     def get_env_vars(self):
-        names = self.ENV_VAR_DEFS['names']
-        optional = self.ENV_VAR_DEFS.get('optional', ())
-        conversions = self.ENV_VAR_DEFS.get('conversions', {})
+        names = self.ENV_VAR_DEFS["names"]
+        optional = self.ENV_VAR_DEFS.get("optional", ())
+        conversions = self.ENV_VAR_DEFS.get("conversions", {})
 
         def env_val(name):
             conversion = conversions.get(name, lambda x: x)
-            return conversion(os.environ[name.upper()] if name not in optional else os.environ.get(name.upper()))
+            return conversion(
+                os.environ[name.upper()]
+                if name not in optional
+                else os.environ.get(name.upper())
+            )
 
-        EnvVars = namedtuple('EnvVars', names)
+        EnvVars = namedtuple("EnvVars", names)
         return EnvVars(*[env_val(name) for name in names])
 
     def __call__(self, event, context):
@@ -91,16 +97,20 @@ class GenericHandler:
             raise
 
     def sns_on_error(self, exc):
-        if self.env is None or getattr(self.env, 'sns_on_error') is None:
+        if self.env is None or getattr(self.env, "sns_on_error") is None:
             return
-        msg = '\n'.join((str(exc), traceback.format_exc()))
-        sns.publish(TopicArn=self.env.sns_on_error, Subject=self.SNS_ON_ERROR_SUBJECT, Message=msg)
+        msg = "\n".join((str(exc), traceback.format_exc()))
+        sns.publish(
+            TopicArn=self.env.sns_on_error,
+            Subject=self.SNS_ON_ERROR_SUBJECT,
+            Message=msg,
+        )
 
 
 def shorten(s, length=100):
     if length <= 3:
         return s[:length]
-    return s if len(s) <= length else s[:length - 3] + '...'
+    return s if len(s) <= length else s[: length - 3] + "..."
 
 
 def ts_from_str(s):

@@ -18,7 +18,7 @@ class MD5Parser:
 
     @classmethod
     def _match_path(cls, s):
-        return s.split('/')[-1]
+        return s.split("/")[-1]
 
     def _parse(self, fname, match, skip):
         with open(fname) as f:
@@ -39,7 +39,7 @@ def md5lines(fd):
     for line in fd:
         line = line.strip()
         # skip blank lines
-        if line == '':
+        if line == "":
             continue
         m = bsd_md5_re.match(line)
         if m:

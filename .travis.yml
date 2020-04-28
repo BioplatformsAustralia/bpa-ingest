@@ -1,4 +1,6 @@
+sudo: false
 language: python
-python: 3.7
-script:
-  - pytest
+python:
+  - "3.8"
+install: pip install poetry
+script: poetry install && poetry run tox && poetry run black --check bpaingest

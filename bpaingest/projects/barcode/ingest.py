@@ -1,5 +1,3 @@
-
-
 from unipath import Path
 
 from ...util import make_logger
@@ -9,8 +7,8 @@ logger = make_logger(__name__)
 
 
 class BarcodeMetadata(BaseMetadata):
-    metadata_urls = ['https://downloads-qcif.bioplatforms.com/bpa/barcode/tracking/']
-    organization = 'bpa-barcode'
+    metadata_urls = ["https://downloads-qcif.bioplatforms.com/bpa/barcode/tracking/"]
+    organization = "bpa-barcode"
 
     def __init__(self, metadata_path):
         super().__init__()
