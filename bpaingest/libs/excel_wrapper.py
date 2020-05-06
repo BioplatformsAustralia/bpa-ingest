@@ -19,10 +19,6 @@ import os
 import xlrd
 import string
 
-from ..util import make_logger
-
-
-logger = make_logger(__name__)
 
 SkipColumn = namedtuple("SkipColumn", ["column_name", "skip_all"])
 skip_column_default = SkipColumn("column_name", False)
@@ -42,7 +38,7 @@ def make_skip_column(column_name, **kwargs):
     return skip_column_default._replace(column_name=column_name, **kwargs)
 
 
-class ExcelWrapper(object):
+class ExcelWrapper:
     """
     Parse a excel file and yields namedtuples.
     fieldspec specifies the columns  to be read in, and the name
@@ -57,6 +53,7 @@ class ExcelWrapper(object):
 
     def __init__(
         self,
+        logger,
         field_spec,
         file_name,
         sheet_name=None,
@@ -65,6 +62,7 @@ class ExcelWrapper(object):
         suggest_template=False,
         additional_context=None,
     ):
+        self._logger = logger
         self._log = []
         self.file_name = file_name
         self.header_length = header_length
@@ -387,7 +385,7 @@ class ExcelWrapper(object):
                     val = val.strip()
                 # apply func
                 if func is not None:
-                    val = func(val)
+                    val = func(self._logger, val)
                 tpl.append(val)
             if self.additional_context:
                 tpl += list(self.additional_context.values())

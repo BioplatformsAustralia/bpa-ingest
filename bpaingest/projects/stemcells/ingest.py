@@ -4,7 +4,7 @@ from collections import defaultdict
 from hashlib import md5 as md5hash
 
 from ...libs import ingest_utils
-from ...util import make_logger, sample_id_to_ckan_name, common_values, clean_tag_name
+from ...util import sample_id_to_ckan_name, common_values, clean_tag_name
 from ...abstract import BaseMetadata
 from ...libs.excel_wrapper import (
     ExcelWrapper,
@@ -26,16 +26,13 @@ from glob import glob
 import os
 import re
 
-logger = make_logger(__name__)
-
-
 common_skip = [
     re.compile(r"^._metadata\.xlsx$"),
     re.compile(r"^.*_Report\.pdf"),
 ]
 
 
-def parse_sample_id_range(s):
+def parse_sample_id_range(logger, s):
     return s.strip().split("/")[-1]
 
 
@@ -66,15 +63,17 @@ class StemcellsTranscriptomeMetadata(BaseMetadata):
     }
     md5 = {"match": [files.transcriptome_filename_re], "skip": common_skip}
 
-    def __init__(self, metadata_path, contextual_metadata=None, metadata_info=None):
-        super().__init__()
+    def __init__(
+        self, logger, metadata_path, contextual_metadata=None, metadata_info=None
+    ):
+        super().__init__(logger, metadata_path)
         self.path = Path(metadata_path)
         self.contextual_metadata = contextual_metadata
         self.metadata_info = metadata_info
         self.track_meta = StemcellsTrackMetadata()
 
     def _get_packages(self):
-        logger.info(
+        self._logger.info(
             "Ingesting Stemcells Transcriptomics metadata from {0}".format(self.path)
         )
         packages = []
@@ -82,14 +81,10 @@ class StemcellsTranscriptomeMetadata(BaseMetadata):
         # this is harmless as they have to precisly match, and sample_id is the primary key
         all_rows = set()
         for fname in glob(self.path + "/*.xlsx"):
-            logger.info(
+            self._logger.info(
                 "Processing Stemcells Transcriptomics metadata file {0}".format(fname)
             )
-            all_rows.update(
-                StemcellsTranscriptomeMetadata.parse_spreadsheet(
-                    fname, self.metadata_info
-                )
-            )
+            all_rows.update(self.parse_spreadsheet(fname, self.metadata_info))
         for row in all_rows:
             sample_id = row.sample_id
             if sample_id is None:
@@ -113,20 +108,20 @@ class StemcellsTranscriptomeMetadata(BaseMetadata):
                     "facility": row.facility_code.upper(),
                     "type": self.ckan_data_type,
                     "date_of_transfer": ingest_utils.get_date_isoformat(
-                        track_meta.date_of_transfer
+                        self._logger, track_meta.date_of_transfer
                     ),
                     "data_type": track_meta.data_type,
                     "description": track_meta.description,
                     "folder_name": track_meta.folder_name,
                     "sample_submission_date": ingest_utils.get_date_isoformat(
-                        track_meta.date_of_transfer
+                        self._logger, track_meta.date_of_transfer
                     ),
                     "contextual_data_submission_date": None,
                     "data_generated": ingest_utils.get_date_isoformat(
-                        track_meta.date_of_transfer_to_archive
+                        self._logger, track_meta.date_of_transfer_to_archive
                     ),
                     "archive_ingestion_date": ingest_utils.get_date_isoformat(
-                        track_meta.date_of_transfer_to_archive
+                        self._logger, track_meta.date_of_transfer_to_archive
                     ),
                     "dataset_url": track_meta.download,
                     "private": True,
@@ -140,15 +135,19 @@ class StemcellsTranscriptomeMetadata(BaseMetadata):
         return packages
 
     def _get_resources(self):
-        logger.info("Ingesting Sepsis md5 file information from {0}".format(self.path))
+        self._logger.info(
+            "Ingesting Sepsis md5 file information from {0}".format(self.path)
+        )
         resources = []
         for md5_file in glob(self.path + "/*.md5"):
-            logger.info("Processing md5 file {0}".format(md5_file))
+            self._logger.info("Processing md5 file {0}".format(md5_file))
             for filename, md5, file_info in self.parse_md5file(md5_file):
                 resource = file_info.copy()
                 resource["md5"] = resource["id"] = md5
                 resource["name"] = filename
-                sample_id = ingest_utils.extract_ands_id(file_info.get("id"))
+                sample_id = ingest_utils.extract_ands_id(
+                    self._logger, file_info.get("id")
+                )
                 xlsx_info = self.metadata_info[os.path.basename(md5_file)]
                 legacy_url = urljoin(xlsx_info["base_url"], filename)
                 resources.append(((sample_id,), legacy_url, resource))
@@ -182,24 +181,28 @@ class StemcellsSmallRNAMetadata(BaseMetadata):
     }
     md5 = {"match": [files.smallrna_filename_re], "skip": common_skip}
 
-    def __init__(self, metadata_path, contextual_metadata=None, metadata_info=None):
-        super().__init__()
+    def __init__(
+        self, logger, metadata_path, contextual_metadata=None, metadata_info=None
+    ):
+        super().__init__(logger, metadata_path)
         self.path = Path(metadata_path)
         self.contextual_metadata = contextual_metadata
         self.metadata_info = metadata_info
         self.track_meta = StemcellsTrackMetadata()
 
     def _get_packages(self):
-        logger.info("Ingesting Stemcells SmallRNA metadata from {0}".format(self.path))
+        self._logger.info(
+            "Ingesting Stemcells SmallRNA metadata from {0}".format(self.path)
+        )
         packages = []
         # duplicate rows are an issue in this project. we filter them out by uniquifying
         # this is harmless as they have to precisly match, and sample_id is the primary key
         all_rows = set()
         for fname in glob(self.path + "/*.xlsx"):
-            logger.info("Processing Stemcells SmallRNA metadata file {0}".format(fname))
-            all_rows.update(
-                StemcellsSmallRNAMetadata.parse_spreadsheet(fname, self.metadata_info)
+            self._logger.info(
+                "Processing Stemcells SmallRNA metadata file {0}".format(fname)
             )
+            all_rows.update(self.parse_spreadsheet(fname, self.metadata_info))
         for row in all_rows:
             sample_id = row.sample_id
             if sample_id is None:
@@ -223,20 +226,20 @@ class StemcellsSmallRNAMetadata(BaseMetadata):
                     "facility": row.facility_code.upper(),
                     "type": self.ckan_data_type,
                     "date_of_transfer": ingest_utils.get_date_isoformat(
-                        track_meta.date_of_transfer
+                        self._logger, track_meta.date_of_transfer
                     ),
                     "data_type": track_meta.data_type,
                     "description": track_meta.description,
                     "folder_name": track_meta.folder_name,
                     "sample_submission_date": ingest_utils.get_date_isoformat(
-                        track_meta.date_of_transfer
+                        self._logger, track_meta.date_of_transfer
                     ),
                     "contextual_data_submission_date": None,
                     "data_generated": ingest_utils.get_date_isoformat(
-                        track_meta.date_of_transfer_to_archive
+                        self._logger, track_meta.date_of_transfer_to_archive
                     ),
                     "archive_ingestion_date": ingest_utils.get_date_isoformat(
-                        track_meta.date_of_transfer_to_archive
+                        self._logger, track_meta.date_of_transfer_to_archive
                     ),
                     "dataset_url": track_meta.download,
                     "private": True,
@@ -250,15 +253,19 @@ class StemcellsSmallRNAMetadata(BaseMetadata):
         return packages
 
     def _get_resources(self):
-        logger.info("Ingesting Sepsis md5 file information from {0}".format(self.path))
+        self._logger.info(
+            "Ingesting Sepsis md5 file information from {0}".format(self.path)
+        )
         resources = []
         for md5_file in glob(self.path + "/*.md5"):
-            logger.info("Processing md5 file {0}".format(md5_file))
+            self._logger.info("Processing md5 file {0}".format(md5_file))
             for filename, md5, file_info in self.parse_md5file(md5_file):
                 resource = file_info.copy()
                 resource["md5"] = resource["id"] = md5
                 resource["name"] = filename
-                sample_id = ingest_utils.extract_ands_id(file_info.get("id"))
+                sample_id = ingest_utils.extract_ands_id(
+                    self._logger, file_info.get("id")
+                )
                 xlsx_info = self.metadata_info[os.path.basename(md5_file)]
                 legacy_url = urljoin(xlsx_info["base_url"], filename)
                 resources.append(((sample_id,), legacy_url, resource))
@@ -303,8 +310,10 @@ class StemcellsSingleCellRNASeqMetadata(BaseMetadata):
         "skip": common_skip,
     }
 
-    def __init__(self, metadata_path, contextual_metadata=None, metadata_info=None):
-        super().__init__()
+    def __init__(
+        self, logger, metadata_path, contextual_metadata=None, metadata_info=None
+    ):
+        super().__init__(logger, metadata_path)
         self.path = Path(metadata_path)
         self.contextual_metadata = contextual_metadata
         self.metadata_info = metadata_info
@@ -312,7 +321,7 @@ class StemcellsSingleCellRNASeqMetadata(BaseMetadata):
         self.flow_lookup = {}
 
     def _get_packages(self):
-        logger.info(
+        self._logger.info(
             "Ingesting Stemcells SingleCellRNASeq metadata from {0}".format(self.path)
         )
         packages = []
@@ -320,12 +329,10 @@ class StemcellsSingleCellRNASeqMetadata(BaseMetadata):
         # this is harmless as they have to precisly match, and sample_id is the primary key
         all_rows = set()
         for fname in glob(self.path + "/*.xlsx"):
-            logger.info(
+            self._logger.info(
                 "Processing Stemcells SingleCellRNASeq metadata file {0}".format(fname)
             )
-            next_rows = StemcellsSingleCellRNASeqMetadata.parse_spreadsheet(
-                fname, self.metadata_info
-            )
+            next_rows = self.parse_spreadsheet(fname, self.metadata_info)
             file_info = files.singlecell_raw_xlsx_filename_re.match(
                 os.path.basename(fname)
             ).groupdict()
@@ -343,10 +350,14 @@ class StemcellsSingleCellRNASeqMetadata(BaseMetadata):
             track_meta = self.track_meta.get(row.ticket)
             # check that it really is a range
             if "-" not in sample_id_range:
-                logger.error("Skipping row with BPA ID Range `%s'" % (sample_id_range))
+                self._logger.error(
+                    "Skipping row with BPA ID Range `%s'" % (sample_id_range)
+                )
                 continue
             # NB: this isn't really the BPA ID, it's the first BPA ID
-            sample_id = ingest_utils.extract_ands_id(sample_id_range.split("-", 1)[0])
+            sample_id = ingest_utils.extract_ands_id(
+                self._logger, sample_id_range.split("-", 1)[0]
+            )
             obj.update(
                 {
                     "name": name,
@@ -364,20 +375,20 @@ class StemcellsSingleCellRNASeqMetadata(BaseMetadata):
                     "facility": row.facility_code.upper(),
                     "type": self.ckan_data_type,
                     "date_of_transfer": ingest_utils.get_date_isoformat(
-                        track_meta.date_of_transfer
+                        self._logger, track_meta.date_of_transfer
                     ),
                     "data_type": track_meta.data_type,
                     "description": track_meta.description,
                     "folder_name": track_meta.folder_name,
                     "sample_submission_date": ingest_utils.get_date_isoformat(
-                        track_meta.date_of_transfer
+                        self._logger, track_meta.date_of_transfer
                     ),
                     "contextual_data_submission_date": None,
                     "data_generated": ingest_utils.get_date_isoformat(
-                        track_meta.date_of_transfer_to_archive
+                        self._logger, track_meta.date_of_transfer_to_archive
                     ),
                     "archive_ingestion_date": ingest_utils.get_date_isoformat(
-                        track_meta.date_of_transfer_to_archive
+                        self._logger, track_meta.date_of_transfer_to_archive
                     ),
                     "dataset_url": track_meta.download,
                     "omics": "transcriptomics",
@@ -393,10 +404,12 @@ class StemcellsSingleCellRNASeqMetadata(BaseMetadata):
         return packages
 
     def _get_resources(self):
-        logger.info("Ingesting Sepsis md5 file information from {0}".format(self.path))
+        self._logger.info(
+            "Ingesting Sepsis md5 file information from {0}".format(self.path)
+        )
         resources = []
         for md5_file in glob(self.path + "/*.md5"):
-            logger.info("Processing md5 file {0}".format(md5_file))
+            self._logger.info("Processing md5 file {0}".format(md5_file))
             for filename, md5, file_info in self.parse_md5file(md5_file):
                 if file_info is None:
                     raise Exception("cannot parse filename: %s" % filename)
@@ -462,15 +475,17 @@ class StemcellsMetabolomicsMetadata(BaseMetadata):
     }
     md5 = {"match": [files.metabolomics_filename_re], "skip": common_skip}
 
-    def __init__(self, metadata_path, contextual_metadata=None, metadata_info=None):
-        super().__init__()
+    def __init__(
+        self, logger, metadata_path, contextual_metadata=None, metadata_info=None
+    ):
+        super().__init__(logger, metadata_path)
         self.path = Path(metadata_path)
         self.contextual_metadata = contextual_metadata
         self.metadata_info = metadata_info
         self.track_meta = StemcellsTrackMetadata()
 
     def _get_packages(self):
-        logger.info(
+        self._logger.info(
             "Ingesting Stemcells Metabolomics metadata from {0}".format(self.path)
         )
         packages = []
@@ -478,14 +493,10 @@ class StemcellsMetabolomicsMetadata(BaseMetadata):
         # this is harmless as they have to precisly match, and sample_id is the primary key
         all_rows = set()
         for fname in glob(self.path + "/*.xlsx"):
-            logger.info(
+            self._logger.info(
                 "Processing Stemcells Metabolomics metadata file {0}".format(fname)
             )
-            all_rows.update(
-                StemcellsMetabolomicsMetadata.parse_spreadsheet(
-                    fname, self.metadata_info
-                )
-            )
+            all_rows.update(self.parse_spreadsheet(fname, self.metadata_info))
         for row in all_rows:
             sample_id = row.sample_id
             if sample_id is None:
@@ -496,7 +507,9 @@ class StemcellsMetabolomicsMetadata(BaseMetadata):
                 self.ckan_data_type,
             )
             track_meta = self.track_meta.get(row.ticket)
-            analytical_platform = fix_analytical_platform(row.analytical_platform)
+            analytical_platform = fix_analytical_platform(
+                self._logger, row.analytical_platform
+            )
             obj.update(
                 {
                     "name": name,
@@ -517,20 +530,20 @@ class StemcellsMetabolomicsMetadata(BaseMetadata):
                     "facility": row.facility_code.upper(),
                     "type": self.ckan_data_type,
                     "date_of_transfer": ingest_utils.get_date_isoformat(
-                        track_meta.date_of_transfer
+                        self._logger, track_meta.date_of_transfer
                     ),
                     "data_type": track_meta.data_type,
                     "description": track_meta.description,
                     "folder_name": track_meta.folder_name,
                     "sample_submission_date": ingest_utils.get_date_isoformat(
-                        track_meta.date_of_transfer
+                        self._logger, track_meta.date_of_transfer
                     ),
                     "contextual_data_submission_date": None,
                     "data_generated": ingest_utils.get_date_isoformat(
-                        track_meta.date_of_transfer_to_archive
+                        self._logger, track_meta.date_of_transfer_to_archive
                     ),
                     "archive_ingestion_date": ingest_utils.get_date_isoformat(
-                        track_meta.date_of_transfer_to_archive
+                        self._logger, track_meta.date_of_transfer_to_archive
                     ),
                     "dataset_url": track_meta.download,
                     "private": True,
@@ -544,18 +557,22 @@ class StemcellsMetabolomicsMetadata(BaseMetadata):
         return packages
 
     def _get_resources(self):
-        logger.info("Ingesting Sepsis md5 file information from {0}".format(self.path))
+        self._logger.info(
+            "Ingesting Sepsis md5 file information from {0}".format(self.path)
+        )
         resources = []
         for md5_file in glob(self.path + "/*.md5"):
-            logger.info("Processing md5 file {0}".format(md5_file))
+            self._logger.info("Processing md5 file {0}".format(md5_file))
             for filename, md5, file_info in self.parse_md5file(md5_file):
                 resource = file_info.copy()
                 resource["md5"] = resource["id"] = md5
                 resource["name"] = filename
                 resource["analytical_platform"] = fix_analytical_platform(
-                    resource["analytical_platform"]
+                    self._logger, resource["analytical_platform"]
                 )
-                sample_id = ingest_utils.extract_ands_id(file_info.get("id"))
+                sample_id = ingest_utils.extract_ands_id(
+                    self._logger, file_info.get("id")
+                )
                 xlsx_info = self.metadata_info[os.path.basename(md5_file)]
                 legacy_url = urljoin(xlsx_info["base_url"], filename)
                 resources.append(
@@ -575,19 +592,17 @@ class StemcellsProteomicsBaseMetadata(BaseMetadata):
     organization = "bpa-stemcells"
 
     def __init__(self, *args, **kwargs):
-        super().__init__()
+        super().__init__(*args, **kwargs)
         self.filename_metadata = {}
 
     def read_all_rows(self, mode):
         all_rows = set()
         for fname in glob(self.path + "/*.xlsx"):
-            logger.info(
+            self._logger.info(
                 "Processing Stemcells Proteomics metadata file {0}".format(fname)
             )
             xlsx_info = self.metadata_info[os.path.basename(fname)]
-            all_rows.update(
-                StemcellsProteomicsMetadata.parse_spreadsheet(fname, xlsx_info, mode)
-            )
+            all_rows.update(self.parse_spreadsheet(fname, xlsx_info, mode))
         self.filename_metadata.update(dict((t.raw_filename, t) for t in all_rows))
         self.filename_metadata.update(
             dict((t.protein_result_filename, t) for t in all_rows)
@@ -597,7 +612,6 @@ class StemcellsProteomicsBaseMetadata(BaseMetadata):
         )
         return all_rows
 
-    @classmethod
     def parse_spreadsheet(self, fname, additional_context, mode):
         if mode == "1d":
             field_spec = [
@@ -643,6 +657,7 @@ class StemcellsProteomicsBaseMetadata(BaseMetadata):
             fld("sample_unique_id", "sample unique id"),
         ]
         wrapper = ExcelWrapper(
+            self._logger,
             field_spec,
             fname,
             header_length=2,
@@ -650,7 +665,7 @@ class StemcellsProteomicsBaseMetadata(BaseMetadata):
             additional_context=additional_context,
         )
         for error in wrapper.get_errors():
-            logger.error(error)
+            self._logger.error(error)
         rows = list(wrapper.get_all())
         return rows
 
@@ -662,15 +677,17 @@ class StemcellsProteomicsMetadata(StemcellsProteomicsBaseMetadata):
         "skip": common_skip,
     }
 
-    def __init__(self, metadata_path, contextual_metadata=None, metadata_info=None):
-        super().__init__()
+    def __init__(
+        self, logger, metadata_path, contextual_metadata=None, metadata_info=None
+    ):
+        super().__init__(logger, metadata_path)
         self.path = Path(metadata_path)
         self.contextual_metadata = contextual_metadata
         self.metadata_info = metadata_info
         self.track_meta = StemcellsTrackMetadata()
 
     def _get_packages(self):
-        logger.info(
+        self._logger.info(
             "Ingesting Stemcells Proteomics metadata from {0}".format(self.path)
         )
         packages = []
@@ -699,7 +716,7 @@ class StemcellsProteomicsMetadata(StemcellsProteomicsBaseMetadata):
                     "omics": "proteomics",
                     "type": self.ckan_data_type,
                     "date_of_transfer": ingest_utils.get_date_isoformat(
-                        track_meta.date_of_transfer
+                        self._logger, track_meta.date_of_transfer
                     ),
                     "ticket": ticket,
                     "facility": facility_code,
@@ -707,14 +724,14 @@ class StemcellsProteomicsMetadata(StemcellsProteomicsBaseMetadata):
                     "description": track_meta.description,
                     "folder_name": track_meta.folder_name,
                     "sample_submission_date": ingest_utils.get_date_isoformat(
-                        track_meta.date_of_transfer
+                        self._logger, track_meta.date_of_transfer
                     ),
                     "contextual_data_submission_date": None,
                     "data_generated": ingest_utils.get_date_isoformat(
-                        track_meta.date_of_transfer_to_archive
+                        self._logger, track_meta.date_of_transfer_to_archive
                     ),
                     "archive_ingestion_date": ingest_utils.get_date_isoformat(
-                        track_meta.date_of_transfer_to_archive
+                        self._logger, track_meta.date_of_transfer_to_archive
                     ),
                     "dataset_url": track_meta.download,
                     "private": True,
@@ -728,10 +745,12 @@ class StemcellsProteomicsMetadata(StemcellsProteomicsBaseMetadata):
         return packages
 
     def _get_resources(self):
-        logger.info("Ingesting Sepsis md5 file information from {0}".format(self.path))
+        self._logger.info(
+            "Ingesting Sepsis md5 file information from {0}".format(self.path)
+        )
         resources = []
         for md5_file in glob(self.path + "/*.md5"):
-            logger.info("Processing md5 file {0}".format(md5_file))
+            self._logger.info("Processing md5 file {0}".format(md5_file))
             for filename, md5, file_info in self.parse_md5file(md5_file):
                 if file_info is None:
                     if not files.proteomics_pool_filename_re.match(filename):
@@ -752,7 +771,9 @@ class StemcellsProteomicsMetadata(StemcellsProteomicsBaseMetadata):
                     "database_size",
                 ):
                     resource[k] = getattr(resource_meta, k)
-                sample_id = ingest_utils.extract_ands_id(file_info.get("id"))
+                sample_id = ingest_utils.extract_ands_id(
+                    self._logger, file_info.get("id")
+                )
                 xlsx_info = self.metadata_info[os.path.basename(md5_file)]
                 legacy_url = urljoin(xlsx_info["base_url"], filename)
                 resources.append(((sample_id,), legacy_url, resource))
@@ -765,15 +786,17 @@ class StemcellsProteomicsPoolMetadata(StemcellsProteomicsBaseMetadata):
     pool = True
     md5 = {"match": [files.proteomics_pool_filename_re], "skip": common_skip}
 
-    def __init__(self, metadata_path, contextual_metadata=None, metadata_info=None):
-        super().__init__()
+    def __init__(
+        self, logger, metadata_path, contextual_metadata=None, metadata_info=None
+    ):
+        super().__init__(logger, metadata_path)
         self.path = Path(metadata_path)
         self.contextual_metadata = contextual_metadata
         self.metadata_info = metadata_info
         self.track_meta = StemcellsTrackMetadata()
 
     def _get_packages(self):
-        logger.info(
+        self._logger.info(
             "Ingesting Stemcells Proteomics Pool metadata from {0}".format(self.path)
         )
         packages = []
@@ -800,7 +823,7 @@ class StemcellsProteomicsPoolMetadata(StemcellsProteomicsBaseMetadata):
                     "omics": "proteomics",
                     "type": self.ckan_data_type,
                     "date_of_transfer": ingest_utils.get_date_isoformat(
-                        track_meta.date_of_transfer
+                        self._logger, track_meta.date_of_transfer
                     ),
                     "ticket": ticket,
                     "facility": facility_code,
@@ -808,14 +831,14 @@ class StemcellsProteomicsPoolMetadata(StemcellsProteomicsBaseMetadata):
                     "description": track_meta.description,
                     "folder_name": track_meta.folder_name,
                     "sample_submission_date": ingest_utils.get_date_isoformat(
-                        track_meta.date_of_transfer
+                        self._logger, track_meta.date_of_transfer
                     ),
                     "contextual_data_submission_date": None,
                     "data_generated": ingest_utils.get_date_isoformat(
-                        track_meta.date_of_transfer_to_archive
+                        self._logger, track_meta.date_of_transfer_to_archive
                     ),
                     "archive_ingestion_date": ingest_utils.get_date_isoformat(
-                        track_meta.date_of_transfer_to_archive
+                        self._logger, track_meta.date_of_transfer_to_archive
                     ),
                     "dataset_url": track_meta.download,
                     "private": True,
@@ -829,10 +852,12 @@ class StemcellsProteomicsPoolMetadata(StemcellsProteomicsBaseMetadata):
         return packages
 
     def _get_resources(self):
-        logger.info("Ingesting Sepsis md5 file information from {0}".format(self.path))
+        self._logger.info(
+            "Ingesting Sepsis md5 file information from {0}".format(self.path)
+        )
         resources = []
         for md5_file in glob(self.path + "/*.md5"):
-            logger.info("Processing md5 file {0}".format(md5_file))
+            self._logger.info("Processing md5 file {0}".format(md5_file))
             for filename, md5, file_info in self.parse_md5file(md5_file):
                 if file_info is None:
                     if not files.proteomics_filename_re.match(filename):
@@ -926,20 +951,22 @@ class StemcellsProteomicsAnalysedMetadata(BaseMetadata):
         "skip": common_skip,
     }
 
-    def __init__(self, metadata_path, contextual_metadata=None, metadata_info=None):
-        super().__init__()
+    def __init__(
+        self, logger, metadata_path, contextual_metadata=None, metadata_info=None
+    ):
+        super().__init__(logger, metadata_path)
         self.path = Path(metadata_path)
         self.contextual_metadata = contextual_metadata
         self.metadata_info = metadata_info
         self.track_meta = StemcellsTrackMetadata()
 
     def _get_packages(self):
-        logger.info("Ingesting Stemcells metadata from {0}".format(self.path))
+        self._logger.info("Ingesting Stemcells metadata from {0}".format(self.path))
         # we have one package per Zip of analysed data, and we take the common
         # meta-data for each bpa-id
         ticket_rows = defaultdict(list)
         for fname in glob(self.path + "/*.xlsx"):
-            logger.info("Processing Stemcells metadata file {0}".format(fname))
+            self._logger.info("Processing Stemcells metadata file {0}".format(fname))
             xlsx_info = self.metadata_info[os.path.basename(fname)]
             ticket = xlsx_info["ticket"]
             if not ticket:
@@ -954,7 +981,12 @@ class StemcellsProteomicsAnalysedMetadata(BaseMetadata):
             # folder names can be quite long, truncate
             name = name[:100]
             sample_ids = sorted(
-                set([ingest_utils.extract_ands_id(t.sample_id) for t in rows])
+                set(
+                    [
+                        ingest_utils.extract_ands_id(self._logger, t.sample_id)
+                        for t in rows
+                    ]
+                )
             )
             obj.update(
                 {
@@ -968,20 +1000,20 @@ class StemcellsProteomicsAnalysedMetadata(BaseMetadata):
                     "sample_ids": ", ".join(sample_ids),
                     "type": self.ckan_data_type,
                     "date_of_transfer": ingest_utils.get_date_isoformat(
-                        track_meta.date_of_transfer
+                        self._logger, track_meta.date_of_transfer
                     ),
                     "data_type": track_meta.data_type,
                     "description": track_meta.description,
                     "folder_name": track_meta.folder_name,
                     "sample_submission_date": ingest_utils.get_date_isoformat(
-                        track_meta.date_of_transfer
+                        self._logger, track_meta.date_of_transfer
                     ),
                     "contextual_data_submission_date": None,
                     "data_generated": ingest_utils.get_date_isoformat(
-                        track_meta.date_of_transfer_to_archive
+                        self._logger, track_meta.date_of_transfer_to_archive
                     ),
                     "archive_ingestion_date": ingest_utils.get_date_isoformat(
-                        track_meta.date_of_transfer_to_archive
+                        self._logger, track_meta.date_of_transfer_to_archive
                     ),
                     "dataset_url": track_meta.download,
                     "private": True,
@@ -995,10 +1027,12 @@ class StemcellsProteomicsAnalysedMetadata(BaseMetadata):
         return packages
 
     def _get_resources(self):
-        logger.info("Ingesting Sepsis md5 file information from {0}".format(self.path))
+        self._logger.info(
+            "Ingesting Sepsis md5 file information from {0}".format(self.path)
+        )
         resources = []
         for md5_file in glob(self.path + "/*.md5"):
-            logger.info("Processing md5 file {0}".format(md5_file))
+            self._logger.info("Processing md5 file {0}".format(md5_file))
             for filename, md5, file_info in self.parse_md5file(md5_file):
                 resource = {}
                 resource["md5"] = md5
@@ -1060,20 +1094,22 @@ class StemcellsMetabolomicsAnalysedMetadata(BaseMetadata):
     }
     md5 = {"match": [re.compile(r"^.*$"),], "skip": common_skip}
 
-    def __init__(self, metadata_path, contextual_metadata=None, metadata_info=None):
-        super().__init__()
+    def __init__(
+        self, logger, metadata_path, contextual_metadata=None, metadata_info=None
+    ):
+        super().__init__(logger, metadata_path)
         self.path = Path(metadata_path)
         self.contextual_metadata = contextual_metadata
         self.metadata_info = metadata_info
         self.track_meta = StemcellsTrackMetadata()
 
     def _get_packages(self):
-        logger.info("Ingesting Stemcells metadata from {0}".format(self.path))
+        self._logger.info("Ingesting Stemcells metadata from {0}".format(self.path))
         # we have one package per Zip of analysed data, and we take the common
         # meta-data for each bpa-id
         folder_rows = defaultdict(list)
         for fname in glob(self.path + "/*.xlsx"):
-            logger.info("Processing Stemcells metadata file {0}".format(fname))
+            self._logger.info("Processing Stemcells metadata file {0}".format(fname))
             xlsx_info = self.metadata_info[os.path.basename(fname)]
             ticket = xlsx_info["ticket"]
             if not ticket:
@@ -1097,20 +1133,20 @@ class StemcellsMetabolomicsAnalysedMetadata(BaseMetadata):
                     "sample_ids": ", ".join(sample_ids),
                     "type": self.ckan_data_type,
                     "date_of_transfer": ingest_utils.get_date_isoformat(
-                        track_meta.date_of_transfer
+                        self._logger, track_meta.date_of_transfer
                     ),
                     "data_type": track_meta.data_type,
                     "description": track_meta.description,
                     "folder_name": track_meta.folder_name,
                     "sample_submission_date": ingest_utils.get_date_isoformat(
-                        track_meta.date_of_transfer
+                        self._logger, track_meta.date_of_transfer
                     ),
                     "contextual_data_submission_date": None,
                     "data_generated": ingest_utils.get_date_isoformat(
-                        track_meta.date_of_transfer_to_archive
+                        self._logger, track_meta.date_of_transfer_to_archive
                     ),
                     "archive_ingestion_date": ingest_utils.get_date_isoformat(
-                        track_meta.date_of_transfer_to_archive
+                        self._logger, track_meta.date_of_transfer_to_archive
                     ),
                     "dataset_url": track_meta.download,
                     "private": True,
@@ -1124,11 +1160,13 @@ class StemcellsMetabolomicsAnalysedMetadata(BaseMetadata):
         return packages
 
     def _get_resources(self):
-        logger.info("Ingesting Sepsis md5 file information from {0}".format(self.path))
+        self._logger.info(
+            "Ingesting Sepsis md5 file information from {0}".format(self.path)
+        )
         resources = []
         # one MD5 file per 'folder_name', so we just take every file and upload
         for md5_file in glob(self.path + "/*.md5"):
-            logger.info("Processing md5 file {0}".format(md5_file))
+            self._logger.info("Processing md5 file {0}".format(md5_file))
             for filename, md5, file_info in self.parse_md5file(md5_file):
                 resource = file_info.copy() or {}
                 resource["md5"] = md5
@@ -1144,14 +1182,14 @@ class StemcellsMetabolomicsAnalysedMetadata(BaseMetadata):
                 ticket_name = xlsx_info["ticket"]
                 tracking_ticket_folder = self.track_meta.get(ticket_name)
                 if not tracking_ticket_folder:
-                    logger.warn(
+                    self._logger.warn(
                         "No tracking ticket folder found. Consider checking the tracking metadata to ensure it contains ticket_name: {0}.".format(
                             ticket_name
                         )
                     )
                 else:
                     if ticket_name == next:
-                        logger.debug(
+                        self._logger.debug(
                             "Tracking ticket folder is: {0}".format(
                                 tracking_ticket_folder
                             )
@@ -1209,20 +1247,22 @@ class StemcellsTranscriptomeAnalysedMetadata(BaseMetadata):
     }
     md5 = {"match": [re.compile(r"^.*$"),], "skip": common_skip}
 
-    def __init__(self, metadata_path, contextual_metadata=None, metadata_info=None):
-        super().__init__()
+    def __init__(
+        self, logger, metadata_path, contextual_metadata=None, metadata_info=None
+    ):
+        super().__init__(logger, metadata_path)
         self.path = Path(metadata_path)
         self.contextual_metadata = contextual_metadata
         self.metadata_info = metadata_info
         self.track_meta = StemcellsTrackMetadata()
 
     def _get_packages(self):
-        logger.info("Ingesting Stemcells metadata from {0}".format(self.path))
+        self._logger.info("Ingesting Stemcells metadata from {0}".format(self.path))
         # we have one package per Zip of analysed data, and we take the common
         # meta-data for each bpa-id
         folder_rows = defaultdict(list)
         for fname in glob(self.path + "/*.xlsx"):
-            logger.info("Processing Stemcells metadata file {0}".format(fname))
+            self._logger.info("Processing Stemcells metadata file {0}".format(fname))
             xlsx_info = self.metadata_info[os.path.basename(fname)]
             ticket = xlsx_info["ticket"]
             if not ticket:
@@ -1246,20 +1286,20 @@ class StemcellsTranscriptomeAnalysedMetadata(BaseMetadata):
                     "sample_ids": ", ".join(sample_ids),
                     "type": self.ckan_data_type,
                     "date_of_transfer": ingest_utils.get_date_isoformat(
-                        track_meta.date_of_transfer
+                        self._logger, track_meta.date_of_transfer
                     ),
                     "data_type": track_meta.data_type,
                     "description": track_meta.description,
                     "folder_name": track_meta.folder_name,
                     "sample_submission_date": ingest_utils.get_date_isoformat(
-                        track_meta.date_of_transfer
+                        self._logger, track_meta.date_of_transfer
                     ),
                     "contextual_data_submission_date": None,
                     "data_generated": ingest_utils.get_date_isoformat(
-                        track_meta.date_of_transfer_to_archive
+                        self._logger, track_meta.date_of_transfer_to_archive
                     ),
                     "archive_ingestion_date": ingest_utils.get_date_isoformat(
-                        track_meta.date_of_transfer_to_archive
+                        self._logger, track_meta.date_of_transfer_to_archive
                     ),
                     "dataset_url": track_meta.download,
                     "private": True,
@@ -1273,11 +1313,13 @@ class StemcellsTranscriptomeAnalysedMetadata(BaseMetadata):
         return packages
 
     def _get_resources(self):
-        logger.info("Ingesting Sepsis md5 file information from {0}".format(self.path))
+        self._logger.info(
+            "Ingesting Sepsis md5 file information from {0}".format(self.path)
+        )
         resources = []
         # one MD5 file per 'folder_name', so we just take every file and upload
         for md5_file in glob(self.path + "/*.md5"):
-            logger.info("Processing md5 file {0}".format(md5_file))
+            self._logger.info("Processing md5 file {0}".format(md5_file))
             for filename, md5, file_info in self.parse_md5file(md5_file):
                 resource = file_info.copy()
                 resource = {}

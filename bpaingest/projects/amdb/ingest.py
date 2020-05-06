@@ -13,7 +13,6 @@ from ...util import (
     apply_license,
     sample_id_to_ckan_name,
     common_values,
-    make_logger,
     one,
 )
 from .contextual import (
@@ -26,8 +25,6 @@ from .tracking import (
     MarineMicrobesGoogleTrackMetadata,
     MarineMicrobesTrackMetadata,
 )
-
-logger = make_logger(__name__)
 
 common_context = [
     AustralianMicrobiomeSampleContextual,
@@ -86,8 +83,10 @@ class AccessAMDContextualMetadata(AMDBaseMetadata):
     contextual_classes = common_context
     metadata_urls = []
 
-    def __init__(self, metadata_path, contextual_metadata=None, metadata_info=None):
-        super().__init__()
+    def __init__(
+        self, logger, metadata_path, contextual_metadata=None, metadata_info=None
+    ):
+        super().__init__(logger, metadata_path)
         self.contextual_metadata = contextual_metadata
 
     def _get_packages(self):
@@ -148,10 +147,10 @@ class BASEAmpliconsMetadata(AMDBaseMetadata):
                 coerce=ingest_utils.fix_sample_extraction_id,
             ),
             fld("sequencing_facility", "Sequencing facility"),
-            fld("target", "Target", coerce=lambda s: s.upper().strip()),
-            fld("index", "Index", coerce=lambda s: s[:12]),
-            fld("index1", "Index 1", coerce=lambda s: s[:12]),
-            fld("index2", "Index2", coerce=lambda s: s[:12]),
+            fld("target", "Target", coerce=lambda _, s: s.upper().strip()),
+            fld("index", "Index", coerce=lambda _, s: s[:12]),
+            fld("index1", "Index 1", coerce=lambda _, s: s[:12]),
+            fld("index2", "Index2", coerce=lambda _, s: s[:12]),
             fld("pcr_1_to_10", "1:10 PCR, P=pass, F=fail", coerce=ingest_utils.fix_pcr),
             fld(
                 "pcr_1_to_100", "1:100 PCR, P=pass, F=fail", coerce=ingest_utils.fix_pcr
@@ -172,8 +171,10 @@ class BASEAmpliconsMetadata(AMDBaseMetadata):
         "skip": common_skip + files.base_amplicon_control_regexps,
     }
 
-    def __init__(self, metadata_path, contextual_metadata=None, metadata_info=None):
-        super(BASEAmpliconsMetadata, self).__init__()
+    def __init__(
+        self, logger, metadata_path, contextual_metadata=None, metadata_info=None
+    ):
+        super().__init__(logger, metadata_path)
         self.path = Path(metadata_path)
         self.contextual_metadata = contextual_metadata
         self.metadata_info = metadata_info
@@ -188,10 +189,10 @@ class BASEAmpliconsMetadata(AMDBaseMetadata):
                 raise Exception("unable to find flowcell for filename: `%s'" % (fname))
             return m.groups()[0]
 
-        logger.info("Ingesting BASE Amplicon metadata from {0}".format(self.path))
+        self._logger.info("Ingesting BASE Amplicon metadata from {0}".format(self.path))
         packages = []
         for fname in glob(self.path + "/*.xlsx"):
-            logger.info(
+            self._logger.info(
                 "Processing BASE Amplicon metadata file {0}".format(
                     os.path.basename(fname)
                 )
@@ -232,7 +233,7 @@ class BASEAmpliconsMetadata(AMDBaseMetadata):
                     base_amplicon_linkage,
                 )
                 archive_ingestion_date = ingest_utils.get_date_isoformat(
-                    track_get("date_of_transfer_to_archive")
+                    self._logger, track_get("date_of_transfer_to_archive")
                 )
 
                 obj.update(
@@ -270,16 +271,16 @@ class BASEAmpliconsMetadata(AMDBaseMetadata):
                         "facility": row.facility_code.upper(),
                         "type": self.ckan_data_type,
                         "date_of_transfer": ingest_utils.get_date_isoformat(
-                            track_get("date_of_transfer")
+                            self._logger, track_get("date_of_transfer")
                         ),
                         "data_type": track_get("data_type"),
                         "description": track_get("description"),
                         "folder_name": track_get("folder_name"),
                         "sample_submission_date": ingest_utils.get_date_isoformat(
-                            track_get("date_of_transfer")
+                            self._logger, track_get("date_of_transfer")
                         ),
                         "data_generated": ingest_utils.get_date_isoformat(
-                            track_get("date_of_transfer_to_archive")
+                            self._logger, track_get("date_of_transfer_to_archive")
                         ),
                         "archive_ingestion_date": archive_ingestion_date,
                         "license_id": apply_license(archive_ingestion_date),
@@ -290,23 +291,25 @@ class BASEAmpliconsMetadata(AMDBaseMetadata):
                 )
                 for contextual_source in self.contextual_metadata:
                     obj.update(contextual_source.get(sample_id))
-                ingest_utils.add_spatial_extra(obj)
+                ingest_utils.add_spatial_extra(self._logger, obj)
                 tag_names = ["amplicons", amplicon, obj["sample_type"]]
                 obj["tags"] = [{"name": t} for t in tag_names]
                 packages.append(obj)
         return packages
 
     def _get_resources(self):
-        logger.info(
+        self._logger.info(
             "Ingesting BASE Amplicon md5 file information from {0}".format(self.path)
         )
         resources = []
 
         for md5_file in glob(self.path + "/*.md5"):
             index_linkage = os.path.basename(md5_file) in self.index_linkage_md5s
-            logger.info("Processing md5 file {}".format(md5_file))
+            self._logger.info("Processing md5 file {}".format(md5_file))
             for filename, md5, file_info in self.parse_md5file(md5_file):
-                sample_id = ingest_utils.extract_ands_id(file_info.get("id"))
+                sample_id = ingest_utils.extract_ands_id(
+                    self._logger, file_info.get("id")
+                )
                 resource = file_info.copy()
                 resource["md5"] = resource["id"] = md5
                 resource["name"] = filename
@@ -351,8 +354,10 @@ class BASEAmpliconsControlMetadata(AMDBaseMetadata):
         "skip": common_skip + files.base_amplicon_regexps,
     }
 
-    def __init__(self, metadata_path, contextual_metadata=None, metadata_info=None):
-        super(BASEAmpliconsControlMetadata, self).__init__()
+    def __init__(
+        self, logger, metadata_path, contextual_metadata=None, metadata_info=None
+    ):
+        super().__init__(logger, metadata_path)
         self.path = Path(metadata_path)
         self.metadata_info = metadata_info
         self.contextual_metadata = contextual_metadata
@@ -360,7 +365,7 @@ class BASEAmpliconsControlMetadata(AMDBaseMetadata):
 
     def md5_lines(self):
         for md5_file in glob(self.path + "/*.md5"):
-            logger.info("Processing md5 file {}".format(md5_file))
+            self._logger.info("Processing md5 file {}".format(md5_file))
             for filename, md5, file_info in self.parse_md5file(md5_file):
                 yield filename, md5, md5_file, file_info
 
@@ -383,7 +388,7 @@ class BASEAmpliconsControlMetadata(AMDBaseMetadata):
                 return getattr(track_meta, k)
 
             archive_ingestion_date = ingest_utils.get_date_isoformat(
-                track_get("date_of_transfer_to_archive")
+                self._logger, track_get("date_of_transfer_to_archive")
             )
 
             obj.update(
@@ -399,17 +404,17 @@ class BASEAmpliconsControlMetadata(AMDBaseMetadata):
                     "omics": "Genomics",
                     "analytical_platform": "MiSeq",
                     "date_of_transfer": ingest_utils.get_date_isoformat(
-                        track_get("date_of_transfer")
+                        self._logger, track_get("date_of_transfer")
                     ),
                     "data_type": track_get("data_type"),
                     "description": track_get("description"),
                     "folder_name": track_get("folder_name"),
                     "sample_submission_date": ingest_utils.get_date_isoformat(
-                        track_get("date_of_transfer")
+                        self._logger, track_get("date_of_transfer")
                     ),
                     "contextual_data_submission_date": None,
                     "data_generated": ingest_utils.get_date_isoformat(
-                        track_get("date_of_transfer_to_archive")
+                        self._logger, track_get("date_of_transfer_to_archive")
                     ),
                     "archive_ingestion_date": archive_ingestion_date,
                     "license_id": apply_license(archive_ingestion_date),
@@ -421,7 +426,7 @@ class BASEAmpliconsControlMetadata(AMDBaseMetadata):
                     "private": True,
                 }
             )
-            ingest_utils.add_spatial_extra(obj)
+            ingest_utils.add_spatial_extra(self._logger, obj)
             tag_names = ["amplicons-control", amplicon, "raw"]
             obj["tags"] = [{"name": t} for t in tag_names]
             packages.append(obj)
@@ -497,8 +502,10 @@ class BASEMetagenomicsMetadata(AMDBaseMetadata):
         ("8271_2", "H9EV8ADXX"),
     ]
 
-    def __init__(self, metadata_path, contextual_metadata=None, metadata_info=None):
-        super(BASEMetagenomicsMetadata, self).__init__()
+    def __init__(
+        self, logger, metadata_path, contextual_metadata=None, metadata_info=None
+    ):
+        super().__init__(logger, metadata_path)
         self.path = Path(metadata_path)
         self.contextual_metadata = contextual_metadata
         self.metadata_info = metadata_info
@@ -522,7 +529,7 @@ class BASEMetagenomicsMetadata(AMDBaseMetadata):
             sample_extraction_id, self.ckan_data_type, flow_id
         )
         archive_ingestion_date = ingest_utils.get_date_isoformat(
-            track_get("date_of_transfer_to_archive")
+            self._logger, track_get("date_of_transfer_to_archive")
         )
 
         obj = {
@@ -543,13 +550,13 @@ class BASEMetagenomicsMetadata(AMDBaseMetadata):
             "ticket": row_get("ticket"),
             "facility": row_get("facility_code", lambda v: v.upper()),
             "date_of_transfer": ingest_utils.get_date_isoformat(
-                track_get("date_of_transfer")
+                self._logger, track_get("date_of_transfer")
             ),
             "sample_submission_date": ingest_utils.get_date_isoformat(
-                track_get("date_of_transfer")
+                self._logger, track_get("date_of_transfer")
             ),
             "data_generated": ingest_utils.get_date_isoformat(
-                track_get("date_of_transfer_to_archive")
+                self._logger, track_get("date_of_transfer_to_archive")
             ),
             "archive_ingestion_date": archive_ingestion_date,
             "license_id": apply_license(archive_ingestion_date),
@@ -562,7 +569,7 @@ class BASEMetagenomicsMetadata(AMDBaseMetadata):
         }
         for contextual_source in self.contextual_metadata:
             obj.update(contextual_source.get(sample_id))
-        ingest_utils.add_spatial_extra(obj)
+        ingest_utils.add_spatial_extra(self._logger, obj)
         tag_names = ["metagenomics", obj["sample_type"]]
         obj["tags"] = [{"name": t} for t in tag_names]
         return obj
@@ -573,14 +580,18 @@ class BASEMetagenomicsMetadata(AMDBaseMetadata):
         def get_flow_id(fname):
             m = xlsx_re.match(fname)
             if not m:
-                logger.warning("unable to find flowcell for filename: `%s'" % (fname))
+                self._logger.warning(
+                    "unable to find flowcell for filename: `%s'" % (fname)
+                )
                 return None
             return m.groups()[0]
 
-        logger.info("Ingesting BASE Metagenomics metadata from {0}".format(self.path))
+        self._logger.info(
+            "Ingesting BASE Metagenomics metadata from {0}".format(self.path)
+        )
         packages = []
 
-        class FakePilotRow(object):
+        class FakePilotRow:
             def __init__(self, xlsx_info):
                 self.ticket = xlsx_info["ticket"]
                 self.facility_code = xlsx_info["facility_code"]
@@ -592,7 +603,7 @@ class BASEMetagenomicsMetadata(AMDBaseMetadata):
                 ):
                     setattr(self, attr, None)
 
-        class FakePilotTrackMeta(object):
+        class FakePilotTrackMeta:
             def __init__(self):
                 # place-holder date, this is very early data
                 self.archive_ingest_date = (
@@ -603,7 +614,9 @@ class BASEMetagenomicsMetadata(AMDBaseMetadata):
 
         # missing metadata (see note above)
         for sample_extraction_id, flow_id in self.missing_packages:
-            sample_id = ingest_utils.extract_ands_id(sample_extraction_id.split("_")[0])
+            sample_id = ingest_utils.extract_ands_id(
+                self._logger, sample_extraction_id.split("_")[0]
+            )
             sample_extraction_id = ingest_utils.make_sample_extraction_id(
                 sample_extraction_id, sample_id
             )
@@ -623,7 +636,7 @@ class BASEMetagenomicsMetadata(AMDBaseMetadata):
         # we simply skip over the duplicates, which don't have any significant data differences
         generated_packages = set()
         for fname in glob(self.path + "/*.xlsx"):
-            logger.info(
+            self._logger.info(
                 "Processing BASE Metagenomics metadata file {0}".format(
                     os.path.basename(fname)
                 )
@@ -636,7 +649,7 @@ class BASEMetagenomicsMetadata(AMDBaseMetadata):
             for row in uniq_rows:
                 track_meta = self.track_meta.get(row.ticket)
                 if not track_meta:
-                    logger.critical("OOPS: {}".format(xlsx_info))
+                    self._logger.critical("OOPS: {}".format(xlsx_info))
                 # pilot data has the flow cell in the spreadsheet; in the main dataset
                 # there is one flow-cell per spreadsheet, so it's in the spreadsheet
                 # filename
@@ -657,7 +670,7 @@ class BASEMetagenomicsMetadata(AMDBaseMetadata):
                     sample_id, sample_extraction_id, flow_id, row, track_meta
                 )
                 if new_obj["id"] in generated_packages:
-                    logger.debug(
+                    self._logger.debug(
                         "skipped attempt to generate duplicate package: %s"
                         % new_obj["id"]
                     )
@@ -668,16 +681,18 @@ class BASEMetagenomicsMetadata(AMDBaseMetadata):
         return packages
 
     def _get_resources(self):
-        logger.info(
+        self._logger.info(
             "Ingesting BASE Metagenomics md5 file information from {0}".format(
                 self.path
             )
         )
         resources = []
         for md5_file in glob(self.path + "/*.md5"):
-            logger.info("Processing md5 file {}".format(md5_file))
+            self._logger.info("Processing md5 file {}".format(md5_file))
             for filename, md5, file_info in self.parse_md5file(md5_file):
-                sample_id = ingest_utils.extract_ands_id(file_info.get("id"))
+                sample_id = ingest_utils.extract_ands_id(
+                    self._logger, file_info.get("id")
+                )
                 resource = file_info.copy()
                 resource["md5"] = resource["id"] = md5
                 resource["name"] = filename
@@ -712,8 +727,10 @@ class BASESiteImagesMetadata(AMDBaseMetadata):
         "skip": None,
     }
 
-    def __init__(self, metadata_path, contextual_metadata=None, metadata_info=None):
-        super(BASESiteImagesMetadata, self).__init__()
+    def __init__(
+        self, logger, metadata_path, contextual_metadata=None, metadata_info=None
+    ):
+        super().__init__(logger, metadata_path)
         self.path = Path(metadata_path)
         self.contextual_metadata = contextual_metadata
         self.metadata_info = metadata_info
@@ -722,7 +739,7 @@ class BASESiteImagesMetadata(AMDBaseMetadata):
     def _read_md5s(self):
         id_to_resources = {}
         for fname in glob(self.path + "/*.md5"):
-            logger.info("Processing MD5 file %s" % (fname))
+            self._logger.info("Processing MD5 file %s" % (fname))
             xlsx_info = self.metadata_info[os.path.basename(fname)]
             for filename, md5, file_info in self.parse_md5file(fname):
                 id_tpl = (file_info["id1"], file_info["id2"])
@@ -732,12 +749,15 @@ class BASESiteImagesMetadata(AMDBaseMetadata):
                 id_to_resources[id_tpl] = obj
         return id_to_resources
 
-    @classmethod
-    def id_tpl_to_site_ids(cls, id_tpl):
-        return ", ".join([ingest_utils.extract_ands_id(t) for t in id_tpl])
+    def id_tpl_to_site_ids(self, id_tpl):
+        return ", ".join(
+            [ingest_utils.extract_ands_id(self._logger, t) for t in id_tpl]
+        )
 
     def _get_packages(self):
-        logger.info("Ingesting BPA BASE Images metadata from {0}".format(self.path))
+        self._logger.info(
+            "Ingesting BPA BASE Images metadata from {0}".format(self.path)
+        )
         packages = []
         for id_tpl in sorted(self.id_to_resources):
             info = self.id_to_resources[id_tpl]
@@ -749,7 +769,9 @@ class BASESiteImagesMetadata(AMDBaseMetadata):
                 fragment = {}
                 for contextual_source in self.contextual_metadata:
                     fragment.update(
-                        contextual_source.get(ingest_utils.extract_ands_id(abbrev))
+                        contextual_source.get(
+                            ingest_utils.extract_ands_id(self._logger, abbrev)
+                        )
                     )
                 context.append(fragment)
             obj.update(common_values(context))
@@ -767,14 +789,16 @@ class BASESiteImagesMetadata(AMDBaseMetadata):
                     "private": True,
                 }
             )
-            ingest_utils.add_spatial_extra(obj)
+            ingest_utils.add_spatial_extra(self._logger, obj)
             tag_names = ["site-images"]
             obj["tags"] = [{"name": t} for t in tag_names]
             packages.append(obj)
         return packages
 
     def _get_resources(self):
-        logger.info("Ingesting Sepsis md5 file information from {0}".format(self.path))
+        self._logger.info(
+            "Ingesting Sepsis md5 file information from {0}".format(self.path)
+        )
         resources = []
         for id_tpl in sorted(self.id_to_resources):
             site_ids = self.id_tpl_to_site_ids(id_tpl)
@@ -908,14 +932,16 @@ class MarineMicrobesAmpliconsMetadata(AMDBaseMetadata):
         "skip": [files.mm_amplicon_control_filename_re],
     }
 
-    def __init__(self, metadata_path, contextual_metadata=None, metadata_info=None):
-        super().__init__()
+    def __init__(
+        self, logger, metadata_path, contextual_metadata=None, metadata_info=None
+    ):
+        super().__init__(logger, metadata_path)
         self.google_track_meta = MarineMicrobesGoogleTrackMetadata()
         self.path = Path(metadata_path)
         self.contextual_metadata = contextual_metadata
         self.metadata_info = metadata_info
         self.track_meta = {
-            amplicon: MarineMicrobesTrackMetadata(fname)
+            amplicon: MarineMicrobesTrackMetadata(self._logger, fname)
             for (amplicon, fname) in self.amplicon_tracker.items()
         }
 
@@ -937,11 +963,13 @@ class MarineMicrobesAmpliconsMetadata(AMDBaseMetadata):
                 )
             return m.groups()[0]
 
-        logger.info("Ingesting Marine Microbes metadata from {0}".format(self.path))
+        self._logger.info(
+            "Ingesting Marine Microbes metadata from {0}".format(self.path)
+        )
         packages = []
         for fname in unique_spreadsheets(glob(self.path + "/*.xlsx")):
             base_fname = os.path.basename(fname)
-            logger.info(
+            self._logger.info(
                 "Processing Marine Microbes metadata file {0}".format(
                     os.path.basename(fname)
                 )
@@ -972,7 +1000,7 @@ class MarineMicrobesAmpliconsMetadata(AMDBaseMetadata):
                     mm_amplicon_linkage,
                 )
                 archive_ingestion_date = ingest_utils.get_date_isoformat(
-                    google_track_meta.date_of_transfer_to_archive
+                    self._logger, google_track_meta.date_of_transfer_to_archive
                 )
 
                 amplicon = row.amplicon.upper()
@@ -1000,16 +1028,16 @@ class MarineMicrobesAmpliconsMetadata(AMDBaseMetadata):
                         "omics": "Genomics",
                         "analytical_platform": "MiSeq",
                         "date_of_transfer": ingest_utils.get_date_isoformat(
-                            google_track_meta.date_of_transfer
+                            self._logger, google_track_meta.date_of_transfer
                         ),
                         "data_type": google_track_meta.data_type,
                         "description": google_track_meta.description,
                         "folder_name": google_track_meta.folder_name,
                         "sample_submission_date": ingest_utils.get_date_isoformat(
-                            google_track_meta.date_of_transfer
+                            self._logger, google_track_meta.date_of_transfer
                         ),
                         "data_generated": ingest_utils.get_date_isoformat(
-                            google_track_meta.date_of_transfer_to_archive
+                            self._logger, google_track_meta.date_of_transfer_to_archive
                         ),
                         "archive_ingestion_date": archive_ingestion_date,
                         "license_id": apply_license(archive_ingestion_date),
@@ -1023,7 +1051,7 @@ class MarineMicrobesAmpliconsMetadata(AMDBaseMetadata):
                 )
                 for contextual_source in self.contextual_metadata:
                     obj.update(contextual_source.get(sample_id))
-                ingest_utils.add_spatial_extra(obj)
+                ingest_utils.add_spatial_extra(self._logger, obj)
                 tag_names = ["amplicons", amplicon]
                 if obj.get("sample_type"):
                     tag_names.append(obj["sample_type"])
@@ -1032,11 +1060,15 @@ class MarineMicrobesAmpliconsMetadata(AMDBaseMetadata):
         return packages
 
     def _get_resources(self):
-        logger.info("Ingesting MM md5 file information from {0}".format(self.path))
+        self._logger.info(
+            "Ingesting MM md5 file information from {0}".format(self.path)
+        )
         resources = []
         for md5_file in glob(self.path + "/*.md5"):
             use_index_linkage = os.path.basename(md5_file) in self.index_linkage_md5s
-            logger.info("Processing md5 file {} {}".format(md5_file, use_index_linkage))
+            self._logger.info(
+                "Processing md5 file {} {}".format(md5_file, use_index_linkage)
+            )
             for filename, md5, file_info in self.parse_md5file(md5_file):
                 resource = file_info.copy()
                 resource["md5"] = resource["id"] = md5
@@ -1044,7 +1076,9 @@ class MarineMicrobesAmpliconsMetadata(AMDBaseMetadata):
                 resource["resource_type"] = self.ckan_data_type
                 for contextual_source in self.contextual_metadata:
                     resource.update(contextual_source.filename_metadata(filename))
-                sample_id = ingest_utils.extract_ands_id(file_info.get("id"))
+                sample_id = ingest_utils.extract_ands_id(
+                    self._logger, file_info.get("id")
+                )
                 xlsx_info = self.metadata_info[os.path.basename(md5_file)]
                 legacy_url = urljoin(xlsx_info["base_url"], filename)
                 resources.append(
@@ -1081,16 +1115,20 @@ class MarineMicrobesAmpliconsControlMetadata(AMDBaseMetadata):
     ]
     metadata_url_components = ("amplicon", "facility_code", "ticket")
 
-    def __init__(self, metadata_path, contextual_metadata=None, metadata_info=None):
-        super().__init__()
+    def __init__(
+        self, logger, metadata_path, contextual_metadata=None, metadata_info=None
+    ):
+        super().__init__(logger, metadata_path)
         self.path = Path(metadata_path)
         self.metadata_info = metadata_info
         self.google_track_meta = MarineMicrobesGoogleTrackMetadata()
 
     def md5_lines(self):
-        logger.info("Ingesting MM md5 file information from {0}".format(self.path))
+        self._logger.info(
+            "Ingesting MM md5 file information from {0}".format(self.path)
+        )
         for md5_file in glob(self.path + "/*.md5"):
-            logger.info("Processing md5 file {}".format(md5_file))
+            self._logger.info("Processing md5 file {}".format(md5_file))
             for filename, md5, file_info in self.parse_md5file(md5_file):
                 yield filename, md5, md5_file, file_info
 
@@ -1109,7 +1147,7 @@ class MarineMicrobesAmpliconsControlMetadata(AMDBaseMetadata):
             google_track_meta = self.google_track_meta.get(info["ticket"])
 
             archive_ingestion_date = ingest_utils.get_date_isoformat(
-                google_track_meta.date_of_transfer_to_archive
+                self._logger, google_track_meta.date_of_transfer_to_archive
             )
 
             obj.update(
@@ -1125,16 +1163,16 @@ class MarineMicrobesAmpliconsControlMetadata(AMDBaseMetadata):
                     "analytical_platform": "MiSeq",
                     "read_length": mm_amplicon_read_length(amplicon),
                     "date_of_transfer": ingest_utils.get_date_isoformat(
-                        google_track_meta.date_of_transfer
+                        self._logger, google_track_meta.date_of_transfer
                     ),
                     "data_type": google_track_meta.data_type,
                     "description": google_track_meta.description,
                     "folder_name": google_track_meta.folder_name,
                     "sample_submission_date": ingest_utils.get_date_isoformat(
-                        google_track_meta.date_of_transfer
+                        self._logger, google_track_meta.date_of_transfer
                     ),
                     "data_generated": ingest_utils.get_date_isoformat(
-                        google_track_meta.date_of_transfer_to_archive
+                        self._logger, google_track_meta.date_of_transfer_to_archive
                     ),
                     "archive_ingestion_date": archive_ingestion_date,
                     "license_id": apply_license(archive_ingestion_date),
@@ -1146,7 +1184,7 @@ class MarineMicrobesAmpliconsControlMetadata(AMDBaseMetadata):
                     "private": True,
                 }
             )
-            ingest_utils.add_spatial_extra(obj)
+            ingest_utils.add_spatial_extra(self._logger, obj)
             tag_names = ["amplicons-control", amplicon, "raw"]
             obj["tags"] = [{"name": t} for t in tag_names]
             packages.append(obj)
@@ -1169,9 +1207,11 @@ class MarineMicrobesAmpliconsControlMetadata(AMDBaseMetadata):
 
 class BaseMarineMicrobesMetadata(AMDBaseMetadata):
     def __init__(self, *args, **kwargs):
-        super(BaseMarineMicrobesMetadata, self).__init__(*args, **kwargs)
+        super().__init__(*args, **kwargs)
         self.google_track_meta = MarineMicrobesGoogleTrackMetadata()
-        self.track_meta = MarineMicrobesTrackMetadata(self.tracker_filename)
+        self.track_meta = MarineMicrobesTrackMetadata(
+            self._logger, self.tracker_filename
+        )
 
 
 class MarineMicrobesMetagenomicsMetadata(BaseMarineMicrobesMetadata):
@@ -1211,24 +1251,26 @@ class MarineMicrobesMetagenomicsMetadata(BaseMarineMicrobesMetadata):
         "skip": None,
     }
 
-    def __init__(self, metadata_path, contextual_metadata=None, metadata_info=None):
-        super(MarineMicrobesMetagenomicsMetadata, self).__init__()
+    def __init__(
+        self, logger, metadata_path, contextual_metadata=None, metadata_info=None
+    ):
+        super().__init__(logger, metadata_path)
         self.path = Path(metadata_path)
         self.contextual_metadata = contextual_metadata
         self.metadata_info = metadata_info
 
     def _get_packages(self):
-        logger.info("Ingesting Marine Microbes metadata from {0}".format(self.path))
+        self._logger.info(
+            "Ingesting Marine Microbes metadata from {0}".format(self.path)
+        )
         packages = []
         for fname in unique_spreadsheets(glob(self.path + "/*.xlsx")):
-            logger.info(
+            self._logger.info(
                 "Processing Marine Microbes metadata file {0}".format(
                     os.path.basename(fname)
                 )
             )
-            for row in MarineMicrobesMetagenomicsMetadata.parse_spreadsheet(
-                fname, self.metadata_info
-            ):
+            for row in self.parse_spreadsheet(fname, self.metadata_info):
                 sample_id = row.sample_id
                 if sample_id is None:
                     continue
@@ -1239,7 +1281,7 @@ class MarineMicrobesMetagenomicsMetadata(BaseMarineMicrobesMetadata):
                     sample_id.split("/")[-1], self.ckan_data_type
                 )
                 archive_ingestion_date = ingest_utils.get_date_isoformat(
-                    google_track_meta.date_of_transfer_to_archive
+                    self._logger, google_track_meta.date_of_transfer_to_archive
                 )
 
                 obj.update(
@@ -1253,16 +1295,16 @@ class MarineMicrobesMetagenomicsMetadata(BaseMarineMicrobesMetadata):
                         "analytical_platform": "HiSeq",
                         "read_length": "250bp",
                         "date_of_transfer": ingest_utils.get_date_isoformat(
-                            google_track_meta.date_of_transfer
+                            self._logger, google_track_meta.date_of_transfer
                         ),
                         "data_type": google_track_meta.data_type,
                         "description": google_track_meta.description,
                         "folder_name": google_track_meta.folder_name,
                         "sample_submission_date": ingest_utils.get_date_isoformat(
-                            google_track_meta.date_of_transfer
+                            self._logger, google_track_meta.date_of_transfer
                         ),
                         "data_generated": ingest_utils.get_date_isoformat(
-                            google_track_meta.date_of_transfer_to_archive
+                            self._logger, google_track_meta.date_of_transfer_to_archive
                         ),
                         "archive_ingestion_date": archive_ingestion_date,
                         "license_id": apply_license(archive_ingestion_date),
@@ -1282,7 +1324,7 @@ class MarineMicrobesMetagenomicsMetadata(BaseMarineMicrobesMetadata):
                 )
                 for contextual_source in self.contextual_metadata:
                     obj.update(contextual_source.get(sample_id))
-                ingest_utils.add_spatial_extra(obj)
+                ingest_utils.add_spatial_extra(self._logger, obj)
                 tag_names = ["metagenomics", "raw"]
                 if obj.get("sample_type"):
                     tag_names.append(obj["sample_type"])
@@ -1291,10 +1333,12 @@ class MarineMicrobesMetagenomicsMetadata(BaseMarineMicrobesMetadata):
         return packages
 
     def _get_resources(self):
-        logger.info("Ingesting MM md5 file information from {0}".format(self.path))
+        self._logger.info(
+            "Ingesting MM md5 file information from {0}".format(self.path)
+        )
         resources = []
         for md5_file in glob(self.path + "/*.md5"):
-            logger.info("Processing md5 file {0}".format(md5_file))
+            self._logger.info("Processing md5 file {0}".format(md5_file))
             for filename, md5, file_info in self.parse_md5file(md5_file):
                 resource = file_info.copy()
                 resource["md5"] = resource["id"] = md5
@@ -1302,7 +1346,9 @@ class MarineMicrobesMetagenomicsMetadata(BaseMarineMicrobesMetadata):
                 resource["resource_type"] = self.ckan_data_type
                 for contextual_source in self.contextual_metadata:
                     resource.update(contextual_source.filename_metadata(filename))
-                sample_id = ingest_utils.extract_ands_id(file_info.get("id"))
+                sample_id = ingest_utils.extract_ands_id(
+                    self._logger, file_info.get("id")
+                )
                 xlsx_info = self.metadata_info[os.path.basename(md5_file)]
                 legacy_url = urljoin(xlsx_info["base_url"], filename)
                 resources.append(((sample_id,), legacy_url, resource))
@@ -1343,14 +1389,16 @@ class MarineMicrobesMetatranscriptomeMetadata(BaseMarineMicrobesMetadata):
         "skip": None,
     }
 
-    def __init__(self, metadata_path, contextual_metadata=None, metadata_info=None):
-        super(MarineMicrobesMetatranscriptomeMetadata, self).__init__()
+    def __init__(
+        self, logger, metadata_path, contextual_metadata=None, metadata_info=None
+    ):
+        super().__init__(logger, metadata_path)
         self.path = Path(metadata_path)
         self.contextual_metadata = contextual_metadata
         self.metadata_info = metadata_info
 
     def _get_packages(self):
-        logger.info(
+        self._logger.info(
             "Ingesting Marine Microbes Transcriptomics metadata from {0}".format(
                 self.path
             )
@@ -1360,14 +1408,12 @@ class MarineMicrobesMetatranscriptomeMetadata(BaseMarineMicrobesMetadata):
         # this is harmless as they have to precisly match, and sample_id is the primary key
         all_rows = set()
         for fname in unique_spreadsheets(glob(self.path + "/*.xlsx")):
-            logger.info(
+            self._logger.info(
                 "Processing Marine Microbes Transcriptomics metadata file {0}".format(
                     os.path.basename(fname)
                 )
             )
-            for row in MarineMicrobesMetatranscriptomeMetadata.parse_spreadsheet(
-                fname, self.metadata_info
-            ):
+            for row in self.parse_spreadsheet(fname, self.metadata_info):
                 all_rows.add(row)
         for row in all_rows:
             sample_id = row.sample_id
@@ -1378,7 +1424,7 @@ class MarineMicrobesMetatranscriptomeMetadata(BaseMarineMicrobesMetadata):
             obj = base_extract_bpam_metadata(track_meta)
             name = sample_id_to_ckan_name(sample_id.split("/")[-1], self.ckan_data_type)
             archive_ingestion_date = ingest_utils.get_date_isoformat(
-                google_track_meta.date_of_transfer_to_archive
+                self._logger, google_track_meta.date_of_transfer_to_archive
             )
 
             obj.update(
@@ -1392,16 +1438,16 @@ class MarineMicrobesMetatranscriptomeMetadata(BaseMarineMicrobesMetadata):
                     "analytical_platform": "HiSeq",
                     "read_length": "250bp",  # to be confirmed by Jason Koval
                     "date_of_transfer": ingest_utils.get_date_isoformat(
-                        google_track_meta.date_of_transfer
+                        self._logger, google_track_meta.date_of_transfer
                     ),
                     "data_type": google_track_meta.data_type,
                     "description": google_track_meta.description,
                     "folder_name": google_track_meta.folder_name,
                     "sample_submission_date": ingest_utils.get_date_isoformat(
-                        google_track_meta.date_of_transfer
+                        self._logger, google_track_meta.date_of_transfer
                     ),
                     "data_generated": ingest_utils.get_date_isoformat(
-                        google_track_meta.date_of_transfer_to_archive
+                        self._logger, google_track_meta.date_of_transfer_to_archive
                     ),
                     "archive_ingestion_date": archive_ingestion_date,
                     "license_id": apply_license(archive_ingestion_date),
@@ -1421,7 +1467,7 @@ class MarineMicrobesMetatranscriptomeMetadata(BaseMarineMicrobesMetadata):
             )
             for contextual_source in self.contextual_metadata:
                 obj.update(contextual_source.get(sample_id))
-            ingest_utils.add_spatial_extra(obj)
+            ingest_utils.add_spatial_extra(self._logger, obj)
             tag_names = ["metatranscriptome", "raw"]
             if obj.get("sample_type"):
                 tag_names.append(obj["sample_type"])
@@ -1430,10 +1476,12 @@ class MarineMicrobesMetatranscriptomeMetadata(BaseMarineMicrobesMetadata):
         return packages
 
     def _get_resources(self):
-        logger.info("Ingesting MM md5 file information from {0}".format(self.path))
+        self._logger.info(
+            "Ingesting MM md5 file information from {0}".format(self.path)
+        )
         resources = []
         for md5_file in glob(self.path + "/*.md5"):
-            logger.info("Processing md5 file {0}".format(md5_file))
+            self._logger.info("Processing md5 file {0}".format(md5_file))
             for filename, md5, file_info in self.parse_md5file(md5_file):
                 resource = file_info.copy()
                 resource["md5"] = resource["id"] = md5
@@ -1441,7 +1489,9 @@ class MarineMicrobesMetatranscriptomeMetadata(BaseMarineMicrobesMetadata):
                 resource["resource_type"] = self.ckan_data_type
                 for contextual_source in self.contextual_metadata:
                     resource.update(contextual_source.filename_metadata(filename))
-                sample_id = ingest_utils.extract_ands_id(file_info.get("id"))
+                sample_id = ingest_utils.extract_ands_id(
+                    self._logger, file_info.get("id")
+                )
                 xlsx_info = self.metadata_info[os.path.basename(md5_file)]
                 legacy_url = urljoin(xlsx_info["base_url"], filename)
                 resources.append(((sample_id,), legacy_url, resource))

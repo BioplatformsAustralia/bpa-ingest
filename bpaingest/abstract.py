@@ -1,45 +1,40 @@
 import os
-from .util import make_logger, xlsx_resource
+from .util import xlsx_resource
 from urllib.parse import urlparse, urljoin
 from .libs.md5lines import MD5Parser
 from .libs.excel_wrapper import ExcelWrapper
-
-
-logger = make_logger(__name__)
 
 
 class BaseMetadata:
     auth = ("bpaingest", "bpaingest")
     resource_linkage = ("sample_id",)
 
-    @classmethod
-    def parse_spreadsheet(cls, fname, metadata_info):
-        kwargs = cls.spreadsheet["options"]
+    def parse_spreadsheet(self, fname, metadata_info):
+        kwargs = self.spreadsheet["options"]
         wrapper = ExcelWrapper(
-            cls.spreadsheet["fields"],
+            self._logger,
+            self.spreadsheet["fields"],
             fname,
             additional_context=metadata_info[os.path.basename(fname)],
             suggest_template=True,
             **kwargs
         )
         for error in wrapper.get_errors():
-            logger.error(error)
+            self._logger.error(error)
         rows = list(wrapper.get_all())
         return rows
 
-    @classmethod
-    def parse_md5file_unwrapped(cls, fname):
-        match = cls.md5["match"]
-        skip = cls.md5["skip"]
+    def parse_md5file_unwrapped(self, fname):
+        match = self.md5["match"]
+        skip = self.md5["skip"]
         return MD5Parser(fname, match, skip)
 
-    @classmethod
-    def parse_md5file(cls, fname):
-        p = cls.parse_md5file_unwrapped(fname)
+    def parse_md5file(self, fname):
+        p = self.parse_md5file_unwrapped(fname)
         for tpl in p.matches:
             yield tpl
         for tpl in p.no_match:
-            logger.error("No match for filename: `%s'" % tpl)
+            self._logger.error("No match for filename: `%s'" % tpl)
 
     def _get_packages(self):
         """
@@ -123,7 +118,8 @@ class BaseMetadata:
                 if isinstance(v, float):
                     obj[k] = str(round(v, 10))
 
-    def __init__(self):
+    def __init__(self, logger, *args, **kwargs):
+        self._logger = logger
         self._packages = self._resources = None
         self._linkage_xlsx = {}
 
@@ -137,7 +133,7 @@ class BaseMetadata:
 
     def generate_xlsx_resources(self):
         if len(self._linkage_xlsx) == 0:
-            logger.error("no XLSX resources, likely a bug in the ingest class")
+            self._logger.error("no XLSX resources, likely a bug in the ingest class")
         resources = []
         for linkage, fname in self._linkage_xlsx.items():
             resource = xlsx_resource(linkage, fname, self.ckan_data_type)

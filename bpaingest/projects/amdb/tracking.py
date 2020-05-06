@@ -10,15 +10,17 @@ class BASETrackMetadata(GoogleDriveTrackMetadata):
 logger = make_logger(__name__)
 
 
-class MarineMicrobesTrackMetadata(object):
-    def __init__(self, name):
+class MarineMicrobesTrackMetadata:
+    def __init__(self, logger, name):
+        self._logger = logger
         fname = get_track_csv("bpam", "*" + name + "*.csv", project="marine-microbes")
         self.track_meta = self.read_track_csv(fname)
 
     def read_track_csv(self, fname):
         header, rows = csv_to_named_tuple("MarineMicrobesTrack", fname)
         return dict(
-            (ingest_utils.extract_ands_id(t.five_digit_bpa_id), t) for t in rows
+            (ingest_utils.extract_ands_id(self._logger, t.five_digit_bpa_id), t)
+            for t in rows
         )
 
     def get(self, sample_id):

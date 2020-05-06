@@ -4,30 +4,29 @@ from ...libs import ingest_utils
 from ...libs.excel_wrapper import ExcelWrapper, make_field_definition as fld
 from ...util import make_logger, one
 
-logger = make_logger(__name__)
 
-
-def date_or_str(v):
-    d = ingest_utils.get_date_isoformat(v, silent=True)
+def date_or_str(logger, v):
+    d = ingest_utils.get_date_isoformat(logger, v, silent=True)
     if d is not None:
         return d
     return v
 
 
-class GAPLibraryContextual(object):
+class GAPLibraryContextual:
     metadata_urls = [
         "https://downloads-qcif.bioplatforms.com/bpa/plants_staging/metadata/2020-04-16/"
     ]
     metadata_patterns = [re.compile(r"^.*\.xlsx$")]
     name = "gap-library-contextual"
 
-    def __init__(self, path):
+    def __init__(self, logger, path):
+        self._logger = logger
         self.library_metadata = self._read_metadata(one(glob(path + "/*.xlsx")))
 
     def get(self, library_id):
         if library_id in self.library_metadata:
             return self.library_metadata[library_id]
-        logger.warning(
+        self._logger.warning(
             "no %s metadata available for: %s" % (type(self).__name__, repr(library_id))
         )
         return {}
@@ -125,6 +124,7 @@ class GAPLibraryContextual(object):
         ]
 
         wrapper = ExcelWrapper(
+            self._logger,
             field_spec,
             fname,
             sheet_name=None,
@@ -133,7 +133,7 @@ class GAPLibraryContextual(object):
             suggest_template=True,
         )
         for error in wrapper.get_errors():
-            logger.error(error)
+            self._logger.error(error)
 
         name_mapping = {
             "decimal_longitude": "longitude",
@@ -147,7 +147,7 @@ class GAPLibraryContextual(object):
                 continue
             if row.library_id in library_metadata:
                 raise Exception("duplicate library id: {}".format(row.library_id))
-            library_id = ingest_utils.extract_ands_id(row.library_id)
+            library_id = ingest_utils.extract_ands_id(self._logger, row.library_id)
             library_metadata[library_id] = row_meta = {}
             for field in row._fields:
                 value = getattr(row, field)

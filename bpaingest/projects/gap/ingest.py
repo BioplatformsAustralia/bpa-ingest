@@ -8,12 +8,11 @@ from unipath import Path
 from ...abstract import BaseMetadata
 from ...libs import ingest_utils
 from ...libs.excel_wrapper import make_field_definition as fld
-from ...util import make_logger, sample_id_to_ckan_name, clean_tag_name
+from ...util import sample_id_to_ckan_name, clean_tag_name
 from . import files
 from .contextual import GAPLibraryContextual
 from .tracking import GAPTrackMetadata
 
-logger = make_logger(__name__)
 common_context = [GAPLibraryContextual]
 
 
@@ -56,18 +55,20 @@ class GAPIlluminaShortreadMetadata(BaseMetadata):
         ],
     }
 
-    def __init__(self, metadata_path, contextual_metadata=None, metadata_info=None):
-        super().__init__()
+    def __init__(
+        self, logger, metadata_path, contextual_metadata=None, metadata_info=None
+    ):
+        super().__init__(logger, metadata_path)
         self.path = Path(metadata_path)
         self.contextual_metadata = contextual_metadata
         self.metadata_info = metadata_info
         self.google_track_meta = GAPTrackMetadata()
 
     def _get_packages(self):
-        logger.info("Ingesting GAP metadata from {0}".format(self.path))
+        self._logger.info("Ingesting GAP metadata from {0}".format(self.path))
         packages = []
         for fname in glob(self.path + "/*.xlsx"):
-            logger.info("Processing GAP metadata file {0}".format(fname))
+            self._logger.info("Processing GAP metadata file {0}".format(fname))
             flow_cell_id = re.match(r"^.*_([^_]+)_metadata.xlsx", fname).groups()[0]
             rows = self.parse_spreadsheet(fname, self.metadata_info)
             xlsx_info = self.metadata_info[os.path.basename(fname)]
@@ -110,14 +111,14 @@ class GAPIlluminaShortreadMetadata(BaseMetadata):
         return packages
 
     def _get_resources(self):
-        logger.info("Ingesting md5 file information from {0}".format(self.path))
+        self._logger.info("Ingesting md5 file information from {0}".format(self.path))
         resources = []
         for md5_file in glob(self.path + "/*.md5"):
-            logger.info("Processing md5 file {0}".format(md5_file))
+            self._logger.info("Processing md5 file {0}".format(md5_file))
             for filename, md5, file_info in self.parse_md5file(md5_file):
                 resource = file_info.copy()
                 resource["sample_id"] = ingest_utils.extract_ands_id(
-                    resource["sample_id"]
+                    self._logger, resource["sample_id"]
                 )
                 resource["md5"] = resource["id"] = md5
                 resource["name"] = filename
@@ -185,18 +186,20 @@ class GAPONTMinionMetadata(BaseMetadata):
         ],
     }
 
-    def __init__(self, metadata_path, contextual_metadata=None, metadata_info=None):
-        super().__init__()
+    def __init__(
+        self, logger, metadata_path, contextual_metadata=None, metadata_info=None
+    ):
+        super().__init__(logger, metadata_path)
         self.path = Path(metadata_path)
         self.contextual_metadata = contextual_metadata
         self.metadata_info = metadata_info
         self.google_track_meta = GAPTrackMetadata()
 
     def _get_packages(self):
-        logger.info("Ingesting GAP metadata from {0}".format(self.path))
+        self._logger.info("Ingesting GAP metadata from {0}".format(self.path))
         packages = []
         for fname in glob(self.path + "/*.xlsx"):
-            logger.info("Processing GAP metadata file {0}".format(fname))
+            self._logger.info("Processing GAP metadata file {0}".format(fname))
             rows = self.parse_spreadsheet(fname, self.metadata_info)
             xlsx_info = self.metadata_info[os.path.basename(fname)]
             ticket = xlsx_info["ticket"]
@@ -235,14 +238,14 @@ class GAPONTMinionMetadata(BaseMetadata):
         return packages
 
     def _get_resources(self):
-        logger.info("Ingesting md5 file information from {0}".format(self.path))
+        self._logger.info("Ingesting md5 file information from {0}".format(self.path))
         resources = []
         for md5_file in glob(self.path + "/*.md5"):
-            logger.info("Processing md5 file {0}".format(md5_file))
+            self._logger.info("Processing md5 file {0}".format(md5_file))
             for filename, md5, file_info in self.parse_md5file(md5_file):
                 resource = file_info.copy()
                 resource["sample_id"] = ingest_utils.extract_ands_id(
-                    resource["sample_id"]
+                    self._logger, resource["sample_id"]
                 )
                 resource["md5"] = resource["id"] = md5
                 resource["name"] = filename
@@ -306,18 +309,20 @@ class GAPONTPromethionMetadata(BaseMetadata):
         ],
     }
 
-    def __init__(self, metadata_path, contextual_metadata=None, metadata_info=None):
-        super().__init__()
+    def __init__(
+        self, logger, metadata_path, contextual_metadata=None, metadata_info=None
+    ):
+        super().__init__(logger, metadata_path)
         self.path = Path(metadata_path)
         self.contextual_metadata = contextual_metadata
         self.metadata_info = metadata_info
         self.google_track_meta = GAPTrackMetadata()
 
     def _get_packages(self):
-        logger.info("Ingesting GAP metadata from {0}".format(self.path))
+        self._logger.info("Ingesting GAP metadata from {0}".format(self.path))
         packages = []
         for fname in glob(self.path + "/*.xlsx"):
-            logger.info("Processing GAP metadata file {0}".format(fname))
+            self._logger.info("Processing GAP metadata file {0}".format(fname))
             rows = self.parse_spreadsheet(fname, self.metadata_info)
             xlsx_info = self.metadata_info[os.path.basename(fname)]
             ticket = xlsx_info["ticket"]
@@ -358,14 +363,14 @@ class GAPONTPromethionMetadata(BaseMetadata):
         return packages
 
     def _get_resources(self):
-        logger.info("Ingesting md5 file information from {0}".format(self.path))
+        self._logger.info("Ingesting md5 file information from {0}".format(self.path))
         resources = []
         for md5_file in glob(self.path + "/*.md5"):
-            logger.info("Processing md5 file {0}".format(md5_file))
+            self._logger.info("Processing md5 file {0}".format(md5_file))
             for filename, md5, file_info in self.parse_md5file(md5_file):
                 resource = file_info.copy()
                 resource["sample_id"] = ingest_utils.extract_ands_id(
-                    resource["sample_id"]
+                    self._logger, resource["sample_id"]
                 )
                 resource["md5"] = resource["id"] = md5
                 resource["name"] = filename
@@ -417,18 +422,20 @@ class GAPGenomics10XMetadata(BaseMetadata):
         ],
     }
 
-    def __init__(self, metadata_path, contextual_metadata=None, metadata_info=None):
-        super().__init__()
+    def __init__(
+        self, logger, metadata_path, contextual_metadata=None, metadata_info=None
+    ):
+        super().__init__(logger, metadata_path)
         self.path = Path(metadata_path)
         self.contextual_metadata = contextual_metadata
         self.metadata_info = metadata_info
         self.google_track_meta = GAPTrackMetadata()
 
     def _get_packages(self):
-        logger.info("Ingesting GAP metadata from {0}".format(self.path))
+        self._logger.info("Ingesting GAP metadata from {0}".format(self.path))
         packages = []
         for fname in glob(self.path + "/*.xlsx"):
-            logger.info("Processing GAP metadata file {0}".format(fname))
+            self._logger.info("Processing GAP metadata file {0}".format(fname))
             flow_cell_id = re.match(r"^.*_([^_]+)_metadata.xlsx", fname).groups()[0]
             rows = self.parse_spreadsheet(fname, self.metadata_info)
             xlsx_info = self.metadata_info[os.path.basename(fname)]
@@ -471,14 +478,14 @@ class GAPGenomics10XMetadata(BaseMetadata):
         return packages
 
     def _get_resources(self):
-        logger.info("Ingesting md5 file information from {0}".format(self.path))
+        self._logger.info("Ingesting md5 file information from {0}".format(self.path))
         resources = []
         for md5_file in glob(self.path + "/*.md5"):
-            logger.info("Processing md5 file {0}".format(md5_file))
+            self._logger.info("Processing md5 file {0}".format(md5_file))
             for filename, md5, file_info in self.parse_md5file(md5_file):
                 resource = file_info.copy()
                 resource["sample_id"] = ingest_utils.extract_ands_id(
-                    resource["sample_id"]
+                    self._logger, resource["sample_id"]
                 )
                 resource["md5"] = resource["id"] = md5
                 resource["name"] = filename

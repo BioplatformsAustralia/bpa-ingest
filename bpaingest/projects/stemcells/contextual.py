@@ -1,4 +1,4 @@
-from ...util import make_logger, one
+from ...util import one
 from ...libs import ingest_utils
 from ...libs.excel_wrapper import ExcelWrapper, make_field_definition as fld
 from .util import fix_analytical_platform
@@ -9,24 +9,22 @@ def bpaops_clean(s):
     return s.lower().replace("-", "")
 
 
-logger = make_logger(__name__)
-
-
-class StemcellsTranscriptomeContextual(object):
+class StemcellsTranscriptomeContextual:
     metadata_urls = [
         "https://downloads-qcif.bioplatforms.com/bpa/stemcell/projectdata/2017-07-28/"
     ]
     name = "stemcell-agrf-transcriptome"
     sheet_name = "Transcriptome"
 
-    def __init__(self, path):
+    def __init__(self, logger, path):
+        self._logger = logger
         xlsx_path = one(glob(path + "/*.xlsx"))
         self.sample_metadata = self._package_metadata(self._read_metadata(xlsx_path))
 
     def get(self, sample_id):
         if sample_id in self.sample_metadata:
             return self.sample_metadata[sample_id]
-        logger.warning(
+        self._logger.warning(
             "no %s metadata available for: %s" % (type(self).__name__, sample_id)
         )
         return {}
@@ -92,6 +90,7 @@ class StemcellsTranscriptomeContextual(object):
         ]
 
         wrapper = ExcelWrapper(
+            self._logger,
             field_spec,
             metadata_path,
             sheet_name=self.sheet_name,
@@ -99,25 +98,26 @@ class StemcellsTranscriptomeContextual(object):
             column_name_row_index=2,
         )
         for error in wrapper.get_errors():
-            logger.error(error)
+            self._logger.error(error)
         return wrapper.get_all()
 
 
-class StemcellsSmallRNAContextual(object):
+class StemcellsSmallRNAContextual:
     metadata_urls = [
         "https://downloads-qcif.bioplatforms.com/bpa/stemcell/projectdata/2017-07-28/"
     ]
     name = "stemcell-agrf-smallrna"
     sheet_name = "Small RNA"
 
-    def __init__(self, path):
+    def __init__(self, logger, path):
+        self._logger = logger
         xlsx_path = one(glob(path + "/*.xlsx"))
         self.sample_metadata = self._package_metadata(self._read_metadata(xlsx_path))
 
     def get(self, sample_id):
         if sample_id in self.sample_metadata:
             return self.sample_metadata[sample_id]
-        logger.warning(
+        self._logger.warning(
             "no %s metadata available for: %s" % (type(self).__name__, sample_id)
         )
         return {}
@@ -183,6 +183,7 @@ class StemcellsSmallRNAContextual(object):
         ]
 
         wrapper = ExcelWrapper(
+            self._logger,
             field_spec,
             metadata_path,
             sheet_name=self.sheet_name,
@@ -190,25 +191,26 @@ class StemcellsSmallRNAContextual(object):
             column_name_row_index=2,
         )
         for error in wrapper.get_errors():
-            logger.error(error)
+            self._logger.error(error)
         return wrapper.get_all()
 
 
-class StemcellsSingleCellRNASeq(object):
+class StemcellsSingleCellRNASeq:
     metadata_urls = [
         "https://downloads-qcif.bioplatforms.com/bpa/stemcell/projectdata/2017-07-28/"
     ]
     name = "stemcell-ramaciotti-singlecell"
     sheet_name = "Single Cell RNAseq"
 
-    def __init__(self, path):
+    def __init__(self, logger, path):
+        self._logger = logger
         xlsx_path = one(glob(path + "/*.xlsx"))
         self.sample_metadata = self._package_metadata(self._read_metadata(xlsx_path))
 
     def get(self, sample_id):
         if sample_id in self.sample_metadata:
             return self.sample_metadata[sample_id]
-        logger.warning(
+        self._logger.warning(
             "no %s metadata available for: %s" % (type(self).__name__, sample_id)
         )
         return {}
@@ -274,6 +276,7 @@ class StemcellsSingleCellRNASeq(object):
         ]
 
         wrapper = ExcelWrapper(
+            self._logger,
             field_spec,
             metadata_path,
             sheet_name=self.sheet_name,
@@ -281,18 +284,19 @@ class StemcellsSingleCellRNASeq(object):
             column_name_row_index=2,
         )
         for error in wrapper.get_errors():
-            logger.error(error)
+            self._logger.error(error)
         return wrapper.get_all()
 
 
-class StemcellsMetabolomicsContextual(object):
+class StemcellsMetabolomicsContextual:
     metadata_urls = [
         "https://downloads-qcif.bioplatforms.com/bpa/stemcell/projectdata/2017-07-28/"
     ]
     name = "stemcell-metabolomics"
     sheet_name = "Metabolomics"
 
-    def __init__(self, path):
+    def __init__(self, logger, path):
+        self._logger = logger
         xlsx_path = one(glob(path + "/*.xlsx"))
         self.sample_metadata = self._package_metadata(self._read_metadata(xlsx_path))
 
@@ -300,7 +304,9 @@ class StemcellsMetabolomicsContextual(object):
         tpl = (sample_id, analytical_platform)
         if tpl in self.sample_metadata:
             return self.sample_metadata[tpl]
-        logger.warning("no %s metadata available for: %s" % (type(self).__name__, tpl))
+        self._logger.warning(
+            "no %s metadata available for: %s" % (type(self).__name__, tpl)
+        )
         return {}
 
     def _package_metadata(self, rows):
@@ -362,6 +368,7 @@ class StemcellsMetabolomicsContextual(object):
         ]
 
         wrapper = ExcelWrapper(
+            self._logger,
             field_spec,
             metadata_path,
             sheet_name=self.sheet_name,
@@ -369,25 +376,26 @@ class StemcellsMetabolomicsContextual(object):
             column_name_row_index=2,
         )
         for error in wrapper.get_errors():
-            logger.error(error)
+            self._logger.error(error)
         return wrapper.get_all()
 
 
-class StemcellsProteomicsContextual(object):
+class StemcellsProteomicsContextual:
     metadata_urls = [
         "https://downloads-qcif.bioplatforms.com/bpa/stemcell/projectdata/2017-07-28/"
     ]
     name = "stemcell-proteomics"
     sheet_names = ["Proteomics"]
 
-    def __init__(self, path):
+    def __init__(self, logger, path):
+        self._logger = logger
         xlsx_path = one(glob(path + "/*.xlsx"))
         self.sample_metadata = self._package_metadata(self._read_metadata(xlsx_path))
 
     def get(self, sample_id):
         if sample_id in self.sample_metadata:
             return self.sample_metadata[sample_id]
-        logger.warning(
+        self._logger.warning(
             "no %s metadata available for: %s" % (type(self).__name__, sample_id)
         )
         return {}
@@ -457,6 +465,7 @@ class StemcellsProteomicsContextual(object):
         rows = []
         for sheet_name in self.sheet_names:
             wrapper = ExcelWrapper(
+                self._logger,
                 field_spec,
                 metadata_path,
                 sheet_name=sheet_name,
@@ -464,7 +473,7 @@ class StemcellsProteomicsContextual(object):
                 column_name_row_index=2,
             )
             for error in wrapper.get_errors():
-                logger.error(error)
+                self._logger.error(error)
             rows += list(wrapper.get_all())
         # there are a bunch of duplicate rows, because per-file metadata is included
         # in the source spreadsheet

@@ -8,10 +8,8 @@ from glob import glob
 from ...libs.excel_wrapper import make_field_definition as fld
 from ...libs import ingest_utils
 
-from ...util import make_logger, sample_id_to_ckan_name, common_values
+from ...util import sample_id_to_ckan_name, common_values
 from ...abstract import BaseMetadata
-
-logger = make_logger(__name__)
 
 
 class WheatPathogensGenomesMetadata(BaseMetadata):
@@ -64,15 +62,15 @@ class WheatPathogensGenomesMetadata(BaseMetadata):
         },
     }
 
-    def __init__(self, metadata_path, metadata_info=None):
-        super().__init__()
+    def __init__(self, logger, metadata_path, metadata_info=None):
+        super().__init__(logger, metadata_path)
         self.path = Path(metadata_path)
         self.metadata_info = metadata_info
 
     def _get_packages(self):
         packages = []
         for fname in glob(self.path + "/Wheat_pathogens_genomic_metadata.xlsx"):
-            logger.info(
+            self._logger.info(
                 "Processing Stemcells Transcriptomics metadata file {0}".format(fname)
             )
             # there are duplicates by BPA ID -- the spreadsheet is per-file data
@@ -108,6 +106,7 @@ class WheatPathogensGenomesMetadata(BaseMetadata):
                     "index": data["index_sequence"],
                     "library_id": data["library_id"],
                     "collection_date": ingest_utils.get_date_isoformat(
+                        self._logger,
                         data["collection_date"]
                     ),
                     "collection_location": data["collection_location"],
@@ -130,18 +129,19 @@ class WheatPathogensGenomesMetadata(BaseMetadata):
                 sample_id = row.sample_id
                 resource = {
                     "flowcell": row.flow_cell_id,
-                    "run_number": ingest_utils.get_clean_number(row.run_number),
+                    "run_number": ingest_utils.get_clean_number(self._logger, row.run_number),
                     "sequencer": row.sequencer or "Unknown",
                     "run_index_number": row.index_number,
-                    "run_lane_number": ingest_utils.get_clean_number(row.lane_number)
+                    "run_lane_number": ingest_utils.get_clean_number(self._logger, row.lane_number)
                     or "none",
                     "run_protocol": row.library_construction_protocol,
                     "run_protocol_base_pairs": ingest_utils.get_clean_number(
+                        self._logger,
                         row.library_construction
                     ),
                     "run_protocol_library_type": row.library,
-                    "index_number": ingest_utils.get_clean_number(row.index_number),
-                    "lane_number": ingest_utils.get_clean_number(row.lane_number),
+                    "index_number": ingest_utils.get_clean_number(self._logger, row.index_number),
+                    "lane_number": ingest_utils.get_clean_number(self._logger, row.lane_number),
                     "name": get_file_name(row.sequence_filename),
                     "file_size": row.file_size,
                     "resource_type": self.ckan_data_type,
