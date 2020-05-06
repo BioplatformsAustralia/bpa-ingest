@@ -79,18 +79,18 @@ class DownloadMetadata:
         self.auth = (auth_user, get_password(auth_env_name))
 
     def _set_path(self, path):
+        # if we have a user-specified target directory, don't clean up at the end
+        self.cleanup = path is not None
+        if path is None:
+            path = tempfile.mkdtemp(prefix="bpaingest-metadata-")
+        self.path = path
         self.info_json = os.path.join(path, "bpa-ingest.json")
-        if path is not None:
-            self.path = path
-            self.cleanup = False
-            if os.access(self.info_json, os.R_OK):
-                self._logger.info(
-                    "skipping metadata download, complete download in directory `%s' exists"
-                    % path
-                )
-                self.fetch = False
-        else:
-            self.path = tempfile.mkdtemp(prefix="bpaingest-metadata-")
+        if os.access(self.info_json, os.R_OK):
+            self._logger.info(
+                "skipping metadata download, complete download in directory `%s' exists"
+                % path
+            )
+            self.fetch = False
 
     def __enter__(self):
         return self
