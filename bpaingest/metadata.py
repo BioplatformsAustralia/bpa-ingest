@@ -25,7 +25,6 @@ class DownloadMetadata(object):
             (os.path.join(self.path, c.name), c) for c in contextual_classes
         ]
 
-        self.info_json = os.path.join(self.path, "bpa-ingest.json")
         if self.fetch or force_fetch:
             self._fetch_metadata(project_class, self.contextual, metadata_info)
 
@@ -77,12 +76,13 @@ class DownloadMetadata(object):
         self.auth = (auth_user, get_password(auth_env_name))
 
     def _set_path(self, path):
+        self.info_json = os.path.join(path, "bpa-ingest.json")
         if path is not None:
             self.path = path
             self.cleanup = False
-            if os.access(path, os.R_OK):
+            if os.access(self.info_json, os.R_OK):
                 logger.info(
-                    "skipping metadata download, specified directory `%s' exists" % path
+                    "skipping metadata download, complete download in directory `%s' exists" % path
                 )
                 self.fetch = False
         else:
