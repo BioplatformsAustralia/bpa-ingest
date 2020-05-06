@@ -28,6 +28,7 @@ bpasslh = "^2.1.0"
 [tool.poetry.dev-dependencies]
 black = "^19.10b0"
 tox = "^3.14.6"
+flake8 = "^3.7.9"
 
 [tool.tox]
 legacy_tox_ini = """
