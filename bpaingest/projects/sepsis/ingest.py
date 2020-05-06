@@ -7,7 +7,6 @@ from hashlib import md5 as md5hash
 from .strains import get_taxon_strain, map_taxon_strain, map_taxon_strain_rows
 from ...libs import ingest_utils
 from ...util import (
-    make_logger,
     sample_id_to_ckan_name,
     csv_to_named_tuple,
     common_values,
@@ -33,8 +32,6 @@ from . import files
 from datetime import datetime
 import os
 import re
-
-logger = make_logger(__name__)
 
 
 def fix_version(s):
@@ -155,20 +152,24 @@ class SepsisGenomicsMiseqMetadata(BaseSepsisMetadata):
         "skip": None,
     }
 
-    def __init__(self, metadata_path, contextual_metadata=None, metadata_info=None):
-        super().__init__()
+    def __init__(
+        self, logger, metadata_path, contextual_metadata=None, metadata_info=None
+    ):
+        super().__init__(logger, metadata_path)
         self.path = Path(metadata_path)
         self.contextual_metadata = contextual_metadata
         self.bpam_track_meta = SepsisGenomicsTrackMetadata("GenomicsMiSeq")
         self.metadata_info = metadata_info
 
     def _get_packages(self):
-        logger.info(
+        self._logger.info(
             "Ingesting Sepsis Genomics Miseq metadata from {0}".format(self.path)
         )
         packages = []
         for fname in glob(self.path + "/*.xlsx"):
-            logger.info("Processing Sepsis Genomics metadata file {0}".format(fname))
+            self._logger.info(
+                "Processing Sepsis Genomics metadata file {0}".format(fname)
+            )
             rows = self.parse_spreadsheet(fname, self.metadata_info)
             xlsx_info = self.metadata_info[os.path.basename(fname)]
             ticket = xlsx_info["ticket"]
@@ -212,10 +213,12 @@ class SepsisGenomicsMiseqMetadata(BaseSepsisMetadata):
         return packages
 
     def _get_resources(self):
-        logger.info("Ingesting Sepsis md5 file information from {0}".format(self.path))
+        self._logger.info(
+            "Ingesting Sepsis md5 file information from {0}".format(self.path)
+        )
         resources = []
         for md5_file in glob(self.path + "/*.md5"):
-            logger.info("Processing md5 file {0}".format(md5_file))
+            self._logger.info("Processing md5 file {0}".format(md5_file))
             for filename, md5, file_info in self.parse_md5file(md5_file):
                 resource = dict(
                     (t, file_info.get(t))
@@ -273,8 +276,10 @@ class SepsisGenomicsPacbioMetadata(BaseSepsisMetadata):
         "skip": None,
     }
 
-    def __init__(self, metadata_path, contextual_metadata=None, metadata_info=None):
-        super().__init__()
+    def __init__(
+        self, logger, metadata_path, contextual_metadata=None, metadata_info=None
+    ):
+        super().__init__(logger, metadata_path)
         self.path = Path(metadata_path)
         self.contextual_metadata = contextual_metadata
         self.bpam_track_meta = SepsisGenomicsTrackMetadata("GenomicsPacBio")
@@ -287,12 +292,14 @@ class SepsisGenomicsPacbioMetadata(BaseSepsisMetadata):
         )
 
     def _get_packages(self):
-        logger.info(
+        self._logger.info(
             "Ingesting Sepsis Genomics Pacbio metadata from {0}".format(self.path)
         )
         packages = []
         for fname in glob(self.path + "/*.xlsx"):
-            logger.info("Processing Sepsis Genomics metadata file {0}".format(fname))
+            self._logger.info(
+                "Processing Sepsis Genomics metadata file {0}".format(fname)
+            )
             rows = self.parse_spreadsheet(fname, self.metadata_info)
             xlsx_info = self.metadata_info[os.path.basename(fname)]
             ticket = xlsx_info["ticket"]
@@ -339,10 +346,12 @@ class SepsisGenomicsPacbioMetadata(BaseSepsisMetadata):
         return packages
 
     def _get_resources(self):
-        logger.info("Ingesting Sepsis md5 file information from {0}".format(self.path))
+        self._logger.info(
+            "Ingesting Sepsis md5 file information from {0}".format(self.path)
+        )
         resources = []
         for md5_file in glob(self.path + "/*.md5"):
-            logger.info("Processing md5 file {0}".format(md5_file))
+            self._logger.info("Processing md5 file {0}".format(md5_file))
             for filename, md5, file_info in self.parse_md5file(md5_file):
                 resource = dict(
                     (t, file_info.get(t))
@@ -388,8 +397,10 @@ class SepsisTranscriptomicsHiseqMetadata(BaseSepsisMetadata):
     }
     md5 = {"match": [files.hiseq_filename_re], "skip": None}
 
-    def __init__(self, metadata_path, contextual_metadata=None, metadata_info=None):
-        super().__init__()
+    def __init__(
+        self, logger, metadata_path, contextual_metadata=None, metadata_info=None
+    ):
+        super().__init__(logger, metadata_path)
         self.path = Path(metadata_path)
         self.contextual_metadata = contextual_metadata
         self.bpam_track_meta = SepsisTrackMetadata("TranscriptomicsHiSeq")
@@ -404,7 +415,7 @@ class SepsisTranscriptomicsHiseqMetadata(BaseSepsisMetadata):
         )
 
     def _get_packages(self):
-        logger.info(
+        self._logger.info(
             "Ingesting Sepsis Transcriptomics Hiseq metadata from {0}".format(self.path)
         )
         packages = []
@@ -415,7 +426,7 @@ class SepsisTranscriptomicsHiseqMetadata(BaseSepsisMetadata):
 
         sample_id_info = defaultdict(list)
         for fname in glob(self.path + "/*.xlsx"):
-            logger.info(
+            self._logger.info(
                 "Processing Sepsis Transcriptomics metadata file {0}".format(fname)
             )
 
@@ -484,10 +495,12 @@ class SepsisTranscriptomicsHiseqMetadata(BaseSepsisMetadata):
         return packages
 
     def _get_resources(self):
-        logger.info("Ingesting Sepsis md5 file information from {0}".format(self.path))
+        self._logger.info(
+            "Ingesting Sepsis md5 file information from {0}".format(self.path)
+        )
         resources = []
         for md5_file in glob(self.path + "/*.md5"):
-            logger.info("Processing md5 file {0}".format(md5_file))
+            self._logger.info("Processing md5 file {0}".format(md5_file))
             for filename, md5, file_info in self.parse_md5file(md5_file):
                 resource = dict(
                     (t, file_info.get(t))
@@ -545,8 +558,10 @@ class SepsisMetabolomicsGCMSMetadata(BaseSepsisMetadata):
         "skip": [re.compile(r"^.*_metadata\.xlsx$")],
     }
 
-    def __init__(self, metadata_path, contextual_metadata=None, metadata_info=None):
-        super().__init__()
+    def __init__(
+        self, logger, metadata_path, contextual_metadata=None, metadata_info=None
+    ):
+        super().__init__(logger, metadata_path)
         self.path = Path(metadata_path)
         self.contextual_metadata = contextual_metadata
         self.bpam_track_meta = SepsisTrackMetadata("MetabolomicsGCMS")
@@ -563,7 +578,7 @@ class SepsisMetabolomicsGCMSMetadata(BaseSepsisMetadata):
     def _get_packages(self):
         packages = []
         for fname in glob(self.path + "/*.xlsx"):
-            logger.info(
+            self._logger.info(
                 "Processing Sepsis Metabolomics GCMS metadata file {0}".format(fname)
             )
             rows = self.parse_spreadsheet(fname, self.metadata_info)
@@ -613,10 +628,12 @@ class SepsisMetabolomicsGCMSMetadata(BaseSepsisMetadata):
         return packages
 
     def _get_resources(self):
-        logger.info("Ingesting Sepsis md5 file information from {0}".format(self.path))
+        self._logger.info(
+            "Ingesting Sepsis md5 file information from {0}".format(self.path)
+        )
         resources = []
         for md5_file in glob(self.path + "/*.md5"):
-            logger.info("Processing md5 file {0}".format(md5_file))
+            self._logger.info("Processing md5 file {0}".format(md5_file))
             for filename, md5, file_info in self.parse_md5file(md5_file):
                 resource = dict(
                     (t, file_info.get(t))
@@ -666,8 +683,10 @@ class SepsisMetabolomicsLCMSMetadata(BaseSepsisMetadata):
         "skip": [re.compile(r"^.*_metadata\.xlsx$")],
     }
 
-    def __init__(self, metadata_path, contextual_metadata=None, metadata_info=None):
-        super().__init__()
+    def __init__(
+        self, logger, metadata_path, contextual_metadata=None, metadata_info=None
+    ):
+        super().__init__(logger, metadata_path)
         self.path = Path(metadata_path)
         self.contextual_metadata = contextual_metadata
         self.bpam_track_meta = SepsisTrackMetadata("MetabolomicsLCMS")
@@ -684,7 +703,7 @@ class SepsisMetabolomicsLCMSMetadata(BaseSepsisMetadata):
     def _get_packages(self):
         packages = []
         for fname in glob(self.path + "/*.xlsx"):
-            logger.info(
+            self._logger.info(
                 "Processing Sepsis Metabolomics LCMS metadata file {0}".format(fname)
             )
             rows = self.parse_spreadsheet(fname, self.metadata_info)
@@ -739,10 +758,12 @@ class SepsisMetabolomicsLCMSMetadata(BaseSepsisMetadata):
         return packages
 
     def _get_resources(self):
-        logger.info("Ingesting Sepsis md5 file information from {0}".format(self.path))
+        self._logger.info(
+            "Ingesting Sepsis md5 file information from {0}".format(self.path)
+        )
         resources = []
         for md5_file in glob(self.path + "/*.md5"):
-            logger.info("Processing md5 file {0}".format(md5_file))
+            self._logger.info("Processing md5 file {0}".format(md5_file))
             for filename, md5, file_info in self.parse_md5file(md5_file):
                 resource = dict(
                     (t, file_info.get(t))
@@ -809,8 +830,10 @@ class SepsisProteomicsMS1QuantificationMetadata(BaseSepsisMetadata):
         "skip": None,
     }
 
-    def __init__(self, metadata_path, contextual_metadata=None, metadata_info=None):
-        super().__init__()
+    def __init__(
+        self, logger, metadata_path, contextual_metadata=None, metadata_info=None
+    ):
+        super().__init__(logger, metadata_path)
         self.path = Path(metadata_path)
         self.contextual_metadata = contextual_metadata
         self.bpam_track_meta = SepsisTrackMetadata("ProteomicsMS1Quantification")
@@ -829,7 +852,7 @@ class SepsisProteomicsMS1QuantificationMetadata(BaseSepsisMetadata):
     def _get_packages(self):
         packages = []
         for fname in glob(self.path + "/*.xlsx"):
-            logger.info(
+            self._logger.info(
                 "Processing Sepsis Proteomics MS1Quantification metadata file {0}".format(
                     fname
                 )
@@ -845,7 +868,7 @@ class SepsisProteomicsMS1QuantificationMetadata(BaseSepsisMetadata):
                 bpam_track_meta = self.bpam_track_meta.get(sample_id)
                 taxon, strain = get_taxon_strain(bpam_track_meta)
                 if "taxon_or_organism" not in bpam_track_meta:
-                    logger.error(
+                    self._logger.error(
                         "package for {} excluded due to missing BPAM metadata".format(
                             sample_id
                         )
@@ -881,10 +904,12 @@ class SepsisProteomicsMS1QuantificationMetadata(BaseSepsisMetadata):
         return packages
 
     def _get_resources(self):
-        logger.info("Ingesting Sepsis md5 file information from {0}".format(self.path))
+        self._logger.info(
+            "Ingesting Sepsis md5 file information from {0}".format(self.path)
+        )
         resources = []
         for md5_file in glob(self.path + "/*.md5"):
-            logger.info("Processing md5 file {0}".format(md5_file))
+            self._logger.info("Processing md5 file {0}".format(md5_file))
             for filename, md5, file_info in self.parse_md5file(md5_file):
                 resource = dict(
                     (t, file_info.get(t)) for t in ("vendor", "machine_data")
@@ -933,8 +958,10 @@ class SepsisProteomicsSwathMSBaseSepsisMetadata(BaseSepsisMetadata):
         "options": {"header_length": 1, "column_name_row_index": 1,},
     }
 
-    def __init__(self, metadata_path, contextual_metadata=None, metadata_info=None):
-        super().__init__()
+    def __init__(
+        self, logger, metadata_path, contextual_metadata=None, metadata_info=None
+    ):
+        super().__init__(logger, metadata_path)
         self.path = Path(metadata_path)
         self.metadata_info = metadata_info
         self.contextual_metadata = contextual_metadata
@@ -959,7 +986,7 @@ class SepsisProteomicsSwathMSBaseSepsisMetadata(BaseSepsisMetadata):
         package_data = {}
         file_data = {}
         for fname in glob(self.path + "/*_metadata.xlsx"):
-            logger.info(
+            self._logger.info(
                 "Processing Sepsis Proteomics SwathMS metadata file {0}".format(fname)
             )
             rows = self.parse_spreadsheet(fname, self.metadata_info)
@@ -1076,17 +1103,19 @@ class SepsisProteomicsSwathMSBaseSepsisMetadata(BaseSepsisMetadata):
         return packages
 
     def get_swath_resources(self, data_type):
-        logger.info("Ingesting Sepsis md5 file information from {0}".format(self.path))
+        self._logger.info(
+            "Ingesting Sepsis md5 file information from {0}".format(self.path)
+        )
         resources = []
 
         for md5_file in glob(self.path + "/*.md5"):
-            logger.info("Processing md5 file {0}".format(md5_file))
+            self._logger.info("Processing md5 file {0}".format(md5_file))
             for filename, md5, file_info in self.parse_md5file(md5_file):
                 resource = dict(
                     (t, file_info.get(t)) for t in ("vendor", "machine_data")
                 )
                 if filename not in self.file_data:
-                    logger.warning("no submission metadata for `%s'" % (filename))
+                    self._logger.warning("no submission metadata for `%s'" % (filename))
                 file_meta = self.file_data.get(filename, {})
                 resource["md5"] = resource["id"] = md5
                 resource["data_type"] = file_info.get("type")
@@ -1152,20 +1181,22 @@ class SepsisProteomicsSwathMSCombinedSampleMetadata(BaseSepsisMetadata):
         "skip": None,
     }
 
-    def __init__(self, metadata_path, contextual_metadata=None, metadata_info=None):
-        super().__init__()
+    def __init__(
+        self, logger, metadata_path, contextual_metadata=None, metadata_info=None
+    ):
+        super().__init__(logger, metadata_path)
         self.path = Path(metadata_path)
         self.contextual_metadata = contextual_metadata
         self.metadata_info = metadata_info
         self.google_track_meta = SepsisGoogleTrackMetadata()
 
     def _get_packages(self):
-        logger.info("Ingesting Sepsis metadata from {0}".format(self.path))
+        self._logger.info("Ingesting Sepsis metadata from {0}".format(self.path))
         # we have one package per Zip of analysed data, and we take the common
         # meta-data for each bpa-id
         folder_rows = defaultdict(list)
         for fname in glob(self.path + "/*.xlsx"):
-            logger.info("Processing Sepsis metadata file {0}".format(fname))
+            self._logger.info("Processing Sepsis metadata file {0}".format(fname))
             xlsx_info = self.metadata_info[os.path.basename(fname)]
             ticket = xlsx_info["ticket"]
             if not ticket:
@@ -1230,11 +1261,13 @@ class SepsisProteomicsSwathMSCombinedSampleMetadata(BaseSepsisMetadata):
         return packages
 
     def _get_resources(self):
-        logger.info("Ingesting Sepsis md5 file information from {0}".format(self.path))
+        self._logger.info(
+            "Ingesting Sepsis md5 file information from {0}".format(self.path)
+        )
         resources = []
         # one MD5 file per 'folder_name', so we just take every file and upload
         for md5_file in glob(self.path + "/*.md5"):
-            logger.info("Processing md5 file {0}".format(md5_file))
+            self._logger.info("Processing md5 file {0}".format(md5_file))
             for filename, md5, file_info in self.parse_md5file(md5_file):
                 resource = {}
                 resource["md5"] = resource["id"] = md5
@@ -1288,20 +1321,22 @@ class SepsisProteomics2DLibraryMetadata(BaseSepsisMetadata):
         "skip": None,
     }
 
-    def __init__(self, metadata_path, contextual_metadata=None, metadata_info=None):
-        super().__init__()
+    def __init__(
+        self, logger, metadata_path, contextual_metadata=None, metadata_info=None
+    ):
+        super().__init__(logger, metadata_path)
         self.path = Path(metadata_path)
         self.contextual_metadata = contextual_metadata
         self.metadata_info = metadata_info
         self.google_track_meta = SepsisGoogleTrackMetadata()
 
     def _get_packages(self):
-        logger.info("Ingesting Sepsis metadata from {0}".format(self.path))
+        self._logger.info("Ingesting Sepsis metadata from {0}".format(self.path))
         # we have one package per Zip of analysed data, and we take the common
         # meta-data for each bpa-id
         folder_rows = defaultdict(list)
         for fname in glob(self.path + "/*.xlsx"):
-            logger.info("Processing Sepsis metadata file {0}".format(fname))
+            self._logger.info("Processing Sepsis metadata file {0}".format(fname))
             xlsx_info = self.metadata_info[os.path.basename(fname)]
             ticket = xlsx_info["ticket"]
             if not ticket:
@@ -1365,11 +1400,13 @@ class SepsisProteomics2DLibraryMetadata(BaseSepsisMetadata):
         return packages
 
     def _get_resources(self):
-        logger.info("Ingesting Sepsis md5 file information from {0}".format(self.path))
+        self._logger.info(
+            "Ingesting Sepsis md5 file information from {0}".format(self.path)
+        )
         resources = []
         # one MD5 file per 'folder_name', so we just take every file and upload
         for md5_file in glob(self.path + "/*.md5"):
-            logger.info("Processing md5 file {0}".format(md5_file))
+            self._logger.info("Processing md5 file {0}".format(md5_file))
             for filename, md5, file_info in self.parse_md5file(md5_file):
                 resource = {}
                 resource["md5"] = resource["id"] = md5
@@ -1532,8 +1569,10 @@ class SepsisProteomicsAnalysedMetadata(BaseSepsisAnalysedMetadata):
         "skip": None,
     }
 
-    def __init__(self, metadata_path, contextual_metadata=None, metadata_info=None):
-        super().__init__()
+    def __init__(
+        self, logger, metadata_path, contextual_metadata=None, metadata_info=None
+    ):
+        super().__init__(logger, metadata_path)
         self.path = Path(metadata_path)
         self.contextual_metadata = contextual_metadata
         self.metadata_info = metadata_info
@@ -1544,12 +1583,12 @@ class SepsisProteomicsAnalysedMetadata(BaseSepsisAnalysedMetadata):
         ]
 
     def _get_packages(self):
-        logger.info("Ingesting Sepsis metadata from {0}".format(self.path))
+        self._logger.info("Ingesting Sepsis metadata from {0}".format(self.path))
         # we have one package per Zip of analysed data, and we take the common
         # meta-data for each bpa-id
         folder_rows = defaultdict(list)
         for fname in glob(self.path + "/*.xlsx"):
-            logger.info("Processing Sepsis metadata file {0}".format(fname))
+            self._logger.info("Processing Sepsis metadata file {0}".format(fname))
             xlsx_info = self.metadata_info[os.path.basename(fname)]
             ticket = xlsx_info["ticket"]
             if not ticket:
@@ -1627,11 +1666,13 @@ class SepsisProteomicsAnalysedMetadata(BaseSepsisAnalysedMetadata):
         return packages
 
     def _get_resources(self):
-        logger.info("Ingesting Sepsis md5 file information from {0}".format(self.path))
+        self._logger.info(
+            "Ingesting Sepsis md5 file information from {0}".format(self.path)
+        )
         resources = []
         # one MD5 file per 'folder_name', so we just take every file and upload
         for md5_file in glob(self.path + "/*.md5"):
-            logger.info("Processing md5 file {0}".format(md5_file))
+            self._logger.info("Processing md5 file {0}".format(md5_file))
             for filename, md5, file_info in self.parse_md5file(md5_file):
                 resource = {}
                 resource["md5"] = resource["id"] = md5
@@ -1702,8 +1743,10 @@ class SepsisTranscriptomicsAnalysedMetadata(BaseSepsisAnalysedMetadata):
         "skip": None,
     }
 
-    def __init__(self, metadata_path, contextual_metadata=None, metadata_info=None):
-        super().__init__()
+    def __init__(
+        self, logger, metadata_path, contextual_metadata=None, metadata_info=None
+    ):
+        super().__init__(logger, metadata_path)
         self.path = Path(metadata_path)
         self.contextual_metadata = contextual_metadata
         self.metadata_info = metadata_info
@@ -1711,12 +1754,12 @@ class SepsisTranscriptomicsAnalysedMetadata(BaseSepsisAnalysedMetadata):
         self.bpam_track_meta = [SepsisTrackMetadata("TranscriptomicsHiSeq")]
 
     def _get_packages(self):
-        logger.info("Ingesting Sepsis metadata from {0}".format(self.path))
+        self._logger.info("Ingesting Sepsis metadata from {0}".format(self.path))
         # we have one package per Zip of analysed data, and we take the common
         # meta-data for each bpa-id
         ticket_rows = defaultdict(list)
         for fname in glob(self.path + "/*.xlsx"):
-            logger.info("Processing Sepsis metadata file {0}".format(fname))
+            self._logger.info("Processing Sepsis metadata file {0}".format(fname))
             xlsx_info = self.metadata_info[os.path.basename(fname)]
             ticket = xlsx_info["ticket"]
             if not ticket:
@@ -1789,11 +1832,13 @@ class SepsisTranscriptomicsAnalysedMetadata(BaseSepsisAnalysedMetadata):
         return packages
 
     def _get_resources(self):
-        logger.info("Ingesting Sepsis md5 file information from {0}".format(self.path))
+        self._logger.info(
+            "Ingesting Sepsis md5 file information from {0}".format(self.path)
+        )
         resources = []
         # one MD5 file per 'folder_name', so we just take every file and upload
         for md5_file in glob(self.path + "/*.md5"):
-            logger.info("Processing md5 file {0}".format(md5_file))
+            self._logger.info("Processing md5 file {0}".format(md5_file))
             for filename, md5, file_info in self.parse_md5file(md5_file):
                 resource = {}
                 resource["md5"] = resource["id"] = md5
@@ -1853,8 +1898,10 @@ class SepsisMetabolomicsAnalysedMetadata(BaseSepsisAnalysedMetadata):
         "skip": None,
     }
 
-    def __init__(self, metadata_path, contextual_metadata=None, metadata_info=None):
-        super().__init__()
+    def __init__(
+        self, logger, metadata_path, contextual_metadata=None, metadata_info=None
+    ):
+        super().__init__(logger, metadata_path)
         self.path = Path(metadata_path)
         self.contextual_metadata = contextual_metadata
         self.metadata_info = metadata_info
@@ -1862,12 +1909,12 @@ class SepsisMetabolomicsAnalysedMetadata(BaseSepsisAnalysedMetadata):
         self.bpam_track_meta = [SepsisTrackMetadata("MetabolomicsLCMS")]
 
     def _get_packages(self):
-        logger.info("Ingesting Sepsis metadata from {0}".format(self.path))
+        self._logger.info("Ingesting Sepsis metadata from {0}".format(self.path))
         # we have one package per Zip of analysed data, and we take the common
         # meta-data for each bpa-id
         folder_rows = defaultdict(list)
         for fname in glob(self.path + "/*.xlsx"):
-            logger.info("Processing Sepsis metadata file {0}".format(fname))
+            self._logger.info("Processing Sepsis metadata file {0}".format(fname))
             xlsx_info = self.metadata_info[os.path.basename(fname)]
             ticket = xlsx_info["ticket"]
             if not ticket:
@@ -1944,11 +1991,13 @@ class SepsisMetabolomicsAnalysedMetadata(BaseSepsisAnalysedMetadata):
         return packages
 
     def _get_resources(self):
-        logger.info("Ingesting Sepsis md5 file information from {0}".format(self.path))
+        self._logger.info(
+            "Ingesting Sepsis md5 file information from {0}".format(self.path)
+        )
         resources = []
         # one MD5 file per 'folder_name', so we just take every file and upload
         for md5_file in glob(self.path + "/*.md5"):
-            logger.info("Processing md5 file {0}".format(md5_file))
+            self._logger.info("Processing md5 file {0}".format(md5_file))
             for filename, md5, file_info in self.parse_md5file(md5_file):
                 resource = {}
                 resource["md5"] = resource["id"] = md5
@@ -2017,8 +2066,10 @@ class SepsisGenomicsAnalysedMetadata(BaseSepsisAnalysedMetadata):
         "skip": None,
     }
 
-    def __init__(self, metadata_path, contextual_metadata=None, metadata_info=None):
-        super().__init__()
+    def __init__(
+        self, logger, metadata_path, contextual_metadata=None, metadata_info=None
+    ):
+        super().__init__(logger, metadata_path)
         self.path = Path(metadata_path)
         self.contextual_metadata = contextual_metadata
         self.metadata_info = metadata_info
@@ -2026,12 +2077,12 @@ class SepsisGenomicsAnalysedMetadata(BaseSepsisAnalysedMetadata):
         self.bpam_track_meta = [SepsisGenomicsTrackMetadata("MetabolomicsLCMS")]
 
     def _get_packages(self):
-        logger.info("Ingesting Sepsis metadata from {0}".format(self.path))
+        self._logger.info("Ingesting Sepsis metadata from {0}".format(self.path))
         # we have one package per Zip of analysed data, and we take the common
         # meta-data for each bpa-id
         folder_rows = defaultdict(list)
         for fname in glob(self.path + "/*.xlsx"):
-            logger.info("Processing Sepsis metadata file {0}".format(fname))
+            self._logger.info("Processing Sepsis metadata file {0}".format(fname))
             xlsx_info = self.metadata_info[os.path.basename(fname)]
             ticket = xlsx_info["ticket"]
             if not ticket:
@@ -2107,11 +2158,13 @@ class SepsisGenomicsAnalysedMetadata(BaseSepsisAnalysedMetadata):
         return packages
 
     def _get_resources(self):
-        logger.info("Ingesting Sepsis md5 file information from {0}".format(self.path))
+        self._logger.info(
+            "Ingesting Sepsis md5 file information from {0}".format(self.path)
+        )
         resources = []
         # one MD5 file per 'folder_name', so we just take every file and upload
         for md5_file in glob(self.path + "/*.md5"):
-            logger.info("Processing md5 file {0}".format(md5_file))
+            self._logger.info("Processing md5 file {0}".format(md5_file))
             for filename, md5, file_info in self.parse_md5file(md5_file):
                 resource = {}
                 resource["md5"] = resource["id"] = md5
@@ -2173,8 +2226,10 @@ class SepsisProteomicsProteinDatabaseMetadata(BaseSepsisAnalysedMetadata):
         "skip": None,
     }
 
-    def __init__(self, metadata_path, contextual_metadata=None, metadata_info=None):
-        super().__init__()
+    def __init__(
+        self, logger, metadata_path, contextual_metadata=None, metadata_info=None
+    ):
+        super().__init__(logger, metadata_path)
         self.path = Path(metadata_path)
         self.contextual_metadata = contextual_metadata
         self.metadata_info = metadata_info
@@ -2182,12 +2237,12 @@ class SepsisProteomicsProteinDatabaseMetadata(BaseSepsisAnalysedMetadata):
         self.bpam_track_meta = []
 
     def _get_packages(self):
-        logger.info("Ingesting Sepsis metadata from {0}".format(self.path))
+        self._logger.info("Ingesting Sepsis metadata from {0}".format(self.path))
         # we have one package per Zip of analysed data, and we take the common
         # meta-data for each bpa-id
         folder_rows = defaultdict(list)
         for fname in glob(self.path + "/*.xlsx"):
-            logger.info("Processing Sepsis metadata file {0}".format(fname))
+            self._logger.info("Processing Sepsis metadata file {0}".format(fname))
             xlsx_info = self.metadata_info[os.path.basename(fname)]
             ticket = xlsx_info["ticket"]
             if not ticket:
@@ -2260,11 +2315,13 @@ class SepsisProteomicsProteinDatabaseMetadata(BaseSepsisAnalysedMetadata):
             xlsx_info = self.metadata_info[os.path.basename(fname)]
             rows += self.parse_spreadsheet(fname, self.metadata_info)
         by_filename = dict((t.file_name.strip(), t) for t in rows)
-        logger.info("Ingesting Sepsis md5 file information from {0}".format(self.path))
+        self._logger.info(
+            "Ingesting Sepsis md5 file information from {0}".format(self.path)
+        )
         resources = []
         # one MD5 file per 'folder_name', so we just take every file and upload
         for md5_file in glob(self.path + "/*.md5"):
-            logger.info("Processing md5 file {0}".format(md5_file))
+            self._logger.info("Processing md5 file {0}".format(md5_file))
             for filename, md5, file_info in self.parse_md5file(md5_file):
                 resource = {}
                 extra_data = by_filename.get(filename)

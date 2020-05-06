@@ -123,7 +123,8 @@ class BaseMetadata:
                 if isinstance(v, float):
                     obj[k] = str(round(v, 10))
 
-    def __init__(self):
+    def __init__(self, logger, *args, **kwargs):
+        self._logger = logger
         self._packages = self._resources = None
         self._linkage_xlsx = {}
 

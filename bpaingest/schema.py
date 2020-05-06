@@ -153,7 +153,9 @@ def generate_schemas(args):
             "Schema generation: %s / %s" % (class_info["project"], class_info["slug"])
         )
         dlpath = os.path.join(args.download_path, class_info["slug"])
-        with DownloadMetadata(project_cls, path=dlpath) as dlmeta:
+        with DownloadMetadata(
+            make_logger(class_info["slug"]), project_cls, path=dlpath
+        ) as dlmeta:
             meta = dlmeta.meta
             data_type = meta.ckan_data_type
             # multiple Metadata classes producing the same data type makes delete unsafe

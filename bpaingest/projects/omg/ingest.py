@@ -3,7 +3,7 @@ from collections import defaultdict
 
 from ...abstract import BaseMetadata
 
-from ...util import make_logger, sample_id_to_ckan_name, common_values
+from ...util import sample_id_to_ckan_name, common_values
 from urllib.parse import urljoin
 
 from glob import glob
@@ -19,7 +19,6 @@ from ...libs.ingest_utils import get_clean_number
 import os
 import re
 
-logger = make_logger(__name__)
 common_context = [OMGSampleContextual, OMGLibraryContextual]
 
 
@@ -124,8 +123,10 @@ class OMG10XRawIlluminaMetadata(OMGBaseMetadata):
         ],
     }
 
-    def __init__(self, metadata_path, contextual_metadata=None, metadata_info=None):
-        super().__init__()
+    def __init__(
+        self, logger, metadata_path, contextual_metadata=None, metadata_info=None
+    ):
+        super().__init__(logger, metadata_path)
         self.path = Path(metadata_path)
         self.contextual_metadata = contextual_metadata
         self.metadata_info = metadata_info
@@ -142,7 +143,7 @@ class OMG10XRawIlluminaMetadata(OMGBaseMetadata):
                 raise Exception("unable to find flowcell for filename: `%s'" % (fname))
             return m.groups()[0]
 
-        logger.info("Ingesting OMG metadata from {0}".format(self.path))
+        self._logger.info("Ingesting OMG metadata from {0}".format(self.path))
 
         def make_row_metadata(row):
             row_obj = {}
@@ -159,7 +160,7 @@ class OMG10XRawIlluminaMetadata(OMGBaseMetadata):
         fname_rows = defaultdict(list)
 
         for fname in glob(self.path + "/*.xlsx"):
-            logger.info(
+            self._logger.info(
                 "Processing OMG metadata file {0}".format(os.path.basename(fname))
             )
             for row in self.parse_spreadsheet(fname, self.metadata_info):
@@ -238,7 +239,9 @@ class OMG10XRawIlluminaMetadata(OMGBaseMetadata):
         return self.apply_location_generalisation(packages)
 
     def _get_resources(self):
-        logger.info("Ingesting OMG md5 file information from {0}".format(self.path))
+        self._logger.info(
+            "Ingesting OMG md5 file information from {0}".format(self.path)
+        )
         resources = []
         for md5_file in glob(self.path + "/*.md5"):
             for filename, md5, file_info in self.parse_md5file(md5_file):
@@ -327,8 +330,10 @@ class OMG10XRawMetadata(OMGBaseMetadata):
         ],
     }
 
-    def __init__(self, metadata_path, contextual_metadata=None, metadata_info=None):
-        super().__init__()
+    def __init__(
+        self, logger, metadata_path, contextual_metadata=None, metadata_info=None
+    ):
+        super().__init__(logger, metadata_path)
         self.path = Path(metadata_path)
         self.contextual_metadata = contextual_metadata
         self.metadata_info = metadata_info
@@ -337,10 +342,10 @@ class OMG10XRawMetadata(OMGBaseMetadata):
         self.library_to_sample = {}
 
     def _get_packages(self):
-        logger.info("Ingesting OMG metadata from {0}".format(self.path))
+        self._logger.info("Ingesting OMG metadata from {0}".format(self.path))
         packages = []
         for fname in glob(self.path + "/*.xlsx"):
-            logger.info(
+            self._logger.info(
                 "Processing OMG metadata file {0}".format(os.path.basename(fname))
             )
 
@@ -414,10 +419,12 @@ class OMG10XRawMetadata(OMGBaseMetadata):
         return self.apply_location_generalisation(packages)
 
     def _get_resources(self):
-        logger.info("Ingesting OMG md5 file information from {0}".format(self.path))
+        self._logger.info(
+            "Ingesting OMG md5 file information from {0}".format(self.path)
+        )
         resources = []
         for md5_file in glob(self.path + "/*.md5"):
-            logger.info("Processing md5 file {}".format(md5_file))
+            self._logger.info("Processing md5 file {}".format(md5_file))
             for filename, md5, file_info in self.parse_md5file(md5_file):
                 xlsx_info = self.metadata_info[os.path.basename(md5_file)]
                 ticket = xlsx_info["ticket"]
@@ -500,8 +507,10 @@ class OMG10XProcessedIlluminaMetadata(OMGBaseMetadata):
         ],
     }
 
-    def __init__(self, metadata_path, contextual_metadata=None, metadata_info=None):
-        super().__init__()
+    def __init__(
+        self, logger, metadata_path, contextual_metadata=None, metadata_info=None
+    ):
+        super().__init__(logger, metadata_path)
         self.path = Path(metadata_path)
         self.contextual_metadata = contextual_metadata
         self.metadata_info = metadata_info
@@ -518,10 +527,10 @@ class OMG10XProcessedIlluminaMetadata(OMGBaseMetadata):
                 raise Exception("unable to find flowcell for filename: `%s'" % (fname))
             return m.groups()[0]
 
-        logger.info("Ingesting OMG metadata from {0}".format(self.path))
+        self._logger.info("Ingesting OMG metadata from {0}".format(self.path))
         packages = []
         for fname in glob(self.path + "/*.xlsx"):
-            logger.info(
+            self._logger.info(
                 "Processing OMG metadata file {0}".format(os.path.basename(fname))
             )
             for row in self.parse_spreadsheet(fname, self.metadata_info):
@@ -590,10 +599,12 @@ class OMG10XProcessedIlluminaMetadata(OMGBaseMetadata):
         return self.apply_location_generalisation(packages)
 
     def _get_resources(self):
-        logger.info("Ingesting OMG md5 file information from {0}".format(self.path))
+        self._logger.info(
+            "Ingesting OMG md5 file information from {0}".format(self.path)
+        )
         resources = []
         for md5_file in glob(self.path + "/*.md5"):
-            logger.info("Processing md5 file {}".format(md5_file))
+            self._logger.info("Processing md5 file {}".format(md5_file))
             for filename, md5, file_info in self.parse_md5file(md5_file):
                 bpa_sample_id, flow_id = self.file_package[filename]
                 resource = file_info.copy()
@@ -699,8 +710,10 @@ class OMGExonCaptureMetadata(OMGBaseMetadata):
         ],
     }
 
-    def __init__(self, metadata_path, contextual_metadata=None, metadata_info=None):
-        super().__init__()
+    def __init__(
+        self, logger, metadata_path, contextual_metadata=None, metadata_info=None
+    ):
+        super().__init__(logger, metadata_path)
         self.path = Path(metadata_path)
         self.contextual_metadata = contextual_metadata
         self.metadata_info = metadata_info
@@ -712,10 +725,10 @@ class OMGExonCaptureMetadata(OMGBaseMetadata):
         return flow_id + "_" + index.replace("-", "").replace("_", "")
 
     def _get_packages(self):
-        logger.info("Ingesting OMG metadata from {0}".format(self.path))
+        self._logger.info("Ingesting OMG metadata from {0}".format(self.path))
         packages = []
         for fname in glob(self.path + "/*.xlsx"):
-            logger.info(
+            self._logger.info(
                 "Processing OMG metadata file {0}".format(os.path.basename(fname))
             )
             for row in self.parse_spreadsheet(fname, self.metadata_info):
@@ -808,10 +821,12 @@ class OMGExonCaptureMetadata(OMGBaseMetadata):
         return self.apply_location_generalisation(packages)
 
     def _get_resources(self):
-        logger.info("Ingesting OMG md5 file information from {0}".format(self.path))
+        self._logger.info(
+            "Ingesting OMG md5 file information from {0}".format(self.path)
+        )
         resources = []
         for md5_file in glob(self.path + "/*.md5"):
-            logger.info("Processing md5 file {}".format(md5_file))
+            self._logger.info("Processing md5 file {}".format(md5_file))
             for filename, md5, file_info in self.parse_md5file(md5_file):
                 resource = file_info.copy()
                 resource["md5"] = resource["id"] = md5
@@ -900,18 +915,20 @@ class OMGGenomicsNovaseqMetadata(OMGBaseMetadata):
         ],
     }
 
-    def __init__(self, metadata_path, contextual_metadata=None, metadata_info=None):
-        super().__init__()
+    def __init__(
+        self, logger, metadata_path, contextual_metadata=None, metadata_info=None
+    ):
+        super().__init__(logger, metadata_path)
         self.path = Path(metadata_path)
         self.contextual_metadata = contextual_metadata
         self.metadata_info = metadata_info
         self.track_meta = OMGTrackMetadata()
 
     def _get_packages(self):
-        logger.info("Ingesting OMG metadata from {0}".format(self.path))
+        self._logger.info("Ingesting OMG metadata from {0}".format(self.path))
         packages = []
         for fname in glob(self.path + "/*.xlsx"):
-            logger.info(
+            self._logger.info(
                 "Processing OMG metadata file {0}".format(os.path.basename(fname))
             )
             for row in self.parse_spreadsheet(fname, self.metadata_info):
@@ -980,10 +997,12 @@ class OMGGenomicsNovaseqMetadata(OMGBaseMetadata):
         return self.apply_location_generalisation(packages)
 
     def _get_resources(self):
-        logger.info("Ingesting OMG md5 file information from {0}".format(self.path))
+        self._logger.info(
+            "Ingesting OMG md5 file information from {0}".format(self.path)
+        )
         resources = []
         for md5_file in glob(self.path + "/*.md5"):
-            logger.info("Processing md5 file {}".format(md5_file))
+            self._logger.info("Processing md5 file {}".format(md5_file))
             for filename, md5, file_info in self.parse_md5file(md5_file):
                 resource = file_info.copy()
                 resource["md5"] = resource["id"] = md5
@@ -1061,8 +1080,10 @@ class OMGGenomicsHiSeqMetadata(OMGBaseMetadata):
         ],
     }
 
-    def __init__(self, metadata_path, contextual_metadata=None, metadata_info=None):
-        super().__init__()
+    def __init__(
+        self, logger, metadata_path, contextual_metadata=None, metadata_info=None
+    ):
+        super().__init__(logger, metadata_path)
         self.path = Path(metadata_path)
         self.contextual_metadata = contextual_metadata
         self.metadata_info = metadata_info
@@ -1077,10 +1098,10 @@ class OMGGenomicsHiSeqMetadata(OMGBaseMetadata):
                 raise Exception("unable to find flowcell for filename: `%s'" % (fname))
             return m.groups()[0]
 
-        logger.info("Ingesting OMG metadata from {0}".format(self.path))
+        self._logger.info("Ingesting OMG metadata from {0}".format(self.path))
         packages = []
         for fname in glob(self.path + "/*.xlsx"):
-            logger.info(
+            self._logger.info(
                 "Processing OMG metadata file {0}".format(os.path.basename(fname))
             )
             flow_id = get_flow_id(fname)
@@ -1152,10 +1173,12 @@ class OMGGenomicsHiSeqMetadata(OMGBaseMetadata):
         return self.apply_location_generalisation(packages)
 
     def _get_resources(self):
-        logger.info("Ingesting OMG md5 file information from {0}".format(self.path))
+        self._logger.info(
+            "Ingesting OMG md5 file information from {0}".format(self.path)
+        )
         resources = []
         for md5_file in glob(self.path + "/*.md5"):
-            logger.info("Processing md5 file {}".format(md5_file))
+            self._logger.info("Processing md5 file {}".format(md5_file))
             for filename, md5, file_info in self.parse_md5file(md5_file):
                 resource = file_info.copy()
                 resource["md5"] = resource["id"] = md5
@@ -1253,8 +1276,10 @@ class OMGGenomicsDDRADMetadata(OMGBaseMetadata):
         "skip": None,
     }
 
-    def __init__(self, metadata_path, contextual_metadata=None, metadata_info=None):
-        super().__init__()
+    def __init__(
+        self, logger, metadata_path, contextual_metadata=None, metadata_info=None
+    ):
+        super().__init__(logger, metadata_path)
         self.path = Path(metadata_path)
         self.contextual_metadata = contextual_metadata
         self.metadata_info = metadata_info
@@ -1270,10 +1295,10 @@ class OMGGenomicsDDRADMetadata(OMGBaseMetadata):
                 raise Exception("unable to find flowcell for filename: `%s'" % (fname))
             return m.groups()[0]
 
-        logger.info("Ingesting OMG metadata from {0}".format(self.path))
+        self._logger.info("Ingesting OMG metadata from {0}".format(self.path))
         packages = []
         for fname in glob(self.path + "/*.xlsx"):
-            logger.info(
+            self._logger.info(
                 "Processing OMG metadata file {0}".format(os.path.basename(fname))
             )
             flow_id = get_flow_id(fname)
@@ -1334,10 +1359,12 @@ class OMGGenomicsDDRADMetadata(OMGBaseMetadata):
         return self.apply_location_generalisation(packages)
 
     def _get_resources(self):
-        logger.info("Ingesting OMG md5 file information from {0}".format(self.path))
+        self._logger.info(
+            "Ingesting OMG md5 file information from {0}".format(self.path)
+        )
         resources = []
         for md5_file in glob(self.path + "/*.md5"):
-            logger.info("Processing md5 file {}".format(md5_file))
+            self._logger.info("Processing md5 file {}".format(md5_file))
             for filename, md5, file_info in self.parse_md5file(md5_file):
                 resource = file_info.copy()
                 resource["md5"] = resource["id"] = md5
@@ -1427,22 +1454,24 @@ class OMGGenomicsPacbioMetadata(OMGBaseMetadata):
         ],
     }
 
-    def __init__(self, metadata_path, contextual_metadata=None, metadata_info=None):
-        super().__init__()
+    def __init__(
+        self, logger, metadata_path, contextual_metadata=None, metadata_info=None
+    ):
+        super().__init__(logger, metadata_path)
         self.path = Path(metadata_path)
         self.contextual_metadata = contextual_metadata
         self.metadata_info = metadata_info
         self.track_meta = OMGTrackMetadata()
 
     def _get_packages(self):
-        logger.info("Ingesting OMG metadata from {0}".format(self.path))
+        self._logger.info("Ingesting OMG metadata from {0}".format(self.path))
         packages = []
 
         filename_re = re.compile(r"^OMG_.*_(\d{8})_metadata\.xlsx")
         objs = []
         # this is a folder-oriented ingest, so we crush each xlsx down into a single row
         for fname in glob(self.path + "/*.xlsx"):
-            logger.info(
+            self._logger.info(
                 "Processing OMG metadata file {0}".format(os.path.basename(fname))
             )
 
@@ -1517,10 +1546,12 @@ class OMGGenomicsPacbioMetadata(OMGBaseMetadata):
         return self.apply_location_generalisation(packages)
 
     def _get_resources(self):
-        logger.info("Ingesting OMG md5 file information from {0}".format(self.path))
+        self._logger.info(
+            "Ingesting OMG md5 file information from {0}".format(self.path)
+        )
         resources = []
         for md5_file in glob(self.path + "/*.md5"):
-            logger.info("Processing md5 file {}".format(md5_file))
+            self._logger.info("Processing md5 file {}".format(md5_file))
             for filename, md5, file_info in self.parse_md5file(md5_file):
                 resource = file_info.copy()
                 resource["md5"] = resource["id"] = md5
@@ -1611,18 +1642,20 @@ class OMGONTPromethionMetadata(OMGBaseMetadata):
         ],
     }
 
-    def __init__(self, metadata_path, contextual_metadata=None, metadata_info=None):
-        super().__init__()
+    def __init__(
+        self, logger, metadata_path, contextual_metadata=None, metadata_info=None
+    ):
+        super().__init__(logger, metadata_path)
         self.path = Path(metadata_path)
         self.contextual_metadata = contextual_metadata
         self.metadata_info = metadata_info
         self.track_meta = OMGTrackMetadata()
 
     def _get_packages(self):
-        logger.info("Ingesting OMG metadata from {0}".format(self.path))
+        self._logger.info("Ingesting OMG metadata from {0}".format(self.path))
         packages = []
         for fname in glob(self.path + "/*.xlsx"):
-            logger.info("Processing OMG metadata file {0}".format(fname))
+            self._logger.info("Processing OMG metadata file {0}".format(fname))
             rows = self.parse_spreadsheet(fname, self.metadata_info)
 
             def track_get(k):
@@ -1682,10 +1715,10 @@ class OMGONTPromethionMetadata(OMGBaseMetadata):
         return self.apply_location_generalisation(packages)
 
     def _get_resources(self):
-        logger.info("Ingesting md5 file information from {0}".format(self.path))
+        self._logger.info("Ingesting md5 file information from {0}".format(self.path))
         resources = []
         for md5_file in glob(self.path + "/*.md5"):
-            logger.info("Processing md5 file {0}".format(md5_file))
+            self._logger.info("Processing md5 file {0}".format(md5_file))
             for filename, md5, file_info in self.parse_md5file(md5_file):
                 resource = file_info.copy()
                 resource["bpa_library_id"] = ingest_utils.extract_ands_id(

@@ -11,7 +11,9 @@ logger = make_logger(__name__)
 
 
 class DownloadMetadata(object):
-    def __init__(self, project_class, path=None, force_fetch=False, metadata_info=None):
+    def __init__(
+        self, logger, project_class, path=None, force_fetch=False, metadata_info=None
+    ):
         self.cleanup = True
         self.fetch = True
         self._set_path(path)
@@ -29,15 +31,15 @@ class DownloadMetadata(object):
             self._fetch_metadata(project_class, self.contextual, metadata_info)
 
         self.project_class = project_class
-        self.meta = self.make_meta()
+        self.meta = self.make_meta(logger)
 
-    def make_meta(self):
+    def make_meta(self, logger):
         meta_kwargs = {}
         with open(self.info_json, "r") as fd:
             meta_kwargs["metadata_info"] = json.load(fd)
         if self.contextual:
             meta_kwargs["contextual_metadata"] = [c(p) for (p, c) in self.contextual]
-        return self.project_class(self.path, **meta_kwargs)
+        return self.project_class(logger, self.path, **meta_kwargs)
 
     def _fetch_metadata(self, project_class, contextual, metadata_info):
         for metadata_url in project_class.metadata_urls:
@@ -82,7 +84,8 @@ class DownloadMetadata(object):
             self.cleanup = False
             if os.access(self.info_json, os.R_OK):
                 logger.info(
-                    "skipping metadata download, complete download in directory `%s' exists" % path
+                    "skipping metadata download, complete download in directory `%s' exists"
+                    % path
                 )
                 self.fetch = False
         else:

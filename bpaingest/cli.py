@@ -113,7 +113,9 @@ def sync(args):
     """sync a project"""
     ckan = make_ckan_api(args)
     with DownloadMetadata(
-        project_cli_options[args.project_name], path=args.download_path
+        make_logger(args.project_name),
+        project_cli_options[args.project_name],
+        path=args.download_path,
     ) as dlmeta:
         sync_metadata(
             ckan,
@@ -145,7 +147,9 @@ def genhash(args):
     data, and generate expected E-Tag and SHA256 values.
     """
     with DownloadMetadata(
-        project_cli_options[args.project_name], path=args.download_path
+        make_logger(args.project_name),
+        project_cli_options[args.project_name],
+        path=args.download_path,
     ) as dlmeta:
         genhash_fn(ckan, dlmeta.meta, args.mirror_path, num_threads=4)
         print_accounts()

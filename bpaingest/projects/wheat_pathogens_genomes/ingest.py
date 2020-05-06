@@ -8,10 +8,8 @@ from glob import glob
 from ...libs.excel_wrapper import make_field_definition as fld
 from ...libs import ingest_utils
 
-from ...util import make_logger, sample_id_to_ckan_name, common_values
+from ...util import sample_id_to_ckan_name, common_values
 from ...abstract import BaseMetadata
-
-logger = make_logger(__name__)
 
 
 class WheatPathogensGenomesMetadata(BaseMetadata):
@@ -64,15 +62,15 @@ class WheatPathogensGenomesMetadata(BaseMetadata):
         },
     }
 
-    def __init__(self, metadata_path, metadata_info=None):
-        super().__init__()
+    def __init__(self, logger, metadata_path, metadata_info=None):
+        super().__init__(logger, metadata_path)
         self.path = Path(metadata_path)
         self.metadata_info = metadata_info
 
     def _get_packages(self):
         packages = []
         for fname in glob(self.path + "/Wheat_pathogens_genomic_metadata.xlsx"):
-            logger.info(
+            self._logger.info(
                 "Processing Stemcells Transcriptomics metadata file {0}".format(fname)
             )
             # there are duplicates by BPA ID -- the spreadsheet is per-file data

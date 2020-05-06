@@ -5,13 +5,11 @@ from urllib.parse import urljoin
 
 from ...libs.excel_wrapper import make_field_definition as fld
 from ...libs import ingest_utils
-from ...util import make_logger, sample_id_to_ckan_name
+from ...util import sample_id_to_ckan_name
 from ...abstract import BaseMetadata
 from ...util import clean_tag_name
 from . import files
 from .runs import parse_run_data, BLANK_RUN
-
-logger = make_logger(__name__)
 
 
 class WheatCultivarsMetadata(BaseMetadata):
@@ -43,8 +41,8 @@ class WheatCultivarsMetadata(BaseMetadata):
         "options": {"sheet_name": "Characteristics", "header_length": 1},
     }
 
-    def __init__(self, metadata_path, metadata_info=None):
-        super().__init__()
+    def __init__(self, logger, metadata_path, metadata_info=None):
+        super().__init__(logger, metadata_path)
         self.metadata_info = metadata_info
         self.path = Path(metadata_path)
         self.runs = parse_run_data(self.path)
@@ -52,7 +50,7 @@ class WheatCultivarsMetadata(BaseMetadata):
     def _get_packages(self):
         packages = []
         for fname in glob(self.path + "/*.xlsx"):
-            logger.info(
+            self._logger.info(
                 "Processing Stemcells Transcriptomics metadata file {0}".format(fname)
             )
             for row in self.parse_spreadsheet(fname, self.metadata_info):
@@ -101,10 +99,10 @@ class WheatCultivarsMetadata(BaseMetadata):
         return packages
 
     def _get_resources(self):
-        logger.info("Ingesting md5 file information from {0}".format(self.path))
+        self._logger.info("Ingesting md5 file information from {0}".format(self.path))
         resources = []
         for md5_file in glob(self.path + "/*.md5"):
-            logger.info("Processing md5 file {0}".format(md5_file))
+            self._logger.info("Processing md5 file {0}".format(md5_file))
             for filename, md5, file_info in files.parse_md5_file(md5_file):
                 resource = file_info.copy()
                 resource["md5"] = resource["id"] = md5

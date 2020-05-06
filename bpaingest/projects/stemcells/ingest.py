@@ -4,7 +4,7 @@ from collections import defaultdict
 from hashlib import md5 as md5hash
 
 from ...libs import ingest_utils
-from ...util import make_logger, sample_id_to_ckan_name, common_values, clean_tag_name
+from ...util import sample_id_to_ckan_name, common_values, clean_tag_name
 from ...abstract import BaseMetadata
 from ...libs.excel_wrapper import (
     ExcelWrapper,
@@ -25,9 +25,6 @@ from glob import glob
 
 import os
 import re
-
-logger = make_logger(__name__)
-
 
 common_skip = [
     re.compile(r"^._metadata\.xlsx$"),
@@ -66,15 +63,17 @@ class StemcellsTranscriptomeMetadata(BaseMetadata):
     }
     md5 = {"match": [files.transcriptome_filename_re], "skip": common_skip}
 
-    def __init__(self, metadata_path, contextual_metadata=None, metadata_info=None):
-        super().__init__()
+    def __init__(
+        self, logger, metadata_path, contextual_metadata=None, metadata_info=None
+    ):
+        super().__init__(logger, metadata_path)
         self.path = Path(metadata_path)
         self.contextual_metadata = contextual_metadata
         self.metadata_info = metadata_info
         self.track_meta = StemcellsTrackMetadata()
 
     def _get_packages(self):
-        logger.info(
+        self._logger.info(
             "Ingesting Stemcells Transcriptomics metadata from {0}".format(self.path)
         )
         packages = []
@@ -82,7 +81,7 @@ class StemcellsTranscriptomeMetadata(BaseMetadata):
         # this is harmless as they have to precisly match, and sample_id is the primary key
         all_rows = set()
         for fname in glob(self.path + "/*.xlsx"):
-            logger.info(
+            self._logger.info(
                 "Processing Stemcells Transcriptomics metadata file {0}".format(fname)
             )
             all_rows.update(
@@ -140,10 +139,12 @@ class StemcellsTranscriptomeMetadata(BaseMetadata):
         return packages
 
     def _get_resources(self):
-        logger.info("Ingesting Sepsis md5 file information from {0}".format(self.path))
+        self._logger.info(
+            "Ingesting Sepsis md5 file information from {0}".format(self.path)
+        )
         resources = []
         for md5_file in glob(self.path + "/*.md5"):
-            logger.info("Processing md5 file {0}".format(md5_file))
+            self._logger.info("Processing md5 file {0}".format(md5_file))
             for filename, md5, file_info in self.parse_md5file(md5_file):
                 resource = file_info.copy()
                 resource["md5"] = resource["id"] = md5
@@ -182,21 +183,27 @@ class StemcellsSmallRNAMetadata(BaseMetadata):
     }
     md5 = {"match": [files.smallrna_filename_re], "skip": common_skip}
 
-    def __init__(self, metadata_path, contextual_metadata=None, metadata_info=None):
-        super().__init__()
+    def __init__(
+        self, logger, metadata_path, contextual_metadata=None, metadata_info=None
+    ):
+        super().__init__(logger, metadata_path)
         self.path = Path(metadata_path)
         self.contextual_metadata = contextual_metadata
         self.metadata_info = metadata_info
         self.track_meta = StemcellsTrackMetadata()
 
     def _get_packages(self):
-        logger.info("Ingesting Stemcells SmallRNA metadata from {0}".format(self.path))
+        self._logger.info(
+            "Ingesting Stemcells SmallRNA metadata from {0}".format(self.path)
+        )
         packages = []
         # duplicate rows are an issue in this project. we filter them out by uniquifying
         # this is harmless as they have to precisly match, and sample_id is the primary key
         all_rows = set()
         for fname in glob(self.path + "/*.xlsx"):
-            logger.info("Processing Stemcells SmallRNA metadata file {0}".format(fname))
+            self._logger.info(
+                "Processing Stemcells SmallRNA metadata file {0}".format(fname)
+            )
             all_rows.update(
                 StemcellsSmallRNAMetadata.parse_spreadsheet(fname, self.metadata_info)
             )
@@ -250,10 +257,12 @@ class StemcellsSmallRNAMetadata(BaseMetadata):
         return packages
 
     def _get_resources(self):
-        logger.info("Ingesting Sepsis md5 file information from {0}".format(self.path))
+        self._logger.info(
+            "Ingesting Sepsis md5 file information from {0}".format(self.path)
+        )
         resources = []
         for md5_file in glob(self.path + "/*.md5"):
-            logger.info("Processing md5 file {0}".format(md5_file))
+            self._logger.info("Processing md5 file {0}".format(md5_file))
             for filename, md5, file_info in self.parse_md5file(md5_file):
                 resource = file_info.copy()
                 resource["md5"] = resource["id"] = md5
@@ -303,8 +312,10 @@ class StemcellsSingleCellRNASeqMetadata(BaseMetadata):
         "skip": common_skip,
     }
 
-    def __init__(self, metadata_path, contextual_metadata=None, metadata_info=None):
-        super().__init__()
+    def __init__(
+        self, logger, metadata_path, contextual_metadata=None, metadata_info=None
+    ):
+        super().__init__(logger, metadata_path)
         self.path = Path(metadata_path)
         self.contextual_metadata = contextual_metadata
         self.metadata_info = metadata_info
@@ -312,7 +323,7 @@ class StemcellsSingleCellRNASeqMetadata(BaseMetadata):
         self.flow_lookup = {}
 
     def _get_packages(self):
-        logger.info(
+        self._logger.info(
             "Ingesting Stemcells SingleCellRNASeq metadata from {0}".format(self.path)
         )
         packages = []
@@ -320,7 +331,7 @@ class StemcellsSingleCellRNASeqMetadata(BaseMetadata):
         # this is harmless as they have to precisly match, and sample_id is the primary key
         all_rows = set()
         for fname in glob(self.path + "/*.xlsx"):
-            logger.info(
+            self._logger.info(
                 "Processing Stemcells SingleCellRNASeq metadata file {0}".format(fname)
             )
             next_rows = StemcellsSingleCellRNASeqMetadata.parse_spreadsheet(
@@ -343,7 +354,9 @@ class StemcellsSingleCellRNASeqMetadata(BaseMetadata):
             track_meta = self.track_meta.get(row.ticket)
             # check that it really is a range
             if "-" not in sample_id_range:
-                logger.error("Skipping row with BPA ID Range `%s'" % (sample_id_range))
+                self._logger.error(
+                    "Skipping row with BPA ID Range `%s'" % (sample_id_range)
+                )
                 continue
             # NB: this isn't really the BPA ID, it's the first BPA ID
             sample_id = ingest_utils.extract_ands_id(sample_id_range.split("-", 1)[0])
@@ -393,10 +406,12 @@ class StemcellsSingleCellRNASeqMetadata(BaseMetadata):
         return packages
 
     def _get_resources(self):
-        logger.info("Ingesting Sepsis md5 file information from {0}".format(self.path))
+        self._logger.info(
+            "Ingesting Sepsis md5 file information from {0}".format(self.path)
+        )
         resources = []
         for md5_file in glob(self.path + "/*.md5"):
-            logger.info("Processing md5 file {0}".format(md5_file))
+            self._logger.info("Processing md5 file {0}".format(md5_file))
             for filename, md5, file_info in self.parse_md5file(md5_file):
                 if file_info is None:
                     raise Exception("cannot parse filename: %s" % filename)
@@ -462,15 +477,17 @@ class StemcellsMetabolomicsMetadata(BaseMetadata):
     }
     md5 = {"match": [files.metabolomics_filename_re], "skip": common_skip}
 
-    def __init__(self, metadata_path, contextual_metadata=None, metadata_info=None):
-        super().__init__()
+    def __init__(
+        self, logger, metadata_path, contextual_metadata=None, metadata_info=None
+    ):
+        super().__init__(logger, metadata_path)
         self.path = Path(metadata_path)
         self.contextual_metadata = contextual_metadata
         self.metadata_info = metadata_info
         self.track_meta = StemcellsTrackMetadata()
 
     def _get_packages(self):
-        logger.info(
+        self._logger.info(
             "Ingesting Stemcells Metabolomics metadata from {0}".format(self.path)
         )
         packages = []
@@ -478,7 +495,7 @@ class StemcellsMetabolomicsMetadata(BaseMetadata):
         # this is harmless as they have to precisly match, and sample_id is the primary key
         all_rows = set()
         for fname in glob(self.path + "/*.xlsx"):
-            logger.info(
+            self._logger.info(
                 "Processing Stemcells Metabolomics metadata file {0}".format(fname)
             )
             all_rows.update(
@@ -544,10 +561,12 @@ class StemcellsMetabolomicsMetadata(BaseMetadata):
         return packages
 
     def _get_resources(self):
-        logger.info("Ingesting Sepsis md5 file information from {0}".format(self.path))
+        self._logger.info(
+            "Ingesting Sepsis md5 file information from {0}".format(self.path)
+        )
         resources = []
         for md5_file in glob(self.path + "/*.md5"):
-            logger.info("Processing md5 file {0}".format(md5_file))
+            self._logger.info("Processing md5 file {0}".format(md5_file))
             for filename, md5, file_info in self.parse_md5file(md5_file):
                 resource = file_info.copy()
                 resource["md5"] = resource["id"] = md5
@@ -575,13 +594,13 @@ class StemcellsProteomicsBaseMetadata(BaseMetadata):
     organization = "bpa-stemcells"
 
     def __init__(self, *args, **kwargs):
-        super().__init__()
+        super().__init__(*args, **kwargs)
         self.filename_metadata = {}
 
     def read_all_rows(self, mode):
         all_rows = set()
         for fname in glob(self.path + "/*.xlsx"):
-            logger.info(
+            self._logger.info(
                 "Processing Stemcells Proteomics metadata file {0}".format(fname)
             )
             xlsx_info = self.metadata_info[os.path.basename(fname)]
@@ -650,7 +669,7 @@ class StemcellsProteomicsBaseMetadata(BaseMetadata):
             additional_context=additional_context,
         )
         for error in wrapper.get_errors():
-            logger.error(error)
+            self._logger.error(error)
         rows = list(wrapper.get_all())
         return rows
 
@@ -662,15 +681,17 @@ class StemcellsProteomicsMetadata(StemcellsProteomicsBaseMetadata):
         "skip": common_skip,
     }
 
-    def __init__(self, metadata_path, contextual_metadata=None, metadata_info=None):
-        super().__init__()
+    def __init__(
+        self, logger, metadata_path, contextual_metadata=None, metadata_info=None
+    ):
+        super().__init__(logger, metadata_path)
         self.path = Path(metadata_path)
         self.contextual_metadata = contextual_metadata
         self.metadata_info = metadata_info
         self.track_meta = StemcellsTrackMetadata()
 
     def _get_packages(self):
-        logger.info(
+        self._logger.info(
             "Ingesting Stemcells Proteomics metadata from {0}".format(self.path)
         )
         packages = []
@@ -728,10 +749,12 @@ class StemcellsProteomicsMetadata(StemcellsProteomicsBaseMetadata):
         return packages
 
     def _get_resources(self):
-        logger.info("Ingesting Sepsis md5 file information from {0}".format(self.path))
+        self._logger.info(
+            "Ingesting Sepsis md5 file information from {0}".format(self.path)
+        )
         resources = []
         for md5_file in glob(self.path + "/*.md5"):
-            logger.info("Processing md5 file {0}".format(md5_file))
+            self._logger.info("Processing md5 file {0}".format(md5_file))
             for filename, md5, file_info in self.parse_md5file(md5_file):
                 if file_info is None:
                     if not files.proteomics_pool_filename_re.match(filename):
@@ -765,8 +788,10 @@ class StemcellsProteomicsPoolMetadata(StemcellsProteomicsBaseMetadata):
     pool = True
     md5 = {"match": [files.proteomics_pool_filename_re], "skip": common_skip}
 
-    def __init__(self, metadata_path, contextual_metadata=None, metadata_info=None):
-        super().__init__()
+    def __init__(
+        self, logger, metadata_path, contextual_metadata=None, metadata_info=None
+    ):
+        super().__init__(logger, metadata_path)
         self.path = Path(metadata_path)
         self.contextual_metadata = contextual_metadata
         self.metadata_info = metadata_info
@@ -926,8 +951,10 @@ class StemcellsProteomicsAnalysedMetadata(BaseMetadata):
         "skip": common_skip,
     }
 
-    def __init__(self, metadata_path, contextual_metadata=None, metadata_info=None):
-        super().__init__()
+    def __init__(
+        self, logger, metadata_path, contextual_metadata=None, metadata_info=None
+    ):
+        super().__init__(logger, metadata_path)
         self.path = Path(metadata_path)
         self.contextual_metadata = contextual_metadata
         self.metadata_info = metadata_info
@@ -1060,8 +1087,10 @@ class StemcellsMetabolomicsAnalysedMetadata(BaseMetadata):
     }
     md5 = {"match": [re.compile(r"^.*$"),], "skip": common_skip}
 
-    def __init__(self, metadata_path, contextual_metadata=None, metadata_info=None):
-        super().__init__()
+    def __init__(
+        self, logger, metadata_path, contextual_metadata=None, metadata_info=None
+    ):
+        super().__init__(logger, metadata_path)
         self.path = Path(metadata_path)
         self.contextual_metadata = contextual_metadata
         self.metadata_info = metadata_info
@@ -1209,15 +1238,17 @@ class StemcellsTranscriptomeAnalysedMetadata(BaseMetadata):
     }
     md5 = {"match": [re.compile(r"^.*$"),], "skip": common_skip}
 
-    def __init__(self, metadata_path, contextual_metadata=None, metadata_info=None):
-        super().__init__()
+    def __init__(
+        self, logger, metadata_path, contextual_metadata=None, metadata_info=None
+    ):
+        super().__init__(logger, metadata_path)
         self.path = Path(metadata_path)
         self.contextual_metadata = contextual_metadata
         self.metadata_info = metadata_info
         self.track_meta = StemcellsTrackMetadata()
 
     def _get_packages(self):
-        logger.info("Ingesting Stemcells metadata from {0}".format(self.path))
+        self._logger.info("Ingesting Stemcells metadata from {0}".format(self.path))
         # we have one package per Zip of analysed data, and we take the common
         # meta-data for each bpa-id
         folder_rows = defaultdict(list)
@@ -1273,11 +1304,13 @@ class StemcellsTranscriptomeAnalysedMetadata(BaseMetadata):
         return packages
 
     def _get_resources(self):
-        logger.info("Ingesting Sepsis md5 file information from {0}".format(self.path))
+        self._logger.info(
+            "Ingesting Sepsis md5 file information from {0}".format(self.path)
+        )
         resources = []
         # one MD5 file per 'folder_name', so we just take every file and upload
         for md5_file in glob(self.path + "/*.md5"):
-            logger.info("Processing md5 file {0}".format(md5_file))
+            self._logger.info("Processing md5 file {0}".format(md5_file))
             for filename, md5, file_info in self.parse_md5file(md5_file):
                 resource = file_info.copy()
                 resource = {}

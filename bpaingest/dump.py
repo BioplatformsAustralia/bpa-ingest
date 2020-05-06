@@ -82,7 +82,9 @@ def dump_state(args):
             % (class_info["project"], class_info["slug"])
         )
         dlpath = os.path.join(args.download_path, class_info["slug"])
-        with DownloadMetadata(class_info["cls"], path=dlpath) as dlmeta:
+        with DownloadMetadata(
+            make_logger(class_info["slug"]), class_info["cls"], path=dlpath
+        ) as dlmeta:
             meta = dlmeta.meta
             data_type = meta.ckan_data_type
             data_type_meta[data_type] = meta

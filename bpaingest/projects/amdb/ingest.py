@@ -13,7 +13,6 @@ from ...util import (
     apply_license,
     sample_id_to_ckan_name,
     common_values,
-    make_logger,
     one,
 )
 from .contextual import (
@@ -26,8 +25,6 @@ from .tracking import (
     MarineMicrobesGoogleTrackMetadata,
     MarineMicrobesTrackMetadata,
 )
-
-logger = make_logger(__name__)
 
 common_context = [
     AustralianMicrobiomeSampleContextual,
@@ -86,8 +83,10 @@ class AccessAMDContextualMetadata(AMDBaseMetadata):
     contextual_classes = common_context
     metadata_urls = []
 
-    def __init__(self, metadata_path, contextual_metadata=None, metadata_info=None):
-        super().__init__()
+    def __init__(
+        self, logger, metadata_path, contextual_metadata=None, metadata_info=None
+    ):
+        super().__init__(logger, metadata_path)
         self.contextual_metadata = contextual_metadata
 
     def _get_packages(self):
@@ -172,8 +171,10 @@ class BASEAmpliconsMetadata(AMDBaseMetadata):
         "skip": common_skip + files.base_amplicon_control_regexps,
     }
 
-    def __init__(self, metadata_path, contextual_metadata=None, metadata_info=None):
-        super(BASEAmpliconsMetadata, self).__init__()
+    def __init__(
+        self, logger, metadata_path, contextual_metadata=None, metadata_info=None
+    ):
+        super().__init__(logger, metadata_path)
         self.path = Path(metadata_path)
         self.contextual_metadata = contextual_metadata
         self.metadata_info = metadata_info
@@ -188,10 +189,10 @@ class BASEAmpliconsMetadata(AMDBaseMetadata):
                 raise Exception("unable to find flowcell for filename: `%s'" % (fname))
             return m.groups()[0]
 
-        logger.info("Ingesting BASE Amplicon metadata from {0}".format(self.path))
+        self._logger.info("Ingesting BASE Amplicon metadata from {0}".format(self.path))
         packages = []
         for fname in glob(self.path + "/*.xlsx"):
-            logger.info(
+            self._logger.info(
                 "Processing BASE Amplicon metadata file {0}".format(
                     os.path.basename(fname)
                 )
@@ -297,14 +298,14 @@ class BASEAmpliconsMetadata(AMDBaseMetadata):
         return packages
 
     def _get_resources(self):
-        logger.info(
+        self._logger.info(
             "Ingesting BASE Amplicon md5 file information from {0}".format(self.path)
         )
         resources = []
 
         for md5_file in glob(self.path + "/*.md5"):
             index_linkage = os.path.basename(md5_file) in self.index_linkage_md5s
-            logger.info("Processing md5 file {}".format(md5_file))
+            self._logger.info("Processing md5 file {}".format(md5_file))
             for filename, md5, file_info in self.parse_md5file(md5_file):
                 sample_id = ingest_utils.extract_ands_id(file_info.get("id"))
                 resource = file_info.copy()
@@ -351,8 +352,10 @@ class BASEAmpliconsControlMetadata(AMDBaseMetadata):
         "skip": common_skip + files.base_amplicon_regexps,
     }
 
-    def __init__(self, metadata_path, contextual_metadata=None, metadata_info=None):
-        super(BASEAmpliconsControlMetadata, self).__init__()
+    def __init__(
+        self, logger, metadata_path, contextual_metadata=None, metadata_info=None
+    ):
+        super().__init__(logger, metadata_path)
         self.path = Path(metadata_path)
         self.metadata_info = metadata_info
         self.contextual_metadata = contextual_metadata
@@ -360,7 +363,7 @@ class BASEAmpliconsControlMetadata(AMDBaseMetadata):
 
     def md5_lines(self):
         for md5_file in glob(self.path + "/*.md5"):
-            logger.info("Processing md5 file {}".format(md5_file))
+            self._logger.info("Processing md5 file {}".format(md5_file))
             for filename, md5, file_info in self.parse_md5file(md5_file):
                 yield filename, md5, md5_file, file_info
 
@@ -497,8 +500,10 @@ class BASEMetagenomicsMetadata(AMDBaseMetadata):
         ("8271_2", "H9EV8ADXX"),
     ]
 
-    def __init__(self, metadata_path, contextual_metadata=None, metadata_info=None):
-        super(BASEMetagenomicsMetadata, self).__init__()
+    def __init__(
+        self, logger, metadata_path, contextual_metadata=None, metadata_info=None
+    ):
+        super().__init__(logger, metadata_path)
         self.path = Path(metadata_path)
         self.contextual_metadata = contextual_metadata
         self.metadata_info = metadata_info
@@ -573,11 +578,15 @@ class BASEMetagenomicsMetadata(AMDBaseMetadata):
         def get_flow_id(fname):
             m = xlsx_re.match(fname)
             if not m:
-                logger.warning("unable to find flowcell for filename: `%s'" % (fname))
+                self._logger.warning(
+                    "unable to find flowcell for filename: `%s'" % (fname)
+                )
                 return None
             return m.groups()[0]
 
-        logger.info("Ingesting BASE Metagenomics metadata from {0}".format(self.path))
+        self._logger.info(
+            "Ingesting BASE Metagenomics metadata from {0}".format(self.path)
+        )
         packages = []
 
         class FakePilotRow(object):
@@ -623,7 +632,7 @@ class BASEMetagenomicsMetadata(AMDBaseMetadata):
         # we simply skip over the duplicates, which don't have any significant data differences
         generated_packages = set()
         for fname in glob(self.path + "/*.xlsx"):
-            logger.info(
+            self._logger.info(
                 "Processing BASE Metagenomics metadata file {0}".format(
                     os.path.basename(fname)
                 )
@@ -636,7 +645,7 @@ class BASEMetagenomicsMetadata(AMDBaseMetadata):
             for row in uniq_rows:
                 track_meta = self.track_meta.get(row.ticket)
                 if not track_meta:
-                    logger.critical("OOPS: {}".format(xlsx_info))
+                    self._logger.critical("OOPS: {}".format(xlsx_info))
                 # pilot data has the flow cell in the spreadsheet; in the main dataset
                 # there is one flow-cell per spreadsheet, so it's in the spreadsheet
                 # filename
@@ -657,7 +666,7 @@ class BASEMetagenomicsMetadata(AMDBaseMetadata):
                     sample_id, sample_extraction_id, flow_id, row, track_meta
                 )
                 if new_obj["id"] in generated_packages:
-                    logger.debug(
+                    self._logger.debug(
                         "skipped attempt to generate duplicate package: %s"
                         % new_obj["id"]
                     )
@@ -668,14 +677,14 @@ class BASEMetagenomicsMetadata(AMDBaseMetadata):
         return packages
 
     def _get_resources(self):
-        logger.info(
+        self._logger.info(
             "Ingesting BASE Metagenomics md5 file information from {0}".format(
                 self.path
             )
         )
         resources = []
         for md5_file in glob(self.path + "/*.md5"):
-            logger.info("Processing md5 file {}".format(md5_file))
+            self._logger.info("Processing md5 file {}".format(md5_file))
             for filename, md5, file_info in self.parse_md5file(md5_file):
                 sample_id = ingest_utils.extract_ands_id(file_info.get("id"))
                 resource = file_info.copy()
@@ -712,8 +721,10 @@ class BASESiteImagesMetadata(AMDBaseMetadata):
         "skip": None,
     }
 
-    def __init__(self, metadata_path, contextual_metadata=None, metadata_info=None):
-        super(BASESiteImagesMetadata, self).__init__()
+    def __init__(
+        self, logger, metadata_path, contextual_metadata=None, metadata_info=None
+    ):
+        super().__init__(logger, metadata_path)
         self.path = Path(metadata_path)
         self.contextual_metadata = contextual_metadata
         self.metadata_info = metadata_info
@@ -722,7 +733,7 @@ class BASESiteImagesMetadata(AMDBaseMetadata):
     def _read_md5s(self):
         id_to_resources = {}
         for fname in glob(self.path + "/*.md5"):
-            logger.info("Processing MD5 file %s" % (fname))
+            self._logger.info("Processing MD5 file %s" % (fname))
             xlsx_info = self.metadata_info[os.path.basename(fname)]
             for filename, md5, file_info in self.parse_md5file(fname):
                 id_tpl = (file_info["id1"], file_info["id2"])
@@ -737,7 +748,9 @@ class BASESiteImagesMetadata(AMDBaseMetadata):
         return ", ".join([ingest_utils.extract_ands_id(t) for t in id_tpl])
 
     def _get_packages(self):
-        logger.info("Ingesting BPA BASE Images metadata from {0}".format(self.path))
+        self._logger.info(
+            "Ingesting BPA BASE Images metadata from {0}".format(self.path)
+        )
         packages = []
         for id_tpl in sorted(self.id_to_resources):
             info = self.id_to_resources[id_tpl]
@@ -774,7 +787,9 @@ class BASESiteImagesMetadata(AMDBaseMetadata):
         return packages
 
     def _get_resources(self):
-        logger.info("Ingesting Sepsis md5 file information from {0}".format(self.path))
+        self._logger.info(
+            "Ingesting Sepsis md5 file information from {0}".format(self.path)
+        )
         resources = []
         for id_tpl in sorted(self.id_to_resources):
             site_ids = self.id_tpl_to_site_ids(id_tpl)
@@ -908,8 +923,10 @@ class MarineMicrobesAmpliconsMetadata(AMDBaseMetadata):
         "skip": [files.mm_amplicon_control_filename_re],
     }
 
-    def __init__(self, metadata_path, contextual_metadata=None, metadata_info=None):
-        super().__init__()
+    def __init__(
+        self, logger, metadata_path, contextual_metadata=None, metadata_info=None
+    ):
+        super().__init__(logger, metadata_path)
         self.google_track_meta = MarineMicrobesGoogleTrackMetadata()
         self.path = Path(metadata_path)
         self.contextual_metadata = contextual_metadata
@@ -937,11 +954,13 @@ class MarineMicrobesAmpliconsMetadata(AMDBaseMetadata):
                 )
             return m.groups()[0]
 
-        logger.info("Ingesting Marine Microbes metadata from {0}".format(self.path))
+        self._logger.info(
+            "Ingesting Marine Microbes metadata from {0}".format(self.path)
+        )
         packages = []
         for fname in unique_spreadsheets(glob(self.path + "/*.xlsx")):
             base_fname = os.path.basename(fname)
-            logger.info(
+            self._logger.info(
                 "Processing Marine Microbes metadata file {0}".format(
                     os.path.basename(fname)
                 )
@@ -1032,11 +1051,15 @@ class MarineMicrobesAmpliconsMetadata(AMDBaseMetadata):
         return packages
 
     def _get_resources(self):
-        logger.info("Ingesting MM md5 file information from {0}".format(self.path))
+        self._logger.info(
+            "Ingesting MM md5 file information from {0}".format(self.path)
+        )
         resources = []
         for md5_file in glob(self.path + "/*.md5"):
             use_index_linkage = os.path.basename(md5_file) in self.index_linkage_md5s
-            logger.info("Processing md5 file {} {}".format(md5_file, use_index_linkage))
+            self._logger.info(
+                "Processing md5 file {} {}".format(md5_file, use_index_linkage)
+            )
             for filename, md5, file_info in self.parse_md5file(md5_file):
                 resource = file_info.copy()
                 resource["md5"] = resource["id"] = md5
@@ -1081,16 +1104,20 @@ class MarineMicrobesAmpliconsControlMetadata(AMDBaseMetadata):
     ]
     metadata_url_components = ("amplicon", "facility_code", "ticket")
 
-    def __init__(self, metadata_path, contextual_metadata=None, metadata_info=None):
-        super().__init__()
+    def __init__(
+        self, logger, metadata_path, contextual_metadata=None, metadata_info=None
+    ):
+        super().__init__(logger, metadata_path)
         self.path = Path(metadata_path)
         self.metadata_info = metadata_info
         self.google_track_meta = MarineMicrobesGoogleTrackMetadata()
 
     def md5_lines(self):
-        logger.info("Ingesting MM md5 file information from {0}".format(self.path))
+        self._logger.info(
+            "Ingesting MM md5 file information from {0}".format(self.path)
+        )
         for md5_file in glob(self.path + "/*.md5"):
-            logger.info("Processing md5 file {}".format(md5_file))
+            self._logger.info("Processing md5 file {}".format(md5_file))
             for filename, md5, file_info in self.parse_md5file(md5_file):
                 yield filename, md5, md5_file, file_info
 
@@ -1169,7 +1196,7 @@ class MarineMicrobesAmpliconsControlMetadata(AMDBaseMetadata):
 
 class BaseMarineMicrobesMetadata(AMDBaseMetadata):
     def __init__(self, *args, **kwargs):
-        super(BaseMarineMicrobesMetadata, self).__init__(*args, **kwargs)
+        super().__init__(*args, **kwargs)
         self.google_track_meta = MarineMicrobesGoogleTrackMetadata()
         self.track_meta = MarineMicrobesTrackMetadata(self.tracker_filename)
 
@@ -1211,17 +1238,21 @@ class MarineMicrobesMetagenomicsMetadata(BaseMarineMicrobesMetadata):
         "skip": None,
     }
 
-    def __init__(self, metadata_path, contextual_metadata=None, metadata_info=None):
-        super(MarineMicrobesMetagenomicsMetadata, self).__init__()
+    def __init__(
+        self, logger, metadata_path, contextual_metadata=None, metadata_info=None
+    ):
+        super().__init__(logger, metadata_path)
         self.path = Path(metadata_path)
         self.contextual_metadata = contextual_metadata
         self.metadata_info = metadata_info
 
     def _get_packages(self):
-        logger.info("Ingesting Marine Microbes metadata from {0}".format(self.path))
+        self._logger.info(
+            "Ingesting Marine Microbes metadata from {0}".format(self.path)
+        )
         packages = []
         for fname in unique_spreadsheets(glob(self.path + "/*.xlsx")):
-            logger.info(
+            self._logger.info(
                 "Processing Marine Microbes metadata file {0}".format(
                     os.path.basename(fname)
                 )
@@ -1291,10 +1322,12 @@ class MarineMicrobesMetagenomicsMetadata(BaseMarineMicrobesMetadata):
         return packages
 
     def _get_resources(self):
-        logger.info("Ingesting MM md5 file information from {0}".format(self.path))
+        self._logger.info(
+            "Ingesting MM md5 file information from {0}".format(self.path)
+        )
         resources = []
         for md5_file in glob(self.path + "/*.md5"):
-            logger.info("Processing md5 file {0}".format(md5_file))
+            self._logger.info("Processing md5 file {0}".format(md5_file))
             for filename, md5, file_info in self.parse_md5file(md5_file):
                 resource = file_info.copy()
                 resource["md5"] = resource["id"] = md5
@@ -1343,14 +1376,16 @@ class MarineMicrobesMetatranscriptomeMetadata(BaseMarineMicrobesMetadata):
         "skip": None,
     }
 
-    def __init__(self, metadata_path, contextual_metadata=None, metadata_info=None):
-        super(MarineMicrobesMetatranscriptomeMetadata, self).__init__()
+    def __init__(
+        self, logger, metadata_path, contextual_metadata=None, metadata_info=None
+    ):
+        super().__init__(logger, metadata_path)
         self.path = Path(metadata_path)
         self.contextual_metadata = contextual_metadata
         self.metadata_info = metadata_info
 
     def _get_packages(self):
-        logger.info(
+        self._logger.info(
             "Ingesting Marine Microbes Transcriptomics metadata from {0}".format(
                 self.path
             )
@@ -1360,7 +1395,7 @@ class MarineMicrobesMetatranscriptomeMetadata(BaseMarineMicrobesMetadata):
         # this is harmless as they have to precisly match, and sample_id is the primary key
         all_rows = set()
         for fname in unique_spreadsheets(glob(self.path + "/*.xlsx")):
-            logger.info(
+            self._logger.info(
                 "Processing Marine Microbes Transcriptomics metadata file {0}".format(
                     os.path.basename(fname)
                 )
@@ -1430,10 +1465,12 @@ class MarineMicrobesMetatranscriptomeMetadata(BaseMarineMicrobesMetadata):
         return packages
 
     def _get_resources(self):
-        logger.info("Ingesting MM md5 file information from {0}".format(self.path))
+        self._logger.info(
+            "Ingesting MM md5 file information from {0}".format(self.path)
+        )
         resources = []
         for md5_file in glob(self.path + "/*.md5"):
-            logger.info("Processing md5 file {0}".format(md5_file))
+            self._logger.info("Processing md5 file {0}".format(md5_file))
             for filename, md5, file_info in self.parse_md5file(md5_file):
                 resource = file_info.copy()
                 resource["md5"] = resource["id"] = md5

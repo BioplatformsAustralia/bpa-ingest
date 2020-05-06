@@ -1,9 +1,6 @@
 from unipath import Path
 
-from ...util import make_logger
 from ...abstract import BaseMetadata
-
-logger = make_logger(__name__)
 
 
 class WheatPathogensTranscriptMetadata(BaseMetadata):
@@ -13,8 +10,8 @@ class WheatPathogensTranscriptMetadata(BaseMetadata):
     organization = "bpa-wheat-pathogens-transcript"
     omics = "transcriptomics"
 
-    def __init__(self, metadata_path):
-        super().__init__()
+    def __init__(self, logger, metadata_path):
+        super().__init__(logger, metadata_path)
         self.path = Path(metadata_path)
 
     def _get_packages(self):
