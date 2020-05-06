@@ -22,7 +22,7 @@ class WheatCultivarsMetadata(BaseMetadata):
         "fields": [
             fld("source_name", "BPA ID"),
             fld("code", "CODE"),
-            fld("sample_id", "BPA ID", coerce=lambda s: s.replace("/", ".")),
+            fld("sample_id", "BPA ID", coerce=lambda _, s: s.replace("/", ".")),
             fld("characteristics", "Characteristics"),
             fld("organism", "Organism"),
             fld("variety", "Variety"),
@@ -45,7 +45,7 @@ class WheatCultivarsMetadata(BaseMetadata):
         super().__init__(logger, metadata_path)
         self.metadata_info = metadata_info
         self.path = Path(metadata_path)
-        self.runs = parse_run_data(self.path)
+        self.runs = parse_run_data(self._logger, self.path)
 
     def _get_packages(self):
         packages = []
@@ -103,12 +103,14 @@ class WheatCultivarsMetadata(BaseMetadata):
         resources = []
         for md5_file in glob(self.path + "/*.md5"):
             self._logger.info("Processing md5 file {0}".format(md5_file))
-            for filename, md5, file_info in files.parse_md5_file(md5_file):
+            for filename, md5, file_info in files.parse_md5_file(
+                self._logger, md5_file
+            ):
                 resource = file_info.copy()
                 resource["md5"] = resource["id"] = md5
                 resource["name"] = filename
                 resource.update(self.runs.get(resource["run"], BLANK_RUN))
-                sample_id = ingest_utils.extract_ands_id(file_info["sample_id"])
+                sample_id = ingest_utils.extract_ands_id(self._logger, file_info["sample_id"])
                 xlsx_info = self.metadata_info[os.path.basename(md5_file)]
                 legacy_url = urljoin(xlsx_info["base_url"], "../all/" + filename)
                 resources.append(((sample_id,), legacy_url, resource))

@@ -7,8 +7,9 @@ from collections import namedtuple, defaultdict
 logger = make_logger(__name__)
 
 
-class SepsisTrackMetadata(object):
-    def __init__(self, name):
+class SepsisTrackMetadata:
+    def __init__(self, logger, name):
+        self._logger = logger
         fname = get_track_csv("bpam", "*" + name + "*.csv", project="sepsis")
         self.track_meta = self._read_track_csv(fname)
 
@@ -16,7 +17,8 @@ class SepsisTrackMetadata(object):
         header, rows = csv_to_named_tuple("SepsisTrack", fname)
         rows = map_taxon_strain_rows(rows)
         return dict(
-            (ingest_utils.extract_ands_id(t.five_digit_bpa_id), t) for t in rows
+            (ingest_utils.extract_ands_id(self._logger, t.five_digit_bpa_id), t)
+            for t in rows
         )
 
     def get(self, sample_id):
@@ -50,11 +52,12 @@ class SepsisGenomicsTrackMetadata(SepsisTrackMetadata):
         return obj
 
 
-class SepsisGoogleTrackMetadata(object):
+class SepsisGoogleTrackMetadata:
     name = "Antibiotic Resistant Pathogen"
     platform = "google-drive"
 
-    def __init__(self):
+    def __init__(self, logger):
+        self._logger = logger
         fname = get_track_csv(self.platform, "*" + self.name + "*.csv")
         logger.info("Reading track CSV file: " + fname)
         self.headers, self.track_rows = self.read_track_csv(fname)

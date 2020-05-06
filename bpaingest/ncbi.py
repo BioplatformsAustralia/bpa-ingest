@@ -35,7 +35,9 @@ class NCBISRAContextual:
             _, rows = csv_to_named_tuple("BioSample", fname, mode="rU")
             accessions.update(
                 {
-                    ingest_utils.extract_ands_id(t.sample_name): t.accession.strip()
+                    ingest_utils.extract_ands_id(
+                        self._logger, t.sample_name
+                    ): t.accession.strip()
                     for t in rows
                 }
             )
@@ -53,7 +55,12 @@ class NCBISRAContextual:
                 "SRARow", fname, mode="rU", dialect="excel-tab"
             )
             accessions.update(
-                {ingest_utils.extract_ands_id(t.sample_name): t.accession for t in rows}
+                {
+                    ingest_utils.extract_ands_id(
+                        self._logger, t.sample_name
+                    ): t.accession
+                    for t in rows
+                }
             )
         return accessions
 

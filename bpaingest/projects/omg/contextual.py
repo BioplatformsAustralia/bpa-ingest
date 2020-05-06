@@ -5,14 +5,14 @@ from ...libs.excel_wrapper import ExcelWrapper, make_field_definition as fld
 from ...util import one
 
 
-def date_or_str(v):
-    d = ingest_utils.get_date_isoformat(v, silent=True)
+def date_or_str(logger, v):
+    d = ingest_utils.get_date_isoformat(logger, v, silent=True)
     if d is not None:
         return d
     return v
 
 
-class OMGSampleContextual(object):
+class OMGSampleContextual:
     metadata_urls = [
         "https://downloads-qcif.bioplatforms.com/bpa/omg_staging/metadata/2020-04-09/"
     ]
@@ -93,6 +93,7 @@ class OMGSampleContextual(object):
         ]
 
         wrapper = ExcelWrapper(
+            self._logger,
             field_spec,
             fname,
             sheet_name=None,
@@ -114,7 +115,9 @@ class OMGSampleContextual(object):
             if not row.bpa_sample_id:
                 continue
             assert row.bpa_sample_id not in sample_metadata
-            bpa_sample_id = ingest_utils.extract_ands_id(row.bpa_sample_id)
+            bpa_sample_id = ingest_utils.extract_ands_id(
+                self._logger, row.bpa_sample_id
+            )
             sample_metadata[bpa_sample_id] = row_meta = {}
             for field in row._fields:
                 value = getattr(row, field)
@@ -124,7 +127,7 @@ class OMGSampleContextual(object):
         return sample_metadata
 
 
-class OMGLibraryContextual(object):
+class OMGLibraryContextual:
     # this spreadsheet was only used for early data.
     # for more recent data, it is included in the transfer metadata
     metadata_urls = [
@@ -171,6 +174,7 @@ class OMGLibraryContextual(object):
             fld("library_status", "library_status"),
         ]
         wrapper = ExcelWrapper(
+            self._logger,
             field_spec,
             fname,
             sheet_name=None,
@@ -186,7 +190,9 @@ class OMGLibraryContextual(object):
             if not row.bpa_library_id:
                 continue
             assert row.bpa_library_id not in library_metadata
-            bpa_library_id = ingest_utils.extract_ands_id(row.bpa_library_id)
+            bpa_library_id = ingest_utils.extract_ands_id(
+                self._logger, row.bpa_library_id
+            )
             library_metadata[bpa_library_id] = row_meta = {}
             for field in row._fields:
                 value = getattr(row, field)

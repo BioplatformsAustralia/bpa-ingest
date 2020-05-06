@@ -40,8 +40,8 @@ class OMGBaseMetadata(BaseMetadata):
         cache = {}
         for package in packages:
             lat, lng = (
-                get_clean_number(package.get("latitude")),
-                get_clean_number(package.get("longitude")),
+                get_clean_number(self._logger, package.get("latitude")),
+                get_clean_number(self._logger, package.get("longitude")),
             )
             args = (species_name(package), lat, lng)
             if args not in cache:
@@ -209,27 +209,27 @@ class OMG10XRawIlluminaMetadata(OMGBaseMetadata):
                 {
                     "ticket": ticket,
                     "date_of_transfer": ingest_utils.get_date_isoformat(
-                        track_get("date_of_transfer")
+                        self._logger, track_get("date_of_transfer")
                     ),
                     "data_type": track_get("data_type"),
                     "description": track_get("description"),
                     "folder_name": track_get("folder_name"),
                     "sample_submission_date": ingest_utils.get_date_isoformat(
-                        track_get("date_of_transfer")
+                        self._logger, track_get("date_of_transfer")
                     ),
                     "contextual_data_submission_date": None,
                     "data_generated": ingest_utils.get_date_isoformat(
-                        track_get("date_of_transfer_to_archive")
+                        self._logger, track_get("date_of_transfer_to_archive")
                     ),
                     "archive_ingestion_date": ingest_utils.get_date_isoformat(
-                        track_get("date_of_transfer_to_archive")
+                        self._logger, track_get("date_of_transfer_to_archive")
                     ),
                     "dataset_url": track_get("download"),
                     "notes": notes,
                 }
             )
 
-            ingest_utils.add_spatial_extra(obj)
+            ingest_utils.add_spatial_extra(self._logger, obj)
             obj.update(common_values([make_row_metadata(row) for row in rows]))
             tag_names = ["10x-raw"]
             obj["tags"] = [{"name": t} for t in tag_names]
@@ -389,20 +389,20 @@ class OMG10XRawMetadata(OMGBaseMetadata):
                         context.get("institution_name", ""),
                     ),
                     "date_of_transfer": ingest_utils.get_date_isoformat(
-                        track_get("date_of_transfer")
+                        self._logger, track_get("date_of_transfer")
                     ),
                     "data_type": track_get("data_type"),
                     "description": track_get("description"),
                     "folder_name": track_get("folder_name"),
                     "sample_submission_date": ingest_utils.get_date_isoformat(
-                        track_get("date_of_transfer")
+                        self._logger, track_get("date_of_transfer")
                     ),
                     "contextual_data_submission_date": None,
                     "data_generated": ingest_utils.get_date_isoformat(
-                        track_get("date_of_transfer_to_archive")
+                        self._logger, track_get("date_of_transfer_to_archive")
                     ),
                     "archive_ingestion_date": ingest_utils.get_date_isoformat(
-                        track_get("date_of_transfer_to_archive")
+                        self._logger, track_get("date_of_transfer_to_archive")
                     ),
                     "dataset_url": track_get("download"),
                     "type": self.ckan_data_type,
@@ -411,7 +411,7 @@ class OMG10XRawMetadata(OMGBaseMetadata):
             )
             self.library_to_sample[obj["bpa_library_id"]] = obj["bpa_sample_id"]
             obj.update(context)
-            ingest_utils.add_spatial_extra(obj)
+            ingest_utils.add_spatial_extra(self._logger, obj)
             tag_names = ["10x-raw"]
             obj["tags"] = [{"name": t} for t in tag_names]
             self.track_xlsx_resource(obj, fname)
@@ -432,7 +432,9 @@ class OMG10XRawMetadata(OMGBaseMetadata):
 
                 # FIXME: we have inconsistently named files, raise with Anna M after
                 # urgent ingest complete.
-                bpa_sample_id = ingest_utils.extract_ands_id(file_info["bpa_sample_id"])
+                bpa_sample_id = ingest_utils.extract_ands_id(
+                    self._logger, file_info["bpa_sample_id"]
+                )
                 if bpa_sample_id.split("/", 1)[1].startswith("5"):
                     # actually a library ID, map back
                     bpa_sample_id = file_info["bpa_sample_id"] = self.library_to_sample[
@@ -569,20 +571,20 @@ class OMG10XProcessedIlluminaMetadata(OMGBaseMetadata):
                             context.get("institution_name", ""),
                         ),
                         "date_of_transfer": ingest_utils.get_date_isoformat(
-                            track_get("date_of_transfer")
+                            self._logger, track_get("date_of_transfer")
                         ),
                         "data_type": track_get("data_type"),
                         "description": track_get("description"),
                         "folder_name": track_get("folder_name"),
                         "sample_submission_date": ingest_utils.get_date_isoformat(
-                            track_get("date_of_transfer")
+                            self._logger, track_get("date_of_transfer")
                         ),
                         "contextual_data_submission_date": None,
                         "data_generated": ingest_utils.get_date_isoformat(
-                            track_get("date_of_transfer_to_archive")
+                            self._logger, track_get("date_of_transfer_to_archive")
                         ),
                         "archive_ingestion_date": ingest_utils.get_date_isoformat(
-                            track_get("date_of_transfer_to_archive")
+                            self._logger, track_get("date_of_transfer_to_archive")
                         ),
                         "dataset_url": track_get("download"),
                         "ticket": row.ticket,
@@ -591,7 +593,7 @@ class OMG10XProcessedIlluminaMetadata(OMGBaseMetadata):
                     }
                 )
                 obj.update(context)
-                ingest_utils.add_spatial_extra(obj)
+                ingest_utils.add_spatial_extra(self._logger, obj)
                 tag_names = ["10x-processed"]
                 obj["tags"] = [{"name": t} for t in tag_names]
                 self.track_xlsx_resource(obj, fname)
@@ -784,20 +786,20 @@ class OMGExonCaptureMetadata(OMGBaseMetadata):
                             context.get("institution_name", ""),
                         ),
                         "date_of_transfer": ingest_utils.get_date_isoformat(
-                            track_get("date_of_transfer")
+                            self._logger, track_get("date_of_transfer")
                         ),
                         "data_type": track_get("data_type"),
                         "description": track_get("description"),
                         "folder_name": track_get("folder_name"),
                         "sample_submission_date": ingest_utils.get_date_isoformat(
-                            track_get("date_of_transfer")
+                            self._logger, track_get("date_of_transfer")
                         ),
                         "contextual_data_submission_date": None,
                         "data_generated": ingest_utils.get_date_isoformat(
-                            track_get("date_of_transfer_to_archive")
+                            self._logger, track_get("date_of_transfer_to_archive")
                         ),
                         "archive_ingestion_date": ingest_utils.get_date_isoformat(
-                            track_get("date_of_transfer_to_archive")
+                            self._logger, track_get("date_of_transfer_to_archive")
                         ),
                         "dataset_url": track_get("download"),
                         "type": self.ckan_data_type,
@@ -811,7 +813,7 @@ class OMGExonCaptureMetadata(OMGBaseMetadata):
                 obj.pop("library_index_sequence", False)
                 obj.pop("library_oligo_sequence", False)
 
-                ingest_utils.add_spatial_extra(obj)
+                ingest_utils.add_spatial_extra(self._logger, obj)
                 tag_names = ["exon-capture", "raw"]
                 obj["tags"] = [{"name": t} for t in tag_names]
 
@@ -832,7 +834,9 @@ class OMGExonCaptureMetadata(OMGBaseMetadata):
                 resource["md5"] = resource["id"] = md5
                 resource["name"] = filename
                 resource["resource_type"] = self.ckan_data_type
-                library_id = ingest_utils.extract_ands_id(resource["bpa_library_id"])
+                library_id = ingest_utils.extract_ands_id(
+                    self._logger, resource["bpa_library_id"]
+                )
                 xlsx_info = self.metadata_info[os.path.basename(md5_file)]
                 legacy_url = urljoin(xlsx_info["base_url"], filename)
                 resources.append(
@@ -966,20 +970,20 @@ class OMGGenomicsNovaseqMetadata(OMGBaseMetadata):
                             context.get("institution_name", ""),
                         ),
                         "date_of_transfer": ingest_utils.get_date_isoformat(
-                            track_get("date_of_transfer")
+                            self._logger, track_get("date_of_transfer")
                         ),
                         "data_type": track_get("data_type"),
                         "description": track_get("description"),
                         "folder_name": track_get("folder_name"),
                         "sample_submission_date": ingest_utils.get_date_isoformat(
-                            track_get("date_of_transfer")
+                            self._logger, track_get("date_of_transfer")
                         ),
                         "contextual_data_submission_date": None,
                         "data_generated": ingest_utils.get_date_isoformat(
-                            track_get("date_of_transfer_to_archive")
+                            self._logger, track_get("date_of_transfer_to_archive")
                         ),
                         "archive_ingestion_date": ingest_utils.get_date_isoformat(
-                            track_get("date_of_transfer_to_archive")
+                            self._logger, track_get("date_of_transfer_to_archive")
                         ),
                         "dataset_url": track_get("download"),
                         "type": self.ckan_data_type,
@@ -988,7 +992,7 @@ class OMGGenomicsNovaseqMetadata(OMGBaseMetadata):
                 )
                 obj.update(context)
 
-                ingest_utils.add_spatial_extra(obj)
+                ingest_utils.add_spatial_extra(self._logger, obj)
                 tag_names = ["novaseq", "genomics", "raw"]
                 obj["tags"] = [{"name": t} for t in tag_names]
                 self.track_xlsx_resource(obj, fname)
@@ -1008,7 +1012,9 @@ class OMGGenomicsNovaseqMetadata(OMGBaseMetadata):
                 resource["md5"] = resource["id"] = md5
                 resource["name"] = filename
                 resource["resource_type"] = self.ckan_data_type
-                library_id = ingest_utils.extract_ands_id(resource["bpa_library_id"])
+                library_id = ingest_utils.extract_ands_id(
+                    self._logger, resource["bpa_library_id"]
+                )
                 xlsx_info = self.metadata_info[os.path.basename(md5_file)]
                 legacy_url = urljoin(xlsx_info["base_url"], filename)
                 resources.append(
@@ -1144,20 +1150,20 @@ class OMGGenomicsHiSeqMetadata(OMGBaseMetadata):
                             context.get("institution_name", ""),
                         ),
                         "date_of_transfer": ingest_utils.get_date_isoformat(
-                            track_get("date_of_transfer")
+                            self._logger, track_get("date_of_transfer")
                         ),
                         "data_type": track_get("data_type"),
                         "description": track_get("description"),
                         "folder_name": track_get("folder_name"),
                         "sample_submission_date": ingest_utils.get_date_isoformat(
-                            track_get("date_of_transfer")
+                            self._logger, track_get("date_of_transfer")
                         ),
                         "contextual_data_submission_date": None,
                         "data_generated": ingest_utils.get_date_isoformat(
-                            track_get("date_of_transfer_to_archive")
+                            self._logger, track_get("date_of_transfer_to_archive")
                         ),
                         "archive_ingestion_date": ingest_utils.get_date_isoformat(
-                            track_get("date_of_transfer_to_archive")
+                            self._logger, track_get("date_of_transfer_to_archive")
                         ),
                         "dataset_url": track_get("download"),
                         "type": self.ckan_data_type,
@@ -1165,7 +1171,7 @@ class OMGGenomicsHiSeqMetadata(OMGBaseMetadata):
                     }
                 )
                 obj.update(context)
-                ingest_utils.add_spatial_extra(obj)
+                ingest_utils.add_spatial_extra(self._logger, obj)
                 tag_names = ["genomics-hiseq"]
                 obj["tags"] = [{"name": t} for t in tag_names]
                 self.track_xlsx_resource(obj, fname)
@@ -1189,7 +1195,9 @@ class OMGGenomicsHiSeqMetadata(OMGBaseMetadata):
                 resources.append(
                     (
                         (
-                            ingest_utils.extract_ands_id(resource["bpa_sample_id"]),
+                            ingest_utils.extract_ands_id(
+                                self._logger, resource["bpa_sample_id"]
+                            ),
                             resource["flow_cell_id"],
                         ),
                         legacy_url,
@@ -1331,27 +1339,27 @@ class OMGGenomicsDDRADMetadata(OMGBaseMetadata):
                         "bpa_dataset_id": bpa_dataset_id,
                         "title": "OMG Genomics ddRAD %s %s" % (bpa_dataset_id, flow_id),
                         "date_of_transfer": ingest_utils.get_date_isoformat(
-                            track_get("date_of_transfer")
+                            self._logger, track_get("date_of_transfer")
                         ),
                         "data_type": track_get("data_type"),
                         "description": track_get("description"),
                         "folder_name": track_get("folder_name"),
                         "sample_submission_date": ingest_utils.get_date_isoformat(
-                            track_get("date_of_transfer")
+                            self._logger, track_get("date_of_transfer")
                         ),
                         "contextual_data_submission_date": None,
                         "data_generated": ingest_utils.get_date_isoformat(
-                            track_get("date_of_transfer_to_archive")
+                            self._logger, track_get("date_of_transfer_to_archive")
                         ),
                         "archive_ingestion_date": ingest_utils.get_date_isoformat(
-                            track_get("date_of_transfer_to_archive")
+                            self._logger, track_get("date_of_transfer_to_archive")
                         ),
                         "dataset_url": track_get("download"),
                         "type": self.ckan_data_type,
                         "private": True,
                     }
                 )
-                ingest_utils.add_spatial_extra(obj)
+                ingest_utils.add_spatial_extra(self._logger, obj)
                 tag_names = ["genomics-ddrad"]
                 obj["tags"] = [{"name": t} for t in tag_names]
                 self.track_xlsx_resource(obj, fname)
@@ -1375,7 +1383,9 @@ class OMGGenomicsDDRADMetadata(OMGBaseMetadata):
                 resources.append(
                     (
                         (
-                            ingest_utils.extract_ands_id(resource["bpa_dataset_id"]),
+                            ingest_utils.extract_ands_id(
+                                self._logger, resource["bpa_dataset_id"]
+                            ),
                             resource["flowcell_id"],
                         ),
                         legacy_url,
@@ -1515,20 +1525,20 @@ class OMGGenomicsPacbioMetadata(OMGBaseMetadata):
                         context.get("institution_name", ""),
                     ),
                     "date_of_transfer": ingest_utils.get_date_isoformat(
-                        track_get("date_of_transfer")
+                        self._logger, track_get("date_of_transfer")
                     ),
                     "data_type": track_get("data_type"),
                     "description": track_get("description"),
                     "folder_name": track_get("folder_name"),
                     "sample_submission_date": ingest_utils.get_date_isoformat(
-                        track_get("date_of_transfer")
+                        self._logger, track_get("date_of_transfer")
                     ),
                     "contextual_data_submission_date": None,
                     "data_generated": ingest_utils.get_date_isoformat(
-                        track_get("date_of_transfer_to_archive")
+                        self._logger, track_get("date_of_transfer_to_archive")
                     ),
                     "archive_ingestion_date": ingest_utils.get_date_isoformat(
-                        track_get("date_of_transfer_to_archive")
+                        self._logger, track_get("date_of_transfer_to_archive")
                     ),
                     "dataset_url": track_get("download"),
                     "type": self.ckan_data_type,
@@ -1537,7 +1547,7 @@ class OMGGenomicsPacbioMetadata(OMGBaseMetadata):
             )
             obj.update(context)
 
-            ingest_utils.add_spatial_extra(obj)
+            ingest_utils.add_spatial_extra(self._logger, obj)
             tag_names = ["pacbio", "genomics", "raw"]
             obj["tags"] = [{"name": t} for t in tag_names]
             self.track_xlsx_resource(obj, fname)
@@ -1557,13 +1567,15 @@ class OMGGenomicsPacbioMetadata(OMGBaseMetadata):
                 resource["md5"] = resource["id"] = md5
                 resource["name"] = filename
                 resource["resource_type"] = self.ckan_data_type
-                library_id = ingest_utils.extract_ands_id(resource["bpa_library_id"])
+                library_id = ingest_utils.extract_ands_id(
+                    self._logger, resource["bpa_library_id"]
+                )
                 xlsx_info = self.metadata_info[os.path.basename(md5_file)]
                 legacy_url = urljoin(xlsx_info["base_url"], filename)
                 resources.append(
                     (
                         (
-                            ingest_utils.extract_ands_id(library_id),
+                            ingest_utils.extract_ands_id(self._logger, library_id),
                             resource["run_date"],
                         ),
                         legacy_url,
@@ -1686,20 +1698,20 @@ class OMGONTPromethionMetadata(OMGBaseMetadata):
                         "notes": "%s. %s."
                         % (obj.get("common_name", ""), obj.get("institution_name", "")),
                         "date_of_transfer": ingest_utils.get_date_isoformat(
-                            track_get("date_of_transfer")
+                            self._logger, track_get("date_of_transfer")
                         ),
                         "data_type": track_get("data_type"),
                         "description": track_get("description"),
                         "folder_name": track_get("folder_name"),
                         "sample_submission_date": ingest_utils.get_date_isoformat(
-                            track_get("date_of_transfer")
+                            self._logger, track_get("date_of_transfer")
                         ),
                         "contextual_data_submission_date": None,
                         "data_generated": ingest_utils.get_date_isoformat(
-                            track_get("date_of_transfer_to_archive")
+                            self._logger, track_get("date_of_transfer_to_archive")
                         ),
                         "archive_ingestion_date": ingest_utils.get_date_isoformat(
-                            track_get("date_of_transfer_to_archive")
+                            self._logger, track_get("date_of_transfer_to_archive")
                         ),
                         "dataset_url": track_get("download"),
                         "name": name,
@@ -1722,7 +1734,7 @@ class OMGONTPromethionMetadata(OMGBaseMetadata):
             for filename, md5, file_info in self.parse_md5file(md5_file):
                 resource = file_info.copy()
                 resource["bpa_library_id"] = ingest_utils.extract_ands_id(
-                    resource["bpa_library_id"]
+                    self._logger, resource["bpa_library_id"]
                 )
                 resource["md5"] = resource["id"] = md5
                 resource["name"] = filename

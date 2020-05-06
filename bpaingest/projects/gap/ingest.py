@@ -118,7 +118,7 @@ class GAPIlluminaShortreadMetadata(BaseMetadata):
             for filename, md5, file_info in self.parse_md5file(md5_file):
                 resource = file_info.copy()
                 resource["sample_id"] = ingest_utils.extract_ands_id(
-                    resource["sample_id"]
+                    self._logger, resource["sample_id"]
                 )
                 resource["md5"] = resource["id"] = md5
                 resource["name"] = filename
@@ -245,7 +245,7 @@ class GAPONTMinionMetadata(BaseMetadata):
             for filename, md5, file_info in self.parse_md5file(md5_file):
                 resource = file_info.copy()
                 resource["sample_id"] = ingest_utils.extract_ands_id(
-                    resource["sample_id"]
+                    self._logger, resource["sample_id"]
                 )
                 resource["md5"] = resource["id"] = md5
                 resource["name"] = filename
@@ -370,7 +370,7 @@ class GAPONTPromethionMetadata(BaseMetadata):
             for filename, md5, file_info in self.parse_md5file(md5_file):
                 resource = file_info.copy()
                 resource["sample_id"] = ingest_utils.extract_ands_id(
-                    resource["sample_id"]
+                    self._logger, resource["sample_id"]
                 )
                 resource["md5"] = resource["id"] = md5
                 resource["name"] = filename
@@ -485,7 +485,7 @@ class GAPGenomics10XMetadata(BaseMetadata):
             for filename, md5, file_info in self.parse_md5file(md5_file):
                 resource = file_info.copy()
                 resource["sample_id"] = ingest_utils.extract_ands_id(
-                    resource["sample_id"]
+                    self._logger, resource["sample_id"]
                 )
                 resource["md5"] = resource["id"] = md5
                 resource["name"] = filename

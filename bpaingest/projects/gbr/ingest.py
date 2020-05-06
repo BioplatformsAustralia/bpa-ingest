@@ -83,7 +83,7 @@ class GbrPacbioMetadata(BaseMetadata):
 
                 pacbio_linkage = make_pacbio_linkage(row.flow_cell_id, row.run_number)
                 name = sample_id_to_ckan_name(
-                    ingest_utils.short_ands_id(sample_id),
+                    ingest_utils.short_ands_id(self._logger, sample_id),
                     self.ckan_data_type,
                     pacbio_linkage,
                 )
@@ -122,7 +122,9 @@ class GbrPacbioMetadata(BaseMetadata):
                 resource = file_info.copy()
                 resource["md5"] = resource["id"] = md5
                 resource["name"] = filename
-                sample_id = ingest_utils.extract_ands_id(file_info["sample_id"])
+                sample_id = ingest_utils.extract_ands_id(
+                    self._logger, file_info["sample_id"]
+                )
                 xlsx_info = self.metadata_info[os.path.basename(md5_file)]
                 legacy_url = urljoin(xlsx_info["base_url"], filename)
                 pacbio_linkage = make_pacbio_linkage(
@@ -157,7 +159,7 @@ class GbrAmpliconsMetadata(BaseMetadata):
             ),
             fld("sequencing_facility", "Sequencing facility"),
             fld("target_range", "Target Range"),
-            fld("amplicon", "Target", coerce=lambda s: s.upper().strip().lower()),
+            fld("amplicon", "Target", coerce=lambda _, s: s.upper().strip().lower()),
             fld("i7_index", "I7_Index_ID"),
             fld("i5_index", "I5_Index_ID"),
             fld("index1", "index"),
@@ -242,7 +244,9 @@ class GbrAmpliconsMetadata(BaseMetadata):
                 resource = file_info.copy()
                 resource["md5"] = resource["id"] = md5
                 resource["name"] = filename
-                sample_id = ingest_utils.extract_ands_id(file_info["sample_id"])
+                sample_id = ingest_utils.extract_ands_id(
+                    self._logger, file_info["sample_id"]
+                )
                 xlsx_info = self.metadata_info[os.path.basename(md5_file)]
                 legacy_url = urljoin(xlsx_info["base_url"], filename)
                 resources.append(

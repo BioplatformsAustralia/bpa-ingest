@@ -13,12 +13,12 @@ def parse_base_pair(val):
         return int(val[:-2]) * 1000
 
 
-def make_file_metadata(md5_lines):
+def make_file_metadata(logger, md5_lines):
     """
     Add md5 data
     """
     for md5_line in md5_lines:
-        sample_id = extract_ands_id(md5_line.sample_id)
+        sample_id = extract_ands_id(logger, md5_line.sample_id)
         if sample_id is None:
             continue
 
@@ -48,7 +48,7 @@ def cultivars_parse_md5_file(md5_file):
     PAS_AD08TAACXX_GCCAAT_L002_R1.fastq.gz
     """
 
-    class MD5ParsedLine(object):
+    class MD5ParsedLine:
         Cultivar = namedtuple("Cultivar", "desc sample_id")
         cultivars = {
             "DRY": Cultivar("Drysdale", "102.100.100.13703"),
@@ -155,7 +155,7 @@ def cultivars_parse_md5_file(md5_file):
     return data
 
 
-def parse_md5_file(md5_file):
+def parse_md5_file(logger, md5_file):
     data = cultivars_parse_md5_file(md5_file)
-    for file_info in make_file_metadata(data):
+    for file_info in make_file_metadata(logger, data):
         yield file_info["name"], file_info["md5"], file_info

@@ -32,7 +32,7 @@ VALID_PLATFORMS = (
 )
 
 
-def fix_analytical_platform(s):
+def fix_analytical_platform(logger, s):
     if not s:
         return s
     s = PLATFORM_CORRECTIONS.get(s, s)

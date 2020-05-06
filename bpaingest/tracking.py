@@ -18,7 +18,7 @@ def get_track_csv(platform, glob_pattern, project=None):
     return one(glob(os.path.join(get_track_dir(platform, project), glob_pattern)))
 
 
-class GoogleDriveTrackMetadata(object):
+class GoogleDriveTrackMetadata:
     platform = "google-drive"
 
     def __init__(self):

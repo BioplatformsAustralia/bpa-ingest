@@ -205,7 +205,7 @@ class LandUseEnforcement(BaseOntologyEnforcement):
 def fix_sometimes_date(val):
     "mix of dates and free-text, make into strings"
     if isinstance(val, datetime.date) or isinstance(val, datetime.datetime):
-        return ingest_utils.get_date_isoformat(val)
+        return ingest_utils.get_date_isoformat(self._logger, val)
     val = val.strip()
     if val == "":
         return None
@@ -225,7 +225,7 @@ class BASENCBIContextual(NCBISRAContextual):
     bioproject_accession = "PRJNA317932"
 
 
-class AustralianMicrobiomeSampleContextual(object):
+class AustralianMicrobiomeSampleContextual:
     # we smash together the tabs, because there is one tab per sample type
     # each BPA ID should have only one entry (if it has one at all)
     metadata_urls = [
@@ -1395,6 +1395,7 @@ class AustralianMicrobiomeSampleContextual(object):
         rows = []
         for sheet_name, field_spec in sorted(self.field_specs.items()):
             wrapper = ExcelWrapper(
+                self._logger,
                 field_spec,
                 metadata_path,
                 sheet_name=sheet_name,

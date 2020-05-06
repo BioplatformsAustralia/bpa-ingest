@@ -32,7 +32,7 @@ common_skip = [
 ]
 
 
-def parse_sample_id_range(s):
+def parse_sample_id_range(logger, s):
     return s.strip().split("/")[-1]
 
 
@@ -108,20 +108,20 @@ class StemcellsTranscriptomeMetadata(BaseMetadata):
                     "facility": row.facility_code.upper(),
                     "type": self.ckan_data_type,
                     "date_of_transfer": ingest_utils.get_date_isoformat(
-                        track_meta.date_of_transfer
+                        self._logger, track_meta.date_of_transfer
                     ),
                     "data_type": track_meta.data_type,
                     "description": track_meta.description,
                     "folder_name": track_meta.folder_name,
                     "sample_submission_date": ingest_utils.get_date_isoformat(
-                        track_meta.date_of_transfer
+                        self._logger, track_meta.date_of_transfer
                     ),
                     "contextual_data_submission_date": None,
                     "data_generated": ingest_utils.get_date_isoformat(
-                        track_meta.date_of_transfer_to_archive
+                        self._logger, track_meta.date_of_transfer_to_archive
                     ),
                     "archive_ingestion_date": ingest_utils.get_date_isoformat(
-                        track_meta.date_of_transfer_to_archive
+                        self._logger, track_meta.date_of_transfer_to_archive
                     ),
                     "dataset_url": track_meta.download,
                     "private": True,
@@ -145,7 +145,9 @@ class StemcellsTranscriptomeMetadata(BaseMetadata):
                 resource = file_info.copy()
                 resource["md5"] = resource["id"] = md5
                 resource["name"] = filename
-                sample_id = ingest_utils.extract_ands_id(file_info.get("id"))
+                sample_id = ingest_utils.extract_ands_id(
+                    self._logger, file_info.get("id")
+                )
                 xlsx_info = self.metadata_info[os.path.basename(md5_file)]
                 legacy_url = urljoin(xlsx_info["base_url"], filename)
                 resources.append(((sample_id,), legacy_url, resource))
@@ -224,20 +226,20 @@ class StemcellsSmallRNAMetadata(BaseMetadata):
                     "facility": row.facility_code.upper(),
                     "type": self.ckan_data_type,
                     "date_of_transfer": ingest_utils.get_date_isoformat(
-                        track_meta.date_of_transfer
+                        self._logger, track_meta.date_of_transfer
                     ),
                     "data_type": track_meta.data_type,
                     "description": track_meta.description,
                     "folder_name": track_meta.folder_name,
                     "sample_submission_date": ingest_utils.get_date_isoformat(
-                        track_meta.date_of_transfer
+                        self._logger, track_meta.date_of_transfer
                     ),
                     "contextual_data_submission_date": None,
                     "data_generated": ingest_utils.get_date_isoformat(
-                        track_meta.date_of_transfer_to_archive
+                        self._logger, track_meta.date_of_transfer_to_archive
                     ),
                     "archive_ingestion_date": ingest_utils.get_date_isoformat(
-                        track_meta.date_of_transfer_to_archive
+                        self._logger, track_meta.date_of_transfer_to_archive
                     ),
                     "dataset_url": track_meta.download,
                     "private": True,
@@ -261,7 +263,9 @@ class StemcellsSmallRNAMetadata(BaseMetadata):
                 resource = file_info.copy()
                 resource["md5"] = resource["id"] = md5
                 resource["name"] = filename
-                sample_id = ingest_utils.extract_ands_id(file_info.get("id"))
+                sample_id = ingest_utils.extract_ands_id(
+                    self._logger, file_info.get("id")
+                )
                 xlsx_info = self.metadata_info[os.path.basename(md5_file)]
                 legacy_url = urljoin(xlsx_info["base_url"], filename)
                 resources.append(((sample_id,), legacy_url, resource))
@@ -351,7 +355,9 @@ class StemcellsSingleCellRNASeqMetadata(BaseMetadata):
                 )
                 continue
             # NB: this isn't really the BPA ID, it's the first BPA ID
-            sample_id = ingest_utils.extract_ands_id(sample_id_range.split("-", 1)[0])
+            sample_id = ingest_utils.extract_ands_id(
+                self._logger, sample_id_range.split("-", 1)[0]
+            )
             obj.update(
                 {
                     "name": name,
@@ -369,20 +375,20 @@ class StemcellsSingleCellRNASeqMetadata(BaseMetadata):
                     "facility": row.facility_code.upper(),
                     "type": self.ckan_data_type,
                     "date_of_transfer": ingest_utils.get_date_isoformat(
-                        track_meta.date_of_transfer
+                        self._logger, track_meta.date_of_transfer
                     ),
                     "data_type": track_meta.data_type,
                     "description": track_meta.description,
                     "folder_name": track_meta.folder_name,
                     "sample_submission_date": ingest_utils.get_date_isoformat(
-                        track_meta.date_of_transfer
+                        self._logger, track_meta.date_of_transfer
                     ),
                     "contextual_data_submission_date": None,
                     "data_generated": ingest_utils.get_date_isoformat(
-                        track_meta.date_of_transfer_to_archive
+                        self._logger, track_meta.date_of_transfer_to_archive
                     ),
                     "archive_ingestion_date": ingest_utils.get_date_isoformat(
-                        track_meta.date_of_transfer_to_archive
+                        self._logger, track_meta.date_of_transfer_to_archive
                     ),
                     "dataset_url": track_meta.download,
                     "omics": "transcriptomics",
@@ -501,7 +507,9 @@ class StemcellsMetabolomicsMetadata(BaseMetadata):
                 self.ckan_data_type,
             )
             track_meta = self.track_meta.get(row.ticket)
-            analytical_platform = fix_analytical_platform(row.analytical_platform)
+            analytical_platform = fix_analytical_platform(
+                self._logger, row.analytical_platform
+            )
             obj.update(
                 {
                     "name": name,
@@ -522,20 +530,20 @@ class StemcellsMetabolomicsMetadata(BaseMetadata):
                     "facility": row.facility_code.upper(),
                     "type": self.ckan_data_type,
                     "date_of_transfer": ingest_utils.get_date_isoformat(
-                        track_meta.date_of_transfer
+                        self._logger, track_meta.date_of_transfer
                     ),
                     "data_type": track_meta.data_type,
                     "description": track_meta.description,
                     "folder_name": track_meta.folder_name,
                     "sample_submission_date": ingest_utils.get_date_isoformat(
-                        track_meta.date_of_transfer
+                        self._logger, track_meta.date_of_transfer
                     ),
                     "contextual_data_submission_date": None,
                     "data_generated": ingest_utils.get_date_isoformat(
-                        track_meta.date_of_transfer_to_archive
+                        self._logger, track_meta.date_of_transfer_to_archive
                     ),
                     "archive_ingestion_date": ingest_utils.get_date_isoformat(
-                        track_meta.date_of_transfer_to_archive
+                        self._logger, track_meta.date_of_transfer_to_archive
                     ),
                     "dataset_url": track_meta.download,
                     "private": True,
@@ -560,9 +568,11 @@ class StemcellsMetabolomicsMetadata(BaseMetadata):
                 resource["md5"] = resource["id"] = md5
                 resource["name"] = filename
                 resource["analytical_platform"] = fix_analytical_platform(
-                    resource["analytical_platform"]
+                    self._logger, resource["analytical_platform"]
                 )
-                sample_id = ingest_utils.extract_ands_id(file_info.get("id"))
+                sample_id = ingest_utils.extract_ands_id(
+                    self._logger, file_info.get("id")
+                )
                 xlsx_info = self.metadata_info[os.path.basename(md5_file)]
                 legacy_url = urljoin(xlsx_info["base_url"], filename)
                 resources.append(
@@ -602,7 +612,6 @@ class StemcellsProteomicsBaseMetadata(BaseMetadata):
         )
         return all_rows
 
-    @classmethod
     def parse_spreadsheet(self, fname, additional_context, mode):
         if mode == "1d":
             field_spec = [
@@ -648,6 +657,7 @@ class StemcellsProteomicsBaseMetadata(BaseMetadata):
             fld("sample_unique_id", "sample unique id"),
         ]
         wrapper = ExcelWrapper(
+            self._logger,
             field_spec,
             fname,
             header_length=2,
@@ -706,7 +716,7 @@ class StemcellsProteomicsMetadata(StemcellsProteomicsBaseMetadata):
                     "omics": "proteomics",
                     "type": self.ckan_data_type,
                     "date_of_transfer": ingest_utils.get_date_isoformat(
-                        track_meta.date_of_transfer
+                        self._logger, track_meta.date_of_transfer
                     ),
                     "ticket": ticket,
                     "facility": facility_code,
@@ -714,14 +724,14 @@ class StemcellsProteomicsMetadata(StemcellsProteomicsBaseMetadata):
                     "description": track_meta.description,
                     "folder_name": track_meta.folder_name,
                     "sample_submission_date": ingest_utils.get_date_isoformat(
-                        track_meta.date_of_transfer
+                        self._logger, track_meta.date_of_transfer
                     ),
                     "contextual_data_submission_date": None,
                     "data_generated": ingest_utils.get_date_isoformat(
-                        track_meta.date_of_transfer_to_archive
+                        self._logger, track_meta.date_of_transfer_to_archive
                     ),
                     "archive_ingestion_date": ingest_utils.get_date_isoformat(
-                        track_meta.date_of_transfer_to_archive
+                        self._logger, track_meta.date_of_transfer_to_archive
                     ),
                     "dataset_url": track_meta.download,
                     "private": True,
@@ -761,7 +771,9 @@ class StemcellsProteomicsMetadata(StemcellsProteomicsBaseMetadata):
                     "database_size",
                 ):
                     resource[k] = getattr(resource_meta, k)
-                sample_id = ingest_utils.extract_ands_id(file_info.get("id"))
+                sample_id = ingest_utils.extract_ands_id(
+                    self._logger, file_info.get("id")
+                )
                 xlsx_info = self.metadata_info[os.path.basename(md5_file)]
                 legacy_url = urljoin(xlsx_info["base_url"], filename)
                 resources.append(((sample_id,), legacy_url, resource))
@@ -811,7 +823,7 @@ class StemcellsProteomicsPoolMetadata(StemcellsProteomicsBaseMetadata):
                     "omics": "proteomics",
                     "type": self.ckan_data_type,
                     "date_of_transfer": ingest_utils.get_date_isoformat(
-                        track_meta.date_of_transfer
+                        self._logger, track_meta.date_of_transfer
                     ),
                     "ticket": ticket,
                     "facility": facility_code,
@@ -819,14 +831,14 @@ class StemcellsProteomicsPoolMetadata(StemcellsProteomicsBaseMetadata):
                     "description": track_meta.description,
                     "folder_name": track_meta.folder_name,
                     "sample_submission_date": ingest_utils.get_date_isoformat(
-                        track_meta.date_of_transfer
+                        self._logger, track_meta.date_of_transfer
                     ),
                     "contextual_data_submission_date": None,
                     "data_generated": ingest_utils.get_date_isoformat(
-                        track_meta.date_of_transfer_to_archive
+                        self._logger, track_meta.date_of_transfer_to_archive
                     ),
                     "archive_ingestion_date": ingest_utils.get_date_isoformat(
-                        track_meta.date_of_transfer_to_archive
+                        self._logger, track_meta.date_of_transfer_to_archive
                     ),
                     "dataset_url": track_meta.download,
                     "private": True,
@@ -840,7 +852,9 @@ class StemcellsProteomicsPoolMetadata(StemcellsProteomicsBaseMetadata):
         return packages
 
     def _get_resources(self):
-        self._logger.info("Ingesting Sepsis md5 file information from {0}".format(self.path))
+        self._logger.info(
+            "Ingesting Sepsis md5 file information from {0}".format(self.path)
+        )
         resources = []
         for md5_file in glob(self.path + "/*.md5"):
             self._logger.info("Processing md5 file {0}".format(md5_file))
@@ -967,7 +981,12 @@ class StemcellsProteomicsAnalysedMetadata(BaseMetadata):
             # folder names can be quite long, truncate
             name = name[:100]
             sample_ids = sorted(
-                set([ingest_utils.extract_ands_id(t.sample_id) for t in rows])
+                set(
+                    [
+                        ingest_utils.extract_ands_id(self._logger, t.sample_id)
+                        for t in rows
+                    ]
+                )
             )
             obj.update(
                 {
@@ -981,20 +1000,20 @@ class StemcellsProteomicsAnalysedMetadata(BaseMetadata):
                     "sample_ids": ", ".join(sample_ids),
                     "type": self.ckan_data_type,
                     "date_of_transfer": ingest_utils.get_date_isoformat(
-                        track_meta.date_of_transfer
+                        self._logger, track_meta.date_of_transfer
                     ),
                     "data_type": track_meta.data_type,
                     "description": track_meta.description,
                     "folder_name": track_meta.folder_name,
                     "sample_submission_date": ingest_utils.get_date_isoformat(
-                        track_meta.date_of_transfer
+                        self._logger, track_meta.date_of_transfer
                     ),
                     "contextual_data_submission_date": None,
                     "data_generated": ingest_utils.get_date_isoformat(
-                        track_meta.date_of_transfer_to_archive
+                        self._logger, track_meta.date_of_transfer_to_archive
                     ),
                     "archive_ingestion_date": ingest_utils.get_date_isoformat(
-                        track_meta.date_of_transfer_to_archive
+                        self._logger, track_meta.date_of_transfer_to_archive
                     ),
                     "dataset_url": track_meta.download,
                     "private": True,
@@ -1008,7 +1027,9 @@ class StemcellsProteomicsAnalysedMetadata(BaseMetadata):
         return packages
 
     def _get_resources(self):
-        self._logger.info("Ingesting Sepsis md5 file information from {0}".format(self.path))
+        self._logger.info(
+            "Ingesting Sepsis md5 file information from {0}".format(self.path)
+        )
         resources = []
         for md5_file in glob(self.path + "/*.md5"):
             self._logger.info("Processing md5 file {0}".format(md5_file))
@@ -1112,20 +1133,20 @@ class StemcellsMetabolomicsAnalysedMetadata(BaseMetadata):
                     "sample_ids": ", ".join(sample_ids),
                     "type": self.ckan_data_type,
                     "date_of_transfer": ingest_utils.get_date_isoformat(
-                        track_meta.date_of_transfer
+                        self._logger, track_meta.date_of_transfer
                     ),
                     "data_type": track_meta.data_type,
                     "description": track_meta.description,
                     "folder_name": track_meta.folder_name,
                     "sample_submission_date": ingest_utils.get_date_isoformat(
-                        track_meta.date_of_transfer
+                        self._logger, track_meta.date_of_transfer
                     ),
                     "contextual_data_submission_date": None,
                     "data_generated": ingest_utils.get_date_isoformat(
-                        track_meta.date_of_transfer_to_archive
+                        self._logger, track_meta.date_of_transfer_to_archive
                     ),
                     "archive_ingestion_date": ingest_utils.get_date_isoformat(
-                        track_meta.date_of_transfer_to_archive
+                        self._logger, track_meta.date_of_transfer_to_archive
                     ),
                     "dataset_url": track_meta.download,
                     "private": True,
@@ -1265,20 +1286,20 @@ class StemcellsTranscriptomeAnalysedMetadata(BaseMetadata):
                     "sample_ids": ", ".join(sample_ids),
                     "type": self.ckan_data_type,
                     "date_of_transfer": ingest_utils.get_date_isoformat(
-                        track_meta.date_of_transfer
+                        self._logger, track_meta.date_of_transfer
                     ),
                     "data_type": track_meta.data_type,
                     "description": track_meta.description,
                     "folder_name": track_meta.folder_name,
                     "sample_submission_date": ingest_utils.get_date_isoformat(
-                        track_meta.date_of_transfer
+                        self._logger, track_meta.date_of_transfer
                     ),
                     "contextual_data_submission_date": None,
                     "data_generated": ingest_utils.get_date_isoformat(
-                        track_meta.date_of_transfer_to_archive
+                        self._logger, track_meta.date_of_transfer_to_archive
                     ),
                     "archive_ingestion_date": ingest_utils.get_date_isoformat(
-                        track_meta.date_of_transfer_to_archive
+                        self._logger, track_meta.date_of_transfer_to_archive
                     ),
                     "dataset_url": track_meta.download,
                     "private": True,

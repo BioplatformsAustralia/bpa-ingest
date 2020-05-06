@@ -108,7 +108,7 @@ def make_organization(ckan, organization_obj):
     return make_obj(ckan, "organization", organization_obj)
 
 
-class ArchiveInfo(object):
+class ArchiveInfo:
     def __init__(self, ckan):
         self.ckan_address = self.ckan_address = None
         if ckan is not None:

@@ -5,7 +5,7 @@ from .strains import get_taxon_strain, map_taxon_strain_rows
 from glob import glob
 
 
-def int_or_comment(val):
+def int_or_comment(logger, val):
     # fix up '14.0' type values coming through from Excel; if not an integer,
     # it's a note or a text code, which we just pass back unaltered
     if val is None:
@@ -19,12 +19,12 @@ def int_or_comment(val):
         return val
 
 
-def date_or_comment(val):
+def date_or_comment(logger, val):
     # another mix of actual dates and free-text comments, clean up as much as we can
     # into standard dates, but if not we return the underlying value
     if val is None:
         return None
-    val_as_date = ingest_utils.get_date_isoformat(val)
+    val_as_date = ingest_utils.get_date_isoformat(logger, val)
     if val_as_date is not None:
         return val_as_date
     val = str(val).strip()
@@ -33,7 +33,7 @@ def date_or_comment(val):
     return val
 
 
-def get_gram_stain(val):
+def get_gram_stain(logger, val):
     if val and val != "":
         val = val.lower()
         if "positive" in val:
@@ -43,7 +43,7 @@ def get_gram_stain(val):
     return None
 
 
-def get_sex(val):
+def get_sex(logger, val):
     if val is None:
         return None
     val = val.lower()
@@ -57,7 +57,7 @@ def get_sex(val):
     return None
 
 
-def get_strain_or_isolate(val):
+def get_strain_or_isolate(logger, val):
     if val and val != "":
         # convert floats to str
         if isinstance(val, float):
@@ -66,7 +66,7 @@ def get_strain_or_isolate(val):
     return None
 
 
-class SepsisBacterialContextual(object):
+class SepsisBacterialContextual:
     """
     Bacterial sample metadata: used by each of the -omics classes below.
     """
@@ -131,6 +131,7 @@ class SepsisBacterialContextual(object):
             fld("host_description", "Host_description"),
         ]
         wrapper = ExcelWrapper(
+            self._logger,
             field_spec,
             metadata_path,
             sheet_name=None,
@@ -142,7 +143,7 @@ class SepsisBacterialContextual(object):
         return map_taxon_strain_rows(wrapper.get_all())
 
 
-class SepsisGenomicsContextual(object):
+class SepsisGenomicsContextual:
     """
     Genomics sample metadata: used by the genomics classes.
     """
@@ -209,6 +210,7 @@ class SepsisGenomicsContextual(object):
             fld("data_type", "Data type"),
         ]
         wrapper = ExcelWrapper(
+            self._logger,
             field_spec,
             metadata_path,
             sheet_name="Genomics",
@@ -220,7 +222,7 @@ class SepsisGenomicsContextual(object):
         return wrapper.get_all()
 
 
-class SepsisTranscriptomicsHiseqContextual(object):
+class SepsisTranscriptomicsHiseqContextual:
     """
     Transcriptomics sample metadata: used by the genomics classes.
     """
@@ -298,6 +300,7 @@ class SepsisTranscriptomicsHiseqContextual(object):
         ]
 
         wrapper = ExcelWrapper(
+            self._logger,
             field_spec,
             metadata_path,
             sheet_name="RNA HiSeq",
@@ -309,7 +312,7 @@ class SepsisTranscriptomicsHiseqContextual(object):
         return wrapper.get_all()
 
 
-class SepsisMetabolomicsLCMSContextual(object):
+class SepsisMetabolomicsLCMSContextual:
     """
     Metabolomics sample metadata: used by the genomics classes.
     """
@@ -382,6 +385,7 @@ class SepsisMetabolomicsLCMSContextual(object):
         ]
 
         wrapper = ExcelWrapper(
+            self._logger,
             field_spec,
             metadata_path,
             sheet_name="Metabolomics",
@@ -393,7 +397,7 @@ class SepsisMetabolomicsLCMSContextual(object):
         return wrapper.get_all()
 
 
-class SepsisProteomicsBaseContextual(object):
+class SepsisProteomicsBaseContextual:
     """
     Proteomics sample metadata: used by both proteomics classes.
     """
@@ -474,6 +478,7 @@ class SepsisProteomicsBaseContextual(object):
             fld("data_type", "Data type"),
         ]
         wrapper = ExcelWrapper(
+            self._logger,
             field_spec,
             metadata_path,
             sheet_name="Proteomics",

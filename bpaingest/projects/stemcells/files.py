@@ -156,7 +156,7 @@ xlsx_filename_re = re.compile(r"^.*\.xlsx")
 pdf_filename_re = re.compile(r"^.*\.pdf")
 
 
-def proteomics_raw_extract_pool_id(v):
+def proteomics_raw_extract_pool_id(logger, v):
     if v is None:
         return
     m = proteomics_pool_filename_re.match(v)

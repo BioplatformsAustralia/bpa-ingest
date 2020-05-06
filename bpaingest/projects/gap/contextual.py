@@ -5,14 +5,14 @@ from ...libs.excel_wrapper import ExcelWrapper, make_field_definition as fld
 from ...util import make_logger, one
 
 
-def date_or_str(v):
-    d = ingest_utils.get_date_isoformat(v, silent=True)
+def date_or_str(logger, v):
+    d = ingest_utils.get_date_isoformat(logger, v, silent=True)
     if d is not None:
         return d
     return v
 
 
-class GAPLibraryContextual(object):
+class GAPLibraryContextual:
     metadata_urls = [
         "https://downloads-qcif.bioplatforms.com/bpa/plants_staging/metadata/2020-04-16/"
     ]
@@ -124,6 +124,7 @@ class GAPLibraryContextual(object):
         ]
 
         wrapper = ExcelWrapper(
+            self._logger,
             field_spec,
             fname,
             sheet_name=None,
@@ -146,7 +147,7 @@ class GAPLibraryContextual(object):
                 continue
             if row.library_id in library_metadata:
                 raise Exception("duplicate library id: {}".format(row.library_id))
-            library_id = ingest_utils.extract_ands_id(row.library_id)
+            library_id = ingest_utils.extract_ands_id(self._logger, row.library_id)
             library_metadata[library_id] = row_meta = {}
             for field in row._fields:
                 value = getattr(row, field)

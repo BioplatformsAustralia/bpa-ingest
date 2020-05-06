@@ -12,6 +12,7 @@ class BaseMetadata:
     def parse_spreadsheet(self, fname, metadata_info):
         kwargs = self.spreadsheet["options"]
         wrapper = ExcelWrapper(
+            self._logger,
             self.spreadsheet["fields"],
             fname,
             additional_context=metadata_info[os.path.basename(fname)],

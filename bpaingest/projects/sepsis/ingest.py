@@ -34,21 +34,25 @@ import os
 import re
 
 
-def fix_version(s):
+def fix_version(logger, s):
     if isinstance(s, datetime):
-        return ingest_utils.get_date_isoformat(s)
+        return ingest_utils.get_date_isoformat(logger, s)
     return str(s)
 
 
-def parse_pooled_sample_id(s):
+def parse_pooled_sample_id(logger, s):
     if isinstance(s, str) and "," in s:
-        return tuple([ingest_utils.extract_ands_id(t.strip()) for t in s.split(",")])
+        return tuple(
+            [ingest_utils.extract_ands_id(logger, t.strip()) for t in s.split(",")]
+        )
     else:
-        return ingest_utils.extract_ands_id(s)
+        return ingest_utils.extract_ands_id(logger, s)
 
 
-def make_sample_id_list(s):
-    return tuple([ingest_utils.extract_ands_id(t.strip()) for t in s.split(",")])
+def make_sample_id_list(logger, s):
+    return tuple(
+        [ingest_utils.extract_ands_id(logger, t.strip()) for t in s.split(",")]
+    )
 
 
 expanded_names = {
@@ -117,7 +121,7 @@ class BaseSepsisMetadata(BaseMetadata):
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        self.google_track_meta = SepsisGoogleTrackMetadata()
+        self.google_track_meta = SepsisGoogleTrackMetadata(self._logger)
 
     def parse_spreadsheet(self, *args, **kwargs):
         return map_taxon_strain_rows(super().parse_spreadsheet(*args, **kwargs))
@@ -158,7 +162,9 @@ class SepsisGenomicsMiseqMetadata(BaseSepsisMetadata):
         super().__init__(logger, metadata_path)
         self.path = Path(metadata_path)
         self.contextual_metadata = contextual_metadata
-        self.bpam_track_meta = SepsisGenomicsTrackMetadata("GenomicsMiSeq")
+        self.bpam_track_meta = SepsisGenomicsTrackMetadata(
+            self._logger, "GenomicsMiSeq"
+        )
         self.metadata_info = metadata_info
 
     def _get_packages(self):
@@ -188,7 +194,7 @@ class SepsisGenomicsMiseqMetadata(BaseSepsisMetadata):
                         "id": name,
                         "sample_id": sample_id,
                         "archive_ingestion_date": ingest_utils.get_date_isoformat(
-                            google_track_meta.date_of_transfer_to_archive
+                            self._logger, google_track_meta.date_of_transfer_to_archive
                         ),
                         "notes": "ARP Genomics Miseq Raw Data: %s %s %s Replicate %s"
                         % (taxon, strain, obj["growth_media"], obj["replicate"]),
@@ -237,7 +243,9 @@ class SepsisGenomicsMiseqMetadata(BaseSepsisMetadata):
                 resource["md5"] = resource["id"] = md5
                 resource["name"] = filename
                 resource["resource_type"] = self.ckan_data_type
-                sample_id = ingest_utils.extract_ands_id(file_info.get("id"))
+                sample_id = ingest_utils.extract_ands_id(
+                    self._logger, file_info.get("id")
+                )
                 xlsx_info = self.metadata_info[os.path.basename(md5_file)]
                 legacy_url = urljoin(xlsx_info["base_url"], filename)
                 resources.append(((sample_id,), legacy_url, resource))
@@ -282,13 +290,16 @@ class SepsisGenomicsPacbioMetadata(BaseSepsisMetadata):
         super().__init__(logger, metadata_path)
         self.path = Path(metadata_path)
         self.contextual_metadata = contextual_metadata
-        self.bpam_track_meta = SepsisGenomicsTrackMetadata("GenomicsPacBio")
+        self.bpam_track_meta = SepsisGenomicsTrackMetadata(
+            self._logger, "GenomicsPacBio"
+        )
         self.metadata_info = metadata_info
 
     def read_track_csv(self, fname):
         header, rows = csv_to_named_tuple("SepsisGenomicsPacbioTrack", fname)
         return dict(
-            (ingest_utils.extract_ands_id(t.five_digit_bpa_id), t) for t in rows
+            (ingest_utils.extract_ands_id(self._logger, t.five_digit_bpa_id), t)
+            for t in rows
         )
 
     def _get_packages(self):
@@ -318,7 +329,7 @@ class SepsisGenomicsPacbioMetadata(BaseSepsisMetadata):
                         "id": name,
                         "sample_id": sample_id,
                         "archive_ingestion_date": ingest_utils.get_date_isoformat(
-                            google_track_meta.date_of_transfer_to_archive
+                            self._logger, google_track_meta.date_of_transfer_to_archive
                         ),
                         "title": "Sepsis Genomics Pacbio %s"
                         % (sample_id.split("/")[-1]),
@@ -360,7 +371,9 @@ class SepsisGenomicsPacbioMetadata(BaseSepsisMetadata):
                 resource["md5"] = resource["id"] = md5
                 resource["name"] = filename
                 resource["resource_type"] = self.ckan_data_type
-                sample_id = ingest_utils.extract_ands_id(file_info.get("id"))
+                sample_id = ingest_utils.extract_ands_id(
+                    self._logger, file_info.get("id")
+                )
                 xlsx_info = self.metadata_info[os.path.basename(md5_file)]
                 legacy_url = urljoin(xlsx_info["base_url"], filename)
                 resources.append(((sample_id,), legacy_url, resource))
@@ -403,7 +416,7 @@ class SepsisTranscriptomicsHiseqMetadata(BaseSepsisMetadata):
         super().__init__(logger, metadata_path)
         self.path = Path(metadata_path)
         self.contextual_metadata = contextual_metadata
-        self.bpam_track_meta = SepsisTrackMetadata("TranscriptomicsHiSeq")
+        self.bpam_track_meta = SepsisTrackMetadata(self._logger, "TranscriptomicsHiSeq")
         self.metadata_info = metadata_info
 
     def read_track_csv(self, fname):
@@ -411,7 +424,8 @@ class SepsisTranscriptomicsHiseqMetadata(BaseSepsisMetadata):
             return {}
         header, rows = csv_to_named_tuple("SepsisGenomicsHiseqTrack", fname)
         return dict(
-            (ingest_utils.extract_ands_id(t.five_digit_bpa_id), t) for t in rows
+            (ingest_utils.extract_ands_id(self._logger, t.five_digit_bpa_id), t)
+            for t in rows
         )
 
     def _get_packages(self):
@@ -445,7 +459,9 @@ class SepsisTranscriptomicsHiseqMetadata(BaseSepsisMetadata):
         sample_id_flowcells = defaultdict(set)
         for md5_file in glob(self.path + "/*.md5"):
             for filename, md5, file_info in self.parse_md5file(md5_file):
-                sample_id = ingest_utils.extract_ands_id(file_info.get("id"))
+                sample_id = ingest_utils.extract_ands_id(
+                    self._logger, file_info.get("id")
+                )
                 sample_id_flowcells[sample_id].add(file_info["flow_cell_id"])
 
         for sample_id, info in sample_id_info.items():
@@ -517,7 +533,9 @@ class SepsisTranscriptomicsHiseqMetadata(BaseSepsisMetadata):
                 resource["md5"] = resource["id"] = md5
                 resource["name"] = filename
                 resource["resource_type"] = self.ckan_data_type
-                sample_id = ingest_utils.extract_ands_id(file_info.get("id"))
+                sample_id = ingest_utils.extract_ands_id(
+                    self._logger, file_info.get("id")
+                )
                 xlsx_info = self.metadata_info[os.path.basename(md5_file)]
                 legacy_url = urljoin(xlsx_info["base_url"], filename)
                 resources.append(((sample_id,), legacy_url, resource))
@@ -564,7 +582,7 @@ class SepsisMetabolomicsGCMSMetadata(BaseSepsisMetadata):
         super().__init__(logger, metadata_path)
         self.path = Path(metadata_path)
         self.contextual_metadata = contextual_metadata
-        self.bpam_track_meta = SepsisTrackMetadata("MetabolomicsGCMS")
+        self.bpam_track_meta = SepsisTrackMetadata(self._logger, "MetabolomicsGCMS")
         self.metadata_info = metadata_info
 
     def read_track_csv(self, fname):
@@ -572,7 +590,8 @@ class SepsisMetabolomicsGCMSMetadata(BaseSepsisMetadata):
             return {}
         header, rows = csv_to_named_tuple("SepsisMetabolomicsGCMSTrack", fname)
         return dict(
-            (ingest_utils.extract_ands_id(t.five_digit_bpa_id), t) for t in rows
+            (ingest_utils.extract_ands_id(self._logger, t.five_digit_bpa_id), t)
+            for t in rows
         )
 
     def _get_packages(self):
@@ -601,7 +620,7 @@ class SepsisMetabolomicsGCMSMetadata(BaseSepsisMetadata):
                         "id": name,
                         "sample_id": sample_id,
                         "archive_ingestion_date": ingest_utils.get_date_isoformat(
-                            google_track_meta.date_of_transfer_to_archive
+                            self._logger, google_track_meta.date_of_transfer_to_archive
                         ),
                         "title": "ARP Metabolomics GCMS %s"
                         % (sample_id.split("/")[-1]),
@@ -642,7 +661,9 @@ class SepsisMetabolomicsGCMSMetadata(BaseSepsisMetadata):
                 resource["md5"] = resource["id"] = md5
                 resource["name"] = filename
                 resource["resource_type"] = self.ckan_data_type
-                sample_id = ingest_utils.extract_ands_id(file_info.get("id"))
+                sample_id = ingest_utils.extract_ands_id(
+                    self._logger, file_info.get("id")
+                )
                 xlsx_info = self.metadata_info[os.path.basename(md5_file)]
                 legacy_url = urljoin(xlsx_info["base_url"], filename)
                 resources.append(((sample_id,), legacy_url, resource))
@@ -689,7 +710,7 @@ class SepsisMetabolomicsLCMSMetadata(BaseSepsisMetadata):
         super().__init__(logger, metadata_path)
         self.path = Path(metadata_path)
         self.contextual_metadata = contextual_metadata
-        self.bpam_track_meta = SepsisTrackMetadata("MetabolomicsLCMS")
+        self.bpam_track_meta = SepsisTrackMetadata(self._logger, "MetabolomicsLCMS")
         self.metadata_info = metadata_info
 
     def read_track_csv(self, fname):
@@ -697,7 +718,8 @@ class SepsisMetabolomicsLCMSMetadata(BaseSepsisMetadata):
             return {}
         header, rows = csv_to_named_tuple("SepsisMetabolomicsLCMSTrack", fname)
         return dict(
-            (ingest_utils.extract_ands_id(t.five_digit_bpa_id), t) for t in rows
+            (ingest_utils.extract_ands_id(self._logger, t.five_digit_bpa_id), t)
+            for t in rows
         )
 
     def _get_packages(self):
@@ -726,7 +748,7 @@ class SepsisMetabolomicsLCMSMetadata(BaseSepsisMetadata):
                         "id": name,
                         "sample_id": sample_id,
                         "archive_ingestion_date": ingest_utils.get_date_isoformat(
-                            google_track_meta.date_of_transfer_to_archive
+                            self._logger, google_track_meta.date_of_transfer_to_archive
                         ),
                         "title": "ARP Metabolomics LCMS %s"
                         % (sample_id.split("/")[-1]),
@@ -772,7 +794,9 @@ class SepsisMetabolomicsLCMSMetadata(BaseSepsisMetadata):
                 resource["md5"] = resource["id"] = md5
                 resource["name"] = filename
                 resource["resource_type"] = self.ckan_data_type
-                sample_id = ingest_utils.extract_ands_id(file_info.get("id"))
+                sample_id = ingest_utils.extract_ands_id(
+                    self._logger, file_info.get("id")
+                )
                 xlsx_info = self.metadata_info[os.path.basename(md5_file)]
                 legacy_url = urljoin(xlsx_info["base_url"], filename)
                 resources.append(((sample_id,), legacy_url, resource))
@@ -836,7 +860,9 @@ class SepsisProteomicsMS1QuantificationMetadata(BaseSepsisMetadata):
         super().__init__(logger, metadata_path)
         self.path = Path(metadata_path)
         self.contextual_metadata = contextual_metadata
-        self.bpam_track_meta = SepsisTrackMetadata("ProteomicsMS1Quantification")
+        self.bpam_track_meta = SepsisTrackMetadata(
+            self._logger, "ProteomicsMS1Quantification"
+        )
         self.metadata_info = metadata_info
 
     def read_track_csv(self, fname):
@@ -846,7 +872,8 @@ class SepsisProteomicsMS1QuantificationMetadata(BaseSepsisMetadata):
             "SepsisProteomicsMS1QuantificationTrack", fname
         )
         return dict(
-            (ingest_utils.extract_ands_id(t.five_digit_bpa_id), t) for t in rows
+            (ingest_utils.extract_ands_id(self._logger, t.five_digit_bpa_id), t)
+            for t in rows
         )
 
     def _get_packages(self):
@@ -889,7 +916,7 @@ class SepsisProteomicsMS1QuantificationMetadata(BaseSepsisMetadata):
                         "title": "ARP Proteomics MS1Quantification %s"
                         % (sample_id.split("/")[-1]),
                         "archive_ingestion_date": ingest_utils.get_date_isoformat(
-                            google_track_meta.date_of_transfer_to_archive
+                            self._logger, google_track_meta.date_of_transfer_to_archive
                         ),
                         "notes": "ARP Proteomics MS1Quantification Raw Data: %s %s %s Replicate %s"
                         % (taxon, strain, obj["growth_media"], obj["replicate"]),
@@ -917,7 +944,9 @@ class SepsisProteomicsMS1QuantificationMetadata(BaseSepsisMetadata):
                 resource["md5"] = resource["id"] = md5
                 resource["name"] = filename
                 resource["resource_type"] = self.ckan_data_type
-                sample_id = ingest_utils.extract_ands_id(file_info.get("id"))
+                sample_id = ingest_utils.extract_ands_id(
+                    self._logger, file_info.get("id")
+                )
                 xlsx_info = self.metadata_info[os.path.basename(md5_file)]
                 legacy_url = urljoin(xlsx_info["base_url"], filename)
                 resources.append(((sample_id,), legacy_url, resource))
@@ -965,7 +994,7 @@ class SepsisProteomicsSwathMSBaseSepsisMetadata(BaseSepsisMetadata):
         self.path = Path(metadata_path)
         self.metadata_info = metadata_info
         self.contextual_metadata = contextual_metadata
-        self.bpam_track_meta = SepsisTrackMetadata("ProteomicsSwathMS")
+        self.bpam_track_meta = SepsisTrackMetadata(self._logger, "ProteomicsSwathMS")
         self.package_data, self.file_data = self.get_spreadsheet_data()
 
     def read_track_csv(self, fname):
@@ -973,7 +1002,8 @@ class SepsisProteomicsSwathMSBaseSepsisMetadata(BaseSepsisMetadata):
             return {}
         header, rows = csv_to_named_tuple("SepsisProteomicsSwathMSTrack", fname)
         return dict(
-            (ingest_utils.extract_ands_id(t.five_digit_bpa_id), t) for t in rows
+            (ingest_utils.extract_ands_id(self._logger, t.five_digit_bpa_id), t)
+            for t in rows
         )
 
     def get_spreadsheet_data(self):
@@ -1034,7 +1064,7 @@ class SepsisProteomicsSwathMSBaseSepsisMetadata(BaseSepsisMetadata):
                     "gradient_time_per_acn": row.gradient_time_per_acn,
                     "mass_spectrometer": row.mass_spectrometer,
                     "archive_ingestion_date": ingest_utils.get_date_isoformat(
-                        google_track_meta.date_of_transfer_to_archive
+                        self._logger, google_track_meta.date_of_transfer_to_archive
                     ),
                 }
                 package_meta.update(contextual_meta)
@@ -1125,7 +1155,9 @@ class SepsisProteomicsSwathMSBaseSepsisMetadata(BaseSepsisMetadata):
                 resource.update(file_meta)
                 resource["name"] = filename
                 if data_type == "1d":
-                    package_id = ingest_utils.extract_ands_id(file_info.get("id"))
+                    package_id = ingest_utils.extract_ands_id(
+                        self._logger, file_info.get("id")
+                    )
                 elif data_type == "2d":
                     package_id = package_name
 
@@ -1188,7 +1220,7 @@ class SepsisProteomicsSwathMSCombinedSampleMetadata(BaseSepsisMetadata):
         self.path = Path(metadata_path)
         self.contextual_metadata = contextual_metadata
         self.metadata_info = metadata_info
-        self.google_track_meta = SepsisGoogleTrackMetadata()
+        self.google_track_meta = SepsisGoogleTrackMetadata(self._logger)
 
     def _get_packages(self):
         self._logger.info("Ingesting Sepsis metadata from {0}".format(self.path))
@@ -1223,16 +1255,16 @@ class SepsisProteomicsSwathMSCombinedSampleMetadata(BaseSepsisMetadata):
                     "data_generated": "True",
                     "type": self.ckan_data_type,
                     "date_of_transfer": ingest_utils.get_date_isoformat(
-                        track_meta.date_of_transfer
+                        self._logger, track_meta.date_of_transfer
                     ),
                     "data_type": track_meta.data_type,
                     "description": track_meta.description,
                     "folder_name": track_meta.folder_name,
                     "sample_submission_date": ingest_utils.get_date_isoformat(
-                        track_meta.date_of_transfer
+                        self._logger, track_meta.date_of_transfer
                     ),
                     "archive_ingestion_date": ingest_utils.get_date_isoformat(
-                        track_meta.date_of_transfer_to_archive
+                        self._logger, track_meta.date_of_transfer_to_archive
                     ),
                     "dataset_url": track_meta.download,
                     "private": True,
@@ -1328,7 +1360,7 @@ class SepsisProteomics2DLibraryMetadata(BaseSepsisMetadata):
         self.path = Path(metadata_path)
         self.contextual_metadata = contextual_metadata
         self.metadata_info = metadata_info
-        self.google_track_meta = SepsisGoogleTrackMetadata()
+        self.google_track_meta = SepsisGoogleTrackMetadata(self._logger)
 
     def _get_packages(self):
         self._logger.info("Ingesting Sepsis metadata from {0}".format(self.path))
@@ -1362,16 +1394,16 @@ class SepsisProteomics2DLibraryMetadata(BaseSepsisMetadata):
                     "data_generated": "True",
                     "type": self.ckan_data_type,
                     "date_of_transfer": ingest_utils.get_date_isoformat(
-                        track_meta.date_of_transfer
+                        self._logger, track_meta.date_of_transfer
                     ),
                     "data_type": track_meta.data_type,
                     "description": track_meta.description,
                     "folder_name": track_meta.folder_name,
                     "sample_submission_date": ingest_utils.get_date_isoformat(
-                        track_meta.date_of_transfer
+                        self._logger, track_meta.date_of_transfer
                     ),
                     "archive_ingestion_date": ingest_utils.get_date_isoformat(
-                        track_meta.date_of_transfer_to_archive
+                        self._logger, track_meta.date_of_transfer_to_archive
                     ),
                     "dataset_url": track_meta.download,
                     "private": True,
@@ -1576,10 +1608,10 @@ class SepsisProteomicsAnalysedMetadata(BaseSepsisAnalysedMetadata):
         self.path = Path(metadata_path)
         self.contextual_metadata = contextual_metadata
         self.metadata_info = metadata_info
-        self.google_track_meta = SepsisGoogleTrackMetadata()
+        self.google_track_meta = SepsisGoogleTrackMetadata(self._logger)
         self.bpam_track_meta = [
-            SepsisTrackMetadata("ProteomicsMS1Quantification"),
-            SepsisTrackMetadata("ProteomicsSwathMS"),
+            SepsisTrackMetadata(self._logger, "ProteomicsMS1Quantification"),
+            SepsisTrackMetadata(self._logger, "ProteomicsSwathMS"),
         ]
 
     def _get_packages(self):
@@ -1618,16 +1650,16 @@ class SepsisProteomicsAnalysedMetadata(BaseSepsisAnalysedMetadata):
                     "data_generated": "True",
                     "type": self.ckan_data_type,
                     "date_of_transfer": ingest_utils.get_date_isoformat(
-                        track_meta.date_of_transfer
+                        self._logger, track_meta.date_of_transfer
                     ),
                     "data_type": track_meta.data_type,
                     "description": track_meta.description,
                     "folder_name": track_meta.folder_name,
                     "sample_submission_date": ingest_utils.get_date_isoformat(
-                        track_meta.date_of_transfer
+                        self._logger, track_meta.date_of_transfer
                     ),
                     "archive_ingestion_date": ingest_utils.get_date_isoformat(
-                        track_meta.date_of_transfer_to_archive
+                        self._logger, track_meta.date_of_transfer_to_archive
                     ),
                     "dataset_url": track_meta.download,
                     "private": True,
@@ -1750,8 +1782,10 @@ class SepsisTranscriptomicsAnalysedMetadata(BaseSepsisAnalysedMetadata):
         self.path = Path(metadata_path)
         self.contextual_metadata = contextual_metadata
         self.metadata_info = metadata_info
-        self.google_track_meta = SepsisGoogleTrackMetadata()
-        self.bpam_track_meta = [SepsisTrackMetadata("TranscriptomicsHiSeq")]
+        self.google_track_meta = SepsisGoogleTrackMetadata(self._logger)
+        self.bpam_track_meta = [
+            SepsisTrackMetadata(self._logger, "TranscriptomicsHiSeq")
+        ]
 
     def _get_packages(self):
         self._logger.info("Ingesting Sepsis metadata from {0}".format(self.path))
@@ -1792,16 +1826,16 @@ class SepsisTranscriptomicsAnalysedMetadata(BaseSepsisAnalysedMetadata):
                     "data_generated": "True",
                     "type": self.ckan_data_type,
                     "date_of_transfer": ingest_utils.get_date_isoformat(
-                        track_meta.date_of_transfer
+                        self._logger, track_meta.date_of_transfer
                     ),
                     "data_type": track_meta.data_type,
                     "description": track_meta.description,
                     "ticket": ticket,
                     "sample_submission_date": ingest_utils.get_date_isoformat(
-                        track_meta.date_of_transfer
+                        self._logger, track_meta.date_of_transfer
                     ),
                     "archive_ingestion_date": ingest_utils.get_date_isoformat(
-                        track_meta.date_of_transfer_to_archive
+                        self._logger, track_meta.date_of_transfer_to_archive
                     ),
                     "dataset_url": track_meta.download,
                     "private": True,
@@ -1905,8 +1939,8 @@ class SepsisMetabolomicsAnalysedMetadata(BaseSepsisAnalysedMetadata):
         self.path = Path(metadata_path)
         self.contextual_metadata = contextual_metadata
         self.metadata_info = metadata_info
-        self.google_track_meta = SepsisGoogleTrackMetadata()
-        self.bpam_track_meta = [SepsisTrackMetadata("MetabolomicsLCMS")]
+        self.google_track_meta = SepsisGoogleTrackMetadata(self._logger)
+        self.bpam_track_meta = [SepsisTrackMetadata(self._logger, "MetabolomicsLCMS")]
 
     def _get_packages(self):
         self._logger.info("Ingesting Sepsis metadata from {0}".format(self.path))
@@ -1950,16 +1984,16 @@ class SepsisMetabolomicsAnalysedMetadata(BaseSepsisAnalysedMetadata):
                     "data_generated": "True",
                     "type": self.ckan_data_type,
                     "date_of_transfer": ingest_utils.get_date_isoformat(
-                        track_meta.date_of_transfer
+                        self._logger, track_meta.date_of_transfer
                     ),
                     "data_type": track_meta.data_type,
                     "description": track_meta.description,
                     "folder_name": track_meta.folder_name,
                     "sample_submission_date": ingest_utils.get_date_isoformat(
-                        track_meta.date_of_transfer
+                        self._logger, track_meta.date_of_transfer
                     ),
                     "archive_ingestion_date": ingest_utils.get_date_isoformat(
-                        track_meta.date_of_transfer_to_archive
+                        self._logger, track_meta.date_of_transfer_to_archive
                     ),
                     "dataset_url": track_meta.download,
                     "private": True,
@@ -2073,8 +2107,10 @@ class SepsisGenomicsAnalysedMetadata(BaseSepsisAnalysedMetadata):
         self.path = Path(metadata_path)
         self.contextual_metadata = contextual_metadata
         self.metadata_info = metadata_info
-        self.google_track_meta = SepsisGoogleTrackMetadata()
-        self.bpam_track_meta = [SepsisGenomicsTrackMetadata("MetabolomicsLCMS")]
+        self.google_track_meta = SepsisGoogleTrackMetadata(self._logger)
+        self.bpam_track_meta = [
+            SepsisGenomicsTrackMetadata(self._logger, "MetabolomicsLCMS")
+        ]
 
     def _get_packages(self):
         self._logger.info("Ingesting Sepsis metadata from {0}".format(self.path))
@@ -2117,16 +2153,16 @@ class SepsisGenomicsAnalysedMetadata(BaseSepsisAnalysedMetadata):
                     "data_generated": "True",
                     "type": self.ckan_data_type,
                     "date_of_transfer": ingest_utils.get_date_isoformat(
-                        track_meta.date_of_transfer
+                        self._logger, track_meta.date_of_transfer
                     ),
                     "data_type": track_meta.data_type,
                     "description": track_meta.description,
                     "folder_name": track_meta.folder_name,
                     "sample_submission_date": ingest_utils.get_date_isoformat(
-                        track_meta.date_of_transfer
+                        self._logger, track_meta.date_of_transfer
                     ),
                     "archive_ingestion_date": ingest_utils.get_date_isoformat(
-                        track_meta.date_of_transfer_to_archive
+                        self._logger, track_meta.date_of_transfer_to_archive
                     ),
                     "dataset_url": track_meta.download,
                     "private": True,
@@ -2233,7 +2269,7 @@ class SepsisProteomicsProteinDatabaseMetadata(BaseSepsisAnalysedMetadata):
         self.path = Path(metadata_path)
         self.contextual_metadata = contextual_metadata
         self.metadata_info = metadata_info
-        self.google_track_meta = SepsisGoogleTrackMetadata()
+        self.google_track_meta = SepsisGoogleTrackMetadata(self._logger)
         self.bpam_track_meta = []
 
     def _get_packages(self):
@@ -2271,16 +2307,16 @@ class SepsisProteomicsProteinDatabaseMetadata(BaseSepsisAnalysedMetadata):
                     "data_generated": "True",
                     "type": self.ckan_data_type,
                     "date_of_transfer": ingest_utils.get_date_isoformat(
-                        track_meta.date_of_transfer
+                        self._logger, track_meta.date_of_transfer
                     ),
                     "data_type": track_meta.data_type,
                     "description": track_meta.description,
                     "folder_name": track_meta.folder_name,
                     "sample_submission_date": ingest_utils.get_date_isoformat(
-                        track_meta.date_of_transfer
+                        self._logger, track_meta.date_of_transfer
                     ),
                     "archive_ingestion_date": ingest_utils.get_date_isoformat(
-                        track_meta.date_of_transfer_to_archive
+                        self._logger, track_meta.date_of_transfer_to_archive
                     ),
                     "dataset_url": track_meta.download,
                     "private": True,

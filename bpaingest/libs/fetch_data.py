@@ -10,13 +10,10 @@ import requests
 from bs4 import BeautifulSoup
 from distutils.dir_util import mkpath
 from urllib.parse import urljoin
-from ..util import make_logger
 
 import requests.packages.urllib3
 
 requests.packages.urllib3.disable_warnings()
-
-logger = make_logger(__name__)
 
 
 class MissingCredentialsException(Exception):
@@ -56,7 +53,8 @@ class Fetcher:
 
     recurse_re = re.compile(r"^[A-Za-z0-9_-]+/")
 
-    def __init__(self, target_folder, metadata_source_url, auth=None):
+    def __init__(self, logger, target_folder, metadata_source_url, auth=None):
+        self._logger = logger
         self.target_folder = target_folder
         self.metadata_source_url = metadata_source_url
         self.auth = auth
@@ -67,7 +65,7 @@ class Fetcher:
             mkpath(self.target_folder)
 
     def _fetch(self, session, base_url, name):
-        logger.info("Fetching {} from {}".format(name, base_url))
+        self._logger.info("Fetching {} from {}".format(name, base_url))
         url = base_url + name
         r = session.get(url, stream=True, auth=self.auth, verify=False)
         if r.status_code != 200:
@@ -102,10 +100,10 @@ class Fetcher:
         if _session is None:
             _session = requests.Session()
 
-        logger.info("Fetching folder from {}".format(_url))
+        self._logger.info("Fetching folder from {}".format(_url))
         response = _session.get(_url, stream=True, auth=self.auth, verify=False)
         if response.status_code != 200:
-            logger.error(
+            self._logger.error(
                 "warning: status code %d for url %s" % (response.status_code, _url)
             )
         fetched = set()

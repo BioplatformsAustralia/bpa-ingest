@@ -2,10 +2,7 @@ import json
 import re
 from .bpa_constants import BPA_PREFIX
 
-from ..util import make_logger
 import datetime
-
-logger = make_logger(__name__)
 
 ands_id_re = re.compile(r"^102\.100\.100[/\.](\d+)$")
 ands_id_abbrev_re = re.compile(r"^(\d+)$")
@@ -15,7 +12,7 @@ ands_id_abbrev_2_re = re.compile(r"^102\.100\.\.100[/\.](\d+)$")
 sample_extraction_id_re = re.compile(r"^\d{4,6}_\d")
 
 
-def fix_pcr(pcr):
+def fix_pcr(logger, pcr):
     """ Check pcr value """
     val = pcr.strip()
     # header in the spreadsheet
@@ -27,23 +24,13 @@ def fix_pcr(pcr):
     return val
 
 
-def to_uppercase(s):
+def to_uppercase(logger, s):
     if s is None:
         return
     return str(s).upper()
 
 
-def add_spatial_extra(package):
-    "add a ckanext-spatial extra to the package which has a longitude and latitude"
-    lat = get_clean_number(package.get("latitude"))
-    lng = get_clean_number(package.get("longitude"))
-    if not lat or not lng:
-        return
-    geo = {"type": "Point", "coordinates": [lng, lat]}
-    package["spatial"] = json.dumps(geo, sort_keys=True)
-
-
-def fix_sample_extraction_id(val):
+def fix_sample_extraction_id(logger, val):
     if val is None:
         return val
     if isinstance(val, float) or isinstance(val, int):
@@ -66,7 +53,7 @@ def make_sample_extraction_id(extraction_id, sample_id):
     return extraction_id or (sample_id.split("/")[-1] + "_1")
 
 
-def fix_date_interval(val):
+def fix_date_interval(logger, val):
     # 1:10 is in excel date format in some columns; convert back
     if isinstance(val, datetime.time):
         return "%s:%s" % (val.hour, val.minute)
@@ -99,7 +86,7 @@ def merge_pass_fail(row):
     raise Exception("more than one amplicon pass_fail column value: %s" % (vals))
 
 
-def extract_ands_id(s, silent=False):
+def extract_ands_id(logger, s, silent=False):
     "parse a BPA ID, with or without the prefix, returning with the prefix"
     if isinstance(s, float):
         s = int(s)
@@ -131,15 +118,15 @@ def extract_ands_id(s, silent=False):
     return None
 
 
-def extract_ands_id_silent(s):
-    return extract_ands_id(s, silent=True)
+def extract_ands_id_silent(logger, s):
+    return extract_ands_id(logger, s, silent=True)
 
 
-def short_ands_id(s):
-    return extract_ands_id(s).split("/")[-1]
+def short_ands_id(logger, s):
+    return extract_ands_id(logger, s).split("/")[-1]
 
 
-def get_int(val, default=None):
+def get_int(logger, val, default=None):
     """
     get a int from a string containing other alpha characters
     """
@@ -156,7 +143,7 @@ def get_int(val, default=None):
 number_find_re = re.compile(r"(-?\d+\.?\d*)")
 
 
-def get_clean_number(val, default=None):
+def get_clean_number(logger, val, default=None):
     if isinstance(val, float):
         return val
 
@@ -176,36 +163,19 @@ def get_clean_number(val, default=None):
     return float(matches[0])
 
 
-def strip_all(reader):
-    """
-    Scrub extra whitespace from values in the reader dicts as read from the csv files
-    """
-
-    from django.utils.encoding import smart_text
-
-    entries = []
-    for entry in reader:
-        new_e = {}
-        for k, v in list(entry.items()):
-            new_e[k] = smart_text(v.strip())
-        entries.append(new_e)
-
-    return entries
-
-
-def get_date_isoformat(s, silent=False):
+def get_date_isoformat(logger, s, silent=False):
     "try to parse the date, if we can, return the date as an ISO format string"
-    dt = _get_date(s, silent)
+    dt = _get_date(logger, s, silent)
     if dt is None:
         return None
     return dt.strftime("%Y-%m-%d")
 
 
-def get_time(s):
+def get_time(logger, s):
     return str(s)
 
 
-def _get_date(dt, silent=False):
+def _get_date(logger, dt, silent=False):
     """
     convert `dt` into a datetime.date, returning `dt` if it is already an
     instance of datetime.date. only two string date formats are supported:
@@ -250,3 +220,13 @@ def _get_date(dt, silent=False):
     if not silent:
         logger.error("Date `{}` is not in a supported format".format(dt))
     return None
+
+
+def add_spatial_extra(logger, package):
+    "add a ckanext-spatial extra to the package which has a longitude and latitude"
+    lat = get_clean_number(logger, package.get("latitude"))
+    lng = get_clean_number(logger, package.get("longitude"))
+    if not lat or not lng:
+        return
+    geo = {"type": "Point", "coordinates": [lng, lat]}
+    package["spatial"] = json.dumps(geo, sort_keys=True)

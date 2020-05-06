@@ -76,7 +76,7 @@ def dump_state(args):
 
     data_type_meta = {}
     # download metadata for all project types and aggregate metadata keys
-    for class_info in classes:
+    for class_info in sorted(classes, key=lambda x: x["slug"]):
         logger.info(
             "Dumping state generation: %s / %s"
             % (class_info["project"], class_info["slug"])

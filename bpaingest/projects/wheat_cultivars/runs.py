@@ -25,13 +25,17 @@ BLANK_RUN = make_run(
 )
 
 
-def get_run_data(file_name):
+def get_run_data(logger, file_name):
     """
     The run metadata for this set
     """
 
     field_spec = [
-        fld("sample_id", "Soil sample unique ID", coerce=lambda s: s.replace("/", ".")),
+        fld(
+            "sample_id",
+            "Soil sample unique ID",
+            coerce=lambda _, s: s.replace("/", "."),
+        ),
         fld("variety", "Variety"),
         fld("cultivar_code", "Code"),
         fld("library", "Library code"),
@@ -46,14 +50,14 @@ def get_run_data(file_name):
     ]
 
     wrapper = ExcelWrapper(
-        field_spec, file_name, sheet_name="Metadata", header_length=1
+        logger, field_spec, file_name, sheet_name="Metadata", header_length=1
     )
     for error in wrapper.get_errors():
         logger.error(error)
     return wrapper.get_all()
 
 
-def parse_run_data(path):
+def parse_run_data(logger, path):
     """
     Run data is uniquely defined by
     - sample_id
@@ -78,7 +82,7 @@ def parse_run_data(path):
 
     for metadata_file in path.walk(filter=is_metadata):
         logger.info("Processing Wheat Cultivars {0}".format(metadata_file))
-        run_data = list(get_run_data(metadata_file))
+        run_data = list(get_run_data(logger, metadata_file))
 
     run_lookup = {}
 

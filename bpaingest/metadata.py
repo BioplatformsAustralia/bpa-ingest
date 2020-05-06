@@ -6,7 +6,7 @@ from contextlib import suppress
 from .libs.fetch_data import Fetcher, get_password
 
 
-class DownloadMetadata(object):
+class DownloadMetadata:
     def __init__(
         self, logger, project_class, path=None, force_fetch=False, metadata_info=None
     ):
@@ -45,7 +45,7 @@ class DownloadMetadata(object):
             self._logger.info(
                 "fetching submission metadata: %s" % (project_class.metadata_urls)
             )
-            fetcher = Fetcher(self.path, metadata_url, self.auth)
+            fetcher = Fetcher(self._logger, self.path, metadata_url, self.auth)
             fetcher.fetch_metadata_from_folder(
                 getattr(project_class, "metadata_patterns", None),
                 metadata_info,
@@ -61,7 +61,9 @@ class DownloadMetadata(object):
                 "fetching contextual metadata: %s" % (contextual_cls.metadata_urls)
             )
             for metadata_url in contextual_cls.metadata_urls:
-                fetcher = Fetcher(contextual_path, metadata_url, self.auth)
+                fetcher = Fetcher(
+                    self._logger, contextual_path, metadata_url, self.auth
+                )
                 fetcher.fetch_metadata_from_folder(
                     getattr(contextual_cls, "metadata_patterns", None),
                     metadata_info,

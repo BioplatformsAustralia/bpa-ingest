@@ -9,7 +9,7 @@ def bpaops_clean(s):
     return s.lower().replace("-", "")
 
 
-class StemcellsTranscriptomeContextual(object):
+class StemcellsTranscriptomeContextual:
     metadata_urls = [
         "https://downloads-qcif.bioplatforms.com/bpa/stemcell/projectdata/2017-07-28/"
     ]
@@ -90,6 +90,7 @@ class StemcellsTranscriptomeContextual(object):
         ]
 
         wrapper = ExcelWrapper(
+            self._logger,
             field_spec,
             metadata_path,
             sheet_name=self.sheet_name,
@@ -101,7 +102,7 @@ class StemcellsTranscriptomeContextual(object):
         return wrapper.get_all()
 
 
-class StemcellsSmallRNAContextual(object):
+class StemcellsSmallRNAContextual:
     metadata_urls = [
         "https://downloads-qcif.bioplatforms.com/bpa/stemcell/projectdata/2017-07-28/"
     ]
@@ -182,6 +183,7 @@ class StemcellsSmallRNAContextual(object):
         ]
 
         wrapper = ExcelWrapper(
+            self._logger,
             field_spec,
             metadata_path,
             sheet_name=self.sheet_name,
@@ -193,7 +195,7 @@ class StemcellsSmallRNAContextual(object):
         return wrapper.get_all()
 
 
-class StemcellsSingleCellRNASeq(object):
+class StemcellsSingleCellRNASeq:
     metadata_urls = [
         "https://downloads-qcif.bioplatforms.com/bpa/stemcell/projectdata/2017-07-28/"
     ]
@@ -274,6 +276,7 @@ class StemcellsSingleCellRNASeq(object):
         ]
 
         wrapper = ExcelWrapper(
+            self._logger,
             field_spec,
             metadata_path,
             sheet_name=self.sheet_name,
@@ -285,7 +288,7 @@ class StemcellsSingleCellRNASeq(object):
         return wrapper.get_all()
 
 
-class StemcellsMetabolomicsContextual(object):
+class StemcellsMetabolomicsContextual:
     metadata_urls = [
         "https://downloads-qcif.bioplatforms.com/bpa/stemcell/projectdata/2017-07-28/"
     ]
@@ -365,6 +368,7 @@ class StemcellsMetabolomicsContextual(object):
         ]
 
         wrapper = ExcelWrapper(
+            self._logger,
             field_spec,
             metadata_path,
             sheet_name=self.sheet_name,
@@ -376,7 +380,7 @@ class StemcellsMetabolomicsContextual(object):
         return wrapper.get_all()
 
 
-class StemcellsProteomicsContextual(object):
+class StemcellsProteomicsContextual:
     metadata_urls = [
         "https://downloads-qcif.bioplatforms.com/bpa/stemcell/projectdata/2017-07-28/"
     ]
@@ -461,6 +465,7 @@ class StemcellsProteomicsContextual(object):
         rows = []
         for sheet_name in self.sheet_names:
             wrapper = ExcelWrapper(
+                self._logger,
                 field_spec,
                 metadata_path,
                 sheet_name=sheet_name,
