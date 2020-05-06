@@ -1,11 +1,8 @@
 import os
 from glob import glob
 
-from .util import make_logger, csv_to_named_tuple
+from .util import csv_to_named_tuple
 from .libs import ingest_utils
-
-
-logger = make_logger(__name__)
 
 
 class NCBISRAContextual:
@@ -17,7 +14,8 @@ class NCBISRAContextual:
 
     metadata_patterns = [r"^.*\.(txt|csv|tsv)$"]
 
-    def __init__(self, path):
+    def __init__(self, logger, path):
+        self._logger = logger
         self._path = path
         self.bpaid_biosample = {}
         self.file_submitted = set()
@@ -26,7 +24,7 @@ class NCBISRAContextual:
         self.bpaid_biosample.update(self._read_accessions())
         self.file_submitted.update(self._read_2016_submitted())
         self.file_submitted.update(self._read_ncbi_sra())
-        logger.info(
+        self._logger.info(
             "NCBI upload metadata: %d files uploaded, %d biosample accessions"
             % (len(self.file_submitted), len(self.bpaid_biosample))
         )

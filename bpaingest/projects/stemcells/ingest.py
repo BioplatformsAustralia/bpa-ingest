@@ -784,7 +784,7 @@ class StemcellsProteomicsPoolMetadata(StemcellsProteomicsBaseMetadata):
         self.track_meta = StemcellsTrackMetadata()
 
     def _get_packages(self):
-        logger.info(
+        self._logger.info(
             "Ingesting Stemcells Proteomics Pool metadata from {0}".format(self.path)
         )
         packages = []
@@ -840,10 +840,10 @@ class StemcellsProteomicsPoolMetadata(StemcellsProteomicsBaseMetadata):
         return packages
 
     def _get_resources(self):
-        logger.info("Ingesting Sepsis md5 file information from {0}".format(self.path))
+        self._logger.info("Ingesting Sepsis md5 file information from {0}".format(self.path))
         resources = []
         for md5_file in glob(self.path + "/*.md5"):
-            logger.info("Processing md5 file {0}".format(md5_file))
+            self._logger.info("Processing md5 file {0}".format(md5_file))
             for filename, md5, file_info in self.parse_md5file(md5_file):
                 if file_info is None:
                     if not files.proteomics_filename_re.match(filename):
@@ -947,12 +947,12 @@ class StemcellsProteomicsAnalysedMetadata(BaseMetadata):
         self.track_meta = StemcellsTrackMetadata()
 
     def _get_packages(self):
-        logger.info("Ingesting Stemcells metadata from {0}".format(self.path))
+        self._logger.info("Ingesting Stemcells metadata from {0}".format(self.path))
         # we have one package per Zip of analysed data, and we take the common
         # meta-data for each bpa-id
         ticket_rows = defaultdict(list)
         for fname in glob(self.path + "/*.xlsx"):
-            logger.info("Processing Stemcells metadata file {0}".format(fname))
+            self._logger.info("Processing Stemcells metadata file {0}".format(fname))
             xlsx_info = self.metadata_info[os.path.basename(fname)]
             ticket = xlsx_info["ticket"]
             if not ticket:
@@ -1008,10 +1008,10 @@ class StemcellsProteomicsAnalysedMetadata(BaseMetadata):
         return packages
 
     def _get_resources(self):
-        logger.info("Ingesting Sepsis md5 file information from {0}".format(self.path))
+        self._logger.info("Ingesting Sepsis md5 file information from {0}".format(self.path))
         resources = []
         for md5_file in glob(self.path + "/*.md5"):
-            logger.info("Processing md5 file {0}".format(md5_file))
+            self._logger.info("Processing md5 file {0}".format(md5_file))
             for filename, md5, file_info in self.parse_md5file(md5_file):
                 resource = {}
                 resource["md5"] = md5
@@ -1083,12 +1083,12 @@ class StemcellsMetabolomicsAnalysedMetadata(BaseMetadata):
         self.track_meta = StemcellsTrackMetadata()
 
     def _get_packages(self):
-        logger.info("Ingesting Stemcells metadata from {0}".format(self.path))
+        self._logger.info("Ingesting Stemcells metadata from {0}".format(self.path))
         # we have one package per Zip of analysed data, and we take the common
         # meta-data for each bpa-id
         folder_rows = defaultdict(list)
         for fname in glob(self.path + "/*.xlsx"):
-            logger.info("Processing Stemcells metadata file {0}".format(fname))
+            self._logger.info("Processing Stemcells metadata file {0}".format(fname))
             xlsx_info = self.metadata_info[os.path.basename(fname)]
             ticket = xlsx_info["ticket"]
             if not ticket:
@@ -1139,11 +1139,13 @@ class StemcellsMetabolomicsAnalysedMetadata(BaseMetadata):
         return packages
 
     def _get_resources(self):
-        logger.info("Ingesting Sepsis md5 file information from {0}".format(self.path))
+        self._logger.info(
+            "Ingesting Sepsis md5 file information from {0}".format(self.path)
+        )
         resources = []
         # one MD5 file per 'folder_name', so we just take every file and upload
         for md5_file in glob(self.path + "/*.md5"):
-            logger.info("Processing md5 file {0}".format(md5_file))
+            self._logger.info("Processing md5 file {0}".format(md5_file))
             for filename, md5, file_info in self.parse_md5file(md5_file):
                 resource = file_info.copy() or {}
                 resource["md5"] = md5
@@ -1159,14 +1161,14 @@ class StemcellsMetabolomicsAnalysedMetadata(BaseMetadata):
                 ticket_name = xlsx_info["ticket"]
                 tracking_ticket_folder = self.track_meta.get(ticket_name)
                 if not tracking_ticket_folder:
-                    logger.warn(
+                    self._logger.warn(
                         "No tracking ticket folder found. Consider checking the tracking metadata to ensure it contains ticket_name: {0}.".format(
                             ticket_name
                         )
                     )
                 else:
                     if ticket_name == next:
-                        logger.debug(
+                        self._logger.debug(
                             "Tracking ticket folder is: {0}".format(
                                 tracking_ticket_folder
                             )
@@ -1239,7 +1241,7 @@ class StemcellsTranscriptomeAnalysedMetadata(BaseMetadata):
         # meta-data for each bpa-id
         folder_rows = defaultdict(list)
         for fname in glob(self.path + "/*.xlsx"):
-            logger.info("Processing Stemcells metadata file {0}".format(fname))
+            self._logger.info("Processing Stemcells metadata file {0}".format(fname))
             xlsx_info = self.metadata_info[os.path.basename(fname)]
             ticket = xlsx_info["ticket"]
             if not ticket:

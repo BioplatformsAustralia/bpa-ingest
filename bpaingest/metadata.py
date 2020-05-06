@@ -3,11 +3,7 @@ import shutil
 import json
 import os
 from contextlib import suppress
-from .util import make_logger
 from .libs.fetch_data import Fetcher, get_password
-
-
-logger = make_logger(__name__)
 
 
 class DownloadMetadata(object):
@@ -16,6 +12,7 @@ class DownloadMetadata(object):
     ):
         self.cleanup = True
         self.fetch = True
+        self._logger = logger
         self._set_path(path)
         self._set_auth(project_class)
 
@@ -38,12 +35,14 @@ class DownloadMetadata(object):
         with open(self.info_json, "r") as fd:
             meta_kwargs["metadata_info"] = json.load(fd)
         if self.contextual:
-            meta_kwargs["contextual_metadata"] = [c(p) for (p, c) in self.contextual]
+            meta_kwargs["contextual_metadata"] = [
+                c(self._logger, p) for (p, c) in self.contextual
+            ]
         return self.project_class(logger, self.path, **meta_kwargs)
 
     def _fetch_metadata(self, project_class, contextual, metadata_info):
         for metadata_url in project_class.metadata_urls:
-            logger.info(
+            self._logger.info(
                 "fetching submission metadata: %s" % (project_class.metadata_urls)
             )
             fetcher = Fetcher(self.path, metadata_url, self.auth)
@@ -58,7 +57,7 @@ class DownloadMetadata(object):
 
         for contextual_path, contextual_cls in contextual:
             os.mkdir(contextual_path)
-            logger.info(
+            self._logger.info(
                 "fetching contextual metadata: %s" % (contextual_cls.metadata_urls)
             )
             for metadata_url in contextual_cls.metadata_urls:
@@ -83,7 +82,7 @@ class DownloadMetadata(object):
             self.path = path
             self.cleanup = False
             if os.access(self.info_json, os.R_OK):
-                logger.info(
+                self._logger.info(
                     "skipping metadata download, complete download in directory `%s' exists"
                     % path
                 )

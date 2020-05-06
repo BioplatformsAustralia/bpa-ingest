@@ -2,9 +2,7 @@ import re
 from glob import glob
 from ...libs import ingest_utils
 from ...libs.excel_wrapper import ExcelWrapper, make_field_definition as fld
-from ...util import make_logger, one
-
-logger = make_logger(__name__)
+from ...util import one
 
 
 def date_or_str(v):
@@ -21,13 +19,14 @@ class OMGSampleContextual(object):
     metadata_patterns = [re.compile(r"^OMG_samples_metadata.*\.xlsx$")]
     name = "omg-sample-contextual"
 
-    def __init__(self, path):
+    def __init__(self, logger, path):
+        self._logger = logger
         self.sample_metadata = self._read_metadata(one(glob(path + "/*.xlsx")))
 
     def get(self, bpa_sample_id, bpa_library_id):
         if bpa_sample_id in self.sample_metadata:
             return self.sample_metadata[bpa_sample_id]
-        logger.warning(
+        self._logger.warning(
             "no %s metadata available for: %s"
             % (type(self).__name__, repr(bpa_sample_id))
         )
@@ -102,7 +101,7 @@ class OMGSampleContextual(object):
             suggest_template=True,
         )
         for error in wrapper.get_errors():
-            logger.error(error)
+            self._logger.error(error)
 
         name_mapping = {
             "decimal_longitude": "longitude",
@@ -134,7 +133,8 @@ class OMGLibraryContextual(object):
     metadata_patterns = [re.compile(r"^OMG_library_metadata.*\.xlsx$")]
     name = "omg-library-contextual"
 
-    def __init__(self, path):
+    def __init__(self, logger, path):
+        self._logger = logger
         self.library_metadata = self._read_metadata(one(glob(path + "/*.xlsx")))
 
     def get(self, bpa_sample_id, bpa_library_id):
@@ -179,7 +179,7 @@ class OMGLibraryContextual(object):
             suggest_template=True,
         )
         for error in wrapper.get_errors():
-            logger.error(error)
+            self._logger.error(error)
 
         library_metadata = {}
         for row in wrapper.get_all():

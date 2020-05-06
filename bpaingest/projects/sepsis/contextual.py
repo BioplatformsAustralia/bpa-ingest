@@ -1,11 +1,8 @@
-from ...util import make_logger, one
+from ...util import one
 from ...libs import ingest_utils
 from ...libs.excel_wrapper import ExcelWrapper, make_field_definition as fld
 from .strains import get_taxon_strain, map_taxon_strain_rows
 from glob import glob
-
-
-logger = make_logger(__name__)
 
 
 def int_or_comment(val):
@@ -79,7 +76,8 @@ class SepsisBacterialContextual(object):
     ]
     name = "sepsis-bacterial"
 
-    def __init__(self, path):
+    def __init__(self, logger, path):
+        self._logger = logger
         xlsx_path = one(glob(path + "/*.xlsx"))
         self.sample_metadata = self._package_metadata(self._read_metadata(xlsx_path))
 
@@ -140,7 +138,7 @@ class SepsisBacterialContextual(object):
             column_name_row_index=4,
         )
         for error in wrapper.get_errors():
-            logger.error(error)
+            self._logger.error(error)
         return map_taxon_strain_rows(wrapper.get_all())
 
 
@@ -154,14 +152,15 @@ class SepsisGenomicsContextual(object):
     ]
     name = "sepsis-genomics"
 
-    def __init__(self, path):
+    def __init__(self, logger, path):
+        self._logger = logger
         xlsx_path = one(glob(path + "/*.xlsx"))
         self.sample_metadata = self._package_metadata(self._read_metadata(xlsx_path))
 
     def get(self, sample_id, submission_obj):
         if sample_id in self.sample_metadata:
             return self.sample_metadata[sample_id]
-        logger.warning(
+        self._logger.warning(
             "no %s metadata available for: %s" % (type(self).__name__, repr(sample_id))
         )
         return {}
@@ -172,7 +171,7 @@ class SepsisGenomicsContextual(object):
             if not row.sample_id:
                 continue
             if row.sample_id in sample_metadata:
-                logger.warning(
+                self._logger.warning(
                     "{}: duplicate sample metadata row for {}".format(
                         self.__class__.__name__, row.sample_id
                     )
@@ -217,7 +216,7 @@ class SepsisGenomicsContextual(object):
             column_name_row_index=3,
         )
         for error in wrapper.get_errors():
-            logger.error(error)
+            self._logger.error(error)
         return wrapper.get_all()
 
 
@@ -231,7 +230,8 @@ class SepsisTranscriptomicsHiseqContextual(object):
     ]
     name = "sepsis-transcriptomics-hiseq"
 
-    def __init__(self, path):
+    def __init__(self, logger, path):
+        self._logger = logger
         self.sample_metadata = {}
         for xlsx_path in glob(path + "/*.xlsx"):
             self.sample_metadata.update(
@@ -241,7 +241,7 @@ class SepsisTranscriptomicsHiseqContextual(object):
     def get(self, sample_id, submission_obj):
         if sample_id in self.sample_metadata:
             return self.sample_metadata[sample_id]
-        logger.warning(
+        self._logger.warning(
             "no %s metadata available for: %s" % (type(self).__name__, repr(sample_id))
         )
         return {}
@@ -252,7 +252,7 @@ class SepsisTranscriptomicsHiseqContextual(object):
             if not row.sample_id:
                 continue
             if row.sample_id in sample_metadata:
-                logger.warning(
+                self._logger.warning(
                     "{}: duplicate sample metadata row for {}".format(
                         self.__class__.__name__, row.sample_id
                     )
@@ -305,7 +305,7 @@ class SepsisTranscriptomicsHiseqContextual(object):
             column_name_row_index=3,
         )
         for error in wrapper.get_errors():
-            logger.error(error)
+            self._logger.error(error)
         return wrapper.get_all()
 
 
@@ -319,7 +319,8 @@ class SepsisMetabolomicsLCMSContextual(object):
     ]
     name = "sepsis-metabolomics-lcms"
 
-    def __init__(self, path):
+    def __init__(self, logger, path):
+        self._logger = logger
         self.sample_metadata = {}
         xlsx_path = one(glob(path + "/*.xlsx"))
         self.sample_metadata.update(
@@ -329,7 +330,7 @@ class SepsisMetabolomicsLCMSContextual(object):
     def get(self, sample_id, submission_obj):
         if sample_id in self.sample_metadata:
             return self.sample_metadata[sample_id]
-        logger.warning(
+        self._logger.warning(
             "no %s metadata available for: %s" % (type(self).__name__, repr(sample_id))
         )
         return {}
@@ -340,7 +341,7 @@ class SepsisMetabolomicsLCMSContextual(object):
             if not row.sample_id:
                 continue
             if row.sample_id in sample_metadata:
-                logger.warning(
+                self._logger.warning(
                     "{}: duplicate sample metadata row for {}".format(
                         self.__class__.__name__, row.sample_id
                     )
@@ -388,7 +389,7 @@ class SepsisMetabolomicsLCMSContextual(object):
             column_name_row_index=3,
         )
         for error in wrapper.get_errors():
-            logger.error(error)
+            self._logger.error(error)
         return wrapper.get_all()
 
 
@@ -402,7 +403,8 @@ class SepsisProteomicsBaseContextual(object):
     ]
     name = "sepsis-proteomics"
 
-    def __init__(self, path, analytical_platform):
+    def __init__(self, logger, path, analytical_platform):
+        self._logger = logger
         self.analytical_platform = analytical_platform
         xlsx_path = one(glob(path + "/*.xlsx"))
         self.sample_metadata = self._package_metadata(self._read_metadata(xlsx_path))
@@ -410,7 +412,7 @@ class SepsisProteomicsBaseContextual(object):
     def get(self, sample_id, submission_obj):
         if sample_id in self.sample_metadata:
             return self.sample_metadata[sample_id]
-        logger.warning(
+        self._logger.warning(
             "no %s metadata available for: %s" % (type(self).__name__, repr(sample_id))
         )
         return {}
@@ -423,7 +425,7 @@ class SepsisProteomicsBaseContextual(object):
             if row.analytical_platform.lower() != self.analytical_platform.lower():
                 continue
             if row.sample_id in sample_metadata:
-                logger.warning(
+                self._logger.warning(
                     "{}: duplicate sample metadata row for {}".format(
                         self.__class__.__name__, row.sample_id
                     )
@@ -479,15 +481,16 @@ class SepsisProteomicsBaseContextual(object):
             column_name_row_index=3,
         )
         for error in wrapper.get_errors():
-            logger.error(error)
+            self._logger.error(error)
         return wrapper.get_all()
 
 
 class SepsisProteomicsMS1QuantificationContextual(SepsisProteomicsBaseContextual):
-    def __init__(self, path):
-        super().__init__(path, "MS1 quantification")
+    def __init__(self, logger, path):
+        self._logger = logger
+        super().__init__(logger, path, "MS1 quantification")
 
 
 class SepsisProteomicsSwathMSContextual(SepsisProteomicsBaseContextual):
-    def __init__(self, path):
-        super().__init__(path, "SWATH-MS")
+    def __init__(self, logger, path):
+        super().__init__(logger, path, "SWATH-MS")

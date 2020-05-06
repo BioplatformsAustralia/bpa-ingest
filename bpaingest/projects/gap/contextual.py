@@ -4,8 +4,6 @@ from ...libs import ingest_utils
 from ...libs.excel_wrapper import ExcelWrapper, make_field_definition as fld
 from ...util import make_logger, one
 
-logger = make_logger(__name__)
-
 
 def date_or_str(v):
     d = ingest_utils.get_date_isoformat(v, silent=True)
@@ -21,13 +19,14 @@ class GAPLibraryContextual(object):
     metadata_patterns = [re.compile(r"^.*\.xlsx$")]
     name = "gap-library-contextual"
 
-    def __init__(self, path):
+    def __init__(self, logger, path):
+        self._logger = logger
         self.library_metadata = self._read_metadata(one(glob(path + "/*.xlsx")))
 
     def get(self, library_id):
         if library_id in self.library_metadata:
             return self.library_metadata[library_id]
-        logger.warning(
+        self._logger.warning(
             "no %s metadata available for: %s" % (type(self).__name__, repr(library_id))
         )
         return {}
@@ -133,7 +132,7 @@ class GAPLibraryContextual(object):
             suggest_template=True,
         )
         for error in wrapper.get_errors():
-            logger.error(error)
+            self._logger.error(error)
 
         name_mapping = {
             "decimal_longitude": "longitude",
