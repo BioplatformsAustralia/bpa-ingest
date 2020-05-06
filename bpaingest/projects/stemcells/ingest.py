@@ -84,11 +84,7 @@ class StemcellsTranscriptomeMetadata(BaseMetadata):
             self._logger.info(
                 "Processing Stemcells Transcriptomics metadata file {0}".format(fname)
             )
-            all_rows.update(
-                StemcellsTranscriptomeMetadata.parse_spreadsheet(
-                    fname, self.metadata_info
-                )
-            )
+            all_rows.update(self.parse_spreadsheet(fname, self.metadata_info))
         for row in all_rows:
             sample_id = row.sample_id
             if sample_id is None:
@@ -204,9 +200,7 @@ class StemcellsSmallRNAMetadata(BaseMetadata):
             self._logger.info(
                 "Processing Stemcells SmallRNA metadata file {0}".format(fname)
             )
-            all_rows.update(
-                StemcellsSmallRNAMetadata.parse_spreadsheet(fname, self.metadata_info)
-            )
+            all_rows.update(self.parse_spreadsheet(fname, self.metadata_info))
         for row in all_rows:
             sample_id = row.sample_id
             if sample_id is None:
@@ -334,9 +328,7 @@ class StemcellsSingleCellRNASeqMetadata(BaseMetadata):
             self._logger.info(
                 "Processing Stemcells SingleCellRNASeq metadata file {0}".format(fname)
             )
-            next_rows = StemcellsSingleCellRNASeqMetadata.parse_spreadsheet(
-                fname, self.metadata_info
-            )
+            next_rows = self.parse_spreadsheet(fname, self.metadata_info)
             file_info = files.singlecell_raw_xlsx_filename_re.match(
                 os.path.basename(fname)
             ).groupdict()
@@ -498,11 +490,7 @@ class StemcellsMetabolomicsMetadata(BaseMetadata):
             self._logger.info(
                 "Processing Stemcells Metabolomics metadata file {0}".format(fname)
             )
-            all_rows.update(
-                StemcellsMetabolomicsMetadata.parse_spreadsheet(
-                    fname, self.metadata_info
-                )
-            )
+            all_rows.update(self.parse_spreadsheet(fname, self.metadata_info))
         for row in all_rows:
             sample_id = row.sample_id
             if sample_id is None:
@@ -604,9 +592,7 @@ class StemcellsProteomicsBaseMetadata(BaseMetadata):
                 "Processing Stemcells Proteomics metadata file {0}".format(fname)
             )
             xlsx_info = self.metadata_info[os.path.basename(fname)]
-            all_rows.update(
-                StemcellsProteomicsMetadata.parse_spreadsheet(fname, xlsx_info, mode)
-            )
+            all_rows.update(self.parse_spreadsheet(fname, xlsx_info, mode))
         self.filename_metadata.update(dict((t.raw_filename, t) for t in all_rows))
         self.filename_metadata.update(
             dict((t.protein_result_filename, t) for t in all_rows)

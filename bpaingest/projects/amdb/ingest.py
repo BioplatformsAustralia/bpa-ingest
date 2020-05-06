@@ -1257,9 +1257,7 @@ class MarineMicrobesMetagenomicsMetadata(BaseMarineMicrobesMetadata):
                     os.path.basename(fname)
                 )
             )
-            for row in MarineMicrobesMetagenomicsMetadata.parse_spreadsheet(
-                fname, self.metadata_info
-            ):
+            for row in self.parse_spreadsheet(fname, self.metadata_info):
                 sample_id = row.sample_id
                 if sample_id is None:
                     continue
@@ -1400,9 +1398,7 @@ class MarineMicrobesMetatranscriptomeMetadata(BaseMarineMicrobesMetadata):
                     os.path.basename(fname)
                 )
             )
-            for row in MarineMicrobesMetatranscriptomeMetadata.parse_spreadsheet(
-                fname, self.metadata_info
-            ):
+            for row in self.parse_spreadsheet(fname, self.metadata_info):
                 all_rows.add(row)
         for row in all_rows:
             sample_id = row.sample_id
