@@ -1130,18 +1130,15 @@ class StemcellsMetabolomicsAnalysedMetadata(BaseMetadata):
         for md5_file in glob(self.path + "/*.md5"):
             logger.info("Processing md5 file {0}".format(md5_file))
             for filename, md5, file_info in self.parse_md5file(md5_file):
-                resource = file_info.copy()
-                resource = {}
+                resource = file_info.copy() or {}
                 resource["md5"] = md5
                 xlsx_info = self.metadata_info[os.path.basename(md5_file)]
                 # analysed data has duplicate PNG images in it - we need to keep the id unique
+                id_attributes = self.ckan_data_type + xlsx_info["base_url"] + md5
+                if filename and filename.endswith(".png"):
+                    id_attributes += filename
                 resource["id"] = (
-                    "u-"
-                    + md5hash(
-                        (self.ckan_data_type + xlsx_info["base_url"] + md5).encode(
-                            "utf8"
-                        )
-                    ).hexdigest()
+                    "u-" + md5hash((id_attributes).encode("utf8")).hexdigest()
                 )
                 resource["name"] = filename
                 ticket_name = xlsx_info["ticket"]
