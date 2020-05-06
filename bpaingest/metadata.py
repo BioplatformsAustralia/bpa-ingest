@@ -21,20 +21,26 @@ class DownloadMetadata(object):
             metadata_info = {}
 
         contextual_classes = getattr(project_class, "contextual_classes", [])
-        contextual = [(os.path.join(self.path, c.name), c) for c in contextual_classes]
+        self.contextual = [
+            (os.path.join(self.path, c.name), c) for c in contextual_classes
+        ]
 
-        info_json = os.path.join(self.path, "bpa-ingest.json")
+        self.info_json = os.path.join(self.path, "bpa-ingest.json")
         if self.fetch or force_fetch:
-            self._fetch_metadata(project_class, contextual, info_json, metadata_info)
+            self._fetch_metadata(project_class, self.contextual, metadata_info)
 
+        self.project_class = project_class
+        self.meta = self.make_meta()
+
+    def make_meta(self):
         meta_kwargs = {}
-        with open(info_json, "r") as fd:
+        with open(self.info_json, "r") as fd:
             meta_kwargs["metadata_info"] = json.load(fd)
-        if contextual:
-            meta_kwargs["contextual_metadata"] = [c(p) for (p, c) in contextual]
-        self.meta = project_class(self.path, **meta_kwargs)
+        if self.contextual:
+            meta_kwargs["contextual_metadata"] = [c(p) for (p, c) in self.contextual]
+        return self.project_class(self.path, **meta_kwargs)
 
-    def _fetch_metadata(self, project_class, contextual, info_json, metadata_info):
+    def _fetch_metadata(self, project_class, contextual, metadata_info):
         for metadata_url in project_class.metadata_urls:
             logger.info(
                 "fetching submission metadata: %s" % (project_class.metadata_urls)
@@ -61,8 +67,10 @@ class DownloadMetadata(object):
                     metadata_info,
                     getattr(contextual_cls, "metadata_url_components", []),
                 )
-        with open(info_json, "w") as fd:
+        tmpf = self.info_json + ".new"
+        with open(tmpf, "w") as fd:
             json.dump(metadata_info, fd)
+        os.replace(tmpf, self.info_json)
 
     def _set_auth(self, project_class):
         auth_user, auth_env_name = project_class.auth

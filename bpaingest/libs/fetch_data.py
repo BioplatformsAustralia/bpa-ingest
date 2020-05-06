@@ -19,21 +19,27 @@ requests.packages.urllib3.disable_warnings()
 logger = make_logger(__name__)
 
 
+class MissingCredentialsException(Exception):
+    pass
+
+
+class DownloadException(Exception):
+    pass
+
+
 def get_password(project_name=None):
     """Get downloads password for legacy auth username from environment """
 
     def complain_and_quit():
-        logger.error(
+        raise MissingCredentialsException(
             "Please set shell variable {} to current BPA {} project password".format(
                 password_env, project_name
             )
         )
-        sys.exit()
 
     password_env = "BPA_%s_DOWNLOADS_PASSWORD" % (project_name.upper())
     if password_env is None:
-        logger.error("Set $%s" % (password_env))
-        sys.exit()
+        raise MissingCredentialsException("Set $%s" % (password_env))
 
     if password_env not in os.environ:
         complain_and_quit()
@@ -65,8 +71,7 @@ class Fetcher:
         url = base_url + name
         r = session.get(url, stream=True, auth=self.auth, verify=False)
         if r.status_code != 200:
-            logger.critical("status code {} for: {}".format(r.status_code, url))
-            raise Exception("download failed")
+            raise DownloadException("status code {} for: {}".format(r.status_code, url))
         output_file = self.target_folder + "/" + name
         with open(output_file, "wb") as f:
             for chunk in r.iter_content(chunk_size=1024):
@@ -141,7 +146,7 @@ class Fetcher:
                     meta_parts = subdir.split("/")[: len(url_components)]
                     assert len(meta_parts) == len(url_components)
                     if link_target in metadata_info:
-                        raise Exception(
+                        raise DownloadException(
                             "Legacy archive contains non-unique filename: %s (%s)"
                             % (link_target, metadata_info[link_target])
                         )
