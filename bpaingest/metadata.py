@@ -80,7 +80,7 @@ class DownloadMetadata:
 
     def _set_path(self, path):
         # if we have a user-specified target directory, don't clean up at the end
-        self.cleanup = path is not None
+        self.cleanup = path is None
         if path is None:
             path = tempfile.mkdtemp(prefix="bpaingest-metadata-")
         self.path = path
