@@ -17,8 +17,7 @@ def unique_packages(packages):
         if cnt > 1:
             dupes = [t for t in packages if t["id"] == k]
             logger.critical(
-                "package id `%s' appears %d times: excluded from sync"
-                % (k, len(dupes))
+                "package id `%s' appears %d times: excluded from sync" % (k, len(dupes))
             )
             continue
         yield by_id[k]
@@ -37,7 +36,6 @@ def linkage_qc(state, data_type_meta):
 
         for package_obj in packages:
             package_id = package_obj["id"]
-            \
             linkage_tpl = tuple(
                 package_obj[t] for t in data_type_meta[data_type].resource_linkage
             )
