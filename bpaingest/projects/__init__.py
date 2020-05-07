@@ -1,4 +1,5 @@
 from .amdb.ingest import (
+    AustralianMicrobiomeMetagenomicsNovaseqMetadata,
     BASEAmpliconsMetadata,
     BASEMetagenomicsMetadata,
     BASEAmpliconsControlMetadata,
@@ -60,6 +61,7 @@ from .omg.ingest import (
 
 class ProjectInfo:
     projects = {
+        "amd": [AustralianMicrobiomeMetagenomicsNovaseqMetadata],
         "base": [
             BASEAmpliconsMetadata,
             BASEAmpliconsControlMetadata,
@@ -72,7 +74,7 @@ class ProjectInfo:
             GAPONTPromethionMetadata,
             GAPGenomics10XMetadata,
         ],
-        "gbr": [GbrAmpliconsMetadata, GbrPacbioMetadata,],
+        "gbr": [GbrAmpliconsMetadata, GbrPacbioMetadata],
         "marine-microbes": [
             MarineMicrobesAmpliconsMetadata,
             MarineMicrobesAmpliconsControlMetadata,

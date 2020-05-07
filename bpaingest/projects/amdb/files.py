@@ -285,3 +285,17 @@ def parse_md5_file(md5_file, regexps):
                 yield path, md5, matches[0].groupdict()
             else:
                 yield path, md5, None
+
+
+amd_metagenomics_novaseq_re = re.compile(
+    r"""
+    (?P<id>\d{4,6})_
+    MGE_
+    (?P<flowcell>\w{9})_
+    (?P<index>[G|A|T|C|-]*)_
+    (?P<runsamplenum>S\d+)_
+    (?P<lane>L\d{3})_
+    (?P<read>R[1|2])_001\.fastq\.gz
+""",
+    re.VERBOSE,
+)

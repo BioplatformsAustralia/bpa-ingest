@@ -1,4 +1,5 @@
 from .files import (
+    amd_metagenomics_novaseq_re,
     base_amplicon_control_tech_vendor_filename_re,
     base_amplicon_control_tech_vendor_flow_filename_re,
     base_amplicon_filename_flow_index_swapped_re,
@@ -184,3 +185,9 @@ def test_mm_metagenomics_v2():
     ]
     for filename in filenames:
         assert mm_metagenomics_filename_v2_re.match(filename) is not None
+
+
+def test_amd_metagenomics_novaseq():
+    filenames = ["139811_MGE_HYTFVDSXX_AACGAGGCCG-ATACCTGGAT_S161_L001_R2_001.fastq.gz"]
+    for filename in filenames:
+        assert amd_metagenomics_novaseq_re.match(filename) is not None

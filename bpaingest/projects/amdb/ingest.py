@@ -21,6 +21,7 @@ from .contextual import (
     MarineMicrobesNCBIContextual,
 )
 from .tracking import (
+    AustralianMicrobiomeGoogleTrackMetadata,
     BASETrackMetadata,
     MarineMicrobesGoogleTrackMetadata,
     MarineMicrobesTrackMetadata,
@@ -1473,6 +1474,125 @@ class MarineMicrobesMetatranscriptomeMetadata(BaseMarineMicrobesMetadata):
                 tag_names.append(obj["sample_type"])
             obj["tags"] = [{"name": t} for t in tag_names]
             packages.append(obj)
+        return packages
+
+    def _get_resources(self):
+        self._logger.info(
+            "Ingesting MM md5 file information from {0}".format(self.path)
+        )
+        resources = []
+        for md5_file in glob(self.path + "/*.md5"):
+            self._logger.info("Processing md5 file {0}".format(md5_file))
+            for filename, md5, file_info in self.parse_md5file(md5_file):
+                resource = file_info.copy()
+                resource["md5"] = resource["id"] = md5
+                resource["name"] = filename
+                resource["resource_type"] = self.ckan_data_type
+                for contextual_source in self.contextual_metadata:
+                    resource.update(contextual_source.filename_metadata(filename))
+                sample_id = ingest_utils.extract_ands_id(
+                    self._logger, file_info.get("id")
+                )
+                xlsx_info = self.metadata_info[os.path.basename(md5_file)]
+                legacy_url = urljoin(xlsx_info["base_url"], filename)
+                resources.append(((sample_id,), legacy_url, resource))
+        return resources
+
+
+class AustralianMicrobiomeMetagenomicsNovaseqMetadata(BaseMetadata):
+    organization = "australian-microbiome"
+    ckan_data_type = "amdb-metagenomics-novaseq"
+    omics = "metagenomics-novaseq"
+    contextual_classes = common_context
+    metadata_patterns = [r"^.*\.md5", r"^.*_metadata.*\.xlsx"]
+    metadata_urls = [
+        "https://downloads-qcif.bioplatforms.com/bpa/amd/metagenomics-novaseq/"
+    ]
+    metadata_url_components = ("facility_code", "ticket")
+    spreadsheet = {
+        "fields": [
+            fld("sample_id", "sampleid", coerce=ingest_utils.extract_ands_id),
+            fld("insert_size_range", "insert size range"),
+            fld("library_construction_protocol", "library construction protocol"),
+            fld("sequencer", "sequencer"),
+            fld("conversion_software", "conversion software"),
+            fld("conversion_software_version", "conversion software version"),
+            fld("of_raw_reads", "# of raw reads"),
+        ],
+        "options": {"header_length": 1, "column_name_row_index": 0,},
+    }
+    md5 = {
+        "match": [files.amd_metagenomics_novaseq_re,],
+        "skip": None,
+    }
+
+    def __init__(
+        self, logger, metadata_path, contextual_metadata=None, metadata_info=None
+    ):
+        super().__init__(logger, metadata_path)
+        self.path = Path(metadata_path)
+        self.contextual_metadata = contextual_metadata
+        self.metadata_info = metadata_info
+        self.google_track_meta = AustralianMicrobiomeGoogleTrackMetadata()
+
+    def _get_packages(self):
+        packages = []
+        for fname in unique_spreadsheets(glob(self.path + "/*.xlsx")):
+            self._logger.info(
+                "Processing Australian Microbiome metadata file {0}".format(
+                    os.path.basename(fname)
+                )
+            )
+            for row in self.parse_spreadsheet(fname, self.metadata_info):
+                sample_id = row.sample_id
+                if sample_id is None:
+                    continue
+                google_track_meta = self.google_track_meta.get(row.ticket)
+                name = sample_id_to_ckan_name(
+                    sample_id.split("/")[-1], self.ckan_data_type
+                )
+                archive_ingestion_date = ingest_utils.get_date_isoformat(
+                    self._logger, google_track_meta.date_of_transfer_to_archive
+                )
+
+                obj = row._asdict()
+
+                obj.update(
+                    {
+                        "name": name,
+                        "id": name,
+                        "notes": "Australian Microbiome Metagenomics Novaseq %s"
+                        % (sample_id),
+                        "title": "Australian Microbiome Metagenomics Novaseq %s"
+                        % (sample_id),
+                        "omics": "metagenomics",
+                        "date_of_transfer": ingest_utils.get_date_isoformat(
+                            self._logger, google_track_meta.date_of_transfer
+                        ),
+                        "data_type": google_track_meta.data_type,
+                        "description": google_track_meta.description,
+                        "folder_name": google_track_meta.folder_name,
+                        "sample_submission_date": ingest_utils.get_date_isoformat(
+                            self._logger, google_track_meta.date_of_transfer
+                        ),
+                        "data_generated": ingest_utils.get_date_isoformat(
+                            self._logger, google_track_meta.date_of_transfer_to_archive
+                        ),
+                        "archive_ingestion_date": archive_ingestion_date,
+                        "license_id": apply_license(archive_ingestion_date),
+                        "dataset_url": google_track_meta.download,
+                        "type": self.ckan_data_type,
+                        "private": True,
+                    }
+                )
+                for contextual_source in self.contextual_metadata:
+                    obj.update(contextual_source.get(sample_id))
+                ingest_utils.add_spatial_extra(self._logger, obj)
+                tag_names = ["metagenomics", "raw"]
+                if obj.get("sample_type"):
+                    tag_names.append(obj["sample_type"])
+                obj["tags"] = [{"name": t} for t in tag_names]
+                packages.append(obj)
         return packages
 
     def _get_resources(self):
