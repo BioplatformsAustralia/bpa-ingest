@@ -54,7 +54,7 @@ def linkage_qc(state, data_type_meta):
                 dirname1, resource_name = os.path.split(legacy_url)
                 _dirname2, ticket = os.path.split(dirname1)
                 logger.error(
-                    "dangling resource: {} (ticket: {}, linkage: {})".format(
+                    "dangling resource: name `{}' (ticket: `{}', linkage: `{}')".format(
                         resource_name, ticket, resource_linkage
                     )
                 )

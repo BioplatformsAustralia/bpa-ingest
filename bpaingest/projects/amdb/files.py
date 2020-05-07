@@ -299,3 +299,16 @@ amd_metagenomics_novaseq_re = re.compile(
 """,
     re.VERBOSE,
 )
+
+
+amd_metagenomics_novaseq_control_re = re.compile(
+    r"""
+    SOIL_DNA_MGE_
+    (?P<flowcell>\w{9})-
+    (?P<index>[G|A|T|C|-]*)_
+    (?P<runsamplenum>S\d+)_
+    (?P<lane>L\d{3})_
+    (?P<read>R[1|2])_001\.fastq\.gz
+""",
+    re.VERBOSE,
+)

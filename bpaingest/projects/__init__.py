@@ -1,5 +1,6 @@
 from .amdb.ingest import (
     AustralianMicrobiomeMetagenomicsNovaseqMetadata,
+    AustralianMicrobiomeMetagenomicsNovaseqControlMetadata,
     BASEAmpliconsMetadata,
     BASEMetagenomicsMetadata,
     BASEAmpliconsControlMetadata,
@@ -61,7 +62,10 @@ from .omg.ingest import (
 
 class ProjectInfo:
     projects = {
-        "amd": [AustralianMicrobiomeMetagenomicsNovaseqMetadata],
+        "amd": [
+            AustralianMicrobiomeMetagenomicsNovaseqMetadata,
+            AustralianMicrobiomeMetagenomicsNovaseqControlMetadata,
+        ],
         "base": [
             BASEAmpliconsMetadata,
             BASEAmpliconsControlMetadata,

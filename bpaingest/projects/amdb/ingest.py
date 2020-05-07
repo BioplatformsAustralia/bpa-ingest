@@ -1126,7 +1126,7 @@ class MarineMicrobesAmpliconsControlMetadata(AMDBaseMetadata):
 
     def md5_lines(self):
         self._logger.info(
-            "Ingesting MM md5 file information from {0}".format(self.path)
+            "Ingesting AMDB md5 file information from {0}".format(self.path)
         )
         for md5_file in glob(self.path + "/*.md5"):
             self._logger.info("Processing md5 file {}".format(md5_file))
@@ -1502,7 +1502,8 @@ class MarineMicrobesMetatranscriptomeMetadata(BaseMarineMicrobesMetadata):
 class AustralianMicrobiomeMetagenomicsNovaseqMetadata(BaseMetadata):
     organization = "australian-microbiome"
     ckan_data_type = "amdb-metagenomics-novaseq"
-    omics = "metagenomics-novaseq"
+    omics = "metagenomics"
+    technology = "novaseq"
     contextual_classes = common_context
     metadata_patterns = [r"^.*\.md5", r"^.*_metadata.*\.xlsx"]
     metadata_urls = [
@@ -1523,7 +1524,7 @@ class AustralianMicrobiomeMetagenomicsNovaseqMetadata(BaseMetadata):
     }
     md5 = {
         "match": [files.amd_metagenomics_novaseq_re,],
-        "skip": None,
+        "skip": [files.amd_metagenomics_novaseq_control_re,],
     }
 
     def __init__(
@@ -1615,4 +1616,104 @@ class AustralianMicrobiomeMetagenomicsNovaseqMetadata(BaseMetadata):
                 xlsx_info = self.metadata_info[os.path.basename(md5_file)]
                 legacy_url = urljoin(xlsx_info["base_url"], filename)
                 resources.append(((sample_id,), legacy_url, resource))
+        return resources
+
+
+class AustralianMicrobiomeMetagenomicsNovaseqControlMetadata(AMDBaseMetadata):
+    organization = "australian-microbiome"
+    ckan_data_type = "amdb-metagenomics-novaseq-control"
+    omics = "metagenomics"
+    technology = "novaseq-control"
+    contextual_classes = []
+    metadata_patterns = [r"^.*\.md5"]
+    resource_linkage = ("flowcell",)
+    md5 = {
+        "match": [files.amd_metagenomics_novaseq_control_re],
+        "skip": [files.amd_metagenomics_novaseq_re],
+    }
+    metadata_urls = [
+        "https://downloads-qcif.bioplatforms.com/bpa/amd/metagenomics-novaseq/"
+    ]
+    metadata_url_components = ("facility_code", "ticket")
+
+    def __init__(
+        self, logger, metadata_path, contextual_metadata=None, metadata_info=None
+    ):
+        super().__init__(logger, metadata_path)
+        self.path = Path(metadata_path)
+        self.metadata_info = metadata_info
+        self.google_track_meta = AustralianMicrobiomeGoogleTrackMetadata()
+
+    def md5_lines(self):
+        self._logger.info(
+            "Ingesting MM md5 file information from {0}".format(self.path)
+        )
+        for md5_file in glob(self.path + "/*.md5"):
+            self._logger.info("Processing md5 file {}".format(md5_file))
+            for filename, md5, file_info in self.parse_md5file(md5_file):
+                yield filename, md5, md5_file, file_info
+
+    def _get_packages(self):
+        flowcell_info = {
+            t["flowcell"]: self.metadata_info[os.path.basename(fname)]
+            for _, _, fname, t in self.md5_lines()
+        }
+        packages = []
+        for flowcell, info in sorted(flowcell_info.items()):
+            obj = {}
+            name = sample_id_to_ckan_name(
+                "control", self.ckan_data_type, flowcell
+            ).lower()
+            google_track_meta = self.google_track_meta.get(info["ticket"])
+
+            archive_ingestion_date = ingest_utils.get_date_isoformat(
+                self._logger, google_track_meta.date_of_transfer_to_archive
+            )
+
+            obj.update(
+                {
+                    "name": name,
+                    "id": name,
+                    "flowcell": flowcell,
+                    "notes": "Australian Microbiome Novaseq Control %s" % (flowcell),
+                    "title": "Australian Microbiome Novaseq Control %s" % (flowcell),
+                    "omics": "Genomics",
+                    "analytical_platform": "Novaseq",
+                    "date_of_transfer": ingest_utils.get_date_isoformat(
+                        self._logger, google_track_meta.date_of_transfer
+                    ),
+                    "data_type": google_track_meta.data_type,
+                    "description": google_track_meta.description,
+                    "folder_name": google_track_meta.folder_name,
+                    "sample_submission_date": ingest_utils.get_date_isoformat(
+                        self._logger, google_track_meta.date_of_transfer
+                    ),
+                    "data_generated": ingest_utils.get_date_isoformat(
+                        self._logger, google_track_meta.date_of_transfer_to_archive
+                    ),
+                    "archive_ingestion_date": archive_ingestion_date,
+                    "license_id": apply_license(archive_ingestion_date),
+                    "dataset_url": google_track_meta.download,
+                    "ticket": info["ticket"],
+                    "facility": info["facility_code"].upper(),
+                    "type": self.ckan_data_type,
+                    "private": True,
+                }
+            )
+            ingest_utils.add_spatial_extra(self._logger, obj)
+            tag_names = ["novaseq-control", "raw"]
+            obj["tags"] = [{"name": t} for t in tag_names]
+            packages.append(obj)
+        return packages
+
+    def _get_resources(self):
+        resources = []
+        for filename, md5, md5_file, file_info in self.md5_lines():
+            xlsx_info = self.metadata_info[os.path.basename(md5_file)]
+            resource = file_info.copy()
+            resource["md5"] = resource["id"] = md5
+            resource["name"] = filename
+            resource["resource_type"] = self.ckan_data_type
+            legacy_url = urljoin(xlsx_info["base_url"], filename)
+            resources.append(((resource["flowcell"],), legacy_url, resource))
         return resources
