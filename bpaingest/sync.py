@@ -313,8 +313,6 @@ def sync_metadata(
                     "package id `%s' appears %d times: excluded from sync"
                     % (k, len(dupes))
                 )
-                for dupe in dupes[1:]:
-                    logger.debug(diff_objects(dupes[0], dupe, dupes[0]["type"]))
                 continue
             yield by_id[k]
 

@@ -1,13 +1,27 @@
 import json
 import os
 import re
-from collections import defaultdict
+from collections import defaultdict, Counter
 from .projects import ProjectInfo
 from .metadata import DownloadMetadata
 from .util import make_logger
 
 
 logger = make_logger(__name__)
+
+
+def unique_packages(packages):
+    by_id = dict((t["id"], t) for t in packages)
+    id_count = Counter(t["id"] for t in packages)
+    for k, cnt in list(id_count.items()):
+        if cnt > 1:
+            dupes = [t for t in packages if t["id"] == k]
+            logger.critical(
+                "package id `%s' appears %d times: excluded from sync"
+                % (k, len(dupes))
+            )
+            continue
+        yield by_id[k]
 
 
 def linkage_qc(state, data_type_meta):
@@ -17,11 +31,13 @@ def linkage_qc(state, data_type_meta):
     for data_type in state:
         resource_linkage_package_id = {}
 
-        packages = state[data_type]["packages"]
+        packages = list(unique_packages(state[data_type]["packages"]))
         resources = state[data_type]["resources"]
         counts[data_type] = len(packages), len(resources)
 
         for package_obj in packages:
+            package_id = package_obj["id"]
+            \
             linkage_tpl = tuple(
                 package_obj[t] for t in data_type_meta[data_type].resource_linkage
             )

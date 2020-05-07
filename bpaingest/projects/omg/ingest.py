@@ -1678,9 +1678,10 @@ class OMGONTPromethionMetadata(OMGBaseMetadata):
             for row in rows:
                 track_meta = self.track_meta.get(row.ticket)
                 bpa_library_id = row.bpa_library_id
+                flowcell_id = row.flowcell_id
                 obj = row._asdict()
                 name = sample_id_to_ckan_name(
-                    bpa_library_id.split("/")[-1], self.ckan_data_type
+                    bpa_library_id.split("/")[-1], self.ckan_data_type, flowcell_id
                 )
 
                 for contextual_source in self.contextual_metadata:
