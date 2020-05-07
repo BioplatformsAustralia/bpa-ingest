@@ -14,7 +14,7 @@ def date_or_str(logger, v):
 
 class OMGSampleContextual:
     metadata_urls = [
-        "https://downloads-qcif.bioplatforms.com/bpa/omg_staging/metadata/2020-04-09/"
+        "https://downloads-qcif.bioplatforms.com/bpa/omg_staging/metadata/2020-05-07/"
     ]
     metadata_patterns = [re.compile(r"^OMG_samples_metadata.*\.xlsx$")]
     name = "omg-sample-contextual"
@@ -131,7 +131,7 @@ class OMGLibraryContextual:
     # this spreadsheet was only used for early data.
     # for more recent data, it is included in the transfer metadata
     metadata_urls = [
-        "https://downloads-qcif.bioplatforms.com/bpa/omg_staging/metadata/2020-04-09/"
+        "https://downloads-qcif.bioplatforms.com/bpa/omg_staging/metadata/2020-05-07/"
     ]
     metadata_patterns = [re.compile(r"^OMG_library_metadata.*\.xlsx$")]
     name = "omg-library-contextual"
