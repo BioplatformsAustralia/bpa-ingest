@@ -106,8 +106,7 @@ class WheatPathogensGenomesMetadata(BaseMetadata):
                     "index": data["index_sequence"],
                     "library_id": data["library_id"],
                     "collection_date": ingest_utils.get_date_isoformat(
-                        self._logger,
-                        data["collection_date"]
+                        self._logger, data["collection_date"]
                     ),
                     "collection_location": data["collection_location"],
                     "dna_extraction_protocol": data["dna_extraction_protocol"],
@@ -129,19 +128,26 @@ class WheatPathogensGenomesMetadata(BaseMetadata):
                 sample_id = row.sample_id
                 resource = {
                     "flowcell": row.flow_cell_id,
-                    "run_number": ingest_utils.get_clean_number(self._logger, row.run_number),
+                    "run_number": ingest_utils.get_clean_number(
+                        self._logger, row.run_number
+                    ),
                     "sequencer": row.sequencer or "Unknown",
                     "run_index_number": row.index_number,
-                    "run_lane_number": ingest_utils.get_clean_number(self._logger, row.lane_number)
+                    "run_lane_number": ingest_utils.get_clean_number(
+                        self._logger, row.lane_number
+                    )
                     or "none",
                     "run_protocol": row.library_construction_protocol,
                     "run_protocol_base_pairs": ingest_utils.get_clean_number(
-                        self._logger,
-                        row.library_construction
+                        self._logger, row.library_construction
                     ),
                     "run_protocol_library_type": row.library,
-                    "index_number": ingest_utils.get_clean_number(self._logger, row.index_number),
-                    "lane_number": ingest_utils.get_clean_number(self._logger, row.lane_number),
+                    "index_number": ingest_utils.get_clean_number(
+                        self._logger, row.index_number
+                    ),
+                    "lane_number": ingest_utils.get_clean_number(
+                        self._logger, row.lane_number
+                    ),
                     "name": get_file_name(row.sequence_filename),
                     "file_size": row.file_size,
                     "resource_type": self.ckan_data_type,

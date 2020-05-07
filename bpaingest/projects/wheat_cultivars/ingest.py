@@ -110,7 +110,9 @@ class WheatCultivarsMetadata(BaseMetadata):
                 resource["md5"] = resource["id"] = md5
                 resource["name"] = filename
                 resource.update(self.runs.get(resource["run"], BLANK_RUN))
-                sample_id = ingest_utils.extract_ands_id(self._logger, file_info["sample_id"])
+                sample_id = ingest_utils.extract_ands_id(
+                    self._logger, file_info["sample_id"]
+                )
                 xlsx_info = self.metadata_info[os.path.basename(md5_file)]
                 legacy_url = urljoin(xlsx_info["base_url"], "../all/" + filename)
                 resources.append(((sample_id,), legacy_url, resource))

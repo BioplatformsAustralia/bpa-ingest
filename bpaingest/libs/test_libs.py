@@ -3,6 +3,10 @@ from io import BytesIO
 from .ingest_utils import get_clean_number
 from .multihash import _generate_hashes
 from bpaingest.libs.common_resources import bsd_md5_re, linux_md5_re
+from bpaingest.util import make_logger
+
+
+logger = make_logger(__name__)
 
 TEST_CHUNK_SIZE = 8 * (1 << 20)
 
@@ -15,12 +19,12 @@ def test_get_clean_number():
         ("37.1 degrees", 37.1),
     )
     for f in floats:
-        assert f == get_clean_number(f)
+        assert f == get_clean_number(logger, f)
     for s, f in strings:
-        assert get_clean_number(s) == f
-    assert get_clean_number("") is None
-    assert get_clean_number(123) == 123
-    assert get_clean_number(None) is None
+        assert get_clean_number(logger, s) == f
+    assert get_clean_number(logger, "") is None
+    assert get_clean_number(logger, 123) == 123
+    assert get_clean_number(logger, None) is None
 
 
 def test_multihash_empty():
