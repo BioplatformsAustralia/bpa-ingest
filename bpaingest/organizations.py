@@ -93,9 +93,9 @@ ORGANIZATIONS = [
     },
     {
         "name": "ausarg",
-        "title": "The Australian Amphibian and Reptile Genomics",
-        "display_name": "The Australian Amphibian and Reptile Genomics",
-        "image_url": "https://staging.bioplatforms.com/AusARG-Logo-RGB-150dpi-Transparent.png",
+        "title": "Australian Amphibian and Reptile Genomics",
+        "display_name": "Australian Amphibian and Reptile Genomics",
+        "image_url": "https://data.bioplatforms.com/AusARG-Logo-RGB-150dpi-Transparent.png",
         "groups": [{"capacity": "public", "name": BPA_ORGANIZATION_ID}],
     },
 ]
