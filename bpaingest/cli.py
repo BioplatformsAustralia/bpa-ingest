@@ -26,7 +26,7 @@ LOG_LEVELS = {
 
 
 def make_cli_logger(args):
-    return make_logger(args.project_title, level=LOG_LEVELS[args.log_level])
+    return make_logger(args.project_name, level=LOG_LEVELS[args.log_level])
 
 
 @register_command
