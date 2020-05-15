@@ -59,9 +59,10 @@ def make_registration_decorator():
     return _register, registered
 
 
-def make_logger(name):
+def make_logger(name, level=logging.INFO):
     logger = logging.getLogger(name)
-    logger.setLevel(logging.DEBUG)
+    logger.propagate = False
+    logger.setLevel(level)
     handler = logging.StreamHandler()
     fmt = logging.Formatter("%(asctime)s [%(levelname)-7s] [%(name)s]  %(message)s")
     handler.setFormatter(fmt)

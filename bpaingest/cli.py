@@ -1,4 +1,5 @@
 import argparse
+import logging
 import sys
 import os
 
@@ -14,10 +15,18 @@ from .organizations import ORGANIZATIONS
 from .metadata import DownloadMetadata
 
 
-logger = make_logger(__name__)
 register_command, command_fns = make_registration_decorator()
 project_info = ProjectInfo()
 project_cli_options = project_info.cli_options()
+
+
+LOG_LEVELS = {
+    t: getattr(logging, t) for t in ("CRITICAL", "ERROR", "WARNING", "INFO", "DEBUG")
+}
+
+
+def make_cli_logger(args):
+    return make_logger(args.project_title, level=LOG_LEVELS[args.log_level])
 
 
 @register_command
@@ -113,7 +122,7 @@ def sync(args):
     """sync a project"""
     ckan = make_ckan_api(args)
     with DownloadMetadata(
-        make_logger(args.project_name),
+        make_cli_logger(args),
         project_cli_options[args.project_name],
         path=args.download_path,
     ) as dlmeta:
@@ -147,7 +156,7 @@ def genhash(args):
     data, and generate expected E-Tag and SHA256 values.
     """
     with DownloadMetadata(
-        make_logger(args.project_name),
+        make_cli_logger(args),
         project_cli_options[args.project_name],
         path=args.download_path,
     ) as dlmeta:
@@ -196,6 +205,9 @@ def main():
     parser.add_argument(
         "-p", "--download-path", required=False, default=None, help="CKAN base url"
     )
+    parser.add_argument(
+        "--log-level", required=False, default="INFO", choices=LOG_LEVELS.keys()
+    )
 
     subparsers = parser.add_subparsers(dest="name")
     for name, fn, setup_fn, help_text in sorted(commands()):
@@ -208,4 +220,5 @@ def main():
         version()
     if "func" not in args:
         usage(parser)
+    logging.basicConfig(level=LOG_LEVELS[args.log_level])
     args.func(args)
