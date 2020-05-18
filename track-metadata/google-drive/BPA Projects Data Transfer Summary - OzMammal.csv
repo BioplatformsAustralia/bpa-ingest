@@ -56,5 +56,6 @@ AGRF,28/01/2019,NextSet ddRAD- Data set ID 52621 (Dibbler),AGRF_OMG_H32KHBGXF_52
 BRF,30/03/2020,Nextseq500 150PE - exon capture marsupial,NB501086_0360_AMacDonald_OzMammals_Marsupial_gDNA_exon_capture,Illumina FASTQ,30/03/2020,,BPAOPS-893,(ingested)
 BRF,01/04/2020,Nextseq500 150PE - exon capture marsupial,NB501086_0361_AMacDonald_OzMammals_Rodent_gDNA_exon_capture,Illumina FASTQ,01/04/2020,,BPAOPS-894,(ingested)
 BRF,06/04/2020,Nextseq500 150PE - exon capture marsupial,NB501086_0362_AMacDonald_OzMammals_Rodent_gDNA_exon_capture,Illumina FASTQ,06/04/2020,,BPAOPS-895,(ingested)
-AGRF,28/04/2020,ONT-Promethion- Sample ID:57117 ; library ID 55395; data set ID  52626,20200417_OMG_AGRF_PAE34122,ONT fast5 and fastq,28/04/20202,,BPAOPS-897,https://data.bioplatforms.com/dataset/bpa-omg-ont-promethion-55395-pae34122
-AGRF,28/04/2020,ONT-Promethion- Sample ID:57117 ; library ID 55395; data set ID  52626,20200417_OMG_AGRF_PAE69878,ONT fast5 and fastq,28/04/20202,,BPAOPS-898,https://data.bioplatforms.com/dataset/bpa-omg-ont-promethion-55395-pae69878
+AGRF,28/04/2020,ONT-Promethion- Sample ID:57117 ; library ID 55395; data set ID  52626,20200417_OMG_AGRF_PAE34122,ONT fast5 and fastq,28/04/2020,,BPAOPS-897,https://data.bioplatforms.com/dataset/bpa-omg-ont-promethion-55395-pae34122
+AGRF,28/04/2020,ONT-Promethion- Sample ID:57117 ; library ID 55395; data set ID  52626,20200417_OMG_AGRF_PAE69878,ONT fast5 and fastq,28/04/2020,,BPAOPS-898,https://data.bioplatforms.com/dataset/bpa-omg-ont-promethion-55395-pae69878
+AGRF,15/05/2020,NextSeq ddRAD- Conilurus penicillatus data set ID 52622,AGRF_OMG_H7NCYBGXF_52622,Illumina FASTQ,18/05/2020,,BPAOPS-900,
