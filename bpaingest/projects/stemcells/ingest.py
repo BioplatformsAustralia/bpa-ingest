@@ -210,46 +210,55 @@ class StemcellsSmallRNAMetadata(BaseMetadata):
             obj = {}
             name = sample_id_to_ckan_name(sample_id.split("/")[-1], self.ckan_data_type)
             track_meta = self.track_meta.get(row.ticket)
-            obj.update(
-                {
-                    "name": name,
-                    "id": name,
-                    "sample_id": sample_id,
-                    "notes": "Stemcell SmallRNA %s" % (sample_id),
-                    "title": "Stemcell SmallRNA %s" % (sample_id),
-                    "omics": "transcriptomics",
-                    "insert_size_range": row.insert_size_range,
-                    "library_construction_protocol": row.library_construction_protocol,
-                    "sequencer": row.sequencer,
-                    "analysis_software_version": row.analysis_software_version,
-                    "ticket": row.ticket,
-                    "facility": row.facility_code.upper(),
-                    "type": self.ckan_data_type,
-                    "date_of_transfer": ingest_utils.get_date_isoformat(
-                        self._logger, track_meta.date_of_transfer
-                    ),
-                    "data_type": track_meta.data_type,
-                    "description": track_meta.description,
-                    "folder_name": track_meta.folder_name,
-                    "sample_submission_date": ingest_utils.get_date_isoformat(
-                        self._logger, track_meta.date_of_transfer
-                    ),
-                    "contextual_data_submission_date": None,
-                    "data_generated": ingest_utils.get_date_isoformat(
-                        self._logger, track_meta.date_of_transfer_to_archive
-                    ),
-                    "archive_ingestion_date": ingest_utils.get_date_isoformat(
-                        self._logger, track_meta.date_of_transfer_to_archive
-                    ),
-                    "dataset_url": track_meta.download,
-                    "private": True,
-                }
-            )
-            for contextual_source in self.contextual_metadata:
-                obj.update(contextual_source.get(sample_id))
-            tag_names = ["small-rna", "raw"]
-            obj["tags"] = [{"name": t} for t in tag_names]
-            packages.append(obj)
+            self._logger.info("track_meta is {}".format(track_meta))
+            if not track_meta:
+                self._logger.warning("No track meta data available. Continuing...")
+            else:
+                self._logger.debug(
+                    "Tracking meta for ticket: {} with track_meta: {}".format(
+                        row.ticket, track_meta
+                    )
+                )
+                obj.update(
+                    {
+                        "name": name,
+                        "id": name,
+                        "sample_id": sample_id,
+                        "notes": "Stemcell SmallRNA %s" % (sample_id),
+                        "title": "Stemcell SmallRNA %s" % (sample_id),
+                        "omics": "transcriptomics",
+                        "insert_size_range": row.insert_size_range,
+                        "library_construction_protocol": row.library_construction_protocol,
+                        "sequencer": row.sequencer,
+                        "analysis_software_version": row.analysis_software_version,
+                        "ticket": row.ticket,
+                        "facility": row.facility_code.upper(),
+                        "type": self.ckan_data_type,
+                        "date_of_transfer": ingest_utils.get_date_isoformat(
+                            self._logger, track_meta.date_of_transfer
+                        ),
+                        "data_type": track_meta.data_type,
+                        "description": track_meta.description,
+                        "folder_name": track_meta.folder_name,
+                        "sample_submission_date": ingest_utils.get_date_isoformat(
+                            self._logger, track_meta.date_of_transfer
+                        ),
+                        "contextual_data_submission_date": None,
+                        "data_generated": ingest_utils.get_date_isoformat(
+                            self._logger, track_meta.date_of_transfer_to_archive
+                        ),
+                        "archive_ingestion_date": ingest_utils.get_date_isoformat(
+                            self._logger, track_meta.date_of_transfer_to_archive
+                        ),
+                        "dataset_url": track_meta.download,
+                        "private": True,
+                    }
+                )
+                for contextual_source in self.contextual_metadata:
+                    obj.update(contextual_source.get(sample_id))
+                tag_names = ["small-rna", "raw"]
+                obj["tags"] = [{"name": t} for t in tag_names]
+                packages.append(obj)
         return packages
 
     def _get_resources(self):
