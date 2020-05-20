@@ -210,15 +210,9 @@ class StemcellsSmallRNAMetadata(BaseMetadata):
             obj = {}
             name = sample_id_to_ckan_name(sample_id.split("/")[-1], self.ckan_data_type)
             track_meta = self.track_meta.get(row.ticket)
-            self._logger.info("track_meta is {}".format(track_meta))
             if not track_meta:
                 self._logger.warning("No track meta data available. Continuing...")
             else:
-                self._logger.debug(
-                    "Tracking meta for ticket: {} with track_meta: {}".format(
-                        row.ticket, track_meta
-                    )
-                )
                 obj.update(
                     {
                         "name": name,

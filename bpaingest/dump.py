@@ -7,10 +7,7 @@ from .metadata import DownloadMetadata
 from .util import make_logger
 
 
-logger = make_logger(__name__)
-
-
-def unique_packages(packages):
+def unique_packages(logger, packages):
     by_id = dict((t["id"], t) for t in packages)
     id_count = Counter(t["id"] for t in packages)
     for k, cnt in list(id_count.items()):
@@ -23,14 +20,16 @@ def unique_packages(packages):
         yield by_id[k]
 
 
-def linkage_qc(state, data_type_meta):
+def linkage_qc(logger, state, data_type_meta, errors_callback=None):
+    if not errors_callback:
+        errors_callback = logger.error
     counts = {}
 
     # QC resource linkage
     for data_type in state:
         resource_linkage_package_id = {}
 
-        packages = list(unique_packages(state[data_type]["packages"]))
+        packages = list(unique_packages(logger, (state[data_type]["packages"])))
         resources = state[data_type]["resources"]
         counts[data_type] = len(packages), len(resources)
 
@@ -40,7 +39,7 @@ def linkage_qc(state, data_type_meta):
                 package_obj[t] for t in data_type_meta[data_type].resource_linkage
             )
             if linkage_tpl in resource_linkage_package_id:
-                logger.error(
+                errors_callback(
                     "{}: more than one package linked for tuple {}".format(
                         data_type, linkage_tpl
                     )
@@ -53,7 +52,7 @@ def linkage_qc(state, data_type_meta):
             if resource_linkage not in resource_linkage_package_id:
                 dirname1, resource_name = os.path.split(legacy_url)
                 _dirname2, ticket = os.path.split(dirname1)
-                logger.error(
+                errors_callback(
                     "dangling resource: name `{}' (ticket: `{}', linkage: `{}')".format(
                         resource_name, ticket, resource_linkage
                     )
@@ -61,17 +60,18 @@ def linkage_qc(state, data_type_meta):
 
         for linkage_tpl, package_id in resource_linkage_package_id.items():
             if linkage_tpl not in linked_tuples:
-                logger.error(
+                errors_callback(
                     "{}: package has no linked resources, tuple: {}".format(
                         package_id, linkage_tpl
                     )
                 )
 
     for data_type, (p, r) in counts.items():
-        logger.debug("{}: {} packages, {} resources".format(data_type, p, r))
+        errors_callback("{}: {} packages, {} resources".format(data_type, p, r))
 
 
 def dump_state(args):
+    logger = make_logger(__name__)
     state = defaultdict(lambda: defaultdict(list))
 
     project_info = ProjectInfo()
@@ -109,7 +109,7 @@ def dump_state(args):
         state[data_type]["packages"].sort(key=lambda x: x["id"])
         state[data_type]["resources"].sort(key=lambda x: x[2]["id"])
 
-    linkage_qc(state, data_type_meta)
+    linkage_qc(logger, state, data_type_meta)
 
     with open(args.filename, "w") as fd:
         json.dump(state, fd, sort_keys=True, indent=2, separators=(",", ": "))
