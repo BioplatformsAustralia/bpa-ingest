@@ -24,8 +24,8 @@ common_context = [OMGSampleContextual, OMGLibraryContextual]
 
 class OMGBaseMetadata(BaseMetadata):
     def __init__(self, *args, **kwargs):
-        self.generaliser = SensitiveDataGeneraliser()
         super().__init__(*args, **kwargs)
+        self.generaliser = SensitiveDataGeneraliser(self._logger)
 
     def apply_location_generalisation(self, packages):
         "Apply location generalisation for sensitive species found from ALA"
@@ -34,11 +34,25 @@ class OMGBaseMetadata(BaseMetadata):
             return "{} {}".format(package.get("genus", ""), package.get("species", ""))
 
         # prime the cache of responses
+        self._logger.info("building location generalisation cache")
         names = sorted(set(species_name(p) for p in packages))
         self.generaliser.ala_lookup.get_bulk(names)
 
         cache = {}
         for package in packages:
+            # if the sample wasn't collected in Australia, suppress the longitude
+            # and latitude (ALA lookup via SSLH is irrelevant)
+            country = package.get("country", "")
+            if country.lower() != "australia":
+                self._logger.debug(
+                    "library_id {} outside Australia, suppressing location: {}".format(
+                        package.get("bpa_dataset_id", ""), country
+                    )
+                )
+                package.update({"latitude": None, "longitude": None})
+                continue
+            # Sample is in Australia; use ALA to determine whether it is sensitive,
+            # and apply the relevant sensitisation level (if any)
             lat, lng = (
                 get_clean_number(self._logger, package.get("latitude")),
                 get_clean_number(self._logger, package.get("longitude")),

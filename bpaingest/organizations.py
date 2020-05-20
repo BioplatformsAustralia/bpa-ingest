@@ -16,8 +16,8 @@ ORGANIZATIONS = [
     },
     {
         "name": "australian-microbiome",
-        "title": "Australian Microbiome",
-        "display_name": "Australian Microbiome",
+        "title": "The Australian Microbiome Initiative",
+        "display_name": "The Australian Microbiome Initiative",
         "image_url": "https://data.bioplatforms.com/new_ausmicro_logo.png",
         "groups": [{"capacity": "public", "name": BPA_ORGANIZATION_ID}],
     },
@@ -89,6 +89,13 @@ ORGANIZATIONS = [
         "title": "Genomics for Australian Plants",
         "display_name": "Genomics for Australian Plants",
         "image_url": "https://data.bioplatforms.com/plants-logo.png",
+        "groups": [{"capacity": "public", "name": BPA_ORGANIZATION_ID}],
+    },
+    {
+        "name": "ausarg",
+        "title": "Australian Amphibian and Reptile Genomics",
+        "display_name": "Australian Amphibian and Reptile Genomics",
+        "image_url": "https://data.bioplatforms.com/AusARG-Logo-RGB-150dpi-Transparent.png",
         "groups": [{"capacity": "public", "name": BPA_ORGANIZATION_ID}],
     },
 ]
