@@ -5,7 +5,7 @@ import ckanapi
 import os
 from urllib.parse import urlparse
 from collections import defaultdict
-from .util import make_logger, authenticated_ckan_session
+from .util import make_logger
 
 logger = make_logger(__name__)
 UPLOAD_RETRY = 3
@@ -108,82 +108,24 @@ def make_organization(ckan, organization_obj):
     return make_obj(ckan, "organization", organization_obj)
 
 
-class ArchiveInfo:
-    def __init__(self, ckan):
-        self.ckan_address = self.ckan_address = None
-        if ckan is not None:
-            self.ckan_session = authenticated_ckan_session(ckan)
-            self.ckan_address = ckan.address
-        self.other_session = requests.Session()
+class BaseArchiveInfo:
+    def __init__(self):
         self._size_cache = {}
 
-    def pick_session(self, url):
-        "pick session based on URL, if on CKAN use our authenticated session"
-        if self.ckan_address is not None and url.startswith(self.ckan_address):
-            return self.ckan_session
-        return self.other_session
+    def check_status_code(self, response):
+        if response.status_code in (403, 401):
+            # if we're getting 403s and we re-upload a bunch of data because of it, that is unhelpful
+            logger.error("authentication error accessing archive")
+            raise Exception("authentication failed")
 
-    def resolve_url(self, url, auth):
-        session = self.pick_session(url)
-        new_url = url
-        for i in range(4):
-            response = session.head(new_url, auth=auth)
-            if response.status_code == 301 or response.status_code == 302:
-                new_url = response.headers.get("location")
-            elif response.status_code in (403, 401):
-                # if we're getting 403s and we re-upload a bunch of data because of it, that is unhelpful
-                logger.error(
-                    "authentication error accessing archive: aborting to avoid destructive side-effects"
-                )
-                logger.error((url, auth))
-                raise Exception()
-            elif response.status_code == 200:
-                return new_url
-            else:
-                return None
-
-    def get_size(self, url, auth):
-        def _size(response):
-            if response.status_code in (403, 401):
-                # if we're getting 403s and we re-upload a bunch of data because of it, that is unhelpful
-                logger.error(
-                    "authentication error accessing archive: aborting to avoid destructive side-effects."
-                )
-                logger.error((url, auth))
-                raise Exception()
-            if response.status_code != 200:
-                return None
-            if "content-length" in response.headers:
-                return int(response.headers["content-length"])
-            if "content-range" in response.headers:
-                return int(response.headers.get("content-range").rsplit("/", 1)[-1])
-
-        if not url:
+    def size_from_response(self, response):
+        self.check_status_code(response)
+        if response.status_code not in (200, 206):
             return None
-        session = self.pick_session(url)
-        if url not in self._size_cache:
-            resolved = self.resolve_url(url, auth)
-            if resolved is None:
-                return None
-            self._size_cache[url] = self._size_cache[resolved] = _size(
-                session.head(resolved, auth=auth)
-            )
-        return self._size_cache[url]
-
-    def get_etag(self, url, auth):
-        session = self.pick_session(url)
-
-        def _etag(response):
-            if response.status_code != 200:
-                return None
-            return response.headers.get("etag")
-
-        if not url:
-            return None
-        resolved = self.resolve_url(url, auth)
-        if resolved is None:
-            return None
-        return _etag(session.head(resolved, auth=auth))
+        if "content-range" in response.headers:
+            return int(response.headers.get("content-range").rsplit("/", 1)[-1])
+        if "content-length" in response.headers:
+            return int(response.headers["content-length"])
 
 
 def same_netloc(u1, u2):
@@ -192,8 +134,104 @@ def same_netloc(u1, u2):
     return n1 == n2
 
 
+class CKANArchiveInfo(BaseArchiveInfo):
+    def __init__(self, ckan):
+        self.ckan = ckan
+        self.session = requests.Session()
+        super().__init__()
+
+    def on_ckan(self, url):
+        return same_netloc(self.ckan.address, url)
+
+    def resolve_url(self, url):
+        # the archive will issue an S3 link with auth token
+        response = self.session.head(url, headers={"Authorization": self.ckan.apikey})
+        self.check_status_code(response)
+        assert response.status_code == 302
+        return response.headers["location"]
+
+    def ckan_address(self):
+        return self.ckan.address
+
+    def s3_simulated_head(self, url):
+        # we have to do a range request for the first byte, as S3 doesn't let us head
+        # with an authorization token. however, we can still get the full size from the
+        # content-range header
+        return requests.get(url, headers={"Range": "bytes=0-0"})
+
+    def get_etag(self, url):
+        if not url:
+            return None
+        # a URL on S3 with auth token
+        resolved = self.resolve_url(url)
+        if resolved is None:
+            return None
+        response = self.s3_simulated_head(resolved)
+        self.check_status_code(response)
+        if response.status_code != 200:
+            return None
+        return response.headers.get("etag")
+        return _etag(self.session.head(resolved, auth=auth))
+
+    def get_size(self, url):
+        if not url:
+            return None
+        if url not in self._size_cache:
+            # a URL on S3 with auth token
+            resolved = self.resolve_url(url)
+            if resolved is None:
+                return None
+            # we have to do a range request for the first byte, as S3 doesn't let us head
+            # with an authorization token. however, we can still get the full size from the
+            # content-range header
+            response = self.s3_simulated_head(resolved)
+            self._size_cache[url] = self._size_cache[
+                resolved
+            ] = self.size_from_response(response)
+        return self._size_cache[url]
+
+
+class ApacheArchiveInfo(BaseArchiveInfo):
+    def __init__(self, auth):
+        self.auth = auth
+        self.session = requests.Session()
+        super().__init__()
+
+    def head(self, url):
+        return self.session.head(url, auth=self.auth)
+
+    def resolve_url(self, url):
+        """
+        follow redirects until we get the final URL; unfortunately there are symlinks in the flat-file
+        archive that need to be walked
+        """
+        new_url = url
+        for i in range(4):
+            logger.debug("{}, {}".format(i, new_url))
+            response = self.session.head(new_url, auth=self.auth)
+            self.check_status_code(response)
+            if response.status_code == 301 or response.status_code == 302:
+                new_url = response.headers.get("location")
+            elif response.status_code == 200:
+                return new_url
+            else:
+                return None
+
+    def get_size(self, url):
+        if not url:
+            return None
+        if url not in self._size_cache:
+            resolved = self.resolve_url(url)
+            if resolved is None:
+                return None
+            self._size_cache[url] = self._size_cache[
+                resolved
+            ] = self.size_from_response(self.head(resolved))
+        return self._size_cache[url]
+
+
 def check_resource(
-    ckan_address, archive_info, current_url, legacy_url, metadata_etags, auth=None
+    ckan_archive_info, apache_archive_info, current_url, legacy_url, metadata_etags,
 ):
     """
     returns None if the ckan_obj looks good (is on the CKAN server, size matches legacy url size)
@@ -204,21 +242,23 @@ def check_resource(
         logger.error("resource missing (no current URL)")
         return "missing"
 
-    if not same_netloc(current_url, ckan_address):
+    if not ckan_archive_info.on_ckan(current_url):
         logger.error("resource is not hosted on CKAN server: %s" % (current_url))
         return "not-on-ckan"
 
     # determine the size of the original file in the legacy archive
-    legacy_size = archive_info.get_size(legacy_url, auth)
+    legacy_size = apache_archive_info.get_size(legacy_url)
     if legacy_size is None:
         logger.error("error getting size of: %s" % (legacy_url))
         return "error-getting-size"
 
     # determine the URL of the proxied s3 resource, and then its size
-    current_size = archive_info.get_size(current_url, None)
+    current_size = ckan_archive_info.get_size(current_url)
     if current_size is None:
         logger.error("error getting size of: %s" % (current_url))
         return "error-getting-size"
+
+    return
 
     if current_size != legacy_size:
         logger.error(

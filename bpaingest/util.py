@@ -80,19 +80,6 @@ def make_ckan_api(args):
 CKAN_AUTH = {"login": "CKAN_USERNAME", "password": "CKAN_PASSWORD"}
 
 
-# http://stackoverflow.com/questions/38271351/download-resources-from-private-ckan-datasets
-def authenticated_ckan_session(ckan):
-    s = requests.Session()
-    data = dict((k, os.environ.get(v)) for k, v in list(CKAN_AUTH.items()))
-    if any(t is None for t in list(data.values())):
-        raise Exception("please set %s" % (", ".join(list(CKAN_AUTH.values()))))
-    url = ckan.address + "/login_generic"
-    r = s.post(url, data=data)
-    if "field-login" in r.text:
-        raise RuntimeError("Login failed.")
-    return s
-
-
 digit_words = {
     "0": "zero",
     "1": "one",

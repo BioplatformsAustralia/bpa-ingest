@@ -5,13 +5,11 @@ from .ops import (
     create_resource,
     reupload_resource,
     get_organization,
-    ArchiveInfo,
-    diff_objects,
+    CKANArchiveInfo,
+    ApacheArchiveInfo,
 )
 from .pkgcache import build_package_cache
 import ckanapi
-from queue import Queue
-from threading import Thread
 from .util import make_logger
 from .util import prune_dict
 from .libs.multihash import S3_HASH_FIELDS
@@ -94,58 +92,34 @@ def sync_packages(ckan, ckan_data_type, packages, org, group, do_delete):
 
 
 def check_resources(ckan, current_resources, resource_id_legacy_url, auth, num_threads):
-    # another time-consuming activity: runs in parallel
-
-    ckan_address = ckan.address
-    archive_info = ArchiveInfo(ckan)
-    # appending to a list is thread-safe in Python
+    ckan_archive_info = CKANArchiveInfo(ckan)
+    apache_archive_info = ApacheArchiveInfo(auth)
     to_reupload = []
 
-    def check_worker():
-        while True:
-            task = q.get()
-            if task is None:
-                break
-            current_ckan_obj, legacy_url, current_url = task
-            obj_id = current_ckan_obj["id"]
-            resource_issue = check_resource(
-                ckan_address,
-                archive_info,
-                current_url,
-                legacy_url,
-                [current_ckan_obj.get(t) for t in S3_HASH_FIELDS],
-                auth,
+    def check(current_ckan_obj, legacy_url, current_url):
+        obj_id = current_ckan_obj["id"]
+        resource_issue = check_resource(
+            ckan_archive_info,
+            apache_archive_info,
+            current_url,
+            legacy_url,
+            [current_ckan_obj.get(t) for t in S3_HASH_FIELDS],
+        )
+        if resource_issue:
+            logger.error(
+                "resource check failed (%s) queued for re-upload: %s"
+                % (resource_issue, obj_id)
             )
-            if resource_issue:
-                logger.error(
-                    "resource check failed (%s) queued for re-upload: %s"
-                    % (resource_issue, obj_id)
-                )
-                to_reupload.append((current_ckan_obj, legacy_url))
-            else:
-                logger.info("resource check OK: %s" % (obj_id))
-            q.task_done()
-
-    q = Queue()
-    threads = []
-    for i in range(num_threads):
-        t = Thread(target=check_worker)
-        threads.append(t)
-        t.start()
+            to_reupload.append((current_ckan_obj, legacy_url))
+        else:
+            logger.info("resource check OK: %s" % (obj_id))
 
     logger.info("%d resources to be checked" % (len(current_resources)))
     for current_ckan_obj in current_resources:
         obj_id = current_ckan_obj["id"]
         legacy_url = resource_id_legacy_url.get(obj_id)
         current_url = current_ckan_obj.get("url")
-        q.put((current_ckan_obj, legacy_url, current_url))
-    q.join()
-
-    for thread in threads:
-        q.put(None)
-
-    for thread in threads:
-        thread.join()
+        check(current_ckan_obj, legacy_url, current_url)
 
     return to_reupload
 

@@ -5,7 +5,6 @@ Utility functions to fetch data from web server
 
 import os
 import re
-import sys
 import requests
 from bs4 import BeautifulSoup
 from distutils.dir_util import mkpath
