@@ -168,10 +168,9 @@ class CKANArchiveInfo(BaseArchiveInfo):
             return None
         response = self.s3_simulated_head(resolved)
         self.check_status_code(response)
-        if response.status_code != 200:
+        if response.status_code not in (200, 206):
             return None
         return response.headers.get("etag")
-        return _etag(self.session.head(resolved, auth=auth))
 
     def get_size(self, url):
         if not url:
@@ -258,8 +257,6 @@ def check_resource(
         logger.error("error getting size of: %s" % (current_url))
         return "error-getting-size"
 
-    return
-
     if current_size != legacy_size:
         logger.error(
             "CKAN resource %s has incorrect size: %d (should be %d)"
@@ -268,7 +265,7 @@ def check_resource(
         return "wrong-size"
 
     # if we have a pre-calculated s3etag in metadata, check it matches
-    current_etag = archive_info.get_etag(current_url, None)
+    current_etag = ckan_archive_info.get_etag(current_url)
     if current_etag.strip('"') not in metadata_etags:
         if None in metadata_etags:
             logger.warning(
