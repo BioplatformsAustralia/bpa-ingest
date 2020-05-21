@@ -289,8 +289,8 @@ def download_legacy_file(legacy_url, auth):
     basename = legacy_url.rsplit("/", 1)[-1]
     tempdir = tempfile.mkdtemp(prefix="bpaingest-data-")
     path = os.path.join(tempdir, basename)
-    archive_info = ArchiveInfo(None)
-    resolved_url = archive_info.resolve_url(legacy_url, auth)
+    archive_info = ApacheArchiveInfo(auth)
+    resolved_url = archive_info.resolve_url(legacy_url)
     logger.info("Resolved `%s' to `%s'" % (legacy_url, resolved_url))
     if not resolved_url:
         logger.error("unable to resolve `%s' - file missing?" % (legacy_url))
