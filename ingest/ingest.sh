@@ -86,6 +86,7 @@ omg()
   apply omg-exoncapture $*
   apply omg-genomics-hiseq $*
   apply omg-genomics-ddrad $*
+  apply omg-transcriptomics-nextseq $*
 }
 
 sepsis()

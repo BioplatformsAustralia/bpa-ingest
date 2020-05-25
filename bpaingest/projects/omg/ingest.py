@@ -1764,3 +1764,184 @@ class OMGONTPromethionMetadata(OMGBaseMetadata):
                     )
                 )
         return resources + self.generate_xlsx_resources()
+
+
+class OMGTranscriptomicsNextseq(OMGBaseMetadata):
+    organization = "bpa-omg"
+    ckan_data_type = "omg-transcriptomics-nextseq"
+    omics = "transcriptomics"
+    technology = "nextseq"
+    contextual_classes = common_context
+    metadata_patterns = [r"^.*\.md5$", r"^.*_metadata.*.*\.xlsx$"]
+    metadata_urls = [
+        "https://downloads-qcif.bioplatforms.com/bpa/omg_staging/transcriptomics_nextseq/",
+    ]
+    metadata_url_components = ("ticket",)
+    resource_linkage = ("bpa_library_id", "flowcell_id")
+    spreadsheet = {
+        "fields": [
+            fld("genus", "genus"),
+            fld("species", "species"),
+            fld("voucher_number", "voucher_number"),
+            fld("tissue_number", "tissue_number"),
+            fld("voucher_or_tissue_number", "voucher_or_tissue_number"),
+            fld(
+                "bpa_dataset_id", "bpa_dataset_id", coerce=ingest_utils.extract_ands_id
+            ),
+            fld(
+                "bpa_library_id", "bpa_library_id", coerce=ingest_utils.extract_ands_id
+            ),
+            # each row has multiple dataset_ids separated by |
+            fld("bpa_sample_id", "bpa_sample_id"),
+            fld("facility_sample_id", "facility_sample_id"),
+            fld("library_type", "library_type"),
+            fld(
+                "library_prep_date",
+                "library_prep_date",
+                coerce=ingest_utils.get_date_isoformat,
+            ),
+            fld("library_prepared_by", "library_prepared_by"),
+            fld("library_prep_method", "library_prep_method"),
+            fld("experimental_design", "experimental_design"),
+            fld("omg_project", "omg_project"),
+            fld("data_custodian", "data_custodian"),
+            fld("dna_treatment", "dna_treatment"),
+            fld("library_index_id", "library_index_id"),
+            fld("library_index_sequence", "library_index_sequence"),
+            fld("library_oligo_sequence", "library_oligo_sequence"),
+            fld("library_pcr_reps", "library_pcr_reps"),
+            fld("library_pcr_cycles", "library_pcr_cycles"),
+            fld("library_ng_ul", "library_ng_ul"),
+            fld("library_comments", "library_comments"),
+            fld("library_location", "library_location"),
+            fld("library_status", "library_status"),
+            fld("sequencing_facility", "sequencing_facility"),
+            fld("n_libraries_pooled", "n_libraries_pooled"),
+            fld("bpa_work_order", "bpa_work_order"),
+            fld("sequencing_platform", "sequencing_platform"),
+            fld("sequence_length", "sequence_length"),
+            fld("flowcell_id", "flowcell_id"),
+            fld("software_version", "software_version"),
+            fld("file", "file"),
+        ],
+        "options": {
+            "sheet_name": "OMG_library_metadata",
+            "header_length": 1,
+            "column_name_row_index": 0,
+        },
+    }
+    md5 = {
+        "match": [files.transcriptomics_nextseq_fastq_filename_re],
+        "skip": None,
+    }
+
+    def __init__(
+        self, logger, metadata_path, contextual_metadata=None, metadata_info=None
+    ):
+        super().__init__(logger, metadata_path)
+        self.path = Path(metadata_path)
+        self.contextual_metadata = contextual_metadata
+        self.metadata_info = metadata_info
+        self.track_meta = OMGTrackMetadata()
+        self.flow_lookup = {}
+
+    def _get_packages(self):
+        xlsx_re = re.compile(r"^.*_(\w+)_metadata.*\.xlsx$")
+
+        def get_flow_id(fname):
+            m = xlsx_re.match(fname)
+            if not m:
+                raise Exception("unable to find flowcell for filename: `%s'" % (fname))
+            return m.groups()[0]
+
+        self._logger.info("Ingesting OMG metadata from {0}".format(self.path))
+        packages = []
+        for fname in glob(self.path + "/*.xlsx"):
+            self._logger.info(
+                "Processing OMG metadata file {0}".format(os.path.basename(fname))
+            )
+            flow_id = get_flow_id(fname)
+            objs = defaultdict(list)
+            for row in self.parse_spreadsheet(fname, self.metadata_info):
+                obj = row._asdict()
+                obj.pop("file")
+                objs[(obj["bpa_library_id"], obj["flowcell_id"])].append(obj)
+
+            for (bpa_library_id, flowcell_id), row_objs in list(objs.items()):
+
+                if bpa_library_id is None:
+                    continue
+
+                obj = common_values(row_objs)
+                track_meta = self.track_meta.get(obj["ticket"])
+
+                def track_get(k):
+                    if track_meta is None:
+                        return None
+                    return getattr(track_meta, k)
+
+                name = sample_id_to_ckan_name(
+                    bpa_library_id, self.ckan_data_type, flowcell_id
+                )
+                obj.update(
+                    {
+                        "name": name,
+                        "id": name,
+                        "bpa_library_id": bpa_library_id,
+                        "title": "OMG Transcriptomics NextSeq %s %s"
+                        % (bpa_library_id, flow_id),
+                        "date_of_transfer": ingest_utils.get_date_isoformat(
+                            self._logger, track_get("date_of_transfer")
+                        ),
+                        "data_type": track_get("data_type"),
+                        "description": track_get("description"),
+                        "folder_name": track_get("folder_name"),
+                        "sample_submission_date": ingest_utils.get_date_isoformat(
+                            self._logger, track_get("date_of_transfer")
+                        ),
+                        "contextual_data_submission_date": None,
+                        "data_generated": ingest_utils.get_date_isoformat(
+                            self._logger, track_get("date_of_transfer_to_archive")
+                        ),
+                        "archive_ingestion_date": ingest_utils.get_date_isoformat(
+                            self._logger, track_get("date_of_transfer_to_archive")
+                        ),
+                        "dataset_url": track_get("download"),
+                        "type": self.ckan_data_type,
+                        "private": True,
+                    }
+                )
+                ingest_utils.add_spatial_extra(self._logger, obj)
+                tag_names = ["transcriptomics-nextseq"]
+                obj["tags"] = [{"name": t} for t in tag_names]
+                self.track_xlsx_resource(obj, fname)
+                packages.append(obj)
+        return self.apply_location_generalisation(packages)
+
+    def _get_resources(self):
+        self._logger.info(
+            "Ingesting OMG md5 file information from {0}".format(self.path)
+        )
+        resources = []
+        for md5_file in glob(self.path + "/*.md5"):
+            self._logger.info("Processing md5 file {}".format(md5_file))
+            for filename, md5, file_info in self.parse_md5file(md5_file):
+                resource = file_info.copy()
+                resource["md5"] = resource["id"] = md5
+                resource["name"] = filename
+                resource["resource_type"] = self.ckan_data_type
+                xlsx_info = self.metadata_info[os.path.basename(md5_file)]
+                legacy_url = urljoin(xlsx_info["base_url"], filename)
+                resources.append(
+                    (
+                        (
+                            ingest_utils.extract_ands_id(
+                                self._logger, resource["bpa_library_id"]
+                            ),
+                            resource["flowcell_id"],
+                        ),
+                        legacy_url,
+                        resource,
+                    )
+                )
+        return resources + self.generate_xlsx_resources()

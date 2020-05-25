@@ -118,3 +118,16 @@ ONT_PROMETHION_PATTERN = r"""
     \.tar
 """
 ont_promethion_re = re.compile(ONT_PROMETHION_PATTERN, re.VERBOSE)
+
+TRANSCRIPTOMICS_NEXTSEQ_FASTQ_FILENAME_PATTERN = r"""
+    (?P<bpa_library_id>\d{4,6})_
+    (?P<flowcell_id>\w{9})_
+    (?P<index>[G|A|T|C|-]*|N)_
+    (?P<runsamplenum>S\d*)_
+    (?P<lane>L\d{3})_
+    (?P<read>[R|I][1|2])
+    _001\.fastq\.gz
+"""
+transcriptomics_nextseq_fastq_filename_re = re.compile(
+    TRANSCRIPTOMICS_NEXTSEQ_FASTQ_FILENAME_PATTERN, re.VERBOSE
+)

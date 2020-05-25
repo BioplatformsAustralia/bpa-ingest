@@ -9,6 +9,7 @@ from .files import (
     ddrad_metadata_sheet_re,
     pacbio_filename_re,
     ont_promethion_re,
+    transcriptomics_nextseq_fastq_filename_re,
 )
 
 
@@ -122,3 +123,11 @@ def test_ont_promethion_re():
     ]
     for filename in filenames:
         assert ont_promethion_re.match(filename) is not None
+
+
+def test_transcriptomics_hiseq_re():
+    filenames = [
+        "53817_H775FAFX2_TTGACT_S1_L002_R2_001.fastq.gz",
+    ]
+    for filename in filenames:
+        assert transcriptomics_nextseq_fastq_filename_re.match(filename) is not None
