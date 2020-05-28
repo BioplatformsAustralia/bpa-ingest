@@ -1,6 +1,8 @@
 from .amdb.ingest import (
     AustralianMicrobiomeMetagenomicsNovaseqMetadata,
     AustralianMicrobiomeMetagenomicsNovaseqControlMetadata,
+    AustralianMicrobiomeAmpliconsMetadata,
+    AustralianMicrobiomeAmpliconsControlMetadata,
     BASEAmpliconsMetadata,
     BASEMetagenomicsMetadata,
     BASEAmpliconsControlMetadata,
@@ -66,6 +68,8 @@ class ProjectInfo:
         "amd": [
             AustralianMicrobiomeMetagenomicsNovaseqMetadata,
             AustralianMicrobiomeMetagenomicsNovaseqControlMetadata,
+            AustralianMicrobiomeAmpliconsMetadata,
+            AustralianMicrobiomeAmpliconsControlMetadata,
         ],
         "base": [
             BASEAmpliconsMetadata,

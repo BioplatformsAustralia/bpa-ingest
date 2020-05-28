@@ -1717,3 +1717,256 @@ class AustralianMicrobiomeMetagenomicsNovaseqControlMetadata(AMDBaseMetadata):
             legacy_url = urljoin(xlsx_info["base_url"], filename)
             resources.append(((resource["flowcell"],), legacy_url, resource))
         return resources
+
+
+class AustralianMicrobiomeAmpliconsMetadata(AMDBaseMetadata):
+    organization = "australian-microbiome"
+    ckan_data_type = "amdb-genomics-amplicon"
+    omics = "genomics"
+    contextual_classes = common_context
+    metadata_patterns = [r"^.*\.md5", r"^.*_metadata.*.*\.xlsx"]
+    resource_linkage = ("sample_id", "flow_id", "index")
+    spreadsheet = {
+        "fields": [
+            fld("sample_id", "sampleid", coerce=ingest_utils.extract_ands_id),
+            fld("target", "target"),
+            fld("pass_fail", "p=pass / f=fail"),
+            fld(
+                "dilution_used", "dilution used", coerce=ingest_utils.fix_date_interval
+            ),
+            fld("reads", "# of reads"),
+            fld("analysis_software", "analysissoftware"),
+            fld("analysis_software_version", "analysissoftwareversion"),
+            fld("comments", "comments"),
+            fld("index", "index"),
+        ],
+        "options": {"header_length": 1, "column_name_row_index": 0,},
+    }
+    technology = "amplicons"
+    metadata_urls = ["https://downloads-qcif.bioplatforms.com/bpa/amd/amplicons-miseq/"]
+    metadata_url_components = ("amplicon", "ticket")
+    md5 = {
+        "match": [files.amd_amplicon_filename_re],
+        "skip": [files.amd_amplicon_control_filename_re],
+    }
+
+    def __init__(
+        self, logger, metadata_path, contextual_metadata=None, metadata_info=None
+    ):
+        super().__init__(logger, metadata_path)
+        self.google_track_meta = AustralianMicrobiomeGoogleTrackMetadata()
+        self.path = Path(metadata_path)
+        self.contextual_metadata = contextual_metadata
+        self.metadata_info = metadata_info
+
+    def _get_packages(self):
+        xlsx_re = re.compile(r"^.*_(\w+)_metadata.*\.xlsx$")
+        flow_comment_re = re.compile(r"^\d{4,6}_(\w{5,})$")  # e.g. 34658_AYBH6
+
+        def get_flow_id(fname):
+            m = xlsx_re.match(fname)
+            if not m:
+                raise Exception("unable to find flowcell for filename: `%s'" % (fname))
+            return m.groups()[0]
+
+        def get_flow_id_from_comment(comment):
+            m = flow_comment_re.match(comment)
+            if not m:
+                raise Exception(
+                    "unable to derive flowcell from comment: `%s'" % (comment)
+                )
+            return m.groups()[0]
+
+        self._logger.info(
+            "Ingesting Australian Microbiome metadata from {0}".format(self.path)
+        )
+        packages = []
+        for fname in unique_spreadsheets(glob(self.path + "/*.xlsx")):
+            base_fname = os.path.basename(fname)
+            self._logger.info(
+                "Processing Australian Microbiome metadata file {0}".format(
+                    os.path.basename(fname)
+                )
+            )
+            flow_id = get_flow_id(fname)
+            for row in self.parse_spreadsheet(fname, self.metadata_info):
+                sample_id = row.sample_id
+                if sample_id is None:
+                    continue
+                obj = row._asdict()
+                obj["flow_id"] = flow_id
+                google_track_meta = self.google_track_meta.get(row.ticket)
+                if google_track_meta is None:
+                    self._logger.warning(
+                        "no google tracking metadata for ticket {}".format(row.ticket)
+                    )
+                    archive_ingestion_date = None
+                else:
+                    obj.update(google_track_meta._asdict())
+                    archive_ingestion_date = ingest_utils.get_date_isoformat(
+                        self._logger, google_track_meta.date_of_transfer_to_archive
+                    )
+                name = sample_id_to_ckan_name(
+                    sample_id.split("/")[-1],
+                    self.ckan_data_type + "-" + row.amplicon.lower(),
+                    "{}_{}".format(obj["flow_id"], obj["index"]),
+                )
+                amplicon = row.amplicon.upper()
+                obj.update(
+                    {
+                        "name": name,
+                        "id": name,
+                        "amplicon": amplicon,
+                        "notes": "Australian Microbiome Amplicons %s %s %s"
+                        % (amplicon, sample_id, flow_id),
+                        "title": "Australian Microbiome Amplicons %s %s %s"
+                        % (amplicon, sample_id, flow_id),
+                        "omics": "Genomics",
+                        "analytical_platform": "MiSeq",
+                        "license_id": apply_license(archive_ingestion_date),
+                        "ticket": row.ticket,
+                        "type": self.ckan_data_type,
+                        "private": True,
+                    }
+                )
+                for contextual_source in self.contextual_metadata:
+                    obj.update(contextual_source.get(sample_id))
+                ingest_utils.add_spatial_extra(self._logger, obj)
+                tag_names = ["amplicons", amplicon]
+                if obj.get("sample_type"):
+                    tag_names.append(obj["sample_type"])
+                obj["tags"] = [{"name": t} for t in tag_names]
+                packages.append(obj)
+        return packages
+
+    def _get_resources(self):
+        self._logger.info(
+            "Ingesting MM md5 file information from {0}".format(self.path)
+        )
+        resources = []
+        for md5_file in glob(self.path + "/*.md5"):
+            self._logger.info("Processing md5 file {}".format(md5_file))
+            for filename, md5, file_info in self.parse_md5file(md5_file):
+                resource = file_info.copy()
+                resource["md5"] = resource["id"] = md5
+                resource["name"] = filename
+                resource["resource_type"] = self.ckan_data_type
+                for contextual_source in self.contextual_metadata:
+                    resource.update(contextual_source.filename_metadata(filename))
+                sample_id = ingest_utils.extract_ands_id(
+                    self._logger, file_info.get("id")
+                )
+                xlsx_info = self.metadata_info[os.path.basename(md5_file)]
+                legacy_url = urljoin(xlsx_info["base_url"], filename)
+                resources.append(
+                    (
+                        (sample_id, resource["flow_id"], resource["index"],),
+                        legacy_url,
+                        resource,
+                    )
+                )
+        return resources
+
+
+class AustralianMicrobiomeAmpliconsControlMetadata(AMDBaseMetadata):
+    organization = "australian-microbiome"
+    ckan_data_type = "amdb-genomics-amplicon-control"
+    omics = "genomics"
+    technology = "amplicons-control"
+    contextual_classes = []
+    metadata_patterns = [r"^.*\.md5"]
+    resource_linkage = ("amplicon", "flow_id")
+    md5 = {
+        "match": [files.amd_amplicon_control_filename_re],
+        "skip": [files.amd_amplicon_filename_re],
+    }
+    metadata_urls = ["https://downloads-qcif.bioplatforms.com/bpa/amd/amplicons-miseq/"]
+    metadata_url_components = ("amplicon", "ticket")
+
+    def __init__(
+        self, logger, metadata_path, contextual_metadata=None, metadata_info=None
+    ):
+        super().__init__(logger, metadata_path)
+        self.path = Path(metadata_path)
+        self.metadata_info = metadata_info
+        self.google_track_meta = AustralianMicrobiomeGoogleTrackMetadata()
+
+    def md5_lines(self):
+        self._logger.info(
+            "Ingesting AMDB md5 file information from {0}".format(self.path)
+        )
+        for md5_file in glob(self.path + "/*.md5"):
+            self._logger.info("Processing md5 file {}".format(md5_file))
+            for filename, md5, file_info in self.parse_md5file(md5_file):
+                yield filename, md5, md5_file, file_info
+
+    def _get_packages(self):
+        flow_id_info = {
+            t["flow_id"]: self.metadata_info[os.path.basename(fname)]
+            for _, _, fname, t in self.md5_lines()
+        }
+        packages = []
+        for flow_id, info in sorted(flow_id_info.items()):
+            obj = {}
+            amplicon = info["amplicon"]
+            name = sample_id_to_ckan_name(
+                "control", self.ckan_data_type + "-" + amplicon, flow_id
+            ).lower()
+            google_track_meta = self.google_track_meta.get(info["ticket"])
+
+            archive_ingestion_date = ingest_utils.get_date_isoformat(
+                self._logger, google_track_meta.date_of_transfer_to_archive
+            )
+
+            obj.update(
+                {
+                    "name": name,
+                    "id": name,
+                    "flow_id": flow_id,
+                    "notes": "Australian Microbiome Amplicons Control %s %s"
+                    % (amplicon, flow_id),
+                    "title": "Australian Microbiome Amplicons Control %s %s"
+                    % (amplicon, flow_id),
+                    "omics": "Genomics",
+                    "analytical_platform": "MiSeq",
+                    "read_length": mm_amplicon_read_length(amplicon),
+                    "date_of_transfer": ingest_utils.get_date_isoformat(
+                        self._logger, google_track_meta.date_of_transfer
+                    ),
+                    "data_type": google_track_meta.data_type,
+                    "description": google_track_meta.description,
+                    "folder_name": google_track_meta.folder_name,
+                    "sample_submission_date": ingest_utils.get_date_isoformat(
+                        self._logger, google_track_meta.date_of_transfer
+                    ),
+                    "data_generated": ingest_utils.get_date_isoformat(
+                        self._logger, google_track_meta.date_of_transfer_to_archive
+                    ),
+                    "archive_ingestion_date": archive_ingestion_date,
+                    "license_id": apply_license(archive_ingestion_date),
+                    "dataset_url": google_track_meta.download,
+                    "ticket": info["ticket"],
+                    "amplicon": amplicon,
+                    "type": self.ckan_data_type,
+                    "private": True,
+                }
+            )
+            ingest_utils.add_spatial_extra(self._logger, obj)
+            tag_names = ["amplicons-control", amplicon, "raw"]
+            obj["tags"] = [{"name": t} for t in tag_names]
+            packages.append(obj)
+        return packages
+
+    def _get_resources(self):
+        resources = []
+        for filename, md5, md5_file, file_info in self.md5_lines():
+            xlsx_info = self.metadata_info[os.path.basename(md5_file)]
+            amplicon = xlsx_info["amplicon"]
+            resource = file_info.copy()
+            resource["md5"] = resource["id"] = md5
+            resource["name"] = filename
+            resource["resource_type"] = self.ckan_data_type
+            resource["amplicon"] = amplicon
+            legacy_url = urljoin(xlsx_info["base_url"], filename)
+            resources.append(((amplicon, resource["flow_id"]), legacy_url, resource))
+        return resources

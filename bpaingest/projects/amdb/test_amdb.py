@@ -1,6 +1,8 @@
 from .files import (
     amd_metagenomics_novaseq_re,
     amd_metagenomics_novaseq_control_re,
+    amd_amplicon_filename_re,
+    amd_amplicon_control_filename_re,
     base_amplicon_control_tech_vendor_filename_re,
     base_amplicon_control_tech_vendor_flow_filename_re,
     base_amplicon_filename_flow_index_swapped_re,
@@ -139,6 +141,24 @@ def test_mm_amplicon():
     ]
     for filename in filenames:
         assert mm_amplicon_filename_re.match(filename) is not None
+
+
+def test_amd_amplicon_re():
+    filenames = [
+        "139713_16S_J6HNJ_CGATCCGT-CGATCTAC_S36_L001_I1.fastq.gz",
+    ]
+    for filename in filenames:
+        assert amd_amplicon_filename_re.match(filename) is not None
+
+
+def test_amd_amplicon_control_re():
+    filenames = [
+        "ATCC1002MOCK_16S_J6H7B_TCCGAATT-TCTACACT_S2_L001_R2.fastq.gz",
+        "No_Template_Control_16S_J6H5P_ACGCCACG-TCTACACT_S3_L001_R2.fastq.gz",
+        "Soil_DNA_16S_J6HNK_ACGCCACG-GATAGCGT_S1_L001_I1.fastq.gz",
+    ]
+    for filename in filenames:
+        assert amd_amplicon_control_filename_re.match(filename) is not None
 
 
 def test_mm_transcriptome():
