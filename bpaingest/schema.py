@@ -66,6 +66,11 @@ schema_template = {
             "display_property": "dcat:Dataset/dcat:distribution/dcat:Distribution/dct:license",
             "form_snippet": "license.html",
         },
+        {
+            "field_name": "resource_permissions",
+            "label": "Resource Permissions",
+            "form_placeholder": "used by ckanext-initiatives",
+        },
     ],
     "resource_fields": [
         {"field_name": "name", "label": "Name"},
