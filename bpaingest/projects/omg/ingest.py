@@ -67,15 +67,29 @@ class OMGBaseMetadata(BaseMetadata):
         return packages
 
     def generate_notes_field(self, row_object):
-        notes = "%s. %s." % (
-            row_object.get("common_name", ""),
-            row_object.get("institution_name", ""),
+        notes = "%s %s, %s %s %s" % (
+            row_object.get("genus", ""),
+            row_object.get("species", ""),
+            row_object.get("voucher_or_tissue_number", ""),
+            row_object.get("country", ""),
+            row_object.get("state_or_region", ""),
         )
         return notes
 
-    def generate_notes_field_from_list(self, row_list):
-        notes = "\n".join(self.generate_notes_field(t) for t in row_list)
+    def generate_notes_field_with_id(self, row_object, id):
+        notes = "%s\n%s %s, %s %s %s" % (
+            id,
+            row_object.get("genus", ""),
+            row_object.get("species", ""),
+            row_object.get("voucher_or_tissue_number", ""),
+            row_object.get("country", ""),
+            row_object.get("state_or_region", ""),
+        )
         return notes
+
+    def generate_notes_field_from_lists(self, row_list, ids):
+        notes = "%s\n" % (ids)
+        return notes.join(self.generate_notes_field(t) for t in row_list)
 
 
 class OMG10XRawIlluminaMetadata(OMGBaseMetadata):
@@ -225,7 +239,7 @@ class OMG10XRawIlluminaMetadata(OMGBaseMetadata):
                     return None
                 return getattr(track_meta, k)
 
-            notes = self.generate_notes_field_from_list(row_metadata)
+            notes = self.generate_notes_field_from_lists(row_metadata, bpa_library_ids)
 
             obj.update(
                 {
@@ -405,7 +419,7 @@ class OMG10XRawMetadata(OMGBaseMetadata):
                     "id": name,
                     "bpa_sample_id": bpa_sample_id,
                     "title": "OMG 10x Raw %s %s" % (bpa_sample_id, flow_id),
-                    "notes": self.generate_notes_field(context),
+                    "notes": self.generate_notes_field_with_id(context, bpa_library_id),
                     "date_of_transfer": ingest_utils.get_date_isoformat(
                         self._logger, track_get("date_of_transfer")
                     ),
@@ -583,7 +597,7 @@ class OMG10XProcessedIlluminaMetadata(OMGBaseMetadata):
                         "flow_id": flow_id,
                         "title": "OMG 10x Illumina Processed %s %s"
                         % (bpa_sample_id, flow_id),
-                        "notes": self.generate_notes_field(context),
+                        "notes": self.generate_notes_field_with_id(context, bpa_library_id),
                         "date_of_transfer": ingest_utils.get_date_isoformat(
                             self._logger, track_get("date_of_transfer")
                         ),
@@ -1150,7 +1164,7 @@ class OMGGenomicsHiSeqMetadata(OMGBaseMetadata):
                         "flow_id": flow_id,
                         "title": "OMG Genomics HiSeq Raw %s %s"
                         % (bpa_sample_id, flow_id),
-                        "notes": self.generate_notes_field(context),
+                        "notes": self.generate_notes_field_with_id(context, bpa_library_id),
                         "date_of_transfer": ingest_utils.get_date_isoformat(
                             self._logger, track_get("date_of_transfer")
                         ),
@@ -1296,6 +1310,13 @@ class OMGGenomicsDDRADMetadata(OMGBaseMetadata):
         self.track_meta = OMGTrackMetadata()
         self.flow_lookup = {}
 
+    def generate_notes_field(self, row_object):
+        notes = "%s %s\nddRAD dataset not demultiplexed" % (
+            row_object.get("genus", ""),
+            row_object.get("species", "")
+        )
+        return notes
+
     def _get_packages(self):
         xlsx_re = re.compile(r"^.*_(\w+)_metadata.*\.xlsx$")
 
@@ -1345,6 +1366,7 @@ class OMGGenomicsDDRADMetadata(OMGBaseMetadata):
                         ),
                         "data_type": track_get("data_type"),
                         "description": track_get("description"),
+                        "notes": self.generate_notes_field(obj),
                         "folder_name": track_get("folder_name"),
                         "sample_submission_date": ingest_utils.get_date_isoformat(
                             self._logger, track_get("date_of_transfer")
@@ -1695,7 +1717,7 @@ class OMGONTPromethionMetadata(OMGBaseMetadata):
                         "title": "OMG ONT PromethION {} {}".format(
                             obj["bpa_sample_id"], row.flowcell_id
                         ),
-                        "notes": self.generate_notes_field(obj),
+                        "notes": self.generate_notes_field_with_id(obj, bpa_library_id),
                         "date_of_transfer": ingest_utils.get_date_isoformat(
                             self._logger, track_get("date_of_transfer")
                         ),
@@ -1879,6 +1901,7 @@ class OMGTranscriptomicsNextseq(OMGBaseMetadata):
                         ),
                         "data_type": track_get("data_type"),
                         "description": track_get("description"),
+                        "notes": self.generate_notes_field(obj),
                         "folder_name": track_get("folder_name"),
                         "sample_submission_date": ingest_utils.get_date_isoformat(
                             self._logger, track_get("date_of_transfer")
