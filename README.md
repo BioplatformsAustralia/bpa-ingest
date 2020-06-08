@@ -46,7 +46,7 @@ export button, then replace the files in `track-metadata/bpam`
 ## Local development:
 For the development environment, you will need to have your local dev environment for bpa-ckan (consider dockercompose-bpa-ckan to do this).
 
-Before you start, ensure you have installed Python 3.7
+Before you start, ensure you have installed Python 3.8
 
 Bpa-ingest, atm, is just a python virtualenv (on command line),so to initialise a dev working environment:
 ```
@@ -55,9 +55,12 @@ git checkout next_release
 git pull origin next_release
 python3 -m venv ~/.virtual/bpa-ingest
 . ~/.virtual/bpa-ingest/bin/activate
-pip install -r requirements.txt
-python setup.py install
-python setup.py develop
+```
+
+We use poetry to build dependencies:
+```
+pip install poetry
+poetry install
 ```
 
 Then (ensuring that you are still in python virtual env) source the environment variables (including API key), before running the ingest:
