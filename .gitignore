@@ -13,7 +13,7 @@ ref/
 venv/
 .#*
 tags
-test.json
+test*.json
 test.log
 ingest.log
 .tox

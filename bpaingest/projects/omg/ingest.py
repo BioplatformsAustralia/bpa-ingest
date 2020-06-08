@@ -89,7 +89,7 @@ class OMGBaseMetadata(BaseMetadata):
 
     def generate_notes_field_from_lists(self, row_list, ids):
         notes = "%s\n" % (ids)
-        return notes.join(self.generate_notes_field(t) for t in row_list)
+        return notes + ". ".join(self.generate_notes_field(t) for t in row_list)
 
 
 class OMG10XRawIlluminaMetadata(OMGBaseMetadata):
@@ -350,6 +350,9 @@ class OMG10XRawMetadata(OMGBaseMetadata):
             fld("flowcell_id", "flowcell_id"),
             fld("software_version", "software_version"),
             fld("file", "file"),
+            fld("genus", "genus", optional=True),
+            fld("species", "species", optional=True),
+            fld("voucher_id", "voucher_id", optional=True)
         ],
         "options": {
             "sheet_name": "OMG_library_metadata",
@@ -529,6 +532,9 @@ class OMG10XProcessedIlluminaMetadata(OMGBaseMetadata):
             fld("flowcell_id", "flowcell_id"),
             fld("software_version", "software_version"),
             fld("file", "file"),
+            fld("genus", "genus", optional=True),
+            fld("species", "species", optional=True),
+            fld("voucher_id", "voucher_id", optional=True)
         ],
         "options": {"header_length": 1, "column_name_row_index": 0,},
     }
@@ -1285,9 +1291,9 @@ class OMGGenomicsDDRADMetadata(OMGBaseMetadata):
             fld("flowcell_id", "flowcell_id"),
             fld("software_version", "software_version"),
             fld("file", "file"),
-            fld("library_pool_index_id", "library_pool_index_id"),
-            fld("library_pool_index_sequence", "library_pool_index_sequence"),
-            fld("library_pool_oligo_sequence", "library_pool_oligo_sequence"),
+            fld("library_pool_index_id", "library_pool_index_id", optional=True),
+            fld("library_pool_index_sequence", "library_pool_index_sequence", optional=True),
+            fld("library_pool_oligo_sequence", "library_pool_oligo_sequence", optional=True),
         ],
         "options": {
             "sheet_name": "OMG_library_metadata",
@@ -1621,7 +1627,7 @@ class OMGONTPromethionMetadata(OMGBaseMetadata):
         "fields": [
             fld("genus", "genus"),
             fld("species", "species"),
-            fld("voucher_id", "voucher_id"),
+            fld("voucher_id", "voucher_id", optional=True),
             fld(
                 "bpa_dataset_id", "bpa_dataset_id", coerce=ingest_utils.extract_ands_id
             ),
@@ -1642,23 +1648,29 @@ class OMGONTPromethionMetadata(OMGBaseMetadata):
             fld("omg_project", "omg_project"),
             fld("data_custodian", "data_custodian"),
             fld("dna_treatment", "dna_treatment"),
-            fld("library_index_id", "library_index_id"),
-            fld("library_index_sequence", "library_index_sequence"),
-            fld("library_oligo_sequence", "library_oligo_sequence"),
-            fld("library_pcr_reps", "library_pcr_reps"),
-            fld("library_pcr_cycles", "library_pcr_cycles"),
-            fld("library_ng_ul", "library_ng_ul"),
+            fld("library_index_id", "library_index_id", optional=True),
+            fld("library_index_sequence", "library_index_sequence", optional=True),
+            fld("library_oligo_sequence", "library_oligo_sequence", optional=True),
+            fld("library_pcr_reps", "library_pcr_reps", optional=True),
+            fld("library_pcr_cycles", "library_pcr_cycles", optional=True),
+            fld("library_ng_ul", "library_ng_ul", optional=True),
             fld("library_comments", "library_comments"),
             fld("library_location", "library_location"),
             fld("library_status", "library_status"),
             fld("sequencing_facility", "sequencing_facility"),
-            fld("n_libraries_pooled", "n_libraries_pooled"),
+            fld("n_libraries_pooled", "n_libraries_pooled", optional=True),
             fld("bpa_work_order", "bpa_work_order", coerce=ingest_utils.get_int),
             fld("sequencing_platform", "sequencing_platform"),
-            fld("sequence_length", "sequence_length"),
+            fld("sequence_length", "sequence_length", optional=True),
             fld("flowcell_id", "flowcell_id"),
             fld("software_version", "software_version"),
-            fld("file", "file"),
+            fld("file", "file", optional=True),
+            fld("insert_size_range", "insert_size_range", optional=True),
+            fld("flowcell_type", "flowcell_type", optional=True),
+            fld("cell_position", "cell_position", optional=True),
+            fld("voucher_number", "voucher_number", optional=True),
+            fld("tissue_number", "tissue_number", optional=True),
+            fld("voucher_or_tissue_number", "voucher_or_tissue_number", optional=True)
         ],
         "options": {
             "sheet_name": "OMG_library_metadata",
