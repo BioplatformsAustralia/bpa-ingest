@@ -352,7 +352,7 @@ class OMG10XRawMetadata(OMGBaseMetadata):
             fld("file", "file"),
             fld("genus", "genus", optional=True),
             fld("species", "species", optional=True),
-            fld("voucher_id", "voucher_id", optional=True)
+            fld("voucher_id", "voucher_id", optional=True),
         ],
         "options": {
             "sheet_name": "OMG_library_metadata",
@@ -534,7 +534,7 @@ class OMG10XProcessedIlluminaMetadata(OMGBaseMetadata):
             fld("file", "file"),
             fld("genus", "genus", optional=True),
             fld("species", "species", optional=True),
-            fld("voucher_id", "voucher_id", optional=True)
+            fld("voucher_id", "voucher_id", optional=True),
         ],
         "options": {"header_length": 1, "column_name_row_index": 0,},
     }
@@ -603,7 +603,9 @@ class OMG10XProcessedIlluminaMetadata(OMGBaseMetadata):
                         "flow_id": flow_id,
                         "title": "OMG 10x Illumina Processed %s %s"
                         % (bpa_sample_id, flow_id),
-                        "notes": self.generate_notes_field_with_id(context, bpa_library_id),
+                        "notes": self.generate_notes_field_with_id(
+                            context, bpa_library_id
+                        ),
                         "date_of_transfer": ingest_utils.get_date_isoformat(
                             self._logger, track_get("date_of_transfer")
                         ),
@@ -1170,7 +1172,9 @@ class OMGGenomicsHiSeqMetadata(OMGBaseMetadata):
                         "flow_id": flow_id,
                         "title": "OMG Genomics HiSeq Raw %s %s"
                         % (bpa_sample_id, flow_id),
-                        "notes": self.generate_notes_field_with_id(context, bpa_library_id),
+                        "notes": self.generate_notes_field_with_id(
+                            context, bpa_library_id
+                        ),
                         "date_of_transfer": ingest_utils.get_date_isoformat(
                             self._logger, track_get("date_of_transfer")
                         ),
@@ -1292,8 +1296,16 @@ class OMGGenomicsDDRADMetadata(OMGBaseMetadata):
             fld("software_version", "software_version"),
             fld("file", "file"),
             fld("library_pool_index_id", "library_pool_index_id", optional=True),
-            fld("library_pool_index_sequence", "library_pool_index_sequence", optional=True),
-            fld("library_pool_oligo_sequence", "library_pool_oligo_sequence", optional=True),
+            fld(
+                "library_pool_index_sequence",
+                "library_pool_index_sequence",
+                optional=True,
+            ),
+            fld(
+                "library_pool_oligo_sequence",
+                "library_pool_oligo_sequence",
+                optional=True,
+            ),
         ],
         "options": {
             "sheet_name": "OMG_library_metadata",
@@ -1319,7 +1331,7 @@ class OMGGenomicsDDRADMetadata(OMGBaseMetadata):
     def generate_notes_field(self, row_object):
         notes = "%s %s\nddRAD dataset not demultiplexed" % (
             row_object.get("genus", ""),
-            row_object.get("species", "")
+            row_object.get("species", ""),
         )
         return notes
 
@@ -1670,7 +1682,7 @@ class OMGONTPromethionMetadata(OMGBaseMetadata):
             fld("cell_position", "cell_position", optional=True),
             fld("voucher_number", "voucher_number", optional=True),
             fld("tissue_number", "tissue_number", optional=True),
-            fld("voucher_or_tissue_number", "voucher_or_tissue_number", optional=True)
+            fld("voucher_or_tissue_number", "voucher_or_tissue_number", optional=True),
         ],
         "options": {
             "sheet_name": "OMG_library_metadata",
