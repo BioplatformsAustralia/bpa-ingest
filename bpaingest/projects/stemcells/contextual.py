@@ -11,7 +11,7 @@ def bpaops_clean(s):
 
 class StemcellsTranscriptomeContextual:
     metadata_urls = [
-        "https://downloads-qcif.bioplatforms.com/bpa/stemcell/projectdata/2017-07-28/"
+        "https://downloads-qcif.bioplatforms.com/bpa/stemcell/projectdata/2020-04-16/"
     ]
     name = "stemcell-agrf-transcriptome"
     sheet_name = "Transcriptome"
@@ -104,7 +104,7 @@ class StemcellsTranscriptomeContextual:
 
 class StemcellsSmallRNAContextual:
     metadata_urls = [
-        "https://downloads-qcif.bioplatforms.com/bpa/stemcell/projectdata/2017-07-28/"
+        "https://downloads-qcif.bioplatforms.com/bpa/stemcell/projectdata/2020-04-16/"
     ]
     name = "stemcell-agrf-smallrna"
     sheet_name = "Small RNA"
@@ -197,7 +197,7 @@ class StemcellsSmallRNAContextual:
 
 class StemcellsSingleCellRNASeq:
     metadata_urls = [
-        "https://downloads-qcif.bioplatforms.com/bpa/stemcell/projectdata/2017-07-28/"
+        "https://downloads-qcif.bioplatforms.com/bpa/stemcell/projectdata/2020-04-16/"
     ]
     name = "stemcell-ramaciotti-singlecell"
     sheet_name = "Single Cell RNAseq"
@@ -290,7 +290,7 @@ class StemcellsSingleCellRNASeq:
 
 class StemcellsMetabolomicsContextual:
     metadata_urls = [
-        "https://downloads-qcif.bioplatforms.com/bpa/stemcell/projectdata/2017-07-28/"
+        "https://downloads-qcif.bioplatforms.com/bpa/stemcell/projectdata/2020-04-16/"
     ]
     name = "stemcell-metabolomics"
     sheet_name = "Metabolomics"
@@ -382,7 +382,7 @@ class StemcellsMetabolomicsContextual:
 
 class StemcellsProteomicsContextual:
     metadata_urls = [
-        "https://downloads-qcif.bioplatforms.com/bpa/stemcell/projectdata/2017-07-28/"
+        "https://downloads-qcif.bioplatforms.com/bpa/stemcell/projectdata/2020-04-16/"
     ]
     name = "stemcell-proteomics"
     sheet_names = ["Proteomics"]
