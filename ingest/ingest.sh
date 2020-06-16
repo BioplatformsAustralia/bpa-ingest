@@ -78,15 +78,16 @@ marine_microbes()
 
 omg()
 {
-  # disabled pending resolution of https://github.com/BioplatformsAustralia/bpa-archive-ops/issues/329
-  # NB: no future data of this type is expected
-  # apply omg-10x-raw-agrf
+  apply omg-10x-raw-agrf
   apply omg-10xprocessed $*
   apply omg-10xraw $*
   apply omg-exoncapture $*
   apply omg-genomics-hiseq $*
   apply omg-genomics-ddrad $*
   apply omg-transcriptomics-nextseq $*
+  apply omg-novaseq $*
+  apply omg-ont-promethion $*
+  apply omg-pacbio $*
 }
 
 sepsis()
@@ -108,17 +109,18 @@ sepsis()
   apply sepsis-transcriptomics-hiseq $*
 }
 
-# stemcell()
-# {
-#   apply stemcells-metabolomics $*
-#   apply stemcells-metabolomics-analysed $*
-#   apply stemcells-proteomics $*
-#   apply stemcells-proteomics-analysed $*
-#   apply stemcells-proteomics-pool $*
-#   apply stemcells-singlecellrna $*
-#   apply stemcells-smallrna $*
-#   apply stemcells-transcriptomics $*
-# }
+stemcell()
+{
+  apply stemcells-metabolomics $*
+  apply stemcells-metabolomics-analysed $*
+  apply stemcells-proteomics $*
+  apply stemcells-proteomics-analysed $*
+  apply stemcells-proteomics-pool $*
+  apply stemcells-singlecellrna $*
+  apply stemcells-smallrna $*
+  apply stemcells-transcriptomics $*
+  apply stemcells-transcriptome-analysed $*
+}
 
 wheat() {
   apply wheat-cultivars $*
@@ -132,18 +134,27 @@ gap() {
   apply gap-genomics-10x $*
 }
 
+amd() {
+  apply amd-genomics-amplicons $*
+  apply amd-genomics-amplicons-control $*
+  apply amd-metagenomics-novaseq $*
+  apply amd-metagenomics-novaseq-control $*
+}
+
 run() {
   apply $*
 }
 
 all()
 {
+  amd $*
   base $*
-  gbr $*
   marine_microbes $*
+  gbr $*
   omg $*
+  gap $*
   sepsis $*
-  # stemcell $*
+  stemcell $*
   wheat $*
 }
 
