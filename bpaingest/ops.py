@@ -64,12 +64,12 @@ def diff_objects(obj1, obj2, desc, skip_differences=None):
         if v1 != v2 and str(v1) != str(v2):
             differences.append((k, v1, v2))
     if differences:
-        logger.debug("%s/%s: differs" % (desc, obj2.get("id", "<no id?>")))
+        logger.info("%s/%s: differs" % (desc, obj2.get("id", "<no id?>")))
     differences.sort()
     for k, v1, v2 in differences:
-        logger.debug("   -  %s=%s (%s)" % (k, v2, type(v2).__name__))
+        logger.info("   -  %s=%s (%s)" % (k, v2, type(v2).__name__))
     for k, v1, v2 in differences:
-        logger.debug("   +  %s=%s (%s)" % (k, v1, type(v1).__name__))
+        logger.info("   +  %s=%s (%s)" % (k, v1, type(v1).__name__))
     return len(differences) > 0
 
 
@@ -206,7 +206,6 @@ class ApacheArchiveInfo(BaseArchiveInfo):
         """
         new_url = url
         for i in range(4):
-            logger.debug("{}, {}".format(i, new_url))
             response = self.session.head(new_url, auth=self.auth)
             self.check_status_code(response)
             if response.status_code == 301 or response.status_code == 302:
@@ -319,10 +318,10 @@ def reupload_resource(ckan, ckan_obj, legacy_url, auth=None):
 
     tempdir, path = download_legacy_file(legacy_url, auth)
     if path is None:
-        logger.debug("download from legacy archive failed")
+        logger.error("download from legacy archive failed")
         return
     try:
-        logger.debug("re-uploading from tempfile: %s" % (path))
+        logger.info("re-uploading from tempfile: %s" % (path))
 
         # FIXME: paramaterise the target bucket name
         filename = path.split("/")[-1]
@@ -336,7 +335,6 @@ def reupload_resource(ckan, ckan_obj, legacy_url, auth=None):
             path,
             s3_destination,
         ]
-        logger.debug(s3cmd_args)
         status = subprocess.call(s3cmd_args)
         if status == 0:
             # patch the object in CKAN to have full URL
