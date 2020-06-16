@@ -99,10 +99,10 @@ class GAPIlluminaShortreadMetadata(BaseMetadata):
                         "id": name,
                         "type": self.ckan_data_type,
                         "flow_cell_id": flow_cell_id,
-                        "private": True,
                         "data_generated": True,
                     }
                 )
+                ingest_utils.permissions_organization_member(self._logger, obj)
                 tag_names = ["genomics", "illumina-shortread"]
                 if "scientific_name" in obj:
                     tag_names.append(clean_tag_name(obj["scientific_name"]))
@@ -226,10 +226,10 @@ class GAPONTMinionMetadata(BaseMetadata):
                         "name": name,
                         "id": name,
                         "type": self.ckan_data_type,
-                        "private": True,
                         "data_generated": True,
                     }
                 )
+                ingest_utils.permissions_organization_member(self._logger, obj)
                 tag_names = ["ont-minion"]
                 if "scientific_name" in obj:
                     tag_names.append(clean_tag_name(obj["scientific_name"]))
@@ -351,10 +351,10 @@ class GAPONTPromethionMetadata(BaseMetadata):
                         "name": name,
                         "id": name,
                         "type": self.ckan_data_type,
-                        "private": True,
                         "data_generated": True,
                     }
                 )
+                ingest_utils.permissions_organization_member(self._logger, obj)
                 tag_names = ["ont-promethion"]
                 if "scientific_name" in obj:
                     tag_names.append(clean_tag_name(obj["scientific_name"]))
@@ -466,10 +466,10 @@ class GAPGenomics10XMetadata(BaseMetadata):
                         "id": name,
                         "type": self.ckan_data_type,
                         "flow_cell_id": flow_cell_id,
-                        "private": True,
                         "data_generated": True,
                     }
                 )
+                ingest_utils.permissions_organization_member(self._logger, obj)
                 tag_names = ["genomics", "10x"]
                 if "scientific_name" in obj:
                     tag_names.append(clean_tag_name(obj["scientific_name"]))

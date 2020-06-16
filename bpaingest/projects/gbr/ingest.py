@@ -95,7 +95,6 @@ class GbrPacbioMetadata(BaseMetadata):
                     "notes": "Pacbio {} {}".format(sample_id, row.flow_cell_id),
                     "tags": [{"name": "Pacbio"}],
                     "type": GbrPacbioMetadata.ckan_data_type,
-                    "private": True,
                     "sample_id": sample_id,
                     "sequencing_facility": row.sequencing_facility,
                     "ticket": xlsx_info["ticket"],
@@ -110,6 +109,7 @@ class GbrPacbioMetadata(BaseMetadata):
                     "casava_version": row.casava_version,
                     "pacbio_linkage": pacbio_linkage,
                 }
+                ingest_utils.permissions_organization_member(self._logger, obj)
                 packages.append(obj)
         return packages
 
@@ -212,7 +212,6 @@ class GbrAmpliconsMetadata(BaseMetadata):
                     "notes": "Amplicon {} {}".format(sample_id, index),
                     "tags": [{"name": "Amplicon"}],
                     "type": GbrAmpliconsMetadata.ckan_data_type,
-                    "private": True,
                     "sample_extraction_id": row.sample_extraction_id,
                     "sequencing_facility": row.sequencing_facility,
                     "amplicon": amplicon,
@@ -232,6 +231,7 @@ class GbrAmpliconsMetadata(BaseMetadata):
                     "facility_code": row.facility_code,
                     "analysis_software_version": row.analysis_software_version,
                 }
+                ingest_utils.permissions_organization_member(self._logger, obj)
                 packages.append(obj)
         return packages
 

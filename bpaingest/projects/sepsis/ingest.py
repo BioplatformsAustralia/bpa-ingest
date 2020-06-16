@@ -208,9 +208,9 @@ class SepsisGenomicsMiseqMetadata(BaseSepsisMetadata):
                         "analysis_software_version": row.analysis_software_version,
                         "type": self.ckan_data_type,
                         "data_generated": True,
-                        "private": True,
                     }
                 )
+                ingest_utils.permissions_organization_member(self._logger, obj)
                 for contextual_source in self.contextual_metadata:
                     obj.update(contextual_source.get(sample_id, track_meta))
                 tag_names = sepsis_contextual_tags(self, obj)
@@ -345,10 +345,10 @@ class SepsisGenomicsPacbioMetadata(BaseSepsisMetadata):
                         "cell_position": row.cell_position,
                         "rs_version": row.rs_version,
                         "type": self.ckan_data_type,
-                        "private": True,
                         "data_generated": True,
                     }
                 )
+                ingest_utils.permissions_organization_member(self._logger, obj)
                 for contextual_source in self.contextual_metadata:
                     obj.update(contextual_source.get(sample_id, track_meta))
                 tag_names = sepsis_contextual_tags(self, obj)
@@ -499,10 +499,10 @@ class SepsisTranscriptomicsHiseqMetadata(BaseSepsisMetadata):
                     "sequencer": row.sequencer,
                     "casava_version": row.casava_version,
                     "type": self.ckan_data_type,
-                    "private": True,
                     "data_generated": True,
                 }
             )
+            ingest_utils.permissions_organization_member(self._logger, obj)
             for contextual_source in self.contextual_metadata:
                 obj.update(contextual_source.get(sample_id, track_meta))
             tag_names = sepsis_contextual_tags(self, obj)
@@ -635,10 +635,10 @@ class SepsisMetabolomicsGCMSMetadata(BaseSepsisMetadata):
                         "acquisition_mode": row.acquisition_mode,
                         "raw_file_name": row.raw_file_name,
                         "type": self.ckan_data_type,
-                        "private": True,
                         "data_generated": True,
                     }
                 )
+                ingest_utils.permissions_organization_member(self._logger, obj)
                 for contextual_source in self.contextual_metadata:
                     obj.update(contextual_source.get(sample_id, track_meta))
                 tag_names = sepsis_contextual_tags(self, obj)
@@ -768,10 +768,10 @@ class SepsisMetabolomicsLCMSMetadata(BaseSepsisMetadata):
                         "acquisition_mode": row.acquisition_mode,
                         "raw_file_name": row.raw_file_name,
                         "type": self.ckan_data_type,
-                        "private": True,
                         "data_generated": True,
                     }
                 )
+                ingest_utils.permissions_organization_member(self._logger, obj)
                 for contextual_source in self.contextual_metadata:
                     obj.update(contextual_source.get(sample_id, track_meta))
                 tag_names = sepsis_contextual_tags(self, obj)
@@ -921,10 +921,10 @@ class SepsisProteomicsMS1QuantificationMetadata(BaseSepsisMetadata):
                         "notes": "ARP Proteomics MS1Quantification Raw Data: %s %s %s Replicate %s"
                         % (taxon, strain, obj["growth_media"], obj["replicate"]),
                         "type": self.ckan_data_type,
-                        "private": True,
                         "data_generated": True,
                     }
                 )
+                ingest_utils.permissions_organization_member(self._logger, obj)
                 tag_names = sepsis_contextual_tags(self, obj)
                 obj["tags"] = [{"name": expanded_tag_name(t)} for t in tag_names]
                 packages.append(obj)
@@ -1123,10 +1123,10 @@ class SepsisProteomicsSwathMSBaseSepsisMetadata(BaseSepsisMetadata):
                         replicate,
                     ),
                     "type": self.ckan_data_type,
-                    "private": True,
                     "data_generated": True,
                 }
             )
+            ingest_utils.permissions_organization_member(self._logger, obj)
             tag_names = sepsis_contextual_tags(self, obj)
             obj["tags"] = [{"name": t} for t in tag_names]
             packages.append(obj)
@@ -1267,10 +1267,10 @@ class SepsisProteomicsSwathMSCombinedSampleMetadata(BaseSepsisMetadata):
                         self._logger, track_meta.date_of_transfer_to_archive
                     ),
                     "dataset_url": track_meta.download,
-                    "private": True,
                     "growth_media": track_meta.growth_media,
                 }
             )
+            ingest_utils.permissions_organization_member(self._logger, obj)
             tag_names = sepsis_contextual_tags(self, obj)
             taxons, strains = add_taxons_strains_meta(self, obj)
             tag_names = add_taxons_strains_tags(taxons, strains, tag_names)
@@ -1406,10 +1406,10 @@ class SepsisProteomics2DLibraryMetadata(BaseSepsisMetadata):
                         self._logger, track_meta.date_of_transfer_to_archive
                     ),
                     "dataset_url": track_meta.download,
-                    "private": True,
                     "growth_media": track_meta.growth_media,
                 }
             )
+            ingest_utils.permissions_organization_member(self._logger, obj)
             tag_names = sepsis_contextual_tags(self, obj)
             taxons, strains = add_taxons_strains_meta(self, obj)
             tag_names = add_taxons_strains_tags(taxons, strains, tag_names)
@@ -1662,9 +1662,9 @@ class SepsisProteomicsAnalysedMetadata(BaseSepsisAnalysedMetadata):
                         self._logger, track_meta.date_of_transfer_to_archive
                     ),
                     "dataset_url": track_meta.download,
-                    "private": True,
                 }
             )
+            ingest_utils.permissions_organization_member(self._logger, obj)
             tag_names = sepsis_contextual_tags(self, obj)
             taxons, strains = add_taxons_strains_meta(self, obj)
             tag_names = add_taxons_strains_tags(taxons, strains, tag_names)
@@ -1838,9 +1838,9 @@ class SepsisTranscriptomicsAnalysedMetadata(BaseSepsisAnalysedMetadata):
                         self._logger, track_meta.date_of_transfer_to_archive
                     ),
                     "dataset_url": track_meta.download,
-                    "private": True,
                 }
             )
+            ingest_utils.permissions_organization_member(self._logger, obj)
             tag_names = sepsis_contextual_tags(self, obj)
             taxons, strains = add_taxons_strains_meta(self, obj)
             tag_names = add_taxons_strains_tags(taxons, strains, tag_names)
@@ -1996,9 +1996,9 @@ class SepsisMetabolomicsAnalysedMetadata(BaseSepsisAnalysedMetadata):
                         self._logger, track_meta.date_of_transfer_to_archive
                     ),
                     "dataset_url": track_meta.download,
-                    "private": True,
                 }
             )
+            ingest_utils.permissions_organization_member(self._logger, obj)
             tag_names = sepsis_contextual_tags(self, obj)
             tag_names.append("Analysed metabolomics")
             taxons, strains = add_taxons_strains_meta(self, obj)
@@ -2165,10 +2165,10 @@ class SepsisGenomicsAnalysedMetadata(BaseSepsisAnalysedMetadata):
                         self._logger, track_meta.date_of_transfer_to_archive
                     ),
                     "dataset_url": track_meta.download,
-                    "private": True,
                     "analytical_platform": ", ".join(analytical_platform),
                 }
             )
+            ingest_utils.permissions_organization_member(self._logger, obj)
             tag_names = sepsis_contextual_tags(self, obj)
             taxons, strains = add_taxons_strains_meta(self, obj)
             tag_names = add_taxons_strains_tags(taxons, strains, tag_names)
@@ -2319,9 +2319,9 @@ class SepsisProteomicsProteinDatabaseMetadata(BaseSepsisAnalysedMetadata):
                         self._logger, track_meta.date_of_transfer_to_archive
                     ),
                     "dataset_url": track_meta.download,
-                    "private": True,
                 }
             )
+            ingest_utils.permissions_organization_member(self._logger, obj)
             tag_names = sepsis_contextual_tags(self, obj)
             taxons, strains = add_taxons_strains_meta(self, obj)
             tag_names = add_taxons_strains_tags(taxons, strains, tag_names)

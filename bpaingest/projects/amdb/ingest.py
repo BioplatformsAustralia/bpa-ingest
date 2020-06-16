@@ -287,8 +287,10 @@ class BASEAmpliconsMetadata(AMDBaseMetadata):
                         "license_id": apply_license(archive_ingestion_date),
                         "dataset_url": track_get("download"),
                         "comments": row.comments,
-                        "private": True,
                     }
+                )
+                ingest_utils.permissions_public_after_embargo(
+                    self._logger, obj, "archive_ingestion_date", 90
                 )
                 for contextual_source in self.contextual_metadata:
                     obj.update(contextual_source.get(sample_id))
@@ -424,8 +426,10 @@ class BASEAmpliconsControlMetadata(AMDBaseMetadata):
                     "facility": info["facility_code"].upper(),
                     "amplicon": amplicon,
                     "type": self.ckan_data_type,
-                    "private": True,
                 }
+            )
+            ingest_utils.permissions_public_after_embargo(
+                self._logger, obj, "archive_ingestion_date", 90
             )
             ingest_utils.add_spatial_extra(self._logger, obj)
             tag_names = ["amplicons-control", amplicon, "raw"]
@@ -566,8 +570,10 @@ class BASEMetagenomicsMetadata(AMDBaseMetadata):
             "folder_name": track_get("folder_name"),
             "dataset_url": track_get("download"),
             "type": self.ckan_data_type,
-            "private": True,
         }
+        ingest_utils.permissions_public_after_embargo(
+            self._logger, obj, "archive_ingestion_date", 90
+        )
         for contextual_source in self.contextual_metadata:
             obj.update(contextual_source.get(sample_id))
         ingest_utils.add_spatial_extra(self._logger, obj)
@@ -787,9 +793,9 @@ class BASESiteImagesMetadata(AMDBaseMetadata):
                     "analytical_platform": "MiSeq",
                     "ticket": info["ticket"],
                     "type": self.ckan_data_type,
-                    "private": True,
                 }
             )
+            ingest_utils.permissions_organization_member(self._logger, obj)
             ingest_utils.add_spatial_extra(self._logger, obj)
             tag_names = ["site-images"]
             obj["tags"] = [{"name": t} for t in tag_names]
@@ -1047,8 +1053,10 @@ class MarineMicrobesAmpliconsMetadata(AMDBaseMetadata):
                         "facility": row.facility_code.upper(),
                         "type": self.ckan_data_type,
                         "comments": row.comments,
-                        "private": True,
                     }
+                )
+                ingest_utils.permissions_public_after_embargo(
+                    self._logger, obj, "archive_ingestion_date", 90
                 )
                 for contextual_source in self.contextual_metadata:
                     obj.update(contextual_source.get(sample_id))
@@ -1182,8 +1190,10 @@ class MarineMicrobesAmpliconsControlMetadata(AMDBaseMetadata):
                     "facility": info["facility_code"].upper(),
                     "amplicon": amplicon,
                     "type": self.ckan_data_type,
-                    "private": True,
                 }
+            )
+            ingest_utils.permissions_public_after_embargo(
+                self._logger, obj, "archive_ingestion_date", 90
             )
             ingest_utils.add_spatial_extra(self._logger, obj)
             tag_names = ["amplicons-control", amplicon, "raw"]
@@ -1320,8 +1330,10 @@ class MarineMicrobesMetagenomicsMetadata(BaseMarineMicrobesMetadata):
                         "ticket": row.ticket,
                         "facility": row.facility_code.upper(),
                         "type": self.ckan_data_type,
-                        "private": True,
                     }
+                )
+                ingest_utils.permissions_public_after_embargo(
+                    self._logger, obj, "archive_ingestion_date", 90
                 )
                 for contextual_source in self.contextual_metadata:
                     obj.update(contextual_source.get(sample_id))
@@ -1463,8 +1475,10 @@ class MarineMicrobesMetatranscriptomeMetadata(BaseMarineMicrobesMetadata):
                     "ticket": row.ticket,
                     "facility": row.facility_code.upper(),
                     "type": self.ckan_data_type,
-                    "private": True,
                 }
+            )
+            ingest_utils.permissions_public_after_embargo(
+                self._logger, obj, "archive_ingestion_date", 90
             )
             for contextual_source in self.contextual_metadata:
                 obj.update(contextual_source.get(sample_id))
@@ -1583,8 +1597,10 @@ class AustralianMicrobiomeMetagenomicsNovaseqMetadata(BaseMetadata):
                         "license_id": apply_license(archive_ingestion_date),
                         "dataset_url": google_track_meta.download,
                         "type": self.ckan_data_type,
-                        "private": True,
                     }
+                )
+                ingest_utils.permissions_public_after_embargo(
+                    self._logger, obj, "archive_ingestion_date", 90
                 )
                 for contextual_source in self.contextual_metadata:
                     obj.update(contextual_source.get(sample_id))
@@ -1697,8 +1713,10 @@ class AustralianMicrobiomeMetagenomicsNovaseqControlMetadata(AMDBaseMetadata):
                     "ticket": info["ticket"],
                     "facility": info["facility_code"].upper(),
                     "type": self.ckan_data_type,
-                    "private": True,
                 }
+            )
+            ingest_utils.permissions_public_after_embargo(
+                self._logger, obj, "archive_ingestion_date", 90
             )
             ingest_utils.add_spatial_extra(self._logger, obj)
             tag_names = ["novaseq-control", "raw"]
@@ -1826,8 +1844,10 @@ class AustralianMicrobiomeAmpliconsMetadata(AMDBaseMetadata):
                         "license_id": apply_license(archive_ingestion_date),
                         "ticket": row.ticket,
                         "type": self.ckan_data_type,
-                        "private": True,
                     }
+                )
+                ingest_utils.permissions_public_after_embargo(
+                    self._logger, obj, "date_of_transfer_to_archive", 90
                 )
                 for contextual_source in self.contextual_metadata:
                     obj.update(contextual_source.get(sample_id))
@@ -1948,8 +1968,10 @@ class AustralianMicrobiomeAmpliconsControlMetadata(AMDBaseMetadata):
                     "ticket": info["ticket"],
                     "amplicon": amplicon,
                     "type": self.ckan_data_type,
-                    "private": True,
                 }
+            )
+            ingest_utils.permissions_public_after_embargo(
+                self._logger, obj, "archive_ingestion_date", 90
             )
             ingest_utils.add_spatial_extra(self._logger, obj)
             tag_names = ["amplicons-control", amplicon, "raw"]

@@ -66,8 +66,8 @@ class WheatCultivarsMetadata(BaseMetadata):
                     "notes": "%s (%s): %s"
                     % (row.variety, row.code, row.classification),
                     "type": self.ckan_data_type,
-                    "private": False,
                 }
+                ingest_utils.permissions_public(self._logger, obj)
                 obj.update(
                     dict(
                         (t, getattr(row, t))

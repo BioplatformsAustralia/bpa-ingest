@@ -112,8 +112,8 @@ class WheatPathogensGenomesMetadata(BaseMetadata):
                     "dna_extraction_protocol": data["dna_extraction_protocol"],
                     "contact_scientist": data["contact_scientist"],
                     "sequencing_facility": "AGRF",
-                    "private": False,
                 }
+                ingest_utils.permissions_public(self._logger, obj)
                 packages.append(obj)
             return packages
 

@@ -226,8 +226,8 @@ class OMG10XRawIlluminaMetadata(OMGBaseMetadata):
                 "title": "OMG 10x Illumina Raw %s %s" % (bpa_sample_ids, flow_id),
                 "archive_name": fname,
                 "type": self.ckan_data_type,
-                "private": True,
             }
+            ingest_utils.permissions_organization_member(self._logger, obj)
             # there must be only one ticket
             assert len(set(t.ticket for t in rows)) == 1
 
@@ -441,10 +441,10 @@ class OMG10XRawMetadata(OMGBaseMetadata):
                     ),
                     "dataset_url": track_get("download"),
                     "type": self.ckan_data_type,
-                    "private": True,
                 }
             )
             self.library_to_sample[obj["bpa_library_id"]] = obj["bpa_sample_id"]
+            ingest_utils.permissions_organization_member(self._logger, obj)
             obj.update(context)
             ingest_utils.add_spatial_extra(self._logger, obj)
             tag_names = ["10x-raw"]
@@ -625,9 +625,9 @@ class OMG10XProcessedIlluminaMetadata(OMGBaseMetadata):
                         "dataset_url": track_get("download"),
                         "ticket": row.ticket,
                         "type": self.ckan_data_type,
-                        "private": True,
                     }
                 )
+                ingest_utils.permissions_organization_member(self._logger, obj)
                 obj.update(context)
                 ingest_utils.add_spatial_extra(self._logger, obj)
                 tag_names = ["10x-processed"]
@@ -835,9 +835,9 @@ class OMGExonCaptureMetadata(OMGBaseMetadata):
                         ),
                         "dataset_url": track_get("download"),
                         "type": self.ckan_data_type,
-                        "private": True,
                     }
                 )
+                ingest_utils.permissions_organization_member(self._logger, obj)
                 obj.update(context)
 
                 # remove obsoleted fields
@@ -1015,9 +1015,9 @@ class OMGGenomicsNovaseqMetadata(OMGBaseMetadata):
                         ),
                         "dataset_url": track_get("download"),
                         "type": self.ckan_data_type,
-                        "private": True,
                     }
                 )
+                ingest_utils.permissions_organization_member(self._logger, obj)
                 obj.update(context)
 
                 ingest_utils.add_spatial_extra(self._logger, obj)
@@ -1193,9 +1193,9 @@ class OMGGenomicsHiSeqMetadata(OMGBaseMetadata):
                         ),
                         "dataset_url": track_get("download"),
                         "type": self.ckan_data_type,
-                        "private": True,
                     }
                 )
+                ingest_utils.permissions_organization_member(self._logger, obj)
                 obj.update(context)
                 ingest_utils.add_spatial_extra(self._logger, obj)
                 tag_names = ["genomics-hiseq"]
@@ -1398,9 +1398,9 @@ class OMGGenomicsDDRADMetadata(OMGBaseMetadata):
                         ),
                         "dataset_url": track_get("download"),
                         "type": self.ckan_data_type,
-                        "private": True,
                     }
                 )
+                ingest_utils.permissions_organization_member(self._logger, obj)
                 ingest_utils.add_spatial_extra(self._logger, obj)
                 tag_names = ["genomics-ddrad"]
                 obj["tags"] = [{"name": t} for t in tag_names]
@@ -1581,9 +1581,9 @@ class OMGGenomicsPacbioMetadata(OMGBaseMetadata):
                     ),
                     "dataset_url": track_get("download"),
                     "type": self.ckan_data_type,
-                    "private": True,
                 }
             )
+            ingest_utils.permissions_organization_member(self._logger, obj)
             obj.update(context)
 
             ingest_utils.add_spatial_extra(self._logger, obj)
@@ -1762,9 +1762,9 @@ class OMGONTPromethionMetadata(OMGBaseMetadata):
                         "name": name,
                         "id": name,
                         "type": self.ckan_data_type,
-                        "private": True,
                     }
                 )
+                ingest_utils.permissions_organization_member(self._logger, obj)
                 tag_names = ["ont-promethion"]
                 obj["tags"] = [{"name": t} for t in tag_names]
                 self.track_xlsx_resource(obj, fname)
@@ -1939,9 +1939,9 @@ class OMGTranscriptomicsNextseq(OMGBaseMetadata):
                         ),
                         "dataset_url": track_get("download"),
                         "type": self.ckan_data_type,
-                        "private": True,
                     }
                 )
+                ingest_utils.permissions_organization_member(self._logger, obj)
                 ingest_utils.add_spatial_extra(self._logger, obj)
                 tag_names = ["transcriptomics-nextseq"]
                 obj["tags"] = [{"name": t} for t in tag_names]

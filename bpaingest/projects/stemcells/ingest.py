@@ -124,9 +124,9 @@ class StemcellsTranscriptomeMetadata(BaseMetadata):
                         self._logger, track_meta.date_of_transfer_to_archive
                     ),
                     "dataset_url": track_meta.download,
-                    "private": True,
                 }
             )
+            ingest_utils.permissions_organization_member(self._logger, obj)
             for contextual_source in self.contextual_metadata:
                 obj.update(contextual_source.get(sample_id))
             tag_names = ["transcriptome", "raw"]
@@ -245,9 +245,9 @@ class StemcellsSmallRNAMetadata(BaseMetadata):
                             self._logger, track_meta.date_of_transfer_to_archive
                         ),
                         "dataset_url": track_meta.download,
-                        "private": True,
                     }
                 )
+                ingest_utils.permissions_organization_member(self._logger, obj)
                 for contextual_source in self.contextual_metadata:
                     obj.update(contextual_source.get(sample_id))
                 tag_names = ["small-rna", "raw"]
@@ -395,9 +395,9 @@ class StemcellsSingleCellRNASeqMetadata(BaseMetadata):
                     ),
                     "dataset_url": track_meta.download,
                     "omics": "transcriptomics",
-                    "private": True,
                 }
             )
+            ingest_utils.permissions_organization_member(self._logger, obj)
             for contextual_source in self.contextual_metadata:
                 # NB: the rows in the contextual metadata are all identical across the range, so this works
                 obj.update(contextual_source.get(sample_id))
@@ -549,9 +549,9 @@ class StemcellsMetabolomicsMetadata(BaseMetadata):
                         self._logger, track_meta.date_of_transfer_to_archive
                     ),
                     "dataset_url": track_meta.download,
-                    "private": True,
                 }
             )
+            ingest_utils.permissions_organization_member(self._logger, obj)
             for contextual_source in self.contextual_metadata:
                 obj.update(contextual_source.get(sample_id, analytical_platform))
             tag_names = ["metabolomic", clean_tag_name(analytical_platform), "raw"]
@@ -737,9 +737,9 @@ class StemcellsProteomicsMetadata(StemcellsProteomicsBaseMetadata):
                         self._logger, track_meta.date_of_transfer_to_archive
                     ),
                     "dataset_url": track_meta.download,
-                    "private": True,
                 }
             )
+            ingest_utils.permissions_organization_member(self._logger, obj)
             for contextual_source in self.contextual_metadata:
                 obj.update(contextual_source.get(sample_id))
             tag_names = ["proteomic", "raw"]
@@ -844,9 +844,9 @@ class StemcellsProteomicsPoolMetadata(StemcellsProteomicsBaseMetadata):
                         self._logger, track_meta.date_of_transfer_to_archive
                     ),
                     "dataset_url": track_meta.download,
-                    "private": True,
                 }
             )
+            ingest_utils.permissions_organization_member(self._logger, obj)
             for contextual_source in self.contextual_metadata:
                 obj.update(contextual_source.get(pool_id))
             tag_names = ["proteomic", "raw"]
@@ -1019,9 +1019,9 @@ class StemcellsProteomicsAnalysedMetadata(BaseMetadata):
                         self._logger, track_meta.date_of_transfer_to_archive
                     ),
                     "dataset_url": track_meta.download,
-                    "private": True,
                 }
             )
+            ingest_utils.permissions_organization_member(self._logger, obj)
             # for contextual_source in self.contextual_metadata:
             #     obj.update(contextual_source.get(track_meta.folder_name))
             tag_names = ["proteomics", "analysed"]
@@ -1152,9 +1152,9 @@ class StemcellsMetabolomicsAnalysedMetadata(BaseMetadata):
                         self._logger, track_meta.date_of_transfer_to_archive
                     ),
                     "dataset_url": track_meta.download,
-                    "private": True,
                 }
             )
+            ingest_utils.permissions_organization_member(self._logger, obj)
             # for contextual_source in self.contextual_metadata:
             #     obj.update(contextual_source.get(ticket))
             tag_names = ["metabolomics", "analysed"]
@@ -1305,9 +1305,9 @@ class StemcellsTranscriptomeAnalysedMetadata(BaseMetadata):
                         self._logger, track_meta.date_of_transfer_to_archive
                     ),
                     "dataset_url": track_meta.download,
-                    "private": True,
                 }
             )
+            ingest_utils.permissions_organization_member(self._logger, obj)
             # for contextual_source in self.contextual_metadata:
             #     obj.update(contextual_source.get(ticket))
             tag_names = ["transcriptomics", "analysed"]

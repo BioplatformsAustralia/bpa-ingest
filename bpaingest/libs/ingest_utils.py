@@ -230,3 +230,23 @@ def add_spatial_extra(logger, package):
         return
     geo = {"type": "Point", "coordinates": [lng, lat]}
     package["spatial"] = json.dumps(geo, sort_keys=True)
+
+
+def permissions_organization_member(logger, obj):
+    obj["private"] = True  # NB: placeholder, should be public when we go live
+    obj["resource_permissions"] = "organization_member"
+
+
+def permissions_public(logger, obj):
+    obj["private"] = False
+    obj["resource_permissions"] = "public"
+
+
+def permissions_public_after_embargo(logger, obj, field_name, days):
+    obj["private"] = True  # NB: placeholder, should be public when we go live
+    if field_name not in obj:
+        logger.critical(
+            "{} not found in obj (keys are {})".format(field_name, sorted(obj.keys()))
+        )
+        raise Exception()
+    obj["resource_permissions"] = "public_after_embargo:{}:{}".format(field_name, days)
