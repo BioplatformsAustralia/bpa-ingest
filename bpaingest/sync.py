@@ -28,6 +28,7 @@ def get_or_create_package(ckan, obj):
             "name": obj["name"],
             "owner_org": obj["owner_org"],
             "private": obj["private"],
+            "resource_permissions": obj["resource_permissions"],
         }
         ckan_obj = ckan_method(ckan, "package", "create")(**create_obj)
         logger.info("created package object: %s" % (obj["id"]))
