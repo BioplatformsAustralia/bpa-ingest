@@ -17,3 +17,4 @@ test*.json
 test.log
 ingest.log
 .tox
+.idea/
