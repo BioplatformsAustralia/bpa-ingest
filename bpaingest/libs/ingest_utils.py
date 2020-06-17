@@ -255,4 +255,3 @@ def permissions_organization_member_after_embargo(
 def permissions_public(logger, obj):
     obj["private"] = False
     obj["resource_permissions"] = "public"
-
