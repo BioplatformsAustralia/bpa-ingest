@@ -156,7 +156,7 @@ def test_amd_amplicon_control_re():
         "ATCC1002MOCK_16S_J6H7B_TCCGAATT-TCTACACT_S2_L001_R2.fastq.gz",
         "No_Template_Control_16S_J6H5P_ACGCCACG-TCTACACT_S3_L001_R2.fastq.gz",
         "Soil_DNA_16S_J6HNK_ACGCCACG-GATAGCGT_S1_L001_I1.fastq.gz",
-        "blank_16S_J655F_AAGAGATG-TCTACACT_S29_L001_I1.fastq.gz"
+        "blank_16S_J655F_AAGAGATG-TCTACACT_S29_L001_I1.fastq.gz",
     ]
     for filename in filenames:
         assert amd_amplicon_control_filename_re.match(filename) is not None
