@@ -237,16 +237,22 @@ def permissions_organization_member(logger, obj):
     obj["resource_permissions"] = "organization_member"
 
 
+def permissions_organization_member_after_embargo(
+    logger, obj, field_name, days, consortium_org
+):
+    obj["private"] = True  # NB: placeholder, should be public when we go live
+    if field_name not in obj:
+        logger.error(
+            "permission field {} not found in obj (keys are {})".format(
+                field_name, sorted(obj.keys())
+            )
+        )
+    obj["resource_permissions"] = "organization_member_after_embargo:{}:{}:{}".format(
+        field_name, days, consortium_org
+    )
+
+
 def permissions_public(logger, obj):
     obj["private"] = False
     obj["resource_permissions"] = "public"
 
-
-def permissions_public_after_embargo(logger, obj, field_name, days):
-    obj["private"] = True  # NB: placeholder, should be public when we go live
-    if field_name not in obj:
-        logger.critical(
-            "{} not found in obj (keys are {})".format(field_name, sorted(obj.keys()))
-        )
-        raise Exception()
-    obj["resource_permissions"] = "public_after_embargo:{}:{}".format(field_name, days)
