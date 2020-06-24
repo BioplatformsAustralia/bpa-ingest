@@ -90,8 +90,9 @@ class GAPIlluminaShortreadMetadata(BaseMetadata):
                         "title": "GAP Illumina short read {} {}".format(
                             sample_id, flow_cell_id
                         ),
-                        "notes": "{}, {}".format(
+                        "notes": "{} {} {}".format(
                             obj.get("scientific_name", ""),
+                            obj.get("bait set name", ""),
                             obj.get("sample_submitter_name", ""),
                         ),
                         "sample_id": sample_id,
@@ -218,8 +219,9 @@ class GAPONTMinionMetadata(BaseMetadata):
                 obj.update(
                     {
                         "title": "GAP ONT MinION {} {}".format(sample_id, row.run_id),
-                        "notes": "{}, {}".format(
+                        "notes": "{} {} {}".format(
                             obj.get("scientific_name", ""),
+                            obj.get("bait set name", ""),
                             obj.get("sample_submitter_name", ""),
                         ),
                         "sample_id": sample_id,
@@ -343,8 +345,9 @@ class GAPONTPromethionMetadata(BaseMetadata):
                         "title": "GAP ONT PromethION {} {}".format(
                             sample_id, row.run_id
                         ),
-                        "notes": "{}, {}".format(
+                        "notes": "{} {} {}".format(
                             obj.get("scientific_name", ""),
+                            obj.get("bait set name", ""),
                             obj.get("sample_submitter_name", ""),
                         ),
                         "sample_id": sample_id,
@@ -457,8 +460,9 @@ class GAPGenomics10XMetadata(BaseMetadata):
                         "title": "GAP Genomics 10X {} {}".format(
                             sample_id, flow_cell_id
                         ),
-                        "notes": "{}, {}".format(
+                        "notes": "{} {} {}".format(
                             obj.get("scientific_name", ""),
+                            obj.get("bait set name", ""),
                             obj.get("sample_submitter_name", ""),
                         ),
                         "sample_id": sample_id,
