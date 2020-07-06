@@ -16,3 +16,5 @@ AGRF,25/06/2020,79638,81995,83652,Acacia pycnantha,Reference Genomes,Pilot,Illum
 AGRF,25/06/2020,79638,81996,83652,Acacia pycnantha,Reference Genomes,Pilot,Illumina Short Read,GAP_NGS_AGRF_HM37KDRXX,,,BPAOPS-930,
 AGRF,25/06/2020,,,83650,,Phylogenomics,Pilot,Illumina Short Read,20200625_GAP_AGRF_HF7CKAFX2 (Angio353 - except Korjent data),,,BPAOPS-931,
 AGRF,25/06/2020,,,83650,,Phylogenomics,Pilot,Illumina Short Read,20200625_GAP_AGRF_H7LV7AFX2 (Waycott baits - except Korjent data),,,BPAOPS-932,
+AGRF,1/7/2020,,,83650,,Phylogenomics,Pilot,Illumina Short Read,"20200701_GAP_AGRF_HF7CKAFX2 (Angio353 - Korjent data only, plus combined bait)",,,BPAOPS-933,
+AGRF,1/7/2020,,,83650,,Phylogenomics,Pilot,Illumina Short Read,20200701_GAP_AGRF_H7LV7AFX2 (Waycott baits - Korjent data only),,,BPAOPS-934,
