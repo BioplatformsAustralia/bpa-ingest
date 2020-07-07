@@ -110,8 +110,9 @@ class GAPIlluminaShortreadMetadata(BaseMetadata):
                 )
                 ingest_utils.permissions_organization_member(self._logger, obj)
                 tag_names = ["genomics", "illumina-shortread"]
-                if "scientific_name" in obj:
-                    tag_names.append(clean_tag_name(obj["scientific_name"]))
+                scientific_name = obj.get("scientific_name", "").strip()
+                if scientific_name:
+                    tag_names.append(clean_tag_name(scientific_name))
                 obj["tags"] = [{"name": t} for t in tag_names]
                 packages.append(obj)
         return packages
