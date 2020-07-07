@@ -113,7 +113,7 @@ class GAPIlluminaShortreadMetadata(BaseMetadata):
                 scientific_name = obj.get("scientific_name", "").strip()
                 if scientific_name:
                     tag_names.append(clean_tag_name(scientific_name))
-                obj["tags"] = [{"name": t} for t in tag_names]
+                obj["tags"] = [{"name": "{:.100}".format(t)} for t in tag_names]
                 packages.append(obj)
         return packages
 
