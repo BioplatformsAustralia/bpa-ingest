@@ -59,7 +59,11 @@ class DownloadMetadata:
             if not os.path.isdir(contextual_path):
                 os.mkdir(contextual_path)
             else:
-                self._logger.info("Context path: {} already exists. Moving on.".format(contextual_path))
+                self._logger.info(
+                    "Context path: {} already exists. Moving on.".format(
+                        contextual_path
+                    )
+                )
             self._logger.info(
                 "fetching contextual metadata: %s" % (contextual_cls.metadata_urls)
             )

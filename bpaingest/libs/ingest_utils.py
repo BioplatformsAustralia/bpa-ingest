@@ -185,7 +185,13 @@ def _get_date(logger, dt, silent=False):
     if dt is None:
         return None
 
-    if dt == "unknown" or dt == "Unknown" or dt == "Not yet assigned" or "Not applicable" or dt == "(null)":
+    if (
+        dt == "unknown"
+        or dt == "Unknown"
+        or dt == "Not yet assigned"
+        or "Not applicable"
+        or dt == "(null)"
+    ):
         return None
 
     if isinstance(dt, datetime.date):

@@ -18,7 +18,7 @@ class GAPLibraryContextual:
     ]
     metadata_patterns = [re.compile(r"^.*\.xlsx$")]
     name = "gap-library-contextual"
-    sheet_names = [ "Ref_genome", "Phylogenomics"]
+    sheet_names = ["Ref_genome", "Phylogenomics"]
 
     def __init__(self, logger, path):
         self._logger = logger

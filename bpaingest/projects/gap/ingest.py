@@ -35,7 +35,11 @@ class GAPIlluminaShortreadMetadata(BaseMetadata):
                 "plant sample unique id",
                 coerce=ingest_utils.extract_ands_id,
             ),
-            fld("library_id", re.compile(r"^[Ll]ibrary [Ii][Dd]$"), coerce=ingest_utils.extract_ands_id),
+            fld(
+                "library_id",
+                re.compile(r"^[Ll]ibrary [Ii][Dd]$"),
+                coerce=ingest_utils.extract_ands_id,
+            ),
             fld("dataset_id", "dataset id", coerce=ingest_utils.extract_ands_id),
             fld("library_construction_protocol", "library construction protocol"),
             fld("sequencer", "sequencer"),
@@ -82,9 +86,7 @@ class GAPIlluminaShortreadMetadata(BaseMetadata):
                 if track_meta is not None:
                     obj.update(track_meta._asdict())
                 raw_library_id = library_id.split("/")[-1]
-                name = sample_id_to_ckan_name(
-                    raw_library_id, self.ckan_data_type
-                )
+                name = sample_id_to_ckan_name(raw_library_id, self.ckan_data_type)
                 for contextual_source in self.contextual_metadata:
                     obj.update(contextual_source.get(library_id))
                 obj.update(
@@ -132,7 +134,11 @@ class GAPIlluminaShortreadMetadata(BaseMetadata):
                 # This will be used by sync/dump later to check resource_linkage in resources against that in packages
                 resources.append(
                     (
-                        (resource["sample_id"], file_info.get("library_id"), resource["flow_cell_id"]),
+                        (
+                            resource["sample_id"],
+                            file_info.get("library_id"),
+                            resource["flow_cell_id"],
+                        ),
                         legacy_url,
                         resource,
                     )
