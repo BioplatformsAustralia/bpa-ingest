@@ -18,9 +18,11 @@ class GAPLibraryContextual:
     ]
     metadata_patterns = [re.compile(r"^.*\.xlsx$")]
     name = "gap-library-contextual"
+    sheet_names = [ "Ref_genome", "Phylogenomics"]
 
     def __init__(self, logger, path):
         self._logger = logger
+        self._logger.info("context path is: {}".format(path))
         self.library_metadata = self._read_metadata(one(glob(path + "/*.xlsx")))
 
     def get(self, library_id):
@@ -121,37 +123,46 @@ class GAPLibraryContextual:
                 "genomic_material_preparation_date",
                 coerce=ingest_utils.get_date_isoformat,
             ),
+            fld("scientific_name_notes", "scientific_name_notes", optional=True),
+            fld("id_vetting_date", "id_vetting_date", optional=True),
+            fld(
+                "living_collections_material_sample_rna",
+                re.compile(r"^living[\s]*_collections_material_sample_rna$"),
+                optional=True,
+            ),
+            fld("silica_gel_id", "silica_gel_id", optional=True),
         ]
 
-        wrapper = ExcelWrapper(
-            self._logger,
-            field_spec,
-            fname,
-            sheet_name=None,
-            header_length=1,
-            column_name_row_index=0,
-            suggest_template=True,
-        )
-        for error in wrapper.get_errors():
-            self._logger.error(error)
-
-        name_mapping = {
-            "decimal_longitude": "longitude",
-            "decimal_latitude": "latitude",
-            "klass": "class",
-        }
-
         library_metadata = {}
-        for row in wrapper.get_all():
-            if not row.library_id:
-                continue
-            if row.library_id in library_metadata:
-                raise Exception("duplicate library id: {}".format(row.library_id))
-            library_id = ingest_utils.extract_ands_id(self._logger, row.library_id)
-            library_metadata[library_id] = row_meta = {}
-            for field in row._fields:
-                value = getattr(row, field)
-                if field == "library_id":
+        for sheet_name in self.sheet_names:
+            wrapper = ExcelWrapper(
+                self._logger,
+                field_spec,
+                fname,
+                sheet_name=sheet_name,
+                header_length=1,
+                column_name_row_index=0,
+                suggest_template=True,
+            )
+            for error in wrapper.get_errors():
+                self._logger.error(error)
+
+            name_mapping = {
+                "decimal_longitude": "longitude",
+                "decimal_latitude": "latitude",
+                "klass": "class",
+            }
+
+            for row in wrapper.get_all():
+                if not row.library_id:
                     continue
-                row_meta[name_mapping.get(field, field)] = value
+                if row.library_id in library_metadata:
+                    raise Exception("duplicate library id: {}".format(row.library_id))
+                library_id = ingest_utils.extract_ands_id(self._logger, row.library_id)
+                library_metadata[library_id] = row_meta = {}
+                for field in row._fields:
+                    value = getattr(row, field)
+                    if field == "library_id":
+                        continue
+                    row_meta[name_mapping.get(field, field)] = value
         return library_metadata

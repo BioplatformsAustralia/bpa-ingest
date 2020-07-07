@@ -1,3 +1,4 @@
+import json
 import os
 import re
 from glob import glob
@@ -26,7 +27,7 @@ class GAPIlluminaShortreadMetadata(BaseMetadata):
         "https://downloads-qcif.bioplatforms.com/bpa/plants_staging/genomics-illumina-shortread/",
     ]
     metadata_url_components = ("ticket",)
-    resource_linkage = ("sample_id", "flow_cell_id")
+    resource_linkage = ("sample_id", "library_id", "flow_cell_id")
     spreadsheet = {
         "fields": [
             fld(
@@ -34,7 +35,7 @@ class GAPIlluminaShortreadMetadata(BaseMetadata):
                 "plant sample unique id",
                 coerce=ingest_utils.extract_ands_id,
             ),
-            fld("library_id", "library id", coerce=ingest_utils.extract_ands_id),
+            fld("library_id", re.compile(r"^[Ll]ibrary [Ii][Dd]$"), coerce=ingest_utils.extract_ands_id),
             fld("dataset_id", "dataset id", coerce=ingest_utils.extract_ands_id),
             fld("library_construction_protocol", "library construction protocol"),
             fld("sequencer", "sequencer"),
@@ -47,9 +48,9 @@ class GAPIlluminaShortreadMetadata(BaseMetadata):
         },
     }
     md5 = {
-        "match": [files.illumina_shortread_re],
+        "match": [files.illumina_shortread_re, files.illumina_shortread_rna_phylo_re],
         "skip": [
-            re.compile(r"^.*_metadata\.xlsx$"),
+            re.compile(r"^.*_metadata.*\.xlsx$"),
             re.compile(r"^.*SampleSheet.*"),
             re.compile(r"^.*TestFiles\.exe.*"),
         ],
@@ -69,7 +70,7 @@ class GAPIlluminaShortreadMetadata(BaseMetadata):
         packages = []
         for fname in glob(self.path + "/*.xlsx"):
             self._logger.info("Processing GAP metadata file {0}".format(fname))
-            flow_cell_id = re.match(r"^.*_([^_]+)_metadata.xlsx", fname).groups()[0]
+            flow_cell_id = re.match(r"^.*_([^_]+)_metadata.*\.xlsx", fname).groups()[0]
             rows = self.parse_spreadsheet(fname, self.metadata_info)
             xlsx_info = self.metadata_info[os.path.basename(fname)]
             ticket = xlsx_info["ticket"]
@@ -80,8 +81,9 @@ class GAPIlluminaShortreadMetadata(BaseMetadata):
                 obj = row._asdict()
                 if track_meta is not None:
                     obj.update(track_meta._asdict())
+                raw_library_id = library_id.split("/")[-1]
                 name = sample_id_to_ckan_name(
-                    library_id.split("/")[-1], self.ckan_data_type
+                    raw_library_id, self.ckan_data_type
                 )
                 for contextual_source in self.contextual_metadata:
                     obj.update(contextual_source.get(library_id))
@@ -101,6 +103,7 @@ class GAPIlluminaShortreadMetadata(BaseMetadata):
                         "type": self.ckan_data_type,
                         "flow_cell_id": flow_cell_id,
                         "data_generated": True,
+                        "library_id": raw_library_id,
                     }
                 )
                 ingest_utils.permissions_organization_member(self._logger, obj)
@@ -126,9 +129,10 @@ class GAPIlluminaShortreadMetadata(BaseMetadata):
                 resource["resource_type"] = self.ckan_data_type
                 xlsx_info = self.metadata_info[os.path.basename(md5_file)]
                 legacy_url = urljoin(xlsx_info["base_url"], filename)
+                # This will be used by sync/dump later to check resource_linkage in resources against that in packages
                 resources.append(
                     (
-                        (resource["sample_id"], resource["flow_cell_id"]),
+                        (resource["sample_id"], file_info.get("library_id"), resource["flow_cell_id"]),
                         legacy_url,
                         resource,
                     )

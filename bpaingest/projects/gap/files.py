@@ -19,6 +19,22 @@ ILLUMINA_SHORTREAD_PATTERN = r"""
 """
 illumina_shortread_re = re.compile(ILLUMINA_SHORTREAD_PATTERN, re.VERBOSE)
 
+ILLUMINA__RNA_AND_PHYLO_SHORTREAD_PATTERN = r"""
+    (?P<sample_id>\d{4,6})_
+    LibID(?P<library_id>\d{4,6})_
+    (?P<flow_cell_id>\w{9,10})_
+    (?P<index>[G|A|T|C|-]*)_
+    (?P<runsamplenum>S?\d*)_?
+    (?P<lane>L\d{3})_
+    (?P<read>[R|I][1|2])
+    (_001|)
+    \.fastq\.gz$
+"""
+
+illumina_shortread_rna_phylo_re = re.compile(
+    ILLUMINA__RNA_AND_PHYLO_SHORTREAD_PATTERN, re.VERBOSE
+)
+
 ONT_MINION_PATTERN = r"""
     (?P<sample_id>\d{4,6})_
     (?P<run_id>FA[KL]\d{5})_

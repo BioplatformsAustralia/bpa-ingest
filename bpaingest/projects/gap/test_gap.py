@@ -3,6 +3,7 @@ from .files import (
     ont_minion_re,
     ont_promethion_re,
     genomics_10x_re,
+    illumina_shortread_rna_phylo_re,
 )
 
 
@@ -12,6 +13,16 @@ def test_illumina_shortread():
     ]
     for filename in filenames:
         assert illumina_shortread_re.match(filename) is not None
+
+
+def test_illumina_rna_and_phylo_shortread():
+    filenames = [
+        "79697_LibID81791_H7LV7AFX2_TAGTGGCA-AGCAGATG_L001_R1.fastq.gz",
+        "79697_LibID81791_H7LV7AFX2_TAGTGGCA-AGCAGATG_S1_L001_R1.fastq.gz",
+        "79638_LibID81644_HLCH5DSXX_CAATTAAC-CGAGATAT_S7_L003_R1_001.fastq.gz",
+    ]
+    for filename in filenames:
+        assert illumina_shortread_rna_phylo_re.match(filename) is not None
 
 
 def test_ont_minion_re():
