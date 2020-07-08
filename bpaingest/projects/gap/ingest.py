@@ -17,13 +17,15 @@ from .tracking import GAPTrackMetadata
 common_context = [GAPLibraryContextual]
 
 
-def common_notes(description, obj):
-    return "GAP {}, Aim - {}, Sample ID {}, Library ID {}, {} {} {} {} {}".format(
+def gap_describe(obj, description):
+    obj["title"] = "GAP {}, Aim - {}, Sample ID {}, Library ID {}, {}".format(
         description,
         obj.get("project_aim", ""),
         obj.get("sample_id", "").split("/")[-1],
         obj.get("library_id", "").split("/")[-1],
         obj.get("bait_set_name", ""),
+    )
+    obj["notes"] = "{} {} {} {}".format(
         obj.get("scientific_name", ""),
         obj.get("scientific_name_authorship", ""),
         obj.get("family", ""),
@@ -105,10 +107,6 @@ class GAPIlluminaShortreadMetadata(BaseMetadata):
                     obj.update(contextual_source.get(library_id))
                 obj.update(
                     {
-                        "title": "GAP Illumina short read {} {}".format(
-                            sample_id, flow_cell_id
-                        ),
-                        "notes": common_notes("Illumina short read", obj),
                         "sample_id": sample_id,
                         "name": name,
                         "id": name,
@@ -118,6 +116,7 @@ class GAPIlluminaShortreadMetadata(BaseMetadata):
                         "library_id": raw_library_id,
                     }
                 )
+                gap_describe(obj, "Illumina short read")
                 ingest_utils.permissions_organization_member(self._logger, obj)
                 tag_names = ["genomics", "illumina-shortread"]
                 scientific_name = obj.get("scientific_name", "").strip()
@@ -239,8 +238,6 @@ class GAPONTMinionMetadata(BaseMetadata):
                     obj.update(contextual_source.get(library_id))
                 obj.update(
                     {
-                        "title": "GAP ONT MinION {} {}".format(sample_id, row.run_id),
-                        "notes": common_notes("ONT MinION", obj),
                         "sample_id": sample_id,
                         "name": name,
                         "id": name,
@@ -248,6 +245,7 @@ class GAPONTMinionMetadata(BaseMetadata):
                         "data_generated": True,
                     }
                 )
+                gap_describe(obj, "ONT MinION")
                 ingest_utils.permissions_organization_member(self._logger, obj)
                 tag_names = ["ont-minion"]
                 if "scientific_name" in obj:
@@ -359,10 +357,6 @@ class GAPONTPromethionMetadata(BaseMetadata):
                     obj.update(contextual_source.get(library_id))
                 obj.update(
                     {
-                        "title": "GAP ONT PromethION {} {}".format(
-                            sample_id, row.run_id
-                        ),
-                        "notes": common_notes("PromethION", obj),
                         "sample_id": sample_id,
                         "name": name,
                         "id": name,
@@ -370,6 +364,7 @@ class GAPONTPromethionMetadata(BaseMetadata):
                         "data_generated": True,
                     }
                 )
+                gap_describe(obj, "PromethION")
                 ingest_utils.permissions_organization_member(self._logger, obj)
                 tag_names = ["ont-promethion"]
                 if "scientific_name" in obj:
@@ -470,10 +465,6 @@ class GAPGenomics10XMetadata(BaseMetadata):
                     obj.update(contextual_source.get(library_id))
                 obj.update(
                     {
-                        "title": "GAP Genomics 10X {} {}".format(
-                            sample_id, flow_cell_id
-                        ),
-                        "notes": common_notes("Genomics 10X", obj),
                         "sample_id": sample_id,
                         "name": name,
                         "id": name,
@@ -482,6 +473,7 @@ class GAPGenomics10XMetadata(BaseMetadata):
                         "data_generated": True,
                     }
                 )
+                gap_describe(obj, "Genomics 10X")
                 ingest_utils.permissions_organization_member(self._logger, obj)
                 tag_names = ["genomics", "10x"]
                 if "scientific_name" in obj:
