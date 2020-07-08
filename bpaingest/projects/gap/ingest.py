@@ -18,14 +18,13 @@ common_context = [GAPLibraryContextual]
 
 
 def gap_describe(obj, description):
-    obj["title"] = "GAP {}, Aim - {}, Sample ID {}, Library ID {}, {}".format(
+    obj["title"] = "GAP {}, {}, {}, {}".format(
         description,
         obj.get("project_aim", ""),
         obj.get("sample_id", "").split("/")[-1],
-        obj.get("library_id", "").split("/")[-1],
         obj.get("bait_set_name", ""),
     )
-    obj["notes"] = "{} {} {} {}".format(
+    obj["notes"] = "{} {}, {}, {}".format(
         obj.get("scientific_name", ""),
         obj.get("scientific_name_authorship", ""),
         obj.get("family", ""),
