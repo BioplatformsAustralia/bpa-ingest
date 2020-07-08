@@ -17,6 +17,20 @@ from .tracking import GAPTrackMetadata
 common_context = [GAPLibraryContextual]
 
 
+def common_notes(description, obj):
+    return "GAP {}, Aim - {}, Sample ID {}, Library ID {}, {} {} {} {} {}".format(
+        description,
+        obj.get("project_aim", ""),
+        obj.get("sample_id", "").split("/")[-1],
+        obj.get("library_id", "").split("/")[-1],
+        obj.get("bait_set_name", ""),
+        obj.get("scientific_name", ""),
+        obj.get("scientific_name_authorship", ""),
+        obj.get("family", ""),
+        obj.get("sample_submitter_name", ""),
+    )
+
+
 class GAPIlluminaShortreadMetadata(BaseMetadata):
     organization = "bpa-plants"
     ckan_data_type = "gap-illumina-shortread"
@@ -94,11 +108,7 @@ class GAPIlluminaShortreadMetadata(BaseMetadata):
                         "title": "GAP Illumina short read {} {}".format(
                             sample_id, flow_cell_id
                         ),
-                        "notes": "{} {} {}".format(
-                            obj.get("scientific_name", ""),
-                            obj.get("bait set name", ""),
-                            obj.get("sample_submitter_name", ""),
-                        ),
+                        "notes": common_notes("Illumina short read", obj),
                         "sample_id": sample_id,
                         "name": name,
                         "id": name,
@@ -230,11 +240,7 @@ class GAPONTMinionMetadata(BaseMetadata):
                 obj.update(
                     {
                         "title": "GAP ONT MinION {} {}".format(sample_id, row.run_id),
-                        "notes": "{} {} {}".format(
-                            obj.get("scientific_name", ""),
-                            obj.get("bait set name", ""),
-                            obj.get("sample_submitter_name", ""),
-                        ),
+                        "notes": common_notes("ONT MinION", obj),
                         "sample_id": sample_id,
                         "name": name,
                         "id": name,
@@ -356,11 +362,7 @@ class GAPONTPromethionMetadata(BaseMetadata):
                         "title": "GAP ONT PromethION {} {}".format(
                             sample_id, row.run_id
                         ),
-                        "notes": "{} {} {}".format(
-                            obj.get("scientific_name", ""),
-                            obj.get("bait set name", ""),
-                            obj.get("sample_submitter_name", ""),
-                        ),
+                        "notes": common_notes("PromethION", obj),
                         "sample_id": sample_id,
                         "name": name,
                         "id": name,
@@ -471,11 +473,7 @@ class GAPGenomics10XMetadata(BaseMetadata):
                         "title": "GAP Genomics 10X {} {}".format(
                             sample_id, flow_cell_id
                         ),
-                        "notes": "{} {} {}".format(
-                            obj.get("scientific_name", ""),
-                            obj.get("bait set name", ""),
-                            obj.get("sample_submitter_name", ""),
-                        ),
+                        "notes": common_notes("Genomics 10X", obj),
                         "sample_id": sample_id,
                         "name": name,
                         "id": name,
