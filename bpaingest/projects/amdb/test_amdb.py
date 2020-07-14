@@ -146,6 +146,8 @@ def test_mm_amplicon():
 def test_amd_amplicon_re():
     filenames = [
         "139713_16S_J6HNJ_CGATCCGT-CGATCTAC_S36_L001_I1.fastq.gz",
+        "139714_A16_J8H8P_ACTCGCTA-CTCTCTAT_S4_L001_I1.fastq.gz",
+        "139714_A16S_J8H8P_ACTCGCTA-CTCTCTAT_S4_L001_I1.fastq.gz",
     ]
     for filename in filenames:
         assert amd_amplicon_filename_re.match(filename) is not None
@@ -154,7 +156,9 @@ def test_amd_amplicon_re():
 def test_amd_amplicon_control_re():
     filenames = [
         "ATCC1002MOCK_16S_J6H7B_TCCGAATT-TCTACACT_S2_L001_R2.fastq.gz",
+        "Arc_mock_community_A16_J8H8P_TCGACGTC-CTAAGCCT_S1_L001_I1.fastq.gz",
         "No_Template_Control_16S_J6H5P_ACGCCACG-TCTACACT_S3_L001_R2.fastq.gz",
+        "No_Template_Control_A16_J8H8P_TCGACGTC-TCTCTCCG_S3_L001_I1.fastq.gz",
         "Soil_DNA_16S_J6HNK_ACGCCACG-GATAGCGT_S1_L001_I1.fastq.gz",
         "blank_16S_J655F_AAGAGATG-TCTACACT_S29_L001_I1.fastq.gz",
     ]

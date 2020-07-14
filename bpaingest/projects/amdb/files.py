@@ -317,7 +317,7 @@ amd_metagenomics_novaseq_control_re = re.compile(
 amd_amplicon_filename_re = re.compile(
     r"""
     (?P<id>\d{4,6})_
-    (?P<amplicon>16S|18S|A16S)_
+    (?P<amplicon>16S|18S|A16S?)_
     (?P<flow_id>\w{5})_
     (?P<index>[G|A|T|C|-]*|UNKNOWN)_
     (?P<runsamplenum>\S\d*|UNKNOWN)_
@@ -332,7 +332,7 @@ amd_amplicon_control_filename_re = re.compile(
     r"""
     ^(?P<control_type>Arc_mock_community|Bac_mock_community|Fungal_mock_community|Soil_DNA|STAN|.*MOCK|No_Template_Control|blank)_
     (?P<extra_descriptor>).*
-    (?P<amplicon>16S|18S|A16S)_
+    (?P<amplicon>16S|18S|A16S?)_
     (?P<flow_id>\w{5})_
     (?P<index>[G|A|T|C|-]*)_
     (?P<runsamplenum>\S\d*)_
