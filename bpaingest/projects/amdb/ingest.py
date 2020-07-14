@@ -822,7 +822,7 @@ class BASESiteImagesMetadata(AMDBaseMetadata):
         return resources
 
 
-marine_read_lengths = {"16s": "300bp", "a16s": "300bp", "18s": "250bp"}
+marine_read_lengths = {"16s": "300bp", "a16s": "300bp", "18s": "250bp", "a16": "300bp"}
 
 
 def mm_amplicon_read_length(amplicon):
