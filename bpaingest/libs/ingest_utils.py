@@ -189,7 +189,7 @@ def _get_date(logger, dt, silent=False):
         dt == "unknown"
         or dt == "Unknown"
         or dt == "Not yet assigned"
-        or "Not applicable"
+        or dt == "Not applicable"
         or dt == "(null)"
     ):
         return None
