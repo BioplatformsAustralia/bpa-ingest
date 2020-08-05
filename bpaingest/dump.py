@@ -67,7 +67,7 @@ def linkage_qc(logger, state, data_type_meta, errors_callback=None):
                 )
 
     for data_type, (p, r) in counts.items():
-        errors_callback("{}: {} packages, {} resources".format(data_type, p, r))
+        logger.info("{}: {} packages, {} resources".format(data_type, p, r))
 
 
 def dump_state(args):
