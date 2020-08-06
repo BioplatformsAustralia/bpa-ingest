@@ -1979,7 +1979,7 @@ class OMGTranscriptomicsNextseq(OMGBaseMetadata):
         return resources + self.generate_xlsx_resources()
 
 
-class OMGGenomicsGenomeAssembliesMetadata(SecondaryMetadata):
+class OMGGenomicsPacBioGenomeAssembliesMetadata(SecondaryMetadata):
     organization = "bpa-omg"
     ckan_data_type = "omg-pacbio-genome-assemblies"
     technology = "pacbio"

@@ -59,24 +59,24 @@ class SecondaryMetadata(BaseMetadata):
     def get_raw_packages(self, ckan, obj):
         ckan_obj = ckan_method(ckan, "package", "show")(id=obj["name"])
 
-    def search_package_and_resources(self):
-        # ckan api will only return first 1000 responses for some calls - so set very high limit.
-        # Ensure that 'private' is turned on
-        self._logger.info(f"Using org id: {self.__org_id}")
-        # ticket = 'BPAOPS-10'
-        ticket = 'BPAOPS-930'
-        search_package_arguments = {
-            "rows": 10000,
-            "start": 0,
-            # "fq": f"+owner_org:{self.__org_id} +ticket:{ticket} +comments:34222_1_18S_UNSW_CTCTCTAC_GCGTAAGA_AUGKE",
-            "fq": f"+owner_org:{self.__org_id} +ticket:{ticket}",
-            # "fq": f"+owner_org:{self.__org_id}",
-            "facet.field": ["resources"],
-            "include_private": True,
-    }
-    package_raw_results = self.__ckan.call_action(
-        "package_search", search_package_arguments
-    )
+    # def search_package_and_resources(self):
+    #     # ckan api will only return first 1000 responses for some calls - so set very high limit.
+    #     # Ensure that 'private' is turned on
+    #     self._logger.info(f"Using org id: {self.__org_id}")
+    #     # ticket = 'BPAOPS-10'
+    #     ticket = 'BPAOPS-930'
+    #     search_package_arguments = {
+    #         "rows": 10000,
+    #         "start": 0,
+    #         # "fq": f"+owner_org:{self.__org_id} +ticket:{ticket} +comments:34222_1_18S_UNSW_CTCTCTAC_GCGTAAGA_AUGKE",
+    #         "fq": f"+owner_org:{self.__org_id} +ticket:{ticket}",
+    #         # "fq": f"+owner_org:{self.__org_id}",
+    #         "facet.field": ["resources"],
+    #         "include_private": True,
+    #     }
+    #     package_raw_results = self.__ckan.call_action(
+    #         "package_search", search_package_arguments
+    #     )
 
     def get_packages(self):
         self._get_packages_and_resources()
