@@ -2,6 +2,7 @@ from unipath import Path
 from collections import defaultdict
 
 from ...abstract import BaseMetadata
+from ...secondarydata import SecondaryMetadata
 
 from ...util import sample_id_to_ckan_name, common_values
 from urllib.parse import urljoin
@@ -12,7 +13,7 @@ from ...libs import ingest_utils
 from bpasslh.handler import SensitiveDataGeneraliser
 from ...libs.excel_wrapper import make_field_definition as fld, make_skip_column as skp
 from . import files
-from .tracking import OMGTrackMetadata
+from .tracking import OMGTrackMetadata, OMGTrackGenomeAssembliesMetadata
 from .contextual import OMGSampleContextual, OMGLibraryContextual
 from ...libs.ingest_utils import get_clean_number
 
@@ -1970,6 +1971,211 @@ class OMGTranscriptomicsNextseq(OMGBaseMetadata):
                                 self._logger, resource["bpa_library_id"]
                             ),
                             resource["flowcell_id"],
+                        ),
+                        legacy_url,
+                        resource,
+                    )
+                )
+        return resources + self.generate_xlsx_resources()
+
+
+class OMGGenomicsGenomeAssembliesMetadata(SecondaryMetadata):
+    organization = "bpa-omg"
+    ckan_data_type = "omg-pacbio-genome-assemblies"
+    technology = "pacbio"
+    contextual_classes = []
+    metadata_patterns = [r"^.*\.md5$", r"^.*_metadata.*.*\.xlsx$"]
+    metadata_urls = [
+        "https://downloads-qcif.bioplatforms.com/bpa/omg_staging/pacbio-secondary/",
+    ]
+    metadata_url_components = ("ticket",)
+    resource_linkage = ("bpa_library_id", "flowcell_id")
+    raw_resource_linkage = ("bpa_library_id", "flowcell_id")
+    spreadsheet = {
+        "fields": [
+            fld("analysis_output_name", "Analysis_output_name"),
+            fld("bpa_sample_ID", "BPA_sample_ID", coerce=ingest_utils.extract_ands_id),
+            fld(
+                "bpa_library_ID", "BPA_library_ID", coerce=ingest_utils.extract_ands_id
+            ),
+            fld(
+                "bpa_dataset_ID", "BPA_dataset_ID", coerce=ingest_utils.extract_ands_id
+            ),
+            fld("genus", "Genus"),
+            fld("species", "Species"),
+            fld("analysis_aim", "Analysis_aim"),
+            fld("assembly method", "Assembly method"),
+            fld(
+                "assembly_method_version_or_date",
+                "Assembly method version or date",
+                coerce=ingest_utils.date_or_str,
+            ),
+            fld("genome_coverage", "Genome coverage"),
+            fld("sequencing_technology", "Sequencing technology"),
+            fld(
+                "assembly_date", "Assembly date", coerce=ingest_utils.get_date_isoformat
+            ),
+            fld("assembly_name", "Assembly name"),
+            fld(
+                "full_or_partial_genome_in_sample",
+                "Full or Partial Genome in the sample :",
+            ),
+            fld("reference_genome", "Reference genome"),
+            fld("update", "Update"),
+            fld("bacteria_available_from", "bacteria_available_from"),
+            fld("computational_infrastructure", "Computational_infrastructure"),
+            fld("main_analysis_output", "Main_analysis_output"),
+            fld("output_version", "Output Version"),
+            fld("number_scaffolds", "No. scaffolds"),
+            fld("n50", "N50"),
+            fld("version_release_link", "Version_release_link"),
+            fld("contact_person", "Contact_Person"),
+        ],
+        "options": {
+            "sheet_name": "Data_Genomes",
+            "header_length": 1,
+            "column_name_row_index": 0,
+        },
+    }
+    md5 = {
+        "match": [files.pacbio_filename_re],
+        "skip": [
+            re.compile(r"^.*_metadata\.xlsx$"),
+            re.compile(r"^.*SampleSheet.*"),
+            re.compile(r"^.*TestFiles\.exe.*"),
+        ],
+    }
+
+    def __init__(
+        self,
+        logger,
+        metadata_path,
+        contextual_metadata=None,
+        metadata_info=None,
+        raw_metadata=None,
+    ):
+        super().__init__(
+            logger, metadata_path, contextual_metadata, metadata_info, raw_metadata
+        )
+        self.path = Path(metadata_path)
+        self.contextual_metadata = contextual_metadata
+        self.metadata_info = metadata_info
+        self.track_meta = OMGTrackGenomeAssembliesMetadata()
+
+    def _get_packages(self):
+        self._logger.info("Ingesting secondary OMG metadata from {0}".format(self.path))
+        packages = []
+
+        filename_re = re.compile(
+            r"^OMG_.*_(\d{8})_([sS]econdary|[gG]enome.*[aA]ssembl.*)_metadata\.xlsx"
+        )
+        objs = []
+        # this is a folder-oriented ingest, so we crush each xlsx down into a single row
+        for fname in glob(self.path + "/*.xlsx"):
+            self._logger.info(
+                "Processing Secondary (Genome assemblies) metadata file {0}".format(
+                    os.path.basename(fname)
+                )
+            )
+            xlsx_filename = os.path.basename(fname)
+            xlsx_date = filename_re.match(xlsx_filename).groups()[0]
+
+            if not xlsx_date:
+                raise Exception("There was no date pattern found in {}", xlsx_filename)
+            fname_obj = common_values(
+                t._asdict() for t in self.parse_spreadsheet(fname, self.metadata_info)
+            )
+            fname_obj["run_date"] = xlsx_date
+            objs.append((fname, fname_obj))
+
+        for (fname, obj) in objs:
+            track_meta = self.track_meta.get(obj["ticket"])
+
+            def track_get(k):
+                if track_meta is None:
+                    return None
+                return getattr(track_meta, k)
+
+            library_id = obj["bpa_library_id"]
+            if library_id is None:
+                continue
+
+            name = sample_id_to_ckan_name(
+                library_id, self.ckan_data_type, obj["run_date"]
+            )
+
+            context = {}
+            for contextual_source in self.contextual_metadata:
+                context.update(
+                    contextual_source.get(obj["bpa_sample_id"], obj["bpa_library_id"])
+                )
+
+            obj.update(
+                {
+                    "name": name,
+                    "id": name,
+                    "title": "OMG Pacbio Secondary {} {}".format(library_id, obj["run_date"]),
+                    "notes": name,
+                    "date_of_transfer": ingest_utils.get_date_isoformat(
+                        self._logger, track_get("date_of_transfer")
+                    ),
+                    "data_type": track_get("data_type"),
+                    "description": track_get("description"),
+                    "folder_name": track_get("folder_name"),
+                    "sample_submission_date": ingest_utils.get_date_isoformat(
+                        self._logger, track_get("date_of_transfer")
+                    ),
+                    "contextual_data_submission_date": None,
+                    "data_generated": ingest_utils.get_date_isoformat(
+                        self._logger, track_get("date_of_transfer_to_archive")
+                    ),
+                    "archive_ingestion_date": ingest_utils.get_date_isoformat(
+                        self._logger, track_get("date_of_transfer_to_archive")
+                    ),
+                    "dataset_url": track_get("download"),
+                    "type": self.ckan_data_type,
+                }
+            )
+            ingest_utils.permissions_organization_member(self._logger, obj)
+            obj.update(context)
+            tag_names = ["pacbio", "genomics", "genome assemblies"]
+            obj["tags"] = [{"name": t} for t in tag_names]
+            self.track_xlsx_resource(obj, fname)
+            packages.append(obj)
+
+            raw_resources = self._get_raw_resources()
+            self._logger.debug(f"Raw resources are: {raw_resources}")
+
+        return packages
+
+    def _get_raw_resources(self):
+        self._logger.info(
+            "Calculating raw resources..."
+        )
+        raw_resources = []
+
+    def _get_resources(self):
+        self._logger.info(
+            "Ingesting OMG md5 file information from {0}".format(self.path)
+        )
+        resources = []
+        for md5_file in glob(self.path + "/*.md5"):
+            self._logger.info("Processing md5 file {}".format(md5_file))
+            for filename, md5, file_info in self.parse_md5file(md5_file):
+                resource = file_info.copy()
+                resource["md5"] = resource["id"] = md5
+                resource["name"] = filename
+                resource["resource_type"] = self.ckan_data_type
+                library_id = ingest_utils.extract_ands_id(
+                    self._logger, resource["bpa_library_id"]
+                )
+                xlsx_info = self.metadata_info[os.path.basename(md5_file)]
+                legacy_url = urljoin(xlsx_info["base_url"], filename)
+                resources.append(
+                    (
+                        (
+                            ingest_utils.extract_ands_id(self._logger, library_id),
+                            resource["run_date"],
                         ),
                         legacy_url,
                         resource,

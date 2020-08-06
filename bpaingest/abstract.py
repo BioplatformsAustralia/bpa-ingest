@@ -143,6 +143,7 @@ class BaseMetadata:
         return resources
 
     def _get_packages_and_resources(self):
+        self._logger.debug("Inside Abstract data...")
         # ensure that each class can expect to have _get_packages() called first,
         # then _get_resources(), and only once in the entire lifetime of the class.
         if self._packages is None:

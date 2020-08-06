@@ -2,14 +2,8 @@ import re
 from glob import glob
 from ...libs import ingest_utils
 from ...libs.excel_wrapper import ExcelWrapper, make_field_definition as fld
+from ...libs.ingest_utils import date_or_str
 from ...util import one
-
-
-def date_or_str(logger, v):
-    d = ingest_utils.get_date_isoformat(logger, v, silent=True)
-    if d is not None:
-        return d
-    return v
 
 
 class OMGSampleContextual:

@@ -261,3 +261,10 @@ def permissions_organization_member_after_embargo(
 def permissions_public(logger, obj):
     obj["private"] = False
     obj["resource_permissions"] = "public"
+
+
+def date_or_str(logger, v):
+    d = get_date_isoformat(logger, v, silent=True)
+    if d is not None:
+        return d
+    return v
