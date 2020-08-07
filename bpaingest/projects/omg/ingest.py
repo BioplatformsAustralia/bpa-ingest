@@ -2047,15 +2047,9 @@ class OMGGenomicsPacBioGenomeAssembliesMetadata(SecondaryMetadata):
     }
 
     def __init__(
-        self,
-        logger,
-        metadata_path,
-        contextual_metadata=None,
-        metadata_info=None
+        self, logger, metadata_path, contextual_metadata=None, metadata_info=None
     ):
-        super().__init__(
-            logger, metadata_path
-        )
+        super().__init__(logger, metadata_path)
         self.path = Path(metadata_path)
         self.contextual_metadata = contextual_metadata
         self.metadata_info = metadata_info
@@ -2113,7 +2107,9 @@ class OMGGenomicsPacBioGenomeAssembliesMetadata(SecondaryMetadata):
                 {
                     "name": name,
                     "id": name,
-                    "title": "OMG Pacbio Secondary {} {}".format(library_id, obj["run_date"]),
+                    "title": "OMG Pacbio Secondary {} {}".format(
+                        library_id, obj["run_date"]
+                    ),
                     "notes": name,
                     "date_of_transfer": ingest_utils.get_date_isoformat(
                         self._logger, track_get("date_of_transfer")
@@ -2148,9 +2144,7 @@ class OMGGenomicsPacBioGenomeAssembliesMetadata(SecondaryMetadata):
         return packages
 
     def _get_raw_resources(self):
-        self._logger.info(
-            "Calculating raw resources..."
-        )
+        self._logger.info("Calculating raw resources...")
         raw_resources = []
 
     def _get_resources(self):
