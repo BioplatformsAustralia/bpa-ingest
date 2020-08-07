@@ -18,28 +18,8 @@ class SecondaryMetadata(BaseMetadata):
     def _get_packages(self):
         raise NotImplementedError("implement _get_packages()")
 
-    def __init__(
-        self,
-        logger,
-        metadata_path,
-        contextual_metadata=None,
-        metadata_info=None,
-        raw_metadata=None,
-    ):
-        super().__init__(logger, metadata_path)
-        self.path = Path(metadata_path)
-        ## TODO: Does a secondary type need context metadata?
-        # self.contextual_metadata = contextual_metadata
-        self.metadata_info = metadata_info
-        self.raw_metadata = raw_metadata
-        self.organization = raw_metadata.organization
-        self.ckan_data_type = raw_metadata.ckan_data_type + "-secondary"
-        self.metadata_urls = raw_metadata.metadata_urls
-        self.metadata_url_components = raw_metadata.metadata_url_components
-        self.resource_linkage = raw_metadata.resource_linkage
-        if getattr(raw_metadata, "technology"):
-            self.technology = raw_metadata.technology
-
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
 
     def _get_packages_and_resources(self):
         self._logger.debug("Inside secondary data...")
@@ -47,7 +27,6 @@ class SecondaryMetadata(BaseMetadata):
         # then _get_resources(), and only once in the entire lifetime of the class.
         if self._packages is None:
             self._packages = self._get_packages()
-            self._raw_metadata
             self._resources = self._get_resources()
             BaseMetadata.resources_add_format(self._resources)
             BaseMetadata.obj_round_floats_and_stringify(self._packages)

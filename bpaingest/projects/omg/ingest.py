@@ -1982,7 +1982,7 @@ class OMGTranscriptomicsNextseq(OMGBaseMetadata):
 class OMGGenomicsPacBioGenomeAssembliesMetadata(SecondaryMetadata):
     organization = "bpa-omg"
     ckan_data_type = "omg-pacbio-genome-assemblies"
-    technology = "pacbio"
+    technology = "pacbio-genome-assemblies"
     contextual_classes = []
     metadata_patterns = [r"^.*\.md5$", r"^.*_metadata.*.*\.xlsx$"]
     metadata_urls = [
@@ -2051,11 +2051,10 @@ class OMGGenomicsPacBioGenomeAssembliesMetadata(SecondaryMetadata):
         logger,
         metadata_path,
         contextual_metadata=None,
-        metadata_info=None,
-        raw_metadata=None,
+        metadata_info=None
     ):
         super().__init__(
-            logger, metadata_path, contextual_metadata, metadata_info, raw_metadata
+            logger, metadata_path
         )
         self.path = Path(metadata_path)
         self.contextual_metadata = contextual_metadata
