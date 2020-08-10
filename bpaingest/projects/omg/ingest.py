@@ -2060,7 +2060,7 @@ class OMGGenomicsPacBioGenomeAssembliesMetadata(SecondaryMetadata):
         packages = []
 
         filename_re = re.compile(
-            r"^OMG_.*_(\d{8})_([sS]econdary|[gG]enome.*[aA]ssembl.*)_metadata\.xlsx"
+            r"^OMG.*_(\d{8})_([sS]econdary|[gG]enome.*[aA]ssembl.*).*_metadata\.xlsx"
         )
         objs = []
         # this is a folder-oriented ingest, so we crush each xlsx down into a single row
