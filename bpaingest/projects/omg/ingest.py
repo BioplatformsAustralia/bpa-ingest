@@ -2027,8 +2027,8 @@ class OMGGenomicsPacBioGenomeAssembliesMetadata(SecondaryMetadata):
         ],
         "options": {
             "sheet_name": "Data_Genomes",
-            "header_length": 1,
-            "column_name_row_index": 2,
+            "header_length": 2,
+            "column_name_row_index": 0,
         },
     }
     md5 = {
