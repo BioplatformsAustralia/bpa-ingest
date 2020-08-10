@@ -2028,7 +2028,7 @@ class OMGGenomicsPacBioGenomeAssembliesMetadata(SecondaryMetadata):
         "options": {
             "sheet_name": "Data_Genomes",
             "header_length": 1,
-            "column_name_row_index": 0,
+            "column_name_row_index": 2,
         },
     }
     md5 = {
@@ -2054,7 +2054,7 @@ class OMGGenomicsPacBioGenomeAssembliesMetadata(SecondaryMetadata):
         packages = []
 
         filename_re = re.compile(
-            r"^OMG.*_(\d{8})_([sS]econdary|[gG]enome.*[aA]ssembl.*).*_metadata\.xlsx"
+            r"^OMG_(\d{8})_([sS]econdary|[gG]enome.*[aA]ssembl.*).*_metadata\.xlsx"
         )
         objs = []
         # this is a folder-oriented ingest, so we crush each xlsx down into a single row
