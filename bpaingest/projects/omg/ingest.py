@@ -1989,8 +1989,8 @@ class OMGGenomicsPacBioGenomeAssembliesMetadata(SecondaryMetadata):
         "https://downloads-qcif.bioplatforms.com/bpa/omg_staging/pacbio-secondary/",
     ]
     metadata_url_components = ("ticket",)
-    resource_linkage = ("bpa_library_id", "flowcell_id")
-    raw_resource_linkage = ("bpa_library_id", "flowcell_id")
+    resource_linkage = ("bpa_library_id", "run_date")
+    raw_resource_linkage = ("bpa_library_id", "run_date")
     spreadsheet = {
         "fields": [
             fld('analysis_output_name', 'analysis_output_name'),
@@ -2041,7 +2041,7 @@ class OMGGenomicsPacBioGenomeAssembliesMetadata(SecondaryMetadata):
     }
 
     def __init__(
-        self, logger, metadata_path, contextual_metadata=None, metadata_info=None
+        self, logger, metadata_path, contextual_metadata=[], metadata_info=None
     ):
         super().__init__(logger, metadata_path)
         self.path = Path(metadata_path)

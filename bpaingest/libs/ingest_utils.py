@@ -191,6 +191,7 @@ def _get_date(logger, dt, silent=False):
         or dt == "Not yet assigned"
         or dt == "Not applicable"
         or dt == "(null)"
+        or dt == "NA"
     ):
         return None
 
