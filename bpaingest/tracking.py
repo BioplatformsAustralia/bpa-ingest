@@ -22,9 +22,7 @@ class GoogleDriveTrackMetadata:
     platform = "google-drive"
 
     def __init__(self):
-        logger.info(f"name is {self.name}")
-        fname = get_track_csv(self.platform, "*" + self.name + ".csv")
-
+        fname = get_track_csv(self.platform, "*" + self.name + "*.csv")
         logger.info("Reading track CSV file: " + fname)
         self.track_meta = self.read_track_csv(fname)
 
