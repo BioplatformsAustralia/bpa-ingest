@@ -2139,7 +2139,7 @@ class OMGGenomicsPacBioGenomeAssembliesMetadata(SecondaryMetadata):
             )
             ingest_utils.permissions_organization_member(self._logger, obj)
             obj.update(context)
-            tag_names = ["pacbio", "genomics", "genome assemblies"]
+            tag_names = ["pacbio", "genomics", "secondary", "derived", "genome assemblies"]
             obj["tags"] = [{"name": t} for t in tag_names]
             self.track_xlsx_resource(obj, fname)
             packages.append(obj)
