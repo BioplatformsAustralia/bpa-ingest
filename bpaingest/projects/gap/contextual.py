@@ -18,7 +18,7 @@ class GAPLibraryContextual:
     ]
     metadata_patterns = [re.compile(r"^.*\.xlsx$")]
     name = "gap-library-contextual"
-    sheet_names = ["Ref_genome", "Phylogenomics"]
+    sheet_names = ["Ref_genome", "Phylogenomics_pilot", "Phylogenomics_AATOL"]
 
     def __init__(self, logger, path):
         self._logger = logger
@@ -123,14 +123,13 @@ class GAPLibraryContextual:
                 "genomic_material_preparation_date",
                 coerce=ingest_utils.get_date_isoformat,
             ),
-            fld("scientific_name_notes", "scientific_name_notes", optional=True),
-            fld("id_vetting_date", "id_vetting_date", optional=True),
+            fld("scientific_name_notes", "scientific_name_notes"),
+            fld("id_vetting_date", "id_vetting_date"),
             fld(
                 "living_collections_material_sample_rna",
-                re.compile(r"^living[\s]*_collections_material_sample_rna$"),
-                optional=True,
+                re.compile(r"^living[\s]*_collections_material_sample_[rR][nN][aA]$")
             ),
-            fld("silica_gel_id", "silica_gel_id", optional=True),
+            fld("silica_gel_id", "silica_gel_id"),
         ]
 
         library_metadata = {}
