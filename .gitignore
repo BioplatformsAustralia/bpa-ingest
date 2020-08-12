@@ -19,3 +19,4 @@ ingest.log
 .tox
 .idea/
 temp/
+staging-bpa.env
