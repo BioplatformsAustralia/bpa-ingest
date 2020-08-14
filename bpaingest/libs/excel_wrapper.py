@@ -174,7 +174,7 @@ class ExcelWrapper:
                 self.missing_headers.append(spec.column_name)
                 if not spec.optional:
                     self._error(
-                        "Column `{}' not found in `{}' `{}'".format(
+                        "E3001: Column `{}' not found in `{}' `{}'".format(
                             col_descr, os.path.basename(self.file_name), self.sheet.name
                         )
                     )
