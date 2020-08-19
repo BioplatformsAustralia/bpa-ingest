@@ -68,6 +68,10 @@ gbr() {
   apply gbr-genomics-pacbio $*
 }
 
+ausarg() {
+  apply ausarg-illumina-fastq $*
+}
+
 marine_microbes()
 {
   apply marine-microbes-genomics-amplicons $*

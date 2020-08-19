@@ -12,6 +12,7 @@ from .amdb.ingest import (
     MarineMicrobesMetagenomicsMetadata,
     MarineMicrobesMetatranscriptomeMetadata,
 )
+from .ausarg.ingest import AusargIlluminaFastqMetadata
 from .gbr.ingest import GbrAmpliconsMetadata, GbrPacbioMetadata
 from .sepsis.ingest import (
     SepsisGenomicsMiseqMetadata,
@@ -70,6 +71,9 @@ class ProjectInfo:
             AustralianMicrobiomeMetagenomicsNovaseqControlMetadata,
             AustralianMicrobiomeAmpliconsMetadata,
             AustralianMicrobiomeAmpliconsControlMetadata,
+        ],
+        "ausarg": [
+            AusargIlluminaFastqMetadata
         ],
         "base": [
             BASEAmpliconsMetadata,
@@ -166,7 +170,8 @@ class ProjectInfo:
             nm_parts.append("analysed")
         if class_info["pool"]:
             nm_parts.append("pool")
-        return "-".join(filter(None, nm_parts))
+        test = "-".join(filter(None, nm_parts))
+        return test
 
     def cli_options(self):
         return dict((t["slug"], t["cls"]) for t in self.metadata_info)

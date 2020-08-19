@@ -12,13 +12,13 @@ def date_or_str(logger, v):
     return v
 
 
-class GAPLibraryContextual:
+class AusargLibraryContextual:
     metadata_urls = [
-        "https://downloads-qcif.bioplatforms.com/bpa/plants_staging/metadata/2020-08-05/"
+        "https://downloads-qcif.bioplatforms.com/bpa/ausarg_staging/metadata/2020-08-19/"
     ]
     metadata_patterns = [re.compile(r"^.*\.xlsx$")]
-    name = "gap-library-contextual"
-    sheet_names = ["Ref_genome", "Phylogenomics_pilot", "Phylogenomics_AATOL"]
+    name = "ausarg-library-contextual"
+    sheet_names = ["Sample_metadata"]
 
     def __init__(self, logger, path):
         self._logger = logger
