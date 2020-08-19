@@ -13,10 +13,13 @@ from bpaingest.util import common_values, sample_id_to_ckan_name
 
 class SecondaryMetadata(BaseMetadata):
     def _get_resources(self):
-        raise NotImplementedError("implement _get_packages()")
+        raise NotImplementedError("implement _get_resources()")
 
     def _get_packages(self):
         raise NotImplementedError("implement _get_packages()")
+
+    def _get_raw_resources(self):
+        raise NotImplementedError("implement _get_raw_resources()")
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
@@ -27,6 +30,7 @@ class SecondaryMetadata(BaseMetadata):
         # then _get_resources(), and only once in the entire lifetime of the class.
         if self._packages is None:
             self._packages = self._get_packages()
+            self._get_raw_resources()
             self._resources = self._get_resources()
             BaseMetadata.resources_add_format(self._resources)
             BaseMetadata.obj_round_floats_and_stringify(self._packages)
