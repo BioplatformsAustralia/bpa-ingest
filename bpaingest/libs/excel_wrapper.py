@@ -187,7 +187,7 @@ class ExcelWrapper:
             if s != "" and idx not in mapped_columns and idx not in skip_columns:
                 unmapped_columns.append(idx)
                 self._error(
-                        "E3002: Column `{}' not mapped to an output field in `{}` `{}`".format(
+                    "E3002: Column `{}' not mapped to an output field in `{}` `{}`".format(
                         s, os.path.basename(self.file_name), self.sheet.name
                     )
                 )
