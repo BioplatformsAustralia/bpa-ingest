@@ -6,7 +6,7 @@ logger = make_logger(__name__)
 
 
 ILLUMINA_FASTQ_PATTERN = r"""
-    (?P<sample_id>\d{4,6})_
+    (?P<library_id>\d{4,6})_
     AusARG_
     (?P<facility_id>(UNSW))_
     (?P<flowcell_id>\w{9,10})_

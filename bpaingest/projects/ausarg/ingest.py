@@ -30,9 +30,9 @@ class AusargIlluminaFastqMetadata(BaseMetadata):
     resource_linkage = ("library_id", "flowcell_id")
     spreadsheet = {
         "fields": [
-            fld("library_id", "library_id"),
+            fld("library_id", "library_id", coerce=ingest_utils.extract_ands_id),
             fld("sample_id", "sample_id", coerce=ingest_utils.extract_ands_id),
-            fld("dataset_id", "dataset_id"),
+            fld("dataset_id", "dataset_id", coerce=ingest_utils.extract_ands_id),
             fld("work_order", "work_order"),
             fld("specimen_id", "specimen_id"),
             fld("tissue_number", "tissue_number"),
@@ -164,8 +164,8 @@ class AusargIlluminaFastqMetadata(BaseMetadata):
             self._logger.info("Processing md5 file {0}".format(md5_file))
             for filename, md5, file_info in self.parse_md5file(md5_file):
                 resource = file_info.copy()
-                resource["sample_id"] = ingest_utils.extract_ands_id(
-                    self._logger, resource["sample_id"]
+                resource["library_id"] = ingest_utils.extract_ands_id(
+                    self._logger, resource["library_id"]
                 )
                 resource["md5"] = resource["id"] = md5
                 resource["name"] = filename
@@ -175,7 +175,7 @@ class AusargIlluminaFastqMetadata(BaseMetadata):
                 # This will be used by sync/dump later to check resource_linkage in resources against that in packages
                 resources.append(
                     (
-                        (file_info.get("library_id"), resource["flowcell_id"],),
+                        (resource["library_id"], resource["flowcell_id"],),
                         legacy_url,
                         resource,
                     )
