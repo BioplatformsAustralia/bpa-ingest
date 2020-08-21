@@ -72,9 +72,7 @@ class ProjectInfo:
             AustralianMicrobiomeAmpliconsMetadata,
             AustralianMicrobiomeAmpliconsControlMetadata,
         ],
-        "ausarg": [
-            AusargIlluminaFastqMetadata
-        ],
+        "ausarg": [AusargIlluminaFastqMetadata],
         "base": [
             BASEAmpliconsMetadata,
             BASEAmpliconsControlMetadata,

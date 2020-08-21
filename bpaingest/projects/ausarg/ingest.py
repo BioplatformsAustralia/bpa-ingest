@@ -30,65 +30,47 @@ class AusargIlluminaFastqMetadata(BaseMetadata):
     resource_linkage = ("sample_id", "library_id", "flow_cell_id")
     spreadsheet = {
         "fields": [
+            fld('library_id', 'library_id'),
             fld('sample_id', 'sample_id', coerce=ingest_utils.extract_ands_id),
-            fld('specimenid', 'specimenid'),
-            fld('specimenid_description', 'specimenid_description'),
+            fld('dataset_id', 'dataset_id'),
+            fld('work_order', 'work_order'),
+            fld('specimen_id', 'specimen_id'),
             fld('tissue_number', 'tissue_number'),
-            fld('voucher_or_tissue_number', 'voucher_or_tissue_number'),
-            fld('institution_name', 'institution_name'),
-            fld('tissue_collection', 'tissue_ collection'),
-            fld('sample_custodian', 'sample_custodian'),
-            fld('access_rights', 'access_rights'),
-            fld('tissue_type', 'tissue_type'),
-            fld('tissue_preservation', 'tissue_preservation'),
-            fld('sample_quality', 'sample_quality'),
-            fld('taxon_id', 'taxon_id'),
-            fld('phylum', 'phylum'),
-            fld('class', 'class'),
-            fld('order', 'order'),
-            fld('family', 'family'),
             fld('genus', 'genus'),
             fld('species', 'species'),
-            fld('subspecies', 'subspecies'),
-            fld('common_name', 'common_name'),
-            fld('identified_by', 'identified_by'),
-            fld('collection_date', 'collection_date', coerce=ingest_utils.get_date_isoformat),
-            fld('collector', 'collector'),
-            fld('collection_method', 'collection_method'),
-            fld('collector_sample_id', 'collector_sample_id'),
-            fld('wild_captive', 'wild_captive'),
-            fld('source_population', 'source_population'),
-            fld('country', 'country'),
-            fld('state_or_region', 'state_or_region'),
-            fld('location_text', 'location_text'),
-            fld('habitat', 'habitat'),
-            fld('decimal_latitude', 'decimal_latitude'),
-            fld('decimal_longitude', 'decimal_longitude'),
-            fld('coord_uncertainty_metres', 'coord_uncertainty_metres'),
-            fld('genotypic_sex', 'genotypic sex'),
-            fld('phenotypic_sex', 'phenotypic sex'),
-            fld('method_of_determination', 'method of determination'),
-            fld('certainty', 'certainty'),
-            fld('lifestage', 'life-stage'),
-            fld('birth_date', 'birth_date', coerce=ingest_utils.get_date_isoformat),
-            fld('death_date', 'death_date', coerce=ingest_utils.get_date_isoformat),
-            fld('associated_media', 'associated_media'),
-            fld('ancillary_notes', 'ancillary_notes'),
-            fld('barcode_id', 'barcode_id'),
-            fld('ala_specimen_url', 'ala_specimen_url'),
-            fld('prior_genetics', 'prior_genetics'),
-            fld('taxonomic_group', 'taxonomic_group'),
-            fld('type_status', 'type_status'),
-            fld('material_extraction_type', 'material_extraction_type'),
-            fld('material_extraction_date', 'material_extraction_date', coerce=ingest_utils.get_date_isoformat),
-            fld('material_extracted_by', 'material_extracted_by'),
-            fld('material_extraction_method', 'material_extraction_method'),
-            fld('material_conc_ng_ul', 'material_conc_ng_ul'),
+            fld('data_custodian', 'data_custodian'),
+            fld('experimental_design', 'experimental design'),
+            fld('ausarg_project', 'ausarg_project'),
+            fld('facility_sample_id', 'facility_sample_id'),
+            fld('sequencing_facility', 'sequencing_facility'),
+            fld('sequencing_platform', 'sequencing_platform'),
+            fld('library_construction_protocol', 'library_construction_protocol'),
+            fld('library_type', 'library_type'),
+            fld('library_prep_date', 'library_prep_date', coerce=ingest_utils.get_date_isoformat),
+            fld('library_prepared_by', 'library_prepared_by'),
+            fld('library_location', 'library_location'),
+            fld('library_status', 'library_status'),
+            fld('library_comments', 'library_comments'),
+            fld('dna_treatment', 'dna_treatment'),
+            fld('library_index_id', 'library_index_id'),
+            fld('library_index_seq', 'library_index_seq'),
+            fld('library_oligo_sequence', 'library_oligo_sequence'),
+            fld('insert_size_range', 'insert_size_range'),
+            fld('library_ng_ul', 'library_ng_ul'),
+            fld('library_pcr_cycles', 'library_pcr_cycles'),
+            fld('library_pcr_reps', 'library_pcr_reps'),
+            fld('n_libraries_pooled', 'n_libraries_pooled'),
+            fld('flowcell_type', 'flowcell_type'),
+            fld('flowcell_id', 'flowcell_id'),
+            fld('cell_postion', 'cell_postion'),
+            fld('movie_length', 'movie_length'),
+            fld('analysis_software', 'analysis_software'),
+            fld('analysis_software_version', 'analysis_software_version'),
         ],
         "options": {
             "sheet_name": None,
-            "header_length": 2,
-            "column_name_row_index": 1,
+            "header_length": 1,
+            "column_name_row_index": 0,
         },
     }
     md5 = {
@@ -110,7 +92,7 @@ class AusargIlluminaFastqMetadata(BaseMetadata):
     ]
 
     def __init__(
-            self, logger, metadata_path, contextual_metadata=None, metadata_info=None
+        self, logger, metadata_path, contextual_metadata=None, metadata_info=None
     ):
         super().__init__(logger, metadata_path)
         self.path = Path(metadata_path)
@@ -137,7 +119,7 @@ class AusargIlluminaFastqMetadata(BaseMetadata):
                 raw_library_id = library_id.split("/")[-1]
                 name = sample_id_to_ckan_name(raw_library_id, self.ckan_data_type)
                 for contextual_source in self.contextual_metadata:
-                    obj.update(contextual_source.get(library_id))
+                    obj.update(contextual_source.get(sample_id))
                 obj.update(
                     {
                         "sample_id": sample_id,

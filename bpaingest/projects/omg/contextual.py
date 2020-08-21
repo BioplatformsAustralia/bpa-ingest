@@ -23,7 +23,7 @@ class OMGSampleContextual:
         self._logger = logger
         self.sample_metadata = self._read_metadata(one(glob(path + "/*.xlsx")))
 
-    def get(self, bpa_sample_id, bpa_library_id):
+    def get(self, bpa_sample_id):
         if bpa_sample_id in self.sample_metadata:
             return self.sample_metadata[bpa_sample_id]
         self._logger.warning(

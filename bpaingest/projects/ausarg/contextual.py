@@ -25,111 +25,78 @@ class AusargLibraryContextual:
         self._logger.info("context path is: {}".format(path))
         self.library_metadata = self._read_metadata(one(glob(path + "/*.xlsx")))
 
-    def get(self, library_id):
-        if library_id in self.library_metadata:
-            return self.library_metadata[library_id]
+    def get(self, identifier):
+        if identifier in self.library_metadata:
+            return self.library_metadata[identifier]
         self._logger.warning(
-            "no %s metadata available for: %s" % (type(self).__name__, repr(library_id))
+            "no %s metadata available for: %s" % (type(self).__name__, repr(identifier))
         )
         return {}
 
     def _read_metadata(self, fname):
-
         field_spec = [
-            fld("data_type", "data_type"),
-            fld("project_aim", "project_aim"),
-            fld("sample_submitter_name", "sample_submitter_name"),
-            fld("sample_submitter_email", "sample_submitter_email"),
-            fld(
-                "sample_submission_date",
-                "sample_submission_date",
-                coerce=ingest_utils.get_date_isoformat,
-            ),
-            fld(
-                "sample_id",
-                "bioplatforms_sample_id",
-                coerce=ingest_utils.extract_ands_id,
-            ),
-            fld(
-                "library_id",
-                "bioplatforms_library_id",
-                coerce=ingest_utils.extract_ands_id,
-            ),
-            fld(
-                "dataset_id",
-                "bioplatforms_dataset_id",
-                coerce=ingest_utils.extract_ands_id,
-            ),
-            fld("nagoya_protocol_compliance", "nagoya_protocol_compliance"),
-            fld("nagoya_protocol_permit_number", "nagoya_protocol_permit_number"),
-            fld("scientific_name", "scientific_name"),
-            fld("scientific_name_authorship", "scientific_name_authorship"),
+            fld("sample_id", "sample_id", coerce=ingest_utils.extract_ands_id),
+            fld("specimenid", "specimenid"),
+            fld("specimenid_description", "specimenid_description"),
+            fld("tissue_number", "tissue_number"),
+            fld("voucher_or_tissue_number", "voucher_or_tissue_number"),
+            fld("institution_name", "institution_name"),
+            fld("tissue_collection", "tissue_ collection"),
+            fld("sample_custodian", "sample_custodian"),
+            fld("access_rights", "access_rights"),
+            fld("tissue_type", "tissue_type"),
+            fld("tissue_preservation", "tissue_preservation"),
+            fld("sample_quality", "sample_quality"),
+            fld("taxon_id", "taxon_id"),
+            fld("phylum", "phylum"),
+            fld("klass", "class"),
+            fld("order", "order"),
             fld("family", "family"),
-            fld("id_vetting_by", "id_vetting_by"),
-            fld("bait_set_name", "bait_set_name"),
-            fld("bait_set_reference", "bait_set_reference"),
+            fld("genus", "genus"),
+            fld("species", "species"),
+            fld("subspecies", "subspecies"),
+            fld("common_name", "common_name"),
+            fld("identified_by", "identified_by"),
             fld(
-                "living_collections_catalog_number",
-                "living _collections_catalog_number",
-            ),
-            fld(
-                "living_collections_record_number", "living _collections_record_number"
-            ),
-            fld("living_collections_recorded_by", "living _collections_recorded_by"),
-            fld(
-                "living_collections_event_date",
-                "living _collections_event_date",
+                "collection_date",
+                "collection_date",
                 coerce=ingest_utils.get_date_isoformat,
             ),
-            fld("herbarium_code", "herbarium_code"),
-            fld("voucher_herbarium_collector_id", "voucher_herbarium_collector_id"),
-            fld("voucher_herbarium_catalog_number", "voucher_herbarium_catalog_number"),
-            fld("voucher_herbarium_record_number", "voucher_herbarium_record_number"),
-            fld("voucher_herbarium_recorded_by", "voucher_herbarium_recorded_by"),
+            fld("collector", "collector"),
+            fld("collection_method", "collection_method"),
+            fld("collector_sample_id", "collector_sample_id"),
+            fld("wild_captive", "wild_captive"),
+            fld("source_population", "source_population"),
+            fld("country", "country"),
+            fld("state_or_region", "state_or_region"),
+            fld("location_text", "location_text"),
+            fld("habitat", "habitat"),
+            fld("decimal_latitude", "decimal_latitude"),
+            fld("decimal_longitude", "decimal_longitude"),
+            fld("coord_uncertainty_metres", "coord_uncertainty_metres"),
+            fld("genotypic_sex", "genotypic sex"),
+            fld("phenotypic_sex", "phenotypic sex"),
+            fld("method_of_determination", "method of determination"),
+            fld("certainty", "certainty"),
+            fld("lifestage", "life-stage"),
+            fld("birth_date", "birth_date", coerce=ingest_utils.get_date_isoformat),
+            fld("death_date", "death_date", coerce=ingest_utils.get_date_isoformat),
+            fld("associated_media", "associated_media"),
+            fld("ancillary_notes", "ancillary_notes"),
+            fld("barcode_id", "barcode_id"),
+            fld("ala_specimen_url", "ala_specimen_url"),
+            fld("prior_genetics", "prior_genetics"),
+            fld("taxonomic_group", "taxonomic_group"),
+            fld("type_status", "type_status"),
+            fld("material_extraction_type", "material_extraction_type"),
             fld(
-                "voucher_herbarium_event_date",
-                "voucher_herbarium_event_date",
+                "material_extraction_date",
+                "material_extraction_date",
                 coerce=ingest_utils.get_date_isoformat,
             ),
-            fld("silica_gel", "silica_gel"),
-            fld("silica_gel_pressed_sheet", "silica_gel_pressed_sheet"),
-            fld("dna_extract", "dna_extract"),
-            fld("dna_extract_pressed_sheet", "dna_extract_pressed_sheet"),
-            fld("preservation_type", "preservation_type"),
-            fld("preservation_temperature", "preservation_temperature"),
-            fld(
-                "preservation_date_begin",
-                "preservation_date_begin",
-                coerce=ingest_utils.get_date_isoformat,
-            ),
-            fld(
-                "genomic_material_associated_references",
-                "genomic_material_associated_references",
-            ),
-            fld(
-                "genomic_material_preparation_type", "genomic_material_preparation_type"
-            ),
-            fld(
-                "genomic_material_preparation_process",
-                "genomic_material_preparation_process",
-            ),
-            fld(
-                "genomic_material_preparation_materials",
-                "genomic_material_preparation_materials",
-            ),
-            fld("genomic_material_prepared_by", "genomic_material_prepared_by"),
-            fld(
-                "genomic_material_preparation_date",
-                "genomic_material_preparation_date",
-                coerce=ingest_utils.get_date_isoformat,
-            ),
-            fld("scientific_name_notes", "scientific_name_notes"),
-            fld("id_vetting_date", "id_vetting_date"),
-            fld(
-                "living_collections_material_sample_rna",
-                re.compile(r"^living[\s]*_collections_material_sample_[rR][nN][aA]$"),
-            ),
-            fld("silica_gel_id", "silica_gel_id"),
+            fld("material_extracted_by", "material_extracted_by"),
+            fld("material_extraction_method", "material_extraction_method"),
+            fld("material_conc_ng_ul", "material_conc_ng_ul"),
         ]
 
         library_metadata = {}
@@ -153,15 +120,16 @@ class AusargLibraryContextual:
             }
 
             for row in wrapper.get_all():
-                if not row.library_id:
+                # use sample_id as unique identifier (no library ID exists in context atm)
+                if not row.sample_id:
                     continue
-                if row.library_id in library_metadata:
-                    raise Exception("duplicate library id: {}".format(row.library_id))
-                library_id = ingest_utils.extract_ands_id(self._logger, row.library_id)
-                library_metadata[library_id] = row_meta = {}
+                if row.sample_id in library_metadata:
+                    raise Exception("duplicate sample id: {}".format(row.sample_id))
+                sample_id = ingest_utils.extract_ands_id(self._logger, row.sample_id)
+                library_metadata[sample_id] = row_meta = {}
                 for field in row._fields:
                     value = getattr(row, field)
-                    if field == "library_id":
+                    if field == "sample_id":
                         continue
                     row_meta[name_mapping.get(field, field)] = value
         return library_metadata

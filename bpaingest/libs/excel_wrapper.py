@@ -224,6 +224,9 @@ class ExcelWrapper:
             s = re.sub("_+", "_", s)
             if s == "bpa_id":
                 return "sample_id"
+            # 'class' is a Python reserved word (rollback name at later point in code)
+            if s == "class":
+                return "klass"
             return s
 
         parens = OrderedDict([("]", "["), (")", "("),])
