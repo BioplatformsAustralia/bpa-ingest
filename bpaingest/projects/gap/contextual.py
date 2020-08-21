@@ -127,7 +127,7 @@ class GAPLibraryContextual:
             fld("id_vetting_date", "id_vetting_date"),
             fld(
                 "living_collections_material_sample_rna",
-                re.compile(r"^living[\s]*_collections_material_sample_[rR][nN][aA]$")
+                re.compile(r"^living[\s]*_collections_material_sample_[rR][nN][aA]$"),
             ),
             fld("silica_gel_id", "silica_gel_id"),
         ]
