@@ -27,45 +27,49 @@ class AusargIlluminaFastqMetadata(BaseMetadata):
         "https://downloads-qcif.bioplatforms.com/bpa/ausarg_staging/illumina-fastq/",
     ]
     metadata_url_components = ("ticket",)
-    resource_linkage = ("sample_id", "library_id", "flow_cell_id")
+    resource_linkage = ("library_id", "flowcell_id")
     spreadsheet = {
         "fields": [
-            fld('library_id', 'library_id'),
-            fld('sample_id', 'sample_id', coerce=ingest_utils.extract_ands_id),
-            fld('dataset_id', 'dataset_id'),
-            fld('work_order', 'work_order'),
-            fld('specimen_id', 'specimen_id'),
-            fld('tissue_number', 'tissue_number'),
-            fld('genus', 'genus'),
-            fld('species', 'species'),
-            fld('data_custodian', 'data_custodian'),
-            fld('experimental_design', 'experimental design'),
-            fld('ausarg_project', 'ausarg_project'),
-            fld('facility_sample_id', 'facility_sample_id'),
-            fld('sequencing_facility', 'sequencing_facility'),
-            fld('sequencing_platform', 'sequencing_platform'),
-            fld('library_construction_protocol', 'library_construction_protocol'),
-            fld('library_type', 'library_type'),
-            fld('library_prep_date', 'library_prep_date', coerce=ingest_utils.get_date_isoformat),
-            fld('library_prepared_by', 'library_prepared_by'),
-            fld('library_location', 'library_location'),
-            fld('library_status', 'library_status'),
-            fld('library_comments', 'library_comments'),
-            fld('dna_treatment', 'dna_treatment'),
-            fld('library_index_id', 'library_index_id'),
-            fld('library_index_seq', 'library_index_seq'),
-            fld('library_oligo_sequence', 'library_oligo_sequence'),
-            fld('insert_size_range', 'insert_size_range'),
-            fld('library_ng_ul', 'library_ng_ul'),
-            fld('library_pcr_cycles', 'library_pcr_cycles'),
-            fld('library_pcr_reps', 'library_pcr_reps'),
-            fld('n_libraries_pooled', 'n_libraries_pooled'),
-            fld('flowcell_type', 'flowcell_type'),
-            fld('flowcell_id', 'flowcell_id'),
-            fld('cell_postion', 'cell_postion'),
-            fld('movie_length', 'movie_length'),
-            fld('analysis_software', 'analysis_software'),
-            fld('analysis_software_version', 'analysis_software_version'),
+            fld("library_id", "library_id"),
+            fld("sample_id", "sample_id", coerce=ingest_utils.extract_ands_id),
+            fld("dataset_id", "dataset_id"),
+            fld("work_order", "work_order"),
+            fld("specimen_id", "specimen_id"),
+            fld("tissue_number", "tissue_number"),
+            fld("genus", "genus"),
+            fld("species", "species"),
+            fld("data_custodian", "data_custodian"),
+            fld("experimental_design", "experimental design"),
+            fld("ausarg_project", "ausarg_project"),
+            fld("facility_sample_id", "facility_sample_id"),
+            fld("sequencing_facility", "sequencing_facility"),
+            fld("sequencing_platform", "sequencing_platform"),
+            fld("library_construction_protocol", "library_construction_protocol"),
+            fld("library_type", "library_type"),
+            fld(
+                "library_prep_date",
+                "library_prep_date",
+                coerce=ingest_utils.get_date_isoformat,
+            ),
+            fld("library_prepared_by", "library_prepared_by"),
+            fld("library_location", "library_location"),
+            fld("library_status", "library_status"),
+            fld("library_comments", "library_comments"),
+            fld("dna_treatment", "dna_treatment"),
+            fld("library_index_id", "library_index_id"),
+            fld("library_index_seq", "library_index_seq"),
+            fld("library_oligo_sequence", "library_oligo_sequence"),
+            fld("insert_size_range", "insert_size_range"),
+            fld("library_ng_ul", "library_ng_ul"),
+            fld("library_pcr_cycles", "library_pcr_cycles"),
+            fld("library_pcr_reps", "library_pcr_reps"),
+            fld("n_libraries_pooled", "n_libraries_pooled"),
+            fld("flowcell_type", "flowcell_type"),
+            fld("flowcell_id", "flowcell_id"),
+            fld("cell_postion", "cell_postion"),
+            fld("movie_length", "movie_length"),
+            fld("analysis_software", "analysis_software"),
+            fld("analysis_software_version", "analysis_software_version"),
         ],
         "options": {
             "sheet_name": None,
@@ -105,38 +109,50 @@ class AusargIlluminaFastqMetadata(BaseMetadata):
         packages = []
         for fname in glob(self.path + "/*.xlsx"):
             self._logger.info("Processing GAP metadata file {0}".format(fname))
-            flow_cell_id = re.match(r"^.*_([^_]+)_metadata.*\.xlsx", fname).groups()[0]
+            metadata_sheet_flowcell_id = re.match(
+                r"^.*_([^_]+)_metadata.*\.xlsx", fname
+            ).groups()[0]
             rows = self.parse_spreadsheet(fname, self.metadata_info)
             xlsx_info = self.metadata_info[os.path.basename(fname)]
             ticket = xlsx_info["ticket"]
             track_meta = self.google_track_meta.get(ticket)
             for row in rows:
-                sample_id = row.sample_id
-                library_id = row.library_id
                 obj = row._asdict()
+                if metadata_sheet_flowcell_id != row.flowcell_id:
+                    raise Exception(
+                        "The metadata row for library ID: {} has a flow cell ID of {}, which cannot be found in the metadata sheet name: {}".format(
+                            row.library_id, row.flowcell_id, fname
+                        )
+                    )
                 if track_meta is not None:
-                    obj.update(track_meta._asdict())
-                raw_library_id = library_id.split("/")[-1]
-                name = sample_id_to_ckan_name(raw_library_id, self.ckan_data_type)
+                    track_obj = track_meta._asdict()
+                    tracking_folder_name = track_obj.get("folder_name", "")
+                    if not re.search(row.flowcell_id, tracking_folder_name):
+                        raise Exception(
+                            "The metadata row for library ID: {} has a flow cell ID of {}, which cannot be found in the tracking field value: {}".format(
+                                row.library_id, row.flowcell_id, tracking_folder_name
+                            )
+                        )
+                    obj.update(track_obj)
+                name = sample_id_to_ckan_name(
+                    "{}".format(row.library_id),
+                    self.ckan_data_type,
+                    "{}".format(row.flowcell_id),
+                )
                 for contextual_source in self.contextual_metadata:
-                    obj.update(contextual_source.get(sample_id))
+                    obj.update(contextual_source.get(row.sample_id))
+                notes = self.build_notes_without_blanks(obj)
                 obj.update(
                     {
-                        "sample_id": sample_id,
                         "name": name,
                         "id": name,
                         "type": self.ckan_data_type,
-                        "flow_cell_id": flow_cell_id,
                         "data_generated": True,
-                        "library_id": raw_library_id,
+                        "notes": notes,
                     }
                 )
-                notes = self.build_notes_without_blanks(obj)
                 ingest_utils.permissions_organization_member(self._logger, obj)
-                tag_names = ["amphibians", "reptiles", ""]
-                scientific_name = obj.get("scientific_name", "").strip()
-                if scientific_name:
-                    tag_names.append(clean_tag_name(scientific_name))
+                tag_names = ["illumina-fastq"]
                 obj["tags"] = [{"name": "{:.100}".format(t)} for t in tag_names]
                 packages.append(obj)
         return packages
@@ -159,11 +175,7 @@ class AusargIlluminaFastqMetadata(BaseMetadata):
                 # This will be used by sync/dump later to check resource_linkage in resources against that in packages
                 resources.append(
                     (
-                        (
-                            resource["sample_id"],
-                            file_info.get("library_id"),
-                            resource["flow_cell_id"],
-                        ),
+                        (file_info.get("library_id"), resource["flowcell_id"],),
                         legacy_url,
                         resource,
                     )
