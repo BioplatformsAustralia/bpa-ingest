@@ -18,7 +18,7 @@ common_context = [AusargLibraryContextual]
 
 
 class AusargIlluminaFastqMetadata(BaseMetadata):
-    organization = "bpa-plants"
+    organization = "ausarg"
     ckan_data_type = "ausarg-illumina-fastq"
     technology = "illumina-fastq"
     contextual_classes = common_context
