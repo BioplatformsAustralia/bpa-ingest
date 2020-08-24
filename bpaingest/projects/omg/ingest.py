@@ -2044,7 +2044,7 @@ class OMGGenomicsPacBioGenomeAssembliesMetadata(SecondaryMetadata):
         },
     }
     md5 = {
-        "match": [files.pacbio_filename_re],
+        "match": [files.pacbio_secondary_filename_re],
         "skip": [
             re.compile(r"^.*_metadata\.xlsx$"),
             re.compile(r"^.*SampleSheet.*"),
@@ -2087,7 +2087,7 @@ class OMGGenomicsPacBioGenomeAssembliesMetadata(SecondaryMetadata):
                         "name": name,
                         "id": name,
                         "title": "OMG Pacbio Secondary {} {}".format(
-                            library_id, obj["run_date"]
+                            obj["bpa_library_id"], obj["assembly_date"]
                         ),
                         "notes": name,
                         "date_of_transfer": ingest_utils.get_date_isoformat(
@@ -2113,7 +2113,7 @@ class OMGGenomicsPacBioGenomeAssembliesMetadata(SecondaryMetadata):
                 ingest_utils.permissions_organization_member(self._logger, obj)
                 ##TODO: for release, remove this line and correct permissions_organization_member
                 obj["private"] = False
-                obj.update(context)
+                self._logger.info("No context metadata for this data type, so no object merge....Continuing")
                 tag_names = ["pacbio", "genomics", "secondary", "derived", "genome assemblies"]
                 obj["tags"] = [{"name": t} for t in tag_names]
                 self.track_xlsx_resource(obj, fname)
@@ -2149,7 +2149,7 @@ class OMGGenomicsPacBioGenomeAssembliesMetadata(SecondaryMetadata):
                     (
                         (
                             ingest_utils.extract_ands_id(self._logger, library_id),
-                            resource["run_date"],
+                            resource["assembly_date"],
                         ),
                         legacy_url,
                         resource,

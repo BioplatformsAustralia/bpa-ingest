@@ -98,15 +98,15 @@ PACBIO_PATTERN = r"""
 """
 pacbio_filename_re = re.compile(PACBIO_PATTERN, re.VERBOSE)
 
-PACBIO_PATTERN = r"""
+PACBIO_SECONDARY_PATTERN = r"""
     (?P<bpa_library_id>\d{4,6})_
     (?P<facility>UNSW)_
     PAC_
-    (?P<run_date>\d{8})_
+    (?P<assembly_date>\d{8})_
     (?P<run_code>.{3})
     \.tar\.gz
 """
-pacbio_filename_re = re.compile(PACBIO_PATTERN, re.VERBOSE)
+pacbio_secondary_filename_re = re.compile(PACBIO_SECONDARY_PATTERN, re.VERBOSE)
 
 ONT_PROMETHION_PATTERN = r"""
     (?P<bpa_library_id>\d{4,6})_
