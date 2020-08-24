@@ -2073,6 +2073,7 @@ class OMGGenomicsPacBioGenomeAssembliesMetadata(SecondaryMetadata):
             )
             for obj in self.parse_spreadsheet(fname, self.metadata_info):
                 track_meta = self.track_meta.get(obj.ticket)
+
                 def track_get(k):
                     if track_meta is None:
                         return None
@@ -2113,8 +2114,16 @@ class OMGGenomicsPacBioGenomeAssembliesMetadata(SecondaryMetadata):
                 ingest_utils.permissions_organization_member(self._logger, obj)
                 ##TODO: for release, remove this line and correct permissions_organization_member
                 obj["private"] = False
-                self._logger.info("No context metadata for this data type, so no object merge....Continuing")
-                tag_names = ["pacbio", "genomics", "secondary", "derived", "genome assemblies"]
+                self._logger.info(
+                    "No context metadata for this data type, so no object merge....Continuing"
+                )
+                tag_names = [
+                    "pacbio",
+                    "genomics",
+                    "secondary",
+                    "derived",
+                    "genome assemblies",
+                ]
                 obj["tags"] = [{"name": t} for t in tag_names]
                 self.track_xlsx_resource(obj, fname)
                 packages.append(obj)
@@ -2126,7 +2135,6 @@ class OMGGenomicsPacBioGenomeAssembliesMetadata(SecondaryMetadata):
         for obj in self._packages:
             self._logger.info("Have next package for raw resources...")
             self._logger.info(f"{obj}")
-
 
     def _get_resources(self):
         self._logger.info(

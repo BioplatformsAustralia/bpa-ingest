@@ -243,6 +243,7 @@ def permissions_organization_member(logger, obj):
     obj["private"] = True  # NB: placeholder, should be public when we go live
     obj["resource_permissions"] = "organization_member"
 
+
 def permissions_organization_member_after_embargo(
     logger, obj, field_name, days, consortium_org
 ):
