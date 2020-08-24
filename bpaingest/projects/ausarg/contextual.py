@@ -35,9 +35,15 @@ class AusargLibraryContextual:
 
     def _read_metadata(self, fname):
         field_spec = [
-            fld("sample_id", re.compile(r"sample_[Ii][Dd]"), coerce=ingest_utils.extract_ands_id),
+            fld(
+                "sample_id",
+                re.compile(r"sample_[Ii][Dd]"),
+                coerce=ingest_utils.extract_ands_id,
+            ),
             fld("specimen_id", re.compile(r"specimen_?[Ii][Dd]")),
-            fld("specimen_id_description", re.compile(r"specimen_?[Ii][Dd]_description")),
+            fld(
+                "specimen_id_description", re.compile(r"specimen_?[Ii][Dd]_description")
+            ),
             fld("tissue_number", "tissue_number"),
             fld("voucher_or_tissue_number", "voucher_or_tissue_number"),
             fld("institution_name", "institution_name"),
@@ -95,7 +101,10 @@ class AusargLibraryContextual:
                 coerce=ingest_utils.get_date_isoformat,
             ),
             fld("material_extracted_by", re.compile(r"[Mm]aterial_extracted_by")),
-            fld("material_extraction_method", re.compile(r"[Mm]aterial_extraction_method")),
+            fld(
+                "material_extraction_method",
+                re.compile(r"[Mm]aterial_extraction_method"),
+            ),
             fld("material_conc_ng_ul", re.compile(r"[Mm]aterial_conc_ng_ul")),
         ]
 

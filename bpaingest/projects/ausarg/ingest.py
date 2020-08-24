@@ -30,9 +30,21 @@ class AusargIlluminaFastqMetadata(BaseMetadata):
     resource_linkage = ("library_id", "flowcell_id")
     spreadsheet = {
         "fields": [
-            fld("library_id", re.compile(r"library_[Ii][Dd]"), coerce=ingest_utils.extract_ands_id),
-            fld("sample_id", re.compile(r"sample_[Ii][Dd]"), coerce=ingest_utils.extract_ands_id),
-            fld("dataset_id", re.compile(r"dataset_[Ii][Dd]"), coerce=ingest_utils.extract_ands_id),
+            fld(
+                "library_id",
+                re.compile(r"library_[Ii][Dd]"),
+                coerce=ingest_utils.extract_ands_id,
+            ),
+            fld(
+                "sample_id",
+                re.compile(r"sample_[Ii][Dd]"),
+                coerce=ingest_utils.extract_ands_id,
+            ),
+            fld(
+                "dataset_id",
+                re.compile(r"dataset_[Ii][Dd]"),
+                coerce=ingest_utils.extract_ands_id,
+            ),
             fld("work_order", "work_order"),
             fld("specimen_id", re.compile(r"specimen_[Ii][Dd]")),
             fld("tissue_number", "tissue_number"),
