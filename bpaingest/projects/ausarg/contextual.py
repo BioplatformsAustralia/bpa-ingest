@@ -35,9 +35,9 @@ class AusargLibraryContextual:
 
     def _read_metadata(self, fname):
         field_spec = [
-            fld("sample_id", "sample_id", coerce=ingest_utils.extract_ands_id),
-            fld("specimenid", "specimenid"),
-            fld("specimenid_description", "specimenid_description"),
+            fld("sample_id", re.compile(r"sample_[Ii][Dd]"), coerce=ingest_utils.extract_ands_id),
+            fld("specimen_id", re.compile(r"specimen_?[Ii][Dd]")),
+            fld("specimen_id_description", re.compile(r"specimen_?[Ii][Dd]_description")),
             fld("tissue_number", "tissue_number"),
             fld("voucher_or_tissue_number", "voucher_or_tissue_number"),
             fld("institution_name", "institution_name"),
@@ -47,7 +47,7 @@ class AusargLibraryContextual:
             fld("tissue_type", "tissue_type"),
             fld("tissue_preservation", "tissue_preservation"),
             fld("sample_quality", "sample_quality"),
-            fld("taxon_id", "taxon_id"),
+            fld("taxon_id", re.compile(r"taxon_[Ii][Dd]")),
             fld("phylum", "phylum"),
             fld("klass", "class"),
             fld("order", "order"),
@@ -64,7 +64,7 @@ class AusargLibraryContextual:
             ),
             fld("collector", "collector"),
             fld("collection_method", "collection_method"),
-            fld("collector_sample_id", "collector_sample_id"),
+            fld("collector_sample_id", re.compile(r"collector_sample_[Ii][Dd]")),
             fld("wild_captive", "wild_captive"),
             fld("source_population", "source_population"),
             fld("country", "country"),
@@ -84,19 +84,19 @@ class AusargLibraryContextual:
             fld("associated_media", "associated_media"),
             fld("ancillary_notes", "ancillary_notes"),
             fld("barcode_id", "barcode_id"),
-            fld("ala_specimen_url", "ala_specimen_url"),
+            fld("ala_specimen_url", re.compile(r"[aA][Ll][aA]_specimen_[uU][rR][lL]")),
             fld("prior_genetics", "prior_genetics"),
             fld("taxonomic_group", "taxonomic_group"),
             fld("type_status", "type_status"),
-            fld("material_extraction_type", "material_extraction_type"),
+            fld("material_extraction_type", re.compile(r"[Mm]aterial_extraction_type")),
             fld(
                 "material_extraction_date",
-                "material_extraction_date",
+                re.compile(r"[Mm]aterial_extraction_date"),
                 coerce=ingest_utils.get_date_isoformat,
             ),
-            fld("material_extracted_by", "material_extracted_by"),
-            fld("material_extraction_method", "material_extraction_method"),
-            fld("material_conc_ng_ul", "material_conc_ng_ul"),
+            fld("material_extracted_by", re.compile(r"[Mm]aterial_extracted_by")),
+            fld("material_extraction_method", re.compile(r"[Mm]aterial_extraction_method")),
+            fld("material_conc_ng_ul", re.compile(r"[Mm]aterial_conc_ng_ul")),
         ]
 
         library_metadata = {}

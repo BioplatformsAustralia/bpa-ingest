@@ -30,18 +30,18 @@ class AusargIlluminaFastqMetadata(BaseMetadata):
     resource_linkage = ("library_id", "flowcell_id")
     spreadsheet = {
         "fields": [
-            fld("library_id", "library_id", coerce=ingest_utils.extract_ands_id),
-            fld("sample_id", "sample_id", coerce=ingest_utils.extract_ands_id),
-            fld("dataset_id", "dataset_id", coerce=ingest_utils.extract_ands_id),
+            fld("library_id", re.compile(r"library_[Ii][Dd]"), coerce=ingest_utils.extract_ands_id),
+            fld("sample_id", re.compile(r"sample_[Ii][Dd]"), coerce=ingest_utils.extract_ands_id),
+            fld("dataset_id", re.compile(r"dataset_[Ii][Dd]"), coerce=ingest_utils.extract_ands_id),
             fld("work_order", "work_order"),
-            fld("specimen_id", "specimen_id"),
+            fld("specimen_id", re.compile(r"specimen_[Ii][Dd]")),
             fld("tissue_number", "tissue_number"),
             fld("genus", "genus"),
             fld("species", "species"),
             fld("data_custodian", "data_custodian"),
             fld("experimental_design", "experimental design"),
-            fld("ausarg_project", "ausarg_project"),
-            fld("facility_sample_id", "facility_sample_id"),
+            fld("ausarg_project", re.compile(r"[Aa]us[aA][rR][gG]_project")),
+            fld("facility_sample_id", re.compile(r"facility_sample_[Ii][Dd]")),
             fld("sequencing_facility", "sequencing_facility"),
             fld("sequencing_platform", "sequencing_platform"),
             fld("library_construction_protocol", "library_construction_protocol"),
@@ -55,8 +55,8 @@ class AusargIlluminaFastqMetadata(BaseMetadata):
             fld("library_location", "library_location"),
             fld("library_status", "library_status"),
             fld("library_comments", "library_comments"),
-            fld("dna_treatment", "dna_treatment"),
-            fld("library_index_id", "library_index_id"),
+            fld("dna_treatment", re.compile(r"[Dd][nN][aA]_treatment")),
+            fld("library_index_id", re.compile(r"library_index_[Ii][Dd]")),
             fld("library_index_seq", "library_index_seq"),
             fld("library_oligo_sequence", "library_oligo_sequence"),
             fld("insert_size_range", "insert_size_range"),
@@ -65,7 +65,7 @@ class AusargIlluminaFastqMetadata(BaseMetadata):
             fld("library_pcr_reps", "library_pcr_reps"),
             fld("n_libraries_pooled", "n_libraries_pooled"),
             fld("flowcell_type", "flowcell_type"),
-            fld("flowcell_id", "flowcell_id"),
+            fld("flowcell_id", re.compile(r"flowcell_[Ii][Dd]")),
             fld("cell_postion", "cell_postion"),
             fld("movie_length", "movie_length"),
             fld("analysis_software", "analysis_software"),
@@ -135,7 +135,7 @@ class AusargIlluminaFastqMetadata(BaseMetadata):
                         )
                     obj.update(track_obj)
                 name = sample_id_to_ckan_name(
-                    "{}".format(row.library_id),
+                    "{}".format(row.library_id.split("/")[-1]),
                     self.ckan_data_type,
                     "{}".format(row.flowcell_id),
                 )
