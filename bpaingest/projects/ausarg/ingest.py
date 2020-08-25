@@ -146,6 +146,11 @@ class AusargIlluminaFastqMetadata(BaseMetadata):
                             )
                         )
                     obj.update(track_obj)
+                    # overwrite potentially incorrect values from tracking data - fail if source fields don't exist
+                    obj["bioplatforms_sample_id"] = obj["sample_id"]
+                    obj["bioplatforms_library_id"] = obj["library_id"]
+                    obj["bioplatforms_dataset_id"] = obj["dataset_id"]
+                    obj["scientific_name"] = "{} {}".format(obj["genus"], obj["species"])
                 name = sample_id_to_ckan_name(
                     "{}".format(row.library_id.split("/")[-1]),
                     self.ckan_data_type,
@@ -153,18 +158,20 @@ class AusargIlluminaFastqMetadata(BaseMetadata):
                 )
                 for contextual_source in self.contextual_metadata:
                     obj.update(contextual_source.get(row.sample_id))
-                notes = self.build_notes_without_blanks(obj)
                 obj.update(
                     {
                         "name": name,
                         "id": name,
                         "type": self.ckan_data_type,
                         "data_generated": True,
-                        "notes": notes,
+                        "notes": self.build_notes_without_blanks(obj),
                     }
                 )
                 ingest_utils.permissions_organization_member(self._logger, obj)
                 tag_names = ["illumina-fastq"]
+                scientific_name = obj.get("scientific_name", "").strip()
+                if scientific_name:
+                    tag_names.append(clean_tag_name(obj["scientific_name"]))
                 obj["tags"] = [{"name": "{:.100}".format(t)} for t in tag_names]
                 packages.append(obj)
         return packages
