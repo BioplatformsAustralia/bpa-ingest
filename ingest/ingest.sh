@@ -160,6 +160,7 @@ all()
   sepsis $*
   stemcell $*
   wheat $*
+  ausarg $*
 }
 
 action="$1"
