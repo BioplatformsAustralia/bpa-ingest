@@ -150,7 +150,9 @@ class AusargIlluminaFastqMetadata(BaseMetadata):
                     obj["bioplatforms_sample_id"] = obj["sample_id"]
                     obj["bioplatforms_library_id"] = obj["library_id"]
                     obj["bioplatforms_dataset_id"] = obj["dataset_id"]
-                    obj["scientific_name"] = "{} {}".format(obj["genus"], obj["species"])
+                    obj["scientific_name"] = "{} {}".format(
+                        obj["genus"], obj["species"]
+                    )
                 name = sample_id_to_ckan_name(
                     "{}".format(row.library_id.split("/")[-1]),
                     self.ckan_data_type,
