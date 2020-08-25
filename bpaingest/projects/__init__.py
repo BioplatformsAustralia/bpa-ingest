@@ -168,8 +168,7 @@ class ProjectInfo:
             nm_parts.append("analysed")
         if class_info["pool"]:
             nm_parts.append("pool")
-        test = "-".join(filter(None, nm_parts))
-        return test
+        return "-".join(filter(None, nm_parts))
 
     def cli_options(self):
         return dict((t["slug"], t["cls"]) for t in self.metadata_info)
