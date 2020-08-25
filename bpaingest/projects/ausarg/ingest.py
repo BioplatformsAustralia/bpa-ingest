@@ -100,8 +100,8 @@ class AusargIlluminaFastqMetadata(BaseMetadata):
     notes_mapping = [
         {"key": "genus", "separator": " "},
         {"key": "species", "separator": ", "},
-        {"key": "AusARG_project", "separator": ", "},
-        {"key": "sequencing_platforms", "separator": " "},
+        {"key": "ausarg_project", "separator": ", "},
+        {"key": "sequencing_platform", "separator": " "},
         {"key": "library_type", "separator": ", "},
         {"key": "state_or_origin", "separator": ", "},
         {"key": "country"},
