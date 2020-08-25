@@ -1,3 +1,5 @@
+import re
+
 from .ops import (
     ckan_method,
     patch_if_required,
@@ -200,8 +202,12 @@ def sync_package_resources(
 
 def reupload_resources(ckan, to_reupload, resource_id_legacy_url, auth, num_threads):
     logger.info("%d objects to be re-uploaded" % (len(to_reupload)))
+    destination = "bpa-ckan-prod/prodenv"
+    if re.search("staging.bioplatforms", getattr(ckan, "address", "")):
+        destination = "bpa-ckan-devel/staging"
+    logger.info("Resources will be reuploaded under: {}...".format(destination))
     for reupload_obj, legacy_url in to_reupload:
-        reupload_resource(ckan, reupload_obj, legacy_url, auth)
+        reupload_resource(ckan, reupload_obj, legacy_url, destination, auth)
 
 
 def sync_resources(
