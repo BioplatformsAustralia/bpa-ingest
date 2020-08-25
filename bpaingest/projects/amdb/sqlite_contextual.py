@@ -232,7 +232,7 @@ class AustralianMicrobiomeSampleContextualSQLite:
         "https://downloads-qcif.bioplatforms.com/bpa/amd/metadata/contextual/2020-01-29/"
     ]
     metadata_patterns = [re.compile(r"^.*\.xlsx$")]
-    name = "amd-samplecontextual"
+    name = "amd-samplecontextualsqlite"
     field_specs = {
         "Coastal water": [
             fld("sample_id", "bpa_id", coerce=ingest_utils.extract_ands_id),
