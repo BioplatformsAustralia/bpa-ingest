@@ -6,6 +6,7 @@ from urllib.parse import urljoin
 from unipath import Path
 
 from . import files
+from .sqlite_contextual import AustralianMicrobiomeSampleContextualSQLite
 from ...abstract import BaseMetadata
 from ...libs import ingest_utils
 from ...libs.excel_wrapper import make_field_definition as fld
@@ -28,9 +29,7 @@ from .tracking import (
 )
 
 common_context = [
-    AustralianMicrobiomeSampleContextual,
-    BASENCBIContextual,
-    MarineMicrobesNCBIContextual,
+    AustralianMicrobiomeSampleContextualSQLite
 ]
 
 
@@ -66,7 +65,7 @@ def build_base_amplicon_linkage(index_linkage, flow_id, index):
 
 def build_contextual_field_names():
     field_names = {}
-    lookup = AustralianMicrobiomeSampleContextual.units_for_fields()
+    lookup = AustralianMicrobiomeSampleContextualSQLite.units_for_fields()
     for field, units in lookup.items():
         if units is None:
             continue
