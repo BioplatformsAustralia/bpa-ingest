@@ -240,14 +240,14 @@ def add_spatial_extra(logger, package):
 
 
 def permissions_organization_member(logger, obj):
-    obj["private"] = True  # NB: placeholder, should be public when we go live
+    obj["private"] = False
     obj["resource_permissions"] = "organization_member"
 
 
 def permissions_organization_member_after_embargo(
     logger, obj, field_name, days, consortium_org
 ):
-    obj["private"] = True  # NB: placeholder, should be public when we go live
+    obj["private"] = False
     if field_name not in obj:
         logger.error(
             "permission field {} not found in obj (keys are {})".format(

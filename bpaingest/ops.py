@@ -313,7 +313,7 @@ def download_legacy_file(legacy_url, auth):
     return tempdir, path
 
 
-def reupload_resource(ckan, ckan_obj, legacy_url, auth=None):
+def reupload_resource(ckan, ckan_obj, legacy_url, parent_destination, auth=None):
     "reupload data from legacy_url to ckan_obj"
 
     tempdir, path = download_legacy_file(legacy_url, auth)
@@ -322,11 +322,9 @@ def reupload_resource(ckan, ckan_obj, legacy_url, auth=None):
         return
     try:
         logger.info("re-uploading from tempfile: %s" % (path))
-
-        # FIXME: paramaterise the target bucket name
         filename = path.split("/")[-1]
-        s3_destination = "s3://bpa-ckan-prod/prodenv/resources/{}/{}".format(
-            ckan_obj["id"], filename
+        s3_destination = "s3://{}/resources/{}/{}".format(
+            parent_destination, ckan_obj["id"], filename
         )
         s3cmd_args = [
             "aws",

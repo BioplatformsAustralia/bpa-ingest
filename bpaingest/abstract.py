@@ -9,6 +9,15 @@ class BaseMetadata:
     auth = ("bpaingest", "bpaingest")
     resource_linkage = ("sample_id",)
 
+    def build_notes_without_blanks(self, obj):
+        notes = ""
+        # ensure blank fields are not used
+        for next_note in self.notes_mapping:
+            next_value = obj.get(next_note["key"], "")
+            if next_value:
+                notes += next_value + next_note.get("separator", "")
+        return notes
+
     def parse_spreadsheet(self, fname, metadata_info):
         kwargs = self.spreadsheet["options"]
         wrapper = ExcelWrapper(

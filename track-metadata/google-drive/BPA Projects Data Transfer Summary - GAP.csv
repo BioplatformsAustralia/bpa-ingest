@@ -11,10 +11,13 @@ AGRF,16/04/2020,79639,81993,83651,Telopea speciosissima,Reference Genomes,Pilot,
 AGRF,23/06/2020,79638,81994,83652,Acacia pycnantha,Reference Genomes,Pilot,Illumina Short Read,GAP_NGS_AGRF_HLYCTDRXX,23/06/2020,,BPAOPS-924,"(withdrawn, replaced)"
 AGRF,23/06/2020,79638,81995,83652,Acacia pycnantha,Reference Genomes,Pilot,Illumina Short Read,GAP_NGS_AGRF_HLYCTDRXX,23/06/2020,,BPAOPS-924,
 AGRF,23/06/2020,79638,81996,83652,Acacia pycnantha,Reference Genomes,Pilot,Illumina Short Read,GAP_NGS_AGRF_HLYCTDRXX,23/06/2020,,BPAOPS-924,
-AGRF,25/06/2020,79638,81994,83652,Acacia pycnantha,Reference Genomes,Pilot,Illumina Short Read,GAP_NGS_AGRF_HM37KDRXX,,,BPAOPS-930,
-AGRF,25/06/2020,79638,81995,83652,Acacia pycnantha,Reference Genomes,Pilot,Illumina Short Read,GAP_NGS_AGRF_HM37KDRXX,,,BPAOPS-930,
-AGRF,25/06/2020,79638,81996,83652,Acacia pycnantha,Reference Genomes,Pilot,Illumina Short Read,GAP_NGS_AGRF_HM37KDRXX,,,BPAOPS-930,
-AGRF,25/06/2020,,,83650,,Phylogenomics,Pilot,Illumina Short Read,20200625_GAP_AGRF_HF7CKAFX2 (Angio353 - except Korjent data),,,BPAOPS-931,
-AGRF,25/06/2020,,,83650,,Phylogenomics,Pilot,Illumina Short Read,20200625_GAP_AGRF_H7LV7AFX2 (Waycott baits - except Korjent data),,,BPAOPS-932,
-AGRF,1/7/2020,,,83650,,Phylogenomics,Pilot,Illumina Short Read,"20200701_GAP_AGRF_HF7CKAFX2 (Angio353 - Korjent data only, plus combined bait)",,,BPAOPS-933,
-AGRF,1/7/2020,,,83650,,Phylogenomics,Pilot,Illumina Short Read,20200701_GAP_AGRF_H7LV7AFX2 (Waycott baits - Korjent data only),,,BPAOPS-934,
+AGRF,25/06/2020,79638,81994,83652,Acacia pycnantha,Reference Genomes,Pilot,Illumina Short Read,GAP_NGS_AGRF_HM37KDRXX,08/07/2020,,BPAOPS-930,"(withdrawn, replaced)"
+AGRF,25/06/2020,79638,81995,83652,Acacia pycnantha,Reference Genomes,Pilot,Illumina Short Read,GAP_NGS_AGRF_HM37KDRXX,08/07/2020,,BPAOPS-930,
+AGRF,25/06/2020,79638,81996,83652,Acacia pycnantha,Reference Genomes,Pilot,Illumina Short Read,GAP_NGS_AGRF_HM37KDRXX,08/07/2020,,BPAOPS-930,
+AGRF,25/06/2020,,,83650,,Phylogenomics,Pilot,Illumina Short Read,20200625_GAP_AGRF_HF7CKAFX2 (Angio353 - except Korjent data),08/07/2020,,BPAOPS-931,https://data.bioplatforms.com/organization/bpa-plants?q=ticket%3ABPAOPS-931&sort=score+desc%2C+metadata_modified+desc
+AGRF,25/06/2020,,,83650,,Phylogenomics,Pilot,Illumina Short Read,20200625_GAP_AGRF_H7LV7AFX2 (Waycott baits - except Korjent data),08/07/2020,,BPAOPS-932,https://data.bioplatforms.com/organization/bpa-plants?q=ticket%3ABPAOPS-932&sort=score+desc%2C+metadata_modified+desc
+AGRF,1/7/2020,,,83650,,Phylogenomics,Pilot,Illumina Short Read,"20200701_GAP_AGRF_HF7CKAFX2 (Angio353 - Korjent data only, plus combined bait)",08/07/2020,,BPAOPS-933,https://data.bioplatforms.com/organization/bpa-plants?q=ticket%3ABPAOPS-933&sort=score+desc%2C+metadata_modified+desc
+AGRF,1/7/2020,,,83650,,Phylogenomics,Pilot,Illumina Short Read,20200701_GAP_AGRF_H7LV7AFX2 (Waycott baits - Korjent data only),08/07/2020,,BPAOPS-934,https://data.bioplatforms.com/organization/bpa-plants?q=ticket%3ABPAOPS-934&sort=score+desc%2C+metadata_modified+desc
+AGRF,06/08/2020,79638,81994,83652,Acacia pycnantha,Reference Genomes,Pilot,Illumina Short Read,20200806_GAP_NGS_AGRF_HNMVTDRXX,11/08/2020,,BPAOPS-947,
+AGRF,06/08/2020,79638,81995,83652,Acacia pycnantha,Reference Genomes,Pilot,Illumina Short Read,20200806_GAP_NGS_AGRF_HNMVTDRXX,11/08/2020,,BPAOPS-947,
+AGRF,06/08/2020,79638,81996,83652,Acacia pycnantha,Reference Genomes,Pilot,Illumina Short Read,20200806_GAP_NGS_AGRF_HNMVTDRXX,11/08/2020,,BPAOPS-947,

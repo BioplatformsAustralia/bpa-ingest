@@ -68,6 +68,10 @@ gbr() {
   apply gbr-genomics-pacbio $*
 }
 
+ausarg() {
+  apply ausarg-illumina-fastq $*
+}
+
 marine_microbes()
 {
   apply marine-microbes-genomics-amplicons $*
@@ -157,6 +161,7 @@ all()
   sepsis $*
   stemcell $*
   wheat $*
+  ausarg $*
 }
 
 action="$1"
