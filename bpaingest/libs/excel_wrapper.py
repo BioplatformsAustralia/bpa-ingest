@@ -174,7 +174,7 @@ class ExcelWrapper:
                 self.missing_headers.append(spec.column_name)
                 if not spec.optional:
                     self._error(
-                        "Column `{}' not found in `{}' `{}'".format(
+                        "E3001: Column `{}' not found in `{}' `{}'".format(
                             col_descr, os.path.basename(self.file_name), self.sheet.name
                         )
                     )
@@ -187,7 +187,7 @@ class ExcelWrapper:
             if s != "" and idx not in mapped_columns and idx not in skip_columns:
                 unmapped_columns.append(idx)
                 self._error(
-                    "Column `{}' not mapped to an output field in `{}` `{}`".format(
+                    "E3002: Column `{}' not mapped to an output field in `{}` `{}`".format(
                         s, os.path.basename(self.file_name), self.sheet.name
                     )
                 )
@@ -224,6 +224,9 @@ class ExcelWrapper:
             s = re.sub("_+", "_", s)
             if s == "bpa_id":
                 return "sample_id"
+            # 'class' is a Python reserved word (rollback name at later point in code)
+            if s == "class":
+                return "klass"
             return s
 
         parens = OrderedDict([("]", "["), (")", "("),])

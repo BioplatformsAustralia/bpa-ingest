@@ -23,6 +23,8 @@ class OMGSampleContextual:
         self._logger = logger
         self.sample_metadata = self._read_metadata(one(glob(path + "/*.xlsx")))
 
+    # The callee calls with (sample_id and library_id) as workaround to not knowing whether calling
+    # this class method or the other library context class
     def get(self, bpa_sample_id, bpa_library_id):
         if bpa_sample_id in self.sample_metadata:
             return self.sample_metadata[bpa_sample_id]
@@ -140,6 +142,8 @@ class OMGLibraryContextual:
         self._logger = logger
         self.library_metadata = self._read_metadata(one(glob(path + "/*.xlsx")))
 
+    # The callee calls with (sample_id and library_id) as workaround to not knowing whether calling
+    # this class method or the other library context class
     def get(self, bpa_sample_id, bpa_library_id):
         if bpa_library_id in self.library_metadata:
             return self.library_metadata[bpa_library_id]

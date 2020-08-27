@@ -98,4 +98,11 @@ ORGANIZATIONS = [
         "image_url": "https://data.bioplatforms.com/AusARG-Logo-RGB-150dpi-Transparent.png",
         "groups": [{"capacity": "public", "name": BPA_ORGANIZATION_ID}],
     },
+    {
+        "name": "threatened-species",
+        "title": "Threatened Species Initiative",
+        "display_name": "Threatened Species Initiative",
+        "image_url": "https://data.bioplatforms.com/Threatened-Species-Initiative-Logo-150dpi-RGB.png",
+        "groups": [{"capacity": "public", "name": BPA_ORGANIZATION_ID}],
+    },
 ]
