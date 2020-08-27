@@ -61,7 +61,7 @@ from .omg.ingest import (
     OMGGenomicsPacbioMetadata,
     OMGONTPromethionMetadata,
     OMGTranscriptomicsNextseq,
-    OMGGenomicsPacBioGenomeAssembliesMetadata,
+    OMGGenomicsPacBioGenomeAssemblyMetadata,
 )
 
 
@@ -104,7 +104,7 @@ class ProjectInfo:
             OMGGenomicsPacbioMetadata,
             OMGONTPromethionMetadata,
             OMGTranscriptomicsNextseq,
-            OMGGenomicsPacBioGenomeAssembliesMetadata,
+            OMGGenomicsPacBioGenomeAssemblyMetadata,
         ],
         "sepsis": [
             SepsisGenomicsMiseqMetadata,

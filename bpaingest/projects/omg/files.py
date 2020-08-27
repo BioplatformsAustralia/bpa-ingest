@@ -98,16 +98,6 @@ PACBIO_PATTERN = r"""
 """
 pacbio_filename_re = re.compile(PACBIO_PATTERN, re.VERBOSE)
 
-PACBIO_SECONDARY_PATTERN = r"""
-    (?P<bpa_library_id>\d{4,6})_
-    (?P<facility>UNSW)_
-    PAC_
-    (?P<assembly_date>\d{8})_
-    (?P<run_code>.{3})
-    \.tar\.gz
-"""
-pacbio_secondary_filename_re = re.compile(PACBIO_SECONDARY_PATTERN, re.VERBOSE)
-
 ONT_PROMETHION_PATTERN = r"""
     (?P<bpa_library_id>\d{4,6})_
     (?P<flowcell_id>PA[DE]\d{5})_
@@ -131,3 +121,15 @@ TRANSCRIPTOMICS_NEXTSEQ_FASTQ_FILENAME_PATTERN = r"""
 transcriptomics_nextseq_fastq_filename_re = re.compile(
     TRANSCRIPTOMICS_NEXTSEQ_FASTQ_FILENAME_PATTERN, re.VERBOSE
 )
+
+PACBIO_SECONDARY_PATTERN = r"""
+    (?P<bpa_library_id>\d{4,6})_
+    (?P<facility>UNSW)_
+    PAC_
+    (?P<assembly_date>\d{8})_
+    (?P<run_code>.{3})
+    \.tar\.gz
+    Scras_dunnart_assem1\.0_pb-ont-illsr_flyeassem_red-rd-scfitr2_pil2xwgs2_60chr
+    \.fasta
+"""
+pacbio_secondary_filename_re = re.compile(PACBIO_SECONDARY_PATTERN, re.VERBOSE)

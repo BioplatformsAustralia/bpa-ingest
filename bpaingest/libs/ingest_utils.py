@@ -1,4 +1,5 @@
 import json
+import numbers
 import re
 from .bpa_constants import BPA_PREFIX
 
@@ -268,4 +269,18 @@ def date_or_str(logger, v):
     d = get_date_isoformat(logger, v, silent=True)
     if d is not None:
         return d
-    return v
+    # only round to integer if decimal places are 0
+    if isinstance(v, numbers.Number) and v.is_integer():
+        return str(int(v))
+    return str(v)
+
+def from_comma_or_space_separated_to_list(logger, raw):
+    separators = [",", " "]
+    if re.search(" ", raw) and re.search(",", raw):
+        raise Exception(
+            "There are spaces and commas in this string. Only commas or spaces can be used, not both.")
+    for next_separator in separators:
+        result = raw.split(next_separator)
+        if result != raw:
+            return raw
+    raise Exception("Raw input must be separated by one of {}".format(separators))

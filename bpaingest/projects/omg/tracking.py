@@ -5,5 +5,5 @@ class OMGTrackMetadata(GoogleDriveTrackMetadata):
     name = "OzMammal"
 
 
-class OMGTrackGenomeAssembliesMetadata(GoogleDriveTrackMetadata):
+class OMGTrackGenomeAssemblyMetadata(GoogleDriveTrackMetadata):
     name = "OzMammalSecondary"

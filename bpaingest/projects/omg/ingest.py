@@ -4,7 +4,7 @@ from collections import defaultdict
 from ...abstract import BaseMetadata
 from ...secondarydata import SecondaryMetadata
 
-from ...util import sample_id_to_ckan_name, common_values
+from ...util import sample_id_to_ckan_name, common_values, clean_tag_name
 from urllib.parse import urljoin
 
 from glob import glob
@@ -13,9 +13,9 @@ from ...libs import ingest_utils
 from bpasslh.handler import SensitiveDataGeneraliser
 from ...libs.excel_wrapper import make_field_definition as fld, make_skip_column as skp
 from . import files
-from .tracking import OMGTrackMetadata, OMGTrackGenomeAssembliesMetadata
+from .tracking import OMGTrackMetadata, OMGTrackGenomeAssemblyMetadata
 from .contextual import OMGSampleContextual, OMGLibraryContextual
-from ...libs.ingest_utils import get_clean_number
+from ...libs.ingest_utils import get_clean_number, from_comma_or_space_separated_to_list
 
 import os
 import re
@@ -152,7 +152,7 @@ class OMG10XRawIlluminaMetadata(OMGBaseMetadata):
             fld("software_version", "software_version"),
             fld("file", "file"),
         ],
-        "options": {"header_length": 1, "column_name_row_index": 0,},
+        "options": {"header_length": 1, "column_name_row_index": 0, },
     }
     md5 = {
         "match": [files.tenxtar_filename_re],
@@ -164,7 +164,7 @@ class OMG10XRawIlluminaMetadata(OMGBaseMetadata):
     }
 
     def __init__(
-        self, logger, metadata_path, contextual_metadata=None, metadata_info=None
+            self, logger, metadata_path, contextual_metadata=None, metadata_info=None
     ):
         super().__init__(logger, metadata_path)
         self.path = Path(metadata_path)
@@ -371,7 +371,7 @@ class OMG10XRawMetadata(OMGBaseMetadata):
     }
 
     def __init__(
-        self, logger, metadata_path, contextual_metadata=None, metadata_info=None
+            self, logger, metadata_path, contextual_metadata=None, metadata_info=None
     ):
         super().__init__(logger, metadata_path)
         self.path = Path(metadata_path)
@@ -537,7 +537,7 @@ class OMG10XProcessedIlluminaMetadata(OMGBaseMetadata):
             fld("species", "species", optional=True),
             fld("voucher_id", "voucher_id", optional=True),
         ],
-        "options": {"header_length": 1, "column_name_row_index": 0,},
+        "options": {"header_length": 1, "column_name_row_index": 0, },
     }
     md5 = {
         "match": [files.tenxtar_filename_re],
@@ -549,7 +549,7 @@ class OMG10XProcessedIlluminaMetadata(OMGBaseMetadata):
     }
 
     def __init__(
-        self, logger, metadata_path, contextual_metadata=None, metadata_info=None
+            self, logger, metadata_path, contextual_metadata=None, metadata_info=None
     ):
         super().__init__(logger, metadata_path)
         self.path = Path(metadata_path)
@@ -603,7 +603,7 @@ class OMG10XProcessedIlluminaMetadata(OMGBaseMetadata):
                         "id": name,
                         "flow_id": flow_id,
                         "title": "OMG 10x Illumina Processed %s %s"
-                        % (bpa_sample_id, flow_id),
+                                 % (bpa_sample_id, flow_id),
                         "notes": self.generate_notes_field_with_id(
                             context, bpa_library_id
                         ),
@@ -738,7 +738,7 @@ class OMGExonCaptureMetadata(OMGBaseMetadata):
             fld("software_version", "software_version"),
             fld("file", "file"),
         ],
-        "options": {"header_length": 1, "column_name_row_index": 0,},
+        "options": {"header_length": 1, "column_name_row_index": 0, },
     }
     md5 = {
         "match": [files.exon_filename_re],
@@ -750,7 +750,7 @@ class OMGExonCaptureMetadata(OMGBaseMetadata):
     }
 
     def __init__(
-        self, logger, metadata_path, contextual_metadata=None, metadata_info=None
+            self, logger, metadata_path, contextual_metadata=None, metadata_info=None
     ):
         super().__init__(logger, metadata_path)
         self.path = Path(metadata_path)
@@ -816,7 +816,7 @@ class OMGExonCaptureMetadata(OMGBaseMetadata):
                         "name": name,
                         "id": name,
                         "title": "OMG Exon Capture Raw %s %s %s"
-                        % (library_id, row.flowcell_id, row.library_index_sequence),
+                                 % (library_id, row.flowcell_id, row.library_index_sequence),
                         "notes": self.generate_notes_field(context),
                         "date_of_transfer": ingest_utils.get_date_isoformat(
                             self._logger, track_get("date_of_transfer")
@@ -953,7 +953,7 @@ class OMGGenomicsNovaseqMetadata(OMGBaseMetadata):
     }
 
     def __init__(
-        self, logger, metadata_path, contextual_metadata=None, metadata_info=None
+            self, logger, metadata_path, contextual_metadata=None, metadata_info=None
     ):
         super().__init__(logger, metadata_path)
         self.path = Path(metadata_path)
@@ -996,7 +996,7 @@ class OMGGenomicsNovaseqMetadata(OMGBaseMetadata):
                         "name": name,
                         "id": name,
                         "title": "OMG Novaseq Raw %s %s %s"
-                        % (library_id, row.flowcell_id, row.library_index_sequence),
+                                 % (library_id, row.flowcell_id, row.library_index_sequence),
                         "notes": self.generate_notes_field(context),
                         "date_of_transfer": ingest_utils.get_date_isoformat(
                             self._logger, track_get("date_of_transfer")
@@ -1104,7 +1104,7 @@ class OMGGenomicsHiSeqMetadata(OMGBaseMetadata):
             fld("software_version", "software_version"),
             fld("file", "file"),
         ],
-        "options": {"header_length": 1, "column_name_row_index": 0,},
+        "options": {"header_length": 1, "column_name_row_index": 0, },
     }
     md5 = {
         "match": [files.hiseq_filename_re],
@@ -1116,7 +1116,7 @@ class OMGGenomicsHiSeqMetadata(OMGBaseMetadata):
     }
 
     def __init__(
-        self, logger, metadata_path, contextual_metadata=None, metadata_info=None
+            self, logger, metadata_path, contextual_metadata=None, metadata_info=None
     ):
         super().__init__(logger, metadata_path)
         self.path = Path(metadata_path)
@@ -1172,7 +1172,7 @@ class OMGGenomicsHiSeqMetadata(OMGBaseMetadata):
                         "id": name,
                         "flow_id": flow_id,
                         "title": "OMG Genomics HiSeq Raw %s %s"
-                        % (bpa_sample_id, flow_id),
+                                 % (bpa_sample_id, flow_id),
                         "notes": self.generate_notes_field_with_id(
                             context, bpa_library_id
                         ),
@@ -1315,12 +1315,12 @@ class OMGGenomicsDDRADMetadata(OMGBaseMetadata):
         },
     }
     md5 = {
-        "match": [files.ddrad_fastq_filename_re, files.ddrad_metadata_sheet_re,],
+        "match": [files.ddrad_fastq_filename_re, files.ddrad_metadata_sheet_re, ],
         "skip": None,
     }
 
     def __init__(
-        self, logger, metadata_path, contextual_metadata=None, metadata_info=None
+            self, logger, metadata_path, contextual_metadata=None, metadata_info=None
     ):
         super().__init__(logger, metadata_path)
         self.path = Path(metadata_path)
@@ -1508,7 +1508,7 @@ class OMGGenomicsPacbioMetadata(OMGBaseMetadata):
     }
 
     def __init__(
-        self, logger, metadata_path, contextual_metadata=None, metadata_info=None
+            self, logger, metadata_path, contextual_metadata=None, metadata_info=None
     ):
         super().__init__(logger, metadata_path)
         self.path = Path(metadata_path)
@@ -1701,7 +1701,7 @@ class OMGONTPromethionMetadata(OMGBaseMetadata):
     }
 
     def __init__(
-        self, logger, metadata_path, contextual_metadata=None, metadata_info=None
+            self, logger, metadata_path, contextual_metadata=None, metadata_info=None
     ):
         super().__init__(logger, metadata_path)
         self.path = Path(metadata_path)
@@ -1867,7 +1867,7 @@ class OMGTranscriptomicsNextseq(OMGBaseMetadata):
     }
 
     def __init__(
-        self, logger, metadata_path, contextual_metadata=None, metadata_info=None
+            self, logger, metadata_path, contextual_metadata=None, metadata_info=None
     ):
         super().__init__(logger, metadata_path)
         self.path = Path(metadata_path)
@@ -1920,7 +1920,7 @@ class OMGTranscriptomicsNextseq(OMGBaseMetadata):
                         "id": name,
                         "bpa_library_id": bpa_library_id,
                         "title": "OMG Transcriptomics NextSeq %s %s"
-                        % (bpa_library_id, flow_id),
+                                 % (bpa_library_id, flow_id),
                         "date_of_transfer": ingest_utils.get_date_isoformat(
                             self._logger, track_get("date_of_transfer")
                         ),
@@ -1979,10 +1979,10 @@ class OMGTranscriptomicsNextseq(OMGBaseMetadata):
         return resources + self.generate_xlsx_resources()
 
 
-class OMGGenomicsPacBioGenomeAssembliesMetadata(SecondaryMetadata):
+class OMGGenomicsPacBioGenomeAssemblyMetadata(SecondaryMetadata):
     organization = "bpa-omg"
-    ckan_data_type = "omg-pacbio-genome-assemblies"
-    technology = "pacbio-genome-assemblies"
+    ckan_data_type = "omg-pacbio-genome-assembly"
+    technology = "pacbio-genome-assembly"
     contextual_classes = []
     metadata_patterns = [r"^.*\.md5$", r"^.*_metadata.*\.xlsx$"]
     metadata_urls = [
@@ -1993,7 +1993,7 @@ class OMGGenomicsPacBioGenomeAssembliesMetadata(SecondaryMetadata):
     raw_resource_linkage = ("bpa_library_id", "run_date")
     spreadsheet = {
         "fields": [
-            fld("analysis_output_name", "analysis_output_name"),
+            fld('filename', 'filename', optional=True),
             fld("bpa_sample_id", "bpa_sample_id", coerce=ingest_utils.extract_ands_id),
             fld(
                 "bpa_library_id", "bpa_library_id", coerce=ingest_utils.extract_ands_id
@@ -2001,41 +2001,31 @@ class OMGGenomicsPacBioGenomeAssembliesMetadata(SecondaryMetadata):
             fld(
                 "bpa_dataset_id", "bpa_dataset_id", coerce=ingest_utils.extract_ands_id
             ),
-            fld("genus", "genus"),
-            fld("species", "species"),
-            fld("seq_technology", "seq_technology"),
-            fld("analysis_aim", "analysis_aim"),
-            fld("assembly_method", "assembly method"),
-            fld(
-                "assembly_method_version_or_date",
-                "assembly method version or date",
-                coerce=ingest_utils.get_date_isoformat,
-            ),
-            fld("genome_coverage", "genome coverage"),
-            fld("sequencing_technology", "sequencing technology"),
-            fld(
-                "assembly_date", "assembly date", coerce=ingest_utils.get_date_isoformat
-            ),
-            fld("assembly_name", "assembly name"),
-            fld(
-                "full_or_partial_genome_in_the_sample",
-                "full or partial genome in the sample :",
-            ),
-            fld("reference_genome", "reference genome"),
-            fld("update", "update", coerce=ingest_utils.get_date_isoformat),
-            fld("bacteria_available_from", "bacteria_available_from"),
-            fld("computational_infrastructure", "computational_infrastructure"),
-            fld("main_analysis_output", "main_analysis_output"),
-            fld("output_version", "output version"),
-            fld("no_scaffolds", "no. scaffolds"),
-            fld("n50", re.compile(r"[nN]50")),
-            fld("version_release_link", "version_release_link"),
-            fld("contact_person", "contact_person"),
-            fld("raw_resource_name", re.compile(r"Raw.*resource.*")),
-            fld("raw_run_date", "raw run date", coerce=ingest_utils.get_date_isoformat),
-            fld("raw_run_code", "raw run code"),
-            fld("raw_facility", "raw facility"),
-            fld("raw_library_id", "raw  library id"),
+            fld('genus', 'genus'),
+            fld('species', 'species'),
+            fld('seq_technology', 'seq_technology'),
+            fld('analysis_aim', 'analysis_aim'),
+            fld('assembly_method', 'assembly method'),
+            fld('hybrid', 'hybrid'),
+            fld('polishing_scaffolding_method', 'polishing scaffolding method'),
+            fld('polishing_scaffolding_data', 'polishing scaffolding data'),
+            fld('assembly_method_version_or_date', 'assembly method version or date',
+                coerce=ingest_utils.date_or_str),
+            fld('genome_coverage', 'genome coverage'),
+            fld('sequencing_technology', 'sequencing technology'),
+            fld('assembly_date', 'assembly date', coerce=ingest_utils.date_or_str),
+            fld('assembly_name', 'assembly name'),
+            fld('full_or_partial_genome_in_the_sample', 'full or partial genome in the sample :'),
+            fld('reference_genome', 'reference genome'),
+            fld('update', 'update', coerce=ingest_utils.get_date_isoformat),
+            fld('bacteria_available_from', 'bacteria_available_from'),
+            fld('computational_infrastructure', 'computational_infrastructure'),
+            fld('main_analysis_output', 'main_analysis_output'),
+            fld('no_scaffolds', 'no. scaffolds'),
+            fld('n50', 'n50 (mb)', units='mb', coerce=ingest_utils.get_clean_number),
+            fld('version_release_link', 'version_release_link'),
+            fld('contact_person', 'contact_person'),
+            fld('raw_resources', 'raw resources'),
         ],
         "options": {
             "sheet_name": "Data_Genomes",
@@ -2053,13 +2043,13 @@ class OMGGenomicsPacBioGenomeAssembliesMetadata(SecondaryMetadata):
     }
 
     def __init__(
-        self, logger, metadata_path, contextual_metadata=[], metadata_info=None
+            self, logger, metadata_path, contextual_metadata=[], metadata_info=None
     ):
         super().__init__(logger, metadata_path)
         self.path = Path(metadata_path)
         self.contextual_metadata = contextual_metadata
         self.metadata_info = metadata_info
-        self.track_meta = OMGTrackGenomeAssembliesMetadata()
+        self.google_track_meta = OMGTrackGenomeAssemblyMetadata()
 
     def _get_packages(self):
         self._logger.info("Ingesting secondary OMG metadata from {0}".format(self.path))
@@ -2067,64 +2057,67 @@ class OMGGenomicsPacBioGenomeAssembliesMetadata(SecondaryMetadata):
 
         for fname in glob(self.path + "/*.xlsx"):
             self._logger.info(
-                "Processing Secondary (Genome assemblies) metadata file {0}".format(
+                "Processing Secondary (Genome assembly) metadata file {0}".format(
                     os.path.basename(fname)
                 )
             )
-            for obj in self.parse_spreadsheet(fname, self.metadata_info):
-                track_meta = self.track_meta.get(obj.ticket)
-
-                def track_get(k):
-                    if track_meta is None:
-                        return None
-                    return getattr(track_meta, k)
+            rows = self.parse_spreadsheet(fname, self.metadata_info)
+            xlsx_info = self.metadata_info[os.path.basename(fname)]
+            ticket = xlsx_info["ticket"]
+            track_meta = self.google_track_meta.get(ticket)
+            for row in rows:
+                obj = row._asdict()
+                for key_identifier in ["bpa_library_id", "assembly_method_version_or_date"]:
+                    if not obj[key_identifier]:
+                        raise Exception("A row does not contain {}, which is mandatory.".format(key_identifier))
+                if track_meta is not None:
+                    def track_get(k):
+                        if track_meta is None:
+                            return None
+                        return getattr(track_meta, k)
 
                 name = sample_id_to_ckan_name(
-                    obj["bpa_library_id"], self.ckan_data_type, obj["assembly_date"]
+                    "{}".format(obj["bpa_library_id"].split("/")[-1]),
+                    self.ckan_data_type,
+                    obj["assembly_method_version_or_date"],
                 )
-
                 obj.update(
                     {
                         "name": name,
                         "id": name,
-                        "title": "OMG Pacbio Secondary {} {}".format(
-                            obj["bpa_library_id"], obj["assembly_date"]
+                        "title": "OMG Pacbio Genome Assembly {} {}".format(
+                            obj["bpa_library_id"], obj["assembly_method_version_or_date"]
                         ),
                         "notes": name,
                         "date_of_transfer": ingest_utils.get_date_isoformat(
                             self._logger, track_get("date_of_transfer")
                         ),
-                        "data_type": track_get("data_type"),
-                        "description": track_get("description"),
                         "folder_name": track_get("folder_name"),
+                        "description": track_get("description"),
                         "sample_submission_date": ingest_utils.get_date_isoformat(
                             self._logger, track_get("date_of_transfer")
                         ),
                         "contextual_data_submission_date": None,
-                        "data_generated": ingest_utils.get_date_isoformat(
-                            self._logger, track_get("date_of_transfer_to_archive")
-                        ),
                         "archive_ingestion_date": ingest_utils.get_date_isoformat(
                             self._logger, track_get("date_of_transfer_to_archive")
                         ),
-                        "dataset_url": track_get("download"),
-                        "type": self.ckan_data_type,
+                        "type": self.ckan_data_type
                     }
                 )
                 ingest_utils.permissions_organization_member(self._logger, obj)
-                ##TODO: for release, remove this line and correct permissions_organization_member
-                obj["private"] = False
                 self._logger.info(
                     "No context metadata for this data type, so no object merge....Continuing"
                 )
                 tag_names = [
                     "pacbio",
                     "genomics",
-                    "secondary",
-                    "derived",
-                    "genome assemblies",
+                    "genome assembly",
                 ]
-                obj["tags"] = [{"name": t} for t in tag_names]
+                for f in ["genus", "species"]:
+                    next_to_clean = obj.get(f, "").strip()
+                    if next_to_clean:
+                        tag_names.append(clean_tag_name(next_to_clean))
+                obj["tags"] = [{"name": "{:.100}".format(t)} for t in tag_names]
                 self.track_xlsx_resource(obj, fname)
                 packages.append(obj)
 
@@ -2133,8 +2126,8 @@ class OMGGenomicsPacBioGenomeAssembliesMetadata(SecondaryMetadata):
     def _get_raw_resources(self):
         self._logger.info("Calculating raw resources...")
         for obj in self._packages:
-            self._logger.info("Have next package for raw resources...")
-            self._logger.info(f"{obj}")
+            raw_resources = from_comma_or_space_separated_to_list(self._logger, obj["raw_resources"])
+            self._logger.info("have raw list: {}".format(raw_resources))
 
     def _get_resources(self):
         self._logger.info(

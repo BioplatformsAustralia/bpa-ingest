@@ -25,12 +25,12 @@ class SecondaryMetadata(BaseMetadata):
         super().__init__(*args, **kwargs)
 
     def _get_packages_and_resources(self):
-        self._logger.debug("Inside secondary data...")
+        self._logger.info("Inside secondary data...")
         # ensure that each class can expect to have _get_packages() called first,
         # then _get_resources(), and only once in the entire lifetime of the class.
         if self._packages is None:
             self._packages = self._get_packages()
-            self._get_raw_resources()
+            self._raw_resources = self._get_raw_resources()
             self._resources = self._get_resources()
             BaseMetadata.resources_add_format(self._resources)
             BaseMetadata.obj_round_floats_and_stringify(self._packages)
