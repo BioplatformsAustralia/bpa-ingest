@@ -9,6 +9,7 @@ import pandas
 
 from .contextual import AustralianMicrobiomeSampleContextual
 
+
 class AustralianMicrobiomeSampleContextualSQLite(AustralianMicrobiomeSampleContextual):
     metadata_patterns = [re.compile(r"^.*\.db$")]
     name = "amd-samplecontextualsqlite"
@@ -55,7 +56,9 @@ class AustralianMicrobiomeSampleContextualSQLite(AustralianMicrobiomeSampleConte
         return pandas.read_sql_query(f"SELECT * FROM {self.db_table_name}", con)
 
 
-class AustralianMicrobiomeSampleContextualSQLiteToExcelCopy(AustralianMicrobiomeSampleContextualSQLite):
+class AustralianMicrobiomeSampleContextualSQLiteToExcelCopy(
+    AustralianMicrobiomeSampleContextualSQLite
+):
     excel_file_copy_name = "context_metadata.xlsx"
 
     def dataframe_to_excel_file(self, df, fname):

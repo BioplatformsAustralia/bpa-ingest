@@ -6,8 +6,10 @@ from urllib.parse import urljoin
 from unipath import Path
 
 from . import files
-from .sqlite_contextual import AustralianMicrobiomeSampleContextualSQLite, \
-    AustralianMicrobiomeSampleContextualSQLiteToExcelCopy
+from .sqlite_contextual import (
+    AustralianMicrobiomeSampleContextualSQLite,
+    AustralianMicrobiomeSampleContextualSQLiteToExcelCopy,
+)
 from ...abstract import BaseMetadata
 from ...libs import ingest_utils
 from ...libs.excel_wrapper import make_field_definition as fld
