@@ -1,35 +1,14 @@
-import io
-
-import datetime
 import re
-import tempfile
+from collections import defaultdict
 from glob import glob
-
-import pandas
 
 from ...libs import ingest_utils
 from ...libs.excel_wrapper import (
     ExcelWrapper,
-    make_skip_column as skip,
     FieldDefinition,
     make_field_definition as fld,
 )
 from ...util import one
-from ...ncbi import NCBISRAContextual
-from collections import defaultdict
-from .vocabularies import (
-    AustralianSoilClassificationVocabulary,
-    BroadVegetationTypeVocabulary,
-    CropRotationClassification,
-    EcologicalZoneVocabulary,
-    FAOSoilClassificationVocabulary,
-    HorizonClassificationVocabulary,
-    LandUseVocabulary,
-    ProfilePositionVocabulary,
-    SoilColourVocabulary,
-    TillageClassificationVocabulary,
-)
-
 
 CHEM_MIN_SENTINAL_VALUE = 0.0001
 
@@ -38,194 +17,11 @@ class NotInVocabulary(Exception):
     pass
 
 
-class BaseOntologyEnforcement:
-    def __init__(self):
-        self.norm_to_term = self._build_terms()
-
-    def _build_terms(self):
-        terms = [t[0] for t in self.vocabulary]
-        return dict((BaseOntologyEnforcement._normalise(x), x) for x in terms)
-
-    @classmethod
-    def _normalise(cls, s):
-        s = s.lower()
-        s = s.replace(" ", "")
-        s = s.replace("&", "and")
-        s = s.replace("-", "")
-        return s
-
-    def get(self, term):
-        """
-        returns the term, as found in the list of appropriate terms,
-        or raises NotInVocabulary
-        """
-        if term is None:
-            return ""
-        norm = self._normalise(term)
-        if not norm:
-            return ""
-        elif norm in self.norm_to_term:
-            return self.norm_to_term[norm]
-        else:
-            raise NotInVocabulary(term)
-
-
-class BroadLandUseEnforcement(BaseOntologyEnforcement):
-    vocabulary = LandUseVocabulary
-
-
-class AustralianSoilClassificationEnforcement(BaseOntologyEnforcement):
-    vocabulary = AustralianSoilClassificationVocabulary
-
-    def __init__(self):
-        super().__init__()
-        self.norm_to_term[self._normalise("Tenosol")] = "Tenosols"
-        self.norm_to_term[self._normalise("Chromosol")] = "Chromosols"
-        self.norm_to_term[self._normalise("Hydrosol")] = "Hydrosols"
-
-
-class ProfilePositionEnforcement(BaseOntologyEnforcement):
-    vocabulary = ProfilePositionVocabulary
-
-
-class BroadVegetationTypeEnforement(BaseOntologyEnforcement):
-    vocabulary = BroadVegetationTypeVocabulary
-
-
-class FAOSoilClassificationEnforcement(BaseOntologyEnforcement):
-    vocabulary = FAOSoilClassificationVocabulary
-
-    def __init__(self):
-        super().__init__()
-        self.norm_to_term[self._normalise("Tenosol")] = "Tenosols"
-        self.norm_to_term[self._normalise("Cambisol")] = "Cambisols"
-
-
-class SoilColourEnforcement(BaseOntologyEnforcement):
-    vocabulary = SoilColourVocabulary
-
-    def _build_terms(self):
-        terms = [t[1] for t in self.vocabulary]
-        return dict((BaseOntologyEnforcement._normalise(x), x) for x in terms)
-
-
-class HorizonClassificationEnforcement(BaseOntologyEnforcement):
-    vocabulary = HorizonClassificationVocabulary
-
-    def get(self, term):
-        if term is None:
-            return ""
-        # codes are single characters. we check each character
-        # against the vocabulary; if it's not in there, we chuck it out
-        terms = []
-        for c in term:
-            norm = self._normalise(c)
-            if not norm or norm not in self.norm_to_term:
-                continue
-            terms.append(self.norm_to_term[norm])
-        return ",".join(sorted(terms))
-
-
-class EcologicalZoneEnforcement(BaseOntologyEnforcement):
-    vocabulary = EcologicalZoneVocabulary
-
-    def __init__(self):
-        super().__init__()
-        self.norm_to_term[self._normalise("Tenosol")] = "Tenosols"
-        self.norm_to_term[self._normalise("Mediterranian")] = "Mediterranean"
-        self.norm_to_term[self._normalise("Wet Tropics")] = "Tropical (wet)"
-        self.norm_to_term[self._normalise("Other (polar)")] = "Polar"
-
-
-class TillageClassificationEnforcement(BaseOntologyEnforcement):
-    vocabulary = TillageClassificationVocabulary
-
-    def get(self, term):
-        # take first part of string which is the tillage and leave out description
-        if term is None:
-            return ""
-        first_part = term.split(":")[0]
-        return super().get(first_part)
-
-
-class CropRotationEnforcement(BaseOntologyEnforcement):
-    vocabulary = CropRotationClassification
-
-    def _build_terms(self):
-        terms = [t for t in self.vocabulary]
-        return dict((BaseOntologyEnforcement._normalise(x), x) for x in terms)
-
-
-class LandUseEnforcement(BaseOntologyEnforcement):
-    def __init__(self):
-        self.tree = self._build_tree()
-
-    def _build_tree(self):
-        def expand_tree(values, tree, prefix=[]):
-            # some of the names are actually a tree path in themselves
-            name = [t.strip() for t in values[0].split("-")]
-            path = prefix + name
-            norm_path = tuple([self._normalise(t) for t in path])
-            tree[norm_path] = " - ".join(path)
-            for value in values[1:]:
-                if isinstance(value, tuple):
-                    # a tuple is a sub-tree which we recurse into
-                    if value:
-                        expand_tree(value, tree, prefix=path)
-                else:
-                    # a string is a fellow leaf-node of the parent
-                    expand_tree((value,), tree, prefix=prefix)
-
-        tree = {}
-        for subtree in LandUseVocabulary:
-            expand_tree(subtree, tree)
-        return tree
-
-    def get(self, original):
-        if original is None:
-            return ""
-
-        query = tuple(
-            [t for t in [self._normalise(t) for t in original.split("-")] if t]
-        )
-
-        if len(query) == 0:
-            return ""
-
-        # tree contains all fully expanded paths through the classification tree,
-        # as tuples, and the values in the tree are the string representation of these
-        # fully expanded forms. tuples have been run through normalisation.
-
-        matches = []
-        for code, classification in self.tree.items():
-            if code[-len(query) :] == query:
-                matches.append(code)
-
-        matches.sort(key=lambda m: len(m))
-        if matches:
-            return self.tree[matches[0]]
-        else:
-            raise NotInVocabulary(original)
-
-
-def fix_slope_date(val):
-    # 2/3 has been turned into a date by Excel
-    if isinstance(val, datetime.datetime):
-        return "%s/%s" % (val.day, val.month)
-    return val
-
-
-class BASENCBIContextual(NCBISRAContextual):
-    metadata_urls = ["https://downloads-qcif.bioplatforms.com/bpa/base/metadata/ncbi/"]
-    name = "base-ncbi-contextual"
-    bioproject_accession = "PRJNA317932"
-
-
 class AustralianMicrobiomeSampleContextualSQLite:
     metadata_urls = [
         "https://downloads-qcif.bioplatforms.com/bpa/amd/metadata/sqlitecontextual/2020-08-18"
     ]
-    metadata_patterns = [re.compile(r"^.*\.xlsx$"), re.compile(r"^.*\.db$")]
+    metadata_patterns = [re.compile(r"^.*\.db$")]
     name = "amd-samplecontextualsqlite"
     field_specs = {
         "Sqlite": [
@@ -561,7 +357,7 @@ class AustralianMicrobiomeSampleContextualSQLite:
             fld(
                 "date_since_change_in_land_use",
                 "date_since_change_in_land_use",
-                coerce=ingest_utils.get_date_isoformat,
+                coerce=ingest_utils.get_year,
             ),
             fld(
                 "density_ctd_density",
@@ -1489,7 +1285,6 @@ class AustralianMicrobiomeSampleContextualSQLite:
             fld("zirconium_method", "zirconium_method"),
         ],
     }
-    ontology_cleanups = {}
 
     def __init__(self, logger, path):
         self._logger = logger
@@ -1589,16 +1384,6 @@ class AustralianMicrobiomeSampleContextualSQLite:
                 val = getattr(row, field)
                 if field != "sample_id":
                     row_meta[field] = val
-            ontology_cleanups = self.ontology_cleanups.get(row_meta["environment"])
-            if ontology_cleanups is not None:
-                for cleanup_name, enforcer in ontology_cleanups.items():
-                    try:
-                        row_meta[cleanup_name] = enforcer.get(row_meta[cleanup_name])
-                    except NotInVocabulary as e:
-                        self.environment_ontology_errors[
-                            (row_meta["environment"], cleanup_name)
-                        ].add(e.args[0])
-                        del row_meta[cleanup_name]
         return sample_metadata
 
     @staticmethod
@@ -1625,11 +1410,3 @@ class AustralianMicrobiomeSampleContextualSQLite:
 
     def filename_metadata(self, *args, **kwargs):
         return {}
-
-
-class MarineMicrobesNCBIContextual(NCBISRAContextual):
-    metadata_urls = [
-        "https://downloads-qcif.bioplatforms.com/bpa/marine_microbes/metadata/ncbi/"
-    ]
-    name = "mm-ncbi-contextual"
-    bioproject_accession = "PRJNA385736"
