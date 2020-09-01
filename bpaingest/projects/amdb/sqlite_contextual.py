@@ -19,7 +19,7 @@ class NotInVocabulary(Exception):
 
 class AustralianMicrobiomeSampleContextualSQLite:
     metadata_urls = [
-        "https://downloads-qcif.bioplatforms.com/bpa/amd/metadata/sqlitecontextual/2020-08-18"
+        "https://downloads-qcif.bioplatforms.com/bpa/amd/metadata/sqlitecontextual/2020-08-18/"
     ]
     metadata_patterns = [re.compile(r"^.*\.db$")]
     name = "amd-samplecontextualsqlite"

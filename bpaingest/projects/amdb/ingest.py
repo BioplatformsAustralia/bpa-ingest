@@ -24,7 +24,7 @@ from .tracking import (
     MarineMicrobesTrackMetadata,
 )
 
-common_context = [AustralianMicrobiomeSampleContextual]
+common_context = [AustralianMicrobiomeSampleContextualSQLite]
 
 
 # fixed read lengths provided by AB at CSIRO
