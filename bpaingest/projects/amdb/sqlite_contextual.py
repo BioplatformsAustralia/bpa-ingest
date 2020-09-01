@@ -208,16 +208,6 @@ class LandUseEnforcement(BaseOntologyEnforcement):
             raise NotInVocabulary(original)
 
 
-def fix_sometimes_date(val):
-    "mix of dates and free-text, make into strings"
-    if isinstance(val, datetime.date) or isinstance(val, datetime.datetime):
-        return ingest_utils.get_date_isoformat(self._logger, val)
-    val = val.strip()
-    if val == "":
-        return None
-    return val
-
-
 def fix_slope_date(val):
     # 2/3 has been turned into a date by Excel
     if isinstance(val, datetime.datetime):

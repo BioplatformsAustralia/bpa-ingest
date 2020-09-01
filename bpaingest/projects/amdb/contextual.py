@@ -1,29 +1,14 @@
-import datetime
 import re
+from collections import defaultdict
 from glob import glob
+
 from ...libs import ingest_utils
 from ...libs.excel_wrapper import (
     ExcelWrapper,
-    make_skip_column as skip,
     FieldDefinition,
     make_field_definition as fld,
 )
 from ...util import one
-from ...ncbi import NCBISRAContextual
-from collections import defaultdict
-from .vocabularies import (
-    AustralianSoilClassificationVocabulary,
-    BroadVegetationTypeVocabulary,
-    CropRotationClassification,
-    EcologicalZoneVocabulary,
-    FAOSoilClassificationVocabulary,
-    HorizonClassificationVocabulary,
-    LandUseVocabulary,
-    ProfilePositionVocabulary,
-    SoilColourVocabulary,
-    TillageClassificationVocabulary,
-)
-
 
 CHEM_MIN_SENTINAL_VALUE = 0.0001
 
@@ -31,22 +16,6 @@ CHEM_MIN_SENTINAL_VALUE = 0.0001
 class NotInVocabulary(Exception):
     pass
 
-
-def fix_sometimes_date(val):
-    "mix of dates and free-text, make into strings"
-    if isinstance(val, datetime.date) or isinstance(val, datetime.datetime):
-        return ingest_utils.get_date_isoformat(self._logger, val)
-    val = val.strip()
-    if val == "":
-        return None
-    return val
-
-
-def fix_slope_date(val):
-    # 2/3 has been turned into a date by Excel
-    if isinstance(val, datetime.datetime):
-        return "%s/%s" % (val.day, val.month)
-    return val
 
 class AustralianMicrobiomeSampleContextual:
     # we smash together the tabs, because there is one tab per sample type

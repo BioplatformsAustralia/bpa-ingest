@@ -16,9 +16,7 @@ from ...util import (
     common_values,
     one,
 )
-from .contextual import (
-    AustralianMicrobiomeSampleContextual,
-)
+from .contextual import AustralianMicrobiomeSampleContextual
 from .tracking import (
     AustralianMicrobiomeGoogleTrackMetadata,
     BASETrackMetadata,

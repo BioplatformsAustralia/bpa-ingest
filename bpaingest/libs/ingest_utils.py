@@ -175,11 +175,13 @@ def get_date_isoformat(logger, s, silent=False):
 def get_time(logger, s):
     return str(s)
 
+
 def get_year(logger, s):
     if re.search("\d{4}\.\d*", s):
         # remove decimal and convert back to string before interpreting as date
         return datetime.datetime.strptime(str(math.trunc(float(s))), "%Y")
-    else: return get_date_isoformat(logger, s)
+    else:
+        return get_date_isoformat(logger, s)
 
 
 def _get_date(logger, dt, silent=False):
