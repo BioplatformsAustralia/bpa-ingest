@@ -1,4 +1,5 @@
 import re
+import tempfile
 from collections import defaultdict
 from glob import glob
 
@@ -1296,11 +1297,9 @@ class AustralianMicrobiomeSampleContextualSQLite:
         fo = tempfile.NamedTemporaryFile(suffix=".xlsx")
         self._logger.info("Have temp file: {}".format(fo.name))
         self.dataframe_to_excel_file(data_frames, fo.name)
-        # fo.name
-        # fo.close()
-        # xlsx_path = one(glob(path + "/*.xlsx"))
         self.environment_ontology_errors = defaultdict(set)
         self.sample_metadata = self._package_metadata(self._read_metadata(fo.name))
+        # once metadata extracted, close file handle, so any tempfile cleanup can occur
         fo.close()
         self._logger.info("context file processing completed.")
 
