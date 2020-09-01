@@ -2,6 +2,8 @@ import re
 from collections import defaultdict
 from glob import glob
 
+import pandas
+
 from ...libs import ingest_utils
 from ...libs.excel_wrapper import (
     ExcelWrapper,
@@ -1308,17 +1310,6 @@ class AustralianMicrobiomeSampleContextualSQLite:
         writer.save()
         self._logger.info("Excel file written.")
 
-    # def dataframe_to_excel_bytes(self, df):
-    #     output = io.BytesIO()
-    #
-    #     # Use the BytesIO object as the filehandle.
-    #     writer = pandas.ExcelWriter(output, engine='xlsxwriter')
-    #
-    #     # Write the data frame to the BytesIO object.
-    #     df.to_excel(writer, sheet_name='Sqlite')
-    #     writer.save()
-    #     return output.getvalue()
-
     def test_for_sqlite(self, db_path):
         import sqlite3 as lite
         import sys
@@ -1333,9 +1324,7 @@ class AustralianMicrobiomeSampleContextualSQLite:
             cur.execute("SELECT SQLITE_VERSION()")
             data = cur.fetchone()
             self._logger.info("SQLite version: %s" % data)
-
-            query = "SELECT * FROM AM_metadata"
-            df = pandas.read_sql_query(query, con)
+            df = pandas.read_sql_query("SELECT * FROM AM_metadata", con)
             return df
         except lite.Error as e:
             self._logger.error("Error %s:" % e.args[0])
