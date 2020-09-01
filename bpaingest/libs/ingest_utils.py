@@ -1,4 +1,5 @@
 import json
+import math
 import re
 from .bpa_constants import BPA_PREFIX
 
@@ -174,6 +175,12 @@ def get_date_isoformat(logger, s, silent=False):
 def get_time(logger, s):
     return str(s)
 
+def get_year(logger, s):
+    if re.search("\d{4}\.\d*", s):
+        # remove decimal and convert back to string before interpreting as date
+        return datetime.datetime.strptime(str(math.trunc(float(s))), "%Y")
+    else: return get_date_isoformat(logger, s)
+
 
 def _get_date(logger, dt, silent=False):
     """
@@ -220,6 +227,16 @@ def _get_date(logger, dt, silent=False):
 
     try:
         return datetime.datetime.strptime(dt, "%d/%m/%y").date()
+    except ValueError:
+        pass
+
+    try:
+        return datetime.datetime.strptime(dt, "%Y-%m-%d %H:%M:%S").date()
+    except ValueError:
+        pass
+
+    try:
+        return datetime.datetime.strptime(dt, "%y-%m-%d %H:%M:%S").date()
     except ValueError:
         pass
 

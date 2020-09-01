@@ -111,5 +111,6 @@ def dump_state(args):
 
     linkage_qc(logger, state, data_type_meta)
 
+    # for datetime objects, use 'default as str' for now so that parsing doesn't break
     with open(args.filename, "w") as fd:
-        json.dump(state, fd, sort_keys=True, indent=2, separators=(",", ": "))
+        json.dump(state, fd, sort_keys=True, indent=2, separators=(",", ": "), default=str)

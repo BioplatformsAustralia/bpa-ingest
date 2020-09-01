@@ -28,9 +28,7 @@ from .tracking import (
     MarineMicrobesTrackMetadata,
 )
 
-common_context = [
-    AustralianMicrobiomeSampleContextualSQLite
-]
+common_context = [AustralianMicrobiomeSampleContextual]
 
 
 # fixed read lengths provided by AB at CSIRO
@@ -65,7 +63,7 @@ def build_base_amplicon_linkage(index_linkage, flow_id, index):
 
 def build_contextual_field_names():
     field_names = {}
-    lookup = AustralianMicrobiomeSampleContextualSQLite.units_for_fields()
+    lookup = AustralianMicrobiomeSampleContextual.units_for_fields()
     for field, units in lookup.items():
         if units is None:
             continue
