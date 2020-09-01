@@ -18,8 +18,6 @@ class NotInVocabulary(Exception):
 
 
 class AustralianMicrobiomeSampleContextual:
-    # we smash together the tabs, because there is one tab per sample type
-    # each BPA ID should have only one entry (if it has one at all)
     metadata_urls = [
         "https://downloads-qcif.bioplatforms.com/bpa/amd/metadata/sqlitecontextual/2020-08-18/"
     ]
@@ -1287,7 +1285,6 @@ class AustralianMicrobiomeSampleContextual:
             fld("zirconium_method", "zirconium_method"),
         ],
     }
-    ontology_cleanups = {}
 
     def __init__(self, logger, path):
         self._logger = logger
@@ -1335,16 +1332,6 @@ class AustralianMicrobiomeSampleContextual:
                 val = getattr(row, field)
                 if field != "sample_id":
                     row_meta[field] = val
-            ontology_cleanups = self.ontology_cleanups.get(row_meta["environment"])
-            if ontology_cleanups is not None:
-                for cleanup_name, enforcer in ontology_cleanups.items():
-                    try:
-                        row_meta[cleanup_name] = enforcer.get(row_meta[cleanup_name])
-                    except NotInVocabulary as e:
-                        self.environment_ontology_errors[
-                            (row_meta["environment"], cleanup_name)
-                        ].add(e.args[0])
-                        del row_meta[cleanup_name]
         return sample_metadata
 
     @staticmethod
