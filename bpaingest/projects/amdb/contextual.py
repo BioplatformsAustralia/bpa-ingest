@@ -1,5 +1,4 @@
 import re
-from collections import defaultdict
 from glob import glob
 
 from ...libs import ingest_utils
@@ -9,8 +8,6 @@ from ...libs.excel_wrapper import (
     make_field_definition as fld,
 )
 from ...util import one
-
-CHEM_MIN_SENTINAL_VALUE = 0.0001
 
 
 class NotInVocabulary(Exception):
@@ -23,6 +20,7 @@ class AustralianMicrobiomeSampleContextual:
     ]
     metadata_patterns = [re.compile(r"^.*\.xlsx$")]
     name = "amd-samplecontextual"
+    source_pattern = "/*.xlsx"
     field_specs = {
         "Sqlite": [
             fld("sample_id", "sample_id", coerce=ingest_utils.extract_ands_id),
@@ -1288,9 +1286,11 @@ class AustralianMicrobiomeSampleContextual:
 
     def __init__(self, logger, path):
         self._logger = logger
-        xlsx_path = one(glob(path + "/*.xlsx"))
-        self.environment_ontology_errors = defaultdict(set)
-        self.sample_metadata = self._package_metadata(self._read_metadata(xlsx_path))
+        source_path = one(glob(path + self.source_pattern))
+        self.initialise_source_path(source_path)
+
+    def initialise_source_path(self, source_path):
+        self.sample_metadata = self._package_metadata(self._read_metadata(source_path))
 
     @classmethod
     def units_for_fields(cls):
