@@ -6,7 +6,8 @@ from urllib.parse import urljoin
 from unipath import Path
 
 from . import files
-from .sqlite_contextual import AustralianMicrobiomeSampleContextualSQLite
+from .sqlite_contextual import AustralianMicrobiomeSampleContextualSQLite, \
+    AustralianMicrobiomeSampleContextualSQLiteToExcelCopy
 from ...abstract import BaseMetadata
 from ...libs import ingest_utils
 from ...libs.excel_wrapper import make_field_definition as fld
@@ -24,7 +25,7 @@ from .tracking import (
     MarineMicrobesTrackMetadata,
 )
 
-common_context = [AustralianMicrobiomeSampleContextualSQLite]
+common_context = [AustralianMicrobiomeSampleContextualSQLiteToExcelCopy]
 
 
 # fixed read lengths provided by AB at CSIRO

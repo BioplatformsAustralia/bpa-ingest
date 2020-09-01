@@ -1,4 +1,6 @@
+import os
 import re
+import shutil
 import sqlite3 as lite
 import sys
 import tempfile
@@ -6,21 +8,15 @@ import tempfile
 import pandas
 
 from .contextual import AustralianMicrobiomeSampleContextual
-from ...libs.excel_wrapper import (
-    ExcelWrapper,
-    FieldDefinition,
-)
-
-
-class NotInVocabulary(Exception):
-    pass
-
 
 class AustralianMicrobiomeSampleContextualSQLite(AustralianMicrobiomeSampleContextual):
     metadata_patterns = [re.compile(r"^.*\.db$")]
     name = "amd-samplecontextualsqlite"
     source_pattern = "/*.db"
     db_table_name = "AM_metadata"
+
+    def __init__(self, logger, path):
+        super().__init__(logger, path)
 
     def initialise_source_path(self, source_path):
         data_frames = self.get_sqlite_data(source_path)
@@ -58,69 +54,11 @@ class AustralianMicrobiomeSampleContextualSQLite(AustralianMicrobiomeSampleConte
     def fetch_data(self, con):
         return pandas.read_sql_query(f"SELECT * FROM {self.db_table_name}", con)
 
-    @classmethod
-    def units_for_fields(cls):
-        r = {}
-        for sheet_name, fields in cls.field_specs.items():
-            for field in fields:
-                if not isinstance(field, FieldDefinition):
-                    continue
-                if field.attribute in r and r[field.attribute] != field.units:
-                    raise Exception("units inconsistent for field: {}", field.attribute)
-                r[field.attribute] = field.units
-        return r
 
-    def sample_ids(self):
-        return list(self.sample_metadata.keys())
+class AustralianMicrobiomeSampleContextualSQLiteToExcelCopy(AustralianMicrobiomeSampleContextualSQLite):
+    excel_file_copy_name = "context_metadata.xlsx"
 
-    def get(self, sample_id):
-        if sample_id in self.sample_metadata:
-            return self.sample_metadata[sample_id]
-        self._logger.warning(
-            "no %s metadata available for: %s" % (type(self).__name__, repr(sample_id))
-        )
-        return {}
-
-    def _package_metadata(self, rows):
-        sample_metadata = {}
-        for row in rows:
-            if row.sample_id is None:
-                continue
-            if row.sample_id in sample_metadata:
-                raise Exception(
-                    "Metadata invalid, duplicate sample ID {} in row {}".format(
-                        row.sample_id, row
-                    )
-                )
-            assert row.sample_id not in sample_metadata
-            sample_metadata[row.sample_id] = row_meta = {}
-            for field in row._fields:
-                val = getattr(row, field)
-                if field != "sample_id":
-                    row_meta[field] = val
-        return sample_metadata
-
-    @staticmethod
-    def environment_for_sheet(sheet_name):
-        return "Soil" if sheet_name == "Soil" else "Marine"
-
-    def _read_metadata(self, metadata_path):
-        rows = []
-        for sheet_name, field_spec in sorted(self.field_specs.items()):
-            wrapper = ExcelWrapper(
-                self._logger,
-                field_spec,
-                metadata_path,
-                sheet_name=sheet_name,
-                header_length=1,
-                column_name_row_index=0,
-                suggest_template=True,
-                additional_context={},
-            )
-            for error in wrapper.get_errors():
-                self._logger.error(error)
-            rows += wrapper.get_all()
-        return rows
-
-    def filename_metadata(self, *args, **kwargs):
-        return {}
+    def dataframe_to_excel_file(self, df, fname):
+        super().dataframe_to_excel_file(df, fname)
+        shutil.copyfile(fname, os.path.join(self.path_dir, self.excel_file_copy_name))
+        self._logger.info(f"Excel copy made: {self.excel_file_copy_name}")
