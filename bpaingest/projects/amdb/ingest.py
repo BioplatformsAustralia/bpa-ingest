@@ -18,8 +18,6 @@ from ...util import (
 )
 from .contextual import (
     AustralianMicrobiomeSampleContextual,
-    BASENCBIContextual,
-    MarineMicrobesNCBIContextual,
 )
 from .tracking import (
     AustralianMicrobiomeGoogleTrackMetadata,
