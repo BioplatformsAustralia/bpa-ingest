@@ -87,7 +87,7 @@ def dump_state(args):
             )
         classes = new_classes
     logger.info("dumping: {}".format(", ".join(t["slug"] for t in classes)))
-    has_sql_context = True if args.sql_context == 'True' else False
+    has_sql_context = True if args.sql_context == "True" else False
 
     data_type_meta = {}
     # download metadata for all project types and aggregate metadata keys
@@ -98,7 +98,10 @@ def dump_state(args):
         )
         dlpath = os.path.join(args.download_path, class_info["slug"])
         with DownloadMetadata(
-            make_logger(class_info["slug"]), class_info["cls"], path=dlpath, has_sql_context=has_sql_context
+            make_logger(class_info["slug"]),
+            class_info["cls"],
+            path=dlpath,
+            has_sql_context=has_sql_context,
         ) as dlmeta:
             meta = dlmeta.meta
             data_type = meta.ckan_data_type
@@ -114,6 +117,4 @@ def dump_state(args):
 
     # for datetime objects, use 'default as str' for now so that parsing doesn't break
     with open(args.filename, "w") as fd:
-        json.dump(
-            state, fd, sort_keys=True, indent=2, separators=(",", ": ")
-        )
+        json.dump(state, fd, sort_keys=True, indent=2, separators=(",", ": "))

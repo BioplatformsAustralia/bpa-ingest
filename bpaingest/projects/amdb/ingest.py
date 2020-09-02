@@ -72,7 +72,9 @@ def build_contextual_field_names():
 
 class AMDBaseMetadata(BaseMetadata):
     package_field_names = build_contextual_field_names()
-    sql_to_excel_context_classes = [AustralianMicrobiomeSampleContextualSQLiteToExcelCopy]
+    sql_to_excel_context_classes = [
+        AustralianMicrobiomeSampleContextualSQLiteToExcelCopy
+    ]
 
 
 class AccessAMDContextualMetadata(AMDBaseMetadata):
@@ -1514,7 +1516,9 @@ class MarineMicrobesMetatranscriptomeMetadata(BaseMarineMicrobesMetadata):
 
 
 class AustralianMicrobiomeMetagenomicsNovaseqMetadata(BaseMetadata):
-    sql_to_excel_context_classes = [AustralianMicrobiomeSampleContextualSQLiteToExcelCopy]
+    sql_to_excel_context_classes = [
+        AustralianMicrobiomeSampleContextualSQLiteToExcelCopy
+    ]
     organization = "australian-microbiome"
     ckan_data_type = "amdb-metagenomics-novaseq"
     omics = "metagenomics"
