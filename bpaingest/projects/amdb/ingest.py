@@ -73,10 +73,10 @@ class AMDBaseNoSchemaMetadata(BaseMetadata):
         AustralianMicrobiomeSampleContextualSQLiteToExcelCopy
     ]
     notes_mapping = [
-        {"key": "env_material_control_vocab_0", "separator": " "},
+        {"key": "env_material_control_vocab_0", "separator": ", "},
         {"key": "sample_site_location_description", "separator": ", "},
         {"key": "geo_loc_country_subregion", "separator": ", "},
-        {"key": "omics", "separator": " "},
+        {"key": "type", "separator": " "},
         {"key": "analytical_platform"},
     ]
 
