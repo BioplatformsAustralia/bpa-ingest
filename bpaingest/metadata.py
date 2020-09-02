@@ -8,7 +8,7 @@ from .libs.fetch_data import Fetcher, get_password
 
 class DownloadMetadata:
     def __init__(
-        self, logger, project_class, path=None, force_fetch=False, metadata_info=None
+        self, logger, project_class, path=None, force_fetch=False, metadata_info=None, has_sql_context=False
     ):
         self.cleanup = True
         self.fetch = True
@@ -19,7 +19,12 @@ class DownloadMetadata:
         if metadata_info is None:
             metadata_info = {}
 
-        contextual_classes = getattr(project_class, "contextual_classes", [])
+        sql_to_excel_context_classes = getattr(project_class, "sql_to_excel_context_classes", [])
+        if has_sql_context == True and sql_to_excel_context_classes:
+            contextual_classes = sql_to_excel_context_classes
+        else:
+            contextual_classes = getattr(project_class, "contextual_classes", [])
+
         self.contextual = [
             (os.path.join(self.path, c.name), c) for c in contextual_classes
         ]

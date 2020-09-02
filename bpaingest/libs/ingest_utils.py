@@ -178,8 +178,8 @@ def get_time(logger, s):
 
 def get_year(logger, s):
     if re.search("\d{4}\.\d*", s):
-        # remove decimal and convert back to string before interpreting as date
-        return datetime.datetime.strptime(str(math.trunc(float(s))), "%Y")
+        # remove decimal and convert back to string
+        return str(math.trunc(float(s)))
     else:
         return get_date_isoformat(logger, s)
 
