@@ -2,9 +2,13 @@ import json
 import os
 import re
 from collections import defaultdict, Counter
+
+import ckanapi
+
+from .ops import ckan_method
 from .projects import ProjectInfo
 from .metadata import DownloadMetadata
-from .util import make_logger
+from .util import make_logger, make_ckan_api
 
 
 def unique_packages(logger, packages):
@@ -69,6 +73,35 @@ def linkage_qc(logger, state, data_type_meta, errors_callback=None):
     for data_type, (p, r) in counts.items():
         logger.info("{}: {} packages, {} resources".format(data_type, p, r))
 
+def add_raw_to_packages(logger, args, packages):
+    ckan = make_ckan_api(args)
+    for next_package in packages:
+        id = next_package.get('name', '')
+        logger.info(f"next package is {id}")
+        for next_raw_id, next_raw_value in next_package.get("raw", []).items():
+            logger.info(f"next package raw is {next_raw_id}")
+            logger.info(f"next package raw value is: {next_raw_value}")
+            ckan_obj = ckan_method(ckan, "package", "show")(id=id)
+
+            # def search_package_and_resources(self):
+            #     # ckan api will only return first 1000 responses for some calls - so set very high limit.
+            #     # Ensure that 'private' is turned on
+            #     self._logger.info(f"Using org id: {self.__org_id}")
+            #     # ticket = 'BPAOPS-10'
+            #     ticket = 'BPAOPS-930'
+            #     search_package_arguments = {
+            #         "rows": 10000,
+            #         "start": 0,
+            #         # "fq": f"+owner_org:{self.__org_id} +ticket:{ticket} +comments:34222_1_18S_UNSW_CTCTCTAC_GCGTAAGA_AUGKE",
+            #         "fq": f"+owner_org:{self.__org_id} +ticket:{ticket}",
+            #         # "fq": f"+owner_org:{self.__org_id}",
+            #         "facet.field": ["resources"],
+            #         "include_private": True,
+            #     }
+            #     package_raw_results = self.__ckan.call_action(
+            #         "package_search", search_package_arguments
+            #     )
+
 
 def dump_state(args):
     logger = make_logger(__name__)
@@ -114,6 +147,8 @@ def dump_state(args):
         state[data_type]["resources"].sort(key=lambda x: x[2]["id"])
 
     linkage_qc(logger, state, data_type_meta)
+
+    add_raw_to_packages(logger, args, state[data_type]["packages"])
 
     # for datetime objects, use 'default as str' for now so that parsing doesn't break
     with open(args.filename, "w") as fd:

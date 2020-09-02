@@ -2049,6 +2049,7 @@ class OMGGenomicsPacBioGenomeAssemblyMetadata(SecondaryMetadata):
     }
     raw = {
         "match": [files.pacbio_secondary_raw_filename_re],
+        "skip": []
     }
 
     def __init__(
@@ -2148,6 +2149,12 @@ class OMGGenomicsPacBioGenomeAssemblyMetadata(SecondaryMetadata):
                 self._logger, obj["raw_resources"]
             )
             self._logger.info("have raw list: {}".format(raw_resources))
+            raw_result = {}
+            for filename, raw_info in self.parse_raw_list(raw_resources):
+                raw_result[filename] = raw_info
+            obj.update({
+                "raw": raw_result
+            })z
 
     def _get_resources(self):
         self._logger.info(

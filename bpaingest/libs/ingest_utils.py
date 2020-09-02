@@ -295,13 +295,13 @@ def date_or_str(logger, v):
 
 
 def from_comma_or_space_separated_to_list(logger, raw):
-    separators = [",", " "]
-    if re.search(" ", raw) and re.search(",", raw):
+    separators = [",", " ", "\n"]
+    if re.search(" ", raw) and re.search(",", raw) and re.search("\n", raw):
         raise Exception(
-            "There are spaces and commas in this string. Only commas or spaces can be used, not both."
+            "There are spaces and commas and newlines in this string. Only commas OR spaces OR newlines can be used as data separators."
         )
     for next_separator in separators:
         result = raw.split(next_separator)
-        if result != raw:
-            return raw
+        if len(result) > 1:
+            return result
     raise Exception("Raw input must be separated by one of {}".format(separators))
