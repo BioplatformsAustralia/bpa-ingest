@@ -1,5 +1,6 @@
 import datetime
 import json
+import math
 import numbers
 import re
 
@@ -274,15 +275,23 @@ def permissions_public(logger, obj):
     obj["private"] = False
     obj["resource_permissions"] = "public"
 
+def get_year(logger, s):
+    if re.search("\d{4}\.\d*", s):
+        # remove decimal and convert back to string
+        return str(math.trunc(float(s)))
+    else:
+        return get_date_isoformat(logger, s)
+
+
 
 def date_or_str(logger, v):
     d = get_date_isoformat(logger, v, silent=True)
     if d is not None:
         return d
+    as_string = str(v)
     # only round to integer if decimal places are 0
-    if isinstance(v, numbers.Number) and v.is_integer():
-        return str(int(v))
-    return str(v)
+    as_string_groups = re.search(r"(\d{4})(\.0|)", as_string)
+    return as_string_groups.group(1) if as_string_groups else as_string
 
 
 def from_comma_or_space_separated_to_list(logger, raw):
