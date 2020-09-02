@@ -1287,7 +1287,6 @@ class AustralianMicrobiomeSampleContextual:
     def __init__(self, logger, path):
         self._logger = logger
         self.path_dir = path
-        self._logger.info(f"path dir is: {path}")
         source_path = one(glob(path + self.source_pattern))
         self.initialise_source_path(source_path)
 
