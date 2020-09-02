@@ -275,13 +275,13 @@ def permissions_public(logger, obj):
     obj["private"] = False
     obj["resource_permissions"] = "public"
 
+
 def get_year(logger, s):
     if re.search("\d{4}\.\d*", s):
         # remove decimal and convert back to string
         return str(math.trunc(float(s)))
     else:
         return get_date_isoformat(logger, s)
-
 
 
 def date_or_str(logger, v):
