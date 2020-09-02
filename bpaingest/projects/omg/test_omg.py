@@ -10,7 +10,9 @@ from .files import (
     pacbio_filename_re,
     ont_promethion_re,
     transcriptomics_nextseq_fastq_filename_re,
-    pacbio_secondary_filename_re, pacbio_secondary_raw_filename_re)
+    pacbio_secondary_filename_re,
+    pacbio_secondary_raw_filename_re,
+)
 
 
 def test_tenxtar_raw_xlsx_filename_re():
