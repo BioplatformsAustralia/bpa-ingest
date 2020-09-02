@@ -16,6 +16,7 @@ class MD5Parser(RawParser):
                     continue
                 self.matches.append((path, md5, m.groupdict()))
 
+
 def md5lines(fd):
     "read MD5 lines from `fd` and yield pairs of (md5, path)"
     for line in fd:

@@ -73,10 +73,11 @@ def linkage_qc(logger, state, data_type_meta, errors_callback=None):
     for data_type, (p, r) in counts.items():
         logger.info("{}: {} packages, {} resources".format(data_type, p, r))
 
+
 def add_raw_to_packages(logger, args, packages):
     ckan = make_ckan_api(args)
     for next_package in packages:
-        id = next_package.get('name', '')
+        id = next_package.get("name", "")
         logger.info(f"next package is {next_package}")
         for next_raw_value in next_package.get("raw", []):
             # logger.info(f"next package raw is {next_raw_id}")

@@ -2047,10 +2047,7 @@ class OMGGenomicsPacBioGenomeAssemblyMetadata(SecondaryMetadata):
             re.compile(r"^.*TestFiles\.exe.*"),
         ],
     }
-    raw = {
-        "match": [files.pacbio_secondary_raw_filename_re],
-        "skip": []
-    }
+    raw = {"match": [files.pacbio_secondary_raw_filename_re], "skip": []}
 
     def __init__(
         self, logger, metadata_path, contextual_metadata=[], metadata_info=None
@@ -2152,9 +2149,7 @@ class OMGGenomicsPacBioGenomeAssemblyMetadata(SecondaryMetadata):
             raw_result = {}
             for filename, raw_info in self.parse_raw_list(raw_resources):
                 raw_result[filename] = raw_info
-            obj.update({
-                "raw": raw_result
-            })
+            obj.update({"raw": raw_result})
 
     def _get_resources(self):
         self._logger.info(
@@ -2175,9 +2170,7 @@ class OMGGenomicsPacBioGenomeAssemblyMetadata(SecondaryMetadata):
                 legacy_url = urljoin(xlsx_info["base_url"], filename)
                 resources.append(
                     (
-                        (
-                            ingest_utils.extract_ands_id(self._logger, library_id),
-                        ),
+                        (ingest_utils.extract_ands_id(self._logger, library_id),),
                         legacy_url,
                         resource,
                     )
