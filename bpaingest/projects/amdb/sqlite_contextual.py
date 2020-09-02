@@ -12,7 +12,6 @@ from .contextual import AustralianMicrobiomeSampleContextual
 
 class AustralianMicrobiomeSampleContextualSQLite(AustralianMicrobiomeSampleContextual):
     metadata_patterns = [re.compile(r"^.*\.db$")]
-    name = "amd-samplecontextualsqlite"
     source_pattern = "/*.db"
     db_table_name = "AM_metadata"
 
@@ -28,7 +27,7 @@ class AustralianMicrobiomeSampleContextualSQLite(AustralianMicrobiomeSampleConte
 
     def dataframe_to_excel_file(self, df, fname):
         writer = pandas.ExcelWriter(fname)
-        df.to_excel(writer, sheet_name="Sqlite")
+        df.to_excel(writer, sheet_name=self.sheet_name)
         writer.save()
         self._logger.info("Excel file written.")
 

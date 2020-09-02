@@ -16,13 +16,14 @@ class NotInVocabulary(Exception):
 
 class AustralianMicrobiomeSampleContextual:
     metadata_urls = [
-        "https://downloads-qcif.bioplatforms.com/bpa/amd/metadata/sqlitecontextual/2020-08-18/"
+        "https://downloads-qcif.bioplatforms.com/bpa/amd/metadata/contextual/2020-08-18/"
     ]
     metadata_patterns = [re.compile(r"^.*\.xlsx$")]
     name = "amd-samplecontextual"
+    sheet_name = "Sample_context"
     source_pattern = "/*.xlsx"
     field_specs = {
-        "Sqlite": [
+        sheet_name: [
             fld("sample_id", "sample_id", coerce=ingest_utils.extract_ands_id),
             fld(
                 "utc_date_sampled",
