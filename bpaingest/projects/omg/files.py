@@ -1,12 +1,9 @@
 from ...util import make_logger
 import re
 
-
 logger = make_logger(__name__)
 
-
 tenxtar_filename_re = re.compile(r"""(?P<basename>.*)\.tar""")
-
 
 EXON_FILENAME_PATTERN = r"""
     (?P<bpa_library_id>\d{4,6})_
@@ -20,7 +17,6 @@ EXON_FILENAME_PATTERN = r"""
 """
 exon_filename_re = re.compile(EXON_FILENAME_PATTERN, re.VERBOSE)
 
-
 NOVASEQ_FILENAME_PATTERN = r"""
     (?P<bpa_library_id>\d{4,6})_
     (?P<voucher_id>\w+)_
@@ -33,7 +29,6 @@ NOVASEQ_FILENAME_PATTERN = r"""
 """
 novaseq_filename_re = re.compile(NOVASEQ_FILENAME_PATTERN, re.VERBOSE)
 
-
 TENXFASTQ_FILENAME_PATTERN = r"""
     (?P<bpa_sample_id>\d{4,6})_
     (?P<runsamplenum>S\d*)_
@@ -43,7 +38,6 @@ TENXFASTQ_FILENAME_PATTERN = r"""
 """
 tenxfastq_filename_re = re.compile(TENXFASTQ_FILENAME_PATTERN, re.VERBOSE)
 
-
 TENX_RAW_XLSX_FILENAME_PATTERN = r"""
     (?P<bpa_sample_id>\d{4,6})_
     OMG_
@@ -52,7 +46,6 @@ TENX_RAW_XLSX_FILENAME_PATTERN = r"""
     _metadata.xlsx$
 """
 tenx_raw_xlsx_filename_re = re.compile(TENX_RAW_XLSX_FILENAME_PATTERN, re.VERBOSE)
-
 
 # For the short read data we should follow the new BPA file naming protocol that Mabel circulated fairly recently - I'm not sure if it reached you, but I've attached it here. Essentially it is:
 # <BPA sample ID>_<flowcell ID>_<index sequence>_<sample number>_<lane>_<read>_001.fastq.gz
@@ -124,12 +117,20 @@ transcriptomics_nextseq_fastq_filename_re = re.compile(
 
 PACBIO_SECONDARY_PATTERN = r"""
     (?P<bpa_library_id>\d{4,6})_
-    (?P<facility>UNSW)_
-    PAC_
-    (?P<assembly_date>\d{8})_
-    (?P<run_code>.{3})
-    \.tar\.gz
-    Scras_dunnart_assem1\.0_pb-ont-illsr_flyeassem_red-rd-scfitr2_pil2xwgs2_60chr
+    (?P<folder_name>Scras_dunnart_assem1\.0)_
+    pb-ont-illsr_flyeassem_red-rd-scfitr2_
+    pil2xwgs2_
+    60chr
     \.fasta
 """
 pacbio_secondary_filename_re = re.compile(PACBIO_SECONDARY_PATTERN, re.VERBOSE)
+
+PACBIO_SECONDARY_RAW_PATTERN = r"""
+    (?P<bpa_sample_id>\d{4,6})_
+    m\d{4,6}_
+    (?P<run_date>\d{6})_
+    \d{4,6}
+    \.subreads
+    \.bam
+"""
+pacbio_secondary_raw_filename_re = re.compile(PACBIO_SECONDARY_RAW_PATTERN, re.VERBOSE)

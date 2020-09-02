@@ -10,7 +10,7 @@ from .files import (
     pacbio_filename_re,
     ont_promethion_re,
     transcriptomics_nextseq_fastq_filename_re,
-)
+    pacbio_secondary_filename_re, pacbio_secondary_raw_filename_re)
 
 
 def test_tenxtar_raw_xlsx_filename_re():
@@ -131,3 +131,19 @@ def test_transcriptomics_hiseq_re():
     ]
     for filename in filenames:
         assert transcriptomics_nextseq_fastq_filename_re.match(filename) is not None
+
+
+def test_pacbio_secondary_re():
+    filenames = [
+        "53816_Scras_dunnart_assem1.0_pb-ont-illsr_flyeassem_red-rd-scfitr2_pil2xwgs2_60chr.fasta",
+    ]
+    for filename in filenames:
+        assert pacbio_secondary_filename_re.match(filename) is not None
+
+
+def test_pacbio_raw_secondary_re():
+    filenames = [
+        "40065_m54196_190321_124859.subreads.bam",
+    ]
+    for filename in filenames:
+        assert pacbio_secondary_raw_filename_re.match(filename) is not None

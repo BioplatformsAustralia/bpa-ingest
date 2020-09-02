@@ -2047,6 +2047,9 @@ class OMGGenomicsPacBioGenomeAssemblyMetadata(SecondaryMetadata):
             re.compile(r"^.*TestFiles\.exe.*"),
         ],
     }
+    raw = {
+        "match": [files.pacbio_secondary_raw_filename_re],
+    }
 
     def __init__(
         self, logger, metadata_path, contextual_metadata=[], metadata_info=None
