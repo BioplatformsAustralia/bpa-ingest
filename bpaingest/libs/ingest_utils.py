@@ -1,9 +1,9 @@
+import datetime
 import json
 import numbers
 import re
-from .bpa_constants import BPA_PREFIX
 
-import datetime
+from .bpa_constants import BPA_PREFIX
 
 ands_id_re = re.compile(r"^102\.100\.100[/\.](\d+)$")
 ands_id_abbrev_re = re.compile(r"^(\d+)$")
@@ -225,6 +225,16 @@ def _get_date(logger, dt, silent=False):
     except ValueError:
         pass
 
+    try:
+        return datetime.datetime.strptime(dt, "%Y-%m-%d %H:%M:%S").date()
+    except ValueError:
+        pass
+
+    try:
+        return datetime.datetime.strptime(dt, "%y-%m-%d %H:%M:%S").date()
+    except ValueError:
+        pass
+
     if not silent:
         logger.error("Date `{}` is not in a supported format".format(dt))
     return None
@@ -274,11 +284,13 @@ def date_or_str(logger, v):
         return str(int(v))
     return str(v)
 
+
 def from_comma_or_space_separated_to_list(logger, raw):
     separators = [",", " "]
     if re.search(" ", raw) and re.search(",", raw):
         raise Exception(
-            "There are spaces and commas in this string. Only commas or spaces can be used, not both.")
+            "There are spaces and commas in this string. Only commas or spaces can be used, not both."
+        )
     for next_separator in separators:
         result = raw.split(next_separator)
         if result != raw:

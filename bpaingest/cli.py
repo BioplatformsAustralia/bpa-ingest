@@ -111,6 +111,9 @@ def setup_hash(subparser):
 def setup_dump(subparser):
     subparser.add_argument("filename", help="output target")
     subparser.add_argument("--dump-re", help="restrict dump by slug", default="")
+    subparser.add_argument(
+        "--sql-context", help="generate excel file from sql db if available"
+    )
 
 
 def setup_makeschema(subparser):
