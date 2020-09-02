@@ -29,7 +29,6 @@ from .tracking import (
 
 common_context = [AustralianMicrobiomeSampleContextual]
 
-
 # fixed read lengths provided by AB at CSIRO
 amplicon_read_length = {
     "16S": "300bp",
@@ -42,7 +41,6 @@ common_skip = [
     re.compile(r"^.*SampleSheet.*"),
     re.compile(r"^.*TestFiles\.exe.*"),
 ]
-
 
 CONSORTIUM_ORG_NAME = "AM Consortium Members"
 
@@ -70,11 +68,21 @@ def build_contextual_field_names():
     return field_names
 
 
-class AMDBaseMetadata(BaseMetadata):
-    package_field_names = build_contextual_field_names()
+class AMDBaseNoSchemaMetadata(BaseMetadata):
     sql_to_excel_context_classes = [
         AustralianMicrobiomeSampleContextualSQLiteToExcelCopy
     ]
+    notes_mapping = [
+        {"key": "env_material_control_vocab_0", "separator": " "},
+        {"key": "sample_site_location_description", "separator": ", "},
+        {"key": "geo_loc_country_subregion", "separator": ", "},
+        {"key": "omics", "separator": " "},
+        {"key": "analytical_platform"},
+    ]
+
+
+class AMDBaseMetadata(AMDBaseNoSchemaMetadata):
+    package_field_names = build_contextual_field_names()
 
 
 class AccessAMDContextualMetadata(AMDBaseMetadata):
@@ -265,8 +273,6 @@ class BASEAmpliconsMetadata(AMDBaseMetadata):
                         "sample_name": row.sample_name,
                         "analysis_software_version": row.analysis_software_version,
                         "amplicon": amplicon,
-                        "notes": "BASE Amplicons %s %s %s"
-                        % (amplicon, sample_extraction_id, note_extra),
                         "title": "BASE Amplicons %s %s %s"
                         % (amplicon, sample_extraction_id, note_extra),
                         "contextual_data_submission_date": None,
@@ -297,6 +303,7 @@ class BASEAmpliconsMetadata(AMDBaseMetadata):
                 for contextual_source in self.contextual_metadata:
                     obj.update(contextual_source.get(sample_id))
                 ingest_utils.add_spatial_extra(self._logger, obj)
+                self.build_notes_into_object(obj)
                 tag_names = ["amplicons", amplicon, obj["sample_type"]]
                 obj["tags"] = [{"name": t} for t in tag_names]
                 packages.append(obj)
@@ -401,7 +408,6 @@ class BASEAmpliconsControlMetadata(AMDBaseMetadata):
                     "name": name,
                     "id": name,
                     "flow_id": flow_id,
-                    "notes": "BASE Amplicons Control %s %s" % (amplicon, flow_id),
                     "title": "BASE Amplicons Control %s %s" % (amplicon, flow_id),
                     "read_length": base_amplicon_read_length(
                         amplicon
@@ -434,6 +440,7 @@ class BASEAmpliconsControlMetadata(AMDBaseMetadata):
                 self._logger, obj, "archive_ingestion_date", 90, CONSORTIUM_ORG_NAME
             )
             ingest_utils.add_spatial_extra(self._logger, obj)
+            self.build_notes_into_object(obj)
             tag_names = ["amplicons-control", amplicon, "raw"]
             obj["tags"] = [{"name": t} for t in tag_names]
             packages.append(obj)
@@ -551,7 +558,6 @@ class BASEMetagenomicsMetadata(AMDBaseMetadata):
             "library_construction_protocol": row_get("library_construction_protocol"),
             "sequencer": row_get("sequencer"),
             "analysis_software_version": row_get("casava_version"),
-            "notes": "BASE Metagenomics %s" % (sample_extraction_id),
             "title": "BASE Metagenomics %s" % (sample_extraction_id),
             "contextual_data_submission_date": None,
             "ticket": row_get("ticket"),
@@ -579,6 +585,7 @@ class BASEMetagenomicsMetadata(AMDBaseMetadata):
         for contextual_source in self.contextual_metadata:
             obj.update(contextual_source.get(sample_id))
         ingest_utils.add_spatial_extra(self._logger, obj)
+        self.build_notes_into_object(obj)
         tag_names = ["metagenomics", obj["sample_type"]]
         obj["tags"] = [{"name": t} for t in tag_names]
         return obj
@@ -790,7 +797,6 @@ class BASESiteImagesMetadata(AMDBaseMetadata):
                     "id": name,
                     "site_ids": self.id_tpl_to_site_ids(id_tpl),
                     "title": "BASE Site Image %s %s" % id_tpl,
-                    "notes": "Site image: %s" % (obj["location_description"]),
                     "omics": "Genomics",
                     "analytical_platform": "MiSeq",
                     "ticket": info["ticket"],
@@ -798,6 +804,7 @@ class BASESiteImagesMetadata(AMDBaseMetadata):
                 }
             )
             ingest_utils.permissions_organization_member(self._logger, obj)
+            self.build_notes_into_object(obj)
             ingest_utils.add_spatial_extra(self._logger, obj)
             tag_names = ["site-images"]
             obj["tags"] = [{"name": t} for t in tag_names]
@@ -1030,8 +1037,6 @@ class MarineMicrobesAmpliconsMetadata(AMDBaseMetadata):
                         "reads": row.reads,
                         "analysis_software_version": row.analysis_software_version,
                         "amplicon": amplicon,
-                        "notes": "Marine Microbes Amplicons %s %s %s"
-                        % (amplicon, sample_id, flow_id),
                         "title": "Marine Microbes Amplicons %s %s %s"
                         % (amplicon, sample_id, flow_id),
                         "omics": "Genomics",
@@ -1063,6 +1068,7 @@ class MarineMicrobesAmpliconsMetadata(AMDBaseMetadata):
                 for contextual_source in self.contextual_metadata:
                     obj.update(contextual_source.get(sample_id))
                 ingest_utils.add_spatial_extra(self._logger, obj)
+                self.build_notes_into_object(obj)
                 tag_names = ["amplicons", amplicon]
                 if obj.get("sample_type"):
                     tag_names.append(obj["sample_type"])
@@ -1166,8 +1172,6 @@ class MarineMicrobesAmpliconsControlMetadata(AMDBaseMetadata):
                     "name": name,
                     "id": name,
                     "flow_id": flow_id,
-                    "notes": "Marine Microbes Amplicons Control %s %s"
-                    % (amplicon, flow_id),
                     "title": "Marine Microbes Amplicons Control %s %s"
                     % (amplicon, flow_id),
                     "omics": "Genomics",
@@ -1198,6 +1202,7 @@ class MarineMicrobesAmpliconsControlMetadata(AMDBaseMetadata):
                 self._logger, obj, "archive_ingestion_date", 90, CONSORTIUM_ORG_NAME
             )
             ingest_utils.add_spatial_extra(self._logger, obj)
+            self.build_notes_into_object(obj)
             tag_names = ["amplicons-control", amplicon, "raw"]
             obj["tags"] = [{"name": t} for t in tag_names]
             packages.append(obj)
@@ -1302,7 +1307,6 @@ class MarineMicrobesMetagenomicsMetadata(BaseMarineMicrobesMetadata):
                         "name": name,
                         "id": name,
                         "sample_id": sample_id,
-                        "notes": "Marine Microbes Metagenomics %s" % (sample_id),
                         "title": "Marine Microbes Metagenomics %s" % (sample_id),
                         "omics": "metagenomics",
                         "analytical_platform": "HiSeq",
@@ -1340,6 +1344,7 @@ class MarineMicrobesMetagenomicsMetadata(BaseMarineMicrobesMetadata):
                 for contextual_source in self.contextual_metadata:
                     obj.update(contextual_source.get(sample_id))
                 ingest_utils.add_spatial_extra(self._logger, obj)
+                self.build_notes_into_object(obj)
                 tag_names = ["metagenomics", "raw"]
                 if obj.get("sample_type"):
                     tag_names.append(obj["sample_type"])
@@ -1447,7 +1452,6 @@ class MarineMicrobesMetatranscriptomeMetadata(BaseMarineMicrobesMetadata):
                     "name": name,
                     "id": name,
                     "sample_id": sample_id,
-                    "notes": "Marine Microbes Metatranscriptome %s" % (sample_id),
                     "title": "Marine Microbes Metatranscriptome %s" % (sample_id),
                     "omics": "metatranscriptomics",
                     "analytical_platform": "HiSeq",
@@ -1485,6 +1489,7 @@ class MarineMicrobesMetatranscriptomeMetadata(BaseMarineMicrobesMetadata):
             for contextual_source in self.contextual_metadata:
                 obj.update(contextual_source.get(sample_id))
             ingest_utils.add_spatial_extra(self._logger, obj)
+            self.build_notes_into_object(obj)
             tag_names = ["metatranscriptome", "raw"]
             if obj.get("sample_type"):
                 tag_names.append(obj["sample_type"])
@@ -1515,10 +1520,7 @@ class MarineMicrobesMetatranscriptomeMetadata(BaseMarineMicrobesMetadata):
         return resources
 
 
-class AustralianMicrobiomeMetagenomicsNovaseqMetadata(BaseMetadata):
-    sql_to_excel_context_classes = [
-        AustralianMicrobiomeSampleContextualSQLiteToExcelCopy
-    ]
+class AustralianMicrobiomeMetagenomicsNovaseqMetadata(AMDBaseNoSchemaMetadata):
     organization = "australian-microbiome"
     ckan_data_type = "amdb-metagenomics-novaseq"
     omics = "metagenomics"
@@ -1581,8 +1583,6 @@ class AustralianMicrobiomeMetagenomicsNovaseqMetadata(BaseMetadata):
                     {
                         "name": name,
                         "id": name,
-                        "notes": "Australian Microbiome Metagenomics Novaseq %s"
-                        % (sample_id),
                         "title": "Australian Microbiome Metagenomics Novaseq %s"
                         % (sample_id),
                         "omics": "metagenomics",
@@ -1610,6 +1610,7 @@ class AustralianMicrobiomeMetagenomicsNovaseqMetadata(BaseMetadata):
                 for contextual_source in self.contextual_metadata:
                     obj.update(contextual_source.get(sample_id))
                 ingest_utils.add_spatial_extra(self._logger, obj)
+                self.build_notes_into_object(obj)
                 tag_names = ["metagenomics", "raw"]
                 if obj.get("sample_type"):
                     tag_names.append(obj["sample_type"])
@@ -1696,7 +1697,6 @@ class AustralianMicrobiomeMetagenomicsNovaseqControlMetadata(AMDBaseMetadata):
                     "name": name,
                     "id": name,
                     "flowcell": flowcell,
-                    "notes": "Australian Microbiome Novaseq Control %s" % (flowcell),
                     "title": "Australian Microbiome Novaseq Control %s" % (flowcell),
                     "omics": "Genomics",
                     "analytical_platform": "Novaseq",
@@ -1724,6 +1724,7 @@ class AustralianMicrobiomeMetagenomicsNovaseqControlMetadata(AMDBaseMetadata):
                 self._logger, obj, "archive_ingestion_date", 90, CONSORTIUM_ORG_NAME
             )
             ingest_utils.add_spatial_extra(self._logger, obj)
+            self.build_notes_into_object(obj)
             tag_names = ["novaseq-control", "raw"]
             obj["tags"] = [{"name": t} for t in tag_names]
             packages.append(obj)
@@ -1840,8 +1841,6 @@ class AustralianMicrobiomeAmpliconsMetadata(AMDBaseMetadata):
                         "name": name,
                         "id": name,
                         "amplicon": amplicon,
-                        "notes": "Australian Microbiome Amplicons %s %s %s"
-                        % (amplicon, sample_id, flow_id),
                         "title": "Australian Microbiome Amplicons %s %s %s"
                         % (amplicon, sample_id, flow_id),
                         "omics": "Genomics",
@@ -1861,6 +1860,7 @@ class AustralianMicrobiomeAmpliconsMetadata(AMDBaseMetadata):
                 for contextual_source in self.contextual_metadata:
                     obj.update(contextual_source.get(sample_id))
                 ingest_utils.add_spatial_extra(self._logger, obj)
+                self.build_notes_into_object(obj)
                 tag_names = ["amplicons", amplicon]
                 if obj.get("sample_type"):
                     tag_names.append(obj["sample_type"])
@@ -1952,8 +1952,6 @@ class AustralianMicrobiomeAmpliconsControlMetadata(AMDBaseMetadata):
                     "name": name,
                     "id": name,
                     "flow_id": flow_id,
-                    "notes": "Australian Microbiome Amplicons Control %s %s"
-                    % (amplicon, flow_id),
                     "title": "Australian Microbiome Amplicons Control %s %s"
                     % (amplicon, flow_id),
                     "omics": "Genomics",
@@ -1983,6 +1981,7 @@ class AustralianMicrobiomeAmpliconsControlMetadata(AMDBaseMetadata):
                 self._logger, obj, "archive_ingestion_date", 90, CONSORTIUM_ORG_NAME
             )
             ingest_utils.add_spatial_extra(self._logger, obj)
+            self.build_notes_into_object(obj)
             tag_names = ["amplicons-control", amplicon, "raw"]
             obj["tags"] = [{"name": t} for t in tag_names]
             packages.append(obj)

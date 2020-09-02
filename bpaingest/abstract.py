@@ -9,6 +9,9 @@ class BaseMetadata:
     auth = ("bpaingest", "bpaingest")
     resource_linkage = ("sample_id",)
 
+    def build_notes_into_object(self, obj):
+        obj.update({"notes": self.build_notes_without_blanks(obj)})
+
     def build_notes_without_blanks(self, obj):
         notes = ""
         # ensure blank fields are not used
