@@ -114,6 +114,15 @@ def setup_dump(subparser):
     subparser.add_argument(
         "--sql-context", help="generate excel file from sql db if available"
     )
+    subparser.add_argument("-k", "--api-key", required=False, help="CKAN API Key")
+    subparser.add_argument("-u", "--ckan-url", required=False, help="CKAN base url")
+    subparser.add_argument(
+        "--verify-ssl",
+        required=False,
+        type=str2bool,
+        default=True,
+        help="CKAN base url",
+    )
 
 
 def setup_makeschema(subparser):

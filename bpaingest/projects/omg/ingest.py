@@ -1989,7 +1989,7 @@ class OMGGenomicsPacBioGenomeAssemblyMetadata(SecondaryMetadata):
         "https://downloads-qcif.bioplatforms.com/bpa/omg_staging/pacbio-secondary/",
     ]
     metadata_url_components = ("ticket",)
-    resource_linkage = ("bpa_library_id", "assembly_date")
+    resource_linkage = ("bpa_library_id",)
     raw_resource_linkage = ("bpa_library_id", "run_date")
     spreadsheet = {
         "fields": [
@@ -2154,7 +2154,7 @@ class OMGGenomicsPacBioGenomeAssemblyMetadata(SecondaryMetadata):
                 raw_result[filename] = raw_info
             obj.update({
                 "raw": raw_result
-            })z
+            })
 
     def _get_resources(self):
         self._logger.info(
@@ -2177,7 +2177,6 @@ class OMGGenomicsPacBioGenomeAssemblyMetadata(SecondaryMetadata):
                     (
                         (
                             ingest_utils.extract_ands_id(self._logger, library_id),
-                            resource["assembly_date"],
                         ),
                         legacy_url,
                         resource,

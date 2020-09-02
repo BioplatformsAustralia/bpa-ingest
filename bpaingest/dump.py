@@ -77,11 +77,11 @@ def add_raw_to_packages(logger, args, packages):
     ckan = make_ckan_api(args)
     for next_package in packages:
         id = next_package.get('name', '')
-        logger.info(f"next package is {id}")
-        for next_raw_id, next_raw_value in next_package.get("raw", []).items():
-            logger.info(f"next package raw is {next_raw_id}")
+        logger.info(f"next package is {next_package}")
+        for next_raw_value in next_package.get("raw", []):
+            # logger.info(f"next package raw is {next_raw_id}")
             logger.info(f"next package raw value is: {next_raw_value}")
-            ckan_obj = ckan_method(ckan, "package", "show")(id=id)
+            # ckan_obj = ckan_method(ckan, "package", "show")(id=id)
 
             # def search_package_and_resources(self):
             #     # ckan api will only return first 1000 responses for some calls - so set very high limit.
