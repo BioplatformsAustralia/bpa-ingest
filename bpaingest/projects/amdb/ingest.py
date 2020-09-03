@@ -76,7 +76,7 @@ class AMDBaseNoSchemaMetadata(BaseMetadata):
         {"key": "env_material_control_vocab_0", "separator": ", "},
         {"key": "sample_site_location_description", "separator": ", "},
         {"key": "geo_loc_country_subregion", "separator": ", "},
-        {"key": "type", "separator": " "},
+        {"key": "data_type", "separator": " "},
         {"key": "analytical_platform"},
     ]
 
