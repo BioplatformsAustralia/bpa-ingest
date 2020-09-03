@@ -2150,6 +2150,8 @@ class OMGGenomicsPacBioGenomeAssemblyMetadata(SecondaryMetadata):
             for filename, raw_info in self.parse_raw_list(raw_resources):
                 raw_result[filename] = raw_info
             obj.update({"raw": raw_result})
+            # now that we have a list of 'raw' resources we don't need the original string
+            del obj["raw_resources"]
 
     def _get_resources(self):
         self._logger.info(

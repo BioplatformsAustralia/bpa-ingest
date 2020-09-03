@@ -1,7 +1,6 @@
 import datetime
 import json
 import math
-import numbers
 import re
 
 from .bpa_constants import BPA_PREFIX
@@ -86,6 +85,31 @@ def merge_pass_fail(row):
     elif len(vals) == 1:
         return vals[0]
     raise Exception("more than one amplicon pass_fail column value: %s" % (vals))
+
+
+def build_api_fq_from_list(logger, list_of_key_values):
+    fq = ""
+    for key, value in list_of_key_values.items():
+        fq += kv_as_api_fq(logger, key, value)
+    return fq.strip()
+
+
+def kv_as_api_fq(logger, key, value):
+    sanitised_value = build_ands_is_for_whitelist(logger, key, value)
+    return f" +{key}:{sanitised_value}"
+
+
+def build_ands_is_for_whitelist(logger, key, value):
+    if key in [
+        "bpa_dataset_id",
+        "dataset_id",
+        "bpa_sample_id",
+        "sample_id",
+        "bpa_library_id",
+        "library_id",
+    ]:
+        return extract_ands_id(logger, value)
+    return value
 
 
 def extract_ands_id(logger, s, silent=False):
@@ -188,12 +212,12 @@ def _get_date(logger, dt, silent=False):
         return None
 
     if (
-        dt == "unknown"
-        or dt == "Unknown"
-        or dt == "Not yet assigned"
-        or dt == "Not applicable"
-        or dt == "(null)"
-        or dt == "NA"
+            dt == "unknown"
+            or dt == "Unknown"
+            or dt == "Not yet assigned"
+            or dt == "Not applicable"
+            or dt == "(null)"
+            or dt == "NA"
     ):
         return None
 
@@ -257,7 +281,7 @@ def permissions_organization_member(logger, obj):
 
 
 def permissions_organization_member_after_embargo(
-    logger, obj, field_name, days, consortium_org
+        logger, obj, field_name, days, consortium_org
 ):
     obj["private"] = False
     if field_name not in obj:
