@@ -212,12 +212,12 @@ def _get_date(logger, dt, silent=False):
         return None
 
     if (
-            dt == "unknown"
-            or dt == "Unknown"
-            or dt == "Not yet assigned"
-            or dt == "Not applicable"
-            or dt == "(null)"
-            or dt == "NA"
+        dt == "unknown"
+        or dt == "Unknown"
+        or dt == "Not yet assigned"
+        or dt == "Not applicable"
+        or dt == "(null)"
+        or dt == "NA"
     ):
         return None
 
@@ -281,7 +281,7 @@ def permissions_organization_member(logger, obj):
 
 
 def permissions_organization_member_after_embargo(
-        logger, obj, field_name, days, consortium_org
+    logger, obj, field_name, days, consortium_org
 ):
     obj["private"] = False
     if field_name not in obj:

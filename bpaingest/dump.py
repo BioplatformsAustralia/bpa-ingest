@@ -124,10 +124,10 @@ def dump_state(args):
         )
         dlpath = os.path.join(args.download_path, class_info["slug"])
         with DownloadMetadata(
-                make_logger(class_info["slug"]),
-                class_info["cls"],
-                path=dlpath,
-                has_sql_context=has_sql_context,
+            make_logger(class_info["slug"]),
+            class_info["cls"],
+            path=dlpath,
+            has_sql_context=has_sql_context,
         ) as dlmeta:
             meta = dlmeta.meta
             data_type = meta.ckan_data_type
