@@ -87,16 +87,61 @@ def merge_pass_fail(row):
     raise Exception("more than one amplicon pass_fail column value: %s" % (vals))
 
 
-def build_api_fq_from_list(logger, list_of_key_values):
-    fq = ""
-    for key, value in list_of_key_values.items():
-        fq += kv_as_api_fq(logger, key, value)
-    return fq.strip()
+class ApiFqBuilder:
+    def __init__(self, logger, key, value):
+        self.fq = ""
+        self._logger = logger
+        self._key = key
+        self._value = value
+
+    def solr_date(self):
+        self.build_value(build_solr_utc_for_date)
+        return self
+
+    def ands_is_for_whitelist(self):
+        self.build_value(build_ands_is_for_whitelist)
+        return self
+
+    def build_value(self, func):
+        self._value = func(self._logger, self._key, self._value)
+
+    def build(self):
+        # need to escape the colons
+        self._value = escape_for_solr(self._value)
+        return f"+{self._key}:{self._value}"
+
+    @staticmethod
+    def from_collection(logger, list_of_key_values):
+        fq = ""
+        for key, value in list_of_key_values.items():
+            fq += (
+                " "
+                + ApiFqBuilder(logger, key, value)
+                .ands_is_for_whitelist()
+                .solr_date()
+                .build()
+            )
+        return fq.strip()
 
 
-def kv_as_api_fq(logger, key, value):
-    sanitised_value = build_ands_is_for_whitelist(logger, key, value)
-    return f" +{key}:{sanitised_value}"
+def escape_for_solr(value):
+    for c in [":"]:
+        value = value.replace(c, "\\" + c)
+    return value
+
+
+def build_solr_utc_for_date(logger, key, value):
+    if key in ["run_date"]:
+        return date_to_solr(logger, value)
+    return value
+
+
+def date_to_solr(logger, datestring):
+    dt = datetime.datetime.strptime(datestring, "%y%m%d")
+    if dt is None:
+        return datestring
+    # datetimes aren't stored with timezones
+    return f"{dt.isoformat()}Z"
 
 
 def build_ands_is_for_whitelist(logger, key, value):
@@ -252,6 +297,11 @@ def _get_date(logger, dt, silent=False):
 
     try:
         return datetime.datetime.strptime(dt, "%Y-%m-%d %H:%M:%S").date()
+    except ValueError:
+        pass
+
+    try:
+        return datetime.datetime.strptime(dt, "%y-%m-%d %H:%M:%S").date()
     except ValueError:
         pass
 

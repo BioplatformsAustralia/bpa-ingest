@@ -72,7 +72,6 @@ def make_logger(name, level=logging.INFO):
 
 def make_ckan_api(args):
     logger = make_logger(__name__)
-    logger.info(f"have args for ckan: {args}")
     ckan = ckanapi.RemoteCKAN(
         args.ckan_url, apikey=args.api_key, verify_ssl=args.verify_ssl
     )
