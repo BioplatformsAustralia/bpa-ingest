@@ -200,20 +200,11 @@ def xlsx_resource(linkage, fname, resource_type):
 
 def add_raw_to_packages(logger, args, packages):
     for next_package in packages:
-        for next_raw_id, next_raw_value in next_package.get("raw", []).items():
+        for next_raw_id, next_raw_value in next_package.get("raw_resources", {}).items():
             fetched_descriptors = ckan_get_from_dict(logger, args, next_raw_value)
             next_raw_value.update(fetched_descriptors)
 
-
-# def reorder_raw_for_packages(raw_package_ids_collected, fetched_descriptors, next_raw_id):
-#     package_id = getattr(fetched_descriptors, "package_id", "")
-#     first = {package_id: [next_raw_id]} if package_id else {"no raw package": [next_raw_id]}
-#     z = {**first, **raw_package_ids_collected}
-#     return z
-
-
-def ckan_get_from_dict(logger, args, dict):
-    ckan = make_ckan_api(args)
+def ckan_get_from_dict(logger, ckan, dict):
     fq = ApiFqBuilder.from_collection(logger, dict)
     ## keep search parameters as broad as possible (the raw metadata may be from different project/organization
     #     # ckan api will only return first 1000 responses for some calls - so set very high limit.

@@ -2093,8 +2093,7 @@ class OMGGenomicsPacBioGenomeAssemblyMetadata(SecondaryMetadata):
 
                 name = sample_id_to_ckan_name(
                     "{}".format(obj["bpa_library_id"].split("/")[-1]),
-                    self.ckan_data_type,
-                    obj["assembly_method_version_or_date"],
+                    self.ckan_data_type
                 )
                 obj.update(
                     {
@@ -2149,9 +2148,7 @@ class OMGGenomicsPacBioGenomeAssemblyMetadata(SecondaryMetadata):
             raw_result = {}
             for filename, raw_info in self.parse_raw_list(raw_resources):
                 raw_result[filename] = raw_info
-            obj.update({"raw": raw_result})
-            # now that we have a list of 'raw' resources we don't need the original string
-            del obj["raw_resources"]
+            obj.update({"raw_resources": raw_result})
 
     def _get_resources(self):
         self._logger.info(

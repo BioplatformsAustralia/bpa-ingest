@@ -5,7 +5,7 @@ from collections import defaultdict, Counter
 
 from .metadata import DownloadMetadata
 from .projects import ProjectInfo
-from .util import make_logger, add_raw_to_packages
+from .util import make_logger, add_raw_to_packages, make_ckan_api
 
 
 def unique_packages(logger, packages):
@@ -116,7 +116,8 @@ def dump_state(args):
 
     linkage_qc(logger, state, data_type_meta)
 
-    add_raw_to_packages(logger, args, state[data_type]["packages"])
+    ckan = make_ckan_api(args)
+    add_raw_to_packages(logger, ckan, state[data_type]["packages"])
 
     # for datetime objects, use 'default as str' for now so that parsing doesn't break
     with open(args.filename, "w") as fd:

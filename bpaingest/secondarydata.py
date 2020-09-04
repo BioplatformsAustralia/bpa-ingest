@@ -1,15 +1,5 @@
-import os
-import re
-from glob import glob
-from urllib.parse import urljoin
-
-from bpaingest.libs.raw_matcher import RawParser
-from bpaingest.ops import ckan_method
-from unipath import Path
-
 from bpaingest.abstract import BaseMetadata
-from bpaingest.libs import ingest_utils
-from bpaingest.util import common_values, sample_id_to_ckan_name
+from bpaingest.libs.raw_matcher import RawParser
 
 
 class SecondaryMetadata(BaseMetadata):
@@ -33,7 +23,6 @@ class SecondaryMetadata(BaseMetadata):
         super().__init__(*args, **kwargs)
 
     def _get_packages_and_resources(self):
-        self._logger.info("Inside secondary data...")
         # ensure that each class can expect to have _get_packages() called first,
         # then _get_resources(), and only once in the entire lifetime of the class.
         if self._packages is None:
@@ -46,9 +35,6 @@ class SecondaryMetadata(BaseMetadata):
                 t for _, _, t in self._resources
             )
         return self._packages, self._resources
-
-    def get_raw_packages(self, ckan, obj):
-        ckan_obj = ckan_method(ckan, "package", "show")(id=obj["name"])
 
     def get_packages(self):
         self._get_packages_and_resources()
