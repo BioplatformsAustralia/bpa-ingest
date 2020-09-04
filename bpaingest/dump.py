@@ -75,13 +75,20 @@ def linkage_qc(logger, state, data_type_meta, errors_callback=None):
 def add_raw_to_packages(logger, args, packages):
     for next_package in packages:
         for next_raw_id, next_raw_value in next_package.get("raw", []).items():
-            next_raw_value.update(ckan_get_from_dict(logger, args, next_raw_value))
+            fetched_descriptors = ckan_get_from_dict(logger, args, next_raw_value)
+            next_raw_value.update(fetched_descriptors)
+
+
+# def reorder_raw_for_packages(raw_package_ids_collected, fetched_descriptors, next_raw_id):
+#     package_id = getattr(fetched_descriptors, "package_id", "")
+#     first = {package_id: [next_raw_id]} if package_id else {"no raw package": [next_raw_id]}
+#     z = {**first, **raw_package_ids_collected}
+#     return z
 
 
 def ckan_get_from_dict(logger, args, dict):
     ckan = make_ckan_api(args)
     fq = ApiFqBuilder.from_collection(logger, dict)
-    logger.info(f"fq is: {fq}")
     ## keep search parameters as broad as possible (the raw metadata may be from different project/organization
     #     # ckan api will only return first 1000 responses for some calls - so set very high limit.
     #     # Ensure that 'private' is turned on
@@ -93,10 +100,12 @@ def ckan_get_from_dict(logger, args, dict):
     }
     ckan_result = {}
     try:
-        ckan_wrapped_results = ckan.call_action("package_search", search_package_arguments)
+        ckan_wrapped_results = ckan.call_action(
+            "package_search", search_package_arguments
+        )
         if ckan_wrapped_results and ckan_wrapped_results["count"] == 1:
-            raw_package_id = ckan_wrapped_results["results"][0]["id"]
-            ckan_result = {"package_id": raw_package_id}
+            result = ckan_wrapped_results["results"][0]
+            ckan_result = {"package_id": result["id"]}
         else:
             raise Exception(
                 f"Unable to retrieve single result for raw package search. Unfortunately, the solr query: {fq} returned {getattr(ckan_wrapped_results,'count', 0)} results."
@@ -105,7 +114,6 @@ def ckan_get_from_dict(logger, args, dict):
         logger.error(e)
     finally:
         return ckan_result
-
 
 
 def dump_state(args):

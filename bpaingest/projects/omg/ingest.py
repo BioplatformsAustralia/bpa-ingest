@@ -2139,7 +2139,7 @@ class OMGGenomicsPacBioGenomeAssemblyMetadata(SecondaryMetadata):
 
         return packages
 
-    def _get_raw_resources(self):
+    def _add_raw_resources(self):
         self._logger.info("Calculating raw resources...")
         for obj in self._packages:
             raw_resources = from_comma_or_space_separated_to_list(
