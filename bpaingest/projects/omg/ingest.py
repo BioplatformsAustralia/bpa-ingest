@@ -2093,7 +2093,7 @@ class OMGGenomicsPacBioGenomeAssemblyMetadata(SecondaryMetadata):
 
                 name = sample_id_to_ckan_name(
                     "{}".format(obj["bpa_library_id"].split("/")[-1]),
-                    self.ckan_data_type
+                    self.ckan_data_type,
                 )
                 obj.update(
                     {
