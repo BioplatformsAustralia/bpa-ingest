@@ -199,9 +199,12 @@ def xlsx_resource(linkage, fname, resource_type):
 
 def add_raw_to_packages(logger, args, packages):
     for next_package in packages:
-        for next_raw_id, next_raw_value in next_package.get("raw_resources", {}).items():
+        for next_raw_id, next_raw_value in next_package.get(
+            "raw_resources", {}
+        ).items():
             fetched_descriptors = ckan_get_from_dict(logger, args, next_raw_value)
             next_raw_value.update(fetched_descriptors)
+
 
 def ckan_get_from_dict(logger, ckan, dict):
     fq = ApiFqBuilder.from_collection(logger, dict)
