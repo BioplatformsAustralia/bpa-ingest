@@ -1989,7 +1989,7 @@ class OMGGenomicsPacBioGenomeAssemblyMetadata(SecondaryMetadata):
         "https://downloads-qcif.bioplatforms.com/bpa/omg_staging/pacbio-secondary/",
     ]
     metadata_url_components = ("ticket",)
-    resource_linkage = ("bpa_library_id", "assembly_date")
+    resource_linkage = ("bpa_library_id",)
     raw_resource_linkage = ("bpa_library_id", "run_date")
     spreadsheet = {
         "fields": [
@@ -2047,6 +2047,7 @@ class OMGGenomicsPacBioGenomeAssemblyMetadata(SecondaryMetadata):
             re.compile(r"^.*TestFiles\.exe.*"),
         ],
     }
+    raw = {"match": [files.pacbio_secondary_raw_filename_re], "skip": []}
 
     def __init__(
         self, logger, metadata_path, contextual_metadata=[], metadata_info=None
@@ -2092,8 +2093,7 @@ class OMGGenomicsPacBioGenomeAssemblyMetadata(SecondaryMetadata):
 
                 name = sample_id_to_ckan_name(
                     "{}".format(obj["bpa_library_id"].split("/")[-1]),
-                    self.ckan_data_type,
-                    obj["assembly_method_version_or_date"],
+                    self.ckan_data_type
                 )
                 obj.update(
                     {
@@ -2138,13 +2138,17 @@ class OMGGenomicsPacBioGenomeAssemblyMetadata(SecondaryMetadata):
 
         return packages
 
-    def _get_raw_resources(self):
+    def _add_raw_resources(self):
         self._logger.info("Calculating raw resources...")
         for obj in self._packages:
             raw_resources = from_comma_or_space_separated_to_list(
                 self._logger, obj["raw_resources"]
             )
             self._logger.info("have raw list: {}".format(raw_resources))
+            raw_result = {}
+            for filename, raw_info in self.parse_raw_list(raw_resources):
+                raw_result[filename] = raw_info
+            obj.update({"raw_resources": raw_result})
 
     def _get_resources(self):
         self._logger.info(
@@ -2165,10 +2169,7 @@ class OMGGenomicsPacBioGenomeAssemblyMetadata(SecondaryMetadata):
                 legacy_url = urljoin(xlsx_info["base_url"], filename)
                 resources.append(
                     (
-                        (
-                            ingest_utils.extract_ands_id(self._logger, library_id),
-                            resource["assembly_date"],
-                        ),
+                        (ingest_utils.extract_ands_id(self._logger, library_id),),
                         legacy_url,
                         resource,
                     )

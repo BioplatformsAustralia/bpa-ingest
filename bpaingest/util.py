@@ -1,16 +1,16 @@
+import csv
+import datetime
 import logging
-import string
 import os
 import re
+import string
+from collections import namedtuple
+from hashlib import md5
 
 import ckanapi
-import csv
-import requests
-
-from collections import namedtuple
 from dateutil.relativedelta import relativedelta
-from hashlib import md5
-import datetime
+
+from bpaingest.libs.ingest_utils import ApiFqBuilder
 
 
 def one(l):
@@ -71,6 +71,7 @@ def make_logger(name, level=logging.INFO):
 
 
 def make_ckan_api(args):
+    logger = make_logger(__name__)
     ckan = ckanapi.RemoteCKAN(
         args.ckan_url, apikey=args.api_key, verify_ssl=args.verify_ssl
     )
@@ -195,3 +196,38 @@ def xlsx_resource(linkage, fname, resource_type):
         "resource_type": resource_type,
         "md5": md5(data).hexdigest(),
     }
+
+
+def add_raw_to_packages(logger, args, packages):
+    for next_package in packages:
+        for next_raw_id, next_raw_value in next_package.get("raw_resources", {}).items():
+            fetched_descriptors = ckan_get_from_dict(logger, args, next_raw_value)
+            next_raw_value.update(fetched_descriptors)
+
+def ckan_get_from_dict(logger, ckan, dict):
+    fq = ApiFqBuilder.from_collection(logger, dict)
+    ## keep search parameters as broad as possible (the raw metadata may be from different project/organization
+    #     # ckan api will only return first 1000 responses for some calls - so set very high limit.
+    #     # Ensure that 'private' is turned on
+    search_package_arguments = {
+        "rows": 10000,
+        "start": 0,
+        "fq": fq,
+        "include_private": True,
+    }
+    ckan_result = {}
+    try:
+        ckan_wrapped_results = ckan.call_action(
+            "package_search", search_package_arguments
+        )
+        if ckan_wrapped_results and ckan_wrapped_results["count"] == 1:
+            result = ckan_wrapped_results["results"][0]
+            ckan_result = {"package_id": result["id"]}
+        else:
+            raise Exception(
+                f"Unable to retrieve single result for raw package search. Unfortunately, the solr query: {fq} returned {getattr(ckan_wrapped_results,'count', 0)} results."
+            )
+    except Exception as e:
+        logger.error(e)
+    finally:
+        return ckan_result

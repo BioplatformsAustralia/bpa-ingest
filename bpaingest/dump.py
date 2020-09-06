@@ -2,9 +2,10 @@ import json
 import os
 import re
 from collections import defaultdict, Counter
-from .projects import ProjectInfo
+
 from .metadata import DownloadMetadata
-from .util import make_logger
+from .projects import ProjectInfo
+from .util import make_logger, add_raw_to_packages, make_ckan_api
 
 
 def unique_packages(logger, packages):
@@ -114,6 +115,9 @@ def dump_state(args):
         state[data_type]["resources"].sort(key=lambda x: x[2]["id"])
 
     linkage_qc(logger, state, data_type_meta)
+
+    ckan = make_ckan_api(args)
+    add_raw_to_packages(logger, ckan, state[data_type]["packages"])
 
     # for datetime objects, use 'default as str' for now so that parsing doesn't break
     with open(args.filename, "w") as fd:
