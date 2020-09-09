@@ -90,6 +90,12 @@ omg()
   apply omg-pacbio $*
 }
 
+tsi()
+{
+  apply tsi-novaseq $*
+  apply tsi-pacbio-hifi $*
+}
+
 sepsis()
 {
   apply sepsis-genomics-analysed $*
@@ -152,6 +158,7 @@ all()
   marine_microbes $*
   gbr $*
   omg $*
+  tsi $*
   gap $*
   sepsis $*
   stemcell $*
