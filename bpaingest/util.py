@@ -1,9 +1,11 @@
 import csv
 import datetime
+import json
 import logging
 import os
 import re
 import string
+import tempfile
 from collections import namedtuple
 from hashlib import md5
 
@@ -78,7 +80,6 @@ def make_ckan_api(args):
 
 
 CKAN_AUTH = {"login": "CKAN_USERNAME", "password": "CKAN_PASSWORD"}
-
 
 digit_words = {
     "0": "zero",
@@ -180,30 +181,50 @@ def apply_license(archive_ingestion_date):
         return "CC-BY-3.0-AU"
 
 
-def xlsx_resource(linkage, fname, resource_type):
+def resource_metadata_from_file(linkage, fname, resource_type):
     """
     the same XLSX file might be on multiple packages, so we generate an ID
     which is the MD5(str(linkage) || fname)
     """
+    metadata = resource_metadata_from(linkage, fname, resource_type)
     with open(fname, "rb") as fd:
         data = fd.read()
+    add_md5_from_stream_to_resource_metadata(metadata, data)
+    return metadata
+
+
+def resource_metadata_from_file_no_data(linkage, filename, resource_type):
+    metadata = resource_metadata_from(linkage, filename, resource_type)
+    return metadata
+
+
+def resource_metadata_from(linkage, filename, resource_type):
     return {
         "id": md5(
-            (str(linkage) + "||" + os.path.basename(fname)).encode("utf8")
+            (str(linkage) + "||" + os.path.basename(filename)).encode("utf8")
         ).hexdigest(),
-        "name": os.path.basename(fname),
+        "name": os.path.basename(filename),
         "resource_type": resource_type,
-        "md5": md5(data).hexdigest(),
     }
+
+
+def add_md5_from_stream_to_resource_metadata(metadata, data):
+    metadata.update({"md5": md5(data).hexdigest()})
 
 
 def add_raw_to_packages(logger, args, packages):
     for next_package in packages:
-        for next_raw_id, next_raw_value in next_package.get(
-            "raw_resources", {}
-        ).items():
+        next_raw_resources_data = next_package.get("raw_resources", {})
+        for next_raw_id, next_raw_value in next_raw_resources_data.items():
             fetched_descriptors = ckan_get_from_dict(logger, args, next_raw_value)
             next_raw_value.update(fetched_descriptors)
+
+
+def make_raw_resources_file(logger, raw_resources_data):
+    fd = tempfile.NamedTemporaryFile()
+    fd.name = "raw_resources.json"
+    metadata = resource_metadata_from_file_no_data()
+    json.dump(raw_resources_data, fd, sort_keys=True, indent=2)
 
 
 def ckan_get_from_dict(logger, ckan, dict):
@@ -227,7 +248,7 @@ def ckan_get_from_dict(logger, ckan, dict):
             ckan_result = {"package_id": result["id"]}
         else:
             raise Exception(
-                f"Unable to retrieve single result for raw package search. Unfortunately, the solr query: {fq} returned {getattr(ckan_wrapped_results,'count', 0)} results."
+                f"Unable to retrieve single result for raw package search. Unfortunately, the solr query: {fq} returned {getattr(ckan_wrapped_results, 'count', 0)} results."
             )
     except Exception as e:
         logger.error(e)

@@ -117,6 +117,8 @@ def dump_state(args):
     linkage_qc(logger, state, data_type_meta)
 
     ckan = make_ckan_api(args)
+
+    # TODO: raw packages metadata is in packages, but we need to write this into originally created temp file held in resources
     add_raw_to_packages(logger, ckan, state[data_type]["packages"])
 
     # for datetime objects, use 'default as str' for now so that parsing doesn't break

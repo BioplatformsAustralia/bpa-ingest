@@ -1,8 +1,9 @@
 import os
-from .util import xlsx_resource
 from urllib.parse import urlparse, urljoin
-from .libs.md5lines import MD5Parser
+
 from .libs.excel_wrapper import ExcelWrapper
+from .libs.md5lines import MD5Parser
+from .util import resource_metadata_from_file
 
 
 class BaseMetadata:
@@ -115,6 +116,7 @@ class BaseMetadata:
                 "FASTQ",
                 "SCAN",
                 "WIFF",
+                "JSON",
             ):
                 resource_obj["format"] = extension
 
@@ -148,7 +150,7 @@ class BaseMetadata:
             self._logger.error("no XLSX resources, likely a bug in the ingest class")
         resources = []
         for linkage, fname in self._linkage_xlsx.items():
-            resource = xlsx_resource(linkage, fname, self.ckan_data_type)
+            resource = resource_metadata_from_file(linkage, fname, self.ckan_data_type)
             xlsx_info = self.metadata_info[os.path.basename(fname)]
             legacy_url = urljoin(xlsx_info["base_url"], os.path.basename(fname))
             resources.append((linkage, legacy_url, resource))
