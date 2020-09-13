@@ -65,10 +65,10 @@ class SecondaryMetadata(BaseMetadata):
 
     def create_raw_resources_file(self):
         # open an empty file in temp directory
-        with tempfile.TemporaryDirectory() as tmp:
-            path = os.path.join(tmp, self._raw_resources_file_name)
-            tempFile = open(path, "w+")
-        return tempFile.name
+        tmp = tempfile.mkdtemp()
+        path = os.path.join(tmp, self._raw_resources_file_name)
+        temp_file = open(path, "w+")
+        return temp_file.name
 
     def generate_raw_resources(self):
         if len(self._raw_resources_linkage) == 0:

@@ -212,19 +212,51 @@ def add_md5_from_stream_to_resource_metadata(metadata, data):
     metadata.update({"md5": md5(data).hexdigest()})
 
 
-def add_raw_to_packages(logger, args, packages):
-    for next_package in packages:
-        next_raw_resources_data = next_package.get("raw_resources", {})
-        for next_raw_id, next_raw_value in next_raw_resources_data.items():
-            fetched_descriptors = ckan_get_from_dict(logger, args, next_raw_value)
-            next_raw_value.update(fetched_descriptors)
+def add_raw_to_packages(logger, args, state, data_type_meta):
+    for data_type in state:
+        resource_filename_to_match = getattr(
+            data_type_meta[data_type], "_raw_resources_file_name", ""
+        )
+        # use resource_linkage to line up resource against package
+        for next_package in state[data_type]["packages"]:
+            linkage_tpl = tuple(
+                next_package[t] for t in data_type_meta[data_type].resource_linkage
+            )
+            raw_resources_path = get_raw_resources_filename_full_path(
+                logger,
+                state[data_type]["resources"],
+                resource_filename_to_match,
+                linkage_tpl,
+            )
+            if raw_resources_path:
+                next_raw_resources_data = next_package.pop("raw_resources", None)
+                if not next_raw_resources_data:
+                    raise Exception(
+                        "A raw resource path has been created, but there are no raw resources to append."
+                    )
+                for next_raw_id, next_raw_value in next_raw_resources_data.items():
+                    fetched_descriptors = ckan_get_from_dict(
+                        logger, args, next_raw_value
+                    )
+                    next_raw_value.update(fetched_descriptors)
+                with open(raw_resources_path, "w") as raw_resources_file:
+                    json.dump(
+                        next_raw_resources_data,
+                        raw_resources_file,
+                        sort_keys=True,
+                        indent=2,
+                    )
 
 
-def make_raw_resources_file(logger, raw_resources_data):
-    fd = tempfile.NamedTemporaryFile()
-    fd.name = "raw_resources.json"
-    metadata = resource_metadata_from_file_no_data()
-    json.dump(raw_resources_data, fd, sort_keys=True, indent=2)
+def get_raw_resources_filename_full_path(
+    logger, resources, resource_filename_to_match, linkage_tpl
+):
+    for resource_linkage, legacy_url, resource_obj in resources:
+        if (
+            resource_linkage == linkage_tpl
+            and os.path.basename(legacy_url) == resource_filename_to_match
+        ):
+            return legacy_url
 
 
 def ckan_get_from_dict(logger, ckan, dict):

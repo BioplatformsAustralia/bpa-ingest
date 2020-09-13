@@ -35,7 +35,6 @@ def linkage_qc(logger, state, data_type_meta, errors_callback=None):
         counts[data_type] = len(packages), len(resources)
 
         for package_obj in packages:
-            package_id = package_obj["id"]
             linkage_tpl = tuple(
                 package_obj[t] for t in data_type_meta[data_type].resource_linkage
             )
@@ -119,7 +118,7 @@ def dump_state(args):
     ckan = make_ckan_api(args)
 
     # TODO: raw packages metadata is in packages, but we need to write this into originally created temp file held in resources
-    add_raw_to_packages(logger, ckan, state[data_type]["packages"])
+    add_raw_to_packages(logger, ckan, state, data_type_meta)
 
     # for datetime objects, use 'default as str' for now so that parsing doesn't break
     with open(args.filename, "w") as fd:
