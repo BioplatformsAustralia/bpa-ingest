@@ -2054,6 +2054,7 @@ class OMGGenomicsPacBioGenomeAssemblyMetadata(SecondaryMetadata):
         self.contextual_metadata = contextual_metadata
         self.metadata_info = metadata_info
         self.google_track_meta = OMGTrackGenomeAssemblyMetadata()
+        # self.create_metadata_info_for_raw_resources()
 
     def _get_packages(self):
         self._logger.info("Ingesting secondary OMG metadata from {0}".format(self.path))

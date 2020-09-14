@@ -1,5 +1,7 @@
 import subprocess
 import tempfile
+import urllib
+
 import requests
 import ckanapi
 import os
@@ -282,6 +284,9 @@ def check_resource(
 
 
 def download_legacy_file(legacy_url, auth):
+    if legacy_url.startswith("file:///"):
+        local_path = urllib.parse.urlparse(legacy_url).path
+        return os.path.split(local_path)
     basename = legacy_url.rsplit("/", 1)[-1]
     tempdir = tempfile.mkdtemp(prefix="bpaingest-data-")
     path = os.path.join(tempdir, basename)

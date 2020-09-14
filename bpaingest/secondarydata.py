@@ -1,6 +1,8 @@
 import os
 import pathlib
+import re
 import tempfile
+from urllib.parse import urljoin
 
 from bpaingest.abstract import BaseMetadata
 from bpaingest.libs.ingest_utils import from_comma_or_space_separated_to_list
@@ -49,6 +51,14 @@ class SecondaryMetadata(BaseMetadata):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self._raw_resources_linkage = {}
+
+    def create_metadata_info_for_raw_resources(self):
+        self._logger.info(f"got metadata info: {self.metadata_info}")
+        res = [ k for k in self.metadata_info.keys() if k.endswith(".md5")]
+        if not res:
+            raise("Unable to find md5 file in metadata info.")
+        dictionary_copy= self.metadata_info[res[0]].copy()
+        self.metadata_info[self._raw_resources_file_name] = dictionary_copy
 
     def _get_packages_and_resources(self):
         # ensure that each class can expect to have _get_packages() called first,
