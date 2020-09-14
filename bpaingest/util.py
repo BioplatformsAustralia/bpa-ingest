@@ -5,7 +5,6 @@ import logging
 import os
 import re
 import string
-import tempfile
 from collections import namedtuple
 from hashlib import md5
 
@@ -212,40 +211,41 @@ def add_md5_from_stream_to_resource_metadata(metadata, data):
     metadata.update({"md5": md5(data).hexdigest()})
 
 
-def add_raw_to_packages(logger, args, state, data_type_meta):
+def build_raw_resources_from_state_as_file(logger, ckan, state, data_type_meta):
     for data_type in state:
-        resource_filename_to_match = getattr(
-            data_type_meta[data_type], "_raw_resources_file_name", ""
+        build_raw_resources_as_file(
+            logger,
+            ckan,
+            data_type_meta[data_type],
+            state[data_type]["packages"],
+            state[data_type]["resources"],
         )
-        # use resource_linkage to line up resource against package
-        for next_package in state[data_type]["packages"]:
-            linkage_tpl = tuple(
-                next_package[t] for t in data_type_meta[data_type].resource_linkage
-            )
-            raw_resources_path = get_raw_resources_filename_full_path(
-                logger,
-                state[data_type]["resources"],
-                resource_filename_to_match,
-                linkage_tpl,
-            )
-            if raw_resources_path:
-                next_raw_resources_data = next_package.pop("raw_resources", None)
-                if not next_raw_resources_data:
-                    raise Exception(
-                        "A raw resource path has been created, but there are no raw resources to append."
-                    )
-                for next_raw_id, next_raw_value in next_raw_resources_data.items():
-                    fetched_descriptors = ckan_get_from_dict(
-                        logger, args, next_raw_value
-                    )
-                    next_raw_value.update(fetched_descriptors)
-                with open(raw_resources_path, "w") as raw_resources_file:
-                    json.dump(
-                        next_raw_resources_data,
-                        raw_resources_file,
-                        sort_keys=True,
-                        indent=2,
-                    )
+
+
+def build_raw_resources_as_file(logger, args, meta, packages, resources):
+    resource_filename_to_match = getattr(meta, "_raw_resources_file_name", "")
+    # use resource_linkage to line up resource against package
+    for next_package in packages:
+        linkage_tpl = tuple(next_package[t] for t in meta.resource_linkage)
+        raw_resources_path = get_raw_resources_filename_full_path(
+            logger, resources, resource_filename_to_match, linkage_tpl,
+        )
+        if raw_resources_path:
+            next_raw_resources_data = next_package.pop("raw_resources", None)
+            if not next_raw_resources_data:
+                raise Exception(
+                    "A raw resource path has been created, but there are no raw resources to append."
+                )
+            for next_raw_id, next_raw_value in next_raw_resources_data.items():
+                fetched_descriptors = ckan_get_from_dict(logger, args, next_raw_value)
+                next_raw_value.update(fetched_descriptors)
+            with open(raw_resources_path, "w") as raw_resources_file:
+                json.dump(
+                    next_raw_resources_data,
+                    raw_resources_file,
+                    sort_keys=True,
+                    indent=2,
+                )
 
 
 def get_raw_resources_filename_full_path(

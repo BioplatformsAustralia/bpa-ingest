@@ -12,7 +12,11 @@ from .ops import (
 )
 from .pkgcache import build_package_cache
 import ckanapi
-from .util import make_logger, add_raw_to_packages
+from .util import (
+    make_logger,
+    build_raw_resources_from_state_as_file,
+    build_raw_resources_as_file,
+)
 from .util import prune_dict
 from .libs.multihash import S3_HASH_FIELDS
 from collections import Counter
@@ -300,11 +304,11 @@ def sync_metadata(
     organization = get_organization(ckan, meta.organization)
     packages = meta.get_packages()
     packages = list(unique_packages())
-    add_raw_to_packages(logger, ckan, packages)
+    resources = meta.get_resources()
+    build_raw_resources_as_file(logger, ckan, meta, packages, resources)
     ckan_packages = sync_packages(
         ckan, meta.ckan_data_type, packages, organization, None, do_delete
     )
-    resources = meta.get_resources()
     sync_resources(
         ckan,
         resources,

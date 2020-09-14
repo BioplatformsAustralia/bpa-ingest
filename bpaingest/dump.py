@@ -5,7 +5,7 @@ from collections import defaultdict, Counter
 
 from .metadata import DownloadMetadata
 from .projects import ProjectInfo
-from .util import make_logger, add_raw_to_packages, make_ckan_api
+from .util import make_logger, build_raw_resources_from_state_as_file, make_ckan_api
 
 
 def unique_packages(logger, packages):
@@ -118,7 +118,7 @@ def dump_state(args):
     ckan = make_ckan_api(args)
 
     # TODO: raw packages metadata is in packages, but we need to write this into originally created temp file held in resources
-    add_raw_to_packages(logger, ckan, state, data_type_meta)
+    build_raw_resources_from_state_as_file(logger, ckan, state, data_type_meta)
 
     # for datetime objects, use 'default as str' for now so that parsing doesn't break
     with open(args.filename, "w") as fd:
