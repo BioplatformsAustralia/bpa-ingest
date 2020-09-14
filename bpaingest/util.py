@@ -5,6 +5,7 @@ import logging
 import os
 import re
 import string
+import urllib
 from collections import namedtuple
 from hashlib import md5
 
@@ -238,7 +239,9 @@ def build_raw_resources_as_file(logger, args, meta, packages, resources):
                         "A raw resource path has been created, but there are no raw resources to append."
                     )
                 for next_raw_id, next_raw_value in next_raw_resources_data.items():
-                    fetched_descriptors = ckan_get_from_dict(logger, args, next_raw_value)
+                    fetched_descriptors = ckan_get_from_dict(
+                        logger, args, next_raw_value
+                    )
                     next_raw_value.update(fetched_descriptors)
                 with open(raw_resources_path, "w") as raw_resources_file:
                     json.dump(
@@ -257,7 +260,7 @@ def get_raw_resources_filename_full_path(
             resource_linkage == linkage_tpl
             and os.path.basename(legacy_url) == resource_filename_to_match
         ):
-            return legacy_url
+            return urllib.parse.urlparse(legacy_url).path
 
 
 def ckan_get_from_dict(logger, ckan, dict):

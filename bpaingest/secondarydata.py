@@ -1,4 +1,5 @@
 import os
+import pathlib
 import tempfile
 
 from bpaingest.abstract import BaseMetadata
@@ -78,7 +79,7 @@ class SecondaryMetadata(BaseMetadata):
             resource = resource_metadata_from_file_no_data(
                 linkage, fname, self.ckan_data_type
             )
-            legacy_url = fname
+            legacy_url = pathlib.Path(fname).as_uri()
             resources.append((linkage, legacy_url, resource))
         return resources
 
