@@ -3,7 +3,7 @@ from urllib.parse import urlparse, urljoin
 
 from .libs.excel_wrapper import ExcelWrapper
 from .libs.md5lines import MD5Parser
-from .util import resource_metadata_from_file
+from .resource_metadata import resource_metadata_from_file
 
 
 class BaseMetadata:

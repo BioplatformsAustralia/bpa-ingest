@@ -7,6 +7,8 @@ import ckanapi
 import os
 from urllib.parse import urlparse
 from collections import defaultdict
+
+from .libs.ingest_utils import ApiFqBuilder
 from .util import make_logger
 
 logger = make_logger(__name__)
@@ -285,7 +287,9 @@ def check_resource(
 
 def download_legacy_file(legacy_url, auth):
     if legacy_url.startswith("file:///"):
-        raise Exception("Cannot upload local file. URL reference must be via http or https")
+        raise Exception(
+            "Cannot download local file. URL reference must be via http or https"
+        )
     basename = legacy_url.rsplit("/", 1)[-1]
     tempdir = tempfile.mkdtemp(prefix="bpaingest-data-")
     path = os.path.join(tempdir, basename)
@@ -363,3 +367,32 @@ def create_resource(ckan, ckan_obj):
 
 def get_organization(ckan, id):
     return ckan_method(ckan, "organization", "show")(id=id)
+
+
+def ckan_get_from_dict(logger, ckan, dict):
+    fq = ApiFqBuilder.from_collection(logger, dict)
+    ## keep search parameters as broad as possible (the raw metadata may be from different project/organization
+    #     # ckan api will only return first 1000 responses for some calls - so set very high limit.
+    #     # Ensure that 'private' is turned on
+    search_package_arguments = {
+        "rows": 10000,
+        "start": 0,
+        "fq": fq,
+        "include_private": True,
+    }
+    ckan_result = {}
+    try:
+        ckan_wrapped_results = ckan.call_action(
+            "package_search", search_package_arguments
+        )
+        if ckan_wrapped_results and ckan_wrapped_results["count"] == 1:
+            result = ckan_wrapped_results["results"][0]
+            ckan_result = {"package_id": result["id"]}
+        else:
+            raise Exception(
+                f"Unable to retrieve single result for raw package search. Unfortunately, the solr query: {fq} returned {getattr(ckan_wrapped_results, 'count', 0)} results."
+            )
+    except Exception as e:
+        logger.error(e)
+    finally:
+        return ckan_result

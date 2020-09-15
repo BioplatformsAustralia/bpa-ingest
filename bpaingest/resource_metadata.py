@@ -1,0 +1,130 @@
+import json
+import json
+import os
+import urllib
+from collections import OrderedDict
+from hashlib import md5
+
+from bpaingest.ops import ckan_get_from_dict, download_legacy_file
+
+
+def resource_metadata_from_file(linkage, fname, resource_type):
+    """
+    the same XLSX file might be on multiple packages, so we generate an ID
+    which is the MD5(str(linkage) || fname)
+    """
+    metadata = resource_metadata_from(linkage, fname, resource_type)
+    with open(fname, "rb") as fd:
+        data = fd.read()
+    add_md5_from_stream_to_resource_metadata(metadata, data)
+    return metadata
+
+
+def resource_metadata_from_file_no_data(linkage, filename, resource_type):
+    metadata = resource_metadata_from(linkage, filename, resource_type)
+    return metadata
+
+
+def resource_metadata_from(linkage, filename, resource_type):
+    return {
+        "id": md5(
+            (str(linkage) + "||" + os.path.basename(filename)).encode("utf8")
+        ).hexdigest(),
+        "name": os.path.basename(filename),
+        "resource_type": resource_type,
+    }
+
+
+def add_md5_from_stream_to_resource_metadata(metadata, data):
+    metadata.update({"md5": create_md5_from_stream(data)})
+
+
+def create_md5_from_stream(data):
+    return md5(data).hexdigest()
+
+
+def build_raw_resources_from_state_as_file(logger, ckan, state, data_type_meta):
+    for data_type in state:
+        raw_resources_files = build_raw_resources_as_file(
+            logger,
+            ckan,
+            data_type_meta[data_type],
+            state[data_type]["packages"],
+            state[data_type]["resources"],
+        )
+        for next in raw_resources_files:
+            logger.info(
+                f"Checking MD5 on raw resources file, {next['path']}  against remote URL: {next['metadata'][1]}"
+            )
+            raw_resource_md5 = next["metadata"][2]["md5"]
+            tempdir, path = download_legacy_file(
+                next["metadata"][1], state[data_type]["auth"]
+            )
+            with open(path, "rb") as fd:
+                data = fd.read()
+                md5 = create_md5_from_stream(data)
+                if md5 != raw_resource_md5:
+                    raise Exception(
+                        "The md5sum of raw resources content does not match the content on remote downloads server. Ensure that the raw_resources_file created earlier is copied up onto the downloads server, before re-running the ingest."
+                    )
+
+
+def build_raw_resources_as_file(logger, ckan, meta, packages, resources):
+    raw_resources_files = []
+    raw_resources_linkage = getattr(meta, "_raw_resources_linkage", "")
+    if raw_resources_linkage:
+        # use resource_linkage to line up resource against package
+        for next_package in packages:
+            linkage_tpl = tuple(next_package[t] for t in meta.resource_linkage)
+            raw_resources_path = get_raw_resources_filename_full_path(
+                raw_resources_linkage, linkage_tpl
+            )
+            raw_resources_metadata = get_raw_resources_metadata(
+                resources, linkage_tpl, raw_resources_path
+            )
+
+            next_raw_resources_data = next_package.pop("raw_resources", None)
+            if not next_raw_resources_data:
+                raise Exception(
+                    "A raw resource path has been created, but there are no raw resources to append."
+                )
+            for next_raw_id, next_raw_value in next_raw_resources_data.items():
+                fetched_descriptors = ckan_get_from_dict(logger, ckan, next_raw_value)
+                next_raw_value.update(fetched_descriptors)
+            with open(raw_resources_path, "w") as raw_resources_file:
+                json.dump(
+                    next_raw_resources_data,
+                    raw_resources_file,
+                    sort_keys=True,
+                    indent=2,
+                )
+            update_raw_resources_metadata(resources, linkage_tpl, raw_resources_path)
+            raw_resources_files.append(
+                {"path": raw_resources_path, "metadata": raw_resources_metadata}
+            )
+    return raw_resources_files
+
+
+def get_raw_resources_filename_full_path(raw_resources_linkages, linkage_tpl):
+    filepath = raw_resources_linkages[linkage_tpl]
+    return urllib.parse.urlparse(filepath).path
+
+
+def get_raw_resources_metadata(resources, linkage_tpl, full_path_name):
+    raw_filename = os.path.basename(full_path_name)
+    for resource_linkage, legacy_url, resource_obj in resources:
+        if resource_linkage == linkage_tpl and raw_filename == resource_obj.get(
+            "name", ""
+        ):
+            return (resource_linkage, legacy_url, resource_obj)
+
+
+def update_raw_resources_metadata(resources, linkage_tpl, full_path_name):
+    raw_filename = os.path.basename(full_path_name)
+    for resource_linkage, legacy_url, resource_obj in resources:
+        if resource_linkage == linkage_tpl and raw_filename == resource_obj.get(
+            "name", ""
+        ):
+            with open(full_path_name, "rb") as fd:
+                data = fd.read()
+                add_md5_from_stream_to_resource_metadata(resource_obj, data)

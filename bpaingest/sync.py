@@ -12,8 +12,8 @@ from .ops import (
 )
 from .pkgcache import build_package_cache
 import ckanapi
-from .util import (
-    make_logger,
+from .util import make_logger
+from .resource_metadata import (
     build_raw_resources_from_state_as_file,
     build_raw_resources_as_file,
 )
@@ -305,7 +305,7 @@ def sync_metadata(
     packages = meta.get_packages()
     packages = list(unique_packages())
     resources = meta.get_resources()
-    build_raw_resources_as_file(logger, ckan, meta, packages)
+    build_raw_resources_as_file(logger, ckan, meta, packages, resources)
     ckan_packages = sync_packages(
         ckan, meta.ckan_data_type, packages, organization, None, do_delete
     )

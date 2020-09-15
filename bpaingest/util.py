@@ -1,18 +1,12 @@
 import csv
 import datetime
-import json
 import logging
-import os
 import re
 import string
-import urllib
 from collections import namedtuple
-from hashlib import md5
 
 import ckanapi
 from dateutil.relativedelta import relativedelta
-
-from bpaingest.libs.ingest_utils import ApiFqBuilder
 
 
 def one(l):
@@ -179,104 +173,3 @@ def apply_license(archive_ingestion_date):
         return "other-closed"
     else:
         return "CC-BY-3.0-AU"
-
-
-def resource_metadata_from_file(linkage, fname, resource_type):
-    """
-    the same XLSX file might be on multiple packages, so we generate an ID
-    which is the MD5(str(linkage) || fname)
-    """
-    metadata = resource_metadata_from(linkage, fname, resource_type)
-    with open(fname, "rb") as fd:
-        data = fd.read()
-    add_md5_from_stream_to_resource_metadata(metadata, data)
-    return metadata
-
-
-def resource_metadata_from_file_no_data(linkage, filename, resource_type):
-    metadata = resource_metadata_from(linkage, filename, resource_type)
-    return metadata
-
-
-def resource_metadata_from(linkage, filename, resource_type):
-    return {
-        "id": md5(
-            (str(linkage) + "||" + os.path.basename(filename)).encode("utf8")
-        ).hexdigest(),
-        "name": os.path.basename(filename),
-        "resource_type": resource_type,
-    }
-
-
-def add_md5_from_stream_to_resource_metadata(metadata, data):
-    metadata.update({"md5": md5(data).hexdigest()})
-
-
-def build_raw_resources_from_state_as_file(logger, ckan, state, data_type_meta):
-    for data_type in state:
-        build_raw_resources_as_file(
-            logger,
-            ckan,
-            data_type_meta[data_type],
-            state[data_type]["packages"]
-        )
-
-
-def build_raw_resources_as_file(logger, ckan, meta, packages):
-    raw_resources_linkage = getattr(meta, "_raw_resources_linkage", "")
-    if raw_resources_linkage:
-        # use resource_linkage to line up resource against package
-        for next_package in packages:
-            linkage_tpl = tuple(next_package[t] for t in meta.resource_linkage)
-            raw_resources_path = get_raw_resources_filename_full_path(raw_resources_linkage, linkage_tpl)
-            next_raw_resources_data = next_package.pop("raw_resources", None)
-            if not next_raw_resources_data:
-                raise Exception(
-                    "A raw resource path has been created, but there are no raw resources to append."
-                )
-            for next_raw_id, next_raw_value in next_raw_resources_data.items():
-                fetched_descriptors = ckan_get_from_dict(
-                    logger, ckan, next_raw_value
-                )
-                next_raw_value.update(fetched_descriptors)
-            with open(raw_resources_path, "w") as raw_resources_file:
-                json.dump(
-                    next_raw_resources_data,
-                    raw_resources_file,
-                    sort_keys=True,
-                    indent=2,
-                )
-
-
-def get_raw_resources_filename_full_path(raw_resources_linkages, linkage_tpl):
-    filepath = raw_resources_linkages[linkage_tpl]
-    return urllib.parse.urlparse(filepath).path
-
-
-def ckan_get_from_dict(logger, ckan, dict):
-    fq = ApiFqBuilder.from_collection(logger, dict)
-    ## keep search parameters as broad as possible (the raw metadata may be from different project/organization
-    #     # ckan api will only return first 1000 responses for some calls - so set very high limit.
-    #     # Ensure that 'private' is turned on
-    search_package_arguments = {
-        "rows": 10000,
-        "start": 0,
-        "fq": fq,
-        "include_private": True,
-    }
-    ckan_result = {}
-    try:
-        ckan_wrapped_results = ckan.call_action(
-            "package_search", search_package_arguments
-        )
-        if ckan_wrapped_results and ckan_wrapped_results["count"] == 1:
-            result = ckan_wrapped_results["results"][0]
-            ckan_result = {"package_id": result["id"]}
-        else:
-            raise Exception(
-                f"Unable to retrieve single result for raw package search. Unfortunately, the solr query: {fq} returned {getattr(ckan_wrapped_results, 'count', 0)} results."
-            )
-    except Exception as e:
-        logger.error(e)
-    finally:
-        return ckan_result

@@ -5,7 +5,8 @@ from collections import defaultdict, Counter
 
 from .metadata import DownloadMetadata
 from .projects import ProjectInfo
-from .util import make_logger, build_raw_resources_from_state_as_file, make_ckan_api
+from .util import make_logger, make_ckan_api
+from .resource_metadata import build_raw_resources_from_state_as_file
 
 
 def unique_packages(logger, packages):
@@ -108,6 +109,7 @@ def dump_state(args):
             data_type_meta[data_type] = meta
             state[data_type]["packages"] += meta.get_packages()
             state[data_type]["resources"] += meta.get_resources()
+            state[data_type]["auth"] = dlmeta.auth
 
     for data_type in state:
         state[data_type]["packages"].sort(key=lambda x: x["id"])
@@ -118,8 +120,16 @@ def dump_state(args):
     ckan = make_ckan_api(args)
 
     # TODO: raw packages metadata is in packages, but we need to write this into originally created temp file held in resources
-    build_raw_resources_from_state_as_file(logger, ckan, state, data_type_meta)
+    raw_resources_files = build_raw_resources_from_state_as_file(
+        logger, ckan, state, data_type_meta
+    )
 
     # for datetime objects, use 'default as str' for now so that parsing doesn't break
     with open(args.filename, "w") as fd:
         json.dump(state, fd, sort_keys=True, indent=2, separators=(",", ": "))
+
+    def compare_local_raw_resources_file_to_remote(logger, auth):
+        logger.info("Entered compare...")
+        # tempdir, path = download_legacy_file(legacy_url, auth)
+        # # for fname in glob(self.path + "/*.xlsx"):
+        # download_legacy_file(legacy_url, auth)

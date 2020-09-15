@@ -7,11 +7,11 @@ from urllib.parse import urljoin
 from bpaingest.abstract import BaseMetadata
 from bpaingest.libs.ingest_utils import from_comma_or_space_separated_to_list
 from bpaingest.libs.raw_matcher import RawParser
-from bpaingest.util import resource_metadata_from_file_no_data
+from bpaingest.resource_metadata import resource_metadata_from_file_no_data
 
 
 class SecondaryMetadata(BaseMetadata):
-    _raw_resources_file_name = "raw_resources.json"
+    _raw_resources_file_basename = "raw_resources.json"
 
     def parse_raw_list(self, lname):
         p = RawParser(lname, self.raw["match"], self.raw["skip"])
@@ -46,19 +46,13 @@ class SecondaryMetadata(BaseMetadata):
 
         linkage_key = tuple([obj[t] for t in self.resource_linkage])
         assert linkage_key not in self._raw_resources_linkage
-        self._raw_resources_linkage[linkage_key] = self.create_raw_resources_filename_only()
+        self._raw_resources_linkage[linkage_key] = self.create_raw_resources_filename(
+            linkage_key
+        )
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self._raw_resources_linkage = {}
-
-    def create_metadata_info_for_raw_resources(self):
-        self._logger.info(f"got metadata info: {self.metadata_info}")
-        res = [ k for k in self.metadata_info.keys() if k.endswith(".md5")]
-        if not res:
-            raise("Unable to find md5 file in metadata info.")
-        dictionary_copy= self.metadata_info[res[0]].copy()
-        self.metadata_info[self._raw_resources_file_name] = dictionary_copy
 
     def _get_packages_and_resources(self):
         # ensure that each class can expect to have _get_packages() called first,
@@ -74,9 +68,14 @@ class SecondaryMetadata(BaseMetadata):
             )
         return self._packages, self._resources
 
-    def create_raw_resources_filename_only(self):
+    def create_raw_resources_filename(self, linkages):
         file_dir = os.path.dirname(self.path)
-        path = os.path.join(file_dir, self._raw_resources_file_name)
+        sanitised_linkages = []
+        for next_linkage in linkages:
+            sanitised_linkages.append(next_linkage.split("/")[-1])
+        tuple_for_filename = "_".join(sanitised_linkages)
+        filename = f"{tuple_for_filename}_{self._raw_resources_file_basename}"
+        path = os.path.join(file_dir, filename)
         # // no need to open file yet, just create the name we will use later
         return path
 
@@ -90,7 +89,9 @@ class SecondaryMetadata(BaseMetadata):
             )
             raw_resources_info = self.metadata_info.get(os.path.basename(fname), "")
             if raw_resources_info:
-                legacy_url = urljoin(raw_resources_info["base_url"], os.path.basename(fname))
+                legacy_url = urljoin(
+                    raw_resources_info["base_url"], os.path.basename(fname)
+                )
             else:
                 legacy_url = pathlib.Path(os.path.abspath(fname)).as_uri()
             resources.append((linkage, legacy_url, resource))
