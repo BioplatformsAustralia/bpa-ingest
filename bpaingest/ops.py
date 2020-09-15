@@ -285,8 +285,7 @@ def check_resource(
 
 def download_legacy_file(legacy_url, auth):
     if legacy_url.startswith("file:///"):
-        local_path = urllib.parse.urlparse(legacy_url).path
-        return os.path.split(local_path)
+        raise Exception("Cannot upload local file. URL reference must be via http or https")
     basename = legacy_url.rsplit("/", 1)[-1]
     tempdir = tempfile.mkdtemp(prefix="bpaingest-data-")
     path = os.path.join(tempdir, basename)

@@ -1981,7 +1981,7 @@ class OMGGenomicsPacBioGenomeAssemblyMetadata(SecondaryMetadata):
     ckan_data_type = "omg-pacbio-genome-assembly"
     technology = "pacbio-genome-assembly"
     contextual_classes = []
-    metadata_patterns = [r"^.*\.md5$", r"^.*_metadata.*\.xlsx$"]
+    metadata_patterns = [r"^.*\.md5$", r"^.*_metadata.*\.xlsx$", r"^.*_resources.json$"]
     metadata_urls = [
         "https://downloads-qcif.bioplatforms.com/bpa/omg_staging/pacbio-secondary/",
     ]

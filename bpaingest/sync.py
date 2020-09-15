@@ -305,7 +305,7 @@ def sync_metadata(
     packages = meta.get_packages()
     packages = list(unique_packages())
     resources = meta.get_resources()
-    build_raw_resources_as_file(logger, ckan, meta, packages, resources)
+    build_raw_resources_as_file(logger, ckan, meta, packages)
     ckan_packages = sync_packages(
         ckan, meta.ckan_data_type, packages, organization, None, do_delete
     )

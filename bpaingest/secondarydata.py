@@ -46,7 +46,7 @@ class SecondaryMetadata(BaseMetadata):
 
         linkage_key = tuple([obj[t] for t in self.resource_linkage])
         assert linkage_key not in self._raw_resources_linkage
-        self._raw_resources_linkage[linkage_key] = self.create_raw_resources_file()
+        self._raw_resources_linkage[linkage_key] = self.create_raw_resources_filename_only()
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
@@ -74,12 +74,11 @@ class SecondaryMetadata(BaseMetadata):
             )
         return self._packages, self._resources
 
-    def create_raw_resources_file(self):
-        # open an empty file in temp directory
-        tmp = tempfile.mkdtemp()
-        path = os.path.join(tmp, self._raw_resources_file_name)
-        temp_file = open(path, "w+")
-        return temp_file.name
+    def create_raw_resources_filename_only(self):
+        file_dir = os.path.dirname(self.path)
+        path = os.path.join(file_dir, self._raw_resources_file_name)
+        # // no need to open file yet, just create the name we will use later
+        return path
 
     def generate_raw_resources(self):
         if len(self._raw_resources_linkage) == 0:
@@ -89,7 +88,11 @@ class SecondaryMetadata(BaseMetadata):
             resource = resource_metadata_from_file_no_data(
                 linkage, fname, self.ckan_data_type
             )
-            legacy_url = pathlib.Path(fname).as_uri()
+            raw_resources_info = self.metadata_info.get(os.path.basename(fname), "")
+            if raw_resources_info:
+                legacy_url = urljoin(raw_resources_info["base_url"], os.path.basename(fname))
+            else:
+                legacy_url = pathlib.Path(os.path.abspath(fname)).as_uri()
             resources.append((linkage, legacy_url, resource))
         return resources
 
