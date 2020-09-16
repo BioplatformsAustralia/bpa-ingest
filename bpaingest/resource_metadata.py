@@ -5,7 +5,11 @@ import urllib
 from hashlib import md5
 
 from bpaingest.ops import ckan_get_from_dict, download_legacy_file
-from bpaingest.util import create_md5_from_stream, add_md5_from_stream_to_metadata, get_md5_legacy_url
+from bpaingest.util import (
+    create_md5_from_stream,
+    add_md5_from_stream_to_metadata,
+    get_md5_legacy_url,
+)
 
 
 def resource_metadata_from_file(linkage, fname, resource_type):
@@ -68,7 +72,6 @@ def validate_raw_resources(logger, state):
                         "The md5sum of raw resources content does not match the content on remote downloads server. "
                         "Ensure that the raw_resources_file created earlier is copied up onto the downloads server, "
                         "before re-running the ingest. "
-
                     )
 
 
@@ -122,7 +125,7 @@ def get_raw_resources_metadata(resources, linkage_tpl, full_path_name):
     raw_filename = os.path.basename(full_path_name)
     for resource_linkage, legacy_url, resource_obj in resources:
         if resource_linkage == linkage_tpl and raw_filename == resource_obj.get(
-                "name", ""
+            "name", ""
         ):
             return (resource_linkage, legacy_url, resource_obj)
 
@@ -131,7 +134,7 @@ def update_raw_resources_metadata(resources, linkage_tpl, full_path_name):
     raw_filename = os.path.basename(full_path_name)
     for resource_linkage, legacy_url, resource_obj in resources:
         if resource_linkage == linkage_tpl and raw_filename == resource_obj.get(
-                "name", ""
+            "name", ""
         ):
             with open(full_path_name, "rb") as fd:
                 data = fd.read()

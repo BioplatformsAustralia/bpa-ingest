@@ -91,13 +91,13 @@ digit_words = {
 
 
 def csv_to_named_tuple(
-        typname,
-        fname,
-        mode="r",
-        additional_context=None,
-        cleanup=None,
-        name_fn=None,
-        dialect="excel",
+    typname,
+    fname,
+    mode="r",
+    additional_context=None,
+    cleanup=None,
+    name_fn=None,
+    dialect="excel",
 ):
     if fname is None:
         return [], []
@@ -183,6 +183,11 @@ def add_md5_from_stream_to_metadata(metadata, data):
 def create_md5_from_stream(data):
     return md5(data).hexdigest()
 
+
 def get_md5_legacy_url(meta):
-    first_md5_baseurl = [val.get("base_url") for key, val in meta.metadata_info.items() if key.endswith(".md5")][0]
+    first_md5_baseurl = [
+        val.get("base_url")
+        for key, val in meta.metadata_info.items()
+        if key.endswith(".md5")
+    ][0]
     return first_md5_baseurl

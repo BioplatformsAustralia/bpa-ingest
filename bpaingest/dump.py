@@ -5,7 +5,10 @@ from collections import defaultdict, Counter
 
 from .metadata import DownloadMetadata
 from .projects import ProjectInfo
-from .resource_metadata import build_raw_resources_from_state_as_file, validate_raw_resources
+from .resource_metadata import (
+    build_raw_resources_from_state_as_file,
+    validate_raw_resources,
+)
 from .util import make_logger, make_ckan_api, get_md5_legacy_url
 
 
@@ -121,7 +124,6 @@ def dump_state(args):
 
     build_raw_resources_from_state_as_file(logger, ckan, state, data_type_meta)
     validate_raw_resources(logger, state)
-
 
     # for datetime objects, use 'default as str' for now so that parsing doesn't break
     with open(args.filename, "w") as fd:
