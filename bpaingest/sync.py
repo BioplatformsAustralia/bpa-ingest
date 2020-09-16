@@ -13,7 +13,10 @@ from .ops import (
 from .pkgcache import build_package_cache
 import ckanapi
 
-from .resource_metadata import build_raw_resources_as_file, validate_raw_resources_file_metadata
+from .resource_metadata import (
+    build_raw_resources_as_file,
+    validate_raw_resources_file_metadata,
+)
 from .util import make_logger
 from .util import prune_dict
 from .libs.multihash import S3_HASH_FIELDS
@@ -303,7 +306,9 @@ def sync_metadata(
     packages = meta.get_packages()
     packages = list(unique_packages())
     resources = meta.get_resources()
-    raw_resources_metadata = build_raw_resources_as_file(logger, ckan, meta, packages, resources)
+    raw_resources_metadata = build_raw_resources_as_file(
+        logger, ckan, meta, packages, resources
+    )
     validate_raw_resources_file_metadata(logger, raw_resources_metadata, auth)
     ckan_packages = sync_packages(
         ckan, meta.ckan_data_type, packages, organization, None, do_delete

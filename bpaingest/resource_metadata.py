@@ -41,7 +41,9 @@ def resource_metadata_from(linkage, filename, resource_type):
 
 def validate_raw_resources_from_state(logger, state):
     for data_type in state:
-        validate_raw_resources_file_metadata(logger, state[data_type]["raw_resources_files"], state[data_type]["auth"])
+        validate_raw_resources_file_metadata(
+            logger, state[data_type]["raw_resources_files"], state[data_type]["auth"]
+        )
 
 
 def validate_raw_resources_file_metadata(logger, raw_resources_metadata, auth):
@@ -115,9 +117,7 @@ def build_raw_resources_as_file(logger, ckan, meta, packages, resources):
             raw_resources_files.append(
                 {"path": raw_resources_path, "metadata": raw_resources_metadata}
             )
-            logger.info(
-                f"Generated raw resouces file: {raw_resources_path}."
-            )
+            logger.info(f"Generated raw resouces file: {raw_resources_path}.")
     return raw_resources_files
 
 
@@ -130,7 +130,7 @@ def get_raw_resources_metadata(resources, linkage_tpl, full_path_name):
     raw_filename = os.path.basename(full_path_name)
     for resource_linkage, legacy_url, resource_obj in resources:
         if resource_linkage == linkage_tpl and raw_filename == resource_obj.get(
-                "name", ""
+            "name", ""
         ):
             return (resource_linkage, legacy_url, resource_obj)
 
@@ -139,7 +139,7 @@ def update_raw_resources_metadata(resources, linkage_tpl, full_path_name):
     raw_filename = os.path.basename(full_path_name)
     for resource_linkage, legacy_url, resource_obj in resources:
         if resource_linkage == linkage_tpl and raw_filename == resource_obj.get(
-                "name", ""
+            "name", ""
         ):
             with open(full_path_name, "rb") as fd:
                 data = fd.read()
