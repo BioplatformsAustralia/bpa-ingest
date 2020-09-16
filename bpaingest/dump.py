@@ -7,8 +7,7 @@ from .metadata import DownloadMetadata
 from .projects import ProjectInfo
 from .resource_metadata import (
     build_raw_resources_from_state_as_file,
-    validate_raw_resources,
-)
+    validate_raw_resources_from_state)
 from .util import make_logger, make_ckan_api
 
 
@@ -102,10 +101,10 @@ def dump_state(args):
         )
         dlpath = os.path.join(args.download_path, class_info["slug"])
         with DownloadMetadata(
-            make_logger(class_info["slug"]),
-            class_info["cls"],
-            path=dlpath,
-            has_sql_context=has_sql_context,
+                make_logger(class_info["slug"]),
+                class_info["cls"],
+                path=dlpath,
+                has_sql_context=has_sql_context,
         ) as dlmeta:
             meta = dlmeta.meta
             data_type = meta.ckan_data_type
@@ -123,7 +122,7 @@ def dump_state(args):
     ckan = make_ckan_api(args)
 
     build_raw_resources_from_state_as_file(logger, ckan, state, data_type_meta)
-    validate_raw_resources(logger, state)
+    validate_raw_resources_from_state(logger, state)
 
     # for datetime objects, use 'default as str' for now so that parsing doesn't break
     with open(args.filename, "w") as fd:
