@@ -286,7 +286,7 @@ def check_resource(
 
 
 def download_legacy_file(legacy_url, auth):
-    if legacy_url.startswith("file:///"):
+    if legacy_url and legacy_url.startswith("file:///"):
         raise Exception(
             "Cannot download local file. URL reference must be via http or https"
         )
