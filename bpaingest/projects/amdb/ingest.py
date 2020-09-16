@@ -43,6 +43,9 @@ common_skip = [
 ]
 
 CONSORTIUM_ORG_NAME = "AM Consortium Members"
+# This is the URL slug of the organization whose members are
+# permitted access during the embargo period
+CONSORTIUM_ORG_NAME = "am-consortium-members"
 
 
 def base_amplicon_read_length(amplicon):
