@@ -1,7 +1,6 @@
 import csv
 import datetime
 import logging
-import os
 import re
 import string
 from collections import namedtuple
@@ -9,8 +8,6 @@ from hashlib import md5
 
 import ckanapi
 from dateutil.relativedelta import relativedelta
-
-from bpaingest.libs.ingest_utils import ApiFqBuilder
 
 
 def one(l):
@@ -180,56 +177,18 @@ def apply_license(archive_ingestion_date):
         return "CC-BY-3.0-AU"
 
 
-def xlsx_resource(linkage, fname, resource_type):
-    """
-    the same XLSX file might be on multiple packages, so we generate an ID
-    which is the MD5(str(linkage) || fname)
-    """
-    with open(fname, "rb") as fd:
-        data = fd.read()
-    return {
-        "id": md5(
-            (str(linkage) + "||" + os.path.basename(fname)).encode("utf8")
-        ).hexdigest(),
-        "name": os.path.basename(fname),
-        "resource_type": resource_type,
-        "md5": md5(data).hexdigest(),
-    }
+def add_md5_from_stream_to_metadata(metadata, data):
+    metadata.update({"md5": create_md5_from_stream(data)})
 
 
-def add_raw_to_packages(logger, args, packages):
-    for next_package in packages:
-        for next_raw_id, next_raw_value in next_package.get(
-            "raw_resources", {}
-        ).items():
-            fetched_descriptors = ckan_get_from_dict(logger, args, next_raw_value)
-            next_raw_value.update(fetched_descriptors)
+def create_md5_from_stream(data):
+    return md5(data).hexdigest()
 
 
-def ckan_get_from_dict(logger, ckan, dict):
-    fq = ApiFqBuilder.from_collection(logger, dict)
-    ## keep search parameters as broad as possible (the raw metadata may be from different project/organization
-    #     # ckan api will only return first 1000 responses for some calls - so set very high limit.
-    #     # Ensure that 'private' is turned on
-    search_package_arguments = {
-        "rows": 10000,
-        "start": 0,
-        "fq": fq,
-        "include_private": True,
-    }
-    ckan_result = {}
-    try:
-        ckan_wrapped_results = ckan.call_action(
-            "package_search", search_package_arguments
-        )
-        if ckan_wrapped_results and ckan_wrapped_results["count"] == 1:
-            result = ckan_wrapped_results["results"][0]
-            ckan_result = {"package_id": result["id"]}
-        else:
-            raise Exception(
-                f"Unable to retrieve single result for raw package search. Unfortunately, the solr query: {fq} returned {getattr(ckan_wrapped_results,'count', 0)} results."
-            )
-    except Exception as e:
-        logger.error(e)
-    finally:
-        return ckan_result
+def get_md5_legacy_url(meta):
+    first_md5_baseurl = [
+        val.get("base_url")
+        for key, val in meta.metadata_info.items()
+        if key.endswith(".md5")
+    ][0]
+    return first_md5_baseurl

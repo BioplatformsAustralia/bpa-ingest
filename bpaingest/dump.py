@@ -5,7 +5,11 @@ from collections import defaultdict, Counter
 
 from .metadata import DownloadMetadata
 from .projects import ProjectInfo
-from .util import make_logger, add_raw_to_packages, make_ckan_api
+from .resource_metadata import (
+    build_raw_resources_from_state_as_file,
+    validate_raw_resources_from_state,
+)
+from .util import make_logger, make_ckan_api
 
 
 def unique_packages(logger, packages):
@@ -35,7 +39,6 @@ def linkage_qc(logger, state, data_type_meta, errors_callback=None):
         counts[data_type] = len(packages), len(resources)
 
         for package_obj in packages:
-            package_id = package_obj["id"]
             linkage_tpl = tuple(
                 package_obj[t] for t in data_type_meta[data_type].resource_linkage
             )
@@ -109,6 +112,7 @@ def dump_state(args):
             data_type_meta[data_type] = meta
             state[data_type]["packages"] += meta.get_packages()
             state[data_type]["resources"] += meta.get_resources()
+            state[data_type]["auth"] = dlmeta.auth
 
     for data_type in state:
         state[data_type]["packages"].sort(key=lambda x: x["id"])
@@ -117,7 +121,9 @@ def dump_state(args):
     linkage_qc(logger, state, data_type_meta)
 
     ckan = make_ckan_api(args)
-    add_raw_to_packages(logger, ckan, state[data_type]["packages"])
+
+    build_raw_resources_from_state_as_file(logger, ckan, state, data_type_meta)
+    validate_raw_resources_from_state(logger, state)
 
     # for datetime objects, use 'default as str' for now so that parsing doesn't break
     with open(args.filename, "w") as fd:

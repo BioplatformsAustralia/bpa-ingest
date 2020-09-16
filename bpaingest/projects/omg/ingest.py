@@ -1,24 +1,21 @@
-from unipath import Path
-from collections import defaultdict
-
-from ...abstract import BaseMetadata
-from ...secondarydata import SecondaryMetadata
-
-from ...util import sample_id_to_ckan_name, common_values, clean_tag_name
-from urllib.parse import urljoin
-
-from glob import glob
-
-from ...libs import ingest_utils
-from bpasslh.handler import SensitiveDataGeneraliser
-from ...libs.excel_wrapper import make_field_definition as fld, make_skip_column as skp
-from . import files
-from .tracking import OMGTrackMetadata, OMGTrackGenomeAssemblyMetadata
-from .contextual import OMGSampleContextual, OMGLibraryContextual
-from ...libs.ingest_utils import get_clean_number, from_comma_or_space_separated_to_list
-
 import os
 import re
+from collections import defaultdict
+from glob import glob
+from urllib.parse import urljoin
+
+from bpasslh.handler import SensitiveDataGeneraliser
+from unipath import Path
+
+from . import files
+from .contextual import OMGSampleContextual, OMGLibraryContextual
+from .tracking import OMGTrackMetadata, OMGTrackGenomeAssemblyMetadata
+from ...abstract import BaseMetadata
+from ...libs import ingest_utils
+from ...libs.excel_wrapper import make_field_definition as fld, make_skip_column as skp
+from ...libs.ingest_utils import get_clean_number
+from ...secondarydata import SecondaryMetadata
+from ...util import sample_id_to_ckan_name, common_values, clean_tag_name
 
 common_context = [OMGSampleContextual, OMGLibraryContextual]
 
@@ -1984,7 +1981,11 @@ class OMGGenomicsPacBioGenomeAssemblyMetadata(SecondaryMetadata):
     ckan_data_type = "omg-pacbio-genome-assembly"
     technology = "pacbio-genome-assembly"
     contextual_classes = []
-    metadata_patterns = [r"^.*\.md5$", r"^.*_metadata.*\.xlsx$"]
+    metadata_patterns = [
+        r"^.*\.md5$",
+        r"^.*_metadata.*\.xlsx$",
+        r"^.*raw_resources.json$",
+    ]
     metadata_urls = [
         "https://downloads-qcif.bioplatforms.com/bpa/omg_staging/pacbio-secondary/",
     ]
@@ -2057,6 +2058,7 @@ class OMGGenomicsPacBioGenomeAssemblyMetadata(SecondaryMetadata):
         self.contextual_metadata = contextual_metadata
         self.metadata_info = metadata_info
         self.google_track_meta = OMGTrackGenomeAssemblyMetadata()
+        # self.create_metadata_info_for_raw_resources()
 
     def _get_packages(self):
         self._logger.info("Ingesting secondary OMG metadata from {0}".format(self.path))
@@ -2138,18 +2140,6 @@ class OMGGenomicsPacBioGenomeAssemblyMetadata(SecondaryMetadata):
 
         return packages
 
-    def _add_raw_resources(self):
-        self._logger.info("Calculating raw resources...")
-        for obj in self._packages:
-            raw_resources = from_comma_or_space_separated_to_list(
-                self._logger, obj["raw_resources"]
-            )
-            self._logger.info("have raw list: {}".format(raw_resources))
-            raw_result = {}
-            for filename, raw_info in self.parse_raw_list(raw_resources):
-                raw_result[filename] = raw_info
-            obj.update({"raw_resources": raw_result})
-
     def _get_resources(self):
         self._logger.info(
             "Ingesting OMG md5 file information from {0}".format(self.path)
@@ -2174,4 +2164,6 @@ class OMGGenomicsPacBioGenomeAssemblyMetadata(SecondaryMetadata):
                         resource,
                     )
                 )
-        return resources + self.generate_xlsx_resources()
+        return (
+            resources + self.generate_xlsx_resources() + self.generate_raw_resources()
+        )
