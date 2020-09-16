@@ -71,10 +71,6 @@ def validate_raw_resources_file_metadata(logger, raw_resources_metadata, auth):
 
 def build_raw_resources_from_state_as_file(logger, ckan, state, data_type_meta):
     for data_type in state:
-        md5_legacy_url = get_md5_legacy_url(data_type_meta[data_type])
-        logger.warning(
-            f"Any updates to generated raw resources files, need to be copied to remote download server at: {md5_legacy_url} "
-        )
         state[data_type]["raw_resources_files"] = build_raw_resources_as_file(
             logger,
             ckan,
@@ -118,6 +114,10 @@ def build_raw_resources_as_file(logger, ckan, meta, packages, resources):
                 {"path": raw_resources_path, "metadata": raw_resources_metadata}
             )
             logger.info(f"Generated raw resouces file: {raw_resources_path}.")
+    md5_legacy_url = get_md5_legacy_url(meta)
+    logger.warning(
+        f"Any updates to generated raw resources files, need to be copied to remote download server at: {md5_legacy_url} "
+    )
     return raw_resources_files
 
 
