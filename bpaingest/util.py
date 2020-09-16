@@ -4,6 +4,7 @@ import logging
 import re
 import string
 from collections import namedtuple
+from hashlib import md5
 
 import ckanapi
 from dateutil.relativedelta import relativedelta
@@ -90,13 +91,13 @@ digit_words = {
 
 
 def csv_to_named_tuple(
-    typname,
-    fname,
-    mode="r",
-    additional_context=None,
-    cleanup=None,
-    name_fn=None,
-    dialect="excel",
+        typname,
+        fname,
+        mode="r",
+        additional_context=None,
+        cleanup=None,
+        name_fn=None,
+        dialect="excel",
 ):
     if fname is None:
         return [], []
@@ -173,3 +174,15 @@ def apply_license(archive_ingestion_date):
         return "other-closed"
     else:
         return "CC-BY-3.0-AU"
+
+
+def add_md5_from_stream_to_metadata(metadata, data):
+    metadata.update({"md5": create_md5_from_stream(data)})
+
+
+def create_md5_from_stream(data):
+    return md5(data).hexdigest()
+
+def get_md5_legacy_url(meta):
+    first_md5_baseurl = [val.get("base_url") for key, val in meta.metadata_info.items() if key.endswith(".md5")][0]
+    return first_md5_baseurl

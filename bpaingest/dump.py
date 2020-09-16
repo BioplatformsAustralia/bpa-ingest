@@ -5,8 +5,8 @@ from collections import defaultdict, Counter
 
 from .metadata import DownloadMetadata
 from .projects import ProjectInfo
-from .util import make_logger, make_ckan_api
-from .resource_metadata import build_raw_resources_from_state_as_file
+from .resource_metadata import build_raw_resources_from_state_as_file, validate_raw_resources
+from .util import make_logger, make_ckan_api, get_md5_legacy_url
 
 
 def unique_packages(logger, packages):
@@ -119,17 +119,10 @@ def dump_state(args):
 
     ckan = make_ckan_api(args)
 
-    # TODO: raw packages metadata is in packages, but we need to write this into originally created temp file held in resources
-    raw_resources_files = build_raw_resources_from_state_as_file(
-        logger, ckan, state, data_type_meta
-    )
+    build_raw_resources_from_state_as_file(logger, ckan, state, data_type_meta)
+    validate_raw_resources(logger, state)
+
 
     # for datetime objects, use 'default as str' for now so that parsing doesn't break
     with open(args.filename, "w") as fd:
         json.dump(state, fd, sort_keys=True, indent=2, separators=(",", ": "))
-
-    def compare_local_raw_resources_file_to_remote(logger, auth):
-        logger.info("Entered compare...")
-        # tempdir, path = download_legacy_file(legacy_url, auth)
-        # # for fname in glob(self.path + "/*.xlsx"):
-        # download_legacy_file(legacy_url, auth)
