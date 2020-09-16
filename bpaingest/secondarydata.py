@@ -5,7 +5,10 @@ from urllib.parse import urljoin
 from bpaingest.abstract import BaseMetadata
 from bpaingest.libs.ingest_utils import from_comma_or_space_separated_to_list
 from bpaingest.libs.raw_matcher import RawParser
-from bpaingest.resource_metadata import resource_metadata_from_file_no_data
+from bpaingest.resource_metadata import (
+    resource_metadata_from_file_no_data,
+    resource_metadata_from_file,
+)
 
 
 class SecondaryMetadata(BaseMetadata):
@@ -82,15 +85,20 @@ class SecondaryMetadata(BaseMetadata):
             self._logger.error("no raw resources, likely a bug in the ingest class")
         resources = []
         for linkage, fname in self._raw_resources_linkage.items():
-            resource = resource_metadata_from_file_no_data(
-                linkage, fname, self.ckan_data_type
-            )
             raw_resources_info = self.metadata_info.get(os.path.basename(fname), "")
+            # if download_info exists for raw_resources, then use remote URL and gather all metadata including md5
             if raw_resources_info:
+                resource = resource_metadata_from_file(
+                    linkage, fname, self.ckan_data_type
+                )
                 legacy_url = urljoin(
                     raw_resources_info["base_url"], os.path.basename(fname)
                 )
             else:
+                # otherwise if no download_info, then use local URL and gather all metadata except md5
+                resource = resource_metadata_from_file_no_data(
+                    linkage, fname, self.ckan_data_type
+                )
                 legacy_url = pathlib.Path(os.path.abspath(fname)).as_uri()
             resources.append((linkage, legacy_url, resource))
         return resources
