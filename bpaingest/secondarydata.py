@@ -1,7 +1,5 @@
 import os
 import pathlib
-import re
-import tempfile
 from urllib.parse import urljoin
 
 from bpaingest.abstract import BaseMetadata

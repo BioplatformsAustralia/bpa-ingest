@@ -9,7 +9,7 @@ from .resource_metadata import (
     build_raw_resources_from_state_as_file,
     validate_raw_resources,
 )
-from .util import make_logger, make_ckan_api, get_md5_legacy_url
+from .util import make_logger, make_ckan_api
 
 
 def unique_packages(logger, packages):
