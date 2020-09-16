@@ -66,15 +66,17 @@ class Fetcher:
     def _fetch(self, session, base_url, name):
         self._logger.info("Fetching {} from {}".format(name, base_url))
         url = base_url + name
-        r = session.get(url, stream=True, auth=self.auth, verify=False)
-        if r.status_code != 200:
-            raise DownloadException("status code {} for: {}".format(r.status_code, url))
-        output_file = self.target_folder + "/" + name
-        with open(output_file, "wb") as f:
-            for chunk in r.iter_content(chunk_size=1024):
-                if chunk:
-                    f.write(chunk)
-                    f.flush()
+        with session.get(url, stream=True, auth=self.auth, verify=False) as r:
+            if r.status_code != 200:
+                raise DownloadException(
+                    "status code {} for: {}".format(r.status_code, url)
+                )
+            output_file = self.target_folder + "/" + name
+            with open(output_file, "wb") as f:
+                for chunk in r.iter_content(chunk_size=1024):
+                    if chunk:
+                        f.write(chunk)
+                        f.flush()
 
     def fetch_metadata_from_folder(
         self,

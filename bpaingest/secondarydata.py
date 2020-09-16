@@ -70,13 +70,12 @@ class SecondaryMetadata(BaseMetadata):
         return self._packages, self._resources
 
     def create_raw_resources_filename(self, linkages):
-        file_dir = os.path.dirname(self.path)
         sanitised_linkages = []
         for next_linkage in linkages:
             sanitised_linkages.append(next_linkage.split("/")[-1])
         tuple_for_filename = "_".join(sanitised_linkages)
         filename = f"{tuple_for_filename}_{self._raw_resources_file_basename}"
-        path = os.path.join(file_dir, filename)
+        path = os.path.join(self.path, filename)
         # // no need to open file yet, just create the name we will use later
         return path
 
