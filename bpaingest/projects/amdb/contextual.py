@@ -736,7 +736,7 @@ class AustralianMicrobiomeSampleContextual:
             fld("light_intensity_meadow_method", "light_intensity_meadow_method"),
             fld(
                 "light_intensity_bottom",
-                "light_intensityµmol_m2_s1_bottom",
+                "light_intensity_µmol_m2_s1_bottom",
                 units=u"\u00B5" + "mol/m^2/s^-1",
             ),
             fld("light_intensity_bottom_method", "light_intensity_bottom_method"),
@@ -807,7 +807,7 @@ class AustralianMicrobiomeSampleContextual:
             fld("niobium_columbium_method", "niobium_columbium_method"),
             fld(
                 "nitrate_nitrite",
-                "nitrate_nitrite_µmol_per_l",
+                "nitrate_nitrite_μmol_per_l",
                 units=u"\u00B5" + "mol/l",
                 coerce=ingest_utils.get_clean_number,
             ),
@@ -823,7 +823,7 @@ class AustralianMicrobiomeSampleContextual:
             ),
             fld(
                 "nitrite",
-                "nitrite_µmol_per_l",
+                "nitrite_μmol_per_l",
                 units=u"\u00B5" + "mol/l",
                 coerce=ingest_utils.get_clean_number,
             ),
@@ -874,13 +874,13 @@ class AustralianMicrobiomeSampleContextual:
             fld("oxygen_ml_per_l_method", "oxygen_ml_per_l_method"),
             fld(
                 "oxygen_ctd",
-                "oxygen_µmol_per_kg_ctd",
+                "oxygen_μmol_per_kg_ctd",
                 units=u"\u00B5" + "mol_per_kg",
                 coerce=ingest_utils.get_clean_number,
             ),
             fld(
                 "oxygen_ctd_method",
-                "oxygen_µmol_per_kg_ctd_method",
+                "oxygen_μmol_per_kg_ctd_methods",
                 units=u"\u00B5" + "mol_per_kg",
             ),
             fld(
@@ -891,7 +891,7 @@ class AustralianMicrobiomeSampleContextual:
             ),
             fld(
                 "oxygen_method",
-                "oxygen_µmol_per_l_method",
+                "oxygen_μmol_per_l_method",
                 units=u"\u00B5" + "mol_per_l",
             ),
             fld("palladium", "palladium"),
@@ -919,7 +919,7 @@ class AustralianMicrobiomeSampleContextual:
             fld("phide_a_method", "phide_a_method"),
             fld(
                 "phosphate",
-                "phosphate_µmol_per_l",
+                "phosphate_μmol_per_l",
                 units=u"\u00B5" + "mol/l",
                 coerce=ingest_utils.get_clean_number,
             ),
@@ -1037,35 +1037,35 @@ class AustralianMicrobiomeSampleContextual:
             fld("sedimentation_rate_method", "sedimentation_rate_method"),
             fld(
                 "sediment_porewater_h4sio4",
-                "sediment_porewater_h4sio4_µmol_per_l",
+                "sediment_porewater_h4sio4_μmol_per_l",
                 units=u"\u00B5" + "mol/l",
                 coerce=ingest_utils.get_clean_number,
             ),
             fld("sediment_porewater_h4sio4_method", "sediment_porewater_h4sio4_method"),
             fld(
                 "sediment_porewater_nh4",
-                "sediment_porewater_nh4_µmol_per_l",
+                "sediment_porewater_nh4_μmol_per_l",
                 units=u"\u00B5" + "mol/l",
                 coerce=ingest_utils.get_clean_number,
             ),
             fld("sediment_porewater_nh4_method", "sediment_porewater_nh4_method"),
             fld(
                 "sediment_porewater_no2",
-                "sediment_porewater_no2_µmol_per_l",
+                "sediment_porewater_no2_μmol_per_l",
                 units=u"\u00B5" + "mol/l",
                 coerce=ingest_utils.get_clean_number,
             ),
             fld("sediment_porewater_no2_method", "sediment_porewater_no2_method"),
             fld(
                 "sediment_porewater_no3",
-                "sediment_porewater_no3_µmol_per_l",
+                "sediment_porewater_no3_μmol_per_l",
                 units=u"\u00B5" + "mol/l",
                 coerce=ingest_utils.get_clean_number,
             ),
             fld("sediment_porewater_no3_method", "sediment_porewater_no3_method"),
             fld(
                 "sediment_porewater_po43",
-                "sediment_porewater_po43_µmol_per_l",
+                "sediment_porewater_po43_μmol_per_l",
                 units=u"\u00B5" + "mol/l",
                 coerce=ingest_utils.get_clean_number,
             ),
@@ -1074,7 +1074,7 @@ class AustralianMicrobiomeSampleContextual:
             fld("selenium_method", "selenium_method"),
             fld(
                 "silicate",
-                "silicate_µmol_per_l",
+                "silicate_μmol_per_l",
                 units=u"\u00B5" + "mol/l",
                 coerce=ingest_utils.get_clean_number,
             ),
@@ -1153,7 +1153,7 @@ class AustralianMicrobiomeSampleContextual:
             fld("toc_method", "toc_method"),
             fld(
                 "total_alkalinity",
-                "total_alkalinity_µmol_per_kg",
+                "total_alkalinity_μmol_per_kg",
                 units=u"\u00B5" + "mol/kg",
                 coerce=ingest_utils.get_clean_number,
             ),
@@ -1167,7 +1167,7 @@ class AustralianMicrobiomeSampleContextual:
             fld("total_carbon_percent_method", "total_carbon_percent_method"),
             fld(
                 "total_co2",
-                "total_co2_µmol_per_kg",
+                "total_co2_μmol_per_kg",
                 units=u"\u00B5" + "mol/kg",
                 coerce=ingest_utils.get_clean_number,
             ),
