@@ -885,7 +885,7 @@ class AustralianMicrobiomeSampleContextual:
             ),
             fld(
                 "oxygen",
-                "oxygen_µmol_per_l",
+                "oxygen_μmol_per_l",
                 units=u"\u00B5" + "mol/l",
                 coerce=ingest_utils.get_clean_number,
             ),
