@@ -1529,7 +1529,7 @@ class MarineMicrobesMetatranscriptomeMetadata(BaseMarineMicrobesMetadata):
         return resources
 
 
-class AustralianMicrobiomeMetagenomicsNovaseqMetadata(AMDBaseNoSchemaMetadata):
+class AustralianMicrobiomeMetagenomicsNovaseqMetadata(AMDBaseMetadata):
     organization = "australian-microbiome"
     ckan_data_type = "amdb-metagenomics-novaseq"
     omics = "metagenomics"
