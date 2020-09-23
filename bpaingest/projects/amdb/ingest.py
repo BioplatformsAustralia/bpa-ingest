@@ -831,7 +831,13 @@ class BASESiteImagesMetadata(AMDBaseMetadata):
         return resources
 
 
-marine_read_lengths = {"16s": "300bp", "a16s": "300bp", "18s": "250bp", "a16": "300bp"}
+marine_read_lengths = {
+    "16s": "300bp",
+    "a16s": "300bp",
+    "18s": "250bp",
+    "a16": "300bp",
+    "its": "300bp",
+}
 
 
 def mm_amplicon_read_length(amplicon):
@@ -1523,7 +1529,7 @@ class MarineMicrobesMetatranscriptomeMetadata(BaseMarineMicrobesMetadata):
         return resources
 
 
-class AustralianMicrobiomeMetagenomicsNovaseqMetadata(AMDBaseNoSchemaMetadata):
+class AustralianMicrobiomeMetagenomicsNovaseqMetadata(AMDBaseMetadata):
     organization = "australian-microbiome"
     ckan_data_type = "amdb-metagenomics-novaseq"
     omics = "metagenomics"

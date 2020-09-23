@@ -148,6 +148,7 @@ def test_amd_amplicon_re():
         "139713_16S_J6HNJ_CGATCCGT-CGATCTAC_S36_L001_I1.fastq.gz",
         "139714_A16_J8H8P_ACTCGCTA-CTCTCTAT_S4_L001_I1.fastq.gz",
         "139714_A16S_J8H8P_ACTCGCTA-CTCTCTAT_S4_L001_I1.fastq.gz",
+        "138620_ITS_J9GNL_AATGTCCG-GCTCTAGT_S52_L001_R1.fastq.gz",
     ]
     for filename in filenames:
         assert amd_amplicon_filename_re.match(filename) is not None
@@ -161,6 +162,9 @@ def test_amd_amplicon_control_re():
         "No_Template_Control_A16_J8H8P_TCGACGTC-TCTCTCCG_S3_L001_I1.fastq.gz",
         "Soil_DNA_16S_J6HNK_ACGCCACG-GATAGCGT_S1_L001_I1.fastq.gz",
         "blank_16S_J655F_AAGAGATG-TCTACACT_S29_L001_I1.fastq.gz",
+        "Fungal_mock_community_ITS_J9GNL_AATGTCCG-GACACTGA_S1_L001_R2.fastq.gz",
+        "No_Template_Control_ITS_J9GNL_AATGTCCG-TAGTGTAG_S3_L001_R2.fastq.gz",
+        "Soil_DNA_ITS_J9GNL_AATGTCCG-TGCGTACG_S2_L001_I1.fastq.gz",
     ]
     for filename in filenames:
         assert amd_amplicon_control_filename_re.match(filename) is not None
