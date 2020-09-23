@@ -210,7 +210,7 @@ def reupload_resources(ckan, to_reupload, resource_id_legacy_url, auth, num_thre
     destination = "bpa-ckan-prod/prodenv"
     if re.search("staging.bioplatforms", getattr(ckan, "address", "")):
         destination = "bpa-ckan-devel/staging"
-    logger.info("Resources will be reuploaded under: {}...".format(destination))
+    logger.info("Resources will be reuploaded under: {}".format(destination))
     for reupload_obj, legacy_url in to_reupload:
         reupload_resource(ckan, reupload_obj, legacy_url, destination, auth)
 
