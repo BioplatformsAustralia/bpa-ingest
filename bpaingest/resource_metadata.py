@@ -114,10 +114,10 @@ def build_raw_resources_as_file(logger, ckan, meta, packages, resources):
                 {"path": raw_resources_path, "metadata": raw_resources_metadata}
             )
             logger.info(f"Generated raw resouces file: {raw_resources_path}.")
-    md5_legacy_url = get_md5_legacy_url(meta)
-    logger.warning(
-        f"Any updates to generated raw resources files, need to be copied to remote download server at: {md5_legacy_url} "
-    )
+        md5_legacy_url = get_md5_legacy_url(meta)
+        logger.warning(
+            f"Any updates to generated raw resources files, need to be copied to remote download server at: {md5_legacy_url} "
+        )
     return raw_resources_files
 
 
