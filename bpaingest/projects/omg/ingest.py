@@ -1245,7 +1245,7 @@ class OMGGenomicsDDRADMetadata(OMGBaseMetadata):
     contextual_classes = common_context
     metadata_patterns = [r"^.*\.md5$", r"^.*_metadata.*.*\.xlsx$"]
     metadata_urls = [
-        "https://downloads-qcif.bioplatforms.com/bpa/omg_staging/nextseq_ddrad/",
+        "https://downloads-qcif.bioplatforms.com/bpa/omg_staging/ddrad/",
     ]
     metadata_url_components = ("ticket",)
     resource_linkage = ("bpa_dataset_id", "flowcell_id")
