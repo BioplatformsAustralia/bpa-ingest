@@ -77,9 +77,19 @@ DDRAD_METADATA_SHEET_PATTERN = r"""
     AGRF_
     (?P<bpa_dataset_id>\d{4,6})_
     (?P<flowcell_id>\w{9})
-    _metadata.xlsx
+    _metadata\.xlsx
 """
 ddrad_metadata_sheet_re = re.compile(DDRAD_METADATA_SHEET_PATTERN, re.VERBOSE)
+
+DDRAD_METADATA_SHEET_2_PATTERN = r"""
+    OMG_
+    NGS_
+    (?P<flowcell_id>\w{9})_
+    library_metadata_
+    (?P<bpa_dataset_id>\d{4,6})
+    \.xlsx
+"""
+ddrad_metadata_sheet_2_re = re.compile(DDRAD_METADATA_SHEET_2_PATTERN, re.VERBOSE)
 
 PACBIO_PATTERN = r"""
     (?P<bpa_library_id>\d{4,6})_

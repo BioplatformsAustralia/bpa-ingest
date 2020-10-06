@@ -1253,7 +1253,7 @@ class OMGGenomicsDDRADMetadata(OMGBaseMetadata):
         "fields": [
             fld("genus", "genus"),
             fld("species", "species"),
-            fld("voucher_id", "voucher_id"),
+            fld("voucher_id", "voucher_id", optional=True),
             fld(
                 "bpa_dataset_id", "bpa_dataset_id", coerce=ingest_utils.extract_ands_id
             ),
@@ -1304,6 +1304,9 @@ class OMGGenomicsDDRADMetadata(OMGBaseMetadata):
                 "library_pool_oligo_sequence",
                 optional=True,
             ),
+            fld("voucher_number", "voucher_number", optional=True),
+            fld("tissue_number", "tissue_number", optional=True),
+            fld("voucher_or_tissue_number", "voucher_or_tissue_number", optional=True),
         ],
         "options": {
             "sheet_name": "OMG_library_metadata",
@@ -1312,8 +1315,19 @@ class OMGGenomicsDDRADMetadata(OMGBaseMetadata):
         },
     }
     md5 = {
-        "match": [files.ddrad_fastq_filename_re, files.ddrad_metadata_sheet_re,],
-        "skip": None,
+        "match": [
+            files.ddrad_fastq_filename_re,
+            files.ddrad_metadata_sheet_re,
+            files.ddrad_metadata_sheet_2_re,
+        ],
+        "skip": [
+            re.compile(r"^.*_metadata\.xlsx$"),
+            re.compile(r"^.*SampleSheet.*"),
+            re.compile(r"^.*TestFiles\.exe.*"),
+            re.compile(r"^err$"),
+            re.compile(r"^out$"),
+            re.compile(r"^.*DataValidation\.pdf.*"),
+        ],
     }
 
     def __init__(

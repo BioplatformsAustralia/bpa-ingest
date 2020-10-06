@@ -7,6 +7,7 @@ from .files import (
     hiseq_filename_re,
     ddrad_fastq_filename_re,
     ddrad_metadata_sheet_re,
+    ddrad_metadata_sheet_2_re,
     pacbio_filename_re,
     ont_promethion_re,
     transcriptomics_nextseq_fastq_filename_re,
@@ -107,6 +108,15 @@ def test_genomics_ddrad_metadata_sheet():
 
     for filename in filenames:
         assert ddrad_metadata_sheet_re.match(filename) is not None
+
+
+def test_genomics_ddrad_metadata_sheet_2():
+    filenames = [
+        "OMG_NGS_HTHTLDRXX_library_metadata_52628.xlsx",
+    ]
+
+    for filename in filenames:
+        assert ddrad_metadata_sheet_2_re.match(filename) is not None
 
 
 def test_pacbio():
