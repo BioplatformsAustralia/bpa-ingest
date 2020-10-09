@@ -227,6 +227,7 @@ def test_amd_metagenomics_novaseq_control():
     filenames = [
         "SOIL_DNA_MGE_HYTFVDSXX-TATCACTCTG-AACGTTACAT_S134_L002_R1_001.fastq.gz",
         "SOIL_DNA_MGE_HYTFVDSXX-TATCACTCTG-AACGTTACAT_S134_L002_R1_001.fastq.gz",
+        "Soil_DNA_MGE_HTW7LDRXX_TTAACGGTGT-ACGGTCAGGA_S37_L002_R2_001.fastq.gz",
     ]
     for filename in filenames:
         assert amd_metagenomics_novaseq_control_re.match(filename) is not None
