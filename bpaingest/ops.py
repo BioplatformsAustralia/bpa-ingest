@@ -324,6 +324,10 @@ def download_legacy_file(legacy_url, auth):
 def reupload_resource(ckan, ckan_obj, legacy_url, parent_destination, auth=None):
     "reupload data from legacy_url to ckan_obj"
 
+    if legacy_url is None:
+        logger.error("download from legacy archive URL failed - legacy_url not set")
+        return
+
     tempdir, path = download_legacy_file(legacy_url, auth)
     if path is None:
         logger.error("download from legacy archive failed")

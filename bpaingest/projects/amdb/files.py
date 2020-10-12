@@ -303,8 +303,9 @@ amd_metagenomics_novaseq_re = re.compile(
 
 amd_metagenomics_novaseq_control_re = re.compile(
     r"""
-    SOIL_DNA_MGE_
-    (?P<flowcell>\w{9})-
+    (?P<control_type>SOIL_DNA|Soil_DNA)_
+    MGE_
+    (?P<flowcell>\w{9})(-|_)
     (?P<index>[G|A|T|C|-]*)_
     (?P<runsamplenum>S\d+)_
     (?P<lane>L\d{3})_

@@ -1542,13 +1542,31 @@ class AustralianMicrobiomeMetagenomicsNovaseqMetadata(AMDBaseMetadata):
     metadata_url_components = ("facility_code", "ticket")
     spreadsheet = {
         "fields": [
-            fld("sample_id", "sampleid", coerce=ingest_utils.extract_ands_id),
-            fld("insert_size_range", "insert size range"),
-            fld("library_construction_protocol", "library construction protocol"),
+            fld(
+                "sample_id",
+                re.compile(r"sample_?[Ii][Dd]"),
+                coerce=ingest_utils.extract_ands_id,
+            ),
+            fld("insert_size_range", re.compile(r"insert[ _]size[ _]range")),
+            fld(
+                "library_construction_protocol",
+                re.compile(r"library[ _]construction[ _]protocol"),
+            ),
             fld("sequencer", "sequencer"),
-            fld("conversion_software", "conversion software"),
-            fld("conversion_software_version", "conversion software version"),
-            fld("of_raw_reads", "# of raw reads"),
+            fld("conversion_software", re.compile(r"conversion[ _]software")),
+            fld(
+                "conversion_software_version",
+                re.compile(r"conversion[ _]software[ _]version"),
+            ),
+            fld(
+                "number_of_raw_reads",
+                re.compile(r"(number_of_raw_reads|# of raw reads)"),
+            ),
+            fld("number_pcr_cycle", "number_pcr_cycle", optional=True),
+            fld("dna_concentration_method", "dna_concentration_method", optional=True),
+            fld("dna_concentration", "dna_concentration", optional=True),
+            fld("absorbance_260_280_ratio", "260_280_ratio", optional=True),
+            fld("absorbance_260_230_ratio", "260_230_ratio", optional=True),
         ],
         "options": {"header_length": 1, "column_name_row_index": 0,},
     }
