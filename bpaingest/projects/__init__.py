@@ -63,10 +63,10 @@ from .omg.ingest import (
     OMGTranscriptomicsNextseq,
 )
 
-# FIX
 from .tsi.ingest import (
     TSINovaseqMetadata,
     TSIPacbioHifiMetadata,
+    TSIGenomicsDDRADMetadata,
 )
 
 
@@ -109,7 +109,7 @@ class ProjectInfo:
             OMGONTPromethionMetadata,
             OMGTranscriptomicsNextseq,
         ],
-        "tsi": [TSINovaseqMetadata, TSIPacbioHifiMetadata,],
+        "tsi": [TSINovaseqMetadata, TSIPacbioHifiMetadata, TSIGenomicsDDRADMetadata,],
         "sepsis": [
             SepsisGenomicsMiseqMetadata,
             SepsisGenomicsPacbioMetadata,

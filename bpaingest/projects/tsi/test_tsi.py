@@ -3,6 +3,8 @@ from bpaingest.projects.tsi.files import (
     novaseq_filename_re,
     pacbio_hifi_filename_re,
     metadata_sheet_re,
+    ddrad_fastq_filename_re,
+    ddrad_metadata_sheet_re,
 )
 
 
@@ -34,3 +36,26 @@ def test_pacbio_hfi():
 
     for filename in filenames:
         assert pacbio_hifi_filename_re.match(filename) is not None
+
+
+def test_tsi_ddrad_fastq():
+    filenames = [
+        "358724_HTW2NDRXX_ACAGTG_L001_R1.fastq.gz",
+        "358724_HTW2NDRXX_ACAGTG_L002_R1.fastq.gz",
+        "358724_HTW2NDRXX_GCCAAT_L001_R1.fastq.gz",
+        "358724_HTW2NDRXX_GCCAAT_L002_R1.fastq.gz",
+        "358724_HTW2NDRXX_GTGAAA_L001_R1.fastq.gz",
+        "358724_HTW2NDRXX_GTGAAA_L002_R1.fastq.gz",
+    ]
+
+    for filename in filenames:
+        assert ddrad_fastq_filename_re.match(filename) is not None
+
+
+def test_tsi_ddrad_metadata_sheet():
+    filenames = [
+        "TSI_NGS_HTW2NDRXX_library_metadata_358724.xlsx",
+    ]
+
+    for filename in filenames:
+        assert ddrad_metadata_sheet_re.match(filename) is not None

@@ -4,7 +4,6 @@ import re
 
 logger = make_logger(__name__)
 
-# VERIFY
 NOVASEQ_FILENAME_PATTERN = r"""
     (?P<bpa_library_id>\d{4,6})_
     (?P<voucher_id>\w+)_
@@ -17,7 +16,6 @@ NOVASEQ_FILENAME_PATTERN = r"""
 """
 novaseq_filename_re = re.compile(NOVASEQ_FILENAME_PATTERN, re.VERBOSE)
 
-# VERIFY
 PACBIO_HIFI_PATTERN = r"""
     (?P<bpa_library_id>\d{4,6})_
     (?P<facility>UNSW)_
@@ -28,7 +26,26 @@ PACBIO_HIFI_PATTERN = r"""
 """
 pacbio_hifi_filename_re = re.compile(PACBIO_HIFI_PATTERN, re.VERBOSE)
 
-# VERIFY
+DDRAD_FASTQ_FILENAME_PATTERN = r"""
+    (?P<bpa_dataset_id>\d{4,6})_
+    (?P<flowcell_id>\w{9})_
+    (?P<index>[G|A|T|C|-]*|N)_
+    (?P<lane>L\d{3})_
+    (?P<read>[R|I][1|2])\.fastq\.gz
+"""
+ddrad_fastq_filename_re = re.compile(DDRAD_FASTQ_FILENAME_PATTERN, re.VERBOSE)
+
+DDRAD_METADATA_SHEET_PATTERN = r"""
+    TSI_
+    NGS_
+    AGRF_
+    (?P<flowcell_id>\w{9})
+    _library_metadata
+    (?P<bpa_dataset_id>\d{4,6})
+    .xlsx
+"""
+ddrad_metadata_sheet_re = re.compile(DDRAD_METADATA_SHEET_PATTERN, re.VERBOSE)
+
 METADATA_SHEET_PATTERN = r"""
     TSI_
     (?P<facility_id>(UNSW))_
