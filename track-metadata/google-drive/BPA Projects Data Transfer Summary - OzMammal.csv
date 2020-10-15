@@ -63,3 +63,5 @@ UNSW,21/05/2020,OMG_52598_dunnart_RNA_library,20200519_UNSW_BPA_OMG_H775FAFX2,Il
 AGRF,29/05/2020,NextSeq ddRAD Mesembriomys gouldii ddRAD data set ID 52627,AGRF_OMG_HV7J3BGXF_52627,Illumina FASTQ,16/06/2020,,BPAOPS-919,
 AGRF,29/05/2020,NextSeq ddRAD Dasyurus hallucatus ddRAD data set ID 52623,AGRF_OMG_H7MH7BGXF_52623 ,Illumina FASTQ,16/06/2020,,BPAOPS-917,
 AGRF,29/05/2020,NextSeq ddRAD Dasyurus hallucatus ddRAD data set ID 52623,AGRF_OMG_HNVTHBGXF_52623,Illumina FASTQ,16/06/2020,,BPAOPS-918,
+BRF,17/09/2020,"Novaseq 6000 Marsupial gDNA capture 52629, 52630, 52633",A00548_115_AMacDonald_52629_52630_52633_Marsupial_gDNA,Illumina FASTQ,17/09/20,,BPAOPS-957,https://data.bioplatforms.com/dataset/a00548_115_amacdonald_52629_52630_52633_marsupial_gdna
+AGRF,18/09/2020,NovaSeq 6000 ddRAD Petrogale lateralis ddRAD data set ID 52628,AGRF_OMG_HTHTLDRXX_52628,Illumina FASTQ,18/09/2020,,BPAOPS-956,(ingested) https://data.bioplatforms.com/dataset/bpa-omg-genomics-ddrad-102_100_100_52628-hthtldrxx

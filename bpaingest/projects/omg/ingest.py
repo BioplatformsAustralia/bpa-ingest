@@ -734,8 +734,13 @@ class OMGExonCaptureMetadata(OMGBaseMetadata):
             fld("flowcell_id", "flowcell_id"),
             fld("software_version", "software_version"),
             fld("file", "file"),
+            fld("voucher_or_tissue_number", "voucher_or_tissue_number", optional=True),
         ],
-        "options": {"header_length": 1, "column_name_row_index": 0,},
+        "options": {
+            "sheet_name": "OMG_library_metadata",
+            "header_length": 1,
+            "column_name_row_index": 0,
+        },
     }
     md5 = {
         "match": [files.exon_filename_re],
