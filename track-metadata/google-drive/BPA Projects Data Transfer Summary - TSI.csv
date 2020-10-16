@@ -1,1 +1,2 @@
-Sequencing facility,Date of transfer,Description,Folder name,Data type,Date of transfer to archive,File Count,BPA Github Ticket,Download
+Sequencing facility,Date of transfer,Description,Folder name,Data type,Date of transfer to archive,File Count,CCG JIRA Ticket,Download
+AGRF,13/10/2020,NovaSeq 6000 ddRAD Perameles bougainville ddRAD data set ID 358724,AGRF_TSI_HTW2NDRXX_358724,Illumina FASTQ,13/10/2020,,BPAOPS-966,
