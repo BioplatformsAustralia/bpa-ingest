@@ -38,11 +38,10 @@ ddrad_fastq_filename_re = re.compile(DDRAD_FASTQ_FILENAME_PATTERN, re.VERBOSE)
 DDRAD_METADATA_SHEET_PATTERN = r"""
     TSI_
     NGS_
-    AGRF_
-    (?P<flowcell_id>\w{9})
-    _library_metadata
+    (?P<flowcell_id>\w{9})_
+    library_metadata_
     (?P<bpa_dataset_id>\d{4,6})
-    .xlsx
+    \.xlsx
 """
 ddrad_metadata_sheet_re = re.compile(DDRAD_METADATA_SHEET_PATTERN, re.VERBOSE)
 
