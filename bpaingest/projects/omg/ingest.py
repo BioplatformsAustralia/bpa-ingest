@@ -825,8 +825,10 @@ class OMGExonCaptureMetadata(OMGBaseMetadata):
                     {
                         "name": name,
                         "id": name,
-                        "title": ("OMG Exon Capture Raw %s %s %s"
-                        % (library_id, row.flowcell_id, index_sequence)).rstrip(),
+                        "title": (
+                            "OMG Exon Capture Raw %s %s %s"
+                            % (library_id, row.flowcell_id, index_sequence)
+                        ).rstrip(),
                         "notes": self.generate_notes_field(context),
                         "date_of_transfer": ingest_utils.get_date_isoformat(
                             self._logger, track_get("date_of_transfer")
