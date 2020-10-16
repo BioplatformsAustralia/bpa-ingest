@@ -813,12 +813,20 @@ class OMGExonCaptureMetadata(OMGBaseMetadata):
                         contextual_source.get(row.bpa_sample_id, row.bpa_library_id)
                     )
 
+                def cleanstring(s):
+                    if s is not None:
+                        return s
+                    else:
+                        return ""
+
+                index_sequence = cleanstring(obj["p7_library_index_sequence"])
+
                 obj.update(
                     {
                         "name": name,
                         "id": name,
-                        "title": "OMG Exon Capture Raw %s %s %s"
-                        % (library_id, row.flowcell_id, row.p7_library_index_sequence),
+                        "title": ("OMG Exon Capture Raw %s %s %s"
+                        % (library_id, row.flowcell_id, index_sequence)).rstrip(),
                         "notes": self.generate_notes_field(context),
                         "date_of_transfer": ingest_utils.get_date_isoformat(
                             self._logger, track_get("date_of_transfer")
