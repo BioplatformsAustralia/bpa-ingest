@@ -12,8 +12,11 @@ from .amdb.ingest import (
     MarineMicrobesMetagenomicsMetadata,
     MarineMicrobesMetatranscriptomeMetadata,
 )
+
 from .ausarg.ingest import AusargIlluminaFastqMetadata
+
 from .gbr.ingest import GbrAmpliconsMetadata, GbrPacbioMetadata
+
 from .sepsis.ingest import (
     SepsisGenomicsMiseqMetadata,
     SepsisTranscriptomicsHiseqMetadata,
@@ -64,6 +67,12 @@ from .omg.ingest import (
     OMGGenomicsPacBioGenomeAssemblyMetadata,
 )
 
+from .tsi.ingest import (
+    TSINovaseqMetadata,
+    TSIPacbioHifiMetadata,
+    TSIGenomicsDDRADMetadata,
+)
+
 
 class ProjectInfo:
     projects = {
@@ -106,6 +115,7 @@ class ProjectInfo:
             OMGTranscriptomicsNextseq,
             OMGGenomicsPacBioGenomeAssemblyMetadata,
         ],
+        "tsi": [TSINovaseqMetadata, TSIPacbioHifiMetadata, TSIGenomicsDDRADMetadata,],
         "sepsis": [
             SepsisGenomicsMiseqMetadata,
             SepsisGenomicsPacbioMetadata,
