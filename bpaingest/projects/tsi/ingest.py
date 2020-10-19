@@ -169,8 +169,6 @@ class TSINovaseqMetadata(TSIBaseMetadata):
             #           fld("library_prep_method", "library_prep_method"),
             # experimental_design
             fld("experimental_design", "experimental_design"),
-            # FIX
-            #            fld("tsi_project", "tsi_project"),
             # data_custodian
             fld("data_custodian", "data_custodian"),
             # DNA_treatment
@@ -436,8 +434,6 @@ class TSIPacbioHifiMetadata(TSIBaseMetadata):
             fld("library_prep_method", "library_prep_method"),
             # experimental_design
             fld("experimental_design", "experimental_design"),
-            # FIX
-            #           fld("tsi_project", "tsi_project"),
             # data_custodian
             fld("data_custodian", "data_custodian"),
             # DNA_treatment
@@ -655,7 +651,6 @@ class TSIGenomicsDDRADMetadata(TSIBaseMetadata):
             fld("library_prepared_by", "library_prepared_by"),
             fld("library_prep_method", "library_prep_method", optional=True),
             fld("experimental_design", "experimental_design"),
-            fld("tsi_project", "tsi_project", optional=True),
             fld("data_custodian", "data_custodian"),
             fld("dna_treatment", "dna_treatment"),
             fld("library_index_id", "library_index_id"),
