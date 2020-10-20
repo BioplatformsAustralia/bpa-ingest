@@ -14,7 +14,12 @@ from .tracking import TSIGoogleTrackMetadata
 from ...abstract import BaseMetadata
 from ...libs import ingest_utils
 from ...libs.excel_wrapper import make_field_definition as fld
-from ...util import sample_id_to_ckan_name, clean_tag_name, common_values
+from ...util import (
+    sample_id_to_ckan_name,
+    clean_tag_name,
+    common_values,
+    apply_cc_by_license,
+)
 from . import files
 
 common_context = [TSILibraryContextual]
@@ -784,6 +789,7 @@ class TSIGenomicsDDRADMetadata(TSIBaseMetadata):
                         ),
                         "dataset_url": track_get("download"),
                         "type": self.ckan_data_type,
+                        "license_id": apply_cc_by_license(),
                     }
                 )
                 ingest_utils.permissions_organization_member(self._logger, obj)

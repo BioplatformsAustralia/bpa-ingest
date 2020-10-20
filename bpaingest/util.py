@@ -174,7 +174,11 @@ def apply_license(archive_ingestion_date):
     if archive_ingestion_date + relativedelta(months=3) > datetime.date.today():
         return "other-closed"
     else:
-        return "CC-BY-3.0-AU"
+        return "CC-BY-4.0-AU"
+
+
+def apply_cc_by_license():
+    return "CC-BY-4.0-AU"
 
 
 def add_md5_from_stream_to_metadata(metadata, data):
