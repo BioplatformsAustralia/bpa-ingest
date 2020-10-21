@@ -206,7 +206,7 @@ def get_int(logger, val, default=None):
         return val
 
     try:
-        return int(get_clean_number(val, default))
+        return int(get_clean_number(logger, val, default))
     except TypeError:
         return default
 
