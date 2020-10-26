@@ -65,4 +65,5 @@ AGRF,29/05/2020,NextSeq ddRAD Dasyurus hallucatus ddRAD data set ID 52623,AGRF_O
 AGRF,29/05/2020,NextSeq ddRAD Dasyurus hallucatus ddRAD data set ID 52623,AGRF_OMG_HNVTHBGXF_52623,Illumina FASTQ,16/06/2020,,BPAOPS-918,
 BRF,17/09/2020,"Novaseq 6000 Marsupial gDNA capture 52629, 52630, 52633",A00548_115_AMacDonald_52629_52630_52633_Marsupial_gDNA,Illumina FASTQ,17/09/20,,BPAOPS-957,(ingested)
 AGRF,18/09/2020,NovaSeq 6000 ddRAD Petrogale lateralis ddRAD data set ID 52628,AGRF_OMG_HTHTLDRXX_52628,Illumina FASTQ,18/09/2020,,BPAOPS-956,(ingested) https://data.bioplatforms.com/dataset/bpa-omg-genomics-ddrad-102_100_100_52628-hthtldrxx
+BRF,23/09/2020,Novaseq 6000 WGS Blackfooted rock wallaby 52634,A00548_114_AMacDonald_52634_Black_footed_rock_wallaby_gDNA,Illumina FASTQ,23/09/2020,,BPAOPS-958,
 AGRF,08/10/2020,NovaSeq 6000 ddRAD Isoodon auratus ddRAD data set ID 52641,AGRF_OMG_HV2LKDRXX_52641,Illumina FASTQ,08/10/2020,,BPAOPS-962,
