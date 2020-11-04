@@ -912,7 +912,6 @@ class OMGWholeGenomeMetadata(OMGBaseMetadata):
         "fields": [
             fld("genus", "genus", optional=True),
             fld("species", "species", optional=True),
-            fld("voucher_id", "voucher_id", optional=True),
             fld(
                 "bpa_dataset_id", "bpa_dataset_id", coerce=ingest_utils.extract_ands_id
             ),
@@ -926,7 +925,7 @@ class OMGWholeGenomeMetadata(OMGBaseMetadata):
             ),
             skp("plate_name"),
             skp("plate_well"),
-            skp("voucher_number"),
+            fld("voucher_number"),
             skp("tissue_number"),
             fld("facility_sample_id", "facility_sample_id"),
             fld("library_type", "library_type"),
