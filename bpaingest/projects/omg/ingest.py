@@ -972,7 +972,7 @@ class OMGWholeGenomeMetadata(OMGBaseMetadata):
             fld("flowcell_id", "flowcell_id"),
             fld("software_version", "software_version"),
             fld("file", "file"),
-            fld("voucher_or_tissue_number", "voucher_or_tissue_number", optional=True),
+            fld("voucher_or_tissue_number", "voucher_or_tissue_number", optional=True, coerce=ingest_utils.int_or_comment),
         ],
         "options": {
             "sheet_name": "OMG_library_metadata",

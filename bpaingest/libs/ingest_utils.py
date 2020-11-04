@@ -210,6 +210,18 @@ def get_int(logger, val, default=None):
     except TypeError:
         return default
 
+def int_or_comment(logger, val):
+    # fix up '14.0' type values coming through from Excel; if not an integer,
+    # it's a note or a text code, which we just pass back unaltered
+    if val is None:
+        return None
+    try:
+        return str(int(float(val)))
+    except ValueError:
+        val = str(val).strip()
+        if not val:
+            return None
+        return val
 
 number_find_re = re.compile(r"(-?\d+\.?\d*)")
 
