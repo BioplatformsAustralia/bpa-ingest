@@ -99,6 +99,7 @@ tsi()
 {
   apply tsi-novaseq $*
   apply tsi-pacbio-hifi $*
+  apply tsi-genomics-ddrad $*
 }
 
 sepsis()
