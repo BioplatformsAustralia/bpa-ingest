@@ -86,6 +86,7 @@ omg()
   apply omg-10xprocessed $*
   apply omg-10xraw $*
   apply omg-exoncapture $*
+  apply omg-whole-genome $*
   apply omg-genomics-hiseq $*
   apply omg-genomics-ddrad $*
   apply omg-transcriptomics-nextseq $*

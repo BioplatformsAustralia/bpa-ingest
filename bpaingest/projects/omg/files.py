@@ -17,6 +17,18 @@ EXON_FILENAME_PATTERN = r"""
 """
 exon_filename_re = re.compile(EXON_FILENAME_PATTERN, re.VERBOSE)
 
+WHOLE_GENOME_FILENAME_PATTERN = r"""
+    (?P<bpa_library_id>\d{4,6})_
+    (?P<flow_cell_id>\w{9,10})_
+    (?P<index>[G|A|T|C|-]*)_
+    (?P<runsamplenum>S\d*)_
+    (?P<lane>L\d{3})_
+    (?P<read>[R|I][1|2])_
+    (?P<flowcellindex>\d{3})
+    \.fastq\.gz$
+"""
+whole_genome_filename_re = re.compile(WHOLE_GENOME_FILENAME_PATTERN, re.VERBOSE)
+
 NOVASEQ_FILENAME_PATTERN = r"""
     (?P<bpa_library_id>\d{4,6})_
     (?P<voucher_id>\w+)_

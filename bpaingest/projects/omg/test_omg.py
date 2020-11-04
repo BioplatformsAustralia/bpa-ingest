@@ -3,6 +3,7 @@ from .files import (
     tenx_raw_xlsx_filename_re,
     tenxfastq_filename_re,
     exon_filename_re,
+    whole_genome_filename_re,
     novaseq_filename_re,
     hiseq_filename_re,
     ddrad_fastq_filename_re,
@@ -49,6 +50,15 @@ def test_exon():
 
     for filename in filenames:
         assert exon_filename_re.match(filename) is not None
+
+def test_whole_genome_re():
+    filenames = [
+        "55985_HVC7KDMXX_ATGCCGC_S17_L001_R2_001.fastq.gz",
+        "55985_HVC7KDMXX_ATGCCGC_S17_L002_R1_001.fastq.gz",
+    ]
+
+    for filename in filenames:
+        assert whole_genome_filename_re.match(filename) is not None
 
 
 def test_novaseq():
