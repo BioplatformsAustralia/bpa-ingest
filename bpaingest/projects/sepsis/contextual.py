@@ -5,7 +5,6 @@ from .strains import get_taxon_strain, map_taxon_strain_rows
 from glob import glob
 
 
-
 def date_or_comment(logger, val):
     # another mix of actual dates and free-text comments, clean up as much as we can
     # into standard dates, but if not we return the underlying value

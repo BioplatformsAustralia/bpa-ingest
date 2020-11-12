@@ -58,7 +58,7 @@ class GAPIlluminaShortreadMetadata(BaseMetadata):
             fld("dataset_id", "dataset id", coerce=ingest_utils.extract_ands_id),
             fld("library_construction_protocol", "library construction protocol"),
             fld("sequencer", "sequencer"),
-            fld('run_format', 'run format', optional=True),
+            fld("run_format", "run format", optional=True),
             fld("analysissoftwareversion", "analysissoftwareversion"),
         ],
         "options": {

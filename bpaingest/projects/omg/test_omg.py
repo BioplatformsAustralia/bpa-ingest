@@ -51,6 +51,7 @@ def test_exon():
     for filename in filenames:
         assert exon_filename_re.match(filename) is not None
 
+
 def test_whole_genome_re():
     filenames = [
         "55985_HVC7KDMXX_ATGCCGC_S17_L001_R2_001.fastq.gz",

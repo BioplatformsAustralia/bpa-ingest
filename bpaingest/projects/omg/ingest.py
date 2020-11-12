@@ -141,7 +141,9 @@ class OMG10XRawIlluminaMetadata(OMGBaseMetadata):
             fld("library_location", "library_location"),
             fld("library_status", "library_status"),
             fld("sequencing_facility", "sequencing_facility"),
-            fld("n_libraries_pooled", "n_libraries_pooled", coerce=ingest_utils.get_int),
+            fld(
+                "n_libraries_pooled", "n_libraries_pooled", coerce=ingest_utils.get_int
+            ),
             fld("bpa_work_order", "bpa_work_order", coerce=ingest_utils.get_int),
             fld("sequencing_platform", "sequencing_platform"),
             fld("sequence_length", "sequence_length"),
@@ -341,7 +343,9 @@ class OMG10XRawMetadata(OMGBaseMetadata):
             fld("library_location", "library_location"),
             fld("library_status", "library_status"),
             fld("sequencing_facility", "sequencing_facility"),
-            fld("n_libraries_pooled", "n_libraries_pooled", coerce=ingest_utils.get_int),
+            fld(
+                "n_libraries_pooled", "n_libraries_pooled", coerce=ingest_utils.get_int
+            ),
             fld("bpa_work_order", "bpa_work_order", coerce=ingest_utils.get_int),
             fld("sequencing_platform", "sequencing_platform"),
             fld("sequence_length", "sequence_length"),
@@ -523,7 +527,9 @@ class OMG10XProcessedIlluminaMetadata(OMGBaseMetadata):
             fld("library_location", "library_location"),
             fld("library_status", "library_status"),
             fld("sequencing_facility", "sequencing_facility"),
-            fld("n_libraries_pooled", "n_libraries_pooled", coerce=ingest_utils.get_int),
+            fld(
+                "n_libraries_pooled", "n_libraries_pooled", coerce=ingest_utils.get_int
+            ),
             fld("bpa_work_order", "bpa_work_order", coerce=ingest_utils.get_int),
             fld("sequencing_platform", "sequencing_platform"),
             fld("sequence_length", "sequence_length"),
@@ -727,7 +733,9 @@ class OMGExonCaptureMetadata(OMGBaseMetadata):
             fld("library_location", "library_location"),
             fld("library_status", "library_status"),
             fld("sequencing_facility", "sequencing_facility"),
-            fld("n_libraries_pooled", "n_libraries_pooled", coerce=ingest_utils.get_int),
+            fld(
+                "n_libraries_pooled", "n_libraries_pooled", coerce=ingest_utils.get_int
+            ),
             fld("bpa_work_order", "bpa_work_order", coerce=ingest_utils.get_int),
             fld("sequencing_platform", "sequencing_platform"),
             fld("sequence_length", "sequence_length"),
@@ -894,6 +902,7 @@ class OMGExonCaptureMetadata(OMGBaseMetadata):
 
         return resources + self.generate_xlsx_resources()
 
+
 class OMGWholeGenomeMetadata(OMGBaseMetadata):
     organization = "bpa-omg"
     ckan_data_type = "omg-novaseq-whole-genome"
@@ -964,14 +973,21 @@ class OMGWholeGenomeMetadata(OMGBaseMetadata):
             fld("library_location", "library_location"),
             fld("library_status", "library_status"),
             fld("sequencing_facility", "sequencing_facility"),
-            fld("n_libraries_pooled", "n_libraries_pooled", coerce=ingest_utils.get_int),
+            fld(
+                "n_libraries_pooled", "n_libraries_pooled", coerce=ingest_utils.get_int
+            ),
             fld("bpa_work_order", "bpa_work_order", coerce=ingest_utils.get_int),
             fld("sequencing_platform", "sequencing_platform"),
             fld("sequence_length", "sequence_length"),
             fld("flowcell_id", "flowcell_id"),
             fld("software_version", "software_version"),
             fld("file", "file"),
-            fld("voucher_or_tissue_number", "voucher_or_tissue_number", optional=True, coerce=ingest_utils.int_or_comment),
+            fld(
+                "voucher_or_tissue_number",
+                "voucher_or_tissue_number",
+                optional=True,
+                coerce=ingest_utils.int_or_comment,
+            ),
         ],
         "options": {
             "sheet_name": "OMG_library_metadata",
@@ -1178,7 +1194,9 @@ class OMGGenomicsNovaseqMetadata(OMGBaseMetadata):
             fld("library_location", "library_location"),
             fld("library_status", "library_status"),
             fld("sequencing_facility", "sequencing_facility"),
-            fld("n_libraries_pooled", "n_libraries_pooled", coerce=ingest_utils.get_int),
+            fld(
+                "n_libraries_pooled", "n_libraries_pooled", coerce=ingest_utils.get_int
+            ),
             fld("bpa_work_order", "bpa_work_order"),
             fld("sequencing_platform", "sequencing_platform"),
             fld("sequence_length", "sequence_length"),
@@ -1345,7 +1363,9 @@ class OMGGenomicsHiSeqMetadata(OMGBaseMetadata):
             fld("library_location", "library_location"),
             fld("library_status", "library_status"),
             fld("sequencing_facility", "sequencing_facility"),
-            fld("n_libraries_pooled", "n_libraries_pooled", coerce=ingest_utils.get_int),
+            fld(
+                "n_libraries_pooled", "n_libraries_pooled", coerce=ingest_utils.get_int
+            ),
             fld("bpa_work_order", "bpa_work_order", coerce=ingest_utils.get_int),
             fld("sequencing_platform", "sequencing_platform"),
             fld("sequence_length", "sequence_length"),
@@ -1538,7 +1558,9 @@ class OMGGenomicsDDRADMetadata(OMGBaseMetadata):
             fld("library_location", "library_location"),
             fld("library_status", "library_status"),
             fld("sequencing_facility", "sequencing_facility"),
-            fld("n_libraries_pooled", "n_libraries_pooled", coerce=ingest_utils.get_int),
+            fld(
+                "n_libraries_pooled", "n_libraries_pooled", coerce=ingest_utils.get_int
+            ),
             fld("bpa_work_order", "bpa_work_order", coerce=ingest_utils.get_int),
             fld("sequencing_platform", "sequencing_platform"),
             fld("sequence_length", "sequence_length"),
@@ -1747,7 +1769,9 @@ class OMGGenomicsPacbioMetadata(OMGBaseMetadata):
             fld("library_location", "library_location"),
             fld("library_status", "library_status"),
             fld("sequencing_facility", "sequencing_facility"),
-            fld("n_libraries_pooled", "n_libraries_pooled", coerce=ingest_utils.get_int),
+            fld(
+                "n_libraries_pooled", "n_libraries_pooled", coerce=ingest_utils.get_int
+            ),
             fld("bpa_work_order", "bpa_work_order"),
             fld("sequencing_platform", "sequencing_platform"),
             fld("sequence_length", "sequence_length"),
@@ -1934,7 +1958,12 @@ class OMGONTPromethionMetadata(OMGBaseMetadata):
             fld("library_location", "library_location"),
             fld("library_status", "library_status"),
             fld("sequencing_facility", "sequencing_facility"),
-            fld("n_libraries_pooled", "n_libraries_pooled", optional=True, coerce=ingest_utils.get_int),
+            fld(
+                "n_libraries_pooled",
+                "n_libraries_pooled",
+                optional=True,
+                coerce=ingest_utils.get_int,
+            ),
             fld("bpa_work_order", "bpa_work_order", coerce=ingest_utils.get_int),
             fld("sequencing_platform", "sequencing_platform"),
             fld("sequence_length", "sequence_length", optional=True),
@@ -2110,7 +2139,9 @@ class OMGTranscriptomicsNextseq(OMGBaseMetadata):
             fld("library_location", "library_location"),
             fld("library_status", "library_status"),
             fld("sequencing_facility", "sequencing_facility"),
-            fld("n_libraries_pooled", "n_libraries_pooled", coerce=ingest_utils.get_int),
+            fld(
+                "n_libraries_pooled", "n_libraries_pooled", coerce=ingest_utils.get_int
+            ),
             fld("bpa_work_order", "bpa_work_order"),
             fld("sequencing_platform", "sequencing_platform"),
             fld("sequence_length", "sequence_length"),
