@@ -91,6 +91,7 @@ omg()
   apply omg-genomics-ddrad $*
   apply omg-transcriptomics-nextseq $*
   apply omg-novaseq $*
+  apply omg-novaseq-whole-genome $*
   apply omg-ont-promethion $*
   apply omg-pacbio $*
   apply omg-pacbio-genome-assembly $*

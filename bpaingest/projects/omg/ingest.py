@@ -896,8 +896,8 @@ class OMGExonCaptureMetadata(OMGBaseMetadata):
 
 class OMGWholeGenomeMetadata(OMGBaseMetadata):
     organization = "bpa-omg"
-    ckan_data_type = "omg-whole-genome"
-    technology = "novaseq"
+    ckan_data_type = "omg-novaseq-whole-genome"
+    technology = "novaseq-whole-genome"
     contextual_classes = common_context
     metadata_patterns = [r"^.*\.md5$", r"^.*_metadata.*.*\.xlsx$"]
     metadata_urls = [
@@ -925,7 +925,7 @@ class OMGWholeGenomeMetadata(OMGBaseMetadata):
             ),
             skp("plate_name"),
             skp("plate_well"),
-            fld("voucher_number"),
+            fld("voucher_number", "voucher_number"),
             skp("tissue_number"),
             fld("facility_sample_id", "facility_sample_id"),
             fld("library_type", "library_type"),
@@ -980,7 +980,7 @@ class OMGWholeGenomeMetadata(OMGBaseMetadata):
         },
     }
     md5 = {
-        "match": [files.exon_filename_re],
+        "match": [files.whole_genome_filename_re],
         "skip": [
             re.compile(r"^.*\.xlsx$"),
             re.compile(r"^.*SampleSheet.*"),
