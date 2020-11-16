@@ -14,11 +14,11 @@ def date_or_str(logger, v):
 
 class AusargLibraryContextual:
     metadata_urls = [
-        "https://downloads-qcif.bioplatforms.com/bpa/ausarg_staging/metadata/2020-08-19/"
+        "https://downloads-qcif.bioplatforms.com/bpa/ausarg_staging/metadata/2020-11-16/"
     ]
     metadata_patterns = [re.compile(r"^.*\.xlsx$")]
     name = "ausarg-library-contextual"
-    sheet_names = ["Sample_metadata"]
+    sheet_names = ["Sample metadata record"]
 
     def __init__(self, logger, path):
         self._logger = logger
