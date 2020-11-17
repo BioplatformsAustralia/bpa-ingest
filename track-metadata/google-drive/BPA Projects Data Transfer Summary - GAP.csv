@@ -22,4 +22,6 @@ AGRF,06/08/2020,79638,81994,83652,Acacia pycnantha,Reference Genomes,Pilot,Illum
 AGRF,06/08/2020,79638,81995,83652,Acacia pycnantha,Reference Genomes,Pilot,Illumina Short Read,20200806_GAP_NGS_AGRF_HNMVTDRXX,11/08/2020,,BPAOPS-947,https://data.bioplatforms.com/dataset/bpa-gap-illumina-shortread-81995
 AGRF,06/08/2020,79638,81996,83652,Acacia pycnantha,Reference Genomes,Pilot,Illumina Short Read,20200806_GAP_NGS_AGRF_HNMVTDRXX,11/08/2020,,BPAOPS-947,https://data.bioplatforms.com/dataset/bpa-gap-illumina-shortread-81996
 AGRF / Kor-jent van Dijk,11/9/2020,,,83650,,Phylogenomics,Pilot,Illumina Short Read,"20200909_GAP_AGRF_HF7CKAFX2 (Angio353 - Korjent data only, plus combined bait)",15/09/2020,,BPAOPS-952,
-UNSW,03/11/2020,79639,83445,83659,Telopea speciosissima,Reference Genomes,Pilot,Illumina Short Read,20201103_GAP_UNSW_HW3MGBGXG (Hi-C NextSeq data),05/11/2020,,BPAOPS-972,
+AGRF / Kor-jent van Dijk,11/9/2020,,,83650,,Phylogenomics,Pilot,Illumina Short Read,20200909_GAP_AGRF_H7LV7AFX2 (Waycott baits - Korjent data only),15/09/2020,,BPAOPS-953,
+UNSW,21/10/2020,79639,83445,83659,Telopea speciosissima,Reference Genomes,Pilot,Illumina Short Read,20201015_GAP_UNSW_BPC29518-1232 (Hi-C QC data),21/10/2020,,BPAOPS-967,(data not ingested)
+UNSW,03/11/2020,79639,83445,83659,Telopea speciosissima,Reference Genomes,Pilot,Illumina Short Read (Hi-C),20201103_GAP_UNSW_HW3MGBGXG (Hi-C NextSeq data),05/11/2020,,BPAOPS-972,https://data.bioplatforms.com/dataset/bpa-gap-illumina-shortread-83445
