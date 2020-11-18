@@ -28,6 +28,16 @@ logger = make_logger(__name__)
 def get_or_create_package(ckan, obj):
     try:
         ckan_obj = ckan_method(ckan, "package", "show")(id=obj["name"])
+        if ckan_obj["state"] == "deleted":
+            logger.info(
+                "found %s package object, purging: %s"
+                % (ckan_obj["state"], ckan_obj["id"])
+            )
+            # purge deleted dataset to allow creation of new package
+            ckan_method(ckan, "dataset", "purge")(id=ckan_obj["id"])
+
+            # deleted and purged things shouldn't be found, simulate error
+            raise ckanapi.errors.NotFound
     except ckanapi.errors.NotFound:
         create_obj = {
             "type": obj["type"],
