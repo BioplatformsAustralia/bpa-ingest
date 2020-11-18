@@ -458,7 +458,7 @@ description = "NumPy is the fundamental package for array computing with Python.
 name = "numpy"
 optional = false
 python-versions = ">=3.6"
-version = "1.19.2"
+version = "1.19.4"
 
 [[package]]
 category = "main"
@@ -638,7 +638,7 @@ description = "Alternative regular expression module, to replace re."
 name = "regex"
 optional = false
 python-versions = "*"
-version = "2020.10.11"
+version = "2020.11.13"
 
 [[package]]
 category = "main"
