@@ -75,6 +75,7 @@ class GAPIlluminaShortreadMetadata(BaseMetadata):
             re.compile(r"^.*TestFiles\.exe.*"),
         ],
     }
+    description = "Illumina short read"
 
     def __init__(
         self, logger, metadata_path, contextual_metadata=None, metadata_info=None
@@ -116,9 +117,9 @@ class GAPIlluminaShortreadMetadata(BaseMetadata):
                         "library_id": raw_library_id,
                     }
                 )
-                gap_describe(obj, "Illumina short read")
+                gap_describe(obj, self.description)
                 ingest_utils.permissions_organization_member(self._logger, obj)
-                tag_names = ["genomics", "illumina-shortread"]
+                tag_names = ["genomics", self.description.replace(" ", "-").lower()]
                 scientific_name = obj.get("scientific_name", "").strip()
                 if scientific_name:
                     tag_names.append(clean_tag_name(scientific_name))
@@ -154,6 +155,15 @@ class GAPIlluminaShortreadMetadata(BaseMetadata):
                     )
                 )
         return resources
+
+
+class GAPHiCMetadata(GAPIlluminaShortreadMetadata):
+    ckan_data_type = "gap-hi-c"
+    description = "Hi-C"
+    technology = "hi-c"
+    metadata_urls = [
+        "https://downloads-qcif.bioplatforms.com/bpa/plants_staging/genomics-hi-c/",
+    ]
 
 
 class GAPONTMinionMetadata(BaseMetadata):

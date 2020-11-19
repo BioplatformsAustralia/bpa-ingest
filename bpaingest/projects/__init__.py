@@ -1,3 +1,5 @@
+import logging
+
 from .amdb.ingest import (
     AustralianMicrobiomeMetagenomicsNovaseqMetadata,
     AustralianMicrobiomeMetagenomicsNovaseqControlMetadata,
@@ -52,6 +54,7 @@ from .gap.ingest import (
     GAPONTPromethionMetadata,
     GAPONTMinionMetadata,
     GAPGenomics10XMetadata,
+    GAPHiCMetadata,
 )
 from .omg.ingest import (
     OMG10XProcessedIlluminaMetadata,
@@ -73,6 +76,7 @@ from .tsi.ingest import (
     TSIPacbioHifiMetadata,
     TSIGenomicsDDRADMetadata,
 )
+from ..util import make_logger
 
 
 class ProjectInfo:
@@ -95,6 +99,7 @@ class ProjectInfo:
             GAPONTMinionMetadata,
             GAPONTPromethionMetadata,
             GAPGenomics10XMetadata,
+            GAPHiCMetadata,
         ],
         "gbr": [GbrAmpliconsMetadata, GbrPacbioMetadata],
         "marine-microbes": [

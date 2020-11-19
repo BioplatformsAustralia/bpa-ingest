@@ -146,6 +146,7 @@ gap() {
   apply gap-ont-minion $*
   apply gap-ont-promethion $*
   apply gap-genomics-10x $*
+  apply gap-hi-c $*
 }
 
 amd() {
