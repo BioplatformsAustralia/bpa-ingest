@@ -124,7 +124,11 @@ class GAPLibraryContextual:
                 coerce=ingest_utils.get_date_isoformat,
             ),
             fld("scientific_name_notes", "scientific_name_notes"),
-            fld("id_vetting_date", "id_vetting_date"),
+            fld(
+                "id_vetting_date",
+                "id_vetting_date",
+                coerce=ingest_utils.get_date_isoformat,
+            ),
             fld(
                 "living_collections_material_sample_rna",
                 re.compile(r"^living[\s]*_collections_material_sample_[rR][nN][aA]$"),
