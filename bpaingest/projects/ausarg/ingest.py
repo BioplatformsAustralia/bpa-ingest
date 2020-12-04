@@ -84,7 +84,7 @@ class AusargIlluminaFastqMetadata(BaseMetadata):
             fld("analysis_software_version", "analysis_software_version"),
         ],
         "options": {
-            "sheet_name": None,
+            "sheet_name": "Library_metadata",
             "header_length": 1,
             "column_name_row_index": 0,
         },
