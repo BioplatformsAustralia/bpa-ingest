@@ -129,6 +129,9 @@ class AusargIlluminaFastqMetadata(BaseMetadata):
             ticket = xlsx_info["ticket"]
             track_meta = self.google_track_meta.get(ticket)
             for row in rows:
+                if not row.library_id and not row.flowcell_id:
+                    # skip empty rows
+                    continue
                 obj = row._asdict()
                 if metadata_sheet_flowcell_id != row.flowcell_id:
                     raise Exception(
