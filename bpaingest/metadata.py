@@ -4,8 +4,7 @@ import json
 import os
 from contextlib import suppress
 from .util import make_logger
-from .libs.fetch_data import Fetcher, get_password
-
+from .libs.fetch_data import Fetcher, get_password, get_env_username
 
 logger = make_logger(__name__)
 
@@ -59,7 +58,11 @@ class DownloadMetadata(object):
             json.dump(metadata_info, fd)
 
     def _set_auth(self, project_class):
-        auth_user, auth_env_name = project_class.auth
+        env_auth_user = get_env_username()
+        if env_auth_user is not None:
+            auth_user, auth_env_name = env_auth_user, env_auth_user
+        else:
+            auth_user, auth_env_name = project_class.auth
         self.auth = (auth_user, get_password(auth_env_name))
 
     def _set_path(self, path):
