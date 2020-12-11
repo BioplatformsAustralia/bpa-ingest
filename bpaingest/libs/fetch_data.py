@@ -47,23 +47,7 @@ def get_password(project_name=None):
     return password
 
 def get_env_username(username_variable='BPAINGEST_DOWNLOADS_USERNAME'):
-    '''Get downloads password for legacy auth username from environment '''
-
-    def complain_and_quit():
-        raise MissingCredentialsException(
-            "Please set shell variable {}".format(
-                username_variable
-            )
-        )
-
-    if username_variable not in os.environ:
-        complain_and_quit()
-
-    fetch_username = os.environ[username_variable]
-    if fetch_username == '':
-        complain_and_quit()
-
-    return fetch_username
+    return os.getenv(username_variable)
 
 class Fetcher:
     """ facilitates fetching data from webserver """

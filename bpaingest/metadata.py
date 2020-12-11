@@ -97,8 +97,10 @@ class DownloadMetadata:
     def _set_auth(self, project_class):
         env_auth_user = get_env_username()
         if env_auth_user is not None:
+            self._logger.info(f"Using username from environment: {env_auth_user}")
             auth_user, auth_env_name = env_auth_user, env_auth_user
         else:
+            self._logger.info(f"Defaulting to project auth...")
             auth_user, auth_env_name = project_class.auth
         self.auth = (auth_user, get_password(auth_env_name))
 
