@@ -47,6 +47,10 @@ def get_password(project_name=None):
     return password
 
 
+def get_env_username(username_variable="BPAINGEST_DOWNLOADS_USERNAME"):
+    return os.getenv(username_variable)
+
+
 class Fetcher:
     """ facilitates fetching data from webserver """
 
