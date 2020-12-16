@@ -95,7 +95,6 @@ class AusargBaseMetadata(BaseMetadata):
         return notes + ". ".join(self.generate_notes_field(t) for t in row_list)
 
 
-
 class AusargIlluminaFastqMetadata(AusargBaseMetadata):
     organization = "ausarg"
     ckan_data_type = "ausarg-illumina-fastq"
@@ -495,8 +494,7 @@ class AusargPacbioHifiMetadata(AusargBaseMetadata):
                 resource["name"] = filename
                 resource["resource_type"] = self.ckan_data_type
                 library_id = ingest_utils.extract_ands_id(
-                    self._logger,
-                    resource["library_id"],
+                    self._logger, resource["library_id"],
                 )
                 #
                 raw_resources_info = resource_info.get(os.path.basename(filename), "")
