@@ -117,6 +117,7 @@ class BaseMetadata:
                 "SCAN",
                 "WIFF",
                 "JSON",
+                "BAM",
             ):
                 resource_obj["format"] = extension
 
