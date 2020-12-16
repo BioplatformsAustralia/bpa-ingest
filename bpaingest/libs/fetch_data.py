@@ -87,6 +87,7 @@ class Fetcher:
         metadata_patterns,
         metadata_info,
         url_components,
+        download=True,
         _target_depth=-1,
         _url=None,
         _session=None,
@@ -96,6 +97,7 @@ class Fetcher:
         `url_components` gives an expected minimum level of recursing to find matching files,
         and the names in `url_components` are used to set `metadata_info` for each downloaded file.
         """
+
         if metadata_patterns is None:
             metadata_patterns = [r"^.*\.(md5|xlsx)$"]
         if _url is None:
@@ -104,7 +106,6 @@ class Fetcher:
             _target_depth = len(url_components)
         if _session is None:
             _session = requests.Session()
-
         self._logger.info("Fetching folder from {}".format(_url))
         response = _session.get(_url, stream=True, auth=self.auth, verify=False)
         if response.status_code != 200:
@@ -124,6 +125,7 @@ class Fetcher:
                         metadata_patterns,
                         metadata_info,
                         url_components,
+                        download=download,
                         _session=_session,
                         _target_depth=_target_depth - 1,
                         _url=urljoin(_url, link_target),
@@ -135,16 +137,17 @@ class Fetcher:
                         metadata_patterns,
                         metadata_info,
                         url_components,
+                        download=download,
                         _session=_session,
                         _target_depth=_target_depth,
                         _url=urljoin(_url, link_target),
                     )
                 elif not any(
-                    re.match(pattern, link_target) for pattern in metadata_patterns
+                    re.compile(pattern).match(link_target)
+                    for pattern in metadata_patterns
                 ):
                     continue
                 else:
-                    # download the actual file
                     subdir = _url[len(self.metadata_source_url) :].strip("/")
                     meta_parts = subdir.split("/")[: len(url_components)]
                     assert len(meta_parts) == len(url_components)
@@ -157,4 +160,6 @@ class Fetcher:
                         list(zip(url_components, meta_parts))
                     )
                     metadata_info[link_target]["base_url"] = _url
-                    self._fetch(_session, _url, link_target)
+                    # download the actual file
+                    if download:
+                        self._fetch(_session, _url, link_target)
