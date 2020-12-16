@@ -13,6 +13,7 @@ from ...abstract import BaseMetadata
 from ...libs import ingest_utils
 from ...libs.excel_wrapper import make_field_definition as fld
 from ...libs.fetch_data import Fetcher, get_password
+from ...libs.ingest_utils import get_clean_number
 from ...util import (
     sample_id_to_ckan_name,
     clean_tag_name,
