@@ -1,3 +1,6 @@
 Facility,Date of transfer,bioplatforms_sample_id,bioplatforms_library_id,bioplatforms_dataset_id,scientific_name,project_aim,Data type,Description,Folder name,Date of transfer to archive,File Count,CCG JIRA Ticket,Download
 Ramaciotti Centre for Genomics- UNSW,4/8/20,349720-349728,350720-350728,351721,Physignathus lesueurii/Bassiana duperreyi,Reference genome,Illumina-fastq,RNA-seq,20200803_UNSW_AusARG_UNSW_HH2JJBGXG,25/08/2020,,BPAOPS-948,
-Ramaciotti Centre for Genomics- UNSW,3/12/20,349733-349740,350733-350740,351730,Tiliqua rugosa/Carettochelys insculpta,Reference genome,Illumina-fastq,RNA-seq,20201202_AusARG_UNSW_HGGKCBGXH,3/12/2020,,BPAOPS-1000,
+Australian Genome Research Facility Ltd,26/11/20,349719,350719,351719-351720,Tiliqua rugosa,Reference genome,PacBio-HiFi,HiFi,AusARG_AGRF_PacBio_C20062700,2/12/2020,,BPAOPS-997,
+Australian Genome Research Facility Ltd,1/12/20,349741,350741,351731,Physignathus lesueurii,Reference genome,PacBio-HiFi,HiFi,AusARG_AGRF_PacBio_C20093932_DA043673,2/12/2020,,BPAOPS-999,
+Australian Genome Research Facility Ltd,1/12/20,349741,350741,351732,Physignathus lesueurii,Reference genome,PacBio-HiFi,HiFi,AusARG_AGRF_PacBio_C20093932_DA043669,2/12/2020,,BPAOPS-999,
+Ramaciotti Centre for Genomics- UNSW,3/12/20,349733-349740,350733-350740,351730,Tiliqua rugosa/Carettochelys insculpta,Reference genome,Illumina-fastq,RNA-seq,20201202_AusARG_UNSW_AHGGKCBGXH,3/12/2020,,BPAOPS-1000,
