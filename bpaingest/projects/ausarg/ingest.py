@@ -117,10 +117,10 @@ class AusargIlluminaFastqMetadata(BaseMetadata):
         self.google_track_meta = AusArgGoogleTrackMetadata()
 
     def _get_packages(self):
-        self._logger.info("Ingesting GAP metadata from {0}".format(self.path))
+        self._logger.info("Ingesting AusARG metadata from {0}".format(self.path))
         packages = []
         for fname in glob(self.path + "/*.xlsx"):
-            self._logger.info("Processing GAP metadata file {0}".format(fname))
+            self._logger.info("Processing AusARG metadata file {0}".format(fname))
             metadata_sheet_flowcell_id = re.match(
                 r"^.*_([^_]+)_metadata.*\.xlsx", fname
             ).groups()[0]
