@@ -1,4 +1,9 @@
-from bpaingest.projects.ausarg.files import illumina_fastq_re, metadata_sheet_re
+from bpaingest.projects.ausarg.files import (
+    illumina_fastq_re,
+    metadata_sheet_re,
+    pacbio_hifi_filename_re,
+    pacbio_hifi_metadata_sheet_re,
+)
 
 
 def test_raw_xlsx_filename_re():
@@ -17,3 +22,33 @@ def test_fastq_filename_re():
     ]
     for filename in filenames:
         assert illumina_fastq_re.match(filename) is not None
+
+
+def test_pacbio_hifi():
+    filenames = [
+        "355356_AusARG_AGRF_PacBio_DA052899_ccs_statistics.csv",
+        "355356_AusARG_AGRF_PacBio_DA052899_final.consensusreadset.xml",
+        "355356_AusARG_AGRF_PacBio_DA052899.ccs.bam",
+        "355356_AusARG_AGRF_PacBio_DA052899.subreads.bam",
+        "355356_AusARG_AGRF_PacBio_DA052899.pdf",
+        "350719_AusARG_AGRF_PacBio_DA052894_DA052873.ccs.bam",
+        "350719_AusARG_AGRF_PacBio_DA052894_DA052873_ccs_statistics.csv",
+        "350719_AusARG_AGRF_PacBio_DA052894_DA052873_final.consensusreadset.xml",
+        "349741_AusARG_AGRF_PacBio_DA043673.pdf",
+        "350719_AusARG_AGRF_PacBio_DA052873.pdf",
+        "350719_AusARG_AGRF_PacBio_DA052894.pdf",
+        "349741_AusARG_AGRF_PacBio_DA043669.pdf",
+    ]
+
+    for filename in filenames:
+        assert pacbio_hifi_filename_re.match(filename) is not None
+
+
+def test_pacbio_hifi_metadata_sheet():
+    filenames = [
+        "355356_AusARG_AGRF_PacBio_DA052899_metadata.xlsx",
+        "350719_AusARG_AGRF_PacBio_DA052894_DA052873_metadata.xlsx",
+    ]
+
+    for filename in filenames:
+        assert pacbio_hifi_metadata_sheet_re.match(filename) is not None

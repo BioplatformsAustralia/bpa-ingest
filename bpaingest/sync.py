@@ -240,7 +240,7 @@ def sync_resources(
 
     resource_linkage_package_id = {}
     for package_obj in ckan_packages:
-        linkage_tpl = tuple(package_obj[t] for t in resource_linkage_attrs)
+        linkage_tpl = tuple((package_obj[t] for t in resource_linkage_attrs),)
         if linkage_tpl in resource_linkage_package_id:
             raise Exception(
                 "more than one package linked for tuple {}".format(linkage_tpl)

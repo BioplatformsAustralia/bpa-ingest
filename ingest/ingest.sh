@@ -70,6 +70,7 @@ gbr() {
 
 ausarg() {
   apply ausarg-illumina-fastq $*
+  apply ausarg-pacbio-hifi $*
 }
 
 marine_microbes()

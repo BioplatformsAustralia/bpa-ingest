@@ -15,7 +15,10 @@ from .amdb.ingest import (
     MarineMicrobesMetatranscriptomeMetadata,
 )
 
-from .ausarg.ingest import AusargIlluminaFastqMetadata
+from .ausarg.ingest import (
+    AusargIlluminaFastqMetadata,
+    AusargPacbioHifiMetadata,
+)
 
 from .gbr.ingest import GbrAmpliconsMetadata, GbrPacbioMetadata
 
@@ -87,7 +90,7 @@ class ProjectInfo:
             AustralianMicrobiomeAmpliconsMetadata,
             AustralianMicrobiomeAmpliconsControlMetadata,
         ],
-        "ausarg": [AusargIlluminaFastqMetadata],
+        "ausarg": [AusargIlluminaFastqMetadata, AusargPacbioHifiMetadata],
         "base": [
             BASEAmpliconsMetadata,
             BASEAmpliconsControlMetadata,
