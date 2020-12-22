@@ -17,14 +17,30 @@ NOVASEQ_FILENAME_PATTERN = r"""
 novaseq_filename_re = re.compile(NOVASEQ_FILENAME_PATTERN, re.VERBOSE)
 
 PACBIO_HIFI_PATTERN = r"""
-    (?P<bpa_library_id>\d{4,6})_
-    (?P<facility>UNSW)_
-    PAC_
-    (?P<run_date>\d{8})_
-    (?P<run_code>.{3})
-    \.tar\.gz
+    (?P<library_id>\d{4,6})_
+    TSI_
+    (?P<facility>AGRF)_
+    PacBio_
+    (?P<flowcell_id>\w{8})
+    (_ccs_statistics\.csv
+      |_final\.consensusreadset\.xml
+      |\.ccs\.bam
+      |\.subreads\.bam
+      |\.pdf)
 """
 pacbio_hifi_filename_re = re.compile(PACBIO_HIFI_PATTERN, re.VERBOSE)
+
+PACBIO_HIFI_METADATA_SHEET_PATTERN = r"""
+    (?P<library_id>\d{4,6})_
+    TSI_
+    (?P<facility>AGRF)_
+    PacBio_
+    (?P<flowcell_id>\w{8})
+    (_metadata\.xlsx)
+"""
+pacbio_hifi_metadata_sheet_re = re.compile(
+    PACBIO_HIFI_METADATA_SHEET_PATTERN, re.VERBOSE
+)
 
 DDRAD_FASTQ_FILENAME_PATTERN = r"""
     (?P<bpa_dataset_id>\d{4,6})_
