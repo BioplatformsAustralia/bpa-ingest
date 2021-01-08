@@ -3,12 +3,14 @@ import tempfile
 import urllib
 
 import requests
+import boto3
 import ckanapi
 import os
 from urllib.parse import urlparse
 from collections import defaultdict
 
 from .libs.ingest_utils import ApiFqBuilder
+from .libs.response_stream import ResponseStream
 from .util import make_logger
 
 logger = make_logger(__name__)
@@ -284,6 +286,18 @@ def check_resource(
 
     return None
 
+def resolve_legacy_file(legacy_url, auth):
+    if legacy_url and legacy_url.startswith("file:///"):
+        raise Exception(
+            "Cannot download local file. URL reference must be via http or https"
+        )
+    archive_info = ApacheArchiveInfo(auth)
+    resolved_url = archive_info.resolve_url(legacy_url)
+    logger.info("Resolved `%s' to `%s'" % (legacy_url, resolved_url))
+    if not resolved_url:
+        logger.error("unable to resolve `%s' - file missing?" % (legacy_url))
+        return None
+    return resolved_url
 
 def download_legacy_file(legacy_url, auth):
     if legacy_url and legacy_url.startswith("file:///"):
@@ -328,24 +342,51 @@ def reupload_resource(ckan, ckan_obj, legacy_url, parent_destination, auth=None)
         logger.error("download from legacy archive URL failed - legacy_url not set")
         return
 
-    tempdir, path = download_legacy_file(legacy_url, auth)
+    stream = False
+    transfer_mode=os.getenv("BPAINGEST_STREAM")
+    if transfer_mode is not None and transfer_mode == "yes":
+        self._logger.info(f"Streaming upload from legacy URL to S3: {legacy_url}")
+        stream = True
+    else:
+        self._logger.info(f"Downloading from legacy URL: {legacy_url}")
+
+    # FIXME
+    if stream:
+        path = resolve_legacy_file(legacy_url, auth)
+    else:
+        tempdir, path = download_legacy_file(legacy_url, auth)
+
     if path is None:
         logger.error("download from legacy archive failed")
         return
+
     try:
-        logger.info("re-uploading from tempfile: %s" % (path))
+        logger.info("re-uploading from: %s" % (path))
         filename = path.split("/")[-1]
         s3_destination = "s3://{}/resources/{}/{}".format(
             parent_destination, ckan_obj["id"], filename
         )
-        s3cmd_args = [
-            "aws",
-            "s3",
-            "cp",
-            path,
-            s3_destination,
-        ]
-        status = subprocess.call(s3cmd_args)
+
+        if stream:
+            s3 = boto3.client('s3')
+
+            response = requests.get(legacy_url, stream=True)
+            # Chunk size of 64 bytes, in this case. Adapt to your use case.
+            stream = ResponseStream(response.iter_content(1024))
+            # TODO Add progress bar
+            with stream as data:
+                key = s3_destination.split("/",3)[3]
+                s3.upload_fileobj(data, parent_destination, key)
+        else:
+            s3cmd_args = [
+                "aws",
+                "s3",
+                "cp",
+                path,
+                s3_destination,
+            ]
+            status = subprocess.call(s3cmd_args)
+
         if status == 0:
             # patch the object in CKAN to have full URL
             resource_url = "{}/dataset/{}/resource/{}/download/{}".format(
@@ -360,8 +401,9 @@ def reupload_resource(ckan, ckan_obj, legacy_url, parent_destination, auth=None)
         else:
             logger.error("upload failed: status {}".format(status))
     finally:
-        os.unlink(path)
-        os.rmdir(tempdir)
+        if not stream:
+            os.unlink(path)
+            os.rmdir(tempdir)
 
 
 def create_resource(ckan, ckan_obj):
