@@ -5,6 +5,7 @@ import urllib
 import requests
 import boto3
 import ckanapi
+import tqdm
 import os
 from urllib.parse import urlparse
 from collections import defaultdict
@@ -371,12 +372,24 @@ def reupload_resource(ckan, ckan_obj, legacy_url, parent_destination, auth=None)
             s3 = boto3.client('s3')
 
             response = requests.get(legacy_url, stream=True)
-            # Chunk size of 64 bytes, in this case. Adapt to your use case.
+            file_size = response.headers.get("Content-length", None)
+
+            # Configure the progress bar
+            bar = {"unit": "B", "unit_scale": True, "unit_divisor": 1024, "ascii": True}
+            if file_size:
+                bar["total"] = file_size
+            else:
+                logger.warn("File size not able to be determined from legacy URL")
+
+            # Chunk size of 1024 bytes
             stream = ResponseStream(response.iter_content(1024))
-            # TODO Add progress bar
-            with stream as data:
-                key = s3_destination.split("/",3)[3]
-                s3.upload_fileobj(data, parent_destination, key)
+
+            with tqdm.tqdm(**bar) as progress:
+                with stream as data:
+                    key = s3_destination.split("/", 3)[3]
+                    s3.upload_fileobj(
+                        data, parent_destination, key, Callback=progress.update
+                    )
         else:
             s3cmd_args = [
                 "aws",

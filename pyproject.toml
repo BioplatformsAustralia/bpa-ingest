@@ -26,6 +26,7 @@ google-api-python-client = "^1.8.2"
 ckanapi = { git = "https://github.com/BioplatformsAustralia/ckanapi.git", branch = "streaming-uploads" }
 bpasslh = "^2.1.1"
 openpyxl = "^3.0.5"
+tqdm = "^4.56.0"
 
 [tool.poetry.dev-dependencies]
 black = "^19.10b0"
