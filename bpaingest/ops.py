@@ -287,6 +287,7 @@ def check_resource(
 
     return None
 
+
 def resolve_legacy_file(legacy_url, auth):
     if legacy_url and legacy_url.startswith("file:///"):
         raise Exception(
@@ -299,6 +300,7 @@ def resolve_legacy_file(legacy_url, auth):
         logger.error("unable to resolve `%s' - file missing?" % (legacy_url))
         return None
     return resolved_url
+
 
 def download_legacy_file(legacy_url, auth):
     if legacy_url and legacy_url.startswith("file:///"):
@@ -344,7 +346,7 @@ def reupload_resource(ckan, ckan_obj, legacy_url, parent_destination, auth=None)
         return
 
     stream = False
-    transfer_mode=os.getenv("BPAINGEST_STREAM")
+    transfer_mode = os.getenv("BPAINGEST_STREAM")
     if transfer_mode is not None and transfer_mode == "yes":
         self._logger.info(f"Streaming upload from legacy URL to S3: {legacy_url}")
         stream = True
@@ -369,7 +371,7 @@ def reupload_resource(ckan, ckan_obj, legacy_url, parent_destination, auth=None)
         )
 
         if stream:
-            s3 = boto3.client('s3')
+            s3 = boto3.client("s3")
 
             response = requests.get(legacy_url, stream=True)
             file_size = response.headers.get("Content-length", None)
