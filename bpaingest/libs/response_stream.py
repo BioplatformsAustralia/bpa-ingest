@@ -72,6 +72,9 @@ class ResponseStream(object):
             except StopIteration:
                 break
 
+    def close(self):
+        pass
+
     def tell(self):
         return self._bytes.tell()
 
