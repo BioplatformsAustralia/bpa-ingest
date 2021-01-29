@@ -369,6 +369,8 @@ def reupload_resource(ckan, ckan_obj, legacy_url, parent_destination, auth=None)
             parent_destination, ckan_obj["id"], filename
         )
 
+        logger.info(f"S3 destination is: {s3_destination}")
+
         if stream:
             s3 = boto3.client("s3")
 
