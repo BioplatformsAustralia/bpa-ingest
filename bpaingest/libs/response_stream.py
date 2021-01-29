@@ -53,6 +53,12 @@ class ResponseStream(object):
         self._bytes = BytesIO()
         self._iterator = request_iterator
 
+    def __enter__(self):
+        return self
+
+    def __exit__(self):
+        return self
+
     def _load_all(self):
         self._bytes.seek(0, SEEK_END)
         for chunk in self._iterator:
