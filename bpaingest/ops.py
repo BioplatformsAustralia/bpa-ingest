@@ -236,7 +236,7 @@ class ApacheArchiveInfo(BaseArchiveInfo):
 
 
 def check_resource(
-    ckan_archive_info, apache_archive_info, current_url, legacy_url, metadata_etags,
+    ckan_archive_info, apache_archive_info, current_url, legacy_url, metadata_etags
 ):
     """
     returns None if the ckan_obj looks good (is on the CKAN server, size matches legacy url size)
@@ -348,12 +348,11 @@ def reupload_resource(ckan, ckan_obj, legacy_url, parent_destination, auth=None)
     stream = False
     transfer_mode = os.getenv("BPAINGEST_STREAM")
     if transfer_mode is not None and transfer_mode == "yes":
-        self._logger.info(f"Streaming upload from legacy URL to S3: {legacy_url}")
+        logger.info(f"Streaming upload from legacy URL to S3: {legacy_url}")
         stream = True
     else:
-        self._logger.info(f"Downloading from legacy URL: {legacy_url}")
+        logger.info(f"Downloading from legacy URL: {legacy_url}")
 
-    # FIXME
     if stream:
         path = resolve_legacy_file(legacy_url, auth)
     else:
@@ -393,13 +392,7 @@ def reupload_resource(ckan, ckan_obj, legacy_url, parent_destination, auth=None)
                         data, parent_destination, key, Callback=progress.update
                     )
         else:
-            s3cmd_args = [
-                "aws",
-                "s3",
-                "cp",
-                path,
-                s3_destination,
-            ]
+            s3cmd_args = ["aws", "s3", "cp", path, s3_destination]
             status = subprocess.call(s3cmd_args)
 
         if status == 0:
