@@ -378,7 +378,7 @@ def reupload_resource(ckan, ckan_obj, legacy_url, parent_destination, auth=None)
             # Configure the progress bar
             bar = {"unit": "B", "unit_scale": True, "unit_divisor": 1024, "ascii": True}
             if file_size:
-                bar["total"] = file_size
+                bar["total"] = int(file_size)
             else:
                 logger.warn("File size not able to be determined from legacy URL")
 
