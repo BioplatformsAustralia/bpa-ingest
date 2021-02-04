@@ -3,10 +3,13 @@ import tempfile
 import urllib
 
 import requests
-import boto3
 import ckanapi
 import tqdm
 import os
+
+import boto3
+from botocore.exceptions import ClientError, WaiterError
+
 from urllib.parse import urlparse
 from collections import defaultdict
 
@@ -363,6 +366,7 @@ def reupload_resource(ckan, ckan_obj, legacy_url, parent_destination, auth=None)
         return
 
     try:
+        status = -1
         logger.info("re-uploading from: %s" % (path))
         filename = path.split("/")[-1]
         s3_destination = "s3://{}/resources/{}/{}".format(
@@ -372,7 +376,9 @@ def reupload_resource(ckan, ckan_obj, legacy_url, parent_destination, auth=None)
         logger.info(f"S3 destination is: {s3_destination}")
 
         if stream:
-            s3 = boto3.client("s3")
+            session = boto3.Session()
+            s3_client = session.client("s3")
+            s3_resource = session.client("s3")
 
             response = requests.get(legacy_url, stream=True)
             file_size = response.headers.get("Content-length", None)
@@ -390,9 +396,49 @@ def reupload_resource(ckan, ckan_obj, legacy_url, parent_destination, auth=None)
             with tqdm.tqdm(**bar) as progress:
                 with stream as data:
                     key = s3_destination.split("/", 3)[3]
-                    s3.upload_fileobj(
-                        data, parent_destination, key, Callback=progress.update
-                    )
+
+                    # validate bucket
+                    try:
+                        bucket = s3_resource.Bucket(parent_destination)
+                    except ClientError as e:
+                        bucket = None
+
+                    # handle pre-existing file case
+                    try:
+                        # In case filename already exists, get current etag to check if the
+                        # contents change after upload
+                        head = s3_client.head_object(Bucket=bucketName, Key=key)
+                    except ClientError:
+                        etag = ""
+                    else:
+                        etag = head["ETag"].strip('"')
+
+                    # create the Object to represent the file
+                    try:
+                        s3_obj = bucket.Object(key)
+                    except ClientError as e:
+                        s3_obj = None
+                    except AttributeError as e:
+                        s3_obj = None
+
+                    # upload with progress bar
+                    try:
+                        s3_obj.upload_fileobj(data, key, Callback=progress.update)
+                    except ClientError as e:
+                        pass
+                    except AttributeError as e:
+                        pass
+                    else:
+                        # wait for S3 Object to exist
+                        try:
+                            s3_obj.wait_until_exists(IfNoneMatch=etag)
+                        except WaiterError as e:
+                            pass
+                        else:
+                            head = s3_client.head_object(Bucket=bucketName, Key=key)
+                            if head["ContentLength"] > 0:
+                                status = 0
+
         else:
             s3cmd_args = ["aws", "s3", "cp", path, s3_destination]
             status = subprocess.call(s3cmd_args)
@@ -411,6 +457,7 @@ def reupload_resource(ckan, ckan_obj, legacy_url, parent_destination, auth=None)
         else:
             logger.error("upload failed: status {}".format(status))
     finally:
+        logger.error("upload failure")
         if not stream:
             os.unlink(path)
             os.rmdir(tempdir)
