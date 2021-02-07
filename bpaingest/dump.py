@@ -75,7 +75,10 @@ def linkage_qc(logger, state, data_type_meta, errors_callback=None):
 
 
 def dump_state(args):
-    logger = make_logger(__name__)
+    if args.log_level:
+        logger = make_logger(__name__, args.log_level)
+    else:
+        logger = make_logger(__name__)
     state = defaultdict(lambda: defaultdict(list))
 
     project_info = ProjectInfo()
