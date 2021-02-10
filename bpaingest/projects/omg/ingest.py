@@ -1,10 +1,9 @@
 import os
 import re
 from collections import defaultdict
-from glob import glob
 from urllib.parse import urljoin
 
-from bpasslh.handler import SensitiveDataGeneraliser
+from glob import glob
 from unipath import Path
 
 from . import files
@@ -13,8 +12,9 @@ from .tracking import OMGTrackMetadata, OMGTrackGenomeAssemblyMetadata
 from ...abstract import BaseMetadata
 from ...libs import ingest_utils
 from ...libs.excel_wrapper import make_field_definition as fld, make_skip_column as skp
-from ...libs.ingest_utils import get_clean_number
 from ...secondarydata import SecondaryMetadata
+from ...sensitive_species_wrapper import SensitiveSpeciesWrapper
+
 from ...util import sample_id_to_ckan_name, common_values, clean_tag_name
 
 common_context = [OMGSampleContextual, OMGLibraryContextual]
@@ -23,46 +23,11 @@ common_context = [OMGSampleContextual, OMGLibraryContextual]
 class OMGBaseMetadata(BaseMetadata):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        self.generaliser = SensitiveDataGeneraliser(self._logger)
+        self.generaliser = SensitiveSpeciesWrapper(self._logger)
 
+    # this method just for here for backwards compatibility
     def apply_location_generalisation(self, packages):
-        "Apply location generalisation for sensitive species found from ALA"
-
-        def species_name(package):
-            return "{} {}".format(package.get("genus", ""), package.get("species", ""))
-
-        # prime the cache of responses
-        self._logger.info("building location generalisation cache")
-        names = sorted(set(species_name(p) for p in packages))
-        self.generaliser.ala_lookup.get_bulk(names)
-
-        cache = {}
-        for package in packages:
-            # if the sample wasn't collected in Australia, suppress the longitude
-            # and latitude (ALA lookup via SSLH is irrelevant)
-            country = package.get("country", "")
-            if country.lower() != "australia":
-                self._logger.debug(
-                    "library_id {} outside Australia, suppressing location: {}".format(
-                        package.get("bpa_dataset_id", ""), country
-                    )
-                )
-                package.update({"latitude": None, "longitude": None})
-                continue
-            # Sample is in Australia; use ALA to determine whether it is sensitive,
-            # and apply the relevant sensitisation level (if any)
-            lat, lng = (
-                get_clean_number(self._logger, package.get("latitude")),
-                get_clean_number(self._logger, package.get("longitude")),
-            )
-            args = (species_name(package), lat, lng)
-            if args not in cache:
-                cache[args] = self.generaliser.apply(*args)
-            generalised = cache[args]
-            if generalised:
-                package.update(generalised._asdict())
-
-        return packages
+        return self.generaliser.apply_location_generalisation(packages)
 
     def generate_notes_field(self, row_object):
         notes = "%s %s, %s %s %s" % (
@@ -151,7 +116,7 @@ class OMG10XRawIlluminaMetadata(OMGBaseMetadata):
             fld("software_version", "software_version"),
             fld("file", "file"),
         ],
-        "options": {"header_length": 1, "column_name_row_index": 0,},
+        "options": {"header_length": 1, "column_name_row_index": 0, },
     }
     md5 = {
         "match": [files.tenxtar_filename_re],
@@ -163,7 +128,7 @@ class OMG10XRawIlluminaMetadata(OMGBaseMetadata):
     }
 
     def __init__(
-        self, logger, metadata_path, contextual_metadata=None, metadata_info=None
+            self, logger, metadata_path, contextual_metadata=None, metadata_info=None
     ):
         super().__init__(logger, metadata_path)
         self.path = Path(metadata_path)
@@ -372,7 +337,7 @@ class OMG10XRawMetadata(OMGBaseMetadata):
     }
 
     def __init__(
-        self, logger, metadata_path, contextual_metadata=None, metadata_info=None
+            self, logger, metadata_path, contextual_metadata=None, metadata_info=None
     ):
         super().__init__(logger, metadata_path)
         self.path = Path(metadata_path)
@@ -540,7 +505,7 @@ class OMG10XProcessedIlluminaMetadata(OMGBaseMetadata):
             fld("species", "species", optional=True),
             fld("voucher_id", "voucher_id", optional=True),
         ],
-        "options": {"header_length": 1, "column_name_row_index": 0,},
+        "options": {"header_length": 1, "column_name_row_index": 0, },
     }
     md5 = {
         "match": [files.tenxtar_filename_re],
@@ -552,7 +517,7 @@ class OMG10XProcessedIlluminaMetadata(OMGBaseMetadata):
     }
 
     def __init__(
-        self, logger, metadata_path, contextual_metadata=None, metadata_info=None
+            self, logger, metadata_path, contextual_metadata=None, metadata_info=None
     ):
         super().__init__(logger, metadata_path)
         self.path = Path(metadata_path)
@@ -606,7 +571,7 @@ class OMG10XProcessedIlluminaMetadata(OMGBaseMetadata):
                         "id": name,
                         "flow_id": flow_id,
                         "title": "OMG 10x Illumina Processed %s %s"
-                        % (bpa_sample_id, flow_id),
+                                 % (bpa_sample_id, flow_id),
                         "notes": self.generate_notes_field_with_id(
                             context, bpa_library_id
                         ),
@@ -760,7 +725,7 @@ class OMGExonCaptureMetadata(OMGBaseMetadata):
     }
 
     def __init__(
-        self, logger, metadata_path, contextual_metadata=None, metadata_info=None
+            self, logger, metadata_path, contextual_metadata=None, metadata_info=None
     ):
         super().__init__(logger, metadata_path)
         self.path = Path(metadata_path)
@@ -834,8 +799,8 @@ class OMGExonCaptureMetadata(OMGBaseMetadata):
                         "name": name,
                         "id": name,
                         "title": (
-                            "OMG Exon Capture Raw %s %s %s"
-                            % (library_id, row.flowcell_id, index_sequence)
+                                "OMG Exon Capture Raw %s %s %s"
+                                % (library_id, row.flowcell_id, index_sequence)
                         ).rstrip(),
                         "notes": self.generate_notes_field(context),
                         "date_of_transfer": ingest_utils.get_date_isoformat(
@@ -1005,7 +970,7 @@ class OMGWholeGenomeMetadata(OMGBaseMetadata):
     }
 
     def __init__(
-        self, logger, metadata_path, contextual_metadata=None, metadata_info=None
+            self, logger, metadata_path, contextual_metadata=None, metadata_info=None
     ):
         super().__init__(logger, metadata_path)
         self.path = Path(metadata_path)
@@ -1079,8 +1044,8 @@ class OMGWholeGenomeMetadata(OMGBaseMetadata):
                         "name": name,
                         "id": name,
                         "title": (
-                            "OMG Whole Genome %s %s %s"
-                            % (library_id, row.flowcell_id, index_sequence)
+                                "OMG Whole Genome %s %s %s"
+                                % (library_id, row.flowcell_id, index_sequence)
                         ).rstrip(),
                         "notes": self.generate_notes_field(context),
                         "date_of_transfer": ingest_utils.get_date_isoformat(
@@ -1220,7 +1185,7 @@ class OMGGenomicsNovaseqMetadata(OMGBaseMetadata):
     }
 
     def __init__(
-        self, logger, metadata_path, contextual_metadata=None, metadata_info=None
+            self, logger, metadata_path, contextual_metadata=None, metadata_info=None
     ):
         super().__init__(logger, metadata_path)
         self.path = Path(metadata_path)
@@ -1263,7 +1228,7 @@ class OMGGenomicsNovaseqMetadata(OMGBaseMetadata):
                         "name": name,
                         "id": name,
                         "title": "OMG Novaseq Raw %s %s %s"
-                        % (library_id, row.flowcell_id, row.library_index_sequence),
+                                 % (library_id, row.flowcell_id, row.library_index_sequence),
                         "notes": self.generate_notes_field(context),
                         "date_of_transfer": ingest_utils.get_date_isoformat(
                             self._logger, track_get("date_of_transfer")
@@ -1373,7 +1338,7 @@ class OMGGenomicsHiSeqMetadata(OMGBaseMetadata):
             fld("software_version", "software_version"),
             fld("file", "file"),
         ],
-        "options": {"header_length": 1, "column_name_row_index": 0,},
+        "options": {"header_length": 1, "column_name_row_index": 0, },
     }
     md5 = {
         "match": [files.hiseq_filename_re],
@@ -1385,7 +1350,7 @@ class OMGGenomicsHiSeqMetadata(OMGBaseMetadata):
     }
 
     def __init__(
-        self, logger, metadata_path, contextual_metadata=None, metadata_info=None
+            self, logger, metadata_path, contextual_metadata=None, metadata_info=None
     ):
         super().__init__(logger, metadata_path)
         self.path = Path(metadata_path)
@@ -1441,7 +1406,7 @@ class OMGGenomicsHiSeqMetadata(OMGBaseMetadata):
                         "id": name,
                         "flow_id": flow_id,
                         "title": "OMG Genomics HiSeq Raw %s %s"
-                        % (bpa_sample_id, flow_id),
+                                 % (bpa_sample_id, flow_id),
                         "notes": self.generate_notes_field_with_id(
                             context, bpa_library_id
                         ),
@@ -1605,7 +1570,7 @@ class OMGGenomicsDDRADMetadata(OMGBaseMetadata):
     }
 
     def __init__(
-        self, logger, metadata_path, contextual_metadata=None, metadata_info=None
+            self, logger, metadata_path, contextual_metadata=None, metadata_info=None
     ):
         super().__init__(logger, metadata_path)
         self.path = Path(metadata_path)
@@ -1795,7 +1760,7 @@ class OMGGenomicsPacbioMetadata(OMGBaseMetadata):
     }
 
     def __init__(
-        self, logger, metadata_path, contextual_metadata=None, metadata_info=None
+            self, logger, metadata_path, contextual_metadata=None, metadata_info=None
     ):
         super().__init__(logger, metadata_path)
         self.path = Path(metadata_path)
@@ -1993,7 +1958,7 @@ class OMGONTPromethionMetadata(OMGBaseMetadata):
     }
 
     def __init__(
-        self, logger, metadata_path, contextual_metadata=None, metadata_info=None
+            self, logger, metadata_path, contextual_metadata=None, metadata_info=None
     ):
         super().__init__(logger, metadata_path)
         self.path = Path(metadata_path)
@@ -2161,7 +2126,7 @@ class OMGTranscriptomicsNextseq(OMGBaseMetadata):
     }
 
     def __init__(
-        self, logger, metadata_path, contextual_metadata=None, metadata_info=None
+            self, logger, metadata_path, contextual_metadata=None, metadata_info=None
     ):
         super().__init__(logger, metadata_path)
         self.path = Path(metadata_path)
@@ -2214,7 +2179,7 @@ class OMGTranscriptomicsNextseq(OMGBaseMetadata):
                         "id": name,
                         "bpa_library_id": bpa_library_id,
                         "title": "OMG Transcriptomics NextSeq %s %s"
-                        % (bpa_library_id, flow_id),
+                                 % (bpa_library_id, flow_id),
                         "date_of_transfer": ingest_utils.get_date_isoformat(
                             self._logger, track_get("date_of_transfer")
                         ),
@@ -2348,7 +2313,7 @@ class OMGGenomicsPacBioGenomeAssemblyMetadata(SecondaryMetadata):
     raw = {"match": [files.pacbio_secondary_raw_filename_re], "skip": []}
 
     def __init__(
-        self, logger, metadata_path, contextual_metadata=[], metadata_info=None
+            self, logger, metadata_path, contextual_metadata=[], metadata_info=None
     ):
         super().__init__(logger, metadata_path)
         self.path = Path(metadata_path)
@@ -2462,5 +2427,5 @@ class OMGGenomicsPacBioGenomeAssemblyMetadata(SecondaryMetadata):
                     )
                 )
         return (
-            resources + self.generate_xlsx_resources() + self.generate_raw_resources()
+                resources + self.generate_xlsx_resources() + self.generate_raw_resources()
         )

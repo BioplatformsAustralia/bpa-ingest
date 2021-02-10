@@ -1,28 +1,24 @@
-import json
 import os
 import re
-from glob import glob
-from urllib.parse import urljoin
 from collections import defaultdict
+from urllib.parse import urljoin
 
+from glob import glob
 from unipath import Path
 
-from bpasslh.handler import SensitiveDataGeneraliser
-
+from . import files
 from .contextual import TSILibraryContextual
 from .tracking import TSIGoogleTrackMetadata
 from ...abstract import BaseMetadata
 from ...libs import ingest_utils
 from ...libs.excel_wrapper import make_field_definition as fld
 from ...libs.fetch_data import Fetcher, get_password
-from ...libs.ingest_utils import get_clean_number
+from ...sensitive_species_wrapper import SensitiveSpeciesWrapper
 from ...util import (
     sample_id_to_ckan_name,
-    clean_tag_name,
     common_values,
     apply_cc_by_license,
 )
-from . import files
 
 common_context = [TSILibraryContextual]
 
@@ -30,46 +26,11 @@ common_context = [TSILibraryContextual]
 class TSIBaseMetadata(BaseMetadata):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        self.generaliser = SensitiveDataGeneraliser(self._logger)
+        self.generaliser = SensitiveSpeciesWrapper(self._logger)
 
+    # this method just for here for backwards compatibility
     def apply_location_generalisation(self, packages):
-        "Apply location generalisation for sensitive species found from ALA"
-
-        def species_name(package):
-            return "{} {}".format(package.get("genus", ""), package.get("species", ""))
-
-        # prime the cache of responses
-        self._logger.info("building location generalisation cache")
-        names = sorted(set(species_name(p) for p in packages))
-        self.generaliser.ala_lookup.get_bulk(names)
-
-        cache = {}
-        for package in packages:
-            # if the sample wasn't collected in Australia, suppress the longitude
-            # and latitude (ALA lookup via SSLH is irrelevant)
-            country = package.get("country", "")
-            if country.lower() != "australia":
-                self._logger.debug(
-                    "library_id {} outside Australia, suppressing location: {}".format(
-                        package.get("bpa_dataset_id", ""), country
-                    )
-                )
-                package.update({"latitude": None, "longitude": None})
-                continue
-            # Sample is in Australia; use ALA to determine whether it is sensitive,
-            # and apply the relevant sensitisation level (if any)
-            lat, lng = (
-                get_clean_number(self._logger, package.get("latitude")),
-                get_clean_number(self._logger, package.get("longitude")),
-            )
-            args = (species_name(package), lat, lng)
-            if args not in cache:
-                cache[args] = self.generaliser.apply(*args)
-            generalised = cache[args]
-            if generalised:
-                package.update(generalised._asdict())
-
-        return packages
+        return self.generaliser.apply_location_generalisation(packages)
 
     def generate_notes_field(self, row_object):
         notes = "%s %s, %s %s %s" % (
@@ -255,7 +216,7 @@ class TSINovaseqMetadata(TSIBaseMetadata):
     }
 
     def __init__(
-        self, logger, metadata_path, contextual_metadata=None, metadata_info=None
+            self, logger, metadata_path, contextual_metadata=None, metadata_info=None
     ):
         super().__init__(logger, metadata_path)
         self.path = Path(metadata_path)
@@ -297,7 +258,7 @@ class TSINovaseqMetadata(TSIBaseMetadata):
                         "name": name,
                         "id": name,
                         "title": "TSI Novaseq %s %s %s"
-                        % (library_id, row.flowcell_id, row.library_index_sequence),
+                                 % (library_id, row.flowcell_id, row.library_index_sequence),
                         "notes": self.generate_notes_field(context),
                         "date_of_transfer": ingest_utils.get_date_isoformat(
                             self._logger, track_get("date_of_transfer")
@@ -452,7 +413,7 @@ class TSIPacbioHifiMetadata(TSIBaseMetadata):
     }
 
     def __init__(
-        self, logger, metadata_path, contextual_metadata=None, metadata_info=None
+            self, logger, metadata_path, contextual_metadata=None, metadata_info=None
     ):
         super().__init__(logger, metadata_path)
         self.path = Path(metadata_path)
@@ -555,7 +516,7 @@ class TSIPacbioHifiMetadata(TSIBaseMetadata):
             self._logger.info("fetching resource metadata: %s" % (self.metadata_urls))
             fetcher = Fetcher(self._logger, self.path, metadata_url, ri_auth)
             fetcher.fetch_metadata_from_folder(
-                [files.pacbio_hifi_filename_re,],
+                [files.pacbio_hifi_filename_re, ],
                 metadata_info,
                 getattr(self, "metadata_url_components", []),
                 download=False,
@@ -687,12 +648,12 @@ class TSIGenomicsDDRADMetadata(TSIBaseMetadata):
         },
     }
     md5 = {
-        "match": [files.ddrad_fastq_filename_re, files.ddrad_metadata_sheet_re,],
+        "match": [files.ddrad_fastq_filename_re, files.ddrad_metadata_sheet_re, ],
         "skip": None,
     }
 
     def __init__(
-        self, logger, metadata_path, contextual_metadata=None, metadata_info=None
+            self, logger, metadata_path, contextual_metadata=None, metadata_info=None
     ):
         super().__init__(logger, metadata_path)
         self.path = Path(metadata_path)
