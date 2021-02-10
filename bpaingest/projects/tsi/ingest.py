@@ -216,7 +216,7 @@ class TSINovaseqMetadata(TSIBaseMetadata):
     }
 
     def __init__(
-            self, logger, metadata_path, contextual_metadata=None, metadata_info=None
+        self, logger, metadata_path, contextual_metadata=None, metadata_info=None
     ):
         super().__init__(logger, metadata_path)
         self.path = Path(metadata_path)
@@ -258,7 +258,7 @@ class TSINovaseqMetadata(TSIBaseMetadata):
                         "name": name,
                         "id": name,
                         "title": "TSI Novaseq %s %s %s"
-                                 % (library_id, row.flowcell_id, row.library_index_sequence),
+                        % (library_id, row.flowcell_id, row.library_index_sequence),
                         "notes": self.generate_notes_field(context),
                         "date_of_transfer": ingest_utils.get_date_isoformat(
                             self._logger, track_get("date_of_transfer")
@@ -413,7 +413,7 @@ class TSIPacbioHifiMetadata(TSIBaseMetadata):
     }
 
     def __init__(
-            self, logger, metadata_path, contextual_metadata=None, metadata_info=None
+        self, logger, metadata_path, contextual_metadata=None, metadata_info=None
     ):
         super().__init__(logger, metadata_path)
         self.path = Path(metadata_path)
@@ -516,7 +516,7 @@ class TSIPacbioHifiMetadata(TSIBaseMetadata):
             self._logger.info("fetching resource metadata: %s" % (self.metadata_urls))
             fetcher = Fetcher(self._logger, self.path, metadata_url, ri_auth)
             fetcher.fetch_metadata_from_folder(
-                [files.pacbio_hifi_filename_re, ],
+                [files.pacbio_hifi_filename_re,],
                 metadata_info,
                 getattr(self, "metadata_url_components", []),
                 download=False,
@@ -648,12 +648,12 @@ class TSIGenomicsDDRADMetadata(TSIBaseMetadata):
         },
     }
     md5 = {
-        "match": [files.ddrad_fastq_filename_re, files.ddrad_metadata_sheet_re, ],
+        "match": [files.ddrad_fastq_filename_re, files.ddrad_metadata_sheet_re,],
         "skip": None,
     }
 
     def __init__(
-            self, logger, metadata_path, contextual_metadata=None, metadata_info=None
+        self, logger, metadata_path, contextual_metadata=None, metadata_info=None
     ):
         super().__init__(logger, metadata_path)
         self.path = Path(metadata_path)

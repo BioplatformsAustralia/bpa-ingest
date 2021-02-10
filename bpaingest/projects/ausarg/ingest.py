@@ -25,7 +25,9 @@ common_context = [AusargLibraryContextual]
 class AusargBaseMetadata(BaseMetadata):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        self.generaliser = SensitiveSpeciesWrapper(self._logger, package_id_keyname='dataset_id')
+        self.generaliser = SensitiveSpeciesWrapper(
+            self._logger, package_id_keyname="dataset_id"
+        )
 
     # this method just for here for backwards compatibility
     def apply_location_generalisation(self, packages):
@@ -148,7 +150,7 @@ class AusargIlluminaFastqMetadata(AusargBaseMetadata):
     ]
 
     def __init__(
-            self, logger, metadata_path, contextual_metadata=None, metadata_info=None
+        self, logger, metadata_path, contextual_metadata=None, metadata_info=None
     ):
         super().__init__(logger, metadata_path)
         self.path = Path(metadata_path)
@@ -331,7 +333,7 @@ class AusargPacbioHifiMetadata(AusargBaseMetadata):
     }
 
     def __init__(
-            self, logger, metadata_path, contextual_metadata=None, metadata_info=None
+        self, logger, metadata_path, contextual_metadata=None, metadata_info=None
     ):
         super().__init__(logger, metadata_path)
         self.path = Path(metadata_path)
@@ -434,7 +436,7 @@ class AusargPacbioHifiMetadata(AusargBaseMetadata):
             self._logger.info("fetching resource metadata: %s" % (self.metadata_urls))
             fetcher = Fetcher(self._logger, self.path, metadata_url, ri_auth)
             fetcher.fetch_metadata_from_folder(
-                [files.pacbio_hifi_filename_re, ],
+                [files.pacbio_hifi_filename_re,],
                 metadata_info,
                 getattr(self, "metadata_url_components", []),
                 download=False,

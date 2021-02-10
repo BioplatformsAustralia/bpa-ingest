@@ -116,7 +116,7 @@ class OMG10XRawIlluminaMetadata(OMGBaseMetadata):
             fld("software_version", "software_version"),
             fld("file", "file"),
         ],
-        "options": {"header_length": 1, "column_name_row_index": 0, },
+        "options": {"header_length": 1, "column_name_row_index": 0,},
     }
     md5 = {
         "match": [files.tenxtar_filename_re],
@@ -128,7 +128,7 @@ class OMG10XRawIlluminaMetadata(OMGBaseMetadata):
     }
 
     def __init__(
-            self, logger, metadata_path, contextual_metadata=None, metadata_info=None
+        self, logger, metadata_path, contextual_metadata=None, metadata_info=None
     ):
         super().__init__(logger, metadata_path)
         self.path = Path(metadata_path)
@@ -337,7 +337,7 @@ class OMG10XRawMetadata(OMGBaseMetadata):
     }
 
     def __init__(
-            self, logger, metadata_path, contextual_metadata=None, metadata_info=None
+        self, logger, metadata_path, contextual_metadata=None, metadata_info=None
     ):
         super().__init__(logger, metadata_path)
         self.path = Path(metadata_path)
@@ -505,7 +505,7 @@ class OMG10XProcessedIlluminaMetadata(OMGBaseMetadata):
             fld("species", "species", optional=True),
             fld("voucher_id", "voucher_id", optional=True),
         ],
-        "options": {"header_length": 1, "column_name_row_index": 0, },
+        "options": {"header_length": 1, "column_name_row_index": 0,},
     }
     md5 = {
         "match": [files.tenxtar_filename_re],
@@ -517,7 +517,7 @@ class OMG10XProcessedIlluminaMetadata(OMGBaseMetadata):
     }
 
     def __init__(
-            self, logger, metadata_path, contextual_metadata=None, metadata_info=None
+        self, logger, metadata_path, contextual_metadata=None, metadata_info=None
     ):
         super().__init__(logger, metadata_path)
         self.path = Path(metadata_path)
@@ -571,7 +571,7 @@ class OMG10XProcessedIlluminaMetadata(OMGBaseMetadata):
                         "id": name,
                         "flow_id": flow_id,
                         "title": "OMG 10x Illumina Processed %s %s"
-                                 % (bpa_sample_id, flow_id),
+                        % (bpa_sample_id, flow_id),
                         "notes": self.generate_notes_field_with_id(
                             context, bpa_library_id
                         ),
@@ -725,7 +725,7 @@ class OMGExonCaptureMetadata(OMGBaseMetadata):
     }
 
     def __init__(
-            self, logger, metadata_path, contextual_metadata=None, metadata_info=None
+        self, logger, metadata_path, contextual_metadata=None, metadata_info=None
     ):
         super().__init__(logger, metadata_path)
         self.path = Path(metadata_path)
@@ -799,8 +799,8 @@ class OMGExonCaptureMetadata(OMGBaseMetadata):
                         "name": name,
                         "id": name,
                         "title": (
-                                "OMG Exon Capture Raw %s %s %s"
-                                % (library_id, row.flowcell_id, index_sequence)
+                            "OMG Exon Capture Raw %s %s %s"
+                            % (library_id, row.flowcell_id, index_sequence)
                         ).rstrip(),
                         "notes": self.generate_notes_field(context),
                         "date_of_transfer": ingest_utils.get_date_isoformat(
@@ -970,7 +970,7 @@ class OMGWholeGenomeMetadata(OMGBaseMetadata):
     }
 
     def __init__(
-            self, logger, metadata_path, contextual_metadata=None, metadata_info=None
+        self, logger, metadata_path, contextual_metadata=None, metadata_info=None
     ):
         super().__init__(logger, metadata_path)
         self.path = Path(metadata_path)
@@ -1044,8 +1044,8 @@ class OMGWholeGenomeMetadata(OMGBaseMetadata):
                         "name": name,
                         "id": name,
                         "title": (
-                                "OMG Whole Genome %s %s %s"
-                                % (library_id, row.flowcell_id, index_sequence)
+                            "OMG Whole Genome %s %s %s"
+                            % (library_id, row.flowcell_id, index_sequence)
                         ).rstrip(),
                         "notes": self.generate_notes_field(context),
                         "date_of_transfer": ingest_utils.get_date_isoformat(
@@ -1185,7 +1185,7 @@ class OMGGenomicsNovaseqMetadata(OMGBaseMetadata):
     }
 
     def __init__(
-            self, logger, metadata_path, contextual_metadata=None, metadata_info=None
+        self, logger, metadata_path, contextual_metadata=None, metadata_info=None
     ):
         super().__init__(logger, metadata_path)
         self.path = Path(metadata_path)
@@ -1228,7 +1228,7 @@ class OMGGenomicsNovaseqMetadata(OMGBaseMetadata):
                         "name": name,
                         "id": name,
                         "title": "OMG Novaseq Raw %s %s %s"
-                                 % (library_id, row.flowcell_id, row.library_index_sequence),
+                        % (library_id, row.flowcell_id, row.library_index_sequence),
                         "notes": self.generate_notes_field(context),
                         "date_of_transfer": ingest_utils.get_date_isoformat(
                             self._logger, track_get("date_of_transfer")
@@ -1338,7 +1338,7 @@ class OMGGenomicsHiSeqMetadata(OMGBaseMetadata):
             fld("software_version", "software_version"),
             fld("file", "file"),
         ],
-        "options": {"header_length": 1, "column_name_row_index": 0, },
+        "options": {"header_length": 1, "column_name_row_index": 0,},
     }
     md5 = {
         "match": [files.hiseq_filename_re],
@@ -1350,7 +1350,7 @@ class OMGGenomicsHiSeqMetadata(OMGBaseMetadata):
     }
 
     def __init__(
-            self, logger, metadata_path, contextual_metadata=None, metadata_info=None
+        self, logger, metadata_path, contextual_metadata=None, metadata_info=None
     ):
         super().__init__(logger, metadata_path)
         self.path = Path(metadata_path)
@@ -1406,7 +1406,7 @@ class OMGGenomicsHiSeqMetadata(OMGBaseMetadata):
                         "id": name,
                         "flow_id": flow_id,
                         "title": "OMG Genomics HiSeq Raw %s %s"
-                                 % (bpa_sample_id, flow_id),
+                        % (bpa_sample_id, flow_id),
                         "notes": self.generate_notes_field_with_id(
                             context, bpa_library_id
                         ),
@@ -1570,7 +1570,7 @@ class OMGGenomicsDDRADMetadata(OMGBaseMetadata):
     }
 
     def __init__(
-            self, logger, metadata_path, contextual_metadata=None, metadata_info=None
+        self, logger, metadata_path, contextual_metadata=None, metadata_info=None
     ):
         super().__init__(logger, metadata_path)
         self.path = Path(metadata_path)
@@ -1760,7 +1760,7 @@ class OMGGenomicsPacbioMetadata(OMGBaseMetadata):
     }
 
     def __init__(
-            self, logger, metadata_path, contextual_metadata=None, metadata_info=None
+        self, logger, metadata_path, contextual_metadata=None, metadata_info=None
     ):
         super().__init__(logger, metadata_path)
         self.path = Path(metadata_path)
@@ -1958,7 +1958,7 @@ class OMGONTPromethionMetadata(OMGBaseMetadata):
     }
 
     def __init__(
-            self, logger, metadata_path, contextual_metadata=None, metadata_info=None
+        self, logger, metadata_path, contextual_metadata=None, metadata_info=None
     ):
         super().__init__(logger, metadata_path)
         self.path = Path(metadata_path)
@@ -2126,7 +2126,7 @@ class OMGTranscriptomicsNextseq(OMGBaseMetadata):
     }
 
     def __init__(
-            self, logger, metadata_path, contextual_metadata=None, metadata_info=None
+        self, logger, metadata_path, contextual_metadata=None, metadata_info=None
     ):
         super().__init__(logger, metadata_path)
         self.path = Path(metadata_path)
@@ -2179,7 +2179,7 @@ class OMGTranscriptomicsNextseq(OMGBaseMetadata):
                         "id": name,
                         "bpa_library_id": bpa_library_id,
                         "title": "OMG Transcriptomics NextSeq %s %s"
-                                 % (bpa_library_id, flow_id),
+                        % (bpa_library_id, flow_id),
                         "date_of_transfer": ingest_utils.get_date_isoformat(
                             self._logger, track_get("date_of_transfer")
                         ),
@@ -2313,7 +2313,7 @@ class OMGGenomicsPacBioGenomeAssemblyMetadata(SecondaryMetadata):
     raw = {"match": [files.pacbio_secondary_raw_filename_re], "skip": []}
 
     def __init__(
-            self, logger, metadata_path, contextual_metadata=[], metadata_info=None
+        self, logger, metadata_path, contextual_metadata=[], metadata_info=None
     ):
         super().__init__(logger, metadata_path)
         self.path = Path(metadata_path)
@@ -2427,5 +2427,5 @@ class OMGGenomicsPacBioGenomeAssemblyMetadata(SecondaryMetadata):
                     )
                 )
         return (
-                resources + self.generate_xlsx_resources() + self.generate_raw_resources()
+            resources + self.generate_xlsx_resources() + self.generate_raw_resources()
         )

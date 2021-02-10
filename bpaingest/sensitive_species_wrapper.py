@@ -3,10 +3,9 @@ from bpasslh.handler import SensitiveDataGeneraliser
 
 
 class SensitiveSpeciesWrapper:
-
     def __init__(self, logger, *args, **kwargs):
         self.generaliser = SensitiveDataGeneraliser(logger)
-        self.package_id_keyname =  kwargs.get('package_id_keyname', 'bpa_dataset_id')
+        self.package_id_keyname = kwargs.get("package_id_keyname", "bpa_dataset_id")
         self._logger = logger
 
     def get_species_and_sub_species(self, packages):
@@ -18,11 +17,17 @@ class SensitiveSpeciesWrapper:
 
     def subspecies_name(self, package):
         if package.get("subspecies_or_variant"):
-            return "{} {}".format(self.species_name(package), package.get("subspecies", ""))
+            return "{} {}".format(
+                self.species_name(package), package.get("subspecies", "")
+            )
         elif package.get("subspecies"):
-            return "{} {}".format(self.species_name(package), package.get("subspecies", ""))
+            return "{} {}".format(
+                self.species_name(package), package.get("subspecies", "")
+            )
         else:
-            self._logger.warn(f"Unable to find subspecies in {package.get('sample_id')}")
+            self._logger.warn(
+                f"Unable to find subspecies in {package.get('sample_id')}"
+            )
 
     def species_name(self, package):
         return "{} {}".format(package.get("genus", ""), package.get("species", ""))
@@ -65,11 +70,12 @@ class SensitiveSpeciesWrapper:
         )
         generalised = self.update_cache(cache, (self.species_name(package), lat, lng))
         if not generalised:
-            generalised = self.update_cache(cache, (self.subspecies_name(package), lat, lng))
+            generalised = self.update_cache(
+                cache, (self.subspecies_name(package), lat, lng)
+            )
         return generalised
 
     def update_cache(self, cache, args):
         if args not in cache:
             cache[args] = self.generaliser.apply(*args)
         return cache[args]
-
