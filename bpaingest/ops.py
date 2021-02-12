@@ -426,7 +426,7 @@ def reupload_resource(ckan, ckan_obj, legacy_url, parent_destination, auth=None)
 
                     # upload with progress bar
                     try:
-                        s3_obj.upload_fileobj(data, key, Callback=progress.update)
+                        s3_obj.upload_fileobj(data, Callback=progress.update)
                     except ClientError as e:
                         pass
                     except AttributeError as e:
