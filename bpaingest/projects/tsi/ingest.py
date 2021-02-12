@@ -69,6 +69,9 @@ class TSIBaseMetadata(BaseMetadata):
             if generalised:
                 package.update(generalised._asdict())
 
+            package.update({"decimal_longitude_public": package.get("longitude")})
+            package.update({"decimal_latitude_public": package.get("latitude")})
+
         return packages
 
     def generate_notes_field(self, row_object):

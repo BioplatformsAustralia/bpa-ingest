@@ -1,7 +1,11 @@
 import re
 from glob import glob
 from ...libs import ingest_utils
-from ...libs.excel_wrapper import ExcelWrapper, make_field_definition as fld
+from ...libs.excel_wrapper import (
+    ExcelWrapper,
+    make_field_definition as fld,
+    make_skip_column as skp,
+)
 from ...util import make_logger, one
 
 
@@ -14,7 +18,7 @@ def date_or_str(logger, v):
 
 class TSILibraryContextual:
     metadata_urls = [
-        "https://downloads-qcif.bioplatforms.com/bpa/tsi_staging/metadata/2020-12-17/"
+        "https://downloads-qcif.bioplatforms.com/bpa/tsi_staging/metadata/2021-02-09/"
     ]
     metadata_patterns = [re.compile(r"^.*\.xlsx$")]
     name = "tsi-library-contextual"
@@ -109,10 +113,15 @@ class TSILibraryContextual:
             fld("location_text", "location_text"),
             # habitat
             fld("habitat", "habitat"),
+            # skip the private lat/long as this will contain data not to be shared
+            skp("decimal_latitude_private"),
+            skp("decimal_longitude_private"),
             # decimal_latitude
-            fld("decimal_latitude", "decimal_latitude"),
+            fld("decimal_latitude", "decimal_latitude_public"),
+            fld("decimal_latitude_public", "decimal_latitude_public"),
             # decimal_longitude
-            fld("decimal_longitude", "decimal_longitude"),
+            fld("decimal_longitude", "decimal_longitude_public"),
+            fld("decimal_longitude_public", "decimal_longitude_public"),
             # coord_uncertainty_metres
             fld("coord_uncertainty_metres", "coord_uncertainty_metres"),
             # genotypic sex
