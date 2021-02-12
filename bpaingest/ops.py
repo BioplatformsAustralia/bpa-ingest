@@ -380,7 +380,10 @@ def reupload_resource(ckan, ckan_obj, legacy_url, parent_destination, auth=None)
             s3_client = session.client("s3")
             s3_resource = session.client("s3")
 
-            response = requests.get(legacy_url, stream=True)
+            basic_auth = requests.auth.HTTPBasicAuth(auth[0], auth[1])
+
+            response = requests.get(legacy_url, stream=True, auth=basic_auth)
+
             file_size = response.headers.get("Content-length", None)
 
             # Configure the progress bar
