@@ -30,9 +30,14 @@ class TSIBaseMetadata(BaseMetadata):
 
     # this method just for here for backwards compatibility
     def apply_location_generalisation(self, packages):
-        return self.generaliser.apply_location_generalisation(packages)
+        packages = self.generaliser.apply_location_generalisation(packages)
+        for package in packages:
+            package.update({"decimal_longitude_public": package.get("longitude")})
+            package.update({"decimal_latitude_public": package.get("latitude")})
+        return packages
 
-    def generate_notes_field(self, row_object):
+
+def generate_notes_field(self, row_object):
         notes = "%s %s, %s %s %s" % (
             row_object.get("genus", ""),
             row_object.get("species", ""),
@@ -640,6 +645,8 @@ class TSIGenomicsDDRADMetadata(TSIBaseMetadata):
             fld("analysis_software_version", "analysis_software_version"),
             fld("file_name", "file_name"),
             fld("file_type", "file_type"),
+            package.update({"decimal_longitude_public": package.get("longitude")})
+            package.update({"decimal_latitude_public": package.get("latitude")})
         ],
         "options": {
             "sheet_name": "Library metadata",
