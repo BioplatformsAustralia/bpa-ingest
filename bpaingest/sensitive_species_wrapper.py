@@ -11,23 +11,21 @@ class SensitiveSpeciesWrapper:
     def get_species_and_sub_species(self, packages):
         collected = []
         for p in packages:
-            collected.append(self.species_name(p))
-            collected.append(self.subspecies_name(p))
+            species = self.species_name(p)
+            if species and species not in collected:
+                collected.append(species)
+                subspecies = self.subspecies_name(p)
+                if subspecies and subspecies not in collected:
+                    collected.append(subspecies)
         return collected
 
     def subspecies_name(self, package):
-        if package.get("subspecies_or_variant"):
-            return "{} {}".format(
-                self.species_name(package), package.get("subspecies", "")
-            )
-        elif package.get("subspecies"):
-            return "{} {}".format(
-                self.species_name(package), package.get("subspecies", "")
-            )
-        else:
-            self._logger.warn(
-                f"Unable to find subspecies in {package.get('sample_id')}"
-            )
+        for keyname in ["subspecies_or_variant", "subspecies"]:
+            if keyname in package:
+                return package.get(keyname)
+        self._logger.warn(
+            f"Unable to find subspecies in {package.get('sample_id') or package.get('bpa_sample_id')}"
+        )
 
     def species_name(self, package):
         return "{} {}".format(package.get("genus", ""), package.get("species", ""))
@@ -46,7 +44,7 @@ class SensitiveSpeciesWrapper:
             # and latitude (ALA lookup via SSLH is irrelevant)
             country = package.get("country", "")
             if country.lower() != "australia":
-                self._logger.debug(
+                self._logger.info(
                     "library_id {} outside Australia, suppressing location: {}".format(
                         package.get(self.package_id_keyname, ""), country
                     )
@@ -56,6 +54,8 @@ class SensitiveSpeciesWrapper:
 
             generalised = self.get_generalised(package, cache)
             if generalised:
+                self._logger.debug(f"generalised package ID is: {package.get('id')}")
+                self._logger.debug(f"generalised to: {generalised._asdict()}")
                 package.update(generalised._asdict())
 
         return packages
