@@ -22,3 +22,5 @@ temp/
 staging-bpa.env
 ingest/ingest-debug.sh
 test.db
+*.out
+*_test.json
