@@ -1,3 +1,5 @@
+import math
+
 from bpaingest.libs.ingest_utils import get_clean_number
 from bpasslh.handler import SensitiveDataGeneraliser
 
@@ -28,7 +30,11 @@ class SensitiveSpeciesWrapper:
         )
 
     def species_name(self, package):
-        return "{} {}".format(package.get("genus", ""), package.get("species", ""))
+        if package.get("genus", "") and package.get("species", ""):
+            return "{} {}".format(package.get("genus", ""), package.get("species", ""))
+        self._logger.warn(
+            f"Unable to find species in {package.get('sample_id') or package.get('bpa_sample_id')}"
+        )
 
     def apply_location_generalisation(self, packages):
         "Apply location generalisation for sensitive species found from ALA"
@@ -44,25 +50,19 @@ class SensitiveSpeciesWrapper:
             # and latitude (ALA lookup via SSLH is irrelevant)
             country = package.get("country", "")
             if country.lower() != "australia":
-                self._logger.info(
-                    "library_id {} outside Australia, suppressing location: {}".format(
-                        package.get(self.package_id_keyname, ""), country
-                    )
-                )
+                self._logger.debug(
+                    f"ID: {package.get(self.package_id_keyname, '')} has 'key:value' pair 'country: {country}', which is outside Australia. Suppressing.")
                 package.update({"latitude": None, "longitude": None})
                 continue
-
             generalised = self.get_generalised(package, cache)
             if generalised:
-                self._logger.debug(f"generalised package ID is: {package.get('id')}")
-                self._logger.debug(f"generalised to: {generalised._asdict()}")
                 package.update(generalised._asdict())
 
         return packages
 
     def get_generalised(self, package, cache):
         # Sample is in Australia; use ALA to determine whether it is sensitive,
-        # and apply the relevant sensitisation level (if any)
+        # and apply the relevant sensitisation level (if any). Otherwise return original.
 
         lat, lng = (
             get_clean_number(self._logger, package.get("latitude")),
@@ -73,9 +73,27 @@ class SensitiveSpeciesWrapper:
             generalised = self.update_cache(
                 cache, (self.subspecies_name(package), lat, lng)
             )
+        self.validate_generalised(package, generalised)
         return generalised
+
+    def validate_generalised(self, package, generalised):
+        if not generalised:
+            return
+        if not self.validate_rounding(package.get('latitude'), generalised.latitude) or not self.validate_rounding(package.get('longitude'), generalised.longitude):
+            raise Exception(
+                f"The base numbers for generalised lat and long do not match the originals. {self.log_verbose_identifiers(package)} NOT represented by generalised lat:{generalised.latitude}, long:{generalised.longitude}")
+        ## if validation passes, log any legitimate 'rounding' updates to lat and long
+        if float(package.get('latitude')) != float(generalised.latitude) and float(package.get('longitude')) != float(generalised.longitude):
+            self._logger.info(
+                f"{self.log_verbose_identifiers(package)} generalised to: {generalised._asdict()}")
+
+    def validate_rounding(self, original, rounded):
+        return math.floor(float(original)) <= rounded <= math.ceil(float(original))
 
     def update_cache(self, cache, args):
         if args not in cache:
             cache[args] = self.generaliser.apply(*args)
         return cache[args]
+
+    def log_verbose_identifiers(self, package):
+        return f"id: {package.get(self.package_id_keyname, '')}, lat: {package.get('latitude')}, long: {package.get('longitude')}"
