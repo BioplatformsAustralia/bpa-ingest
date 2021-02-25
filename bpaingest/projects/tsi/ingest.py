@@ -26,11 +26,10 @@ common_context = [TSILibraryContextual]
 class TSIBaseMetadata(BaseMetadata):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        self.generaliser = SensitiveSpeciesWrapper(self._logger)
 
     # this method just for here for backwards compatibility
     def apply_location_generalisation(self, packages):
-        packages = self.generaliser.apply_location_generalisation(packages)
+        # for TSI: lat and long determined by private/public lat and long from context metadata - no need to calculate separately
         for package in packages:
             package.update({"decimal_longitude_public": package.get("longitude")})
             package.update({"decimal_latitude_public": package.get("latitude")})
