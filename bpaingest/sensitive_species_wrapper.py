@@ -51,7 +51,8 @@ class SensitiveSpeciesWrapper:
             country = package.get("country", "")
             if country.lower() != "australia":
                 self._logger.debug(
-                    f"ID: {package.get(self.package_id_keyname, '')} has 'key:value' pair 'country: {country}', which is outside Australia. Suppressing.")
+                    f"ID: {package.get(self.package_id_keyname, '')} has 'key:value' pair 'country: {country}', which is outside Australia. Suppressing."
+                )
                 package.update({"latitude": None, "longitude": None})
                 continue
             generalised = self.get_generalised(package, cache)
@@ -79,13 +80,21 @@ class SensitiveSpeciesWrapper:
     def validate_generalised(self, package, generalised):
         if not generalised:
             return
-        if not self.validate_rounding(package.get('latitude'), generalised.latitude) or not self.validate_rounding(package.get('longitude'), generalised.longitude):
+        if not self.validate_rounding(
+            package.get("latitude"), generalised.latitude
+        ) or not self.validate_rounding(
+            package.get("longitude"), generalised.longitude
+        ):
             raise Exception(
-                f"The base numbers for generalised lat and long do not match the originals. {self.log_verbose_identifiers(package)} NOT represented by generalised lat:{generalised.latitude}, long:{generalised.longitude}")
+                f"The base numbers for generalised lat and long do not match the originals. {self.log_verbose_identifiers(package)} NOT represented by generalised lat:{generalised.latitude}, long:{generalised.longitude}"
+            )
         ## if validation passes, log any legitimate 'rounding' updates to lat and long
-        if float(package.get('latitude')) != float(generalised.latitude) and float(package.get('longitude')) != float(generalised.longitude):
+        if float(package.get("latitude")) != float(generalised.latitude) and float(
+            package.get("longitude")
+        ) != float(generalised.longitude):
             self._logger.info(
-                f"{self.log_verbose_identifiers(package)} generalised to: {generalised._asdict()}")
+                f"{self.log_verbose_identifiers(package)} generalised to: {generalised._asdict()}"
+            )
 
     def validate_rounding(self, original, rounded):
         return math.floor(float(original)) <= rounded <= math.ceil(float(original))
