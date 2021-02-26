@@ -99,13 +99,17 @@ class GAPIlluminaShortreadMetadata(BaseMetadata):
             for row in rows:
                 sample_id = row.sample_id
                 library_id = row.library_id
+                dataset_id = row.dataset_id
                 obj = row._asdict()
                 if track_meta is not None:
                     obj.update(track_meta._asdict())
                 raw_library_id = library_id.split("/")[-1]
-                name = sample_id_to_ckan_name(raw_library_id, self.ckan_data_type)
+                raw_dataset_id = dataset_id.split("/")[-1]
+                name = sample_id_to_ckan_name(
+                    raw_library_id, self.ckan_data_type, raw_dataset_id
+                )
                 for contextual_source in self.contextual_metadata:
-                    obj.update(contextual_source.get(library_id))
+                    obj.update(contextual_source.get(library_id, dataset_id))
                 obj.update(
                     {
                         "sample_id": sample_id,
@@ -238,14 +242,17 @@ class GAPONTMinionMetadata(BaseMetadata):
             for row in rows:
                 sample_id = row.sample_id
                 library_id = row.library_id
+                dataset_id = row.dataset_id
                 obj = row._asdict()
                 if track_meta is not None:
                     obj.update(track_meta._asdict())
+                raw_library_id = library_id.split("/")[-1]
+                raw_dataset_id = dataset_id.split("/")[-1]
                 name = sample_id_to_ckan_name(
-                    library_id.split("/")[-1], self.ckan_data_type
+                    raw_library_id, self.ckan_data_type, raw_dataset_id
                 )
                 for contextual_source in self.contextual_metadata:
-                    obj.update(contextual_source.get(library_id))
+                    obj.update(contextual_source.get(library_id, dataset_id))
                 obj.update(
                     {
                         "sample_id": sample_id,
@@ -357,14 +364,17 @@ class GAPONTPromethionMetadata(BaseMetadata):
             for row in rows:
                 sample_id = row.sample_id
                 library_id = row.library_id
+                dataset_id = row.dataset_id
                 obj = row._asdict()
                 if track_meta is not None:
                     obj.update(track_meta._asdict())
+                raw_library_id = library_id.split("/")[-1]
+                raw_dataset_id = dataset_id.split("/")[-1]
                 name = sample_id_to_ckan_name(
-                    library_id.split("/")[-1], self.ckan_data_type
+                    raw_library_id, self.ckan_data_type, raw_dataset_id
                 )
                 for contextual_source in self.contextual_metadata:
-                    obj.update(contextual_source.get(library_id))
+                    obj.update(contextual_source.get(library_id, dataset_id))
                 obj.update(
                     {
                         "sample_id": sample_id,
@@ -465,14 +475,17 @@ class GAPGenomics10XMetadata(BaseMetadata):
             for row in rows:
                 sample_id = row.sample_id
                 library_id = row.library_id
+                dataset_id = row.dataset_id
                 obj = row._asdict()
                 if track_meta is not None:
                     obj.update(track_meta._asdict())
+                raw_library_id = library_id.split("/")[-1]
+                raw_dataset_id = dataset_id.split("/")[-1]
                 name = sample_id_to_ckan_name(
-                    library_id.split("/")[-1], self.ckan_data_type
+                    raw_library_id, self.ckan_data_type, raw_dataset_id
                 )
                 for contextual_source in self.contextual_metadata:
-                    obj.update(contextual_source.get(library_id))
+                    obj.update(contextual_source.get(library_id, dataset_id))
                 obj.update(
                     {
                         "sample_id": sample_id,
