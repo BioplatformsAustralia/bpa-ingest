@@ -42,7 +42,7 @@ class GAPIlluminaShortreadMetadata(BaseMetadata):
         "https://downloads-qcif.bioplatforms.com/bpa/plants_staging/genomics-illumina-shortread/",
     ]
     metadata_url_components = ("ticket",)
-    resource_linkage = ("sample_id", "library_id", "flow_cell_id")
+    resource_linkage = ("ticket", "sample_id", "library_id", "flow_cell_id")
     spreadsheet = {
         "fields": [
             fld(
@@ -150,6 +150,7 @@ class GAPIlluminaShortreadMetadata(BaseMetadata):
                 resources.append(
                     (
                         (
+                            xlsx_info["ticket"],
                             resource["sample_id"],
                             file_info.get("library_id"),
                             resource["flow_cell_id"],
@@ -180,7 +181,7 @@ class GAPONTMinionMetadata(BaseMetadata):
         "https://downloads-qcif.bioplatforms.com/bpa/plants_staging/ont-minion/",
     ]
     metadata_url_components = ("ticket",)
-    resource_linkage = ("sample_id", "run_id")
+    resource_linkage = ("ticket", "sample_id", "run_id")
     spreadsheet = {
         "fields": [
             fld(
@@ -287,7 +288,7 @@ class GAPONTMinionMetadata(BaseMetadata):
                 xlsx_info = self.metadata_info[os.path.basename(md5_file)]
                 legacy_url = urljoin(xlsx_info["base_url"], filename)
                 resources.append(
-                    ((resource["sample_id"], resource["run_id"]), legacy_url, resource)
+                    ((xlsx_info["ticket"], resource["sample_id"], resource["run_id"]), legacy_url, resource)
                 )
         return resources
 
@@ -302,7 +303,7 @@ class GAPONTPromethionMetadata(BaseMetadata):
         "https://downloads-qcif.bioplatforms.com/bpa/plants_staging/ont-promethion/",
     ]
     metadata_url_components = ("ticket",)
-    resource_linkage = ("sample_id", "run_id")
+    resource_linkage = ("ticket", "sample_id", "run_id")
     spreadsheet = {
         "fields": [
             fld(
@@ -409,7 +410,7 @@ class GAPONTPromethionMetadata(BaseMetadata):
                 xlsx_info = self.metadata_info[os.path.basename(md5_file)]
                 legacy_url = urljoin(xlsx_info["base_url"], filename)
                 resources.append(
-                    ((resource["sample_id"], resource["run_id"]), legacy_url, resource)
+                    ((xlsx_info["ticket"], resource["sample_id"], resource["run_id"]), legacy_url, resource)
                 )
         return resources
 
