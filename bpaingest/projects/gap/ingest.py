@@ -124,9 +124,6 @@ class GAPIlluminaShortreadMetadata(BaseMetadata):
                 gap_describe(obj, self.description)
                 ingest_utils.permissions_organization_member(self._logger, obj)
                 tag_names = ["genomics", self.description.replace(" ", "-").lower()]
-                scientific_name = obj.get("scientific_name", "").strip()
-                if scientific_name:
-                    tag_names.append(clean_tag_name(scientific_name))
                 obj["tags"] = [{"name": "{:.100}".format(t)} for t in tag_names]
                 packages.append(obj)
         return packages
@@ -266,8 +263,6 @@ class GAPONTMinionMetadata(BaseMetadata):
                 gap_describe(obj, "ONT MinION")
                 ingest_utils.permissions_organization_member(self._logger, obj)
                 tag_names = ["ont-minion"]
-                if "scientific_name" in obj:
-                    tag_names.append(clean_tag_name(obj["scientific_name"]))
                 obj["tags"] = [{"name": t} for t in tag_names]
                 packages.append(obj)
         return packages
@@ -388,8 +383,6 @@ class GAPONTPromethionMetadata(BaseMetadata):
                 gap_describe(obj, "PromethION")
                 ingest_utils.permissions_organization_member(self._logger, obj)
                 tag_names = ["ont-promethion"]
-                if "scientific_name" in obj:
-                    tag_names.append(clean_tag_name(obj["scientific_name"]))
                 obj["tags"] = [{"name": t} for t in tag_names]
                 packages.append(obj)
         return packages
@@ -500,8 +493,6 @@ class GAPGenomics10XMetadata(BaseMetadata):
                 gap_describe(obj, "Genomics 10X")
                 ingest_utils.permissions_organization_member(self._logger, obj)
                 tag_names = ["genomics", "10x"]
-                if "scientific_name" in obj:
-                    tag_names.append(clean_tag_name(obj["scientific_name"]))
                 obj["tags"] = [{"name": t} for t in tag_names]
                 packages.append(obj)
         return packages
