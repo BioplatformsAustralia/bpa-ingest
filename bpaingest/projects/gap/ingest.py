@@ -284,7 +284,15 @@ class GAPONTMinionMetadata(BaseMetadata):
                 xlsx_info = self.metadata_info[os.path.basename(md5_file)]
                 legacy_url = urljoin(xlsx_info["base_url"], filename)
                 resources.append(
-                    ((xlsx_info["ticket"], resource["sample_id"], resource["run_id"]), legacy_url, resource)
+                    (
+                        (
+                            xlsx_info["ticket"],
+                            resource["sample_id"],
+                            resource["run_id"],
+                        ),
+                        legacy_url,
+                        resource,
+                    )
                 )
         return resources
 
@@ -404,7 +412,15 @@ class GAPONTPromethionMetadata(BaseMetadata):
                 xlsx_info = self.metadata_info[os.path.basename(md5_file)]
                 legacy_url = urljoin(xlsx_info["base_url"], filename)
                 resources.append(
-                    ((xlsx_info["ticket"], resource["sample_id"], resource["run_id"]), legacy_url, resource)
+                    (
+                        (
+                            xlsx_info["ticket"],
+                            resource["sample_id"],
+                            resource["run_id"],
+                        ),
+                        legacy_url,
+                        resource,
+                    )
                 )
         return resources
 
@@ -516,6 +532,7 @@ class GAPGenomics10XMetadata(BaseMetadata):
                 resources.append(((xlsx_info["ticket"],), legacy_url, resource))
         return resources
 
+
 class GAPGenomicsDDRADMetadata(BaseMetadata):
     """
     This data conforms to the BPA Genomics ddRAD workflow. future data
@@ -538,12 +555,20 @@ class GAPGenomicsDDRADMetadata(BaseMetadata):
         "fields": [
             fld("voucher_id", "voucher_id", optional=True),
             fld(
-                "dataset_id", "bioplatforms_dataset_id", coerce=ingest_utils.extract_ands_id
+                "dataset_id",
+                "bioplatforms_dataset_id",
+                coerce=ingest_utils.extract_ands_id,
             ),
             fld(
-                "library_id", "bioplatforms_library_id", coerce=ingest_utils.extract_ands_id
+                "library_id",
+                "bioplatforms_library_id",
+                coerce=ingest_utils.extract_ands_id,
             ),
-            fld("sample_id", "bioplatforms_sample_id", coerce=ingest_utils.extract_ands_id),
+            fld(
+                "sample_id",
+                "bioplatforms_sample_id",
+                coerce=ingest_utils.extract_ands_id,
+            ),
             fld("plate_name", "plate_name"),
             fld("plate_well", "plate_well"),
             fld("facility_sample_id", "facility_sample_id"),
@@ -585,18 +610,18 @@ class GAPGenomicsDDRADMetadata(BaseMetadata):
             fld("tissue_number", "tissue_number", optional=True),
             fld("voucher_or_tissue_number", "voucher_or_tissue_number", optional=True),
             fld("library_conc_ng_ul", "library_conc_ng_ul"),
-            fld("project_aim","project_aim"),
-            fld("sample_submitter_name","sample_submitter_name"),
-            fld("sample_submitter_email","sample_submitter_email"),
-            fld("scientific_name","scientific_name"),
-            fld("scientific_name_authorship","scientific_name_authorship"),
-            fld("family","family"),
-            fld("scientific_name_notes","scientific_name_notes"),
-            fld("country","country"),
-            fld("state_or_territory","state_or_territory"),
-            fld("location_id","location_id"),
-            fld("location_notes","location_notes"),
-            fld("population_group","population_group"),
+            fld("project_aim", "project_aim"),
+            fld("sample_submitter_name", "sample_submitter_name"),
+            fld("sample_submitter_email", "sample_submitter_email"),
+            fld("scientific_name", "scientific_name"),
+            fld("scientific_name_authorship", "scientific_name_authorship"),
+            fld("family", "family"),
+            fld("scientific_name_notes", "scientific_name_notes"),
+            fld("country", "country"),
+            fld("state_or_territory", "state_or_territory"),
+            fld("location_id", "location_id"),
+            fld("location_notes", "location_notes"),
+            fld("population_group", "population_group"),
         ],
         "options": {
             "sheet_name": "GAP_library_metadata",
@@ -605,9 +630,7 @@ class GAPGenomicsDDRADMetadata(BaseMetadata):
         },
     }
     md5 = {
-        "match": [
-            files.ddrad_fastq_filename_re,
-        ],
+        "match": [files.ddrad_fastq_filename_re,],
         "skip": [
             files.ddrad_metadata_sheet_re,
             re.compile(r"^.*_metadata\.xlsx$"),
@@ -656,7 +679,7 @@ class GAPGenomicsDDRADMetadata(BaseMetadata):
             objs = defaultdict(list)
             for row in self.parse_spreadsheet(fname, self.metadata_info):
                 obj = row._asdict()
-                #obj.pop("file")
+                # obj.pop("file")
                 objs[(obj["dataset_id"], obj["flowcell_id"])].append(obj)
 
             for (dataset_id, flowcell_id), row_objs in list(objs.items()):
@@ -737,4 +760,3 @@ class GAPGenomicsDDRADMetadata(BaseMetadata):
                     )
                 )
         return resources + self.generate_xlsx_resources()
-

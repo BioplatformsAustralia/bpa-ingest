@@ -56,6 +56,7 @@ def test_genomics_10x_re():
     for filename in filenames:
         assert genomics_10x_re.match(filename) is not None
 
+
 def test_genomics_ddrad_fastq():
     filenames = [
         "83666_HY7LHDRXX_ACAGTG_L001_R1.fastq.gz",
@@ -70,6 +71,7 @@ def test_genomics_ddrad_fastq():
 
     for filename in filenames:
         assert ddrad_fastq_filename_re.match(filename) is not None
+
 
 def test_genomics_ddrad_metadata_sheet():
     filenames = [

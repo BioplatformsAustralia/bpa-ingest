@@ -141,11 +141,11 @@ class GAPLibraryContextual:
                 re.compile(r"^living[\s]*_collections_material_sample_[rR][nN][aA]$"),
             ),
             fld("silica_gel_id", "silica_gel_id"),
-            fld("country","country", optional=True),
-            fld("state_or_territory","state_or_territory", optional=True),
-            fld("location_id","location_id", optional=True),
-            fld("location_notes","location_notes", optional=True),
-            fld("population_group","population_group", optional=True),
+            fld("country", "country", optional=True),
+            fld("state_or_territory", "state_or_territory", optional=True),
+            fld("location_id", "location_id", optional=True),
+            fld("location_notes", "location_notes", optional=True),
+            fld("population_group", "population_group", optional=True),
         ]
 
         library_metadata = {}

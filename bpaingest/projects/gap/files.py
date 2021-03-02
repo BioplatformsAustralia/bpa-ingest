@@ -82,4 +82,3 @@ DDRAD_METADATA_SHEET_PATTERN = r"""
     \.xlsx
 """
 ddrad_metadata_sheet_re = re.compile(DDRAD_METADATA_SHEET_PATTERN, re.VERBOSE)
-
