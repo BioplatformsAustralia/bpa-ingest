@@ -1,15 +1,16 @@
 import json
 import os
 import re
-from glob import glob
+from collections import defaultdict
 from urllib.parse import urljoin
 
+from glob import glob
 from unipath import Path
 
 from ...abstract import BaseMetadata
 from ...libs import ingest_utils
 from ...libs.excel_wrapper import make_field_definition as fld
-from ...util import sample_id_to_ckan_name, clean_tag_name
+from ...util import sample_id_to_ckan_name, common_values, clean_tag_name
 from . import files
 from .contextual import GAPLibraryContextual
 from .tracking import GAPTrackMetadata
@@ -514,3 +515,226 @@ class GAPGenomics10XMetadata(BaseMetadata):
                 legacy_url = urljoin(xlsx_info["base_url"], filename)
                 resources.append(((xlsx_info["ticket"],), legacy_url, resource))
         return resources
+
+class GAPGenomicsDDRADMetadata(BaseMetadata):
+    """
+    This data conforms to the BPA Genomics ddRAD workflow. future data
+    will use this ingest class.
+    Issue: bpa-archive-ops#699
+    """
+
+    organization = "bpa-plants"
+    ckan_data_type = "gap-genomics-ddrad"
+    omics = "genomics"
+    technology = "ddrad"
+    contextual_classes = common_context
+    metadata_patterns = [r"^.*\.md5$", r"^.*_metadata.*.*\.xlsx$"]
+    metadata_urls = [
+        "https://downloads-qcif.bioplatforms.com/bpa/plants_staging/ddrad/",
+    ]
+    metadata_url_components = ("ticket",)
+    resource_linkage = ("dataset_id", "flowcell_id")
+    spreadsheet = {
+        "fields": [
+            fld("voucher_id", "voucher_id", optional=True),
+            fld(
+                "dataset_id", "bioplatforms_dataset_id", coerce=ingest_utils.extract_ands_id
+            ),
+            fld(
+                "library_id", "bioplatforms_library_id", coerce=ingest_utils.extract_ands_id
+            ),
+            fld("sample_id", "bioplatforms_sample_id", coerce=ingest_utils.extract_ands_id),
+            fld("plate_name", "plate_name"),
+            fld("plate_well", "plate_well"),
+            fld("facility_sample_id", "facility_sample_id"),
+            fld("library_type", "library_type"),
+            fld(
+                "library_prep_date",
+                "library_prep_date",
+                coerce=ingest_utils.get_date_isoformat,
+            ),
+            fld("library_prepared_by", "library_prepared_by"),
+            fld("library_prep_method", "library_prep_method"),
+            fld("experimental_design", "experimental_design"),
+            fld("library_index_id", "library_index_id"),
+            fld("library_index_sequence", "library_index_sequence"),
+            fld("library_oligo_sequence", "library_oligo_sequence"),
+            fld("library_pcr_reps", "library_pcr_reps"),
+            fld("library_pcr_cycles", "library_pcr_cycles"),
+            fld("library_comments", "library_comments"),
+            fld("sequencing_facility", "sequencing_facility"),
+            fld(
+                "n_libraries_pooled", "n_libraries_pooled", coerce=ingest_utils.get_int
+            ),
+            fld("sequencing_platform", "sequencing_platform"),
+            fld("sequence_length", "sequence_length"),
+            fld("flowcell_id", "flowcell_id"),
+            fld("software_version", "software_version"),
+            fld("library_pool_index_id", "library_pool_index_id", optional=True),
+            fld(
+                "library_pool_index_sequence",
+                "library_pool_index_sequence",
+                optional=True,
+            ),
+            fld(
+                "library_pool_oligo_sequence",
+                "library_pool_oligo_sequence",
+                optional=True,
+            ),
+            fld("voucher_number", "voucher_number", optional=True),
+            fld("tissue_number", "tissue_number", optional=True),
+            fld("voucher_or_tissue_number", "voucher_or_tissue_number", optional=True),
+            fld("library_conc_ng_ul", "library_conc_ng_ul"),
+            fld("project_aim","project_aim"),
+            fld("sample_submitter_name","sample_submitter_name"),
+            fld("sample_submitter_email","sample_submitter_email"),
+            fld("scientific_name","scientific_name"),
+            fld("scientific_name_authorship","scientific_name_authorship"),
+            fld("family","family"),
+            fld("scientific_name_notes","scientific_name_notes"),
+            fld("country","country"),
+            fld("state_or_territory","state_or_territory"),
+            fld("location_id","location_id"),
+            fld("location_notes","location_notes"),
+            fld("population_group","population_group"),
+        ],
+        "options": {
+            "sheet_name": "GAP_library_metadata",
+            "header_length": 1,
+            "column_name_row_index": 0,
+        },
+    }
+    md5 = {
+        "match": [
+            files.ddrad_fastq_filename_re,
+        ],
+        "skip": [
+            files.ddrad_metadata_sheet_re,
+            re.compile(r"^.*_metadata\.xlsx$"),
+            re.compile(r"^.*SampleSheet.*"),
+            re.compile(r"^.*TestFiles\.exe.*"),
+            re.compile(r"^err$"),
+            re.compile(r"^out$"),
+            re.compile(r"^.*DataValidation\.pdf.*"),
+            re.compile(r"^.*checksums\.(exf|md5)$"),
+        ],
+    }
+
+    def __init__(
+        self, logger, metadata_path, contextual_metadata=None, metadata_info=None
+    ):
+        super().__init__(logger, metadata_path)
+        self.path = Path(metadata_path)
+        self.contextual_metadata = contextual_metadata
+        self.metadata_info = metadata_info
+        self.track_meta = GAPTrackMetadata()
+        self.flow_lookup = {}
+
+    def generate_notes_field(self, row_object):
+        notes = "%s %s\nddRAD dataset not demultiplexed" % (
+            row_object.get("genus", ""),
+            row_object.get("species", ""),
+        )
+        return notes
+
+    def _get_packages(self):
+        xlsx_re = re.compile(r"^.*_(\w+)_metadata.*\.xlsx$")
+
+        def get_flow_id(fname):
+            m = xlsx_re.match(fname)
+            if not m:
+                raise Exception("unable to find flowcell for filename: `%s'" % (fname))
+            return m.groups()[0]
+
+        self._logger.info("Ingesting GAP metadata from {0}".format(self.path))
+        packages = []
+        for fname in glob(self.path + "/*.xlsx"):
+            self._logger.info(
+                "Processing GAP metadata file {0}".format(os.path.basename(fname))
+            )
+            flow_id = get_flow_id(fname)
+            objs = defaultdict(list)
+            for row in self.parse_spreadsheet(fname, self.metadata_info):
+                obj = row._asdict()
+                #obj.pop("file")
+                objs[(obj["dataset_id"], obj["flowcell_id"])].append(obj)
+
+            for (dataset_id, flowcell_id), row_objs in list(objs.items()):
+
+                if dataset_id is None:
+                    continue
+
+                obj = common_values(row_objs)
+                track_meta = self.track_meta.get(obj["ticket"])
+
+                def track_get(k):
+                    if track_meta is None:
+                        return None
+                    return getattr(track_meta, k)
+
+                name = sample_id_to_ckan_name(
+                    dataset_id, self.ckan_data_type, flowcell_id
+                )
+                obj.update(
+                    {
+                        "name": name,
+                        "id": name,
+                        "dataset_id": dataset_id,
+                        "title": "GAP Genomics ddRAD %s %s" % (dataset_id, flow_id),
+                        "date_of_transfer": ingest_utils.get_date_isoformat(
+                            self._logger, track_get("date_of_transfer")
+                        ),
+                        "data_type": track_get("data_type"),
+                        "description": track_get("description"),
+                        "notes": self.generate_notes_field(obj),
+                        "folder_name": track_get("folder_name"),
+                        "sample_submission_date": ingest_utils.get_date_isoformat(
+                            self._logger, track_get("date_of_transfer")
+                        ),
+                        "contextual_data_submission_date": None,
+                        "data_generated": ingest_utils.get_date_isoformat(
+                            self._logger, track_get("date_of_transfer_to_archive")
+                        ),
+                        "archive_ingestion_date": ingest_utils.get_date_isoformat(
+                            self._logger, track_get("date_of_transfer_to_archive")
+                        ),
+                        "dataset_url": track_get("download"),
+                        "type": self.ckan_data_type,
+                    }
+                )
+                ingest_utils.permissions_organization_member(self._logger, obj)
+                ingest_utils.add_spatial_extra(self._logger, obj)
+                tag_names = ["genomics-ddrad"]
+                obj["tags"] = [{"name": t} for t in tag_names]
+                self.track_xlsx_resource(obj, fname)
+                packages.append(obj)
+        return packages
+
+    def _get_resources(self):
+        self._logger.info(
+            "Ingesting GAP md5 file information from {0}".format(self.path)
+        )
+        resources = []
+        for md5_file in glob(self.path + "/*.md5"):
+            self._logger.info("Processing md5 file {}".format(md5_file))
+            for filename, md5, file_info in self.parse_md5file(md5_file):
+                resource = file_info.copy()
+                resource["md5"] = resource["id"] = md5
+                resource["name"] = filename
+                resource["resource_type"] = self.ckan_data_type
+                xlsx_info = self.metadata_info[os.path.basename(md5_file)]
+                legacy_url = urljoin(xlsx_info["base_url"], filename)
+                resources.append(
+                    (
+                        (
+                            ingest_utils.extract_ands_id(
+                                self._logger, resource["dataset_id"]
+                            ),
+                            resource["flowcell_id"],
+                        ),
+                        legacy_url,
+                        resource,
+                    )
+                )
+        return resources + self.generate_xlsx_resources()
+

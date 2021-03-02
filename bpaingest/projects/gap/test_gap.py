@@ -4,6 +4,8 @@ from .files import (
     ont_promethion_re,
     genomics_10x_re,
     illumina_shortread_rna_phylo_re,
+    ddrad_fastq_filename_re,
+    ddrad_metadata_sheet_re,
 )
 
 
@@ -53,3 +55,26 @@ def test_genomics_10x_re():
     ]
     for filename in filenames:
         assert genomics_10x_re.match(filename) is not None
+
+def test_genomics_ddrad_fastq():
+    filenames = [
+        "83666_HY7LHDRXX_ACAGTG_L001_R1.fastq.gz",
+        "83666_HY7LHDRXX_ACAGTG_L002_R1.fastq.gz",
+        "83666_HY7LHDRXX_CTTGTA_L001_R1.fastq.gz",
+        "83666_HY7LHDRXX_CTTGTA_L002_R1.fastq.gz",
+        "83666_HY7LHDRXX_GCCAAT_L001_R1.fastq.gz",
+        "83666_HY7LHDRXX_GCCAAT_L002_R1.fastq.gz",
+        "83666_HY7LHDRXX_GTGAAA_L001_R1.fastq.gz",
+        "83666_HY7LHDRXX_GTGAAA_L002_R1.fastq.gz",
+    ]
+
+    for filename in filenames:
+        assert ddrad_fastq_filename_re.match(filename) is not None
+
+def test_genomics_ddrad_metadata_sheet():
+    filenames = [
+        "GAP_NGS_HY7LHDRXX_library_metadata_83666.xlsx",
+    ]
+
+    for filename in filenames:
+        assert ddrad_metadata_sheet_re.match(filename) is not None

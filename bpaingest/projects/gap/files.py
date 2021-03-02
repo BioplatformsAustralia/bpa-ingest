@@ -63,3 +63,23 @@ GENOMICS_10X_PATTERN = r"""
     \.tar
 """
 genomics_10x_re = re.compile(GENOMICS_10X_PATTERN, re.VERBOSE)
+
+DDRAD_FASTQ_FILENAME_PATTERN = r"""
+    (?P<dataset_id>\d{4,6})_
+    (?P<flowcell_id>\w{9})_
+    (?P<index>[G|A|T|C|-]*|N)_
+    (?P<lane>L\d{3})_
+    (?P<read>[R|I][1|2])\.fastq\.gz
+"""
+ddrad_fastq_filename_re = re.compile(DDRAD_FASTQ_FILENAME_PATTERN, re.VERBOSE)
+
+DDRAD_METADATA_SHEET_PATTERN = r"""
+    GAP_
+    NGS_
+    (?P<flowcell_id>\w{9})_
+    library_metadata_
+    (?P<dataset_id>\d{4,6})
+    \.xlsx
+"""
+ddrad_metadata_sheet_re = re.compile(DDRAD_METADATA_SHEET_PATTERN, re.VERBOSE)
+
