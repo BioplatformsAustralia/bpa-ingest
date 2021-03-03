@@ -632,7 +632,7 @@ class OMGExonCaptureMetadata(OMGBaseMetadata):
     ckan_data_type = "omg-exon-capture"
     technology = "exoncapture"
     contextual_classes = common_context
-    metadata_patterns = [r"^.*\.md5$", r"^.*_metadata.*.*\.xlsx$"]
+    metadata_patterns = [r"^.*\.md5$", r"^.*_[mM]etadata.*\.xlsx$"]
     metadata_urls = [
         "https://downloads-qcif.bioplatforms.com/bpa/omg_staging/exon_capture/",
     ]
