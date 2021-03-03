@@ -14,22 +14,29 @@ def date_or_str(logger, v):
 
 class GAPLibraryContextual:
     metadata_urls = [
-        "https://downloads-qcif.bioplatforms.com/bpa/plants_staging/metadata/2020-12-14/"
+        "https://downloads-qcif.bioplatforms.com/bpa/plants_staging/metadata/2021-02-03/"
     ]
     metadata_patterns = [re.compile(r"^.*\.xlsx$")]
     name = "gap-library-contextual"
-    sheet_names = ["Ref_genome", "Phylogenomics_pilot", "Phylogenomics AATOL"]
+    sheet_names = [
+        "Ref_genome",
+        "Phylogenomics_pilot",
+        "Phylo AATOL - Run 1",
+        "Phylo AATOL - Run 2",
+        "Conservation ",
+    ]
 
     def __init__(self, logger, path):
         self._logger = logger
         self._logger.info("context path is: {}".format(path))
         self.library_metadata = self._read_metadata(one(glob(path + "/*.xlsx")))
 
-    def get(self, library_id):
-        if library_id in self.library_metadata:
-            return self.library_metadata[library_id]
+    def get(self, library_id, dataset_id):
+        if (library_id, dataset_id) in self.library_metadata:
+            return self.library_metadata[(library_id, dataset_id)]
         self._logger.warning(
-            "no %s metadata available for: %s" % (type(self).__name__, repr(library_id))
+            "no %s metadata available for: (%s,%s)"
+            % (type(self).__name__, repr(library_id), repr(dataset_id))
         )
         return {}
 
@@ -134,6 +141,11 @@ class GAPLibraryContextual:
                 re.compile(r"^living[\s]*_collections_material_sample_[rR][nN][aA]$"),
             ),
             fld("silica_gel_id", "silica_gel_id"),
+            fld("country", "country", optional=True),
+            fld("state_or_territory", "state_or_territory", optional=True),
+            fld("location_id", "location_id", optional=True),
+            fld("location_notes", "location_notes", optional=True),
+            fld("population_group", "population_group", optional=True),
         ]
 
         library_metadata = {}
@@ -157,15 +169,20 @@ class GAPLibraryContextual:
             }
 
             for row in wrapper.get_all():
-                if not row.library_id:
+                if not row.library_id or not row.dataset_id:
                     continue
-                if row.library_id in library_metadata:
-                    raise Exception("duplicate library id: {}".format(row.library_id))
+                if (row.library_id, row.dataset_id) in library_metadata:
+                    raise Exception(
+                        "duplicate library / dataset id: {} {}".format(
+                            row.library_id, row.dataset_id
+                        )
+                    )
                 library_id = ingest_utils.extract_ands_id(self._logger, row.library_id)
-                library_metadata[library_id] = row_meta = {}
+                dataset_id = ingest_utils.extract_ands_id(self._logger, row.dataset_id)
+                library_metadata[(library_id, dataset_id)] = row_meta = {}
                 for field in row._fields:
                     value = getattr(row, field)
-                    if field == "library_id":
+                    if field == "library_id" or field == "dataset_id":
                         continue
                     row_meta[name_mapping.get(field, field)] = value
         return library_metadata

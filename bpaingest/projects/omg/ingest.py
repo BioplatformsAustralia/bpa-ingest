@@ -1,10 +1,9 @@
 import os
 import re
 from collections import defaultdict
-from glob import glob
 from urllib.parse import urljoin
 
-from bpasslh.handler import SensitiveDataGeneraliser
+from glob import glob
 from unipath import Path
 
 from . import files
@@ -13,8 +12,9 @@ from .tracking import OMGTrackMetadata, OMGTrackGenomeAssemblyMetadata
 from ...abstract import BaseMetadata
 from ...libs import ingest_utils
 from ...libs.excel_wrapper import make_field_definition as fld, make_skip_column as skp
-from ...libs.ingest_utils import get_clean_number
 from ...secondarydata import SecondaryMetadata
+from ...sensitive_species_wrapper import SensitiveSpeciesWrapper
+
 from ...util import sample_id_to_ckan_name, common_values, clean_tag_name
 
 common_context = [OMGSampleContextual, OMGLibraryContextual]
@@ -23,46 +23,11 @@ common_context = [OMGSampleContextual, OMGLibraryContextual]
 class OMGBaseMetadata(BaseMetadata):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        self.generaliser = SensitiveDataGeneraliser(self._logger)
+        self.generaliser = SensitiveSpeciesWrapper(self._logger)
 
+    # this method just for here for backwards compatibility
     def apply_location_generalisation(self, packages):
-        "Apply location generalisation for sensitive species found from ALA"
-
-        def species_name(package):
-            return "{} {}".format(package.get("genus", ""), package.get("species", ""))
-
-        # prime the cache of responses
-        self._logger.info("building location generalisation cache")
-        names = sorted(set(species_name(p) for p in packages))
-        self.generaliser.ala_lookup.get_bulk(names)
-
-        cache = {}
-        for package in packages:
-            # if the sample wasn't collected in Australia, suppress the longitude
-            # and latitude (ALA lookup via SSLH is irrelevant)
-            country = package.get("country", "")
-            if country.lower() != "australia":
-                self._logger.debug(
-                    "library_id {} outside Australia, suppressing location: {}".format(
-                        package.get("bpa_dataset_id", ""), country
-                    )
-                )
-                package.update({"latitude": None, "longitude": None})
-                continue
-            # Sample is in Australia; use ALA to determine whether it is sensitive,
-            # and apply the relevant sensitisation level (if any)
-            lat, lng = (
-                get_clean_number(self._logger, package.get("latitude")),
-                get_clean_number(self._logger, package.get("longitude")),
-            )
-            args = (species_name(package), lat, lng)
-            if args not in cache:
-                cache[args] = self.generaliser.apply(*args)
-            generalised = cache[args]
-            if generalised:
-                package.update(generalised._asdict())
-
-        return packages
+        return self.generaliser.apply_location_generalisation(packages)
 
     def generate_notes_field(self, row_object):
         notes = "%s %s, %s %s %s" % (

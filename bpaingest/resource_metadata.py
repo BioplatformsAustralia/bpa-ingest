@@ -59,10 +59,14 @@ def validate_raw_resources_file_metadata(logger, raw_resources_metadata, auth):
             f"Checking MD5 on raw resources file, {next['path']}  against remote URL: {next['metadata'][1]}"
         )
         raw_resource_md5 = next["metadata"][2]["md5"]
+        logger.debug(f"raw resource md5 is: {raw_resource_md5}")
         tempdir, path = download_legacy_file(legacy_url, auth)
+        logger.debug(f"path is {path}")
         with open(path, "rb") as fd:
-            data = fd.read()
+            # ensure no newlines read in from end of file so that it matches validation of earlier json dump of resource metadata
+            data = fd.read().rstrip()
             md5 = create_md5_from_stream(data)
+            logger.debug(f"md5 from stream of download URL is: {md5}")
             if md5 != raw_resource_md5:
                 raise Exception(
                     f"The md5sum of raw resources content does not match the content on remote downloads server. {base_validation_action_message}"
