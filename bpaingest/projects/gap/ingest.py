@@ -33,6 +33,19 @@ def gap_describe(obj, description):
     )
 
 
+def gap_describe_ddrad(obj, description):
+    obj["title"] = "GAP {}, {}, Dataset ID {}".format(
+        description,
+        obj.get("project_aim", ""),
+        obj.get("dataset_id", "").split("/")[-1],
+    )
+    obj["notes"] = "{}, {}, {}".format(
+        obj.get("species_complex", ""),
+        obj.get("family", ""),
+        obj.get("sample_submitter_name", ""),
+    )
+
+
 class GAPIlluminaShortreadMetadata(BaseMetadata):
     organization = "bpa-plants"
     ckan_data_type = "gap-illumina-shortread"
@@ -650,13 +663,6 @@ class GAPGenomicsDDRADMetadata(BaseMetadata):
         self.track_meta = GAPTrackMetadata()
         self.flow_lookup = {}
 
-    def generate_notes_field(self, row_object):
-        notes = "%s %s\nddRAD dataset not demultiplexed" % (
-            row_object.get("genus", ""),
-            row_object.get("species", ""),
-        )
-        return notes
-
     def _get_packages(self):
         xlsx_re = re.compile(r"^.*_(\w+)_metadata.*\.xlsx$")
 
@@ -701,13 +707,11 @@ class GAPGenomicsDDRADMetadata(BaseMetadata):
                         "name": name,
                         "id": name,
                         "dataset_id": dataset_id,
-                        "title": "GAP Genomics ddRAD %s %s" % (dataset_id, flow_id),
                         "date_of_transfer": ingest_utils.get_date_isoformat(
                             self._logger, track_get("date_of_transfer")
                         ),
                         "data_type": track_get("data_type"),
                         "description": track_get("description"),
-                        "notes": self.generate_notes_field(obj),
                         "folder_name": track_get("folder_name"),
                         "sample_submission_date": ingest_utils.get_date_isoformat(
                             self._logger, track_get("date_of_transfer")
@@ -723,6 +727,7 @@ class GAPGenomicsDDRADMetadata(BaseMetadata):
                         "type": self.ckan_data_type,
                     }
                 )
+                gap_describe_ddrad(obj, "ddRAD")
                 ingest_utils.permissions_organization_member(self._logger, obj)
                 ingest_utils.add_spatial_extra(self._logger, obj)
                 tag_names = ["genomics-ddrad"]
