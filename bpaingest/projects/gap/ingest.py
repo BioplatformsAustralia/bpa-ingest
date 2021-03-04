@@ -553,7 +553,6 @@ class GAPGenomicsDDRADMetadata(BaseMetadata):
     resource_linkage = ("dataset_id", "flowcell_id")
     spreadsheet = {
         "fields": [
-            fld("voucher_id", "voucher_id", optional=True),
             fld(
                 "dataset_id",
                 "bioplatforms_dataset_id",
@@ -606,9 +605,6 @@ class GAPGenomicsDDRADMetadata(BaseMetadata):
                 "library_pool_oligo_sequence",
                 optional=True,
             ),
-            fld("voucher_number", "voucher_number", optional=True),
-            fld("tissue_number", "tissue_number", optional=True),
-            fld("voucher_or_tissue_number", "voucher_or_tissue_number", optional=True),
             fld("library_conc_ng_ul", "library_conc_ng_ul"),
             fld("project_aim", "project_aim"),
             fld("sample_submitter_name", "sample_submitter_name"),
