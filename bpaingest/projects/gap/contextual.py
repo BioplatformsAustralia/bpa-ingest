@@ -1,7 +1,11 @@
 import re
 from glob import glob
 from ...libs import ingest_utils
-from ...libs.excel_wrapper import ExcelWrapper, make_field_definition as fld
+from ...libs.excel_wrapper import (
+    ExcelWrapper,
+    make_field_definition as fld,
+    make_skip_column as skp,
+)
 from ...util import make_logger, one
 
 
@@ -14,7 +18,7 @@ def date_or_str(logger, v):
 
 class GAPLibraryContextual:
     metadata_urls = [
-        "https://downloads-qcif.bioplatforms.com/bpa/plants_staging/metadata/2021-02-03/"
+        "https://downloads-qcif.bioplatforms.com/bpa/plants_staging/metadata/2021-03-03/"
     ]
     metadata_patterns = [re.compile(r"^.*\.xlsx$")]
     name = "gap-library-contextual"
@@ -146,6 +150,9 @@ class GAPLibraryContextual:
             fld("location_id", "location_id", optional=True),
             fld("location_notes", "location_notes", optional=True),
             fld("population_group", "population_group", optional=True),
+            fld("species_complex", "species_complex", optional=True),
+            skp("decimal_latitude (will not be made public)"),
+            skp("decimal_longitude (will not be made public)"),
         ]
 
         library_metadata = {}

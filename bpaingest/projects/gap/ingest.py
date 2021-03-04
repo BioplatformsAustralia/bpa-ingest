@@ -622,6 +622,7 @@ class GAPGenomicsDDRADMetadata(BaseMetadata):
             fld("location_id", "location_id"),
             fld("location_notes", "location_notes"),
             fld("population_group", "population_group"),
+            fld("species_complex", "species_complex", optional=True),
         ],
         "options": {
             "sheet_name": "GAP_library_metadata",
