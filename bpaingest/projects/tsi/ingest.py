@@ -692,11 +692,13 @@ class TSIGenomicsDDRADMetadata(TSIBaseMetadata):
             for row in self.parse_spreadsheet(fname, self.metadata_info):
                 obj = row._asdict()
                 obj.pop("file")
+                if not obj["dataset_id"] or not obj["flowcell_id"]:
+                    continue
                 objs[(obj["dataset_id"], obj["flowcell_id"])].append(obj)
 
             for (bpa_dataset_id, flowcell_id), row_objs in list(objs.items()):
 
-                if bpa_dataset_id is None:
+                if bpa_dataset_id is None or flowcell_id is None:
                     continue
 
                 obj = common_values(row_objs)
