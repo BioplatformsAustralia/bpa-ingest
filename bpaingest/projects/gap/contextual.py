@@ -18,12 +18,12 @@ def date_or_str(logger, v):
 
 class GAPLibraryContextual:
     metadata_urls = [
-        "https://downloads-qcif.bioplatforms.com/bpa/plants_staging/metadata/2021-03-03/"
+        "https://downloads-qcif.bioplatforms.com/bpa/plants_staging/metadata/2021-03-09/"
     ]
     metadata_patterns = [re.compile(r"^.*\.xlsx$")]
     name = "gap-library-contextual"
     sheet_names = [
-        "Ref_genome",
+        "Ref_genomes",
         "Phylogenomics_pilot",
         "Phylo AATOL - Run 1",
         "Phylo AATOL - Run 2",
