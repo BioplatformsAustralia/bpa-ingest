@@ -262,9 +262,17 @@ def get_time(logger, s):
 
 def _get_date(logger, dt, silent=False):
     """
-    convert `dt` into a datetime.date, returning `dt` if it is already an
-    instance of datetime.date. only two string date formats are supported:
-    YYYY-mm-dd and dd/mm/YYYY. if conversion fails, returns None.
+    Convert `dt` into a datetime.date, returning `dt` if it is already an
+    instance of datetime.date. 
+    
+    The following date formats are supported:
+       YYYY-mm-dd
+       dd/mm/YYYY 
+
+       YYYY-mm (convert to first date of month)
+       mm/YYYY (convert to first date of month)
+    
+    If conversion fails, returns None.
     """
 
     if dt is None:
@@ -295,12 +303,22 @@ def _get_date(logger, dt, silent=False):
         pass
 
     try:
+        return datetime.datetime.strptime(dt, "%Y-%m").date()
+    except ValueError:
+        pass
+
+    try:
         return datetime.datetime.strptime(dt, "%Y-%b-%d").date()
     except ValueError:
         pass
 
     try:
         return datetime.datetime.strptime(dt, "%d/%m/%Y").date()
+    except ValueError:
+        pass
+
+    try:
+        return datetime.datetime.strptime(dt, "%m/%Y").date()
     except ValueError:
         pass
 
