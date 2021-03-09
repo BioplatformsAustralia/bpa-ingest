@@ -597,7 +597,9 @@ class GAPGenomicsDDRADMetadata(BaseMetadata):
             fld("library_index_sequence", "library_index_sequence"),
             fld("library_oligo_sequence", "library_oligo_sequence"),
             fld("library_pcr_reps", "library_pcr_reps", coerce=ingest_utils.get_int),
-            fld("library_pcr_cycles", "library_pcr_cycles", coerce=ingest_utils.get_int),
+            fld(
+                "library_pcr_cycles", "library_pcr_cycles", coerce=ingest_utils.get_int
+            ),
             fld("library_comments", "library_comments"),
             fld("sequencing_facility", "sequencing_facility"),
             fld(
