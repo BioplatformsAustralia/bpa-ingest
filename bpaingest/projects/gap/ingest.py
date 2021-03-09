@@ -716,7 +716,6 @@ class GAPGenomicsDDRADMetadata(BaseMetadata):
                         "sample_submission_date": ingest_utils.get_date_isoformat(
                             self._logger, track_get("date_of_transfer")
                         ),
-                        "contextual_data_submission_date": None,
                         "data_generated": ingest_utils.get_date_isoformat(
                             self._logger, track_get("date_of_transfer_to_archive")
                         ),
