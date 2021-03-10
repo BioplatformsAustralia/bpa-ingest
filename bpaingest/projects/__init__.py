@@ -18,6 +18,7 @@ from .amdb.ingest import (
 from .ausarg.ingest import (
     AusargIlluminaFastqMetadata,
     AusargPacbioHifiMetadata,
+    AusargONTPromethionMetadata,
 )
 
 from .gbr.ingest import GbrAmpliconsMetadata, GbrPacbioMetadata
@@ -91,7 +92,11 @@ class ProjectInfo:
             AustralianMicrobiomeAmpliconsMetadata,
             AustralianMicrobiomeAmpliconsControlMetadata,
         ],
-        "ausarg": [AusargIlluminaFastqMetadata, AusargPacbioHifiMetadata],
+        "ausarg": [
+            AusargIlluminaFastqMetadata,
+            AusargPacbioHifiMetadata,
+            AusargONTPromethionMetadata,
+        ],
         "base": [
             BASEAmpliconsMetadata,
             BASEAmpliconsControlMetadata,

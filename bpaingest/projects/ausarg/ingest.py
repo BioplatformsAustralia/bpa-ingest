@@ -249,6 +249,195 @@ class AusargIlluminaFastqMetadata(AusargBaseMetadata):
         return resources
 
 
+class AusargONTPromethionMetadata(AusargBaseMetadata):
+    organization = "ausarg"
+    ckan_data_type = "ausarg-ont-promethion"
+    technology = "ont-promethion"
+    contextual_classes = common_context
+    metadata_patterns = [r"^.*\.md5$", r"^.*_metadata.*.*\.xlsx$"]
+    metadata_urls = [
+        "https://downloads-qcif.bioplatforms.com/bpa/ausarg_staging/promethion/",
+    ]
+    metadata_url_components = ("ticket",)
+    resource_linkage = ("library_id", "flowcell_id")
+    spreadsheet = {
+        "fields": [
+            fld("genus", "genus"),
+            fld("species", "species"),
+            fld("voucher_id", "voucher_id", optional=True),
+            fld(
+                "library_id",
+                re.compile(r"library_[Ii][Dd]"),
+                coerce=ingest_utils.extract_ands_id,
+            ),
+            fld(
+                "sample_id",
+                re.compile(r"sample_[Ii][Dd]"),
+                coerce=ingest_utils.extract_ands_id,
+            ),
+            fld(
+                "dataset_id",
+                re.compile(r"dataset_[Ii][Dd]"),
+                coerce=ingest_utils.extract_ands_id,
+            ),
+            fld("facility_sample_id", re.compile(r"facility_sample_[Ii][Dd]")),
+            fld("facility_project_code", "facility_project_code"),
+            fld("specimen_id", "specimen_id"),
+            fld("library_construction_protocol", "library_construction_protocol"),
+            fld("library_type", "library_type"),
+            fld(
+                "library_prep_date",
+                "library_prep_date",
+                coerce=ingest_utils.get_date_isoformat,
+            ),
+            fld("library_prepared_by", "library_prepared_by"),
+            # fld("library_prep_method", "library_prep_method"),
+            fld("experimental_design", "experimental design"),
+            # fld("ausarg_project", re.compile(r"[Aa]us[aA][rR][gG]_project")),
+            fld("data_custodian", "data_custodian"),
+            fld("data_context", "data_context"),
+            fld("dna_treatment", "dna_treatment"),
+            fld("library_index_id", "library_index_id", optional=True),
+            fld("library_index_sequence", "library_index_seq", optional=True),
+            fld("library_oligo_sequence", "library_oligo_sequence", optional=True),
+            fld("library_pcr_reps", "library_pcr_reps", optional=True),
+            fld("library_pcr_cycles", "library_pcr_cycles", optional=True),
+            fld("library_ng_ul", "library_ng_ul", optional=True),
+            fld("library_comments", "library_comments"),
+            fld("library_location", "library_location"),
+            fld("library_status", "library_status"),
+            fld("sequencing_facility", "sequencing_facility"),
+            fld(
+                "n_libraries_pooled",
+                "n_libraries_pooled",
+                optional=True,
+                coerce=ingest_utils.get_int,
+            ),
+            fld("work_order", "work_order"),
+            fld("sequencing_platform", "sequencing_platform"),
+            fld("sequence_length", "sequence_length", optional=True),
+            fld("flowcell_id", "flowcell_id"),
+            # fld("software_version", "software_version"),
+            fld("file", "file", optional=True),
+            fld("insert_size_range", "insert_size_range", optional=True),
+            fld("flowcell_type", "flowcell_type", optional=True),
+            fld("cell_position", "cell_position", optional=True),
+            fld("voucher_number", "voucher_number", optional=True),
+            fld("tissue_number", "tissue_number", optional=True),
+            fld("voucher_or_tissue_number", "voucher_or_tissue_number", optional=True),
+            fld("cell_postion", "cell_postion"),
+            fld("movie_length", "movie_length"),
+            fld("analysis_software", "analysis_software"),
+            fld("analysis_software_version", "analysis_software_version"),
+        ],
+        "options": {
+            "sheet_name": "Library_metadata",
+            "header_length": 1,
+            "column_name_row_index": 0,
+        },
+    }
+    md5 = {
+        "match": [files.ont_promethion_re],
+        "skip": [
+            re.compile(r"^.*_metadata\.xlsx$"),
+            re.compile(r"^.*SampleSheet.*"),
+            re.compile(r"^.*TestFiles\.exe.*"),
+        ],
+    }
+
+    def __init__(
+        self, logger, metadata_path, contextual_metadata=None, metadata_info=None
+    ):
+        super().__init__(logger, metadata_path)
+        self.path = Path(metadata_path)
+        self.contextual_metadata = contextual_metadata
+        self.metadata_info = metadata_info
+        self.track_meta = AusArgGoogleTrackMetadata()
+
+    def _get_packages(self):
+        self._logger.info("Ingesting AusARG metadata from {0}".format(self.path))
+        packages = []
+        for fname in glob(self.path + "/*.xlsx"):
+            self._logger.info("Processing AusARG metadata file {0}".format(fname))
+            rows = self.parse_spreadsheet(fname, self.metadata_info)
+
+            def track_get(k):
+                if track_meta is None:
+                    return None
+                return getattr(track_meta, k)
+
+            for row in rows:
+                track_meta = self.track_meta.get(row.ticket)
+                bpa_library_id = row.library_id
+                flowcell_id = row.flowcell_id
+                obj = row._asdict()
+                name = sample_id_to_ckan_name(
+                    bpa_library_id.split("/")[-1], self.ckan_data_type, flowcell_id
+                )
+
+                for contextual_source in self.contextual_metadata:
+                    obj.update(contextual_source.get(obj["sample_id"]))
+
+                obj.update(
+                    {
+                        "title": "AusARG ONT PromethION {} {}".format(
+                            obj["sample_id"], row.flowcell_id
+                        ),
+                        "notes": self.generate_notes_field_with_id(obj, bpa_library_id),
+                        "date_of_transfer": ingest_utils.get_date_isoformat(
+                            self._logger, track_get("date_of_transfer")
+                        ),
+                        "data_type": track_get("data_type"),
+                        "description": track_get("description"),
+                        "folder_name": track_get("folder_name"),
+                        "sample_submission_date": ingest_utils.get_date_isoformat(
+                            self._logger, track_get("date_of_transfer")
+                        ),
+                        "contextual_data_submission_date": None,
+                        "data_generated": ingest_utils.get_date_isoformat(
+                            self._logger, track_get("date_of_transfer_to_archive")
+                        ),
+                        "archive_ingestion_date": ingest_utils.get_date_isoformat(
+                            self._logger, track_get("date_of_transfer_to_archive")
+                        ),
+                        "dataset_url": track_get("download"),
+                        "name": name,
+                        "id": name,
+                        "type": self.ckan_data_type,
+                    }
+                )
+                ingest_utils.permissions_organization_member(self._logger, obj)
+                tag_names = ["ont-promethion"]
+                obj["tags"] = [{"name": t} for t in tag_names]
+                self.track_xlsx_resource(obj, fname)
+                packages.append(obj)
+        return self.apply_location_generalisation(packages)
+
+    def _get_resources(self):
+        self._logger.info("Ingesting md5 file information from {0}".format(self.path))
+        resources = []
+        for md5_file in glob(self.path + "/*.md5"):
+            self._logger.info("Processing md5 file {0}".format(md5_file))
+            for filename, md5, file_info in self.parse_md5file(md5_file):
+                resource = file_info.copy()
+                resource["library_id"] = ingest_utils.extract_ands_id(
+                    self._logger, resource["library_id"]
+                )
+                resource["md5"] = resource["id"] = md5
+                resource["name"] = filename
+                resource["resource_type"] = self.ckan_data_type
+                xlsx_info = self.metadata_info[os.path.basename(md5_file)]
+                legacy_url = urljoin(xlsx_info["base_url"], filename)
+                resources.append(
+                    (
+                        (resource["library_id"], resource["flowcell_id"]),
+                        legacy_url,
+                        resource,
+                    )
+                )
+        return resources + self.generate_xlsx_resources()
+
+
 class AusargPacbioHifiMetadata(AusargBaseMetadata):
     organization = "ausarg"
     ckan_data_type = "ausarg-pacbio-hifi"
