@@ -686,6 +686,8 @@ class GAPGenomicsDDRADMetadata(BaseMetadata):
                 obj = row._asdict()
                 if not obj["dataset_id"] or not obj["flowcell_id"]:
                     continue
+                for contextual_source in self.contextual_metadata:
+                    obj.update(contextual_source.get(obj["library_id"], obj["dataset_id"]))
                 objs[(obj["dataset_id"], obj["flowcell_id"])].append(obj)
 
             for (dataset_id, flowcell_id), row_objs in list(objs.items()):
@@ -695,6 +697,7 @@ class GAPGenomicsDDRADMetadata(BaseMetadata):
 
                 obj = common_values(row_objs)
                 track_meta = self.track_meta.get(obj["ticket"])
+
 
                 def track_get(k):
                     if track_meta is None:
@@ -715,9 +718,6 @@ class GAPGenomicsDDRADMetadata(BaseMetadata):
                         "data_type": track_get("data_type"),
                         "description": track_get("description"),
                         "folder_name": track_get("folder_name"),
-                        "sample_submission_date": ingest_utils.get_date_isoformat(
-                            self._logger, track_get("date_of_transfer")
-                        ),
                         "data_generated": ingest_utils.get_date_isoformat(
                             self._logger, track_get("date_of_transfer_to_archive")
                         ),
