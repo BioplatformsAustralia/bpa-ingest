@@ -110,6 +110,11 @@ class AccessAMDContextualMetadata(AMDBaseMetadata):
         return []
 
 
+def filter_out_metadata_fields(source):
+    for filtered in ["base_amplicon_linkage"]:
+        source.pop(filtered, "")
+
+
 class BASEAmpliconsMetadata(AMDBaseMetadata):
     organization = "australian-microbiome"
     ckan_data_type = "base-genomics-amplicon"
@@ -125,6 +130,30 @@ class BASEAmpliconsMetadata(AMDBaseMetadata):
     # pilot data
     index_linkage_spreadsheets = ("BASE_18S_UNSW_A6BRJ_metadata.xlsx",)
     index_linkage_md5s = ("BASE_18S_UNSW_A6BRJ_checksums.md5",)
+    tickets_with_bad_data = [
+        "BRLOPS-268",
+        "BRLOPS-418",
+        "BRLOPS-675",
+        "BRLOPS-528",
+        "BRLOPS-442",
+        "BRLOPS-309",
+        "BRLOPS-269",
+        "BRLOPS-673",
+        "BRLOPS-302",
+        "BRLOPS-303",
+        "BRLOPS-443",
+        "BRLOPS-442",
+        "BRLOPS-498",
+        "BRLOPS-499",
+        "BRLOPS-270",
+        "BRLOPS-678",
+    ]
+    bad_resource_linkages = [
+        ("19299_1", "18S", "AF4PN"),
+        ("7046_1", "18S", "A78B7"),
+        ("7052_1", "18S", "A78B7"),
+        ("12887_1", "ITS", "A64JJ"),
+    ]
     # FIXME: these to be corrected with the real dates (all early data)
     # work-around put in place to proceed with NCBI upload GB 10/01/2018
     missing_ingest_dates = [
@@ -152,31 +181,53 @@ class BASEAmpliconsMetadata(AMDBaseMetadata):
         "fields": [
             fld(
                 "sample_id",
-                re.compile(r".*sample unique id"),
+                re.compile(r".*sample unique [Ii][Dd]"),
                 coerce=ingest_utils.extract_ands_id,
             ),
             fld(
                 "sample_extraction_id",
-                "Sample extraction ID",
+                re.compile(r".*[Ss]ample extraction [Ii][dD](|_1)"),
                 coerce=ingest_utils.fix_sample_extraction_id,
             ),
-            fld("sequencing_facility", "Sequencing facility"),
+            fld("sequencing_facility", "Sequencing facility", optional=True),
             fld("target", "Target", coerce=lambda _, s: s.upper().strip()),
-            fld("index", "Index", coerce=lambda _, s: s[:12]),
-            fld("index1", "Index 1", coerce=lambda _, s: s[:12]),
-            fld("index2", "Index2", coerce=lambda _, s: s[:12]),
-            fld("pcr_1_to_10", "1:10 PCR, P=pass, F=fail", coerce=ingest_utils.fix_pcr),
+            fld("index", "Index", coerce=lambda _, s: s[:12], optional=True),
+            fld("index1", "Index 1", coerce=lambda _, s: s[:12], optional=True),
+            fld("index2", "Index2", coerce=lambda _, s: s[:12], optional=True),
             fld(
-                "pcr_1_to_100", "1:100 PCR, P=pass, F=fail", coerce=ingest_utils.fix_pcr
+                "pcr_1_to_1",
+                "1:1 PCR, P=pass, F=fail",
+                coerce=ingest_utils.fix_pcr,
+                optional=True,
             ),
-            fld("pcr_neat", "neat PCR, P=pass, F=fail", coerce=ingest_utils.fix_pcr),
+            fld(
+                "pcr_1_to_10",
+                "1:10 PCR, P=pass, F=fail",
+                coerce=ingest_utils.fix_pcr,
+                optional=True,
+            ),
+            fld(
+                "pcr_1_to_100",
+                "1:100 PCR, P=pass, F=fail",
+                coerce=ingest_utils.fix_pcr,
+                optional=True,
+            ),
+            fld(
+                "pcr_neat",
+                "neat PCR, P=pass, F=fail",
+                coerce=ingest_utils.fix_pcr,
+                optional=True,
+            ),
+            fld("pcr", "P=pass / F=fail", coerce=ingest_utils.fix_pcr, optional=True),
             fld("dilution", "Dilution used", coerce=ingest_utils.fix_date_interval),
-            fld("sequencing_run_number", "Sequencing run number"),
-            fld("flow_cell_id", "Flowcell"),
+            fld("sequencing_run_number", "Sequencing run number", optional=True),
+            fld("flow_cell_id", "Flowcell", optional=True),
             fld("reads", ("# of RAW reads", "# of reads"), coerce=ingest_utils.get_int),
-            fld("sample_name", "Sample name on sample sheet"),
+            fld("sample_name", "Sample name on sample sheet", optional=True),
             fld("analysis_software_version", "AnalysisSoftwareVersion"),
-            fld("comments", "Comments"),
+            fld("comments", re.compile(r"[Cc]omments(|1)"), optional=True),
+            fld("comments2", re.compile(r"[Cc]omments2"), optional=True),
+            fld("comments3", re.compile(r"[Cc]omments3"), optional=True),
         ],
         "options": {"header_length": 2, "column_name_row_index": 1,},
     }
@@ -304,13 +355,26 @@ class BASEAmpliconsMetadata(AMDBaseMetadata):
                     self._logger, obj, "archive_ingestion_date", 90, CONSORTIUM_ORG_NAME
                 )
                 for contextual_source in self.contextual_metadata:
+                    filter_out_metadata_fields(contextual_source.get(sample_id))
                     obj.update(contextual_source.get(sample_id))
                 ingest_utils.add_spatial_extra(self._logger, obj)
                 self.build_notes_into_object(obj)
                 tag_names = ["amplicons", amplicon, obj["sample_type"]]
                 obj["tags"] = [{"name": t} for t in tag_names]
-                packages.append(obj)
+                if not self.is_bad_package(obj):
+                    packages.append(obj)
         return packages
+
+    # these packages were set `not to upload` in metadata sheet
+    def is_bad_package(self, obj):
+        package_link = tuple(obj[t] for t in self.resource_linkage)
+        reads = int(obj.get("reads") or 0)
+        ticket = obj.get("ticket") or ""
+        return (
+            # // what is considered a low read is relative - a small number of resource_linkages are bad as special cases
+            ticket in self.tickets_with_bad_data
+            and reads < 1200
+        ) or package_link in self.bad_resource_linkages
 
     def _get_resources(self):
         self._logger.info(
@@ -481,7 +545,7 @@ class BASEMetagenomicsMetadata(AMDBaseMetadata):
         "fields": [
             fld(
                 "sample_id",
-                "Soil sample unique ID",
+                re.compile(r".*[Ss]oil sample unique [Ii][Dd]"),
                 coerce=ingest_utils.extract_ands_id,
             ),
             fld(
@@ -489,11 +553,29 @@ class BASEMetagenomicsMetadata(AMDBaseMetadata):
                 "Sample extraction ID",
                 coerce=ingest_utils.fix_sample_extraction_id,
             ),
-            fld("insert_size_range", "Insert size range"),
+            fld("insert_size_range", "Insert size range", optional=True),
             fld("library_construction_protocol", "Library construction protocol"),
             fld("sequencer", "Sequencer"),
-            fld("casava_version", "CASAVA version"),
-            fld("flow_cell_id", "Run #:Flow Cell ID"),
+            fld("casava_version", "CASAVA version", optional=True),
+            fld("flow_cell_id", "Run #:Flow Cell ID", optional=True),
+            fld("sequencing_facility", "sequencing facility", optional=True),
+            fld("target", "target", optional=True),
+            fld("index", "index", optional=True),
+            fld("library", "library", optional=True),
+            fld("library_code", "library code", optional=True),
+            fld(
+                "library_construction_insert_size_bp",
+                "library construction (insert size bp)",
+                optional=True,
+            ),
+            fld(
+                "library_construction_average_insert_size",
+                "library construction - average insert size",
+                optional=True,
+            ),
+            fld("run_number", "run number", optional=True),
+            fld("run_flow_cell_id", "run #:flow cell id", optional=True),
+            fld("lane_number", "lane number", optional=True),
         ],
         "options": {"header_length": 2, "column_name_row_index": 1,},
     }
@@ -518,6 +600,8 @@ class BASEMetagenomicsMetadata(AMDBaseMetadata):
         ("8271_2", "H80EYADXX"),
         ("8271_2", "H9EV8ADXX"),
     ]
+
+    bad_flow_ids = ["H8AABADXX"]
 
     def __init__(
         self, logger, metadata_path, contextual_metadata=None, metadata_info=None
@@ -668,7 +752,9 @@ class BASEMetagenomicsMetadata(AMDBaseMetadata):
             for row in uniq_rows:
                 track_meta = self.track_meta.get(row.ticket)
                 if not track_meta:
-                    self._logger.critical("OOPS: {}".format(xlsx_info))
+                    self._logger.critical(
+                        "No tracking metadata for: {}".format(xlsx_info)
+                    )
                 # pilot data has the flow cell in the spreadsheet; in the main dataset
                 # there is one flow-cell per spreadsheet, so it's in the spreadsheet
                 # filename
@@ -695,7 +781,8 @@ class BASEMetagenomicsMetadata(AMDBaseMetadata):
                     )
                     continue
                 generated_packages.add(new_obj["id"])
-                packages.append(new_obj)
+                if not new_obj.get("flow_id") in self.bad_flow_ids:
+                    packages.append(new_obj)
 
         return packages
 

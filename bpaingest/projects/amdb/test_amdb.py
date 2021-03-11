@@ -68,6 +68,7 @@ def test_base_amplicon():
         "8101_1_ITS_UNSW_TCGTCGATAATC_A64JJ_S3_L001_I1.fastq.gz",
         "39254_1_ITS_UNSW_CTCGAGAGGCTCTAGT_BC267_S73_L001_I2.fastq.gz",
         "42198_1_A16S_UNSW_TACGCTGC-TATCCTCT_B8RGF_S102_L001_R2.fastq.gz",
+        "7033_1_18S_UNSW_TCTTCCGCTACT_A6BRJ_S23_L001_R1.fastq.gz",
     ]
     for filename in filenames:
         assert base_amplicon_filename_re.match(filename) is not None
@@ -84,16 +85,14 @@ def test_base_amplicon_flow_index_swapped():
 
 def test_base_amplicon_index2():
     filenames = [
-        "19418_1_ITS_AGRF_GTCCGAAACACT_ANVM7_ANVM7_GTCCGAAACACT_L001_R1.fastq.gz",
+        "19418_1_ITS_AGRF_GTCCGAAACACT_ANVM7_ANVM7_GTCCGAAACACT_L001_R1.fastq.gz"
     ]
     for filename in filenames:
         assert base_amplicon_index2_filename_re.match(filename) is not None
 
 
 def test_base_amplicon_index3():
-    filenames = [
-        "13392_1_A16S_UNSW_TAGGCATG_GTAAGGAG_ACG8D_S30_L001_I1.fastq.gz",
-    ]
+    filenames = ["13392_1_A16S_UNSW_TAGGCATG_GTAAGGAG_ACG8D_S30_L001_I1.fastq.gz"]
     for filename in filenames:
         assert base_amplicon_index3_filename_re.match(filename) is not None
 
