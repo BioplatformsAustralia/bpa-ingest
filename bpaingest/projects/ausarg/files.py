@@ -27,6 +27,17 @@ METADATA_SHEET_PATTERN = r"""
 """
 metadata_sheet_re = re.compile(METADATA_SHEET_PATTERN, re.VERBOSE)
 
+ONT_PROMETHION_PATTERN = r"""
+    (?P<library_id>\d{4,6})_
+    (?P<flowcell_id>PA[DEFG]\d{5})_
+    AusARG_
+    (?P<facility_id>(AGRF|RamaciottiGarvan))_
+    ONTPromethION_
+    (?P<archive_type>\w+)
+    \.tar
+"""
+ont_promethion_re = re.compile(ONT_PROMETHION_PATTERN, re.VERBOSE)
+
 PACBIO_HIFI_PATTERN = r"""
     (?P<library_id>\d{4,6})_
     AusARG_

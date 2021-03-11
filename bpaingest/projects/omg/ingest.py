@@ -632,7 +632,7 @@ class OMGExonCaptureMetadata(OMGBaseMetadata):
     ckan_data_type = "omg-exon-capture"
     technology = "exoncapture"
     contextual_classes = common_context
-    metadata_patterns = [r"^.*\.md5$", r"^.*_metadata.*.*\.xlsx$"]
+    metadata_patterns = [r"^.*\.md5$", r"^.*_[mM]etadata.*\.xlsx$"]
     metadata_urls = [
         "https://downloads-qcif.bioplatforms.com/bpa/omg_staging/exon_capture/",
     ]
@@ -1606,11 +1606,13 @@ class OMGGenomicsDDRADMetadata(OMGBaseMetadata):
             for row in self.parse_spreadsheet(fname, self.metadata_info):
                 obj = row._asdict()
                 obj.pop("file")
+                if not obj["bpa_dataset_id"] or not obj["flowcell_id"]:
+                    continue
                 objs[(obj["bpa_dataset_id"], obj["flowcell_id"])].append(obj)
 
             for (bpa_dataset_id, flowcell_id), row_objs in list(objs.items()):
 
-                if bpa_dataset_id is None:
+                if bpa_dataset_id is None or flowcell_id is None:
                     continue
 
                 obj = common_values(row_objs)

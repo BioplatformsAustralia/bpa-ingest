@@ -18,7 +18,7 @@ def date_or_str(logger, v):
 
 class TSILibraryContextual:
     metadata_urls = [
-        "https://downloads-qcif.bioplatforms.com/bpa/tsi_staging/metadata/2021-02-09/"
+        "https://downloads-qcif.bioplatforms.com/bpa/tsi_staging/metadata/2021-03-09/"
     ]
     metadata_patterns = [re.compile(r"^.*\.xlsx$")]
     name = "tsi-library-contextual"

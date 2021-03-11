@@ -31,6 +31,8 @@ class TSIBaseMetadata(BaseMetadata):
     def apply_location_generalisation(self, packages):
         # for TSI: lat and long determined by private/public lat and long from context metadata - no need to calculate separately
         for package in packages:
+            package.update({"longitude": package.get("longitude")})
+            package.update({"latitude": package.get("latitude")})
             package.update({"decimal_longitude_public": package.get("longitude")})
             package.update({"decimal_latitude_public": package.get("latitude")})
         return packages
@@ -692,11 +694,13 @@ class TSIGenomicsDDRADMetadata(TSIBaseMetadata):
             for row in self.parse_spreadsheet(fname, self.metadata_info):
                 obj = row._asdict()
                 obj.pop("file")
+                if not obj["dataset_id"] or not obj["flowcell_id"]:
+                    continue
                 objs[(obj["dataset_id"], obj["flowcell_id"])].append(obj)
 
             for (bpa_dataset_id, flowcell_id), row_objs in list(objs.items()):
 
-                if bpa_dataset_id is None:
+                if bpa_dataset_id is None or flowcell_id is None:
                     continue
 
                 obj = common_values(row_objs)

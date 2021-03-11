@@ -71,6 +71,7 @@ gbr() {
 ausarg() {
   apply ausarg-illumina-fastq $*
   apply ausarg-pacbio-hifi $*
+  apply ausarg-ont-promethion $*
 }
 
 marine_microbes()
