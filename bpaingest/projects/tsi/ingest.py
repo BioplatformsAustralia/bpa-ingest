@@ -31,6 +31,8 @@ class TSIBaseMetadata(BaseMetadata):
     def apply_location_generalisation(self, packages):
         # for TSI: lat and long determined by private/public lat and long from context metadata - no need to calculate separately
         for package in packages:
+            package.update({"longitude": package.get("longitude")})
+            package.update({"latitude": package.get("latitude")})
             package.update({"decimal_longitude_public": package.get("longitude")})
             package.update({"decimal_latitude_public": package.get("latitude")})
         return packages
