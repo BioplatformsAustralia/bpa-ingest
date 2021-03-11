@@ -687,7 +687,9 @@ class GAPGenomicsDDRADMetadata(BaseMetadata):
                 if not obj["dataset_id"] or not obj["flowcell_id"]:
                     continue
                 for contextual_source in self.contextual_metadata:
-                    obj.update(contextual_source.get(obj["library_id"], obj["dataset_id"]))
+                    obj.update(
+                        contextual_source.get(obj["library_id"], obj["dataset_id"])
+                    )
                 objs[(obj["dataset_id"], obj["flowcell_id"])].append(obj)
 
             for (dataset_id, flowcell_id), row_objs in list(objs.items()):
@@ -697,7 +699,6 @@ class GAPGenomicsDDRADMetadata(BaseMetadata):
 
                 obj = common_values(row_objs)
                 track_meta = self.track_meta.get(obj["ticket"])
-
 
                 def track_get(k):
                     if track_meta is None:
