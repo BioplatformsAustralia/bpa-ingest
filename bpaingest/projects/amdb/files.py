@@ -177,8 +177,8 @@ mm_amplicon_control_filename_re = re.compile(
 mm_amplicon_filename_re = re.compile(
     r"""
     (?P<id>\d{4,6})_
-    (?P<extraction>\d)_
-    (?P<amplicon>16S|18S|A16S)_
+    (?P<extraction>\d?)_?
+    (?P<amplicon>1?6S|18S|A16S)_
     (?P<vendor>AGRF|UNSW)_
     (?P<index>[G|A|T|C|-]*|UNKNOWN)_
     (?P<flow_id>\w{5})_

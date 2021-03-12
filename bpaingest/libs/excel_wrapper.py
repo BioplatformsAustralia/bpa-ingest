@@ -23,9 +23,9 @@ import string
 SkipColumn = namedtuple("SkipColumn", ["column_name", "skip_all"])
 skip_column_default = SkipColumn("column_name", False)
 FieldDefinition = namedtuple(
-    "FieldSpec", ["attribute", "column_name", "coerce", "optional", "units"]
+    "FieldSpec", ["attribute", "column_name", "coerce", "optional", "units", "find_all"]
 )
-field_definition_default = FieldDefinition("<replace>", "<replace>", None, False, None)
+field_definition_default = FieldDefinition("<replace>", "<replace>", None, False, None, False)
 
 
 def make_field_definition(attribute, column_name, **kwargs):
@@ -117,6 +117,14 @@ class ExcelWrapper:
             for t in self.sheet.row_values(self.column_name_row_index)
         ]
 
+        # wrapper for find_column enables consistent return types with `find_all_columns_re`
+        def find_column_as_list(column_name):
+            all_index = []
+            found_index = find_column(column_name)
+            if found_index > -1:
+                all_index.append(found_index)
+            return all_index
+
         def find_column(column_name):
             # if has the 'match' attribute, it's a regexp
             if hasattr(column_name, "match"):
@@ -152,25 +160,16 @@ class ExcelWrapper:
                 if spec.skip_all:
                     skip_columns.update(find_all_columns_re(spec.column_name))
                 else:
-                    col_index = find_column(spec.column_name)
-                    skip_columns.add(col_index)
+                    skip_columns.update(find_column_as_list(spec.column_name))
                 continue
 
-            col_index = -1
             col_descr = spec.column_name
             if hasattr(spec.column_name, "match"):
                 col_descr = spec.column_name.pattern
-            if isinstance(spec.column_name, tuple):
-                for c, _name in enumerate(spec.column_name):
-                    col_index = find_column(_name)
-                    if col_index != -1:
-                        break
-            else:
-                col_index = find_column(spec.column_name)
+            find_fn = find_all_columns_re if spec.find_all else find_column_as_list
+            col_index_list = self.get_index(find_fn, spec)
 
-            if col_index != -1:
-                cmap[spec.attribute] = col_index
-            else:
+            if not col_index_list:
                 self.missing_headers.append(spec.column_name)
                 if not spec.optional:
                     self._error(
@@ -180,6 +179,14 @@ class ExcelWrapper:
                     )
                     missing_columns = True
                 cmap[spec.attribute] = None
+            else:
+                for counter, col_index in enumerate(col_index_list):
+                    key_name = spec.attribute
+                    if counter > 0:
+                        key_name += str(counter + 1)
+                        header[col_index] = key_name
+                    cmap[key_name] = col_index
+
 
         mapped_columns = set(cmap.values())
         unmapped_columns = []
@@ -187,13 +194,25 @@ class ExcelWrapper:
             if s != "" and idx not in mapped_columns and idx not in skip_columns:
                 unmapped_columns.append(idx)
                 self._error(
-                    "E3002: Column `{}' not mapped to an output field in `{}` `{}`".format(
+                    "E3002: Column `{}` in `{}` `{}` is not mapped to an output field in the codebase.".format(
                         s, os.path.basename(self.file_name), self.sheet.name
                     )
                 )
         if (len(unmapped_columns) > 0 or missing_columns) and self.suggest_template:
             self.print_template(header)
         return header, cmap
+
+    def get_index(self, find_fn, spec):
+        all_index = []
+        if isinstance(spec.column_name, tuple):
+            for c, _name in enumerate(spec.column_name):
+                all_index = find_fn(_name)
+                if all_index:
+                    break
+
+        else:
+            all_index = find_fn(spec.column_name)
+        return all_index
 
     def print_template(self, header):
         acceptable = set(string.ascii_letters + string.digits + "_")

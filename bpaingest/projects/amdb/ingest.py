@@ -37,7 +37,7 @@ amplicon_read_length = {
     "18S": "150bp",
 }
 common_skip = [
-    re.compile(r"^.*_metadata\.xlsx$"),
+    re.compile(r"^.*_metadata.*\.xlsx$"),
     re.compile(r"^.*SampleSheet.*"),
     re.compile(r"^.*TestFiles\.exe.*"),
 ]
@@ -225,7 +225,7 @@ class BASEAmpliconsMetadata(AMDBaseMetadata):
             fld("reads", ("# of RAW reads", "# of reads"), coerce=ingest_utils.get_int),
             fld("sample_name", "Sample name on sample sheet", optional=True),
             fld("analysis_software_version", "AnalysisSoftwareVersion"),
-            fld("comments", re.compile(r"[Cc]omments(|1)"), optional=True),
+            fld("comments", re.compile(r"[Cc]omments(|1)"), optional=True, find_all=True),
             fld("comments2", re.compile(r"[Cc]omments2"), optional=True),
             fld("comments3", re.compile(r"[Cc]omments3"), optional=True),
         ],
@@ -290,7 +290,7 @@ class BASEAmpliconsMetadata(AMDBaseMetadata):
                     note_extra = "%s %s" % (flow_id, row.index)
                 else:
                     note_extra = flow_id
-                obj = {}
+                obj = row._asdict()
                 amplicon = row.amplicon.upper()
                 name = sample_id_to_ckan_name(
                     sample_extraction_id,
@@ -313,24 +313,10 @@ class BASEAmpliconsMetadata(AMDBaseMetadata):
                         "flow_id": flow_id,
                         "base_amplicon_linkage": base_amplicon_linkage,
                         "sample_extraction_id": sample_extraction_id,
-                        "target": row.target,
-                        "index": row.index,
-                        "index1": row.index1,
-                        "index2": row.index2,
-                        "pcr_1_to_10": row.pcr_1_to_10,
-                        "pcr_1_to_100": row.pcr_1_to_100,
-                        "pcr_neat": row.pcr_neat,
-                        "dilution": row.dilution,
-                        "sequencing_run_number": row.sequencing_run_number,
-                        "flow_cell_id": row.flow_cell_id,
-                        "reads": row.reads,
-                        "sample_name": row.sample_name,
-                        "analysis_software_version": row.analysis_software_version,
                         "amplicon": amplicon,
                         "title": "BASE Amplicons %s %s %s"
                         % (amplicon, sample_extraction_id, note_extra),
                         "contextual_data_submission_date": None,
-                        "ticket": row.ticket,
                         "facility": row.facility_code.upper(),
                         "type": self.ckan_data_type,
                         "date_of_transfer": ingest_utils.get_date_isoformat(
@@ -347,8 +333,7 @@ class BASEAmpliconsMetadata(AMDBaseMetadata):
                         ),
                         "archive_ingestion_date": archive_ingestion_date,
                         "license_id": apply_license(archive_ingestion_date),
-                        "dataset_url": track_get("download"),
-                        "comments": row.comments,
+                        "dataset_url": track_get("download")
                     }
                 )
                 ingest_utils.permissions_organization_member_after_embargo(
@@ -1002,20 +987,25 @@ class MarineMicrobesAmpliconsMetadata(AMDBaseMetadata):
                 re.compile(r"^.*sample unique id$"),
                 coerce=ingest_utils.extract_ands_id,
             ),
-            fld("sample_extraction_id", "Sample extraction ID"),
+            fld("sample_extraction_id", "Sample extraction ID", optional=True),
             fld("target", "Target"),
             fld(
                 "dilution_used", "Dilution used", coerce=ingest_utils.fix_date_interval
             ),
             fld("reads", re.compile(r"^# of (raw )?reads$")),
             fld("analysis_software_version", "AnalysisSoftwareVersion"),
-            fld("comments", re.compile(r"^comments")),
-            fld("sample_name_on_sample_sheet", "Sample name on sample sheet"),
+            fld("comments", re.compile(r"^comments"), find_all=True),
+            fld(
+                "sample_name_on_sample_sheet",
+                "Sample name on sample sheet",
+                optional=True,
+            ),
             # special case: we merge these together (and throw a hard error if more than one has data for a given row)
-            fld("pass_fail", "P=pass, F=fail"),
-            fld("pass_fail_neat", "1:10 PCR, P=pass, F=fail"),
-            fld("pass_fail_10", "1:100 PCR, P=pass, F=fail"),
-            fld("pass_fail_100", "neat PCR, P=pass, F=fail"),
+            fld("pass_fail", re.compile(r".*[Pp]=[Pp](|ass) ?[,/] ?[Ff]=[Ff]ail")),
+            fld("pass_fail_neat", "1:10 PCR, P=pass, F=fail", optional=True),
+            fld("pass_fail_10", "1:100 PCR, P=pass, F=fail", optional=True),
+            fld("pass_fail_100", "neat PCR, P=pass, F=fail", optional=True),
+            fld("index", "index", optional=True),
         ],
         "options": {"header_length": 2, "column_name_row_index": 1,},
     }
@@ -1041,7 +1031,7 @@ class MarineMicrobesAmpliconsMetadata(AMDBaseMetadata):
     metadata_url_components = ("amplicon", "facility_code", "ticket")
     md5 = {
         "match": [files.mm_amplicon_filename_re],
-        "skip": [files.mm_amplicon_control_filename_re],
+        "skip": common_skip + [files.mm_amplicon_control_filename_re],
     }
 
     def __init__(
