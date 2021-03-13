@@ -225,9 +225,9 @@ class BASEAmpliconsMetadata(AMDBaseMetadata):
             fld("reads", ("# of RAW reads", "# of reads"), coerce=ingest_utils.get_int),
             fld("sample_name", "Sample name on sample sheet", optional=True),
             fld("analysis_software_version", "AnalysisSoftwareVersion"),
-            fld("comments", re.compile(r"[Cc]omments(|1)"), optional=True, find_all=True),
-            fld("comments2", re.compile(r"[Cc]omments2"), optional=True),
-            fld("comments3", re.compile(r"[Cc]omments3"), optional=True),
+            fld(
+                "comments", re.compile(r"[Cc]omments(|1)"), optional=True, find_all=True
+            ),
         ],
         "options": {"header_length": 2, "column_name_row_index": 1,},
     }
@@ -333,7 +333,7 @@ class BASEAmpliconsMetadata(AMDBaseMetadata):
                         ),
                         "archive_ingestion_date": archive_ingestion_date,
                         "license_id": apply_license(archive_ingestion_date),
-                        "dataset_url": track_get("download")
+                        "dataset_url": track_get("download"),
                     }
                 )
                 ingest_utils.permissions_organization_member_after_embargo(

@@ -19,13 +19,14 @@ import os
 import xlrd
 import string
 
-
 SkipColumn = namedtuple("SkipColumn", ["column_name", "skip_all"])
 skip_column_default = SkipColumn("column_name", False)
 FieldDefinition = namedtuple(
     "FieldSpec", ["attribute", "column_name", "coerce", "optional", "units", "find_all"]
 )
-field_definition_default = FieldDefinition("<replace>", "<replace>", None, False, None, False)
+field_definition_default = FieldDefinition(
+    "<replace>", "<replace>", None, False, None, False
+)
 
 
 def make_field_definition(attribute, column_name, **kwargs):
@@ -78,9 +79,9 @@ class ExcelWrapper:
         else:
             self.sheet = self.workbook.sheet_by_name(sheet_name)
 
-        self.field_names = self._set_field_names()
         self.missing_headers = []
         self.header, self.name_to_column_map = self.set_name_to_column_map()
+        self.field_names = self._set_field_names()
         self.name_to_func_map = self.set_name_to_func_map()
 
     def _error(self, s):
@@ -155,6 +156,7 @@ class ExcelWrapper:
         skip_columns = set()
 
         missing_columns = False
+        additional_fields_specs = []
         for spec in self.field_spec:
             if isinstance(spec, SkipColumn):
                 if spec.skip_all:
@@ -185,9 +187,18 @@ class ExcelWrapper:
                     if counter > 0:
                         key_name += str(counter + 1)
                         header[col_index] = key_name
+                        ## ensure we're not adding additional fields specs now to avoid being included in this loop
+                        additional_fields_specs.append(
+                            make_field_definition(
+                                attribute=key_name,
+                                column_name=re.compile(".*" + spec.attribute + ".*"),
+                                coerce=spec.coerce,
+                                units=spec.units,
+                            )
+                        )
                     cmap[key_name] = col_index
 
-
+        self.field_spec.extend(additional_fields_specs)
         mapped_columns = set(cmap.values())
         unmapped_columns = []
         for idx, s in enumerate(header):
@@ -209,7 +220,6 @@ class ExcelWrapper:
                 all_index = find_fn(_name)
                 if all_index:
                     break
-
         else:
             all_index = find_fn(spec.column_name)
         return all_index
