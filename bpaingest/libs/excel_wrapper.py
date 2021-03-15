@@ -154,9 +154,7 @@ class ExcelWrapper:
 
         cmap = {}
         skip_columns = set()
-
         missing_columns = False
-        additional_fields_specs = []
         for spec in self.field_spec:
             if isinstance(spec, SkipColumn):
                 if spec.skip_all:
@@ -187,18 +185,8 @@ class ExcelWrapper:
                     if counter > 0:
                         key_name += str(counter + 1)
                         header[col_index] = key_name
-                        ## ensure we're not adding additional fields specs now to avoid being included in this loop
-                        additional_fields_specs.append(
-                            make_field_definition(
-                                attribute=key_name,
-                                column_name=re.compile(".*" + spec.attribute + ".*"),
-                                coerce=spec.coerce,
-                                units=spec.units,
-                            )
-                        )
                     cmap[key_name] = col_index
 
-        self.field_spec.extend(additional_fields_specs)
         mapped_columns = set(cmap.values())
         unmapped_columns = []
         for idx, s in enumerate(header):

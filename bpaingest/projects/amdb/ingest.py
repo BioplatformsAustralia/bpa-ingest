@@ -226,7 +226,13 @@ class BASEAmpliconsMetadata(AMDBaseMetadata):
             fld("sample_name", "Sample name on sample sheet", optional=True),
             fld("analysis_software_version", "AnalysisSoftwareVersion"),
             fld(
-                "comments", re.compile(r"[Cc]omments(|1)"), optional=True, find_all=True
+                "comments", re.compile(r"comments(|1)"), optional=True, find_all=True
+            ),
+            fld(
+                "comments2", re.compile(r"comments2"), optional=True
+            ),
+            fld(
+                "comments3", re.compile(r"comments3"), optional=True
             ),
         ],
         "options": {"header_length": 2, "column_name_row_index": 1,},
