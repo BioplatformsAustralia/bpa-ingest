@@ -1039,6 +1039,10 @@ class MarineMicrobesAmpliconsMetadata(AMDBaseMetadata):
         "match": [files.mm_amplicon_filename_re],
         "skip": common_skip + [files.mm_amplicon_control_filename_re],
     }
+    missing_resources = [
+        ("102.100.100/34937", "AUWLK"),
+        ("102.100.100/37712", "BHHYV")
+    ]
 
     def __init__(
         self, logger, metadata_path, contextual_metadata=None, metadata_info=None
@@ -1165,7 +1169,9 @@ class MarineMicrobesAmpliconsMetadata(AMDBaseMetadata):
                 if obj.get("sample_type"):
                     tag_names.append(obj["sample_type"])
                 obj["tags"] = [{"name": t} for t in tag_names]
-                packages.append(obj)
+                package_link = tuple(obj[t] for t in self.resource_linkage)
+                if package_link not in self.missing_resources:
+                    packages.append(obj)
         return packages
 
     def _get_resources(self):

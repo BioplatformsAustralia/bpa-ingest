@@ -126,7 +126,7 @@ def test_mm_amplicon_control():
         "Fungal_mock_community_18S_UNSW_CGAGGCTG-AAGGCTAT_APK6N_S105_L001_I2.fastq.gz",
         "Soil_DNA_16S_UNSW_CAGCTAGA-GATAGCGT_AYBVB_S110_L001_I1.fastq.gz",
         "STAN_16S_UNSW_TATCAGGTGTGC_AL1HY_S97_L001_R1.fastq.gz",
-        "Bac_mock_community6S_UNSW_GACTCTTG-ACGACGTG_BJT3V_S60_L001_I1.fastq.gz",
+        "Bac_mock_community6S_UNSW_GACTCTTG-ACGACGTG_BJT3V_S60_L001_I1.fastq.gz"
     ]
     for filename in filenames:
         assert mm_amplicon_control_filename_re.match(filename) is not None
