@@ -225,15 +225,9 @@ class BASEAmpliconsMetadata(AMDBaseMetadata):
             fld("reads", ("# of RAW reads", "# of reads"), coerce=ingest_utils.get_int),
             fld("sample_name", "Sample name on sample sheet", optional=True),
             fld("analysis_software_version", "AnalysisSoftwareVersion"),
-            fld(
-                "comments", re.compile(r"comments(|1)"), optional=True, find_all=True
-            ),
-            fld(
-                "comments2", re.compile(r"comments2"), optional=True
-            ),
-            fld(
-                "comments3", re.compile(r"comments3"), optional=True
-            ),
+            fld("comments", re.compile(r"comments(|1)"), optional=True, find_all=True),
+            fld("comments2", re.compile(r"comments2"), optional=True),
+            fld("comments3", re.compile(r"comments3"), optional=True),
         ],
         "options": {"header_length": 2, "column_name_row_index": 1,},
     }
@@ -1039,10 +1033,7 @@ class MarineMicrobesAmpliconsMetadata(AMDBaseMetadata):
         "match": [files.mm_amplicon_filename_re],
         "skip": common_skip + [files.mm_amplicon_control_filename_re],
     }
-    missing_resources = [
-        ("102.100.100/34937", "AUWLK"),
-        ("102.100.100/37712", "BHHYV")
-    ]
+    missing_resources = [("102.100.100/34937", "AUWLK"), ("102.100.100/37712", "BHHYV")]
 
     def __init__(
         self, logger, metadata_path, contextual_metadata=None, metadata_info=None
@@ -1223,7 +1214,7 @@ class MarineMicrobesAmpliconsControlMetadata(AMDBaseMetadata):
     resource_linkage = ("amplicon", "flow_id")
     md5 = {
         "match": [files.mm_amplicon_control_filename_re],
-        "skip": [files.mm_amplicon_filename_re],
+        "skip": common_skip + [files.mm_amplicon_filename_re],
     }
     metadata_urls = [
         "https://downloads-qcif.bioplatforms.com/bpa/marine_microbes/raw/amplicons/"

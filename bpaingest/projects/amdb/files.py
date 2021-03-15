@@ -161,7 +161,7 @@ base_site_image_filename_re = re.compile(
 
 mm_amplicon_control_filename_re = re.compile(
     r"""
-    ^(?P<control_type>Arc_mock_community|Bac_mock_community.*|Fungal_mock_community|Soil_DNA|STAN)_
+    ^(?P<control_type>Arc_mock_community|Bac_mock_community.*|Fungal_mock_community|Soil_DNA.*|STAN)_
     (?P<extra_descriptor>).*
     (?P<vendor>AGRF|UNSW)_
     (?P<index>[G|A|T|C|-]*)_
