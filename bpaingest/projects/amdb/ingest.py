@@ -1483,11 +1483,14 @@ class MarineMicrobesMetatranscriptomeMetadata(BaseMarineMicrobesMetadata):
                 re.compile(r"^.*sample unique id$"),
                 coerce=ingest_utils.extract_ands_id,
             ),
-            fld("sample_extraction_id", "Sample extraction ID"),
+            fld("sample_extraction_id", "Sample extraction ID", optional=True),
             fld("insert_size_range", "Insert size range"),
             fld("library_construction_protocol", "Library construction protocol"),
             fld("sequencer", "Sequencer"),
-            fld("analysis_software_version", "CASAVA version"),
+            fld(
+                "analysis_software_version",
+                ("casava version", "bcl2fastq2", re.compile(r"^software[ &]+version$")),
+            ),
         ],
         "options": {"header_length": 2, "column_name_row_index": 1,},
     }
