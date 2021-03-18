@@ -33,6 +33,19 @@ def gap_describe(obj, description):
     )
 
 
+def gap_describe_ddrad(obj, description):
+    obj["title"] = "GAP {}, {}, Dataset ID {}".format(
+        description,
+        obj.get("project_aim", ""),
+        obj.get("dataset_id", "").split("/")[-1],
+    )
+    obj["notes"] = "{}, {}, {}".format(
+        obj.get("species_complex", ""),
+        obj.get("family", ""),
+        obj.get("sample_submitter_name", ""),
+    )
+
+
 class GAPIlluminaShortreadMetadata(BaseMetadata):
     organization = "bpa-plants"
     ckan_data_type = "gap-illumina-shortread"
@@ -553,7 +566,6 @@ class GAPGenomicsDDRADMetadata(BaseMetadata):
     resource_linkage = ("dataset_id", "flowcell_id")
     spreadsheet = {
         "fields": [
-            fld("voucher_id", "voucher_id", optional=True),
             fld(
                 "dataset_id",
                 "bioplatforms_dataset_id",
@@ -584,8 +596,10 @@ class GAPGenomicsDDRADMetadata(BaseMetadata):
             fld("library_index_id", "library_index_id"),
             fld("library_index_sequence", "library_index_sequence"),
             fld("library_oligo_sequence", "library_oligo_sequence"),
-            fld("library_pcr_reps", "library_pcr_reps"),
-            fld("library_pcr_cycles", "library_pcr_cycles"),
+            fld("library_pcr_reps", "library_pcr_reps", coerce=ingest_utils.get_int),
+            fld(
+                "library_pcr_cycles", "library_pcr_cycles", coerce=ingest_utils.get_int
+            ),
             fld("library_comments", "library_comments"),
             fld("sequencing_facility", "sequencing_facility"),
             fld(
@@ -606,9 +620,6 @@ class GAPGenomicsDDRADMetadata(BaseMetadata):
                 "library_pool_oligo_sequence",
                 optional=True,
             ),
-            fld("voucher_number", "voucher_number", optional=True),
-            fld("tissue_number", "tissue_number", optional=True),
-            fld("voucher_or_tissue_number", "voucher_or_tissue_number", optional=True),
             fld("library_conc_ng_ul", "library_conc_ng_ul"),
             fld("project_aim", "project_aim"),
             fld("sample_submitter_name", "sample_submitter_name"),
@@ -622,6 +633,7 @@ class GAPGenomicsDDRADMetadata(BaseMetadata):
             fld("location_id", "location_id"),
             fld("location_notes", "location_notes"),
             fld("population_group", "population_group"),
+            fld("species_complex", "species_complex", optional=True),
         ],
         "options": {
             "sheet_name": "GAP_library_metadata",
@@ -653,13 +665,6 @@ class GAPGenomicsDDRADMetadata(BaseMetadata):
         self.track_meta = GAPTrackMetadata()
         self.flow_lookup = {}
 
-    def generate_notes_field(self, row_object):
-        notes = "%s %s\nddRAD dataset not demultiplexed" % (
-            row_object.get("genus", ""),
-            row_object.get("species", ""),
-        )
-        return notes
-
     def _get_packages(self):
         xlsx_re = re.compile(r"^.*_(\w+)_metadata.*\.xlsx$")
 
@@ -679,12 +684,17 @@ class GAPGenomicsDDRADMetadata(BaseMetadata):
             objs = defaultdict(list)
             for row in self.parse_spreadsheet(fname, self.metadata_info):
                 obj = row._asdict()
-                # obj.pop("file")
+                if not obj["dataset_id"] or not obj["flowcell_id"]:
+                    continue
+                for contextual_source in self.contextual_metadata:
+                    obj.update(
+                        contextual_source.get(obj["library_id"], obj["dataset_id"])
+                    )
                 objs[(obj["dataset_id"], obj["flowcell_id"])].append(obj)
 
             for (dataset_id, flowcell_id), row_objs in list(objs.items()):
 
-                if dataset_id is None:
+                if dataset_id is None or flowcell_id is None:
                     continue
 
                 obj = common_values(row_objs)
@@ -703,18 +713,12 @@ class GAPGenomicsDDRADMetadata(BaseMetadata):
                         "name": name,
                         "id": name,
                         "dataset_id": dataset_id,
-                        "title": "GAP Genomics ddRAD %s %s" % (dataset_id, flow_id),
                         "date_of_transfer": ingest_utils.get_date_isoformat(
                             self._logger, track_get("date_of_transfer")
                         ),
                         "data_type": track_get("data_type"),
                         "description": track_get("description"),
-                        "notes": self.generate_notes_field(obj),
                         "folder_name": track_get("folder_name"),
-                        "sample_submission_date": ingest_utils.get_date_isoformat(
-                            self._logger, track_get("date_of_transfer")
-                        ),
-                        "contextual_data_submission_date": None,
                         "data_generated": ingest_utils.get_date_isoformat(
                             self._logger, track_get("date_of_transfer_to_archive")
                         ),
@@ -725,6 +729,7 @@ class GAPGenomicsDDRADMetadata(BaseMetadata):
                         "type": self.ckan_data_type,
                     }
                 )
+                gap_describe_ddrad(obj, "ddRAD")
                 ingest_utils.permissions_organization_member(self._logger, obj)
                 ingest_utils.add_spatial_extra(self._logger, obj)
                 tag_names = ["genomics-ddrad"]
