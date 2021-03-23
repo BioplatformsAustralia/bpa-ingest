@@ -37,7 +37,7 @@ illumina_shortread_rna_phylo_re = re.compile(
 
 ONT_MINION_PATTERN = r"""
     (?P<sample_id>\d{4,6})_
-    (?P<run_id>FA[KL]\d{5})_
+    (?P<flow_cell_id>FA[KL]\d{5})_
     GAP_
     (?P<facility_id>(AGRF))_
     ONTMinion_
@@ -48,9 +48,9 @@ ont_minion_re = re.compile(ONT_MINION_PATTERN, re.VERBOSE)
 
 ONT_PROMETHION_PATTERN = r"""
     (?P<sample_id>\d{4,6})_
-    (?P<run_id>PA[DE]\d{5})_
+    (?P<flow_cell_id>PA[DEG]\d{5})_
     GAP_
-    (?P<facility_id>(AGRF))_
+    (?P<facility_id>(AGRF|BRF))_
     ONTPromethION_
     (?P<archive_type>\w+)
     \.tar
