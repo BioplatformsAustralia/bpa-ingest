@@ -342,6 +342,16 @@ def _get_date(logger, dt, silent=False):
     except ValueError:
         pass
 
+    try:
+        return datetime.datetime.strptime(dt, "%Y-%m-%dT%H:%M:%SZ").date()
+    except ValueError:
+        pass
+
+    try:
+        return datetime.datetime.strptime(dt, "%Y-%m-%dT%H:%MZ").date()
+    except ValueError:
+        pass
+
     if not silent:
         logger.error("Date `{}` is not in a supported format".format(dt))
     return None
