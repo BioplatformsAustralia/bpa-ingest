@@ -192,7 +192,7 @@ class GAPONTMinionMetadata(BaseMetadata):
         "https://downloads-qcif.bioplatforms.com/bpa/plants_staging/ont-minion/",
     ]
     metadata_url_components = ("ticket",)
-    resource_linkage = ("ticket", "sample_id", "run_id")
+    resource_linkage = ("ticket", "sample_id", "flow_cell_id")
     spreadsheet = {
         "fields": [
             fld(
@@ -214,7 +214,7 @@ class GAPONTMinionMetadata(BaseMetadata):
             fld("library_construction_protocol", "library construction protocol"),
             fld("sequencer", "sequencer"),
             fld("flow_cell_type", "flow cell type"),
-            fld("run_id", "run id"),
+            fld("flow_cell_id", re.compile(r"(run id|flow_cell_id)")),
             fld("cell_postion", "cell postion"),
             fld("nanopore_software_version", "nanopore software version"),
         ],
@@ -301,7 +301,7 @@ class GAPONTMinionMetadata(BaseMetadata):
                         (
                             xlsx_info["ticket"],
                             resource["sample_id"],
-                            resource["run_id"],
+                            resource["flow_cell_id"],
                         ),
                         legacy_url,
                         resource,
@@ -320,7 +320,7 @@ class GAPONTPromethionMetadata(BaseMetadata):
         "https://downloads-qcif.bioplatforms.com/bpa/plants_staging/ont-promethion/",
     ]
     metadata_url_components = ("ticket",)
-    resource_linkage = ("ticket", "sample_id", "run_id")
+    resource_linkage = ("ticket", "sample_id", "flow_cell_id")
     spreadsheet = {
         "fields": [
             fld(
@@ -342,7 +342,7 @@ class GAPONTPromethionMetadata(BaseMetadata):
             fld("library_construction_protocol", "library construction protocol"),
             fld("sequencer", "sequencer"),
             fld("flow_cell_type", "flow cell type"),
-            fld("run_id", "run id"),
+            fld("flow_cell_id", re.compile(r"(run id|flow_cell_id)")),
             fld("cell_postion", "cell postion"),
             fld("nanopore_software_version", "nanopore software version"),
         ],
@@ -429,7 +429,7 @@ class GAPONTPromethionMetadata(BaseMetadata):
                         (
                             xlsx_info["ticket"],
                             resource["sample_id"],
-                            resource["run_id"],
+                            resource["flow_cell_id"],
                         ),
                         legacy_url,
                         resource,

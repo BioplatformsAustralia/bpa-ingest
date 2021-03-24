@@ -25,10 +25,11 @@ AGRF / Kor-jent van Dijk,11/9/2020,,,83650,,Phylogenomics,Pilot,Illumina Short R
 AGRF / Kor-jent van Dijk,11/9/2020,,,83650,,Phylogenomics,Pilot,Illumina Short Read,20200909_GAP_AGRF_H7LV7AFX2 (Waycott baits - Korjent data only),15/09/2020,BPAOPS-953,
 UNSW,21/10/2020,79639,83445,83659,Telopea speciosissima,Reference Genomes,Pilot,Illumina Short Read,20201015_GAP_UNSW_BPC29518-1232 (Hi-C QC data),21/10/2020,BPAOPS-967,(data not ingested)
 UNSW,03/11/2020,79639,83445,83659,Telopea speciosissima,Reference Genomes,Pilot,Illumina Short Read (Hi-C),20201103_GAP_UNSW_HW3MGBGXG (Hi-C NextSeq data),05/11/2020,BPAOPS-972,https://data.bioplatforms.com/dataset/bpa-gap-hi-c-83445
-AGRF,18/11/20,,,83655,,Phylogenomics - AATOL (NSW) - Run 1,Main dataset,Illumina Short Read,20201116_GAP_AGRF_CAGRF20083581_HVM7GDRXX,19/11/2020,BPAOPS-983,
-AGRF,18/11/20,,,83653,,Phylogenomics - AATOL (WA & SA ) - Run 1,Main dataset,Illumina Short Read,20201116_GAP_AGRF_CAGRF20083582_HVM7GDRXX,19/11/2020,BPAOPS-984,
-AGRF,11/02/2021,,,83666,Geleznowia,Conservation genomics,Main dataset,ddRAD,AGRF_GAP_HY7LHDRXX_83666,10/2/2021,BPAOPS-1026,
-AGRF,11/02/2021,,,83673,Wurmbea ,Conservation genomics,Main dataset,ddRAD,AGRF_GAP_HYCYVDRXX_83673,10/2/2021,BPAOPS-1027,
-AGRF,11/02/2021,,,83676,,Phylogenomics - AATOL (NSW) - Run 2,Main dataset,Illumina Short Read,20210211_GAP_ AGRF_CAGRF21025257_HY7KVDRXX,11/2/2021,BPAOPS-1029,
-AGRF,11/02/2021,,,83675,,Phylogenomics - AATOL (WA & SA ) - Run 2,Main dataset,Illumina Short Read,20210211_GAP_ AGRF_CAGRF21025256_HY7KVDRXX,11/2/2021,BPAOPS-1028,
-AGRF,17/02/2021,,,83658,,Phylogenomics - AATOL (QLD),Main dataset,Illumina Short Read,20210215_GAP_ AGRF_CAGRF21025252_HWHHHDSXY,23/2/2021,BPAOPS-1034,
+AGRF,18/11/2020,,,83655,,Phylogenomics - AATOL (NSW) - Run 1,Main dataset,Illumina Short Read,20201116_GAP_AGRF_CAGRF20083581_HVM7GDRXX,19/11/2020,BPAOPS-983,
+AGRF,18/11/2020,,,83653,,Phylogenomics - AATOL (WA & SA ) - Run 1,Main dataset,Illumina Short Read,20201116_GAP_AGRF_CAGRF20083582_HVM7GDRXX,19/11/2020,BPAOPS-984,
+AGRF,11/02/2021,,,83666,Geleznowia,Conservation genomics,Main dataset,ddRAD,AGRF_GAP_HY7LHDRXX_83666,10/3/2021,BPAOPS-1026,
+AGRF,11/02/2021,,,83673,Wurmbea ,Conservation genomics,Main dataset,ddRAD,AGRF_GAP_HYCYVDRXX_83673,10/3/2021,BPAOPS-1027,
+AGRF,11/02/2021,,,83676,,Phylogenomics - AATOL (NSW) - Run 2,Main dataset,Illumina Short Read,20210211_GAP_ AGRF_CAGRF21025257_HY7KVDRXX,5/3/2021,BPAOPS-1029,
+AGRF,11/02/2021,,,83675,,Phylogenomics - AATOL (WA & SA ) - Run 2,Main dataset,Illumina Short Read,20210211_GAP_ AGRF_CAGRF21025256_HY7KVDRXX,5/3/2021,BPAOPS-1028,
+AGRF,17/02/2021,,,83658,,Phylogenomics - AATOL (QLD),Main dataset,Illumina Short Read,20210215_GAP_ AGRF_CAGRF21025252_HWHHHDSXY,5/3/2021,BPAOPS-1034,
+BRF,18/03/2021,376315,380522,83677,Xanthorrhoea johnsonii,Reference Genomes,Main dataset,PromethION,20210301_GAP_BRF_PAG02700,18/3/2021,BPAOPS-1049,
