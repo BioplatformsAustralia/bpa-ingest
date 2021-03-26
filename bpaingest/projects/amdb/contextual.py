@@ -16,7 +16,9 @@ class NotInVocabulary(Exception):
 
 def ands_orSAMN(logger, s, silent=False):
     if not re.compile(r"SAMN\d{8}"):
-        ingest_utils.extract_ands_id(logger, s, silent)
+        return ingest_utils.extract_ands_id(logger, s, silent)
+    else:
+        return s
 
 
 class AustralianMicrobiomeSampleContextual:
