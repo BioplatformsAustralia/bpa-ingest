@@ -109,7 +109,8 @@ schema_template = {
 def _write_schemas(
     package_keys, resource_keys, package_field_mapping, resource_field_mapping
 ):
-    skip_fields = ("id", "tags", "private", "type", "spatial", "resource_permissions")
+    skip_fields = ("id", "tags", "private", "type", "spatial", "resource_permissions", "title")
+    skip_resource_fields = ("id", "tags", "private", "type", "spatial", "resource_permissions", "title", "name")
     for data_type in sorted(package_keys):
         schema = deepcopy(schema_template)
         mapping = package_field_mapping[data_type]
@@ -121,7 +122,7 @@ def _write_schemas(
             )
         mapping = resource_field_mapping[data_type]
         for k in sorted(resource_keys[data_type]):
-            if k in skip_fields:
+            if k in skip_resource_fields:
                 continue
             schema["resource_fields"].append(
                 {"field_name": k, "label": mapping.get(k, k),}
