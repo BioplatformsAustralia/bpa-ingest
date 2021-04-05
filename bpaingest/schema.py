@@ -110,7 +110,7 @@ def _write_schemas(
     package_keys, resource_keys, package_field_mapping, resource_field_mapping
 ):
     skip_fields = ("id", "tags", "private", "type", "spatial", "resource_permissions", "title")
-    skip_resource_fields = ("id", "tags", "private", "type", "spatial", "resource_permissions", "title", "name")
+    skip_resource_fields = ("id", "tags", "private", "type", "spatial", "resource_permissions", "title", "name", "md5", "format")
     for data_type in sorted(package_keys):
         schema = deepcopy(schema_template)
         mapping = package_field_mapping[data_type]
