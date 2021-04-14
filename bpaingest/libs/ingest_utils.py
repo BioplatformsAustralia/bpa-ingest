@@ -225,6 +225,12 @@ def int_or_comment(logger, val):
         return val
 
 
+def date_or_int_or_comment(logger, val):
+    if isinstance(val, datetime.date):
+        return get_date_isoformat(logger, val)
+    return int_or_comment(logger, val)
+
+
 number_find_re = re.compile(r"(-?\d+\.?\d*)")
 
 

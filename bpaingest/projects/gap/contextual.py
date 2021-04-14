@@ -94,8 +94,16 @@ class GAPLibraryContextual:
             ),
             fld("herbarium_code", "herbarium_code"),
             fld("voucher_herbarium_collector_id", "voucher_herbarium_collector_id"),
-            fld("voucher_herbarium_catalog_number", "voucher_herbarium_catalog_number"),
-            fld("voucher_herbarium_record_number", "voucher_herbarium_record_number"),
+            fld(
+                "voucher_herbarium_catalog_number",
+                "voucher_herbarium_catalog_number",
+                coerce=ingest_utils.int_or_comment,
+            ),
+            fld(
+                "voucher_herbarium_record_number",
+                "voucher_herbarium_record_number",
+                coerce=ingest_utils.date_or_int_or_comment,
+            ),
             fld("voucher_herbarium_recorded_by", "voucher_herbarium_recorded_by"),
             fld(
                 "voucher_herbarium_event_date",
