@@ -329,6 +329,177 @@ class TSINovaseqMetadata(TSIBaseMetadata):
         return resources + self.generate_xlsx_resources()
 
 
+class TSIIlluminaShortreadMetadata(TSIBaseMetadata):
+    organization = "threatened-species"
+    ckan_data_type = "tsi-illumina-shortread"
+    technology = "illumina-shortread"
+    contextual_classes = common_context
+    metadata_patterns = [r"^.*\.md5$", r"^.*_metadata.*.*\.xlsx$"]
+    metadata_urls = [
+        "https://downloads-qcif.bioplatforms.com/bpa/tsi_staging/illumina-shortread/",
+    ]
+    metadata_url_components = ("ticket",)
+    resource_linkage = ("library_id", "flowcell_id")
+    spreadsheet = {
+        "fields": [
+            fld(
+                "sample_id",
+                re.compile(r"sample_[Ii][Dd]"),
+                coerce=ingest_utils.extract_ands_id,
+            ),
+            fld(
+                "library_id",
+                re.compile(r"library_[Ii][Dd]"),
+                coerce=ingest_utils.extract_ands_id,
+            ),
+            fld(
+                "dataset_id",
+                re.compile(r"dataset_[Ii][Dd]"),
+                coerce=ingest_utils.extract_ands_id,
+            ),
+            fld("library_construction_protocol", "library_construction_protocol"),
+            fld("run_format", "run format", optional=True),
+            fld("work_order", "work_order", coerce=ingest_utils.get_int),
+            fld("specimen_id", re.compile(r"specimen_[Ii][Dd]")),
+            fld("tissue_number", "tissue_number"),
+            fld("genus", "genus"),
+            fld("species", "species"),
+            fld("data_custodian", "data_custodian"),
+            fld("data_context", "data_context"),
+            fld("library_type", "library_type"),
+            fld("library_layout", "library_layout"),
+            fld("facility_sample_id", "facility_sample_id"),
+            fld("sequencing_facility", "sequencing_facility"),
+            fld("sequencing_model", "sequencing_model"),
+            fld("library_strategy", "library_strategy"),
+            fld("library_selection", "library_selection"),
+            fld("library_source", "library_source"),
+            fld(
+                "library_prep_date",
+                "library_prep_date",
+                coerce=ingest_utils.get_date_isoformat,
+            ),
+            fld("library_prepared_by", "library_prepared_by"),
+            fld("library_location", "library_location"),
+            fld("library_status", "library_status"),
+            fld("library_comments", "library_comments"),
+            fld("dna_treatment", "dna_treatment"),
+            fld("library_index_id", "library_index_id"),
+            fld("library_index_sequence", "library_index_seq"),
+            fld("library_oligo_sequence", "library_oligo_sequence"),
+            fld("insert_size_range", "insert_size_range"),
+            fld("library_ng_ul", "library_ng_ul"),
+            fld("library_pcr_reps", "library_pcr_reps"),
+            fld("library_pcr_cycles", "library_pcr_cycles"),
+            fld("n_libraries_pooled", "n_libraries_pooled"),
+            fld("flowcell_type", "flowcell_type"),
+            fld("flowcell_id", "flowcell_id"),
+            fld("cell_postion", "cell_postion"),
+            fld("movie_length", "movie_length"),
+            fld("analysis_software", "analysis_software"),
+            fld("analysis_software_version", "analysis_software_version"),
+            fld("file_name", "file_name"),
+            fld("file_type", "file_type"),
+            fld("experimental_design", "experimental_design"),
+            fld("sequencing_platform", "sequencing_platform"),
+        ],
+        "options": {
+            "sheet_name": "Library metadata",
+            "header_length": 1,
+            "column_name_row_index": 0,
+        },
+    }
+    md5 = {
+        "match": [files.illumina_shortread_re,],
+        "skip": [
+            re.compile(r"^.*_metadata.*\.xlsx$"),
+            re.compile(r"^.*SampleSheet.*"),
+            re.compile(r"^.*TestFiles\.exe.*"),
+            re.compile(r"^.*DataValidation\.pdf.*"),
+            re.compile(r"^.*checksums\.(exf|md5)$"),
+        ],
+    }
+    description = "Illumina short read"
+
+    def __init__(
+        self, logger, metadata_path, contextual_metadata=None, metadata_info=None
+    ):
+        super().__init__(logger, metadata_path)
+        self.path = Path(metadata_path)
+        self.contextual_metadata = contextual_metadata
+        self.metadata_info = metadata_info
+        self.google_track_meta = TSIGoogleTrackMetadata()
+
+    def _get_packages(self):
+        self._logger.info("Ingesting TSI metadata from {0}".format(self.path))
+        packages = []
+        for fname in glob(self.path + "/*.xlsx"):
+            self._logger.info("Processing GAP metadata file {0}".format(fname))
+            flow_cell_id = re.match(r"^.*_([^_]+)_metadata.*\.xlsx", fname).groups()[0]
+            rows = self.parse_spreadsheet(fname, self.metadata_info)
+            xlsx_info = self.metadata_info[os.path.basename(fname)]
+            ticket = xlsx_info["ticket"]
+            track_meta = self.google_track_meta.get(ticket)
+            for row in rows:
+                sample_id = row.sample_id
+                library_id = row.library_id
+                dataset_id = row.dataset_id
+                obj = row._asdict()
+                if track_meta is not None:
+                    obj.update(track_meta._asdict())
+                raw_library_id = library_id.split("/")[-1]
+                raw_dataset_id = dataset_id.split("/")[-1]
+                name = sample_id_to_ckan_name(
+                    raw_library_id, self.ckan_data_type, "{}".format(row.flowcell_id),
+                )
+                for contextual_source in self.contextual_metadata:
+                    obj.update(contextual_source.get(sample_id))
+                obj.update(
+                    {
+                        "sample_id": sample_id,
+                        "name": name,
+                        "id": name,
+                        "type": self.ckan_data_type,
+                        "flow_cell_id": flow_cell_id,
+                        "data_generated": True,
+                        "library_id": raw_library_id,
+                        "title": "TSI Illumina Shortread %s %s"
+                        % (library_id, flow_cell_id),
+                        "notes": self.generate_notes_field(obj),
+                    }
+                )
+                ingest_utils.permissions_organization_member(self._logger, obj)
+                tag_names = ["genomics", self.description.replace(" ", "-").lower()]
+                obj["tags"] = [{"name": "{:.100}".format(t)} for t in tag_names]
+                packages.append(obj)
+        return self.apply_location_generalisation(packages)
+
+    def _get_resources(self):
+        self._logger.info("Ingesting md5 file information from {0}".format(self.path))
+        resources = []
+        for md5_file in glob(self.path + "/*.md5"):
+            self._logger.info("Processing md5 file {0}".format(md5_file))
+            for filename, md5, file_info in self.parse_md5file(md5_file):
+                resource = file_info.copy()
+                resource["library_id"] = ingest_utils.extract_ands_id(
+                    self._logger, resource["library_id"]
+                )
+                resource["md5"] = resource["id"] = md5
+                resource["name"] = filename
+                resource["resource_type"] = self.ckan_data_type
+                xlsx_info = self.metadata_info[os.path.basename(md5_file)]
+                legacy_url = urljoin(xlsx_info["base_url"], filename)
+                # This will be used by sync/dump later to check resource_linkage in resources against that in packages
+                resources.append(
+                    (
+                        (file_info.get("library_id"), resource["flow_cell_id"],),
+                        legacy_url,
+                        resource,
+                    )
+                )
+        return resources
+
+
 class TSIPacbioHifiMetadata(TSIBaseMetadata):
     organization = "threatened-species"
     ckan_data_type = "tsi-pacbio-hifi"

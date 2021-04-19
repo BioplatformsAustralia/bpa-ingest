@@ -103,6 +103,7 @@ tsi()
   apply tsi-novaseq $*
   apply tsi-pacbio-hifi $*
   apply tsi-genomics-ddrad $*
+  apply tsi-illumina-shortread $*
 }
 
 sepsis()

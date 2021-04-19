@@ -80,6 +80,7 @@ from .tsi.ingest import (
     TSINovaseqMetadata,
     TSIPacbioHifiMetadata,
     TSIGenomicsDDRADMetadata,
+    TSIIlluminaShortreadMetadata,
 )
 from ..util import make_logger
 
@@ -132,7 +133,12 @@ class ProjectInfo:
             OMGTranscriptomicsNextseq,
             OMGGenomicsPacBioGenomeAssemblyMetadata,
         ],
-        "tsi": [TSINovaseqMetadata, TSIPacbioHifiMetadata, TSIGenomicsDDRADMetadata,],
+        "tsi": [
+            TSINovaseqMetadata,
+            TSIPacbioHifiMetadata,
+            TSIGenomicsDDRADMetadata,
+            TSIIlluminaShortreadMetadata,
+        ],
         "sepsis": [
             SepsisGenomicsMiseqMetadata,
             SepsisGenomicsPacbioMetadata,
