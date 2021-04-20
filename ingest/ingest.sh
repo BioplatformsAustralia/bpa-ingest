@@ -104,6 +104,7 @@ tsi()
   apply tsi-pacbio-hifi $*
   apply tsi-genomics-ddrad $*
   apply tsi-illumina-shortread $*
+  apply tsi-illumina-fastq $*
 }
 
 sepsis()
