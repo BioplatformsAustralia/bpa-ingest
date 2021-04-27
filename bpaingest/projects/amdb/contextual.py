@@ -67,7 +67,6 @@ class AustralianMicrobiomeSampleContextual:
             fld("store_cond", "store_cond"),
             fld("biotic_relationship", "biotic_relationship"),
             fld("env_medium", "env_medium"),
-            fld("env_material", "env_material"),
             fld("env_broad_scale", "env_broad_scale"),
             fld("env_local_scale", "env_local_scale"),
             fld("general_env_feature", "general_env_feature"),
@@ -301,12 +300,12 @@ class AustralianMicrobiomeSampleContextual:
             ),
             fld("conductivity_aqueous_meth", "conductivity_aqueous_meth"),
             fld(
-                "course_sand",
-                "course_sand",
+                "coarse_sand",
+                "coarse_sand",
                 units="%",
                 coerce=ingest_utils.get_clean_number,
             ),
-            fld("course_sand_meth", "course_sand_meth"),
+            fld("coarse_sand_meth", "coarse_sand_meth"),
             fld(
                 "cphlide_a",
                 "cphlide_a",
@@ -1134,7 +1133,6 @@ class AustralianMicrobiomeSampleContextual:
             ),
             fld("sodium_meth", "sodium_meth"),
             fld("specific_host", "specific_host"),
-            fld("stress", "stress"),
             fld(
                 "strontium",
                 "strontium",
@@ -1234,7 +1232,7 @@ class AustralianMicrobiomeSampleContextual:
                 units="mg/kg",
                 coerce=ingest_utils.get_clean_number,
             ),
-            fld("total_nitrogen_method", "total_nitrogen_method"),
+            fld("total_nitrogen_method", "total_nitrogen_meth"),
             fld(
                 "total_phosphorous",
                 "total_phosphorous",
