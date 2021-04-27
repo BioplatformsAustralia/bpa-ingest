@@ -18,12 +18,12 @@ def date_or_str(logger, v):
 
 class GAPLibraryContextual:
     metadata_urls = [
-        "https://downloads-qcif.bioplatforms.com/bpa/plants_staging/metadata/2021-03-29/"
+        "https://downloads-qcif.bioplatforms.com/bpa/plants_staging/metadata/2021-04-19/"
     ]
     metadata_patterns = [re.compile(r"^.*\.xlsx$")]
     name = "gap-library-contextual"
     sheet_names = [
-        "Ref_genome",
+        "Ref_genomes",
         "Phylogenomics_pilot",
         "Phylo AATOL - Run 1",
         "Phylo AATOL - Run 2",
@@ -94,8 +94,16 @@ class GAPLibraryContextual:
             ),
             fld("herbarium_code", "herbarium_code"),
             fld("voucher_herbarium_collector_id", "voucher_herbarium_collector_id"),
-            fld("voucher_herbarium_catalog_number", "voucher_herbarium_catalog_number"),
-            fld("voucher_herbarium_record_number", "voucher_herbarium_record_number"),
+            fld(
+                "voucher_herbarium_catalog_number",
+                "voucher_herbarium_catalog_number",
+                coerce=ingest_utils.int_or_comment,
+            ),
+            fld(
+                "voucher_herbarium_record_number",
+                "voucher_herbarium_record_number",
+                coerce=ingest_utils.date_or_int_or_comment,
+            ),
             fld("voucher_herbarium_recorded_by", "voucher_herbarium_recorded_by"),
             fld(
                 "voucher_herbarium_event_date",

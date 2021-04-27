@@ -87,6 +87,8 @@ class GAPIlluminaShortreadMetadata(BaseMetadata):
             re.compile(r"^.*_metadata.*\.xlsx$"),
             re.compile(r"^.*SampleSheet.*"),
             re.compile(r"^.*TestFiles\.exe.*"),
+            re.compile(r"^.*DataValidation\.pdf.*"),
+            re.compile(r"^.*checksums\.(exf|md5)$"),
         ],
     }
     description = "Illumina short read"
@@ -355,7 +357,7 @@ class GAPONTPromethionMetadata(BaseMetadata):
     md5 = {
         "match": [files.ont_promethion_re],
         "skip": [
-            re.compile(r"^.*_metadata\.xlsx$"),
+            re.compile(r"^.*_metadata.*\.xlsx$"),
             re.compile(r"^.*SampleSheet.*"),
             re.compile(r"^.*TestFiles\.exe.*"),
         ],

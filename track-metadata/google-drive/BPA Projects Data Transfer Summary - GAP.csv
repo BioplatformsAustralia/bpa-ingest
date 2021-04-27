@@ -35,4 +35,6 @@ AGRF,17/02/2021,,,83658,,Phylogenomics - AATOL (QLD),Main dataset,Illumina Short
 BRF,18/03/2021,376315,380522,83677,Xanthorrhoea johnsonii,Reference Genomes,Main dataset,PromethION,20210301_GAP_BRF_PAG02700,18/3/2021,1/4/2021,BPAOPS-1049,
 BRF,23/3/2021,376315,380523,83678,Xanthorrhoea johnsonii,Reference Genomes,Main dataset,PromethION,20210302_GAP_BRF_PAG03810,23/03/2021,1/4/2021,BPAOPS-1053,
 BRF,23/3/2021,376315,380524,83679,Xanthorrhoea johnsonii,Reference Genomes,Main dataset,PromethION,20210305_GAP_BRF_PAG03810,23/03/2021,1/4/2021,BPAOPS-1054,
-AGRF,13/04/2021,,,83654,,Phylogenomics - AATOL (ANH),Main dataset,Illumina Short Read,20210413_GAP_NGS_AGRF_H3GYVDSX2,13/4/2021,,BPAOPS--1060,
+AGRF,13/04/2021,,,83654,,Phylogenomics - AATOL (ANH),Main dataset,Illumina Short Read,20210413_GAP_NGS_AGRF_H3GYVDSX2,13/4/2021,15/4/2021,BPAOPS-1060,
+AGRF / Kor-jent van Dijk,11/9/2020,,,83650,,Phylogenomics,Pilot,Illumina Short Read,"20200909_GAP_AGRF_HF7CKAFX2 (Angio353 - Korjent data only, plus combined bait)",15/09/2020,,BPAOPS-1063,
+AGRF / Kor-jent van Dijk,11/9/2020,,,83650,,Phylogenomics,Pilot,Illumina Short Read,20200909_GAP_AGRF_H7LV7AFX2 (Angio353 duplicate - Korjent data only),15/09/2020,,BPAOPS-1064,

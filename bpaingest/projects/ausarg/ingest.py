@@ -293,7 +293,11 @@ class AusargONTPromethionMetadata(AusargBaseMetadata):
             fld("library_prepared_by", "library_prepared_by"),
             # fld("library_prep_method", "library_prep_method"),
             fld("experimental_design", "experimental design"),
-            fld("ausarg_project", re.compile(r"[Aa]us[aA][rR][gG]_project"), optional=True),
+            fld(
+                "ausarg_project",
+                re.compile(r"[Aa]us[aA][rR][gG]_project"),
+                optional=True,
+            ),
             fld("data_custodian", "data_custodian"),
             fld("data_context", "data_context", optional=True),
             fld("dna_treatment", "dna_treatment"),
