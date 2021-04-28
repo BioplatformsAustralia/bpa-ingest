@@ -1959,6 +1959,7 @@ class AustralianMicrobiomeAmpliconsMetadata(AMDBaseMetadata):
                         "license_id": apply_license(archive_ingestion_date),
                         "ticket": row.ticket,
                         "type": self.ckan_data_type,
+                        "date_of_transfer_to_archive": archive_ingestion_date,
                     }
                 )
                 ingest_utils.permissions_organization_member_after_embargo(
