@@ -123,7 +123,7 @@ class BASEAmpliconsMetadata(AMDBaseMetadata):
     contextual_classes = common_context
     metadata_patterns = [r"^.*\.md5$", r"^.*_metadata.*.*\.xlsx$"]
     metadata_urls = [
-        "https://downloads-qcif.bioplatforms.com/bpa/base/raw/amplicons/",
+        "https://downloads-qcif.bioplatforms.com/bpa/temp_amd/base/raw/amplicons/",
     ]
     metadata_url_components = ("amplicon", "facility_code", "ticket")
     resource_linkage = ("sample_extraction_id", "amplicon", "base_amplicon_linkage")
@@ -409,7 +409,7 @@ class BASEAmpliconsControlMetadata(AMDBaseMetadata):
     contextual_classes = common_context
     metadata_patterns = [r"^.*\.md5$", r"^.*_metadata.*.*\.xlsx$"]
     metadata_urls = [
-        "https://downloads-qcif.bioplatforms.com/bpa/base/raw/amplicons/",
+        "https://downloads-qcif.bioplatforms.com/bpa/temp_amd/base/raw/amplicons/",
     ]
     metadata_url_components = ("amplicon", "facility_code", "ticket")
     resource_linkage = ("amplicon", "flow_id")
@@ -522,7 +522,7 @@ class BASEMetagenomicsMetadata(AMDBaseMetadata):
     contextual_classes = common_context
     metadata_patterns = [r"^.*\.md5$", r"^.*_metadata.*.*\.xlsx$"]
     metadata_urls = [
-        "https://downloads-qcif.bioplatforms.com/bpa/base/raw/metagenomics/",
+        "https://downloads-qcif.bioplatforms.com/bpa/temp_amd/base/raw/metagenomics/",
     ]
     metadata_url_components = ("facility_code", "ticket")
     resource_linkage = ("sample_extraction_id", "flow_id")
@@ -809,7 +809,7 @@ class BASESiteImagesMetadata(AMDBaseMetadata):
     omics = None
     technology = "site-images"
     metadata_urls = [
-        "https://downloads-qcif.bioplatforms.com/bpa/base/site-images/",
+        "https://downloads-qcif.bioplatforms.com/bpa/temp_amd/base/site-images/",
     ]
     metadata_url_components = ("ticket",)
     resource_linkage = ("site_ids",)
@@ -1026,7 +1026,7 @@ class MarineMicrobesAmpliconsMetadata(AMDBaseMetadata):
         "MM_18S_preBPA2_UNSW_metadata.xlsx",
     )
     metadata_urls = [
-        "https://downloads-qcif.bioplatforms.com/bpa/marine_microbes/raw/amplicons/"
+        "https://downloads-qcif.bioplatforms.com/bpa/temp_amd/marine_microbes/raw/amplicons/"
     ]
     metadata_url_components = ("amplicon", "facility_code", "ticket")
     md5 = {
@@ -1217,7 +1217,7 @@ class MarineMicrobesAmpliconsControlMetadata(AMDBaseMetadata):
         "skip": common_skip + [files.mm_amplicon_filename_re],
     }
     metadata_urls = [
-        "https://downloads-qcif.bioplatforms.com/bpa/marine_microbes/raw/amplicons/"
+        "https://downloads-qcif.bioplatforms.com/bpa/temp_amd/marine_microbes/raw/amplicons/"
     ]
     metadata_url_components = ("amplicon", "facility_code", "ticket")
 
@@ -1328,7 +1328,7 @@ class MarineMicrobesMetagenomicsMetadata(BaseMarineMicrobesMetadata):
     contextual_classes = common_context
     metadata_patterns = [r"^.*\.md5", r"^.*_metadata.*\.xlsx"]
     metadata_urls = [
-        "https://downloads-qcif.bioplatforms.com/bpa/marine_microbes/raw/metagenomics/"
+        "https://downloads-qcif.bioplatforms.com/bpa/temp_amd/marine_microbes/raw/metagenomics/"
     ]
     metadata_url_components = ("facility_code", "ticket")
     tracker_filename = "MetagenomicsTrack"
@@ -1472,7 +1472,7 @@ class MarineMicrobesMetatranscriptomeMetadata(BaseMarineMicrobesMetadata):
     omics = "metatranscriptomics"
     metadata_patterns = [r"^.*\.md5", r"^.*_metadata.*\.xlsx"]
     metadata_urls = [
-        "https://downloads-qcif.bioplatforms.com/bpa/marine_microbes/raw/metatranscriptome/"
+        "https://downloads-qcif.bioplatforms.com/bpa/temp_amd/marine_microbes/raw/metatranscriptome/"
     ]
     metadata_url_components = ("facility_code", "ticket")
     tracker_filename = "MetatranscriptomeTrack"
@@ -1621,7 +1621,7 @@ class AustralianMicrobiomeMetagenomicsNovaseqMetadata(AMDBaseMetadata):
     contextual_classes = common_context
     metadata_patterns = [r"^.*\.md5", r"^.*_metadata.*\.xlsx"]
     metadata_urls = [
-        "https://downloads-qcif.bioplatforms.com/bpa/amd/metagenomics-novaseq/"
+        "https://downloads-qcif.bioplatforms.com/bpa/temp_amd/amd/metagenomics-novaseq/"
     ]
     metadata_url_components = ("facility_code", "ticket")
     spreadsheet = {
@@ -1765,7 +1765,7 @@ class AustralianMicrobiomeMetagenomicsNovaseqControlMetadata(AMDBaseMetadata):
         "skip": [files.amd_metagenomics_novaseq_re],
     }
     metadata_urls = [
-        "https://downloads-qcif.bioplatforms.com/bpa/amd/metagenomics-novaseq/"
+        "https://downloads-qcif.bioplatforms.com/bpa/temp_amd/amd/metagenomics-novaseq/"
     ]
     metadata_url_components = ("facility_code", "ticket")
 
@@ -1878,7 +1878,7 @@ class AustralianMicrobiomeAmpliconsMetadata(AMDBaseMetadata):
         "options": {"header_length": 1, "column_name_row_index": 0,},
     }
     technology = "amplicons"
-    metadata_urls = ["https://downloads-qcif.bioplatforms.com/bpa/amd/amplicons-miseq/"]
+    metadata_urls = ["https://downloads-qcif.bioplatforms.com/bpa/temp_amd/amd/amplicons-miseq/"]
     metadata_url_components = ("amplicon", "ticket")
     md5 = {
         "match": [files.amd_amplicon_filename_re],
@@ -2020,7 +2020,7 @@ class AustralianMicrobiomeAmpliconsControlMetadata(AMDBaseMetadata):
         "match": [files.amd_amplicon_control_filename_re],
         "skip": [files.amd_amplicon_filename_re],
     }
-    metadata_urls = ["https://downloads-qcif.bioplatforms.com/bpa/amd/amplicons-miseq/"]
+    metadata_urls = ["https://downloads-qcif.bioplatforms.com/bpa/temp_amd/amd/amplicons-miseq/"]
     metadata_url_components = ("amplicon", "ticket")
 
     def __init__(
