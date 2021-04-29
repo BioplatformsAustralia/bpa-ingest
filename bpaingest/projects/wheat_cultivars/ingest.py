@@ -20,7 +20,7 @@ class WheatCultivarsMetadata(BaseMetadata):
     ckan_data_type = "wheat-cultivars"
     spreadsheet = {
         "fields": [
-            fld("source_name", "BPA ID"),
+            fld("source_name", "Source Name"),
             fld("code", "CODE"),
             fld("sample_id", "BPA ID", coerce=lambda _, s: s.replace("/", ".")),
             fld("characteristics", "Characteristics"),
@@ -37,6 +37,8 @@ class WheatCultivarsMetadata(BaseMetadata):
             fld("soil_tolerance", "Soil tolerance"),
             fld("classification", "International classification"),
             fld("url", "Link"),
+	    fld('sample_name', 'sample name'),
+            fld('factor_value_variety', 'factor value[variety]', units='variety', coerce=ingest_utils.get_clean_number),
         ],
         "options": {"sheet_name": "Characteristics", "header_length": 1},
     }

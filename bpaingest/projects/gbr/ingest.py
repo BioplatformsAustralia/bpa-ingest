@@ -57,7 +57,8 @@ class GbrPacbioMetadata(BaseMetadata):
             fld("run_number", "Run number"),
             fld("flow_cell_id", "Run #:Flow Cell ID"),
             fld("lane_number", "Lane number"),
-            fld("casava_version", "CASAVA version"),
+            fld("casava_version", "CASAVA version", optional=True),
+	    fld('data_processing_version', 'data processing version', optional=True),
         ],
         "options": {"header_length": 3, "column_name_row_index": 1,},
     }

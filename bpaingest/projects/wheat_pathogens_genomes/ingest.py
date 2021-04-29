@@ -54,6 +54,7 @@ class WheatPathogensGenomesMetadata(BaseMetadata):
             fld("locus_tag", "Locus tag"),
             fld("genome_analysis", "Genome-Analysis"),
             fld("metadata_file", "Metadata file"),
+	    fld('notes', 'notes'),
         ],
         "options": {
             "sheet_name": "Metadata",
