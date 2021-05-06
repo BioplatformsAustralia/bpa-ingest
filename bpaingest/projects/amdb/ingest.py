@@ -305,7 +305,6 @@ class BASEAmpliconsMetadata(AMDBaseMetadata):
                     {
                         "name": name,
                         "id": name,
-                        "sample_type": "soil",
                         "read_length": base_amplicon_read_length(
                             amplicon
                         ),  # hard-coded for now, on advice of AB at CSIRO
@@ -398,6 +397,19 @@ class BASEAmpliconsMetadata(AMDBaseMetadata):
                         resource,
                     )
                 )
+
+                archive_name = self.file_package[filename]
+                resource = file_info.copy()
+                # waiting on filename convention from AGRF
+                del resource["basename"]
+                resource["md5"] = resource["id"] = md5
+                resource["name"] = filename
+                resource["resource_type"] = self.ckan_data_type
+                xlsx_info = self.metadata_info[os.path.basename(md5_file)]
+                legacy_url = urljoin(xlsx_info["base_url"], filename)
+                resources.append(((archive_name,), legacy_url, resource))
+
+
         return resources
 
 
@@ -620,7 +632,6 @@ class BASEMetagenomicsMetadata(AMDBaseMetadata):
 
         obj = {
             "name": name,
-            "sample_type": "soil",
             "id": name,
             "sample_id": sample_id,
             "flow_id": flow_id,
