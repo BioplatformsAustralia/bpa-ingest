@@ -1,5 +1,4 @@
 import os
-import os
 import re
 from urllib.parse import urljoin
 
@@ -63,6 +62,7 @@ class AusargIlluminaFastqMetadata(AusargBaseMetadata):
     organization = "ausarg"
     ckan_data_type = "ausarg-illumina-fastq"
     technology = "illumina-fastq"
+    sequence_data_type = "illumina-shortread"
     contextual_classes = common_context
     metadata_patterns = [r"^.*\.md5$", r"^.*_metadata.*.*\.xlsx$"]
     metadata_urls = [
@@ -210,15 +210,13 @@ class AusargIlluminaFastqMetadata(AusargBaseMetadata):
                         "name": name,
                         "id": name,
                         "type": self.ckan_data_type,
+			"sequence_data_type": self.sequence_data_type,
                         "data_generated": True,
                         "notes": self.build_notes_without_blanks(obj),
                     }
                 )
                 ingest_utils.permissions_organization_member(self._logger, obj)
                 tag_names = ["illumina-fastq"]
-                scientific_name = obj.get("scientific_name", "").strip()
-                if scientific_name:
-                    tag_names.append(clean_tag_name(obj["scientific_name"]))
                 obj["tags"] = [{"name": "{:.100}".format(t)} for t in tag_names]
                 packages.append(obj)
         return packages
@@ -253,6 +251,7 @@ class AusargONTPromethionMetadata(AusargBaseMetadata):
     organization = "ausarg"
     ckan_data_type = "ausarg-ont-promethion"
     technology = "ont-promethion"
+    sequence_data_type = "ont-promethion"
     contextual_classes = common_context
     metadata_patterns = [r"^.*\.md5$", r"^.*_metadata.*.*\.xlsx$"]
     metadata_urls = [
@@ -408,6 +407,7 @@ class AusargONTPromethionMetadata(AusargBaseMetadata):
                         "name": name,
                         "id": name,
                         "type": self.ckan_data_type,
+			"sequence_data_type": self.sequence_data_type,
                     }
                 )
                 ingest_utils.permissions_organization_member(self._logger, obj)
@@ -446,6 +446,7 @@ class AusargPacbioHifiMetadata(AusargBaseMetadata):
     organization = "ausarg"
     ckan_data_type = "ausarg-pacbio-hifi"
     technology = "pacbio-hifi"
+    sequence_data_type = "pacbio-hifi"
     contextual_classes = common_context
     metadata_patterns = [r"^.*\.md5$", r"^.*_metadata.*.*\.xlsx$"]
     metadata_urls = [
@@ -609,6 +610,7 @@ class AusargPacbioHifiMetadata(AusargBaseMetadata):
                         ),
                         "dataset_url": track_get("download"),
                         "type": self.ckan_data_type,
+			"sequence_data_type": self.sequence_data_type,
                     }
                 )
                 ingest_utils.permissions_organization_member(self._logger, obj)

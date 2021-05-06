@@ -39,6 +39,7 @@ class GbrPacbioMetadata(BaseMetadata):
     ckan_data_type = "great-barrier-reef-pacbio"
     omics = "genomics"
     technology = "pacbio"
+    sequence_data_type = "pacbio-rsii"
     resource_linkage = ("ticket", "sample_id", "pacbio_linkage")
     spreadsheet = {
         "fields": [
@@ -95,7 +96,8 @@ class GbrPacbioMetadata(BaseMetadata):
                     "title": "Pacbio {} {}".format(sample_id, row.flow_cell_id),
                     "notes": "Pacbio {} {}".format(sample_id, row.flow_cell_id),
                     "tags": [{"name": "Pacbio"}],
-                    "type": GbrPacbioMetadata.ckan_data_type,
+                    "type": self.ckan_data_type,
+		    "sequence_data_type": self.sequence_data_type,
                     "sample_id": sample_id,
                     "sequencing_facility": row.sequencing_facility,
                     "ticket": xlsx_info["ticket"],
@@ -148,6 +150,7 @@ class GbrAmpliconsMetadata(BaseMetadata):
     ckan_data_type = "great-barrier-reef-amplicon"
     omics = "genomics"
     technology = "amplicons"
+    sequence_data_type = "illumina-amplicons"
     resource_linkage = ("sample_id", "amplicon", "index")
     extract_index_re = re.compile("^.*_([GATC]{8}_[GATC]{8})$")
     spreadsheet = {
@@ -177,6 +180,7 @@ class GbrAmpliconsMetadata(BaseMetadata):
             fld("name", "Sample name on sample sheet"),
             fld("analysis_software_version", "AnalysisSoftwareVersion"),
             fld("comments", "Comments",),
+	    fld('data_processing_version', 'data processing version', optional=True),
         ],
         "options": {"header_length": 3, "column_name_row_index": 1,},
     }
@@ -212,7 +216,8 @@ class GbrAmpliconsMetadata(BaseMetadata):
                     "title": "Amplicon {} {}".format(sample_id, index),
                     "notes": "Amplicon {} {}".format(sample_id, index),
                     "tags": [{"name": "Amplicon"}],
-                    "type": GbrAmpliconsMetadata.ckan_data_type,
+                    "type": self.ckan_data_type,
+		    "sequence_data_type": self.sequence_data_type,
                     "sample_extraction_id": row.sample_extraction_id,
                     "sequencing_facility": row.sequencing_facility,
                     "amplicon": amplicon,

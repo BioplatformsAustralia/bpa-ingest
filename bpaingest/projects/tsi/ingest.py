@@ -334,6 +334,7 @@ class TSIIlluminaShortreadMetadata(TSIBaseMetadata):
     organization = "threatened-species"
     ckan_data_type = "tsi-illumina-shortread"
     technology = "illumina-shortread"
+    sequence_data_type = "illumina-shortread"
     contextual_classes = common_context
     metadata_patterns = [r"^.*\.md5$", r"^.*_metadata.*.*\.xlsx$"]
     metadata_urls = [
@@ -461,6 +462,7 @@ class TSIIlluminaShortreadMetadata(TSIBaseMetadata):
                         "name": name,
                         "id": name,
                         "type": self.ckan_data_type,
+			"sequence_data_type": self.sequence_data_type,
                         "flow_cell_id": flow_cell_id,
                         "data_generated": True,
                         "library_id": raw_library_id,
@@ -505,6 +507,7 @@ class TSIIlluminaFastqMetadata(TSIBaseMetadata):
     organization = "threatened-species"
     ckan_data_type = "tsi-illumina-fastq"
     technology = "illumina-fastq"
+    sequence_data_type = "illumina-shortread"
     contextual_classes = common_context
     metadata_patterns = [r"^.*\.md5$", r"^.*_metadata.*.*\.xlsx$"]
     metadata_urls = [
@@ -647,6 +650,7 @@ class TSIIlluminaFastqMetadata(TSIBaseMetadata):
                         "name": name,
                         "id": name,
                         "type": self.ckan_data_type,
+			"sequence_data_type": self.sequence_data_type,
                         "data_generated": True,
                         "title": "TSI Illumina FastQ %s %s"
                         % (row.library_id, row.flowcell_id),
@@ -692,6 +696,7 @@ class TSIPacbioHifiMetadata(TSIBaseMetadata):
     organization = "threatened-species"
     ckan_data_type = "tsi-pacbio-hifi"
     technology = "pacbio-hifi"
+    sequence_data_type = "pacbio-hifi"
     contextual_classes = common_context
     metadata_patterns = [r"^.*\.md5$", r"^.*_metadata.*.*\.xlsx$"]
     metadata_urls = [
@@ -860,6 +865,7 @@ class TSIPacbioHifiMetadata(TSIBaseMetadata):
                         ),
                         "dataset_url": track_get("download"),
                         "type": self.ckan_data_type,
+			"sequence_data_type": self.sequence_data_type,
                     }
                 )
                 ingest_utils.permissions_organization_member(self._logger, obj)
@@ -936,6 +942,7 @@ class TSIGenomicsDDRADMetadata(TSIBaseMetadata):
     ckan_data_type = "tsi-genomics-ddrad"
     omics = "genomics"
     technology = "ddrad"
+    sequence_data_type = "illumina-ddrad"
     contextual_classes = common_context
     metadata_patterns = [r"^.*\.md5$", r"^.*_metadata.*.*\.xlsx$"]
     metadata_urls = [
@@ -1098,6 +1105,7 @@ class TSIGenomicsDDRADMetadata(TSIBaseMetadata):
                         ),
                         "dataset_url": track_get("download"),
                         "type": self.ckan_data_type,
+			"sequence_data_type": self.sequence_data_type,
                         "license_id": apply_cc_by_license(),
                     }
                 )
