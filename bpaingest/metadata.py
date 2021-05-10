@@ -94,6 +94,27 @@ class DownloadMetadata:
             json.dump(metadata_info, fd)
         os.replace(tmpf, self.info_json)
 
+    def init_schema_classes(self, project_class):
+        schema_classes = getattr(project_class, "sql_to_excel_context_classes", [])
+        schema = [(os.path.join(self.path, c.name), c) for c in schema_classes]
+        for schema_path, schema_cls in schema:
+            if not os.path.isdir(schema_path):
+                os.mkdir(schema_path)
+            else:
+                self._logger.info(
+                    "Context path: {} already exists. Moving on.".format(schema_path)
+                )
+            self._logger.info(
+                "fetching contextual metadata: %s" % (schema_cls.metadata_urls)
+            )
+            for metadata_url in schema_cls.metadata_urls:
+                fetcher = Fetcher(self._logger, schema_path, metadata_url, self.auth)
+                fetcher.fetch_metadata_from_folder(
+                    getattr(schema_cls, "metadata_patterns", None),
+                    {},
+                    getattr(schema_cls, "metadata_url_components", []),
+                )
+
     def _set_auth(self, project_class):
         env_auth_user = get_env_username()
         if env_auth_user is not None:
