@@ -19,6 +19,7 @@ class WheatPathogensGenomesMetadata(BaseMetadata):
     organization = "bpa-wheat-pathogens-genomes"
     ckan_data_type = "wheat-pathogens"
     omics = "genomics"
+    sequence_data_type = "illumina-shortread"
     spreadsheet = {
         "fields": [
             fld("sample_id", "BPA ID", coerce=ingest_utils.extract_ands_id),
@@ -92,6 +93,7 @@ class WheatPathogensGenomesMetadata(BaseMetadata):
                     "title": sample_id,
                     "notes": "%s" % (data["official_variety"]),
                     "type": self.ckan_data_type,
+	            "sequence_data_type": self.sequence_data_type,
                     "sample_id": sample_id,
                     "kingdom": data["kingdom"],
                     "phylum": data["phylum"],
