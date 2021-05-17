@@ -73,10 +73,10 @@ def build_contextual_field_names():
 
 
 class AMDBaseNoSchemaMetadata(BaseMetadata):
-    schema_classes = [AustralianMicrobiomeSchema]
     sql_to_excel_context_classes = [
         AustralianMicrobiomeSampleContextualSQLiteToExcelCopy
     ]
+
     notes_mapping = [
         {"key": "env_material_control_vocab_0", "separator": ", "},
         {"key": "sample_site_location_description", "separator": ", "},
@@ -84,7 +84,6 @@ class AMDBaseNoSchemaMetadata(BaseMetadata):
         {"key": "data_type", "separator": " "},
         {"key": "analytical_platform"},
     ]
-
 
 class AMDBaseMetadata(AMDBaseNoSchemaMetadata):
     package_field_names = build_contextual_field_names()
@@ -98,12 +97,14 @@ class AccessAMDContextualMetadata(AMDBaseMetadata):
 
     contextual_classes = common_context
     metadata_urls = []
+    schema_classes = [AustralianMicrobiomeSchema]
 
     def __init__(
-        self, logger, metadata_path, contextual_metadata=None, metadata_info=None
+        self, logger, metadata_path, contextual_metadata=None, metadata_info=None, schema_definitions=None
     ):
         super().__init__(logger, metadata_path)
         self.contextual_metadata = contextual_metadata
+        self.schema_definitions = schema_definitions
 
     def _get_packages(self):
         return []

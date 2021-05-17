@@ -40,6 +40,8 @@ class DownloadMetadata:
         if self.fetch or force_fetch:
             self._fetch_metadata(project_class, self.contextual, metadata_info)
 
+        self.schema_definitions = self.init_schema_classes(project_class)
+
         self.project_class = project_class
         self.meta = self.make_meta(logger)
 
@@ -50,6 +52,10 @@ class DownloadMetadata:
         if self.contextual:
             meta_kwargs["contextual_metadata"] = [
                 c(self._logger, p) for (p, c) in self.contextual
+            ]
+        if self.schema_definitions:
+            meta_kwargs["schema_definitions"] = [
+                c(self._logger, p) for (p, c) in self.schema_definitions
             ]
         return self.project_class(logger, self.path, **meta_kwargs)
 
@@ -95,17 +101,17 @@ class DownloadMetadata:
         os.replace(tmpf, self.info_json)
 
     def init_schema_classes(self, project_class):
-        schema_classes = getattr(project_class, "sql_to_excel_context_classes", [])
+        schema_classes = getattr(project_class, "schema_classes", [])
         schema = [(os.path.join(self.path, c.name), c) for c in schema_classes]
         for schema_path, schema_cls in schema:
             if not os.path.isdir(schema_path):
                 os.mkdir(schema_path)
             else:
                 self._logger.info(
-                    "Context path: {} already exists. Moving on.".format(schema_path)
+                    "Metadata schema path: {} already exists. Moving on.".format(schema_path)
                 )
             self._logger.info(
-                "fetching contextual metadata: %s" % (schema_cls.metadata_urls)
+                "fetching schema metadata: %s" % (schema_cls.metadata_urls)
             )
             for metadata_url in schema_cls.metadata_urls:
                 fetcher = Fetcher(self._logger, schema_path, metadata_url, self.auth)
@@ -114,6 +120,7 @@ class DownloadMetadata:
                     {},
                     getattr(schema_cls, "metadata_url_components", []),
                 )
+        return schema
 
     def _set_auth(self, project_class):
         env_auth_user = get_env_username()

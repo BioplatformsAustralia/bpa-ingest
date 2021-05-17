@@ -117,6 +117,7 @@ def _write_schemas(
         "spatial",
         "resource_permissions",
         "title",
+        "license_id"
     )
     skip_resource_fields = (
         "id",
