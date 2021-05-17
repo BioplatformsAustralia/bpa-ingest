@@ -1223,9 +1223,7 @@ class AustralianMicrobiomeSampleContextual:
             fld("tot_n_meth", "tot_n_meth"),
             fld(
                 "tot_org_carb",
-                "tot_org_carb",
-                units="%",
-                coerce=ingest_utils.get_clean_number,
+                "tot_org_carb"
             ),
             fld("tot_org_c_meth", "tot_org_c_meth"),
             fld(
@@ -1255,7 +1253,7 @@ class AustralianMicrobiomeSampleContextual:
                 units="mg/kg",
                 coerce=ingest_utils.get_clean_number,
             ),
-            fld("total_nitrogen_method", "total_nitrogen_meth"),
+            fld("total_nitrogen_meth", "total_nitrogen_meth"),
             fld(
                 "total_phosphorous",
                 "total_phosphorous",
