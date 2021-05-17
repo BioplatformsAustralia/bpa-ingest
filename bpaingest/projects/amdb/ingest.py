@@ -72,508 +72,6 @@ def build_contextual_field_names():
     return field_names
 
 
-context_fields_to_remove = [
-    "sample_id",
-    "source_mat_id",
-    "utc_date_sampled",
-    "utc_time_sampled",
-    "collection_date",
-    "longitude",
-    "latitude",
-    "lat_lon",
-    "geo_loc_name",
-    "sample_site_location_description",
-    "sample_submitter",
-    "sample_attribution",
-    "funding_agency",
-    "samp_collect_device",
-    "samp_mat_process",
-    "store_cond",
-    "biotic_relationship",
-    "env_medium",
-    "env_broad_scale",
-    "env_local_scale",
-    "general_env_feature",
-    "vegetation_type",
-    "notes",
-    "depth_lower",
-    "depth_upper",
-    "depth",
-    "sample_type",
-    "sample_integrity_warnings",
-    "nucl_acid_ext",
-    "dna_concentration_submitter",
-    "dna_concentration_submitter_meth",
-    "absorbance_260_280_ratio_submitter",
-    "absorbance_260_280_ratio_submitter_meth",
-    "am_environment",
-    "acid_volatile_sulphides",
-    "acid_volatile_sulphides_meth",
-    "agrochem_addition",
-    "alkalinity",
-    "alkalinity_meth",
-    "allo",
-    "allo_meth",
-    "alpha_beta_car",
-    "alpha_beta_car_meth",
-    "ammonium",
-    "ammonium_meth",
-    "ammonium_nitrogen_wt",
-    "ammonium_nitrogen_wt_meth",
-    "anth",
-    "anth_meth",
-    "antimony",
-    "antimony_meth",
-    "arsenic",
-    "arsenic_meth",
-    "asta",
-    "asta_meth",
-    "average_host_abundance",
-    "average_host_abundance_meth",
-    "barium",
-    "barium_meth",
-    "beta_beta_car",
-    "beta_beta_car_meth",
-    "beta_epi_car",
-    "beta_epi_car_meth",
-    "bleaching",
-    "boron_hot_cacl2",
-    "boron_hot_cacl2_meth",
-    "but_fuco",
-    "but_fuco_meth",
-    "cadmium",
-    "cadmium_meth",
-    "cantha",
-    "cantha_meth",
-    "carbonate_bicarbonate",
-    "carbonate_bicarbonate_meth",
-    "cation_exchange_capacity",
-    "cation_exchange_capacity_meth",
-    "cerium",
-    "cerium_meth",
-    "cesium",
-    "cesium_meth",
-    "chloride",
-    "chloride_meth",
-    "chlorophyll_a",
-    "chlorophyll_a_meth",
-    "chlorophyll_b",
-    "chlorophyll_b_meth",
-    "chlorophyll_c1",
-    "chlorophyll_c1_meth",
-    "chlorophyll_c1c2",
-    "chlorophyll_c1c2_meth",
-    "chlorophyll_c2",
-    "chlorophyll_c2_meth",
-    "chlorophyll_c3",
-    "chlorophyll_c3_meth",
-    "chlorophyll_ctd",
-    "chlorophyll_ctd_meth",
-    "chromium",
-    "chromium_meth",
-    "citation",
-    "clay",
-    "clay_meth",
-    "coastal_id",
-    "cobalt",
-    "cobalt_meth",
-    "color",
-    "color_meth",
-    "conductivity",
-    "conductivity_meth",
-    "conductivity_aqueous",
-    "conductivity_aqueous_meth",
-    "coarse_sand",
-    "coarse_sand_meth",
-    "cphlide_a",
-    "cphlide_a_meth",
-    "crop_rotation_1yr_since_present",
-    "crop_rotation_2yrs_since_present",
-    "crop_rotation_3yrs_since_present",
-    "crop_rotation_4yrs_since_present",
-    "crop_rotation_5yrs_since_present",
-    "date_since_change_in_land_use",
-    "days_since_planting",
-    "density",
-    "density_meth",
-    "diadchr",
-    "diadchr_meth",
-    "diadino",
-    "diadino_meth",
-    "diato",
-    "diato_meth",
-    "dino",
-    "dino_meth",
-    "dtpa_copper",
-    "dtpa_copper_meth",
-    "dtpa_iron",
-    "dtpa_iron_meth",
-    "dtpa_manganese",
-    "dtpa_manganese_meth",
-    "dtpa_zinc",
-    "dtpa_zinc_meth",
-    "dv_cphl_a_and_cphl_a",
-    "dv_cphl_a_and_cphl_a_meth",
-    "dv_cphl_a",
-    "dv_cphl_a_meth",
-    "dv_cphl_b_and_cphl_b",
-    "dv_cphl_b_and_cphl_b_meth",
-    "dv_cphl_b",
-    "dv_cphl_b_meth",
-    "dysprosium",
-    "dysprosium_meth",
-    "echin",
-    "echin_meth",
-    "elev",
-    "erbium",
-    "erbium_meth",
-    "europium",
-    "europium_meth",
-    "exc_aluminium",
-    "exc_aluminium_meth",
-    "exc_calcium",
-    "exc_calcium_meth",
-    "exc_magnesium",
-    "exc_magnesium_meth",
-    "exc_potassium",
-    "exc_potassium_meth",
-    "exc_sodium",
-    "exc_sodium_meth",
-    "extreme_event",
-    "fine_sand",
-    "fine_sand_meth",
-    "fine_sediment",
-    "fine_sediment_meth",
-    "fire",
-    "fire_intensity_if_known",
-    "flooding",
-    "fluor",
-    "fluor_meth",
-    "fouling",
-    "fouling_organisms",
-    "fresh_weight",
-    "fresh_weight_meth",
-    "fuco",
-    "fuco_meth",
-    "gadolinium",
-    "gadolinium_meth",
-    "gallium",
-    "gallium_meth",
-    "germanium",
-    "germanium_meth",
-    "gold",
-    "gold_meth",
-    "gravel",
-    "gravel_percent_meth",
-    "grazing_number",
-    "grazing",
-    "gyro",
-    "gyro_meth",
-    "hafnium",
-    "hafnium_meth",
-    "hex_fuco",
-    "hex_fuco_meth",
-    "holmium",
-    "holmium_meth",
-    "horizon",
-    "host_abundance_mean",
-    "host_abundance",
-    "host_abundance_seaweed_mean",
-    "host_associated_microbiome_zone",
-    "host_species_variety",
-    "host_state",
-    "host_type",
-    "icp_te_boron",
-    "icp_te_boron_meth",
-    "icp_te_calcium",
-    "icp_te_calcium_meth",
-    "icp_te_copper",
-    "icp_te_copper_meth",
-    "icp_te_iron",
-    "icp_te_iron_meth",
-    "icp_te_manganese",
-    "icp_te_manganese_meth",
-    "icp_te_phosphorus",
-    "icp_te_phosphorus_meth",
-    "icp_te_sulfur",
-    "icp_te_sulfur_meth",
-    "icp_te_zinc",
-    "icp_te_zinc_meth",
-    "immediate_previous_land_use",
-    "imos_site_code",
-    "information",
-    "inorganic_fraction",
-    "inorganic_fraction_meth",
-    "iridium",
-    "iridium_meth",
-    "keto_hex_fuco",
-    "keto_hex_fuco_meth",
-    "lanthanum",
-    "lanthanum_meth",
-    "lead",
-    "lead_meth",
-    "length",
-    "light_intensity",
-    "light_intensity_meth",
-    "light_intensity_meadow",
-    "light_intensity_meadow_meth",
-    "light_intensity_bottom",
-    "light_intensity_bottom_meth",
-    "light_intensity_surface",
-    "light_intensity_surface_meth",
-    "local_class",
-    "local_class_meth",
-    "lutetium",
-    "lutetium_meth",
-    "lut",
-    "lut_meth",
-    "lyco",
-    "lyco_meth",
-    "magnesium",
-    "magnesium_meth",
-    "mg_dvp",
-    "mg_dvp_meth",
-    "microbial_abundance",
-    "microbial_abundance_meth",
-    "microbial_biomass",
-    "microbial_biomass_meth",
-    "molybdenum",
-    "molybdenum_meth",
-    "mud",
-    "mud_meth",
-    "myxo",
-    "myxo_meth",
-    "neodymium",
-    "neodymium_meth",
-    "neo",
-    "neo_meth",
-    "nickel",
-    "nickel_meth",
-    "niobium_columbium",
-    "niobium_columbium_meth",
-    "nitrate",
-    "nitrate_meth",
-    "nitrate_nitrite",
-    "nitrate_nitrite_meth",
-    "nitrate_nitrogen",
-    "nitrate_nitrogen_meth",
-    "nitrite",
-    "nitrite_meth",
-    "npic",
-    "npic_meth",
-    "npoc",
-    "npoc_meth",
-    "nrs_sample_code",
-    "nrs_trip_code",
-    "org_matter",
-    "org_matter_meth",
-    "organic_carbon",
-    "organic_carbon_meth",
-    "organic_fraction",
-    "organic_fraction_meth",
-    "osmium",
-    "osmium_meth",
-    "oxygen",
-    "oxygen_meth",
-    "oxygen_ctd_vol",
-    "oxygen_ctd_vol_meth",
-    "oxygen_ctd_wt",
-    "oxygen_ctd_wt_meth",
-    "palladium",
-    "palladium_meth",
-    "pam_fluorometer",
-    "pam_fluorometer_meth",
-    "par",
-    "par_meth",
-    "part_org_carb",
-    "part_org_carb_meth",
-    "perid",
-    "perid_meth",
-    "ph",
-    "ph_meth",
-    "ph_solid_h2o",
-    "ph_solid_h2o_meth",
-    "phide_a",
-    "phide_a_meth",
-    "phosphate",
-    "phosphate_meth",
-    "phosphorus_colwell",
-    "phosphorus_colwell_meth",
-    "phytin_a",
-    "phytin_a_meth",
-    "phytin_b",
-    "phytin_b_meth",
-    "picoeukaryotes",
-    "picoeukaryotes_meth",
-    "plant_id",
-    "plant_stage",
-    "plant_stage_meth",
-    "platinum",
-    "platinum_meth",
-    "pn",
-    "pn_meth",
-    "potassium",
-    "potassium_meth",
-    "potassium_colwell",
-    "potassium_colwell_meth",
-    "pras",
-    "pras_meth",
-    "praseodymium",
-    "praseodymium_meth",
-    "pres_rel",
-    "pres_rel_meth",
-    "prochlorococcus",
-    "prochlorococcus_meth",
-    "profile_position",
-    "pyrophide_a",
-    "pyrophide_a_meth",
-    "pyrophytin_a",
-    "pyrophytin_a_meth",
-    "rhodium",
-    "rhodium_meth",
-    "root_length",
-    "root_length_meth",
-    "rubidium",
-    "rubidium_meth",
-    "ruthenium",
-    "ruthenium_meth",
-    "salinity",
-    "salinity_meth",
-    "salinity_lab",
-    "salinity_lab_meth",
-    "samarium",
-    "samarium_meth",
-    "samp_size",
-    "samp_vol_we_dna_ext",
-    "sample_volume_notes",
-    "sand",
-    "sand_meth",
-    "scandium",
-    "scandium_meth",
-    "secchi_depth",
-    "secchi_depth_meth",
-    "sediment_grain_size",
-    "sediment_grain_size_meth",
-    "sediment_grain_size_fract",
-    "sediment_grain_size_fract_meth",
-    "sedimentation_rate",
-    "sedimentation_rate_meth",
-    "sediment_porewater_h4sio4",
-    "sediment_porewater_h4sio4_meth",
-    "sediment_porewater_nh4",
-    "sediment_porewater_nh4_meth",
-    "sediment_porewater_no2",
-    "sediment_porewater_no2_meth",
-    "sediment_porewater_no3",
-    "sediment_porewater_no3_meth",
-    "sediment_porewater_po43",
-    "sediment_porewater_po43_meth",
-    "selenium",
-    "selenium_meth",
-    "shoot_length",
-    "shoot_length_meth",
-    "silicate",
-    "silicate_meth",
-    "silt",
-    "silt_meth",
-    "silver",
-    "silver_meth",
-    "sio2",
-    "sio2_meth",
-    "slope_aspect",
-    "slope_aspect_meth",
-    "slope_gradient",
-    "slope_gradient_meth",
-    "sodium",
-    "sodium_meth",
-    "specific_host",
-    "strontium",
-    "strontium_meth",
-    "sulphur",
-    "sulphur_meth",
-    "synecochoccus",
-    "synecochoccus_meth",
-    "tantalum",
-    "tantalum_meth",
-    "temp",
-    "temp_meth",
-    "terbium",
-    "terbium_meth",
-    "texture",
-    "texture_meth",
-    "thorium",
-    "thorium_meth",
-    "thulium",
-    "thulium_meth",
-    "tillage",
-    "tin",
-    "tin_meth",
-    "tot_carb",
-    "tot_carb_meth",
-    "tot_depth_water_col",
-    "tot_depth_water_meth",
-    "tot_nitro",
-    "tot_n_meth",
-    "tot_org_carb",
-    "tot_org_c_meth",
-    "tot_phosp",
-    "tot_phosp_meth",
-    "total_co2",
-    "total_co2_meth",
-    "total_inorganic_carbon",
-    "total_inorganic_carbon_meth",
-    "total_nitrogen",
-    "total_nitrogen_method",
-    "total_phosphorous",
-    "total_phosphorous_meth",
-    "touching_organisms",
-    "transmittance",
-    "transmittance_meth",
-    "tss",
-    "tss_meth",
-    "tungsten",
-    "tungsten_meth",
-    "turbidity",
-    "turbidity_meth",
-    "uranium",
-    "uranium_meth",
-    "url",
-    "vanadium",
-    "vanadium_meth",
-    "vegetation_dom_grasses",
-    "vegetation_dom_shrubs",
-    "vegetation_dom_trees",
-    "vegetation_total_cover",
-    "viola",
-    "viola_meth",
-    "voyage_code",
-    "voyage_survey_link",
-    "water_content",
-    "water_content_soil_meth",
-    "water_holding_capacity",
-    "water_holding_capacity_meth",
-    "ytterbium",
-    "ytterbium_meth",
-    "yttrium",
-    "yttrium_meth",
-    "zea",
-    "zea_meth",
-    "zirconium",
-    "zirconium_meth",
-    "zooplankton_biomass",
-    "zooplankton_biomass_meth",
-    "sample_metadata_ingest_date",
-    "sample_metadata_ingest_file",
-    "sample_metadata_update_history",
-    "sample_database_file",
-]
-
-
-def scrub_context_fields(obj):
-    for next_c_field in context_fields_to_remove:
-        del obj[next_c_field]
-
-
 class AMDBaseNoSchemaMetadata(BaseMetadata):
     schema_classes = [AustralianMicrobiomeSchema]
     sql_to_excel_context_classes = [
@@ -627,7 +125,7 @@ class BASEAmpliconsMetadata(AMDBaseMetadata):
     contextual_classes = common_context
     metadata_patterns = [r"^.*\.md5$", r"^.*_metadata.*.*\.xlsx$"]
     metadata_urls = [
-        "https://downloads-qcif.bioplatforms.com/bpa/temp_amd/base/raw/amplicons/",
+        "https://downloads-qcif.bioplatforms.com/bpa/base/raw/amplicons/",
     ]
     metadata_url_components = ("amplicon", "facility_code", "ticket")
     resource_linkage = ("sample_extraction_id", "amplicon", "base_amplicon_linkage")
@@ -809,6 +307,7 @@ class BASEAmpliconsMetadata(AMDBaseMetadata):
                     {
                         "name": name,
                         "id": name,
+                        "sample_type": "soil",
                         "read_length": base_amplicon_read_length(
                             amplicon
                         ),  # hard-coded for now, on advice of AB at CSIRO
@@ -850,7 +349,6 @@ class BASEAmpliconsMetadata(AMDBaseMetadata):
                 tag_names = ["amplicons", amplicon, obj["sample_type"]]
                 obj["tags"] = [{"name": t} for t in tag_names]
                 if not self.is_bad_package(obj):
-                    scrub_context_fields(obj)
                     packages.append(obj)
         return packages
 
@@ -913,7 +411,7 @@ class BASEAmpliconsControlMetadata(AMDBaseMetadata):
     contextual_classes = common_context
     metadata_patterns = [r"^.*\.md5$", r"^.*_metadata.*.*\.xlsx$"]
     metadata_urls = [
-        "https://downloads-qcif.bioplatforms.com/bpa/temp_amd/base/raw/amplicons/",
+        "https://downloads-qcif.bioplatforms.com/bpa/base/raw/amplicons/",
     ]
     metadata_url_components = ("amplicon", "facility_code", "ticket")
     resource_linkage = ("amplicon", "flow_id")
@@ -999,7 +497,6 @@ class BASEAmpliconsControlMetadata(AMDBaseMetadata):
             self.build_notes_into_object(obj)
             tag_names = ["amplicons-control", amplicon, "raw"]
             obj["tags"] = [{"name": t} for t in tag_names]
-            scrub_context_fields(obj)
             packages.append(obj)
         return packages
 
@@ -1027,7 +524,7 @@ class BASEMetagenomicsMetadata(AMDBaseMetadata):
     contextual_classes = common_context
     metadata_patterns = [r"^.*\.md5$", r"^.*_metadata.*.*\.xlsx$"]
     metadata_urls = [
-        "https://downloads-qcif.bioplatforms.com/bpa/temp_amd/base/raw/metagenomics/",
+        "https://downloads-qcif.bioplatforms.com/bpa/base/raw/metagenomics/",
     ]
     metadata_url_components = ("facility_code", "ticket")
     resource_linkage = ("sample_extraction_id", "flow_id")
@@ -1125,6 +622,7 @@ class BASEMetagenomicsMetadata(AMDBaseMetadata):
 
         obj = {
             "name": name,
+            "sample_type": "soil",
             "id": name,
             "sample_id": sample_id,
             "flow_id": flow_id,
@@ -1271,8 +769,8 @@ class BASEMetagenomicsMetadata(AMDBaseMetadata):
                     continue
                 generated_packages.add(new_obj["id"])
                 if not new_obj.get("flow_id") in self.bad_flow_ids:
-                    scrub_context_fields(new_obj)
                     packages.append(new_obj)
+
         return packages
 
     def _get_resources(self):
@@ -1313,7 +811,7 @@ class BASESiteImagesMetadata(AMDBaseMetadata):
     omics = None
     technology = "site-images"
     metadata_urls = [
-        "https://downloads-qcif.bioplatforms.com/bpa/temp_amd/base/site-images/",
+        "https://downloads-qcif.bioplatforms.com/bpa/base/site-images/",
     ]
     metadata_url_components = ("ticket",)
     resource_linkage = ("site_ids",)
@@ -1387,7 +885,6 @@ class BASESiteImagesMetadata(AMDBaseMetadata):
             ingest_utils.add_spatial_extra(self._logger, obj)
             tag_names = ["site-images"]
             obj["tags"] = [{"name": t} for t in tag_names]
-            scrub_context_fields(obj)
             packages.append(obj)
         return packages
 
@@ -1531,7 +1028,7 @@ class MarineMicrobesAmpliconsMetadata(AMDBaseMetadata):
         "MM_18S_preBPA2_UNSW_metadata.xlsx",
     )
     metadata_urls = [
-        "https://downloads-qcif.bioplatforms.com/bpa/temp_amd/marine_microbes/raw/amplicons/"
+        "https://downloads-qcif.bioplatforms.com/bpa/marine_microbes/raw/amplicons/"
     ]
     metadata_url_components = ("amplicon", "facility_code", "ticket")
     md5 = {
@@ -1667,7 +1164,6 @@ class MarineMicrobesAmpliconsMetadata(AMDBaseMetadata):
                 obj["tags"] = [{"name": t} for t in tag_names]
                 package_link = tuple(obj[t] for t in self.resource_linkage)
                 if package_link not in self.missing_resources:
-                    scrub_context_fields(obj)
                     packages.append(obj)
         return packages
 
@@ -1723,7 +1219,7 @@ class MarineMicrobesAmpliconsControlMetadata(AMDBaseMetadata):
         "skip": common_skip + [files.mm_amplicon_filename_re],
     }
     metadata_urls = [
-        "https://downloads-qcif.bioplatforms.com/bpa/temp_amd/marine_microbes/raw/amplicons/"
+        "https://downloads-qcif.bioplatforms.com/bpa/marine_microbes/raw/amplicons/"
     ]
     metadata_url_components = ("amplicon", "facility_code", "ticket")
 
@@ -1800,7 +1296,6 @@ class MarineMicrobesAmpliconsControlMetadata(AMDBaseMetadata):
             self.build_notes_into_object(obj)
             tag_names = ["amplicons-control", amplicon, "raw"]
             obj["tags"] = [{"name": t} for t in tag_names]
-            scrub_context_fields(obj)
             packages.append(obj)
         return packages
 
@@ -1835,7 +1330,7 @@ class MarineMicrobesMetagenomicsMetadata(BaseMarineMicrobesMetadata):
     contextual_classes = common_context
     metadata_patterns = [r"^.*\.md5", r"^.*_metadata.*\.xlsx"]
     metadata_urls = [
-        "https://downloads-qcif.bioplatforms.com/bpa/temp_amd/marine_microbes/raw/metagenomics/"
+        "https://downloads-qcif.bioplatforms.com/bpa/marine_microbes/raw/metagenomics/"
     ]
     metadata_url_components = ("facility_code", "ticket")
     tracker_filename = "MetagenomicsTrack"
@@ -1946,7 +1441,6 @@ class MarineMicrobesMetagenomicsMetadata(BaseMarineMicrobesMetadata):
                 if obj.get("sample_type"):
                     tag_names.append(obj["sample_type"])
                 obj["tags"] = [{"name": t} for t in tag_names]
-                scrub_context_fields(obj)
                 packages.append(obj)
         return packages
 
@@ -1980,7 +1474,7 @@ class MarineMicrobesMetatranscriptomeMetadata(BaseMarineMicrobesMetadata):
     omics = "metatranscriptomics"
     metadata_patterns = [r"^.*\.md5", r"^.*_metadata.*\.xlsx"]
     metadata_urls = [
-        "https://downloads-qcif.bioplatforms.com/bpa/temp_amd/marine_microbes/raw/metatranscriptome/"
+        "https://downloads-qcif.bioplatforms.com/bpa/marine_microbes/raw/metatranscriptome/"
     ]
     metadata_url_components = ("facility_code", "ticket")
     tracker_filename = "MetatranscriptomeTrack"
@@ -2095,7 +1589,6 @@ class MarineMicrobesMetatranscriptomeMetadata(BaseMarineMicrobesMetadata):
             if obj.get("sample_type"):
                 tag_names.append(obj["sample_type"])
             obj["tags"] = [{"name": t} for t in tag_names]
-            scrub_context_fields(obj)
             packages.append(obj)
         return packages
 
@@ -2130,7 +1623,7 @@ class AustralianMicrobiomeMetagenomicsNovaseqMetadata(AMDBaseMetadata):
     contextual_classes = common_context
     metadata_patterns = [r"^.*\.md5", r"^.*_metadata.*\.xlsx"]
     metadata_urls = [
-        "https://downloads-qcif.bioplatforms.com/bpa/temp_amd/amd/metagenomics-novaseq/"
+        "https://downloads-qcif.bioplatforms.com/bpa/amd/metagenomics-novaseq/"
     ]
     metadata_url_components = ("facility_code", "ticket")
     spreadsheet = {
@@ -2235,7 +1728,6 @@ class AustralianMicrobiomeMetagenomicsNovaseqMetadata(AMDBaseMetadata):
                 if obj.get("sample_type"):
                     tag_names.append(obj["sample_type"])
                 obj["tags"] = [{"name": t} for t in tag_names]
-                scrub_context_fields(obj)
                 packages.append(obj)
         return packages
 
@@ -2275,7 +1767,7 @@ class AustralianMicrobiomeMetagenomicsNovaseqControlMetadata(AMDBaseMetadata):
         "skip": [files.amd_metagenomics_novaseq_re],
     }
     metadata_urls = [
-        "https://downloads-qcif.bioplatforms.com/bpa/temp_amd/amd/metagenomics-novaseq/"
+        "https://downloads-qcif.bioplatforms.com/bpa/amd/metagenomics-novaseq/"
     ]
     metadata_url_components = ("facility_code", "ticket")
 
@@ -2348,7 +1840,6 @@ class AustralianMicrobiomeMetagenomicsNovaseqControlMetadata(AMDBaseMetadata):
             self.build_notes_into_object(obj)
             tag_names = ["novaseq-control", "raw"]
             obj["tags"] = [{"name": t} for t in tag_names]
-            scrub_context_fields(obj)
             packages.append(obj)
         return packages
 
@@ -2389,9 +1880,7 @@ class AustralianMicrobiomeAmpliconsMetadata(AMDBaseMetadata):
         "options": {"header_length": 1, "column_name_row_index": 0,},
     }
     technology = "amplicons"
-    metadata_urls = [
-        "https://downloads-qcif.bioplatforms.com/bpa/temp_amd/amd/amplicons-miseq/"
-    ]
+    metadata_urls = ["https://downloads-qcif.bioplatforms.com/bpa/amd/amplicons-miseq/"]
     metadata_url_components = ("amplicon", "ticket")
     md5 = {
         "match": [files.amd_amplicon_filename_re],
@@ -2489,7 +1978,6 @@ class AustralianMicrobiomeAmpliconsMetadata(AMDBaseMetadata):
                 if obj.get("sample_type"):
                     tag_names.append(obj["sample_type"])
                 obj["tags"] = [{"name": t} for t in tag_names]
-                scrub_context_fields(obj)
                 packages.append(obj)
         return packages
 
@@ -2534,9 +2022,7 @@ class AustralianMicrobiomeAmpliconsControlMetadata(AMDBaseMetadata):
         "match": [files.amd_amplicon_control_filename_re],
         "skip": [files.amd_amplicon_filename_re],
     }
-    metadata_urls = [
-        "https://downloads-qcif.bioplatforms.com/bpa/temp_amd/amd/amplicons-miseq/"
-    ]
+    metadata_urls = ["https://downloads-qcif.bioplatforms.com/bpa/amd/amplicons-miseq/"]
     metadata_url_components = ("amplicon", "ticket")
 
     def __init__(
@@ -2611,7 +2097,6 @@ class AustralianMicrobiomeAmpliconsControlMetadata(AMDBaseMetadata):
             self.build_notes_into_object(obj)
             tag_names = ["amplicons-control", amplicon, "raw"]
             obj["tags"] = [{"name": t} for t in tag_names]
-            scrub_context_fields(obj)
             packages.append(obj)
         return packages
 
