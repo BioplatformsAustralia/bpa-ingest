@@ -17,7 +17,7 @@ class AustralianMicrobiomeSchema:
         self.schema_definitions = None
 
     def get_schema_definitions(self, use_cols=None, pandas_format=None):
-        if not self.schema_definitions:
+        if self.schema_definitions is None:
             if use_cols is None:
                 use_cols = ["Field", "dType", "AM_enviro", "Units_Definition", "Units"]
             if pandas_format is None:
