@@ -91,6 +91,7 @@ class AMDBaseMetadata(BaseMetadata):
     ):
         super().__init__(logger)
         self.path = Path(metadata_path)
+        self.schema_definitions = kwargs["schema_definitions"]
 
 
 class AccessAMDContextualMetadata(AMDBaseMetadata):
@@ -105,9 +106,8 @@ class AccessAMDContextualMetadata(AMDBaseMetadata):
     def __init__(
         self, logger, metadata_path, **kwargs
     ):
-        super().__init__(logger, metadata_path, kwargs)
+        super().__init__(logger, metadata_path, **kwargs)
         self.contextual_metadata = kwargs["contextual_metadata"]
-        self.schema_definitions = kwargs["schema_definitions"]
 
     def _get_packages(self):
         return []
@@ -245,7 +245,7 @@ class BASEAmpliconsMetadata(AMDBaseMetadata):
     def __init__(
         self, logger, metadata_path, **kwargs
     ):
-        super().__init__(logger, metadata_path)
+        super().__init__(logger, metadata_path, **kwargs)
         self.contextual_metadata = kwargs["contextual_metadata"]
         self.metadata_info = kwargs["metadata_info"]
         self.track_meta = BASETrackMetadata()
@@ -426,7 +426,7 @@ class BASEAmpliconsControlMetadata(AMDBaseMetadata):
     def __init__(
         self, logger, metadata_path, **kwargs
     ):
-        super().__init__(logger, metadata_path)
+        super().__init__(logger, metadata_path, **kwargs)
         self.metadata_info = kwargs["metadata_info"]
         self.contextual_metadata = kwargs["contextual_metadata"]
         self.track_meta = BASETrackMetadata()
@@ -595,7 +595,7 @@ class BASEMetagenomicsMetadata(AMDBaseMetadata):
     def __init__(
         self, logger, metadata_path, **kwargs
     ):
-        super().__init__(logger, metadata_path)
+        super().__init__(logger, metadata_path, **kwargs)
         self.contextual_metadata = kwargs["contextual_metadata"]
         self.metadata_info = kwargs["metadata_info"]
         self.track_meta = BASETrackMetadata()
@@ -824,7 +824,7 @@ class BASESiteImagesMetadata(AMDBaseMetadata):
     def __init__(
         self, logger, metadata_path, **kwargs
     ):
-        super().__init__(logger, metadata_path)
+        super().__init__(logger, metadata_path, **kwargs)
         self.contextual_metadata = kwargs["contextual_metadata"]
         self.metadata_info = kwargs["metadata_info"]
         self.id_to_resources = self._read_md5s()
@@ -1040,7 +1040,7 @@ class MarineMicrobesAmpliconsMetadata(AMDBaseMetadata):
     def __init__(
         self, logger, metadata_path, **kwargs
     ):
-        super().__init__(logger, metadata_path)
+        super().__init__(logger, metadata_path, **kwargs)
         self.google_track_meta = MarineMicrobesGoogleTrackMetadata()
         self.contextual_metadata = kwargs["contextual_metadata"]
         self.metadata_info = kwargs["metadata_info"]
@@ -1225,7 +1225,7 @@ class MarineMicrobesAmpliconsControlMetadata(AMDBaseMetadata):
     def __init__(
         self, logger, metadata_path, **kwargs
     ):
-        super().__init__(logger, metadata_path)
+        super().__init__(logger, metadata_path, **kwargs)
         self.metadata_info = kwargs["metadata_info"]
         self.google_track_meta = MarineMicrobesGoogleTrackMetadata()
 
@@ -1362,7 +1362,7 @@ class MarineMicrobesMetagenomicsMetadata(BaseMarineMicrobesMetadata):
     def __init__(
         self, logger, metadata_path, **kwargs
     ):
-        super().__init__(logger, metadata_path)
+        super().__init__(logger, metadata_path, **kwargs)
         self.contextual_metadata = kwargs["contextual_metadata"]
         self.metadata_info = kwargs["metadata_info"]
 
@@ -1504,7 +1504,7 @@ class MarineMicrobesMetatranscriptomeMetadata(BaseMarineMicrobesMetadata):
     def __init__(
         self, logger, metadata_path, **kwargs
     ):
-        super().__init__(logger, metadata_path)
+        super().__init__(logger, metadata_path, **kwargs)
         self.contextual_metadata = kwargs["contextual_metadata"]
         self.metadata_info = kwargs["metadata_info"]
 
@@ -1660,7 +1660,7 @@ class AustralianMicrobiomeMetagenomicsNovaseqMetadata(AMDBaseMetadata):
     def __init__(
         self, logger, metadata_path, **kwargs
     ):
-        super().__init__(logger, metadata_path)
+        super().__init__(logger, metadata_path, **kwargs)
         self.contextual_metadata = kwargs["contextual_metadata"]
         self.metadata_info = kwargs["metadata_info"]
         self.google_track_meta = AustralianMicrobiomeGoogleTrackMetadata()
@@ -1769,7 +1769,7 @@ class AustralianMicrobiomeMetagenomicsNovaseqControlMetadata(AMDBaseMetadata):
     def __init__(
         self, logger, metadata_path, **kwargs
     ):
-        super().__init__(logger, metadata_path)
+        super().__init__(logger, metadata_path, **kwargs)
         self.metadata_info = kwargs["metadata_info"]
         self.google_track_meta = AustralianMicrobiomeGoogleTrackMetadata()
 
@@ -1884,7 +1884,7 @@ class AustralianMicrobiomeAmpliconsMetadata(AMDBaseMetadata):
     def __init__(
         self, logger, metadata_path, **kwargs
     ):
-        super().__init__(logger, metadata_path)
+        super().__init__(logger, metadata_path, **kwargs)
         self.google_track_meta = AustralianMicrobiomeGoogleTrackMetadata()
         self.contextual_metadata = kwargs["contextual_metadata"]
         self.metadata_info = kwargs["metadata_info"]
@@ -2025,7 +2025,7 @@ class AustralianMicrobiomeAmpliconsControlMetadata(AMDBaseMetadata):
     def __init__(
         self, logger, metadata_path, **kwargs
     ):
-        super().__init__(logger, metadata_path)
+        super().__init__(logger, metadata_path, **kwargs)
         self.metadata_info = kwargs["metadata_info"]
         self.google_track_meta = AustralianMicrobiomeGoogleTrackMetadata()
 
