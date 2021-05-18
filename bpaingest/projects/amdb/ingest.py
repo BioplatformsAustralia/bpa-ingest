@@ -71,11 +71,12 @@ def build_contextual_field_names():
         field_names[field] = "{} ({})".format(field, units.strip())
     return field_names
 
-
-class AMDBaseNoSchemaMetadata(BaseMetadata):
+class AMDBaseMetadata(BaseMetadata):
+    package_field_names = build_contextual_field_names()
     sql_to_excel_context_classes = [
         AustralianMicrobiomeSampleContextualSQLiteToExcelCopy
     ]
+    schema_classes = [AustralianMicrobiomeSchema]
 
     notes_mapping = [
         {"key": "env_material_control_vocab_0", "separator": ", "},
@@ -85,8 +86,11 @@ class AMDBaseNoSchemaMetadata(BaseMetadata):
         {"key": "analytical_platform"},
     ]
 
-class AMDBaseMetadata(AMDBaseNoSchemaMetadata):
-    package_field_names = build_contextual_field_names()
+    def __init__(
+            self, logger, metadata_path, **kwargs
+    ):
+        super().__init__(logger)
+        self.path = Path(metadata_path)
 
 
 class AccessAMDContextualMetadata(AMDBaseMetadata):
@@ -97,14 +101,13 @@ class AccessAMDContextualMetadata(AMDBaseMetadata):
 
     contextual_classes = common_context
     metadata_urls = []
-    schema_classes = [AustralianMicrobiomeSchema]
 
     def __init__(
-        self, logger, metadata_path, contextual_metadata=None, metadata_info=None, schema_definitions=None
+        self, logger, metadata_path, **kwargs
     ):
-        super().__init__(logger, metadata_path)
-        self.contextual_metadata = contextual_metadata
-        self.schema_definitions = schema_definitions
+        super().__init__(logger, metadata_path, kwargs)
+        self.contextual_metadata = kwargs["contextual_metadata"]
+        self.schema_definitions = kwargs["schema_definitions"]
 
     def _get_packages(self):
         return []
@@ -240,12 +243,11 @@ class BASEAmpliconsMetadata(AMDBaseMetadata):
     }
 
     def __init__(
-        self, logger, metadata_path, contextual_metadata=None, metadata_info=None
+        self, logger, metadata_path, **kwargs
     ):
         super().__init__(logger, metadata_path)
-        self.path = Path(metadata_path)
-        self.contextual_metadata = contextual_metadata
-        self.metadata_info = metadata_info
+        self.contextual_metadata = kwargs["contextual_metadata"]
+        self.metadata_info = kwargs["metadata_info"]
         self.track_meta = BASETrackMetadata()
 
     def _get_packages(self):
@@ -422,12 +424,11 @@ class BASEAmpliconsControlMetadata(AMDBaseMetadata):
     }
 
     def __init__(
-        self, logger, metadata_path, contextual_metadata=None, metadata_info=None
+        self, logger, metadata_path, **kwargs
     ):
         super().__init__(logger, metadata_path)
-        self.path = Path(metadata_path)
-        self.metadata_info = metadata_info
-        self.contextual_metadata = contextual_metadata
+        self.metadata_info = kwargs["metadata_info"]
+        self.contextual_metadata = kwargs["contextual_metadata"]
         self.track_meta = BASETrackMetadata()
 
     def md5_lines(self):
@@ -592,12 +593,11 @@ class BASEMetagenomicsMetadata(AMDBaseMetadata):
     bad_flow_ids = ["H8AABADXX"]
 
     def __init__(
-        self, logger, metadata_path, contextual_metadata=None, metadata_info=None
+        self, logger, metadata_path, **kwargs
     ):
         super().__init__(logger, metadata_path)
-        self.path = Path(metadata_path)
-        self.contextual_metadata = contextual_metadata
-        self.metadata_info = metadata_info
+        self.contextual_metadata = kwargs["contextual_metadata"]
+        self.metadata_info = kwargs["metadata_info"]
         self.track_meta = BASETrackMetadata()
 
     def assemble_obj(self, sample_id, sample_extraction_id, flow_id, row, track_meta):
@@ -822,12 +822,11 @@ class BASESiteImagesMetadata(AMDBaseMetadata):
     }
 
     def __init__(
-        self, logger, metadata_path, contextual_metadata=None, metadata_info=None
+        self, logger, metadata_path, **kwargs
     ):
         super().__init__(logger, metadata_path)
-        self.path = Path(metadata_path)
-        self.contextual_metadata = contextual_metadata
-        self.metadata_info = metadata_info
+        self.contextual_metadata = kwargs["contextual_metadata"]
+        self.metadata_info = kwargs["metadata_info"]
         self.id_to_resources = self._read_md5s()
 
     def _read_md5s(self):
@@ -1039,13 +1038,12 @@ class MarineMicrobesAmpliconsMetadata(AMDBaseMetadata):
     missing_resources = [("102.100.100/34937", "AUWLK"), ("102.100.100/37712", "BHHYV")]
 
     def __init__(
-        self, logger, metadata_path, contextual_metadata=None, metadata_info=None
+        self, logger, metadata_path, **kwargs
     ):
         super().__init__(logger, metadata_path)
         self.google_track_meta = MarineMicrobesGoogleTrackMetadata()
-        self.path = Path(metadata_path)
-        self.contextual_metadata = contextual_metadata
-        self.metadata_info = metadata_info
+        self.contextual_metadata = kwargs["contextual_metadata"]
+        self.metadata_info = kwargs["metadata_info"]
         self.track_meta = {
             amplicon: MarineMicrobesTrackMetadata(self._logger, fname)
             for (amplicon, fname) in self.amplicon_tracker.items()
@@ -1225,11 +1223,10 @@ class MarineMicrobesAmpliconsControlMetadata(AMDBaseMetadata):
     metadata_url_components = ("amplicon", "facility_code", "ticket")
 
     def __init__(
-        self, logger, metadata_path, contextual_metadata=None, metadata_info=None
+        self, logger, metadata_path, **kwargs
     ):
         super().__init__(logger, metadata_path)
-        self.path = Path(metadata_path)
-        self.metadata_info = metadata_info
+        self.metadata_info = kwargs["metadata_info"]
         self.google_track_meta = MarineMicrobesGoogleTrackMetadata()
 
     def md5_lines(self):
@@ -1363,12 +1360,11 @@ class MarineMicrobesMetagenomicsMetadata(BaseMarineMicrobesMetadata):
     }
 
     def __init__(
-        self, logger, metadata_path, contextual_metadata=None, metadata_info=None
+        self, logger, metadata_path, **kwargs
     ):
         super().__init__(logger, metadata_path)
-        self.path = Path(metadata_path)
-        self.contextual_metadata = contextual_metadata
-        self.metadata_info = metadata_info
+        self.contextual_metadata = kwargs["contextual_metadata"]
+        self.metadata_info = kwargs["metadata_info"]
 
     def _get_packages(self):
         self._logger.info(
@@ -1506,12 +1502,11 @@ class MarineMicrobesMetatranscriptomeMetadata(BaseMarineMicrobesMetadata):
     }
 
     def __init__(
-        self, logger, metadata_path, contextual_metadata=None, metadata_info=None
+        self, logger, metadata_path, **kwargs
     ):
         super().__init__(logger, metadata_path)
-        self.path = Path(metadata_path)
-        self.contextual_metadata = contextual_metadata
-        self.metadata_info = metadata_info
+        self.contextual_metadata = kwargs["contextual_metadata"]
+        self.metadata_info = kwargs["metadata_info"]
 
     def _get_packages(self):
         self._logger.info(
@@ -1663,12 +1658,11 @@ class AustralianMicrobiomeMetagenomicsNovaseqMetadata(AMDBaseMetadata):
     }
 
     def __init__(
-        self, logger, metadata_path, contextual_metadata=None, metadata_info=None
+        self, logger, metadata_path, **kwargs
     ):
         super().__init__(logger, metadata_path)
-        self.path = Path(metadata_path)
-        self.contextual_metadata = contextual_metadata
-        self.metadata_info = metadata_info
+        self.contextual_metadata = kwargs["contextual_metadata"]
+        self.metadata_info = kwargs["metadata_info"]
         self.google_track_meta = AustralianMicrobiomeGoogleTrackMetadata()
 
     def _get_packages(self):
@@ -1773,11 +1767,10 @@ class AustralianMicrobiomeMetagenomicsNovaseqControlMetadata(AMDBaseMetadata):
     metadata_url_components = ("facility_code", "ticket")
 
     def __init__(
-        self, logger, metadata_path, contextual_metadata=None, metadata_info=None
+        self, logger, metadata_path, **kwargs
     ):
         super().__init__(logger, metadata_path)
-        self.path = Path(metadata_path)
-        self.metadata_info = metadata_info
+        self.metadata_info = kwargs["metadata_info"]
         self.google_track_meta = AustralianMicrobiomeGoogleTrackMetadata()
 
     def md5_lines(self):
@@ -1889,13 +1882,12 @@ class AustralianMicrobiomeAmpliconsMetadata(AMDBaseMetadata):
     }
 
     def __init__(
-        self, logger, metadata_path, contextual_metadata=None, metadata_info=None
+        self, logger, metadata_path, **kwargs
     ):
         super().__init__(logger, metadata_path)
         self.google_track_meta = AustralianMicrobiomeGoogleTrackMetadata()
-        self.path = Path(metadata_path)
-        self.contextual_metadata = contextual_metadata
-        self.metadata_info = metadata_info
+        self.contextual_metadata = kwargs["contextual_metadata"]
+        self.metadata_info = kwargs["metadata_info"]
 
     def _get_packages(self):
         xlsx_re = re.compile(r"^.*_(\w+)_metadata.*\.xlsx$")
@@ -1987,6 +1979,7 @@ class AustralianMicrobiomeAmpliconsMetadata(AMDBaseMetadata):
             "Ingesting MM md5 file information from {0}".format(self.path)
         )
         resources = []
+        # md5_filenames = []
         for md5_file in glob(self.path + "/*.md5"):
             self._logger.info("Processing md5 file {}".format(md5_file))
             for filename, md5, file_info in self.parse_md5file(md5_file):
@@ -2008,7 +2001,10 @@ class AustralianMicrobiomeAmpliconsMetadata(AMDBaseMetadata):
                         resource,
                     )
                 )
-        return resources
+            # md5_filenames.append(md5_file)
+        xlsx_resources = self.generate_xlsx_resources()
+        # m5_resources = self.generate_md5_resources(md5_filenames, xlsx_resources)
+        return resources + xlsx_resources
 
 
 class AustralianMicrobiomeAmpliconsControlMetadata(AMDBaseMetadata):
@@ -2027,11 +2023,10 @@ class AustralianMicrobiomeAmpliconsControlMetadata(AMDBaseMetadata):
     metadata_url_components = ("amplicon", "ticket")
 
     def __init__(
-        self, logger, metadata_path, contextual_metadata=None, metadata_info=None
+        self, logger, metadata_path, **kwargs
     ):
         super().__init__(logger, metadata_path)
-        self.path = Path(metadata_path)
-        self.metadata_info = metadata_info
+        self.metadata_info = kwargs["metadata_info"]
         self.google_track_meta = AustralianMicrobiomeGoogleTrackMetadata()
 
     def md5_lines(self):
