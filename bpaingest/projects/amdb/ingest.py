@@ -71,6 +71,7 @@ def build_contextual_field_names():
         field_names[field] = "{} ({})".format(field, units.strip())
     return field_names
 
+
 class AMDBaseMetadata(BaseMetadata):
     package_field_names = build_contextual_field_names()
     sql_to_excel_context_classes = [
@@ -86,9 +87,7 @@ class AMDBaseMetadata(BaseMetadata):
         {"key": "analytical_platform"},
     ]
 
-    def __init__(
-            self, logger, metadata_path, **kwargs
-    ):
+    def __init__(self, logger, metadata_path, **kwargs):
         super().__init__(logger)
         self.path = Path(metadata_path)
         self.schema_definitions = kwargs["schema_definitions"]
@@ -103,9 +102,7 @@ class AccessAMDContextualMetadata(AMDBaseMetadata):
     contextual_classes = common_context
     metadata_urls = []
 
-    def __init__(
-        self, logger, metadata_path, **kwargs
-    ):
+    def __init__(self, logger, metadata_path, **kwargs):
         super().__init__(logger, metadata_path, **kwargs)
         self.contextual_metadata = kwargs["contextual_metadata"]
 
@@ -242,9 +239,7 @@ class BASEAmpliconsMetadata(AMDBaseMetadata):
         "skip": common_skip + files.base_amplicon_control_regexps,
     }
 
-    def __init__(
-        self, logger, metadata_path, **kwargs
-    ):
+    def __init__(self, logger, metadata_path, **kwargs):
         super().__init__(logger, metadata_path, **kwargs)
         self.contextual_metadata = kwargs["contextual_metadata"]
         self.metadata_info = kwargs["metadata_info"]
@@ -423,9 +418,7 @@ class BASEAmpliconsControlMetadata(AMDBaseMetadata):
         "skip": common_skip + files.base_amplicon_regexps,
     }
 
-    def __init__(
-        self, logger, metadata_path, **kwargs
-    ):
+    def __init__(self, logger, metadata_path, **kwargs):
         super().__init__(logger, metadata_path, **kwargs)
         self.metadata_info = kwargs["metadata_info"]
         self.contextual_metadata = kwargs["contextual_metadata"]
@@ -592,9 +585,7 @@ class BASEMetagenomicsMetadata(AMDBaseMetadata):
 
     bad_flow_ids = ["H8AABADXX"]
 
-    def __init__(
-        self, logger, metadata_path, **kwargs
-    ):
+    def __init__(self, logger, metadata_path, **kwargs):
         super().__init__(logger, metadata_path, **kwargs)
         self.contextual_metadata = kwargs["contextual_metadata"]
         self.metadata_info = kwargs["metadata_info"]
@@ -821,9 +812,7 @@ class BASESiteImagesMetadata(AMDBaseMetadata):
         "skip": None,
     }
 
-    def __init__(
-        self, logger, metadata_path, **kwargs
-    ):
+    def __init__(self, logger, metadata_path, **kwargs):
         super().__init__(logger, metadata_path, **kwargs)
         self.contextual_metadata = kwargs["contextual_metadata"]
         self.metadata_info = kwargs["metadata_info"]
@@ -1037,9 +1026,7 @@ class MarineMicrobesAmpliconsMetadata(AMDBaseMetadata):
     }
     missing_resources = [("102.100.100/34937", "AUWLK"), ("102.100.100/37712", "BHHYV")]
 
-    def __init__(
-        self, logger, metadata_path, **kwargs
-    ):
+    def __init__(self, logger, metadata_path, **kwargs):
         super().__init__(logger, metadata_path, **kwargs)
         self.google_track_meta = MarineMicrobesGoogleTrackMetadata()
         self.contextual_metadata = kwargs["contextual_metadata"]
@@ -1222,9 +1209,7 @@ class MarineMicrobesAmpliconsControlMetadata(AMDBaseMetadata):
     ]
     metadata_url_components = ("amplicon", "facility_code", "ticket")
 
-    def __init__(
-        self, logger, metadata_path, **kwargs
-    ):
+    def __init__(self, logger, metadata_path, **kwargs):
         super().__init__(logger, metadata_path, **kwargs)
         self.metadata_info = kwargs["metadata_info"]
         self.google_track_meta = MarineMicrobesGoogleTrackMetadata()
@@ -1359,9 +1344,7 @@ class MarineMicrobesMetagenomicsMetadata(BaseMarineMicrobesMetadata):
         "skip": common_skip,
     }
 
-    def __init__(
-        self, logger, metadata_path, **kwargs
-    ):
+    def __init__(self, logger, metadata_path, **kwargs):
         super().__init__(logger, metadata_path, **kwargs)
         self.contextual_metadata = kwargs["contextual_metadata"]
         self.metadata_info = kwargs["metadata_info"]
@@ -1501,9 +1484,7 @@ class MarineMicrobesMetatranscriptomeMetadata(BaseMarineMicrobesMetadata):
         "skip": None,
     }
 
-    def __init__(
-        self, logger, metadata_path, **kwargs
-    ):
+    def __init__(self, logger, metadata_path, **kwargs):
         super().__init__(logger, metadata_path, **kwargs)
         self.contextual_metadata = kwargs["contextual_metadata"]
         self.metadata_info = kwargs["metadata_info"]
@@ -1657,9 +1638,7 @@ class AustralianMicrobiomeMetagenomicsNovaseqMetadata(AMDBaseMetadata):
         "skip": [files.amd_metagenomics_novaseq_control_re,],
     }
 
-    def __init__(
-        self, logger, metadata_path, **kwargs
-    ):
+    def __init__(self, logger, metadata_path, **kwargs):
         super().__init__(logger, metadata_path, **kwargs)
         self.contextual_metadata = kwargs["contextual_metadata"]
         self.metadata_info = kwargs["metadata_info"]
@@ -1766,9 +1745,7 @@ class AustralianMicrobiomeMetagenomicsNovaseqControlMetadata(AMDBaseMetadata):
     ]
     metadata_url_components = ("facility_code", "ticket")
 
-    def __init__(
-        self, logger, metadata_path, **kwargs
-    ):
+    def __init__(self, logger, metadata_path, **kwargs):
         super().__init__(logger, metadata_path, **kwargs)
         self.metadata_info = kwargs["metadata_info"]
         self.google_track_meta = AustralianMicrobiomeGoogleTrackMetadata()
@@ -1874,16 +1851,16 @@ class AustralianMicrobiomeAmpliconsMetadata(AMDBaseMetadata):
         "options": {"header_length": 1, "column_name_row_index": 0,},
     }
     technology = "amplicons"
-    metadata_urls = ["https://downloads-qcif.bioplatforms.com/bpa/temp_amd/amd/amplicons-miseq/"]
+    metadata_urls = [
+        "https://downloads-qcif.bioplatforms.com/bpa/temp_amd/amd/amplicons-miseq/"
+    ]
     metadata_url_components = ("amplicon", "ticket")
     md5 = {
         "match": [files.amd_amplicon_filename_re],
         "skip": [files.amd_amplicon_control_filename_re],
     }
 
-    def __init__(
-        self, logger, metadata_path, **kwargs
-    ):
+    def __init__(self, logger, metadata_path, **kwargs):
         super().__init__(logger, metadata_path, **kwargs)
         self.google_track_meta = AustralianMicrobiomeGoogleTrackMetadata()
         self.contextual_metadata = kwargs["contextual_metadata"]
@@ -2019,12 +1996,12 @@ class AustralianMicrobiomeAmpliconsControlMetadata(AMDBaseMetadata):
         "match": [files.amd_amplicon_control_filename_re],
         "skip": [files.amd_amplicon_filename_re],
     }
-    metadata_urls = ["https://downloads-qcif.bioplatforms.com/bpa/temp_amd/amd/amplicons-miseq/"]
+    metadata_urls = [
+        "https://downloads-qcif.bioplatforms.com/bpa/temp_amd/amd/amplicons-miseq/"
+    ]
     metadata_url_components = ("amplicon", "ticket")
 
-    def __init__(
-        self, logger, metadata_path, **kwargs
-    ):
+    def __init__(self, logger, metadata_path, **kwargs):
         super().__init__(logger, metadata_path, **kwargs)
         self.metadata_info = kwargs["metadata_info"]
         self.google_track_meta = AustralianMicrobiomeGoogleTrackMetadata()

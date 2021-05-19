@@ -30,7 +30,7 @@ class BaseMetadata:
             fname,
             additional_context=metadata_info[os.path.basename(fname)],
             suggest_template=True,
-            **kwargs
+            **kwargs,
         )
         for error in wrapper.get_errors():
             self._logger.error(error)
@@ -154,6 +154,35 @@ class BaseMetadata:
             resource = resource_metadata_from_file(linkage, fname, self.ckan_data_type)
             xlsx_info = self.metadata_info[os.path.basename(fname)]
             legacy_url = urljoin(xlsx_info["base_url"], os.path.basename(fname))
+            resources.append((linkage, legacy_url, resource))
+        return resources
+
+    # can use `track_xlsx_resource` to add any resource to each package
+    def generate_context_schema_definitions_as_resource(self):
+        if not self.schema_definitions:
+            raise Exception(
+                f"Cannot generate schema definitions as a resource because no schema definitions exist for {self.ckan_data_type}"
+            )
+        if len(self._linkage_xlsx) == 0:
+            self._logger.error(
+                "no linkage xlsx, likely a bug in the ingest class (xlsx resource needs to be tracked in package creation)"
+            )
+        schema_defs = [next_def for next_def in self.schema_definitions]
+        if len(schema_defs) != 1:
+            raise Exception(
+                f"Expecting 1 and only 1 schema definition for {self.ckan_data_type}"
+            )
+        fname = getattr(schema_defs[0], "source_path")
+        schema_base_urls = getattr(schema_defs[0], "metadata_urls")
+        if len(schema_base_urls) != 1:
+            raise Exception(
+                f"Expecting 1 and only 1 metadata url for schema definition for {self.ckan_data_type}"
+            )
+        metadata_url = schema_base_urls[0]
+        resources = []
+        for linkage, xlsx_name in self._linkage_xlsx.items():
+            resource = resource_metadata_from_file(linkage, fname, self.ckan_data_type)
+            legacy_url = urljoin(metadata_url, os.path.basename(fname))
             resources.append((linkage, legacy_url, resource))
         return resources
 

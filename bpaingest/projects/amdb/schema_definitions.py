@@ -21,7 +21,7 @@ class AustralianMicrobiomeSchema:
             if use_cols is None:
                 use_cols = ["Field", "dType", "AM_enviro", "Units_Definition", "Units"]
             if pandas_format is None:
-                pandas_format = 'records'
+                pandas_format = "records"
             schema_as_dataframes = pandas.read_excel(
                 self.source_path, sheet_name=0, usecols=use_cols
             )

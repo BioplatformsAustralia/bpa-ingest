@@ -37,7 +37,9 @@ class DownloadMetadata:
             (os.path.join(self.path, c.name), c) for c in contextual_classes
         ]
         schema_classes = getattr(project_class, "schema_classes", [])
-        self.schema_definitions = [(os.path.join(self.path, c.name), c) for c in schema_classes]
+        self.schema_definitions = [
+            (os.path.join(self.path, c.name), c) for c in schema_classes
+        ]
 
         if self.fetch or force_fetch:
             self._fetch_metadata(project_class, self.contextual, metadata_info)
@@ -103,13 +105,17 @@ class DownloadMetadata:
 
     def init_schema_classes(self, project_class, metadata_info):
         if not self.schema_definitions:
-            self._logger.info(f"No schema definitions exist for {project_class['name']}. Ignoring...")
+            self._logger.info(
+                f"No schema definitions exist for {project_class['name']}. Ignoring..."
+            )
         for schema_path, schema_cls in self.schema_definitions:
             if not os.path.isdir(schema_path):
                 os.mkdir(schema_path)
             else:
                 self._logger.info(
-                    "Metadata schema definitions path: {} already exists. Moving on.".format(schema_path)
+                    "Metadata schema definitions path: {} already exists. Moving on.".format(
+                        schema_path
+                    )
                 )
             self._logger.info(
                 "fetching schema definitions metadata: %s" % (schema_cls.metadata_urls)
