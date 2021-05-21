@@ -133,7 +133,7 @@ class GAPIlluminaShortreadMetadata(BaseMetadata):
                         "name": name,
                         "id": name,
                         "type": self.ckan_data_type,
-		        "sequence_data_type": self.sequence_data_type,
+                        "sequence_data_type": self.sequence_data_type,
                         "flow_cell_id": flow_cell_id,
                         "data_generated": True,
                         "library_id": raw_library_id,
@@ -277,7 +277,7 @@ class GAPONTMinionMetadata(BaseMetadata):
                         "name": name,
                         "id": name,
                         "type": self.ckan_data_type,
-		        "sequence_data_type": self.sequence_data_type,
+                        "sequence_data_type": self.sequence_data_type,
                         "data_generated": True,
                     }
                 )
@@ -361,7 +361,7 @@ class GAPONTPromethionMetadata(BaseMetadata):
         },
     }
     md5 = {
-        "match": [files.ont_promethion_re],
+        "match": [files.ont_promethion_re, files.ont_promethion_re_2],
         "skip": [
             re.compile(r"^.*_metadata.*\.xlsx$"),
             re.compile(r"^.*SampleSheet.*"),
@@ -407,7 +407,7 @@ class GAPONTPromethionMetadata(BaseMetadata):
                         "name": name,
                         "id": name,
                         "type": self.ckan_data_type,
-		        "sequence_data_type": self.sequence_data_type,
+                        "sequence_data_type": self.sequence_data_type,
                         "data_generated": True,
                     }
                 )
@@ -526,7 +526,7 @@ class GAPGenomics10XMetadata(BaseMetadata):
                         "name": name,
                         "id": name,
                         "type": self.ckan_data_type,
-		        "sequence_data_type": self.sequence_data_type,
+                        "sequence_data_type": self.sequence_data_type,
                         "flow_cell_id": flow_cell_id,
                         "data_generated": True,
                     }
@@ -739,7 +739,7 @@ class GAPGenomicsDDRADMetadata(BaseMetadata):
                         ),
                         "dataset_url": track_get("download"),
                         "type": self.ckan_data_type,
-		        "sequence_data_type": self.sequence_data_type,
+                        "sequence_data_type": self.sequence_data_type,
                     }
                 )
                 gap_describe_ddrad(obj, "ddRAD")

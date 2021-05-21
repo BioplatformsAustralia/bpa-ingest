@@ -32,9 +32,12 @@ AGRF,11/02/2021,,,83673,Wurmbea ,Conservation genomics,Main dataset,ddRAD,AGRF_G
 AGRF,11/02/2021,,,83676,,Phylogenomics - AATOL (NSW) - Run 2,Main dataset,Illumina Short Read,20210211_GAP_ AGRF_CAGRF21025257_HY7KVDRXX,5/3/2021,,BPAOPS-1029,
 AGRF,11/02/2021,,,83675,,Phylogenomics - AATOL (WA & SA ) - Run 2,Main dataset,Illumina Short Read,20210211_GAP_ AGRF_CAGRF21025256_HY7KVDRXX,5/3/2021,,BPAOPS-1028,
 AGRF,17/02/2021,,,83658,,Phylogenomics - AATOL (QLD),Main dataset,Illumina Short Read,20210215_GAP_ AGRF_CAGRF21025252_HWHHHDSXY,5/3/2021,,BPAOPS-1034,
-BRF,18/03/2021,376315,380522,83677,Xanthorrhoea johnsonii,Reference Genomes,Main dataset,PromethION,20210301_GAP_BRF_PAG02700,18/3/2021,1/4/2021,BPAOPS-1049,
-BRF,23/3/2021,376315,380523,83678,Xanthorrhoea johnsonii,Reference Genomes,Main dataset,PromethION,20210302_GAP_BRF_PAG03810,23/03/2021,1/4/2021,BPAOPS-1053,
-BRF,23/3/2021,376315,380524,83679,Xanthorrhoea johnsonii,Reference Genomes,Main dataset,PromethION,20210305_GAP_BRF_PAG03810,23/03/2021,1/4/2021,BPAOPS-1054,
+BRF,18/03/2021,376315,380522,83677,Xanthorrhoea johnsonii,Reference Genomes,Main dataset,PromethION,20210301_GAP_BRF_PAG02700,18/3/2021,1/4/2021,BPAOPS-1049,"(withdrawn, replaced)"
+BRF,23/3/2021,376315,380523,83678,Xanthorrhoea johnsonii,Reference Genomes,Main dataset,PromethION,20210302_GAP_BRF_PAG03810,23/03/2021,1/4/2021,BPAOPS-1053,"(withdrawn, replaced)"
+BRF,23/3/2021,376315,380524,83679,Xanthorrhoea johnsonii,Reference Genomes,Main dataset,PromethION,20210305_GAP_BRF_PAG03810,23/03/2021,1/4/2021,BPAOPS-1054,"(withdrawn, replaced)"
 AGRF,13/04/2021,,,83654,,Phylogenomics - AATOL (ANH),Main dataset,Illumina Short Read,20210413_GAP_NGS_AGRF_H3GYVDSX2,13/4/2021,15/4/2021,BPAOPS-1060,
-AGRF / Kor-jent van Dijk,11/9/2020,,,83650,,Phylogenomics,Pilot,Illumina Short Read,"20200909_GAP_AGRF_HF7CKAFX2 (Angio353 - Korjent data only, plus combined bait)",15/09/2020,,BPAOPS-1063,
-AGRF / Kor-jent van Dijk,11/9/2020,,,83650,,Phylogenomics,Pilot,Illumina Short Read,20200909_GAP_AGRF_H7LV7AFX2 (Angio353 duplicate - Korjent data only),15/09/2020,,BPAOPS-1064,
+AGRF / Kor-jent van Dijk,11/9/2020,,,83650,,Phylogenomics,Pilot,Illumina Short Read,"20200909_GAP_AGRF_HF7CKAFX2 (Angio353 - Korjent data only, plus combined bait)",15/09/2020,28/04/2021,BPAOPS-1063,https://data.bioplatforms.com/dataset?q=ticket%3ABPAOPS-1063
+AGRF / Kor-jent van Dijk,11/9/2020,,,83650,,Phylogenomics,Pilot,Illumina Short Read,20200909_GAP_AGRF_H7LV7AFX2 (Angio353 duplicate - Korjent data only),15/09/2020,28/04/2021,BPAOPS-1064,https://data.bioplatforms.com/dataset?q=ticket%3ABPAOPS-1064
+BRF,18/05/2021,376315,380522,83677,Xanthorrhoea johnsonii,Reference Genomes,Main dataset,PromethION,20210301_GAP_BRF_PAG02700,21/5/2021,,BPAOPS-1070,
+BRF,18/05/2021,376315,380523,83678,Xanthorrhoea johnsonii,Reference Genomes,Main dataset,PromethION,20210302_GAP_BRF_PAG03810,21/5/2021,,BPAOPS-1071,
+BRF,18/05/2021,376315,380524,83679,Xanthorrhoea johnsonii,Reference Genomes,Main dataset,PromethION,20210305_GAP_BRF_PAG03810,21/5/2021,,BPAOPS-1072,

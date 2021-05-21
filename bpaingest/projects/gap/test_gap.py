@@ -2,6 +2,7 @@ from .files import (
     illumina_shortread_re,
     ont_minion_re,
     ont_promethion_re,
+    ont_promethion_re_2,
     genomics_10x_re,
     illumina_shortread_rna_phylo_re,
     ddrad_fastq_filename_re,
@@ -46,6 +47,16 @@ def test_ont_promethion_re():
     ]
     for filename in filenames:
         assert ont_promethion_re.match(filename) is not None
+
+
+def test_ont_promethion_re_2():
+    filenames = [
+        "376315_GAP_BRF_PAG02700_ONTPromethION_report.tar",
+        "376315_GAP_BRF_PAG02700_ONTPromethION_sequencing_summary.tar",
+        "376315_GAP_BRF_PAG03810_Run2_ONTPromethION_fast5_fail.tar",
+    ]
+    for filename in filenames:
+        assert ont_promethion_re_2.match(filename) is not None
 
 
 def test_genomics_10x_re():
