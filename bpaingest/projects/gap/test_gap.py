@@ -54,6 +54,7 @@ def test_ont_promethion_re_2():
         "376315_GAP_BRF_PAG02700_ONTPromethION_report.tar",
         "376315_GAP_BRF_PAG02700_ONTPromethION_sequencing_summary.tar",
         "376315_GAP_BRF_PAG03810_Run2_ONTPromethION_fast5_fail.tar",
+        "376316_GAP_BRF_PAF32853_ONTPromethION_fast5_pass.tar",
     ]
     for filename in filenames:
         assert ont_promethion_re_2.match(filename) is not None
