@@ -287,6 +287,8 @@ def _get_date(logger, dt, silent=False):
     if (
         dt == "unknown"
         or dt == "Unknown"
+        or dt == "UnkNown"
+        or dt == "unkNown"
         or dt == "Not yet assigned"
         or dt == "Not applicable"
         or dt == "(null)"
