@@ -171,7 +171,7 @@ def extract_ands_id(logger, s, silent=False):
     if s.startswith("e.g. "):
         return None
     # duplicated 102.100.100: e.g. 102.100.100.102.100.100.25977
-    s.replace("102.100.100.102.100.100.", "102.100.100/")
+    s = s.replace("102.100.100.102.100.100.", "102.100.100/")
     # handle a sample extraction id tacked on the end with an underscore
     if "_" in s:
         s = s.rsplit("_", 1)[0]
