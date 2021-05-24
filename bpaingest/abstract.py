@@ -1,4 +1,5 @@
 import os
+from glob import glob
 from urllib.parse import urlparse, urljoin
 
 from .libs.excel_wrapper import ExcelWrapper
@@ -96,28 +97,28 @@ class BaseMetadata:
             elif filename.lower().endswith(".fasta.gz"):
                 resource_obj["format"] = "FASTA"
             elif extension in (
-                "PNG",
-                "XLSX",
-                "XLS",
-                "PPTX",
-                "ZIP",
-                "TAR",
-                "GZ",
-                "DOC",
-                "DOCX",
-                "PDF",
-                "CSV",
-                "JPEG",
-                "XML",
-                "BZ2",
-                "EXE",
-                "EXF",
-                "FASTA",
-                "FASTQ",
-                "SCAN",
-                "WIFF",
-                "JSON",
-                "BAM",
+                    "PNG",
+                    "XLSX",
+                    "XLS",
+                    "PPTX",
+                    "ZIP",
+                    "TAR",
+                    "GZ",
+                    "DOC",
+                    "DOCX",
+                    "PDF",
+                    "CSV",
+                    "JPEG",
+                    "XML",
+                    "BZ2",
+                    "EXE",
+                    "EXF",
+                    "FASTA",
+                    "FASTQ",
+                    "SCAN",
+                    "WIFF",
+                    "JSON",
+                    "BAM",
             ):
                 resource_obj["format"] = extension
 
@@ -148,7 +149,10 @@ class BaseMetadata:
 
     def generate_xlsx_resources(self):
         if len(self._linkage_xlsx) == 0:
-            self._logger.error("no XLSX resources, likely a bug in the ingest class")
+            self._logger.error(
+                "no linkage xlsx, likely a bug in the ingest class (xlsx resource needs to be tracked in package "
+                "creation) "
+            )
         resources = []
         for linkage, fname in self._linkage_xlsx.items():
             resource = resource_metadata_from_file(linkage, fname, self.ckan_data_type)
@@ -157,32 +161,38 @@ class BaseMetadata:
             resources.append((linkage, legacy_url, resource))
         return resources
 
+    def md5_lines(self):
+        self._logger.info(
+            "Ingesting MD5 file information from {0}".format(self.path)
+        )
+        for md5_file in glob(self.path + "/*.md5"):
+            self._logger.info("Processing md5 file {}".format(md5_file))
+            for filename, md5, file_info in self.parse_md5file(md5_file):
+                yield filename, md5, md5_file, file_info
+
+    def generate_md5_resources(self):
+        md5_resources = []
+        for md5_file in glob(self.path + "/*.md5"):
+            self._logger.info("Processing md5 file {}".format(md5_file))
+            xlsx_info = self.metadata_info[os.path.basename(md5_file)]
+            base_url = urljoin(xlsx_info["base_url"], md5_file)
+            self.generate_static_file_for_resources(md5_file, base_url, md5_resources)
+        return md5_resources
+
     # can use `track_xlsx_resource` to add any resource to each package
-    def generate_context_schema_definitions_as_resource(self):
-        if not self.schema_definitions:
-            raise Exception(
-                f"Cannot generate schema definitions as a resource because no schema definitions exist for {self.ckan_data_type}"
-            )
+    def generate_static_file_for_resources(self, source_path, base_url, resources=None):
+        if resources is None:
+            resources = []
         if len(self._linkage_xlsx) == 0:
             self._logger.error(
-                "no linkage xlsx, likely a bug in the ingest class (xlsx resource needs to be tracked in package creation)"
+                "no linkage xlsx, likely a bug in the ingest class (xlsx resource needs to be tracked in package "
+                "creation) "
             )
-        schema_defs = [next_def for next_def in self.schema_definitions]
-        if len(schema_defs) != 1:
-            raise Exception(
-                f"Expecting 1 and only 1 schema definition for {self.ckan_data_type}"
-            )
-        fname = getattr(schema_defs[0], "source_path")
-        schema_base_urls = getattr(schema_defs[0], "metadata_urls")
-        if len(schema_base_urls) != 1:
-            raise Exception(
-                f"Expecting 1 and only 1 metadata url for schema definition for {self.ckan_data_type}"
-            )
-        metadata_url = schema_base_urls[0]
-        resources = []
         for linkage, xlsx_name in self._linkage_xlsx.items():
-            resource = resource_metadata_from_file(linkage, fname, self.ckan_data_type)
-            legacy_url = urljoin(metadata_url, os.path.basename(fname))
+            resource = resource_metadata_from_file(
+                linkage, source_path, self.ckan_data_type
+            )
+            legacy_url = urljoin(base_url, os.path.basename(source_path))
             resources.append((linkage, legacy_url, resource))
         return resources
 
