@@ -47,7 +47,7 @@ def get_run_data(logger, file_name):
         fld("flowcell", "Flow Cell ID"),
         fld("index", "Index"),
         fld("casava_version", "CASAVA version"),
-	fld('sequencing_facility', 'sequencing facility'),
+        fld("sequencing_facility", "sequencing facility"),
     ]
 
     wrapper = ExcelWrapper(
