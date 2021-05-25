@@ -261,6 +261,13 @@ def get_date_isoformat(logger, s, silent=False):
         return None
     return dt.strftime("%Y-%m-%d")
 
+def get_date_isoformat_as_datetime(logger, s, silent=False):
+    "try to parse the date, if we can, return the date as an ISO format string"
+    dt = _get_date(logger, s, silent)
+    if dt is None:
+        return None
+    return dt.strftime("%Y-%m-%d_%H:%M:%S")
+
 
 def get_time(logger, s):
     return str(s)
@@ -335,11 +342,6 @@ def _get_date(logger, dt, silent=False):
 
     try:
         return datetime.datetime.strptime(dt, "%Y-%m-%d %H:%M:%S").date()
-    except ValueError:
-        pass
-
-    try:
-        return datetime.datetime.strptime(dt, "%y-%m-%d %H:%M:%S").date()
     except ValueError:
         pass
 
