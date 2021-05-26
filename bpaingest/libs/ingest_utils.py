@@ -261,6 +261,7 @@ def get_date_isoformat(logger, s, silent=False):
         return None
     return dt.strftime("%Y-%m-%d")
 
+
 def get_date_isoformat_as_datetime(logger, s, silent=False):
     "try to parse the date, if we can, return the date as an ISO format string"
     dt = _get_date(logger, s, silent)

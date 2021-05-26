@@ -510,10 +510,7 @@ class AustralianMicrobiomeSampleContextual:
                 units="ppm",
                 coerce=ingest_utils.get_clean_number,
             ),
-            fld(
-                "gadolinium_meth",
-                "gadolinium_meth"
-            ),
+            fld("gadolinium_meth", "gadolinium_meth"),
             fld(
                 "gallium", "gallium", units="ppm", coerce=ingest_utils.get_clean_number
             ),

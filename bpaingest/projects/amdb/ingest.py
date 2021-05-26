@@ -87,10 +87,14 @@ class AMDBaseMetadata(BaseMetadata):
         {"key": "analytical_platform"},
     ]
 
+    # track md5 files using same logic as xlsx but with dummy value
+    md5_track_marker = "md5_track"
+
     def __init__(self, logger, metadata_path, **kwargs):
         super().__init__(logger)
         self.path = Path(metadata_path)
         self.schema_definitions = kwargs["schema_definitions"]
+        self.linkage_xlsx = {}
 
 
 class AccessAMDContextualMetadata(AMDBaseMetadata):
@@ -347,6 +351,7 @@ class BASEAmpliconsMetadata(AMDBaseMetadata):
                 tag_names = ["amplicons", amplicon, obj["sample_type"]]
                 obj["tags"] = [{"name": t} for t in tag_names]
                 if not self.is_bad_package(obj):
+                    self.track_xlsx_resource(obj, self.md5_track_marker)
                     packages.append(obj)
         return packages
 
@@ -398,7 +403,8 @@ class BASEAmpliconsMetadata(AMDBaseMetadata):
                         resource,
                     )
                 )
-        return resources + self.generate_md5_resources()
+            resources.extend(self.generate_md5_resources(md5_file))
+        return resources
 
 
 class BASEAmpliconsControlMetadata(AMDBaseMetadata):
@@ -486,24 +492,29 @@ class BASEAmpliconsControlMetadata(AMDBaseMetadata):
             self.build_notes_into_object(obj)
             tag_names = ["amplicons-control", amplicon, "raw"]
             obj["tags"] = [{"name": t} for t in tag_names]
+            self.track_xlsx_resource(obj, self.md5_track_marker)
             packages.append(obj)
         return packages
 
     def _get_resources(self):
         resources = []
-        for filename, md5, md5_file, file_info in self.md5_lines():
-            resource = file_info.copy()
-            resource["md5"] = resource["id"] = md5
-            resource["name"] = filename
-            resource["resource_type"] = self.ckan_data_type
-            for contextual_source in self.contextual_metadata:
-                resource.update(contextual_source.filename_metadata(filename))
-            xlsx_info = self.metadata_info[os.path.basename(md5_file)]
-            legacy_url = urljoin(xlsx_info["base_url"], filename)
-            resources.append(
-                ((resource["amplicon"], resource["flow_id"]), legacy_url, resource)
-            )
-        return resources + self.generate_md5_resources()
+        self._logger.info("Ingesting MD5 file information from {0}".format(self.path))
+        for md5_file in glob(self.path + "/*.md5"):
+            self._logger.info("Processing md5 file {}".format(md5_file))
+            for filename, md5, file_info in self.parse_md5file(md5_file):
+                resource = file_info.copy()
+                resource["md5"] = resource["id"] = md5
+                resource["name"] = filename
+                resource["resource_type"] = self.ckan_data_type
+                for contextual_source in self.contextual_metadata:
+                    resource.update(contextual_source.filename_metadata(filename))
+                xlsx_info = self.metadata_info[os.path.basename(md5_file)]
+                legacy_url = urljoin(xlsx_info["base_url"], filename)
+                resources.append(
+                    ((resource["amplicon"], resource["flow_id"]), legacy_url, resource)
+                )
+            resources.extend(self.generate_md5_resources(md5_file))
+        return resources
 
 
 class BASEMetagenomicsMetadata(AMDBaseMetadata):
@@ -755,6 +766,7 @@ class BASEMetagenomicsMetadata(AMDBaseMetadata):
                     continue
                 generated_packages.add(new_obj["id"])
                 if not new_obj.get("flow_id") in self.bad_flow_ids:
+                    self.track_xlsx_resource(new_obj, self.md5_track_marker)
                     packages.append(new_obj)
 
         return packages
@@ -786,7 +798,8 @@ class BASEMetagenomicsMetadata(AMDBaseMetadata):
                 resources.append(
                     ((sample_extraction_id, resource["flow_id"]), legacy_url, resource)
                 )
-        return resources + self.generate_md5_resources()
+            resources.extend(self.generate_md5_resources(md5_file))
+        return resources
 
 
 class BASESiteImagesMetadata(AMDBaseMetadata):
@@ -868,6 +881,7 @@ class BASESiteImagesMetadata(AMDBaseMetadata):
             ingest_utils.add_spatial_extra(self._logger, obj)
             tag_names = ["site-images"]
             obj["tags"] = [{"name": t} for t in tag_names]
+            self.track_xlsx_resource(obj, self.md5_track_marker)
             packages.append(obj)
         return packages
 
@@ -885,7 +899,7 @@ class BASESiteImagesMetadata(AMDBaseMetadata):
             resource["name"] = filename
             legacy_url = urljoin(info["base_url"], filename)
             resources.append(((site_ids,), legacy_url, resource))
-        return resources + self.generate_md5_resources()
+        return resources
 
 
 marine_read_lengths = {
@@ -1144,6 +1158,7 @@ class MarineMicrobesAmpliconsMetadata(AMDBaseMetadata):
                 obj["tags"] = [{"name": t} for t in tag_names]
                 package_link = tuple(obj[t] for t in self.resource_linkage)
                 if package_link not in self.missing_resources:
+                    self.track_xlsx_resource(obj, self.md5_track_marker)
                     packages.append(obj)
         return packages
 
@@ -1183,7 +1198,8 @@ class MarineMicrobesAmpliconsMetadata(AMDBaseMetadata):
                         resource,
                     )
                 )
-        return resources + self.generate_md5_resources()
+            resources.extend(self.generate_md5_resources(md5_file))
+        return resources
 
 
 class MarineMicrobesAmpliconsControlMetadata(AMDBaseMetadata):
@@ -1264,22 +1280,27 @@ class MarineMicrobesAmpliconsControlMetadata(AMDBaseMetadata):
             self.build_notes_into_object(obj)
             tag_names = ["amplicons-control", amplicon, "raw"]
             obj["tags"] = [{"name": t} for t in tag_names]
+            self.track_xlsx_resource(obj, self.md5_track_marker)
             packages.append(obj)
         return packages
 
     def _get_resources(self):
         resources = []
-        for filename, md5, md5_file, file_info in self.md5_lines():
-            xlsx_info = self.metadata_info[os.path.basename(md5_file)]
-            amplicon = xlsx_info["amplicon"]
-            resource = file_info.copy()
-            resource["md5"] = resource["id"] = md5
-            resource["name"] = filename
-            resource["resource_type"] = self.ckan_data_type
-            resource["amplicon"] = amplicon
-            legacy_url = urljoin(xlsx_info["base_url"], filename)
-            resources.append(((amplicon, resource["flow_id"]), legacy_url, resource))
-        return resources + self.generate_md5_resources()
+        self._logger.info("Ingesting MD5 file information from {0}".format(self.path))
+        for md5_file in glob(self.path + "/*.md5"):
+            self._logger.info("Processing md5 file {}".format(md5_file))
+            for filename, md5, file_info in self.parse_md5file(md5_file):
+                xlsx_info = self.metadata_info[os.path.basename(md5_file)]
+                amplicon = xlsx_info["amplicon"]
+                resource = file_info.copy()
+                resource["md5"] = resource["id"] = md5
+                resource["name"] = filename
+                resource["resource_type"] = self.ckan_data_type
+                resource["amplicon"] = amplicon
+                legacy_url = urljoin(xlsx_info["base_url"], filename)
+                resources.append(((amplicon, resource["flow_id"]), legacy_url, resource))
+            resources.extend(self.generate_md5_resources(md5_file))
+        return resources
 
 
 class BaseMarineMicrobesMetadata(AMDBaseMetadata):
@@ -1406,6 +1427,7 @@ class MarineMicrobesMetagenomicsMetadata(BaseMarineMicrobesMetadata):
                 if obj.get("sample_type"):
                     tag_names.append(obj["sample_type"])
                 obj["tags"] = [{"name": t} for t in tag_names]
+                self.track_xlsx_resource(obj, self.md5_track_marker)
                 packages.append(obj)
         return packages
 
@@ -1429,7 +1451,8 @@ class MarineMicrobesMetagenomicsMetadata(BaseMarineMicrobesMetadata):
                 xlsx_info = self.metadata_info[os.path.basename(md5_file)]
                 legacy_url = urljoin(xlsx_info["base_url"], filename)
                 resources.append(((sample_id,), legacy_url, resource))
-        return resources + self.generate_md5_resources()
+            resources.extend(self.generate_md5_resources(md5_file))
+        return resources
 
 
 class MarineMicrobesMetatranscriptomeMetadata(BaseMarineMicrobesMetadata):
@@ -1439,7 +1462,7 @@ class MarineMicrobesMetatranscriptomeMetadata(BaseMarineMicrobesMetadata):
     omics = "metatranscriptomics"
     metadata_patterns = [r"^.*\.md5", r"^.*_metadata.*\.xlsx"]
     metadata_urls = [
-        "https://downloads-qcif.bioplatforms.com/bpa/temp_amd/marine_microbes/raw/metatranscriptome/"
+        "https://downloads-qcif.bioplatforms.com/bpa/marine_microbes/raw/metatranscriptome/"
     ]
     metadata_url_components = ("facility_code", "ticket")
     tracker_filename = "MetatranscriptomeTrack"
@@ -1551,6 +1574,7 @@ class MarineMicrobesMetatranscriptomeMetadata(BaseMarineMicrobesMetadata):
             if obj.get("sample_type"):
                 tag_names.append(obj["sample_type"])
             obj["tags"] = [{"name": t} for t in tag_names]
+            self.track_xlsx_resource(obj, self.md5_track_marker)
             packages.append(obj)
         return packages
 
@@ -1574,7 +1598,8 @@ class MarineMicrobesMetatranscriptomeMetadata(BaseMarineMicrobesMetadata):
                 xlsx_info = self.metadata_info[os.path.basename(md5_file)]
                 legacy_url = urljoin(xlsx_info["base_url"], filename)
                 resources.append(((sample_id,), legacy_url, resource))
-        return resources + self.generate_md5_resources()
+            resources.extend(self.generate_md5_resources(md5_file))
+        return resources
 
 
 class AustralianMicrobiomeMetagenomicsNovaseqMetadata(AMDBaseMetadata):
@@ -1687,6 +1712,7 @@ class AustralianMicrobiomeMetagenomicsNovaseqMetadata(AMDBaseMetadata):
                 if obj.get("sample_type"):
                     tag_names.append(obj["sample_type"])
                 obj["tags"] = [{"name": t} for t in tag_names]
+                self.track_xlsx_resource(obj, self.md5_track_marker)
                 packages.append(obj)
         return packages
 
@@ -1710,7 +1736,8 @@ class AustralianMicrobiomeMetagenomicsNovaseqMetadata(AMDBaseMetadata):
                 xlsx_info = self.metadata_info[os.path.basename(md5_file)]
                 legacy_url = urljoin(xlsx_info["base_url"], filename)
                 resources.append(((sample_id,), legacy_url, resource))
-        return resources + self.generate_md5_resources()
+            resources.extend(self.generate_md5_resources(md5_file))
+        return resources
 
 
 class AustralianMicrobiomeMetagenomicsNovaseqControlMetadata(AMDBaseMetadata):
@@ -1787,20 +1814,25 @@ class AustralianMicrobiomeMetagenomicsNovaseqControlMetadata(AMDBaseMetadata):
             self.build_notes_into_object(obj)
             tag_names = ["novaseq-control", "raw"]
             obj["tags"] = [{"name": t} for t in tag_names]
+            self.track_xlsx_resource(obj, self.md5_track_marker)
             packages.append(obj)
         return packages
 
     def _get_resources(self):
         resources = []
-        for filename, md5, md5_file, file_info in self.md5_lines():
-            xlsx_info = self.metadata_info[os.path.basename(md5_file)]
-            resource = file_info.copy()
-            resource["md5"] = resource["id"] = md5
-            resource["name"] = filename
-            resource["resource_type"] = self.ckan_data_type
-            legacy_url = urljoin(xlsx_info["base_url"], filename)
-            resources.append(((resource["flowcell"],), legacy_url, resource))
-        return resources + self.generate_md5_resources()
+        self._logger.info("Ingesting MD5 file information from {0}".format(self.path))
+        for md5_file in glob(self.path + "/*.md5"):
+            self._logger.info("Processing md5 file {}".format(md5_file))
+            for filename, md5, file_info in self.parse_md5file(md5_file):
+                xlsx_info = self.metadata_info[os.path.basename(md5_file)]
+                resource = file_info.copy()
+                resource["md5"] = resource["id"] = md5
+                resource["name"] = filename
+                resource["resource_type"] = self.ckan_data_type
+                legacy_url = urljoin(xlsx_info["base_url"], filename)
+                resources.append(((resource["flowcell"],), legacy_url, resource))
+            resources.extend(self.generate_md5_resources(md5_file))
+        return resources
 
 
 class AustralianMicrobiomeAmpliconsMetadata(AMDBaseMetadata):
@@ -1924,6 +1956,7 @@ class AustralianMicrobiomeAmpliconsMetadata(AMDBaseMetadata):
                 if obj.get("sample_type"):
                     tag_names.append(obj["sample_type"])
                 obj["tags"] = [{"name": t} for t in tag_names]
+                self.track_xlsx_resource(obj, self.md5_track_marker)
                 packages.append(obj)
         return packages
 
@@ -1953,7 +1986,8 @@ class AustralianMicrobiomeAmpliconsMetadata(AMDBaseMetadata):
                         resource,
                     )
                 )
-        return resources + self.generate_md5_resources()
+            resources.extend(self.generate_md5_resources(md5_file))
+        return resources
 
 
 class AustralianMicrobiomeAmpliconsControlMetadata(AMDBaseMetadata):
@@ -2033,19 +2067,24 @@ class AustralianMicrobiomeAmpliconsControlMetadata(AMDBaseMetadata):
             self.build_notes_into_object(obj)
             tag_names = ["amplicons-control", amplicon, "raw"]
             obj["tags"] = [{"name": t} for t in tag_names]
+            self.track_xlsx_resource(obj, self.md5_track_marker)
             packages.append(obj)
         return packages
 
     def _get_resources(self):
         resources = []
-        for filename, md5, md5_file, file_info in self.md5_lines():
-            xlsx_info = self.metadata_info[os.path.basename(md5_file)]
-            amplicon = xlsx_info["amplicon"]
-            resource = file_info.copy()
-            resource["md5"] = resource["id"] = md5
-            resource["name"] = filename
-            resource["resource_type"] = self.ckan_data_type
-            resource["amplicon"] = amplicon
-            legacy_url = urljoin(xlsx_info["base_url"], filename)
-            resources.append(((amplicon, resource["flow_id"]), legacy_url, resource))
-        return resources + self.generate_md5_resources()
+        self._logger.info("Ingesting MD5 file information from {0}".format(self.path))
+        for md5_file in glob(self.path + "/*.md5"):
+            self._logger.info("Processing md5 file {}".format(md5_file))
+            for filename, md5, file_info in self.parse_md5file(md5_file):
+                xlsx_info = self.metadata_info[os.path.basename(md5_file)]
+                amplicon = xlsx_info["amplicon"]
+                resource = file_info.copy()
+                resource["md5"] = resource["id"] = md5
+                resource["name"] = filename
+                resource["resource_type"] = self.ckan_data_type
+                resource["amplicon"] = amplicon
+                legacy_url = urljoin(xlsx_info["base_url"], filename)
+                resources.append(((amplicon, resource["flow_id"]), legacy_url, resource))
+            resources.extend(self.generate_md5_resources(md5_file))
+        return resources

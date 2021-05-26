@@ -4,7 +4,7 @@ from urllib.parse import urlparse, urljoin
 
 from .libs.excel_wrapper import ExcelWrapper
 from .libs.md5lines import MD5Parser
-from .resource_metadata import resource_metadata_from_file
+from .resource_metadata import resource_metadata_from_file, resource_metadata_from
 
 
 class BaseMetadata:
@@ -97,28 +97,28 @@ class BaseMetadata:
             elif filename.lower().endswith(".fasta.gz"):
                 resource_obj["format"] = "FASTA"
             elif extension in (
-                    "PNG",
-                    "XLSX",
-                    "XLS",
-                    "PPTX",
-                    "ZIP",
-                    "TAR",
-                    "GZ",
-                    "DOC",
-                    "DOCX",
-                    "PDF",
-                    "CSV",
-                    "JPEG",
-                    "XML",
-                    "BZ2",
-                    "EXE",
-                    "EXF",
-                    "FASTA",
-                    "FASTQ",
-                    "SCAN",
-                    "WIFF",
-                    "JSON",
-                    "BAM",
+                "PNG",
+                "XLSX",
+                "XLS",
+                "PPTX",
+                "ZIP",
+                "TAR",
+                "GZ",
+                "DOC",
+                "DOCX",
+                "PDF",
+                "CSV",
+                "JPEG",
+                "XML",
+                "BZ2",
+                "EXE",
+                "EXF",
+                "FASTA",
+                "FASTQ",
+                "SCAN",
+                "WIFF",
+                "JSON",
+                "BAM",
             ):
                 resource_obj["format"] = extension
 
@@ -162,36 +162,31 @@ class BaseMetadata:
         return resources
 
     def md5_lines(self):
-        self._logger.info(
-            "Ingesting MD5 file information from {0}".format(self.path)
-        )
+        self._logger.info("Ingesting MD5 file information from {0}".format(self.path))
         for md5_file in glob(self.path + "/*.md5"):
             self._logger.info("Processing md5 file {}".format(md5_file))
             for filename, md5, file_info in self.parse_md5file(md5_file):
                 yield filename, md5, md5_file, file_info
 
-    def generate_md5_resources(self):
-        md5_resources = []
-        for md5_file in glob(self.path + "/*.md5"):
-            self._logger.info("Processing md5 file {}".format(md5_file))
-            xlsx_info = self.metadata_info[os.path.basename(md5_file)]
-            base_url = urljoin(xlsx_info["base_url"], md5_file)
-            self.generate_static_file_for_resources(md5_file, base_url, md5_resources)
-        return md5_resources
+    def generate_md5_resources(self, md5_file):
+        self._logger.info("Processing md5 file {}".format(md5_file))
+        xlsx_info = self.metadata_info[os.path.basename(md5_file)]
+        resource = resource_metadata_from_file(
+            xlsx_info["base_url"], md5_file, self.ckan_data_type
+        )
+        return self.generate_static_file_for_resources(
+            md5_file, xlsx_info["base_url"], resource
+        )
 
     # can use `track_xlsx_resource` to add any resource to each package
-    def generate_static_file_for_resources(self, source_path, base_url, resources=None):
-        if resources is None:
-            resources = []
+    def generate_static_file_for_resources(self, source_path, base_url, resource):
+        resources = []
         if len(self._linkage_xlsx) == 0:
             self._logger.error(
                 "no linkage xlsx, likely a bug in the ingest class (xlsx resource needs to be tracked in package "
                 "creation) "
             )
-        for linkage, xlsx_name in self._linkage_xlsx.items():
-            resource = resource_metadata_from_file(
-                linkage, source_path, self.ckan_data_type
-            )
+        for linkage, _value in self._linkage_xlsx.items():
             legacy_url = urljoin(base_url, os.path.basename(source_path))
             resources.append((linkage, legacy_url, resource))
         return resources
