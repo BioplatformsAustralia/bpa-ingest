@@ -4,7 +4,7 @@ from urllib.parse import urlparse, urljoin
 
 from .libs.excel_wrapper import ExcelWrapper
 from .libs.md5lines import MD5Parser
-from .resource_metadata import resource_metadata_from_file, resource_metadata_from
+from .resource_metadata import resource_metadata_from_file
 
 
 class BaseMetadata:
@@ -188,7 +188,9 @@ class BaseMetadata:
             )
         resources = []
         for linkage in self._linkage_md5:
-            resource = resource_metadata_from_file(linkage, md5_file, self.ckan_data_type)
+            resource = resource_metadata_from_file(
+                linkage, md5_file, self.ckan_data_type
+            )
             legacy_url = urljoin(file_info["base_url"], md5_basename)
             resources.append((linkage, legacy_url, resource))
         return resources

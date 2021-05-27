@@ -71,6 +71,11 @@ schema_template = {
             "label": "Resource Permissions",
             "form_placeholder": "used by ckanext-initiatives",
         },
+        {
+            "field_name": "sequence_data_type",
+            "label": "Sequence Data Type",
+            "form_placeholder": "used by ckanext-bpatheme",
+        },
     ],
     "resource_fields": [
         {"field_name": "name", "label": "Name"},
@@ -116,6 +121,7 @@ def _write_schemas(
         "type",
         "spatial",
         "resource_permissions",
+        "sequence_data_type",
         "title",
         "license_id",
     )
@@ -126,6 +132,7 @@ def _write_schemas(
         "type",
         "spatial",
         "resource_permissions",
+        "sequence_data_type",
         "title",
         "name",
         "md5",

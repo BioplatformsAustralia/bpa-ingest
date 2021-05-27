@@ -124,6 +124,7 @@ class BASEAmpliconsMetadata(AMDBaseMetadata):
     ckan_data_type = "base-genomics-amplicon"
     omics = "genomics"
     technology = "amplicons"
+    sequence_data_type = "illumina-amplicons"
     contextual_classes = common_context
     metadata_patterns = [r"^.*\.md5$", r"^.*_metadata.*.*\.xlsx$"]
     metadata_urls = [
@@ -320,6 +321,7 @@ class BASEAmpliconsMetadata(AMDBaseMetadata):
                         "contextual_data_submission_date": None,
                         "facility": row.facility_code.upper(),
                         "type": self.ckan_data_type,
+                        "sequence_data_type": self.sequence_data_type,
                         "date_of_transfer": ingest_utils.get_date_isoformat(
                             self._logger, track_get("date_of_transfer")
                         ),
@@ -409,6 +411,7 @@ class BASEAmpliconsControlMetadata(AMDBaseMetadata):
     ckan_data_type = "base-genomics-amplicon-control"
     omics = "genomics"
     technology = "amplicons-control"
+    sequence_data_type = "illumina-amplicons"
     contextual_classes = common_context
     metadata_patterns = [r"^.*\.md5$", r"^.*_metadata.*.*\.xlsx$"]
     metadata_urls = [
@@ -480,6 +483,7 @@ class BASEAmpliconsControlMetadata(AMDBaseMetadata):
                     "facility": info["facility_code"].upper(),
                     "amplicon": amplicon,
                     "type": self.ckan_data_type,
+                    "sequence_data_type": self.sequence_data_type,
                 }
             )
             ingest_utils.permissions_organization_member_after_embargo(
@@ -518,6 +522,7 @@ class BASEMetagenomicsMetadata(AMDBaseMetadata):
     organization = "australian-microbiome"
     ckan_data_type = "base-metagenomics"
     omics = "metagenomics"
+    sequence_data_type = "illumina-shortread"
     contextual_classes = common_context
     metadata_patterns = [r"^.*\.md5$", r"^.*_metadata.*.*\.xlsx$"]
     metadata_urls = [
@@ -646,6 +651,7 @@ class BASEMetagenomicsMetadata(AMDBaseMetadata):
             "folder_name": track_get("folder_name"),
             "dataset_url": track_get("download"),
             "type": self.ckan_data_type,
+            "sequence_data_type": self.sequence_data_type,
         }
         ingest_utils.permissions_organization_member_after_embargo(
             self._logger, obj, "archive_ingestion_date", 90, CONSORTIUM_ORG_NAME
@@ -806,6 +812,7 @@ class BASESiteImagesMetadata(AMDBaseMetadata):
     metadata_patterns = [r"^.*\.md5$"]
     omics = None
     technology = "site-images"
+    sequence_data_type = "image"
     metadata_urls = [
         "https://downloads-qcif.bioplatforms.com/bpa/temp_amd/base/site-images/",
     ]
@@ -871,6 +878,7 @@ class BASESiteImagesMetadata(AMDBaseMetadata):
                     "analytical_platform": "MiSeq",
                     "ticket": info["ticket"],
                     "type": self.ckan_data_type,
+                    "sequence_data_type": self.sequence_data_type,
                 }
             )
             ingest_utils.permissions_organization_member(self._logger, obj)
@@ -973,6 +981,7 @@ class MarineMicrobesAmpliconsMetadata(AMDBaseMetadata):
     ckan_data_type = "mm-genomics-amplicon"
     omics = "genomics"
     contextual_classes = common_context
+    sequence_data_type = "illumina-amplicons"
     metadata_patterns = [r"^.*\.md5", r"^.*_metadata.*.*\.xlsx"]
     resource_linkage = ("sample_id", "mm_amplicon_linkage")
     amplicon_tracker = {
@@ -1143,6 +1152,7 @@ class MarineMicrobesAmpliconsMetadata(AMDBaseMetadata):
                         "ticket": row.ticket,
                         "facility": row.facility_code.upper(),
                         "type": self.ckan_data_type,
+                        "sequence_data_type": self.sequence_data_type,
                         "comments": row.comments,
                     }
                 )
@@ -1208,6 +1218,7 @@ class MarineMicrobesAmpliconsControlMetadata(AMDBaseMetadata):
     ckan_data_type = "mm-genomics-amplicon-control"
     omics = "genomics"
     technology = "amplicons-control"
+    sequence_data_type = "illumina-amplicons"
     contextual_classes = []
     metadata_patterns = [r"^.*\.md5"]
     resource_linkage = ("amplicon", "flow_id")
@@ -1272,6 +1283,7 @@ class MarineMicrobesAmpliconsControlMetadata(AMDBaseMetadata):
                     "facility": info["facility_code"].upper(),
                     "amplicon": amplicon,
                     "type": self.ckan_data_type,
+                    "sequence_data_type": self.sequence_data_type,
                 }
             )
             ingest_utils.permissions_organization_member_after_embargo(
@@ -1299,7 +1311,9 @@ class MarineMicrobesAmpliconsControlMetadata(AMDBaseMetadata):
                 resource["resource_type"] = self.ckan_data_type
                 resource["amplicon"] = amplicon
                 legacy_url = urljoin(xlsx_info["base_url"], filename)
-                resources.append(((amplicon, resource["flow_id"]), legacy_url, resource))
+                resources.append(
+                    ((amplicon, resource["flow_id"]), legacy_url, resource)
+                )
             resources.extend(self.generate_md5_resources(md5_file))
         return resources
 
@@ -1316,6 +1330,7 @@ class BaseMarineMicrobesMetadata(AMDBaseMetadata):
 class MarineMicrobesMetagenomicsMetadata(BaseMarineMicrobesMetadata):
     organization = "australian-microbiome"
     ckan_data_type = "mm-metagenomics"
+    sequence_data_type = "illumina-shortread"
     omics = "metagenomics"
     contextual_classes = common_context
     metadata_patterns = [r"^.*\.md5", r"^.*_metadata.*\.xlsx"]
@@ -1415,6 +1430,7 @@ class MarineMicrobesMetagenomicsMetadata(BaseMarineMicrobesMetadata):
                         "ticket": row.ticket,
                         "facility": row.facility_code.upper(),
                         "type": self.ckan_data_type,
+                        "sequence_data_type": self.sequence_data_type,
                     }
                 )
                 ingest_utils.permissions_organization_member_after_embargo(
@@ -1459,6 +1475,7 @@ class MarineMicrobesMetagenomicsMetadata(BaseMarineMicrobesMetadata):
 class MarineMicrobesMetatranscriptomeMetadata(BaseMarineMicrobesMetadata):
     organization = "australian-microbiome"
     ckan_data_type = "mm-metatranscriptome"
+    sequence_data_type = "illumina-transcriptomics"
     contextual_classes = common_context
     omics = "metatranscriptomics"
     metadata_patterns = [r"^.*\.md5", r"^.*_metadata.*\.xlsx"]
@@ -1562,6 +1579,7 @@ class MarineMicrobesMetatranscriptomeMetadata(BaseMarineMicrobesMetadata):
                     "ticket": row.ticket,
                     "facility": row.facility_code.upper(),
                     "type": self.ckan_data_type,
+                    "sequence_data_type": self.sequence_data_type,
                 }
             )
             ingest_utils.permissions_organization_member_after_embargo(
@@ -1608,6 +1626,7 @@ class AustralianMicrobiomeMetagenomicsNovaseqMetadata(AMDBaseMetadata):
     ckan_data_type = "amdb-metagenomics-novaseq"
     omics = "metagenomics"
     technology = "novaseq"
+    sequence_data_type = "illumina-shortread"
     contextual_classes = common_context
     metadata_patterns = [r"^.*\.md5", r"^.*_metadata.*\.xlsx"]
     metadata_urls = [
@@ -1700,6 +1719,7 @@ class AustralianMicrobiomeMetagenomicsNovaseqMetadata(AMDBaseMetadata):
                         "license_id": apply_license(archive_ingestion_date),
                         "dataset_url": google_track_meta.download,
                         "type": self.ckan_data_type,
+                        "sequence_data_type": self.sequence_data_type,
                     }
                 )
                 ingest_utils.permissions_organization_member_after_embargo(
@@ -1746,6 +1766,7 @@ class AustralianMicrobiomeMetagenomicsNovaseqControlMetadata(AMDBaseMetadata):
     ckan_data_type = "amdb-metagenomics-novaseq-control"
     omics = "metagenomics"
     technology = "novaseq-control"
+    sequence_data_type = "illumina-shortread"
     contextual_classes = []
     metadata_patterns = [r"^.*\.md5"]
     resource_linkage = ("flowcell",)
@@ -1806,6 +1827,7 @@ class AustralianMicrobiomeMetagenomicsNovaseqControlMetadata(AMDBaseMetadata):
                     "ticket": info["ticket"],
                     "facility": info["facility_code"].upper(),
                     "type": self.ckan_data_type,
+                    "sequence_data_type": self.sequence_data_type,
                 }
             )
             ingest_utils.permissions_organization_member_after_embargo(
@@ -1840,6 +1862,7 @@ class AustralianMicrobiomeAmpliconsMetadata(AMDBaseMetadata):
     organization = "australian-microbiome"
     ckan_data_type = "amdb-genomics-amplicon"
     omics = "genomics"
+    sequence_data_type = "illumina-amplicons"
     contextual_classes = common_context
     metadata_patterns = [r"^.*\.md5", r"^.*_metadata.*.*\.xlsx"]
     resource_linkage = ("sample_id", "flow_id", "index")
@@ -1940,6 +1963,8 @@ class AustralianMicrobiomeAmpliconsMetadata(AMDBaseMetadata):
                         "license_id": apply_license(archive_ingestion_date),
                         "ticket": row.ticket,
                         "type": self.ckan_data_type,
+                        "date_of_transfer_to_archive": archive_ingestion_date,
+                        "sequence_data_type": self.sequence_data_type,
                     }
                 )
                 ingest_utils.permissions_organization_member_after_embargo(
@@ -1996,6 +2021,7 @@ class AustralianMicrobiomeAmpliconsControlMetadata(AMDBaseMetadata):
     ckan_data_type = "amdb-genomics-amplicon-control"
     omics = "genomics"
     technology = "amplicons-control"
+    sequence_data_type = "illumina-amplicons"
     contextual_classes = []
     metadata_patterns = [r"^.*\.md5"]
     resource_linkage = ("amplicon", "flow_id")
@@ -2059,6 +2085,7 @@ class AustralianMicrobiomeAmpliconsControlMetadata(AMDBaseMetadata):
                     "ticket": info["ticket"],
                     "amplicon": amplicon,
                     "type": self.ckan_data_type,
+                    "sequence_data_type": self.sequence_data_type,
                 }
             )
             ingest_utils.permissions_organization_member_after_embargo(
@@ -2086,6 +2113,8 @@ class AustralianMicrobiomeAmpliconsControlMetadata(AMDBaseMetadata):
                 resource["resource_type"] = self.ckan_data_type
                 resource["amplicon"] = amplicon
                 legacy_url = urljoin(xlsx_info["base_url"], filename)
-                resources.append(((amplicon, resource["flow_id"]), legacy_url, resource))
+                resources.append(
+                    ((amplicon, resource["flow_id"]), legacy_url, resource)
+                )
             resources.extend(self.generate_md5_resources(md5_file))
         return resources
