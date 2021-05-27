@@ -187,7 +187,7 @@ class BaseMetadata:
                 "creation) "
             )
         resources = []
-        for linkage, _value in self._linkage_md5:
+        for linkage in self._linkage_md5:
             resource = resource_metadata_from_file(linkage, md5_file, self.ckan_data_type)
             legacy_url = urljoin(file_info["base_url"], md5_basename)
             resources.append((linkage, legacy_url, resource))
