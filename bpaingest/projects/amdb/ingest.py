@@ -1480,7 +1480,7 @@ class MarineMicrobesMetatranscriptomeMetadata(BaseMarineMicrobesMetadata):
     omics = "metatranscriptomics"
     metadata_patterns = [r"^.*\.md5", r"^.*_metadata.*\.xlsx"]
     metadata_urls = [
-        "https://downloads-qcif.bioplatforms.com/bpa/marine_microbes/raw/metatranscriptome/"
+        "https://downloads-qcif.bioplatforms.com/bpa/temp_amd/marine_microbes/raw/metatranscriptome/"
     ]
     metadata_url_components = ("facility_code", "ticket")
     tracker_filename = "MetatranscriptomeTrack"
