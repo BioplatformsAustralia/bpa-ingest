@@ -38,7 +38,14 @@ BRF,23/3/2021,376315,380524,83679,Xanthorrhoea johnsonii,Reference Genomes,Main 
 AGRF,13/04/2021,,,83654,,Phylogenomics - AATOL (ANH),Main dataset,Illumina Short Read,20210413_GAP_NGS_AGRF_H3GYVDSX2,13/4/2021,15/4/2021,BPAOPS-1060,
 AGRF / Kor-jent van Dijk,11/9/2020,,,83650,,Phylogenomics,Pilot,Illumina Short Read,"20200909_GAP_AGRF_HF7CKAFX2 (Angio353 - Korjent data only, plus combined bait)",15/09/2020,28/04/2021,BPAOPS-1063,https://data.bioplatforms.com/dataset?q=ticket%3ABPAOPS-1063
 AGRF / Kor-jent van Dijk,11/9/2020,,,83650,,Phylogenomics,Pilot,Illumina Short Read,20200909_GAP_AGRF_H7LV7AFX2 (Angio353 duplicate - Korjent data only),15/09/2020,28/04/2021,BPAOPS-1064,https://data.bioplatforms.com/dataset?q=ticket%3ABPAOPS-1064
-BRF,18/05/2021,376315,380522,83677,Xanthorrhoea johnsonii,Reference Genomes,Main dataset,PromethION,20210301_GAP_BRF_PAG02700,21/5/2021,,BPAOPS-1070,
-BRF,18/05/2021,376315,380523,83678,Xanthorrhoea johnsonii,Reference Genomes,Main dataset,PromethION,20210302_GAP_BRF_PAG03810,21/5/2021,,BPAOPS-1071,
-BRF,18/05/2021,376315,380524,83679,Xanthorrhoea johnsonii,Reference Genomes,Main dataset,PromethION,20210305_GAP_BRF_PAG03810,21/5/2021,,BPAOPS-1072,
-BRF,18/08/2021,376316,380527,83682,Phebalium stellatum,Reference Genomes,Main dataset,PromethION,20210419_GAP_BRF_PAF32853,22/5/2021,,BPAOPS-1069,
+BRF,18/05/2021,376315,380522,83677,Xanthorrhoea johnsonii,Reference Genomes,Main dataset,PromethION,20210301_GAP_BRF_PAG02700,21/5/2021,25/5/2021,BPAOPS-1070,https://data.bioplatforms.com/dataset?q=ticket%3ABPAOPS-1070
+BRF,18/05/2021,376315,380523,83678,Xanthorrhoea johnsonii,Reference Genomes,Main dataset,PromethION,20210302_GAP_BRF_PAG03810,21/5/2021,25/5/2021,BPAOPS-1071,https://data.bioplatforms.com/dataset?q=ticket%3ABPAOPS-1071
+BRF,18/05/2021,376315,380524,83679,Xanthorrhoea johnsonii,Reference Genomes,Main dataset,PromethION,20210305_GAP_BRF_PAG03810,21/5/2021,25/5/2021,BPAOPS-1072,https://data.bioplatforms.com/dataset?q=ticket%3ABPAOPS-1072
+BRF,18/08/2021,376316,380527,83682,Phebalium stellatum,Reference Genomes,Main dataset,PromethION,20210419_GAP_BRF_PAF32853,22/5/2021,25/5/2021,BPAOPS-1069,
+BRF,20/05/2021,376318,380528,83683,wahlenbergia_ceracea_HiC,Reference Genomes,Main dataset,Hi-C,20210517_GAP_BRF_AH5TJYDRXY,27/5/2021,,BPAOPS-1075,
+BRF,20/05/2021,376316,380529,83683,phebalium_stellatum_HiC,Reference Genomes,Main dataset,Hi-C,20210517_GAP_BRF_AH5TJYDRXY,27/5/2021,,BPAOPS-1075,
+BRF,20/05/2021,376316,380530,83683,phebalium_stellatum_WGS_1_longDNAprep,Reference Genomes,Main dataset,Illumina Short Read,20210517_GAP_BRF_AH5TJYDRXY,27/5/2021,,BPAOPS-1076,
+BRF,20/05/2021,376316,380531,83683,phebalium_stellatum_WGS_2_shortDNAprep,Reference Genomes,Main dataset,Illumina Short Read,20210517_GAP_BRF_AH5TJYDRXY,27/5/2021,,BPAOPS-1076,
+BRF,20/05/2021,376315,380532,83683,xanthorrhoea_johnsonii_HiC,Reference Genomes,Main dataset,Hi-C,20210517_GAP_BRF_AH5TJYDRXY,27/5/2021,,BPAOPS-1075,
+BRF,20/05/2021,376315,380533,83683,xanthorrhoea_johnsonii_WGS_1_longDNAprep,Reference Genomes,Main dataset,Illumina Short Read,20210517_GAP_BRF_AH5TJYDRXY,27/5/2021,,BPAOPS-1076,
+BRF,20/05/2021,376315,380534,83683,xanthorrhoea_johnsonii_WGS_2_shortDNAprep,Reference Genomes,Main dataset,Illumina Short Read,20210517_GAP_BRF_AH5TJYDRXY,27/5/2021,,BPAOPS-1076,
