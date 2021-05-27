@@ -819,7 +819,7 @@ class AustralianMicrobiomeSampleContextual:
             fld(
                 "oxygen_ctd_vol",
                 "oxygen_ctd_vol",
-                units="ml/L",
+                units="mL/L",
                 coerce=ingest_utils.get_clean_number,
             ),
             fld("oxygen_ctd_vol_meth", "oxygen_ctd_vol_meth"),
@@ -896,7 +896,7 @@ class AustralianMicrobiomeSampleContextual:
             fld(
                 "picoeukaryotes",
                 "picoeukaryotes",
-                units="cells/ml",
+                units="cells/mL",
                 coerce=ingest_utils.get_clean_number,
             ),
             fld("picoeukaryotes_meth", "picoeukaryotes_meth"),
@@ -950,7 +950,7 @@ class AustralianMicrobiomeSampleContextual:
             fld(
                 "prochlorococcus",
                 "prochlorococcus",
-                units="cells/ml",
+                units="cells/mL",
                 coerce=ingest_utils.get_clean_number,
             ),
             fld("prochlorococcus_meth", "prochlorococcus_meth"),
@@ -1018,13 +1018,13 @@ class AustralianMicrobiomeSampleContextual:
             fld(
                 "samp_size",
                 "samp_size",
-                units="l",
+                units="L",
                 coerce=ingest_utils.get_clean_number,
             ),
             fld(
                 "samp_vol_we_dna_ext",
                 "samp_vol_we_dna_ext",
-                units="l",
+                units="L",
                 coerce=ingest_utils.get_clean_number,
             ),
             fld("sample_volume_notes", "sample_volume_notes"),
@@ -1168,7 +1168,7 @@ class AustralianMicrobiomeSampleContextual:
             fld(
                 "synecochoccus",
                 "synecochoccus",
-                units="cells/ml",
+                units="cells/mL",
                 coerce=ingest_utils.get_clean_number,
             ),
             fld("synecochoccus_meth", "synecochoccus_meth"),
