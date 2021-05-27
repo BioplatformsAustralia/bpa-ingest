@@ -87,9 +87,6 @@ class AMDBaseMetadata(BaseMetadata):
         {"key": "analytical_platform"},
     ]
 
-    # track md5 files using same logic as xlsx but with dummy value
-    md5_track_marker = "md5_track"
-
     def __init__(self, logger, metadata_path, **kwargs):
         super().__init__(logger)
         self.path = Path(metadata_path)
@@ -351,7 +348,7 @@ class BASEAmpliconsMetadata(AMDBaseMetadata):
                 tag_names = ["amplicons", amplicon, obj["sample_type"]]
                 obj["tags"] = [{"name": t} for t in tag_names]
                 if not self.is_bad_package(obj):
-                    self.track_xlsx_resource(obj, self.md5_track_marker)
+                    self.track_packages_for_md5(obj)
                     packages.append(obj)
         return packages
 
@@ -492,7 +489,7 @@ class BASEAmpliconsControlMetadata(AMDBaseMetadata):
             self.build_notes_into_object(obj)
             tag_names = ["amplicons-control", amplicon, "raw"]
             obj["tags"] = [{"name": t} for t in tag_names]
-            self.track_xlsx_resource(obj, self.md5_track_marker)
+            self.track_packages_for_md5(obj)
             packages.append(obj)
         return packages
 
@@ -766,7 +763,7 @@ class BASEMetagenomicsMetadata(AMDBaseMetadata):
                     continue
                 generated_packages.add(new_obj["id"])
                 if not new_obj.get("flow_id") in self.bad_flow_ids:
-                    self.track_xlsx_resource(new_obj, self.md5_track_marker)
+                    self.track_packages_for_md5(new_obj)
                     packages.append(new_obj)
 
         return packages
@@ -881,7 +878,7 @@ class BASESiteImagesMetadata(AMDBaseMetadata):
             ingest_utils.add_spatial_extra(self._logger, obj)
             tag_names = ["site-images"]
             obj["tags"] = [{"name": t} for t in tag_names]
-            self.track_xlsx_resource(obj, self.md5_track_marker)
+            self.track_packages_for_md5(obj)
             packages.append(obj)
         return packages
 
@@ -899,6 +896,10 @@ class BASESiteImagesMetadata(AMDBaseMetadata):
             resource["name"] = filename
             legacy_url = urljoin(info["base_url"], filename)
             resources.append(((site_ids,), legacy_url, resource))
+
+        for md5_file in glob(self.path + "/*.md5"):
+            self._logger.info("Processing MD5 file %s for resources" % (md5_file))
+            resources.extend(self.generate_md5_resources(md5_file))
         return resources
 
 
@@ -1158,7 +1159,7 @@ class MarineMicrobesAmpliconsMetadata(AMDBaseMetadata):
                 obj["tags"] = [{"name": t} for t in tag_names]
                 package_link = tuple(obj[t] for t in self.resource_linkage)
                 if package_link not in self.missing_resources:
-                    self.track_xlsx_resource(obj, self.md5_track_marker)
+                    self.track_packages_for_md5(obj)
                     packages.append(obj)
         return packages
 
@@ -1280,7 +1281,7 @@ class MarineMicrobesAmpliconsControlMetadata(AMDBaseMetadata):
             self.build_notes_into_object(obj)
             tag_names = ["amplicons-control", amplicon, "raw"]
             obj["tags"] = [{"name": t} for t in tag_names]
-            self.track_xlsx_resource(obj, self.md5_track_marker)
+            self.track_packages_for_md5(obj)
             packages.append(obj)
         return packages
 
@@ -1427,7 +1428,7 @@ class MarineMicrobesMetagenomicsMetadata(BaseMarineMicrobesMetadata):
                 if obj.get("sample_type"):
                     tag_names.append(obj["sample_type"])
                 obj["tags"] = [{"name": t} for t in tag_names]
-                self.track_xlsx_resource(obj, self.md5_track_marker)
+                self.track_packages_for_md5(obj)
                 packages.append(obj)
         return packages
 
@@ -1574,7 +1575,7 @@ class MarineMicrobesMetatranscriptomeMetadata(BaseMarineMicrobesMetadata):
             if obj.get("sample_type"):
                 tag_names.append(obj["sample_type"])
             obj["tags"] = [{"name": t} for t in tag_names]
-            self.track_xlsx_resource(obj, self.md5_track_marker)
+            self.track_packages_for_md5(obj)
             packages.append(obj)
         return packages
 
@@ -1712,7 +1713,7 @@ class AustralianMicrobiomeMetagenomicsNovaseqMetadata(AMDBaseMetadata):
                 if obj.get("sample_type"):
                     tag_names.append(obj["sample_type"])
                 obj["tags"] = [{"name": t} for t in tag_names]
-                self.track_xlsx_resource(obj, self.md5_track_marker)
+                self.track_packages_for_md5(obj)
                 packages.append(obj)
         return packages
 
@@ -1814,7 +1815,7 @@ class AustralianMicrobiomeMetagenomicsNovaseqControlMetadata(AMDBaseMetadata):
             self.build_notes_into_object(obj)
             tag_names = ["novaseq-control", "raw"]
             obj["tags"] = [{"name": t} for t in tag_names]
-            self.track_xlsx_resource(obj, self.md5_track_marker)
+            self.track_packages_for_md5(obj)
             packages.append(obj)
         return packages
 
@@ -1956,7 +1957,7 @@ class AustralianMicrobiomeAmpliconsMetadata(AMDBaseMetadata):
                 if obj.get("sample_type"):
                     tag_names.append(obj["sample_type"])
                 obj["tags"] = [{"name": t} for t in tag_names]
-                self.track_xlsx_resource(obj, self.md5_track_marker)
+                self.track_packages_for_md5(obj)
                 packages.append(obj)
         return packages
 
@@ -2067,7 +2068,7 @@ class AustralianMicrobiomeAmpliconsControlMetadata(AMDBaseMetadata):
             self.build_notes_into_object(obj)
             tag_names = ["amplicons-control", amplicon, "raw"]
             obj["tags"] = [{"name": t} for t in tag_names]
-            self.track_xlsx_resource(obj, self.md5_track_marker)
+            self.track_packages_for_md5(obj)
             packages.append(obj)
         return packages
 
