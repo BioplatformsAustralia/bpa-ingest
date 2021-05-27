@@ -106,7 +106,7 @@ class DownloadMetadata:
     def init_schema_classes(self, project_class, metadata_info):
         if not self.schema_definitions:
             self._logger.info(
-                f"No schema definitions exist for {project_class['name']}. Ignoring..."
+                f"No schema definitions exist for {getattr(project_class, 'ckan_data_type')}. Ignoring..."
             )
         for schema_path, schema_cls in self.schema_definitions:
             if not os.path.isdir(schema_path):
