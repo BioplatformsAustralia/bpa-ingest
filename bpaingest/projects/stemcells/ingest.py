@@ -46,6 +46,7 @@ class StemcellsTranscriptomeMetadata(BaseMetadata):
     omics = "transcriptomics"
     organization = "bpa-stemcells"
     ckan_data_type = "stemcells-transcriptomics"
+    sequence_data_type = "transcriptomics-analysed"
     spreadsheet = {
         "fields": [
             fld(
@@ -107,6 +108,7 @@ class StemcellsTranscriptomeMetadata(BaseMetadata):
                     "ticket": row.ticket,
                     "facility": row.facility_code.upper(),
                     "type": self.ckan_data_type,
+	            "sequence_data_type": self.sequence_data_type,
                     "date_of_transfer": ingest_utils.get_date_isoformat(
                         self._logger, track_meta.date_of_transfer
                     ),
@@ -164,6 +166,7 @@ class StemcellsSmallRNAMetadata(BaseMetadata):
     organization = "bpa-stemcells"
     technology = "smallrna"
     ckan_data_type = "stemcells-smallrna"
+    sequence_data_type = "illumina-shortread"
     spreadsheet = {
         "fields": [
             fld(
@@ -228,6 +231,7 @@ class StemcellsSmallRNAMetadata(BaseMetadata):
                         "ticket": row.ticket,
                         "facility": row.facility_code.upper(),
                         "type": self.ckan_data_type,
+	                "sequence_data_type": self.sequence_data_type,
                         "date_of_transfer": ingest_utils.get_date_isoformat(
                             self._logger, track_meta.date_of_transfer
                         ),
@@ -286,6 +290,7 @@ class StemcellsSingleCellRNASeqMetadata(BaseMetadata):
     organization = "bpa-stemcells"
     technology = "singlecellrna"
     ckan_data_type = "stemcells-singlecellrnaseq"
+    sequence_data_type = "illumina-10x"
     resource_linkage = ("sample_id_range", "flow_id")
     spreadsheet = {
         "fields": [
@@ -377,6 +382,7 @@ class StemcellsSingleCellRNASeqMetadata(BaseMetadata):
                     "ticket": row.ticket,
                     "facility": row.facility_code.upper(),
                     "type": self.ckan_data_type,
+	            "sequence_data_type": self.sequence_data_type,
                     "date_of_transfer": ingest_utils.get_date_isoformat(
                         self._logger, track_meta.date_of_transfer
                     ),
@@ -443,6 +449,7 @@ class StemcellsMetabolomicsMetadata(BaseMetadata):
     omics = "metabolomics"
     resource_linkage = ("sample_id", "analytical_platform")
     ckan_data_type = "stemcells-metabolomic"
+    sequence_data_type = "metabolomics"
     spreadsheet = {
         "fields": [
             fld(
@@ -532,6 +539,7 @@ class StemcellsMetabolomicsMetadata(BaseMetadata):
                     "ticket": row.ticket,
                     "facility": row.facility_code.upper(),
                     "type": self.ckan_data_type,
+	            "sequence_data_type": self.sequence_data_type,
                     "date_of_transfer": ingest_utils.get_date_isoformat(
                         self._logger, track_meta.date_of_transfer
                     ),
@@ -675,6 +683,7 @@ class StemcellsProteomicsBaseMetadata(BaseMetadata):
 
 class StemcellsProteomicsMetadata(StemcellsProteomicsBaseMetadata):
     ckan_data_type = "stemcells-proteomic"
+    sequence_data_type = "proteomics"
     md5 = {
         "match": [files.proteomics_filename_re, files.proteomics_filename2_re],
         "skip": common_skip,
@@ -718,6 +727,7 @@ class StemcellsProteomicsMetadata(StemcellsProteomicsBaseMetadata):
                     "title": "Stemcell Proteomics %s" % (sample_id),
                     "omics": "proteomics",
                     "type": self.ckan_data_type,
+	            "sequence_data_type": self.sequence_data_type,
                     "date_of_transfer": ingest_utils.get_date_isoformat(
                         self._logger, track_meta.date_of_transfer
                     ),
@@ -785,6 +795,7 @@ class StemcellsProteomicsMetadata(StemcellsProteomicsBaseMetadata):
 
 class StemcellsProteomicsPoolMetadata(StemcellsProteomicsBaseMetadata):
     ckan_data_type = "stemcells-proteomic-pool"
+    sequence_data_type = "proteomics"
     resource_linkage = ("pool_id",)
     pool = True
     md5 = {"match": [files.proteomics_pool_filename_re], "skip": common_skip}
@@ -825,6 +836,7 @@ class StemcellsProteomicsPoolMetadata(StemcellsProteomicsBaseMetadata):
                     "title": "Stemcell Proteomics Pool %s" % (pool_id),
                     "omics": "proteomics",
                     "type": self.ckan_data_type,
+	            "sequence_data_type": self.sequence_data_type,
                     "date_of_transfer": ingest_utils.get_date_isoformat(
                         self._logger, track_meta.date_of_transfer
                     ),
@@ -904,6 +916,7 @@ class StemcellsProteomicsAnalysedMetadata(BaseMetadata):
     omics = "proteomics"
     analysed = True
     ckan_data_type = "stemcells-proteomics-analysed"
+    sequence_data_type = "proteomics-analysed"
     resource_linkage = ("ticket",)
     spreadsheet = {
         "fields": [
@@ -1002,6 +1015,7 @@ class StemcellsProteomicsAnalysedMetadata(BaseMetadata):
                     "omics": "proteomics",
                     "sample_ids": ", ".join(sample_ids),
                     "type": self.ckan_data_type,
+	            "sequence_data_type": self.sequence_data_type,
                     "date_of_transfer": ingest_utils.get_date_isoformat(
                         self._logger, track_meta.date_of_transfer
                     ),
@@ -1063,6 +1077,7 @@ class StemcellsMetabolomicsAnalysedMetadata(BaseMetadata):
     organization = "bpa-stemcells"
     ckan_data_type = "stemcells-metabolomics-analysed"
     omics = "metabolomics"
+    sequence_data_type = "metabolomics-analysed"
     analysed = True
     resource_linkage = ("folder_name",)
     spreadsheet = {
@@ -1135,6 +1150,7 @@ class StemcellsMetabolomicsAnalysedMetadata(BaseMetadata):
                     "omics": "metabolomics",
                     "sample_ids": ", ".join(sample_ids),
                     "type": self.ckan_data_type,
+	            "sequence_data_type": self.sequence_data_type,
                     "date_of_transfer": ingest_utils.get_date_isoformat(
                         self._logger, track_meta.date_of_transfer
                     ),
@@ -1215,6 +1231,7 @@ class StemcellsTranscriptomeAnalysedMetadata(BaseMetadata):
     organization = "bpa-stemcells"
     ckan_data_type = "stemcells-transcriptome-analysed"
     omics = "transcriptome"
+    sequence_data_type = "transcriptomics-analysed"
     analysed = True
     resource_linkage = ("folder_name",)
     spreadsheet = {
@@ -1288,6 +1305,7 @@ class StemcellsTranscriptomeAnalysedMetadata(BaseMetadata):
                     "omics": "transcriptomics",
                     "sample_ids": ", ".join(sample_ids),
                     "type": self.ckan_data_type,
+	            "sequence_data_type": self.sequence_data_type,
                     "date_of_transfer": ingest_utils.get_date_isoformat(
                         self._logger, track_meta.date_of_transfer
                     ),

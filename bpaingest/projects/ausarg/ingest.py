@@ -1,5 +1,4 @@
 import os
-import os
 import re
 from urllib.parse import urljoin
 
@@ -11,7 +10,7 @@ from .contextual import AusargLibraryContextual
 from .tracking import AusArgGoogleTrackMetadata
 from ...abstract import BaseMetadata
 from ...libs import ingest_utils
-from ...libs.excel_wrapper import make_field_definition as fld
+from ...libs.excel_wrapper import make_field_definition as fld, make_skip_column as skp
 from ...libs.fetch_data import Fetcher, get_password
 from ...sensitive_species_wrapper import SensitiveSpeciesWrapper
 from ...util import (
@@ -63,6 +62,7 @@ class AusargIlluminaFastqMetadata(AusargBaseMetadata):
     organization = "ausarg"
     ckan_data_type = "ausarg-illumina-fastq"
     technology = "illumina-fastq"
+    sequence_data_type = "illumina-shortread"
     contextual_classes = common_context
     metadata_patterns = [r"^.*\.md5$", r"^.*_metadata.*.*\.xlsx$"]
     metadata_urls = [
@@ -210,15 +210,13 @@ class AusargIlluminaFastqMetadata(AusargBaseMetadata):
                         "name": name,
                         "id": name,
                         "type": self.ckan_data_type,
+			"sequence_data_type": self.sequence_data_type,
                         "data_generated": True,
                         "notes": self.build_notes_without_blanks(obj),
                     }
                 )
                 ingest_utils.permissions_organization_member(self._logger, obj)
                 tag_names = ["illumina-fastq"]
-                scientific_name = obj.get("scientific_name", "").strip()
-                if scientific_name:
-                    tag_names.append(clean_tag_name(obj["scientific_name"]))
                 obj["tags"] = [{"name": "{:.100}".format(t)} for t in tag_names]
                 packages.append(obj)
         return packages
@@ -253,6 +251,7 @@ class AusargONTPromethionMetadata(AusargBaseMetadata):
     organization = "ausarg"
     ckan_data_type = "ausarg-ont-promethion"
     technology = "ont-promethion"
+    sequence_data_type = "ont-promethion"
     contextual_classes = common_context
     metadata_patterns = [r"^.*\.md5$", r"^.*_metadata.*.*\.xlsx$"]
     metadata_urls = [
@@ -408,6 +407,7 @@ class AusargONTPromethionMetadata(AusargBaseMetadata):
                         "name": name,
                         "id": name,
                         "type": self.ckan_data_type,
+			"sequence_data_type": self.sequence_data_type,
                     }
                 )
                 ingest_utils.permissions_organization_member(self._logger, obj)
@@ -446,6 +446,7 @@ class AusargPacbioHifiMetadata(AusargBaseMetadata):
     organization = "ausarg"
     ckan_data_type = "ausarg-pacbio-hifi"
     technology = "pacbio-hifi"
+    sequence_data_type = "pacbio-hifi"
     contextual_classes = common_context
     metadata_patterns = [r"^.*\.md5$", r"^.*_metadata.*.*\.xlsx$"]
     metadata_urls = [
@@ -609,6 +610,7 @@ class AusargPacbioHifiMetadata(AusargBaseMetadata):
                         ),
                         "dataset_url": track_get("download"),
                         "type": self.ckan_data_type,
+			"sequence_data_type": self.sequence_data_type,
                     }
                 )
                 ingest_utils.permissions_organization_member(self._logger, obj)
@@ -674,3 +676,257 @@ class AusargPacbioHifiMetadata(AusargBaseMetadata):
                     )
                 )
         return resources
+
+class AusargExonCaptureMetadata(AusargBaseMetadata):
+    organization = "ausarg"
+    ckan_data_type = "ausarg-exon-capture"
+    technology = "exoncapture"
+    sequence_data_type = "illumina-exoncapture"
+    contextual_classes = common_context
+    metadata_patterns = [r"^.*\.md5$", r"^.*[lL]ibrary[mM]etadata.*\.xlsx$"]
+    metadata_urls = [
+        "https://downloads-qcif.bioplatforms.com/bpa/ausarg_staging/exon_capture/",
+    ]
+    metadata_url_components = (
+        "facility",
+        "ticket",
+    )
+    resource_linkage = ("library_id", "flowcell_id", "p7_library_index_sequence")
+    spreadsheet = {
+        "fields": [
+            fld("genus", "genus", optional=True),
+            fld("species", "species", optional=True),
+            fld("voucher_id", "voucher_id", optional=True),
+            fld(
+                "dataset_id", "dataset_id", coerce=ingest_utils.extract_ands_id
+            ),
+            fld(
+                "library_id", "library_id", coerce=ingest_utils.extract_ands_id
+            ),
+            fld(
+                "sample_id", "sample_id", coerce=ingest_utils.extract_ands_id,
+		),
+            fld("facility_sample_id", "facility_sample_id"),
+            fld("library_type", "library_type"),
+            fld(
+                "library_prep_date",
+                "library_prep_date",
+                coerce=ingest_utils.get_date_isoformat,
+            ),
+            fld("library_prepared_by", "library_prepared_by"),
+            fld("experimental_design", "experimental_design"),
+            fld("data_custodian", "data_custodian"),
+            fld("dna_treatment", "dna_treatment"),
+            fld("library_index_id", "library_index_id", optional=True),
+            fld("library_index_sequence", "library_index_sequence", optional=True),
+            fld("library_oligo_sequence", "library_oligo_sequence", optional=True),
+            fld("p7_library_index_id", "p7_library_index_id", optional=True),
+            fld(
+                "p7_library_index_sequence", "p7_library_index_sequence", optional=True
+            ),
+            fld(
+                "p7_library_oligo_sequence", "p7_library_oligo_sequence", optional=True
+            ),
+            fld("p5_library_index_id", "p5_library_index_id", optional=True),
+            fld(
+                "p5_library_index_sequence", "p5_library_index_sequence", optional=True
+            ),
+            fld(
+                "p5_library_oligo_sequence", "p5_library_oligo_sequence", optional=True
+            ),
+            fld("library_pcr_reps", "library_pcr_reps"),
+            fld("library_pcr_cycles", "library_pcr_cycles"),
+            fld("library_ng_ul", "library_ng_ul"),
+            fld("library_comments", "library_comments"),
+            fld("library_location", "library_location"),
+            fld("sequencing_facility", "sequencing_facility"),
+            fld(
+                "n_libraries_pooled", "n_libraries_pooled", coerce=ingest_utils.get_int
+            ),
+            fld("sequencing_platform", "sequencing_platform"),
+            fld("flowcell_id", "flowcell_id"),
+            fld("voucher_or_tissue_number", "voucher_or_tissue_number", optional=True),
+            fld('work_order', 'work_order'),
+            fld('facility_project_code', 'facility_project_code'),
+            fld('specimen_id', 'specimen_id'),
+            fld('tissue_number', 'tissue_number'),
+            fld('data_context', 'data_context'),
+            fld('library_layout', 'library_layout'),
+            fld('sequencing_model', 'sequencing_model'),
+            fld('library_construction_protocol', 'library_construction_protocol'),
+            fld('library_strategy', 'library_strategy'),
+            fld('library_selection', 'library_selection'),
+            fld('library_source', 'library_source'),
+            fld('library_index_seq_p7', 'library_index_seq_p7'),
+            fld('library_oligo_sequence_p7', 'library_oligo_sequence_p7'),
+            fld('insert_size_range', 'insert_size_range'),
+            fld('flowcell_type', 'flowcell_type'),
+            fld('cell_postion', 'cell_postion'),
+            fld('movie_length', 'movie_length'),
+            fld('sequencing_kit_chemistry_version', 'sequencing_kit_chemistry_version'),
+            fld('analysis_software', 'analysis_software'),
+            fld('analysis_software_version', 'analysis_software_version'),
+            fld('file_type', 'file_type'),
+            fld('library_index_seq_p5', 'library_index_seq_p5'),
+            fld('library_oligo_sequence_p5', 'library_oligo_sequence_p5'),
+        ],
+        "options": {
+            "sheet_name": "Library_metadata",
+            "header_length": 1,
+            "column_name_row_index": 0,
+        },
+    }
+    md5 = {
+        "match": [files.exon_filename_re],
+        "skip": [
+            re.compile(r"^.*\.xlsx$"),
+            re.compile(r"^.*SampleSheet.*"),
+            re.compile(r"^.*TestFiles\.exe.*"),
+        ],
+    }
+
+    def __init__(
+        self, logger, metadata_path, contextual_metadata=None, metadata_info=None
+    ):
+        super().__init__(logger, metadata_path)
+        self.path = Path(metadata_path)
+        self.contextual_metadata = contextual_metadata
+        self.metadata_info = metadata_info
+        self.track_meta = AusArgGoogleTrackMetadata()
+        self.linkage_xlsx = {}
+
+    @classmethod
+    def flow_cell_index_linkage(cls, flow_id, index):
+        return flow_id + "_" + index.replace("-", "").replace("_", "")
+
+    def _get_packages(self):
+        self._logger.info("Ingesting AusARG metadata from {0}".format(self.path))
+        packages = []
+        for fname in glob(self.path + "/*.xlsx"):
+            self._logger.info(
+                "Processing AusARG metadata file {0}".format(os.path.basename(fname))
+            )
+            for row in self.parse_spreadsheet(fname, self.metadata_info):
+                track_meta = self.track_meta.get(row.ticket)
+
+                def track_get(k):
+                    if track_meta is None:
+                        return None
+                    return getattr(track_meta, k)
+
+                library_id = row.library_id
+                if library_id is None:
+                    continue
+
+                obj = row._asdict()
+
+                def migrate_field(from_field, to_field):
+                    old_val = obj[from_field]
+                    new_val = obj[to_field]
+                    del obj[from_field]
+                    if old_val is not None and new_val is not None:
+                        raise Exception(
+                            "field migration clash, {}->{}".format(from_field, to_field)
+                        )
+                    if old_val:
+                        obj[to_field] = old_val
+
+                # library_index_sequence migrated into p7_library_index_sequence
+                migrate_field("library_index_id", "p7_library_index_id"),
+                migrate_field("library_index_seq_p7", "p7_library_index_sequence"),
+                migrate_field("library_oligo_sequence_p7", "p7_library_oligo_sequence"),
+
+                linkage = self.flow_cell_index_linkage(
+                    row.flowcell_id, obj["p7_library_index_sequence"]
+                )
+
+                name = sample_id_to_ckan_name(library_id, self.ckan_data_type, linkage)
+
+                context = {}
+                for contextual_source in self.contextual_metadata:
+                    context.update(
+                        contextual_source.get(row.sample_id)
+                    )
+
+                def cleanstring(s):
+                    if s is not None:
+                        return s
+                    else:
+                        return ""
+
+                index_sequence = cleanstring(obj["p7_library_index_sequence"])
+
+                obj.update(
+                    {
+                        "name": name,
+                        "id": name,
+                        "title": (
+                            "AusARG Exon Capture Raw %s %s %s"
+                            % (library_id, row.flowcell_id, index_sequence)
+                        ).rstrip(),
+                        "notes": self.generate_notes_field(context),
+                        "date_of_transfer": ingest_utils.get_date_isoformat(
+                            self._logger, track_get("date_of_transfer")
+                        ),
+                        "data_type": track_get("data_type"),
+                        "description": track_get("description"),
+                        "folder_name": track_get("folder_name"),
+                        "sample_submission_date": ingest_utils.get_date_isoformat(
+                            self._logger, track_get("date_of_transfer")
+                        ),
+                        "contextual_data_submission_date": None,
+                        "data_generated": ingest_utils.get_date_isoformat(
+                            self._logger, track_get("date_of_transfer_to_archive")
+                        ),
+                        "archive_ingestion_date": ingest_utils.get_date_isoformat(
+                            self._logger, track_get("date_of_transfer_to_archive")
+                        ),
+                        "dataset_url": track_get("download"),
+                        "type": self.ckan_data_type,
+		        "sequence_data_type": self.sequence_data_type,
+                    }
+                )
+                ingest_utils.permissions_organization_member(self._logger, obj)
+                obj.update(context)
+
+                # remove obsoleted fields
+                obj.pop("library_index_id", False)
+                obj.pop("library_index_seq_p7", False)
+                obj.pop("library_oligo_sequence_p7", False)
+
+                ingest_utils.add_spatial_extra(self._logger, obj)
+                tag_names = ["exon-capture", "raw"]
+                obj["tags"] = [{"name": t} for t in tag_names]
+
+                self.track_xlsx_resource(obj, fname)
+
+                packages.append(obj)
+        return self.apply_location_generalisation(packages)
+
+    def _get_resources(self):
+        self._logger.info(
+            "Ingesting AusARG md5 file information from {0}".format(self.path)
+        )
+        resources = []
+        for md5_file in glob(self.path + "/*.md5"):
+            self._logger.info("Processing md5 file {}".format(md5_file))
+            for filename, md5, file_info in self.parse_md5file(md5_file):
+                resource = file_info.copy()
+                resource["md5"] = resource["id"] = md5
+                resource["name"] = filename
+                resource["resource_type"] = self.ckan_data_type
+                library_id = ingest_utils.extract_ands_id(
+                    self._logger, resource["library_id"]
+                )
+                xlsx_info = self.metadata_info[os.path.basename(md5_file)]
+                legacy_url = urljoin(xlsx_info["base_url"], filename)
+                resources.append(
+                    (
+                        (library_id, resource["flowcell_id"], resource["index"]),
+                        legacy_url,
+                        resource,
+                    )
+                )
+
+        return resources + self.generate_xlsx_resources()
+

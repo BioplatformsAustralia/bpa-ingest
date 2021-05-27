@@ -48,7 +48,7 @@ ont_minion_re = re.compile(ONT_MINION_PATTERN, re.VERBOSE)
 
 ONT_PROMETHION_PATTERN = r"""
     (?P<sample_id>\d{4,6})_
-    (?P<flow_cell_id>PA[DEG]\d{5})_
+    (?P<flow_cell_id>PA[DEFG]\d{5})_
     (Run\d+_)?
     GAP_
     (?P<facility_id>(AGRF|BRF))_
@@ -57,6 +57,18 @@ ONT_PROMETHION_PATTERN = r"""
     \.tar
 """
 ont_promethion_re = re.compile(ONT_PROMETHION_PATTERN, re.VERBOSE)
+
+ONT_PROMETHION_PATTERN_2 = r"""
+    (?P<sample_id>\d{4,6})_
+    GAP_
+    (?P<facility_id>(AGRF|BRF))_
+    (?P<flow_cell_id>PA[DEFG]\d{5})_
+    (Run\d+_)?
+    ONTPromethION_
+    (?P<archive_type>\w+)
+    \.tar
+"""
+ont_promethion_re_2 = re.compile(ONT_PROMETHION_PATTERN_2, re.VERBOSE)
 
 GENOMICS_10X_PATTERN = r"""
     (?P<sample_id>\d{4,6})_

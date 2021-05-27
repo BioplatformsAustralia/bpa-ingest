@@ -65,3 +65,15 @@ PACBIO_HIFI_METADATA_SHEET_PATTERN = r"""
 pacbio_hifi_metadata_sheet_re = re.compile(
     PACBIO_HIFI_METADATA_SHEET_PATTERN, re.VERBOSE
 )
+
+EXON_FILENAME_PATTERN = r"""
+    (?P<library_id>\d{4,6})_
+    (?P<flowcell_id>\w{9,10})_
+    (?P<index>[G|A|T|C|-]*)_
+    (?P<runsamplenum>S\d*)_
+    (?P<lane>L\d{3})_
+    (?P<read>[R|I][1|2])_
+    (?P<flowcellindex>\d{3})
+    \.fastq\.gz$
+"""
+exon_filename_re = re.compile(EXON_FILENAME_PATTERN, re.VERBOSE)
