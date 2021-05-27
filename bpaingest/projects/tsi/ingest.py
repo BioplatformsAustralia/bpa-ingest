@@ -462,7 +462,7 @@ class TSIIlluminaShortreadMetadata(TSIBaseMetadata):
                         "name": name,
                         "id": name,
                         "type": self.ckan_data_type,
-			"sequence_data_type": self.sequence_data_type,
+                        "sequence_data_type": self.sequence_data_type,
                         "flow_cell_id": flow_cell_id,
                         "data_generated": True,
                         "library_id": raw_library_id,
@@ -576,7 +576,7 @@ class TSIIlluminaFastqMetadata(TSIBaseMetadata):
             fld("library_layout", "library_layout"),
             fld("sequencing_model", "sequencing_model"),
             fld("data_context", "data_context"),
-	    fld('facility_project_code', 'facility_project_code'),
+            fld("facility_project_code", "facility_project_code"),
         ],
         "options": {
             "sheet_name": "Library metadata",
@@ -650,7 +650,7 @@ class TSIIlluminaFastqMetadata(TSIBaseMetadata):
                         "name": name,
                         "id": name,
                         "type": self.ckan_data_type,
-			"sequence_data_type": self.sequence_data_type,
+                        "sequence_data_type": self.sequence_data_type,
                         "data_generated": True,
                         "title": "TSI Illumina FastQ %s %s"
                         % (row.library_id, row.flowcell_id),
@@ -865,7 +865,7 @@ class TSIPacbioHifiMetadata(TSIBaseMetadata):
                         ),
                         "dataset_url": track_get("download"),
                         "type": self.ckan_data_type,
-			"sequence_data_type": self.sequence_data_type,
+                        "sequence_data_type": self.sequence_data_type,
                     }
                 )
                 ingest_utils.permissions_organization_member(self._logger, obj)
@@ -1105,7 +1105,7 @@ class TSIGenomicsDDRADMetadata(TSIBaseMetadata):
                         ),
                         "dataset_url": track_get("download"),
                         "type": self.ckan_data_type,
-			"sequence_data_type": self.sequence_data_type,
+                        "sequence_data_type": self.sequence_data_type,
                         "license_id": apply_cc_by_license(),
                     }
                 )
