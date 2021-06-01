@@ -1,4 +1,5 @@
 import os
+import re
 from glob import glob
 from urllib.parse import urlparse, urljoin
 
@@ -97,28 +98,28 @@ class BaseMetadata:
             elif filename.lower().endswith(".fasta.gz"):
                 resource_obj["format"] = "FASTA"
             elif extension in (
-                "PNG",
-                "XLSX",
-                "XLS",
-                "PPTX",
-                "ZIP",
-                "TAR",
-                "GZ",
-                "DOC",
-                "DOCX",
-                "PDF",
-                "CSV",
-                "JPEG",
-                "XML",
-                "BZ2",
-                "EXE",
-                "EXF",
-                "FASTA",
-                "FASTQ",
-                "SCAN",
-                "WIFF",
-                "JSON",
-                "BAM",
+                    "PNG",
+                    "XLSX",
+                    "XLS",
+                    "PPTX",
+                    "ZIP",
+                    "TAR",
+                    "GZ",
+                    "DOC",
+                    "DOCX",
+                    "PDF",
+                    "CSV",
+                    "JPEG",
+                    "XML",
+                    "BZ2",
+                    "EXE",
+                    "EXF",
+                    "FASTA",
+                    "FASTQ",
+                    "SCAN",
+                    "WIFF",
+                    "JSON",
+                    "BAM",
             ):
                 resource_obj["format"] = extension
 
@@ -138,7 +139,7 @@ class BaseMetadata:
         self._logger = logger
         self._packages = self._resources = None
         self._linkage_xlsx = {}
-        self._linkage_md5 = []
+        self._linkage_md5 = {}
 
     def track_xlsx_resource(self, obj, fname):
         """
@@ -148,13 +149,13 @@ class BaseMetadata:
         assert linkage_key not in self._linkage_xlsx
         self._linkage_xlsx[linkage_key] = fname
 
-    def track_packages_for_md5(self, obj):
+    def track_packages_for_md5(self, obj, ticket):
         """
-        track packages for md5sz that needs to be uploaded into the packages generated from it
-        """
+       track packages for md5s that needs to be uploaded into the packages, if metadata_info shows the ticket matches
+       """
         linkage_key = tuple([obj[t] for t in self.resource_linkage])
         assert linkage_key not in self._linkage_md5
-        self._linkage_md5.append(linkage_key)
+        self._linkage_md5[linkage_key] = [f for f in self.all_md5_filenames if self.metadata_info[f]['ticket'] == ticket]
 
     def generate_xlsx_resources(self):
         if len(self._linkage_xlsx) == 0:
@@ -177,22 +178,22 @@ class BaseMetadata:
             for filename, md5, file_info in self.parse_md5file(md5_file):
                 yield filename, md5, md5_file, file_info
 
-    def generate_md5_resources(self, md5_file):
-        self._logger.info("Processing md5 file {}".format(md5_file))
-        md5_basename = os.path.basename(md5_file)
-        file_info = self.metadata_info[md5_basename]
+    def generate_md5_resources(self):
         if len(self._linkage_md5) < 1:
             self._logger.error(
                 "no linkage xlsx, likely a bug in the ingest class (xlsx resource needs to be tracked in package "
                 "creation) "
             )
         resources = []
-        for linkage in self._linkage_md5:
-            resource = resource_metadata_from_file(
-                linkage, md5_file, self.ckan_data_type
-            )
-            legacy_url = urljoin(file_info["base_url"], md5_basename)
-            resources.append((linkage, legacy_url, resource))
+        for linkage, md5_filename_list in self._linkage_md5.items():
+            for md5_filename in md5_filename_list:
+                self._logger.info("Processing md5 file {}".format(md5_filename))
+                resource = resource_metadata_from_file(
+                    linkage, md5_filename, self.ckan_data_type
+                )
+                file_info = self.metadata_info[md5_filename]
+                legacy_url = urljoin(file_info["base_url"], md5_filename)
+                resources.append((linkage, legacy_url, resource))
         return resources
 
     def _get_packages_and_resources(self):

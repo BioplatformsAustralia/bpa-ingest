@@ -36,10 +36,10 @@ class DownloadMetadata:
         self.contextual = [
             (os.path.join(self.path, c.name), c) for c in contextual_classes
         ]
-        schema_classes = getattr(project_class, "schema_classes", [])
-        self.schema_definitions = [
-            (os.path.join(self.path, c.name), c) for c in schema_classes
-        ]
+        # schema_classes = getattr(project_class, "schema_classes", [])
+        # self.schema_definitions = [
+        #     (os.path.join(self.path, c.name), c) for c in schema_classes
+        # ]
 
         if self.fetch or force_fetch:
             self._fetch_metadata(project_class, self.contextual, metadata_info)
@@ -55,10 +55,10 @@ class DownloadMetadata:
             meta_kwargs["contextual_metadata"] = [
                 c(self._logger, p) for (p, c) in self.contextual
             ]
-        if self.schema_definitions:
-            meta_kwargs["schema_definitions"] = [
-                c(self._logger, p) for (p, c) in self.schema_definitions
-            ]
+        # if self.schema_definitions:
+        #     meta_kwargs["schema_definitions"] = [
+        #         c(self._logger, p) for (p, c) in self.schema_definitions
+        #     ]
         return self.project_class(logger, self.path, **meta_kwargs)
 
     def _fetch_metadata(self, project_class, contextual, metadata_info):
@@ -97,7 +97,7 @@ class DownloadMetadata:
                     metadata_info,
                     getattr(contextual_cls, "metadata_url_components", []),
                 )
-        self.init_schema_classes(project_class, metadata_info)
+        # self.init_schema_classes(project_class, metadata_info)
         tmpf = self.info_json + ".new"
         with open(tmpf, "w") as fd:
             json.dump(metadata_info, fd)
