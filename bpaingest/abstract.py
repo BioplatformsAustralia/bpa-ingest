@@ -153,9 +153,12 @@ class BaseMetadata:
         """
        track packages for md5s that needs to be uploaded into the packages, if metadata_info shows the ticket matches
        """
-        linkage_key = tuple([obj[t] for t in self.resource_linkage])
-        assert linkage_key not in self._linkage_md5
-        self._linkage_md5[linkage_key] = [f for f in self.all_md5_filenames if self.metadata_info[f]['ticket'] == ticket]
+        linkage = tuple([obj[t] for t in self.resource_linkage])
+        for f in self.all_md5_filenames:
+            if f not in self._linkage_md5:
+                self._linkage_md5[f] = []
+            if self.metadata_info[f]['ticket'] == ticket and linkage not in self._linkage_md5[f]:
+                self._linkage_md5[f].append(linkage)
 
     def generate_xlsx_resources(self):
         if len(self._linkage_xlsx) == 0:
@@ -178,22 +181,22 @@ class BaseMetadata:
             for filename, md5, file_info in self.parse_md5file(md5_file):
                 yield filename, md5, md5_file, file_info
 
-    def generate_md5_resources(self):
+    def generate_md5_resources(self, md5_file):
+        self._logger.info("Processing md5 file {}".format(md5_file))
+        md5_basename = os.path.basename(md5_file)
+        file_info = self.metadata_info[md5_basename]
         if len(self._linkage_md5) < 1:
             self._logger.error(
                 "no linkage xlsx, likely a bug in the ingest class (xlsx resource needs to be tracked in package "
                 "creation) "
             )
         resources = []
-        for linkage, md5_filename_list in self._linkage_md5.items():
-            for md5_filename in md5_filename_list:
-                self._logger.info("Processing md5 file {}".format(md5_filename))
-                resource = resource_metadata_from_file(
-                    linkage, md5_filename, self.ckan_data_type
-                )
-                file_info = self.metadata_info[md5_filename]
-                legacy_url = urljoin(file_info["base_url"], md5_filename)
-                resources.append((linkage, legacy_url, resource))
+        for linkage in self._linkage_md5[md5_basename]:
+            resource = resource_metadata_from_file(
+                linkage, md5_file, self.ckan_data_type
+            )
+            legacy_url = urljoin(file_info["base_url"], md5_basename)
+            resources.append((linkage, legacy_url, resource))
         return resources
 
     def _get_packages_and_resources(self):

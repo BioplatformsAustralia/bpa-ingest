@@ -410,7 +410,8 @@ class BASEAmpliconsMetadata(AMDFullIngestMetadata):
                         resource,
                     )
                 )
-        return resources + self.generate_md5_resources()
+            resources.extend(self.generate_md5_resources(md5_file))
+        return resources
 
 
 class BASEAmpliconsControlMetadata(AMDFullIngestMetadata):
@@ -520,7 +521,8 @@ class BASEAmpliconsControlMetadata(AMDFullIngestMetadata):
                 resources.append(
                     ((resource["amplicon"], resource["flow_id"]), legacy_url, resource)
                 )
-        return resources + self.generate_md5_resources()
+            resources.extend(self.generate_md5_resources(md5_file))
+        return resources
 
 
 class BASEMetagenomicsMetadata(AMDFullIngestMetadata):
@@ -805,7 +807,8 @@ class BASEMetagenomicsMetadata(AMDFullIngestMetadata):
                 resources.append(
                     ((sample_extraction_id, resource["flow_id"]), legacy_url, resource)
                 )
-        return resources + self.generate_md5_resources()
+            resources.extend(self.generate_md5_resources(md5_file))
+        return resources
 
 
 class BASESiteImagesMetadata(AMDFullIngestMetadata):
@@ -909,7 +912,8 @@ class BASESiteImagesMetadata(AMDFullIngestMetadata):
 
         for md5_file in glob(self.path + "/*.md5"):
             self._logger.info("Processing MD5 file %s for resources" % (md5_file))
-        return resources + self.generate_md5_resources()
+            resources.extend(self.generate_md5_resources(md5_file))
+        return resources
 
 
 marine_read_lengths = {
@@ -1209,7 +1213,8 @@ class MarineMicrobesAmpliconsMetadata(AMDFullIngestMetadata):
                         resource,
                     )
                 )
-        return resources + self.generate_md5_resources()
+            resources.extend(self.generate_md5_resources(md5_file))
+        return resources
 
 
 class MarineMicrobesAmpliconsControlMetadata(AMDFullIngestMetadata):
@@ -1312,7 +1317,8 @@ class MarineMicrobesAmpliconsControlMetadata(AMDFullIngestMetadata):
                 resources.append(
                     ((amplicon, resource["flow_id"]), legacy_url, resource)
                 )
-        return resources + self.generate_md5_resources()
+            resources.extend(self.generate_md5_resources(md5_file))
+        return resources
 
 
 class BaseMarineMicrobesMetadata(AMDFullIngestMetadata):
@@ -1464,7 +1470,8 @@ class MarineMicrobesMetagenomicsMetadata(BaseMarineMicrobesMetadata):
                 xlsx_info = self.metadata_info[os.path.basename(md5_file)]
                 legacy_url = urljoin(xlsx_info["base_url"], filename)
                 resources.append(((sample_id,), legacy_url, resource))
-        return resources + self.generate_md5_resources()
+            resources.extend(self.generate_md5_resources(md5_file))
+        return resources
 
 
 class MarineMicrobesMetatranscriptomeMetadata(BaseMarineMicrobesMetadata):
@@ -1611,7 +1618,8 @@ class MarineMicrobesMetatranscriptomeMetadata(BaseMarineMicrobesMetadata):
                 xlsx_info = self.metadata_info[os.path.basename(md5_file)]
                 legacy_url = urljoin(xlsx_info["base_url"], filename)
                 resources.append(((sample_id,), legacy_url, resource))
-        return resources + self.generate_md5_resources()
+            resources.extend(self.generate_md5_resources(md5_file))
+        return resources
 
 
 class AustralianMicrobiomeMetagenomicsNovaseqMetadata(AMDFullIngestMetadata):
@@ -1749,7 +1757,8 @@ class AustralianMicrobiomeMetagenomicsNovaseqMetadata(AMDFullIngestMetadata):
                 xlsx_info = self.metadata_info[os.path.basename(md5_file)]
                 legacy_url = urljoin(xlsx_info["base_url"], filename)
                 resources.append(((sample_id,), legacy_url, resource))
-        return resources + self.generate_md5_resources()
+            resources.extend(self.generate_md5_resources(md5_file))
+        return resources
 
 
 class AustralianMicrobiomeMetagenomicsNovaseqControlMetadata(AMDFullIngestMetadata):
@@ -1844,7 +1853,8 @@ class AustralianMicrobiomeMetagenomicsNovaseqControlMetadata(AMDFullIngestMetada
                 resource["resource_type"] = self.ckan_data_type
                 legacy_url = urljoin(xlsx_info["base_url"], filename)
                 resources.append(((resource["flowcell"],), legacy_url, resource))
-        return resources + self.generate_md5_resources()
+            resources.extend(self.generate_md5_resources(md5_file))
+        return resources
 
 
 class AustralianMicrobiomeAmpliconsMetadata(AMDFullIngestMetadata):
@@ -2000,7 +2010,8 @@ class AustralianMicrobiomeAmpliconsMetadata(AMDFullIngestMetadata):
                         resource,
                     )
                 )
-        return resources + self.generate_md5_resources()
+            resources.extend(self.generate_md5_resources(md5_file))
+        return resources
 
 
 class AustralianMicrobiomeAmpliconsControlMetadata(AMDFullIngestMetadata):
@@ -2102,4 +2113,5 @@ class AustralianMicrobiomeAmpliconsControlMetadata(AMDFullIngestMetadata):
                 resources.append(
                     ((amplicon, resource["flow_id"]), legacy_url, resource)
                 )
-        return resources + self.generate_md5_resources()
+            resources.extend(self.generate_md5_resources(md5_file))
+        return resources
