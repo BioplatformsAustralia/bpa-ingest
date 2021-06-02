@@ -192,7 +192,7 @@ class OMG10XRawIlluminaMetadata(OMGBaseMetadata):
                 "title": "OMG 10x Illumina Raw %s %s" % (bpa_sample_ids, flow_id),
                 "archive_name": fname,
                 "type": self.ckan_data_type,
-		"sequence_data_type": self.sequence_data_type,
+                "sequence_data_type": self.sequence_data_type,
             }
             ingest_utils.permissions_organization_member(self._logger, obj)
             # there must be only one ticket
@@ -411,7 +411,7 @@ class OMG10XRawMetadata(OMGBaseMetadata):
                     ),
                     "dataset_url": track_get("download"),
                     "type": self.ckan_data_type,
-		    "sequence_data_type": self.sequence_data_type,
+                    "sequence_data_type": self.sequence_data_type,
                 }
             )
             self.library_to_sample[obj["bpa_library_id"]] = obj["bpa_sample_id"]
@@ -599,7 +599,7 @@ class OMG10XProcessedIlluminaMetadata(OMGBaseMetadata):
                         "dataset_url": track_get("download"),
                         "ticket": row.ticket,
                         "type": self.ckan_data_type,
-		        "sequence_data_type": self.sequence_data_type,
+                        "sequence_data_type": self.sequence_data_type,
                     }
                 )
                 ingest_utils.permissions_organization_member(self._logger, obj)
@@ -828,7 +828,7 @@ class OMGExonCaptureMetadata(OMGBaseMetadata):
                         ),
                         "dataset_url": track_get("download"),
                         "type": self.ckan_data_type,
-		        "sequence_data_type": self.sequence_data_type,
+                        "sequence_data_type": self.sequence_data_type,
                     }
                 )
                 ingest_utils.permissions_organization_member(self._logger, obj)
@@ -1075,7 +1075,7 @@ class OMGWholeGenomeMetadata(OMGBaseMetadata):
                         ),
                         "dataset_url": track_get("download"),
                         "type": self.ckan_data_type,
-		        "sequence_data_type": self.sequence_data_type,
+                        "sequence_data_type": self.sequence_data_type,
                     }
                 )
                 ingest_utils.permissions_organization_member(self._logger, obj)
@@ -1259,7 +1259,7 @@ class OMGGenomicsNovaseqMetadata(OMGBaseMetadata):
                         ),
                         "dataset_url": track_get("download"),
                         "type": self.ckan_data_type,
-		        "sequence_data_type": self.sequence_data_type,
+                        "sequence_data_type": self.sequence_data_type,
                     }
                 )
                 ingest_utils.permissions_organization_member(self._logger, obj)
@@ -1441,7 +1441,7 @@ class OMGGenomicsHiSeqMetadata(OMGBaseMetadata):
                         ),
                         "dataset_url": track_get("download"),
                         "type": self.ckan_data_type,
-		        "sequence_data_type": self.sequence_data_type,
+                        "sequence_data_type": self.sequence_data_type,
                     }
                 )
                 ingest_utils.permissions_organization_member(self._logger, obj)
@@ -1666,7 +1666,7 @@ class OMGGenomicsDDRADMetadata(OMGBaseMetadata):
                         ),
                         "dataset_url": track_get("download"),
                         "type": self.ckan_data_type,
-		        "sequence_data_type": self.sequence_data_type,
+                        "sequence_data_type": self.sequence_data_type,
                     }
                 )
                 ingest_utils.permissions_organization_member(self._logger, obj)
@@ -1853,7 +1853,7 @@ class OMGGenomicsPacbioMetadata(OMGBaseMetadata):
                     ),
                     "dataset_url": track_get("download"),
                     "type": self.ckan_data_type,
-		    "sequence_data_type": self.sequence_data_type,
+                    "sequence_data_type": self.sequence_data_type,
                 }
             )
             ingest_utils.permissions_organization_member(self._logger, obj)
@@ -2041,7 +2041,7 @@ class OMGONTPromethionMetadata(OMGBaseMetadata):
                         "name": name,
                         "id": name,
                         "type": self.ckan_data_type,
-		        "sequence_data_type": self.sequence_data_type,
+                        "sequence_data_type": self.sequence_data_type,
                     }
                 )
                 ingest_utils.permissions_organization_member(self._logger, obj)
@@ -2222,7 +2222,7 @@ class OMGTranscriptomicsNextseq(OMGBaseMetadata):
                         ),
                         "dataset_url": track_get("download"),
                         "type": self.ckan_data_type,
-		        "sequence_data_type": self.sequence_data_type,
+                        "sequence_data_type": self.sequence_data_type,
                     }
                 )
                 ingest_utils.permissions_organization_member(self._logger, obj)
@@ -2406,7 +2406,7 @@ class OMGGenomicsPacBioGenomeAssemblyMetadata(SecondaryMetadata):
                             self._logger, track_get("date_of_transfer_to_archive")
                         ),
                         "type": self.ckan_data_type,
-		        "sequence_data_type": self.sequence_data_type,
+                        "sequence_data_type": self.sequence_data_type,
                     }
                 )
                 ingest_utils.permissions_organization_member(self._logger, obj)
