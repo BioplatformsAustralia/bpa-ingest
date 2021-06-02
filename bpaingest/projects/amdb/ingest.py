@@ -77,7 +77,8 @@ class AMDBaseMetadata(BaseMetadata):
     sql_to_excel_context_classes = [
         AustralianMicrobiomeSampleContextualSQLiteToExcelCopy
     ]
-    schema_classes = [AustralianMicrobiomeSchema]
+    # to validate schema class, uncomment this attribute
+    # schema_classes = [AustralianMicrobiomeSchema]
 
     notes_mapping = [
         {"key": "env_material_control_vocab_0", "separator": ", "},
@@ -90,17 +91,39 @@ class AMDBaseMetadata(BaseMetadata):
     def __init__(self, logger, metadata_path, **kwargs):
         super().__init__(logger)
         self.path = Path(metadata_path)
-        # self.schema_definitions = kwargs["schema_definitions"]
+        if kwargs.get("schema_definitions"):
+            self.schema_definitions = kwargs["schema_definitions"]
+            self.validate_schema_units()
         self.linkage_xlsx = {}
+
+    def validate_schema_units(self):
+        self._logger.info(
+            "validating current schema units against current schema definitions file..."
+        )
+        if len(self.contextual_classes) != 1:
+            raise Exception("Can only compare 1 contextual metadata file")
+        context_object = self.contextual_classes[0]
+        context_sheet_name = context_object.sheet_name
+        if len(self.schema_definitions) != 1:
+            raise Exception("Can only compare 1 contextual metadata file")
+        schema_object = self.schema_definitions[0]
+        schema_object.validate_schema_units(
+            context_object.field_specs[context_sheet_name]
+        )
+        self._logger.info("Validation completed.")
+
 
 class AMDFullIngestMetadata(AMDBaseMetadata):
     """
     classes for ingest proper (excludes `AccessAMDContextualMetadata` which is used by OTU)
     """
+
     def __init__(self, logger, metadata_path, **kwargs):
         super().__init__(logger, metadata_path, **kwargs)
         self.metadata_info = kwargs["metadata_info"]
-        self.all_md5_filenames = [f for f in self.metadata_info.keys() if re.match(".*\.md5", f)]
+        self.all_md5_filenames = [
+            f for f in self.metadata_info.keys() if re.match(".*\.md5", f)
+        ]
 
 
 class AccessAMDContextualMetadata(AMDBaseMetadata):

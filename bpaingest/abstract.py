@@ -98,28 +98,28 @@ class BaseMetadata:
             elif filename.lower().endswith(".fasta.gz"):
                 resource_obj["format"] = "FASTA"
             elif extension in (
-                    "PNG",
-                    "XLSX",
-                    "XLS",
-                    "PPTX",
-                    "ZIP",
-                    "TAR",
-                    "GZ",
-                    "DOC",
-                    "DOCX",
-                    "PDF",
-                    "CSV",
-                    "JPEG",
-                    "XML",
-                    "BZ2",
-                    "EXE",
-                    "EXF",
-                    "FASTA",
-                    "FASTQ",
-                    "SCAN",
-                    "WIFF",
-                    "JSON",
-                    "BAM",
+                "PNG",
+                "XLSX",
+                "XLS",
+                "PPTX",
+                "ZIP",
+                "TAR",
+                "GZ",
+                "DOC",
+                "DOCX",
+                "PDF",
+                "CSV",
+                "JPEG",
+                "XML",
+                "BZ2",
+                "EXE",
+                "EXF",
+                "FASTA",
+                "FASTQ",
+                "SCAN",
+                "WIFF",
+                "JSON",
+                "BAM",
             ):
                 resource_obj["format"] = extension
 
@@ -157,7 +157,10 @@ class BaseMetadata:
         for f in self.all_md5_filenames:
             if f not in self._linkage_md5:
                 self._linkage_md5[f] = []
-            if self.metadata_info[f]['ticket'] == ticket and linkage not in self._linkage_md5[f]:
+            if (
+                self.metadata_info[f]["ticket"] == ticket
+                and linkage not in self._linkage_md5[f]
+            ):
                 self._linkage_md5[f].append(linkage)
 
     def generate_xlsx_resources(self):
