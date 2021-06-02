@@ -23,7 +23,7 @@ def ands_orSAMN(logger, s, silent=False):
 
 class AustralianMicrobiomeSampleContextual:
     metadata_urls = [
-        "https://downloads-qcif.bioplatforms.com/bpa/temp_amd/amd/metadata/contextual/2021-05-13/"
+        "https://downloads-qcif.bioplatforms.com/bpa/temp_amd/amd/metadata/contextual/2021-05-28/"
     ]
     metadata_patterns = [re.compile(r"^.*\.xlsx$")]
     name = "amd-samplecontextual"
@@ -1366,6 +1366,7 @@ class AustralianMicrobiomeSampleContextual:
             fld("sample_metadata_ingest_file", "sample_metadata_ingest_file"),
             fld("sample_metadata_update_history", "sample_metadata_update_history"),
             fld("sample_database_file", "sample_database_file"),
+            fld("database_schema_definitions_url", "database_schema_definitions_url")
         ]
     }
 
