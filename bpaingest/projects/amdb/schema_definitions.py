@@ -5,7 +5,7 @@ from ...util import one
 
 class AustralianMicrobiomeSchema:
     metadata_urls = [
-        "https://downloads-qcif.bioplatforms.com/bpa/temp_amd/amd/metadata/schema/2021-05-07/"
+        "https://github.com/AusMicrobiome/contextualdb_doc/raw/2.0.2/db_schema_definitions/db_schema_definitions.xlsx"
     ]
     name = "amd-schema_definitions"
     source_pattern = "/*.xlsx"
