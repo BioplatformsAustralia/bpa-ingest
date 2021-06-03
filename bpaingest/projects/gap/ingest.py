@@ -62,19 +62,24 @@ class GAPIlluminaShortreadMetadata(BaseMetadata):
         "fields": [
             fld(
                 "sample_id",
-                "plant sample unique id",
+                re.compile(r"(plant sample unique id|bioplatforms_sample_id)"),
                 coerce=ingest_utils.extract_ands_id,
             ),
             fld(
                 "library_id",
-                re.compile(r"^[Ll]ibrary [Ii][Dd]$"),
+                re.compile(r"^([Ll]ibrary [Ii][Dd]|bioplatforms_library_id)$"),
                 coerce=ingest_utils.extract_ands_id,
             ),
-            fld("dataset_id", "dataset id", coerce=ingest_utils.extract_ands_id),
+            fld(
+                "dataset_id",
+                re.compile(r"(dataset id|bioplatforms_dataset_id)"),
+                coerce=ingest_utils.extract_ands_id,
+            ),
             fld("library_construction_protocol", "library construction protocol"),
             fld("sequencer", "sequencer"),
             fld("run_format", "run format", optional=True),
             fld("analysissoftwareversion", "analysissoftwareversion"),
+            fld("flow_cell_id", "flow_cell_id", optional=True),
         ],
         "options": {
             "sheet_name": None,

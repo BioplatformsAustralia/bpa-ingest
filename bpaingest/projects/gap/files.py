@@ -22,8 +22,9 @@ illumina_shortread_re = re.compile(ILLUMINA_SHORTREAD_PATTERN, re.VERBOSE)
 ILLUMINA__RNA_AND_PHYLO_SHORTREAD_PATTERN = r"""
     (?P<sample_id>\d{4,6})_
     LibID(?P<library_id>\d{4,6})_
+    (GAP_BRF_)?
     (?P<flow_cell_id>\w{9,10})_
-    (?P<index>[G|A|T|C|-]*)_
+    (?P<index>[G|A|T|C|-]{8,12}([_-][G|A|T|C|-]{8})?)_
     (?P<runsamplenum>S?\d*)_?
     (?P<lane>L\d{3})_
     (?P<read>[R|I][1|2])
