@@ -50,6 +50,7 @@ class GAPIlluminaShortreadMetadata(BaseMetadata):
     organization = "bpa-plants"
     ckan_data_type = "gap-illumina-shortread"
     technology = "illumina-shortread"
+    sequence_data_type = "illumina-shortread"
     contextual_classes = common_context
     metadata_patterns = [r"^.*\.md5$", r"^.*_metadata.*.*\.xlsx$"]
     metadata_urls = [
@@ -61,19 +62,24 @@ class GAPIlluminaShortreadMetadata(BaseMetadata):
         "fields": [
             fld(
                 "sample_id",
-                "plant sample unique id",
+                re.compile(r"(plant sample unique id|bioplatforms_sample_id)"),
                 coerce=ingest_utils.extract_ands_id,
             ),
             fld(
                 "library_id",
-                re.compile(r"^[Ll]ibrary [Ii][Dd]$"),
+                re.compile(r"^([Ll]ibrary [Ii][Dd]|bioplatforms_library_id)$"),
                 coerce=ingest_utils.extract_ands_id,
             ),
-            fld("dataset_id", "dataset id", coerce=ingest_utils.extract_ands_id),
+            fld(
+                "dataset_id",
+                re.compile(r"(dataset id|bioplatforms_dataset_id)"),
+                coerce=ingest_utils.extract_ands_id,
+            ),
             fld("library_construction_protocol", "library construction protocol"),
             fld("sequencer", "sequencer"),
             fld("run_format", "run format", optional=True),
             fld("analysissoftwareversion", "analysissoftwareversion"),
+            fld("flow_cell_id", "flow_cell_id", optional=True),
         ],
         "options": {
             "sheet_name": None,
@@ -132,6 +138,7 @@ class GAPIlluminaShortreadMetadata(BaseMetadata):
                         "name": name,
                         "id": name,
                         "type": self.ckan_data_type,
+                        "sequence_data_type": self.sequence_data_type,
                         "flow_cell_id": flow_cell_id,
                         "data_generated": True,
                         "library_id": raw_library_id,
@@ -179,6 +186,7 @@ class GAPHiCMetadata(GAPIlluminaShortreadMetadata):
     ckan_data_type = "gap-hi-c"
     description = "Hi-C"
     technology = "hi-c"
+    sequence_data_type = "illumina-hic"
     metadata_urls = [
         "https://downloads-qcif.bioplatforms.com/bpa/plants_staging/genomics-hi-c/",
     ]
@@ -188,6 +196,7 @@ class GAPONTMinionMetadata(BaseMetadata):
     organization = "bpa-plants"
     ckan_data_type = "gap-ont-minion"
     technology = "ont-minion"
+    sequence_data_type = "ont-minion"
     contextual_classes = common_context
     metadata_patterns = [r"^.*\.md5$", r"^.*_metadata.*.*\.xlsx$"]
     metadata_urls = [
@@ -273,6 +282,7 @@ class GAPONTMinionMetadata(BaseMetadata):
                         "name": name,
                         "id": name,
                         "type": self.ckan_data_type,
+                        "sequence_data_type": self.sequence_data_type,
                         "data_generated": True,
                     }
                 )
@@ -316,6 +326,7 @@ class GAPONTPromethionMetadata(BaseMetadata):
     organization = "bpa-plants"
     ckan_data_type = "gap-ont-promethion"
     technology = "ont-promethion"
+    sequence_data_type = "ont-promethion"
     contextual_classes = common_context
     metadata_patterns = [r"^.*\.md5$", r"^.*_metadata.*.*\.xlsx$"]
     metadata_urls = [
@@ -355,7 +366,7 @@ class GAPONTPromethionMetadata(BaseMetadata):
         },
     }
     md5 = {
-        "match": [files.ont_promethion_re],
+        "match": [files.ont_promethion_re, files.ont_promethion_re_2],
         "skip": [
             re.compile(r"^.*_metadata.*\.xlsx$"),
             re.compile(r"^.*SampleSheet.*"),
@@ -401,6 +412,7 @@ class GAPONTPromethionMetadata(BaseMetadata):
                         "name": name,
                         "id": name,
                         "type": self.ckan_data_type,
+                        "sequence_data_type": self.sequence_data_type,
                         "data_generated": True,
                     }
                 )
@@ -444,6 +456,7 @@ class GAPGenomics10XMetadata(BaseMetadata):
     organization = "bpa-plants"
     ckan_data_type = "gap-genomics-10x"
     technology = "genomics-10x"
+    sequence_data_type = "illumina-10x"
     contextual_classes = common_context
     metadata_patterns = [r"^.*\.md5$", r"^.*_metadata.*.*\.xlsx$"]
     metadata_urls = [
@@ -518,6 +531,7 @@ class GAPGenomics10XMetadata(BaseMetadata):
                         "name": name,
                         "id": name,
                         "type": self.ckan_data_type,
+                        "sequence_data_type": self.sequence_data_type,
                         "flow_cell_id": flow_cell_id,
                         "data_generated": True,
                     }
@@ -559,6 +573,7 @@ class GAPGenomicsDDRADMetadata(BaseMetadata):
     ckan_data_type = "gap-genomics-ddrad"
     omics = "genomics"
     technology = "ddrad"
+    sequence_data_type = "illumina-ddrad"
     contextual_classes = common_context
     metadata_patterns = [r"^.*\.md5$", r"^.*_metadata.*.*\.xlsx$"]
     metadata_urls = [
@@ -729,6 +744,7 @@ class GAPGenomicsDDRADMetadata(BaseMetadata):
                         ),
                         "dataset_url": track_get("download"),
                         "type": self.ckan_data_type,
+                        "sequence_data_type": self.sequence_data_type,
                     }
                 )
                 gap_describe_ddrad(obj, "ddRAD")

@@ -2,13 +2,12 @@ import re
 from glob import glob
 from ...libs import ingest_utils
 from ...libs.excel_wrapper import ExcelWrapper, make_field_definition as fld
-from ...libs.ingest_utils import date_or_str
 from ...util import one
 
 
 class OMGSampleContextual:
     metadata_urls = [
-        "https://downloads-qcif.bioplatforms.com/bpa/omg_staging/metadata/2021-03-03/"
+        "https://downloads-qcif.bioplatforms.com/bpa/omg_staging/metadata/2021-05-14/"
     ]
     metadata_patterns = [re.compile(r"^OMG_samples_metadata.*\.xlsx$")]
     name = "omg-sample-contextual"
@@ -50,7 +49,7 @@ class OMGSampleContextual:
             fld("species", "species"),
             fld("common_name", "common_name"),
             fld("identified_by", "identified_by"),
-            fld("collection_date", "collection_date", coerce=date_or_str),
+            fld("collection_date", "collection_date", coerce=ingest_utils.date_or_str),
             fld("collector", "collector"),
             fld("collection_method", "collection_method"),
             fld("collector_sample_id", "collector_sample_id"),
@@ -60,19 +59,31 @@ class OMGSampleContextual:
             fld("state_or_region", "state_or_region"),
             fld("location_text", "location_text"),
             fld("habitat", "habitat"),
-            fld("decimal_latitude", re.compile(r"^decimal_latitude.*$")),
-            fld("decimal_longitude", re.compile(r"^decimal_longitude.*$")),
+            fld(
+                "decimal_latitude",
+                re.compile(r"^decimal_latitude.*$"),
+                coerce=ingest_utils.get_clean_number,
+            ),
+            fld(
+                "decimal_longitude",
+                re.compile(r"^decimal_longitude.*$"),
+                coerce=ingest_utils.get_clean_number,
+            ),
             fld("coord_uncertainty_metres", "coord_uncertainty_metres"),
             fld("sex", "sex"),
             fld("life_stage", "life-stage"),
-            fld("birth_date", "birth_date", coerce=date_or_str),
-            fld("death_date", "death_date", coerce=date_or_str),
+            fld("birth_date", "birth_date", coerce=ingest_utils.date_or_str),
+            fld("death_date", "death_date", coerce=ingest_utils.date_or_str),
             fld("associated_media", "associated_media"),
             fld("ancillary_notes", "ancillary_notes"),
             fld("barcode_id", "barcode_id"),
             fld("ala_specimen_url", "ala_specimen_url"),
             fld("prior_genetics", "prior_genetics"),
-            fld("dna_extraction_date", "dna_extraction_date", coerce=date_or_str),
+            fld(
+                "dna_extraction_date",
+                "dna_extraction_date",
+                coerce=ingest_utils.date_or_str,
+            ),
             fld("dna_extracted_by", "dna_extracted_by"),
             fld("dna_extraction_method", "dna_extraction_method"),
             fld("dna_conc_ng_ul", "dna_conc_ng_ul"),

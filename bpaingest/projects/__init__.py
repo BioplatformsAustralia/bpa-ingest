@@ -19,6 +19,7 @@ from .ausarg.ingest import (
     AusargIlluminaFastqMetadata,
     AusargPacbioHifiMetadata,
     AusargONTPromethionMetadata,
+    AusargExonCaptureMetadata,
 )
 
 from .gbr.ingest import GbrAmpliconsMetadata, GbrPacbioMetadata
@@ -98,6 +99,7 @@ class ProjectInfo:
             AusargIlluminaFastqMetadata,
             AusargPacbioHifiMetadata,
             AusargONTPromethionMetadata,
+            AusargExonCaptureMetadata,
         ],
         "base": [
             BASEAmpliconsMetadata,

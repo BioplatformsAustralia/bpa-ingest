@@ -72,6 +72,7 @@ ausarg() {
   apply ausarg-illumina-fastq $*
   apply ausarg-pacbio-hifi $*
   apply ausarg-ont-promethion $*
+  apply ausarg-exoncapture $*
 }
 
 marine_microbes()
