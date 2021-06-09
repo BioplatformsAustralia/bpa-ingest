@@ -516,6 +516,7 @@ class OMG10XProcessedIlluminaMetadata(OMGBaseMetadata):
         "match": [files.tenxtar_filename_re],
         "skip": [
             re.compile(r"^.*_processed\.xlsx$"),
+            re.compile(r"^.*_metadata\.xlsx$"),
             re.compile(r"^.*SampleSheet.*"),
             re.compile(r"^.*TestFiles\.exe.*"),
         ],
