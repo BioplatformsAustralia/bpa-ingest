@@ -73,6 +73,7 @@ ausarg() {
   apply ausarg-pacbio-hifi $*
   apply ausarg-ont-promethion $*
   apply ausarg-exoncapture $*
+  apply ausarg-hi-c $*
 }
 
 marine_microbes()
