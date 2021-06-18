@@ -82,7 +82,7 @@ ILLUMINA_HIC_PATTERN = r"""
     (?P<library_id>\d{4,6})_
     AusARG_
     (?P<facility_id>(BRF))_
-    (?P<flow_cell_id>\w{5,10})_
+    (?P<flowcell_id>\w{5,10})_
     ((?P<index>[G|A|T|C|-]*)_)?
     (?P<runsamplenum>S\d*)_
     (?P<lane>L\d{3})_

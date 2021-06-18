@@ -117,7 +117,7 @@ class AusargIlluminaFastqMetadata(AusargBaseMetadata):
             fld("library_ng_ul", "library_ng_ul"),
             fld("library_pcr_cycles", "library_pcr_cycles"),
             fld("library_pcr_reps", "library_pcr_reps"),
-            fld("n_libraries_pooled", "n_libraries_pooled"),
+            fld("n_libraries_pooled", "n_libraries_pooled", coerce=ingest_utils.get_int),
             fld("flowcell_type", "flowcell_type"),
             fld("flowcell_id", re.compile(r"flowcell_[Ii][Dd]")),
             fld("cell_postion", "cell_postion"),
@@ -504,7 +504,7 @@ class AusargPacbioHifiMetadata(AusargBaseMetadata):
             fld("library_location", "library_location"),
             fld("library_status", "library_status"),
             fld("sequencing_facility", "sequencing_facility"),
-            fld("n_libraries_pooled", "n_libraries_pooled"),
+            fld("n_libraries_pooled", "n_libraries_pooled", coerce=ingest_utils.get_int),
             fld("sequencing_platform", "sequencing_platform"),
             fld("flowcell_id", "flowcell_id"),
             fld("experimental_design", "experimental design"),
@@ -931,6 +931,7 @@ class AusargExonCaptureMetadata(AusargBaseMetadata):
         return resources + self.generate_xlsx_resources()
 
 class AusargHiCMetadata(AusargBaseMetadata):
+    organization = "ausarg"
     ckan_data_type = "ausarg-hi-c"
     description = "Hi-C"
     technology = "hi-c"
@@ -943,7 +944,7 @@ class AusargHiCMetadata(AusargBaseMetadata):
     metadata_url_components = (
         "ticket",
     )
-    resource_linkage = ("ticket", "library_id", "flow_cell_id")
+    resource_linkage = ("ticket", "library_id", "flowcell_id")
     spreadsheet = {
         "fields": [
             fld(
@@ -989,9 +990,9 @@ class AusargHiCMetadata(AusargBaseMetadata):
             fld('library_oligo_sequence', 'library_oligo_sequence'),
             fld('insert_size_range', 'insert_size_range'),
             fld('library_ng_ul', 'library_ng_ul'),
-            fld('library_pcr_cycles', 'library_pcr_cycles'),
-            fld('library_pcr_reps', 'library_pcr_reps'),
-            fld('n_libraries_pooled', 'n_libraries_pooled'),
+            fld('library_pcr_cycles', 'library_pcr_cycles', coerce=ingest_utils.get_int),
+            fld('library_pcr_reps', 'library_pcr_reps', coerce=ingest_utils.get_int),
+            fld("n_libraries_pooled", "n_libraries_pooled", coerce=ingest_utils.get_int),
             fld('flowcell_type', 'flowcell_type'),
             fld('flowcell_id', 'flowcell_id'),
             fld('cell_postion', 'cell_postion'),
@@ -1001,7 +1002,7 @@ class AusargHiCMetadata(AusargBaseMetadata):
             fld('analysis_software_version', 'analysis_software_version'),
             fld('file_type', 'file_type'),
             fld('experimental_design', 'experimental_design'),
-	    fld('work_order', 'work_order'),
+	    fld('work_order', 'work_order', coerce=ingest_utils.get_int),
         ],
         "options": {
             "sheet_name": "Library_metadata",
@@ -1060,7 +1061,7 @@ class AusargHiCMetadata(AusargBaseMetadata):
                         "id": name,
                         "type": self.ckan_data_type,
                         "sequence_data_type": self.sequence_data_type,
-                        "flow_cell_id": row.flowcell_id,
+                        "flowcell_id": row.flowcell_id,
                         "data_generated": True,
                         "library_id": raw_library_id,
                         "notes": self.generate_notes_field_with_id(obj, library_id),
@@ -1093,7 +1094,7 @@ class AusargHiCMetadata(AusargBaseMetadata):
                         (
                             xlsx_info["ticket"],
 			    file_info.get("library_id"),
-                            resource["flow_cell_id"],
+                            resource["flowcell_id"],
                         ),
                         legacy_url,
                         resource,
