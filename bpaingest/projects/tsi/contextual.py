@@ -18,7 +18,7 @@ def date_or_str(logger, v):
 
 class TSILibraryContextual:
     metadata_urls = [
-        "https://downloads-qcif.bioplatforms.com/bpa/tsi_staging/metadata/2021-03-09/"
+        "https://downloads-qcif.bioplatforms.com/bpa/tsi_staging/metadata/2021-06-21/"
     ]
     metadata_patterns = [re.compile(r"^.*\.xlsx$")]
     name = "tsi-library-contextual"
@@ -123,7 +123,7 @@ class TSILibraryContextual:
             fld("decimal_longitude", "decimal_longitude_public"),
             fld("decimal_longitude_public", "decimal_longitude_public"),
             # coord_uncertainty_metres
-            fld("coord_uncertainty_metres", "coord_uncertainty_metres"),
+            fld("coord_uncertainty_metres", "coord_uncertainty_metres", optional=True),
             # genotypic sex
             fld("genotypic_sex", "genotypic sex"),
             # phenotypic sex
