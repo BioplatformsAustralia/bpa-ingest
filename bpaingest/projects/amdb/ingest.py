@@ -1657,6 +1657,7 @@ class AustralianMicrobiomeMetagenomicsNovaseqMetadata(AMDFullIngestMetadata):
         "https://downloads-qcif.bioplatforms.com/bpa/amd/metagenomics-novaseq/"
     ]
     metadata_url_components = ("facility_code", "ticket")
+    resource_linkage = ("sample_id", "flowcell")
     spreadsheet = {
         "fields": [
             fld(
@@ -1699,6 +1700,14 @@ class AustralianMicrobiomeMetagenomicsNovaseqMetadata(AMDFullIngestMetadata):
 
     def _get_packages(self):
         packages = []
+        xlsx_re = re.compile(r"^.*_(\w+)_metadata.*\.xlsx$")
+
+        def get_flow_id(fname):
+            m = xlsx_re.match(fname)
+            if not m:
+                raise Exception("unable to find flowcell for filename: `%s'" % (fname))
+            return m.groups()[0]
+
         for fname in unique_spreadsheets(glob(self.path + "/*.xlsx")):
             self._logger.info(
                 "Processing Australian Microbiome metadata file {0}".format(
@@ -1709,9 +1718,10 @@ class AustralianMicrobiomeMetagenomicsNovaseqMetadata(AMDFullIngestMetadata):
                 sample_id = row.sample_id
                 if sample_id is None:
                     continue
+                flow_id = get_flow_id(fname)
                 google_track_meta = self.google_track_meta.get(row.ticket)
                 name = sample_id_to_ckan_name(
-                    sample_id.split("/")[-1], self.ckan_data_type
+                    sample_id.split("/")[-1], self.ckan_data_type, flow_id
                 )
                 archive_ingestion_date = ingest_utils.get_date_isoformat(
                     self._logger, google_track_meta.date_of_transfer_to_archive
@@ -1743,6 +1753,7 @@ class AustralianMicrobiomeMetagenomicsNovaseqMetadata(AMDFullIngestMetadata):
                         "dataset_url": google_track_meta.download,
                         "type": self.ckan_data_type,
                         "sequence_data_type": self.sequence_data_type,
+                        "flowcell": flow_id,
                     }
                 )
                 ingest_utils.permissions_organization_member_after_embargo(
@@ -1762,7 +1773,7 @@ class AustralianMicrobiomeMetagenomicsNovaseqMetadata(AMDFullIngestMetadata):
 
     def _get_resources(self):
         self._logger.info(
-            "Ingesting MM md5 file information from {0}".format(self.path)
+            "Ingesting AM MGE md5 file information from {0}".format(self.path)
         )
         resources = []
         for md5_file in glob(self.path + "/*.md5"):
@@ -1779,7 +1790,8 @@ class AustralianMicrobiomeMetagenomicsNovaseqMetadata(AMDFullIngestMetadata):
                 )
                 xlsx_info = self.metadata_info[os.path.basename(md5_file)]
                 legacy_url = urljoin(xlsx_info["base_url"], filename)
-                resources.append(((sample_id,), legacy_url, resource))
+                flowcell = file_info.get("flowcell")
+                resources.append(((sample_id, flowcell), legacy_url, resource))
             resources.extend(self.generate_md5_resources(md5_file))
         return resources
 
