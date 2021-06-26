@@ -55,7 +55,7 @@ class WheatPathogensGenomesMetadata(BaseMetadata):
             fld("locus_tag", "Locus tag"),
             fld("genome_analysis", "Genome-Analysis"),
             fld("metadata_file", "Metadata file"),
-	    fld('notes', 'notes'),
+            fld("notes", "notes"),
         ],
         "options": {
             "sheet_name": "Metadata",
@@ -93,7 +93,7 @@ class WheatPathogensGenomesMetadata(BaseMetadata):
                     "title": sample_id,
                     "notes": "%s" % (data["official_variety"]),
                     "type": self.ckan_data_type,
-	            "sequence_data_type": self.sequence_data_type,
+                    "sequence_data_type": self.sequence_data_type,
                     "sample_id": sample_id,
                     "kingdom": data["kingdom"],
                     "phylum": data["phylum"],

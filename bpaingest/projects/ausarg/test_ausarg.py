@@ -69,6 +69,7 @@ def test_pacbio_hifi_metadata_sheet():
     for filename in filenames:
         assert pacbio_hifi_metadata_sheet_re.match(filename) is not None
 
+
 def test_exon():
     filenames = [
         "349779_AHHVV2AFX2_TACGCCAAGT_S1_L001_R1_001.fastq.gz",
@@ -78,6 +79,7 @@ def test_exon():
 
     for filename in filenames:
         assert exon_filename_re.match(filename) is not None
+
 
 def test_illumina_hic():
     filenames = [
@@ -90,5 +92,3 @@ def test_illumina_hic():
     ]
     for filename in filenames:
         assert illumina_hic_re.match(filename) is not None
-
-

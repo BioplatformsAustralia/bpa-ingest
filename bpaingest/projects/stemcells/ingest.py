@@ -108,7 +108,7 @@ class StemcellsTranscriptomeMetadata(BaseMetadata):
                     "ticket": row.ticket,
                     "facility": row.facility_code.upper(),
                     "type": self.ckan_data_type,
-	            "sequence_data_type": self.sequence_data_type,
+                    "sequence_data_type": self.sequence_data_type,
                     "date_of_transfer": ingest_utils.get_date_isoformat(
                         self._logger, track_meta.date_of_transfer
                     ),
@@ -231,7 +231,7 @@ class StemcellsSmallRNAMetadata(BaseMetadata):
                         "ticket": row.ticket,
                         "facility": row.facility_code.upper(),
                         "type": self.ckan_data_type,
-	                "sequence_data_type": self.sequence_data_type,
+                        "sequence_data_type": self.sequence_data_type,
                         "date_of_transfer": ingest_utils.get_date_isoformat(
                             self._logger, track_meta.date_of_transfer
                         ),
@@ -382,7 +382,7 @@ class StemcellsSingleCellRNASeqMetadata(BaseMetadata):
                     "ticket": row.ticket,
                     "facility": row.facility_code.upper(),
                     "type": self.ckan_data_type,
-	            "sequence_data_type": self.sequence_data_type,
+                    "sequence_data_type": self.sequence_data_type,
                     "date_of_transfer": ingest_utils.get_date_isoformat(
                         self._logger, track_meta.date_of_transfer
                     ),
@@ -539,7 +539,7 @@ class StemcellsMetabolomicsMetadata(BaseMetadata):
                     "ticket": row.ticket,
                     "facility": row.facility_code.upper(),
                     "type": self.ckan_data_type,
-	            "sequence_data_type": self.sequence_data_type,
+                    "sequence_data_type": self.sequence_data_type,
                     "date_of_transfer": ingest_utils.get_date_isoformat(
                         self._logger, track_meta.date_of_transfer
                     ),
@@ -727,7 +727,7 @@ class StemcellsProteomicsMetadata(StemcellsProteomicsBaseMetadata):
                     "title": "Stemcell Proteomics %s" % (sample_id),
                     "omics": "proteomics",
                     "type": self.ckan_data_type,
-	            "sequence_data_type": self.sequence_data_type,
+                    "sequence_data_type": self.sequence_data_type,
                     "date_of_transfer": ingest_utils.get_date_isoformat(
                         self._logger, track_meta.date_of_transfer
                     ),
@@ -836,7 +836,7 @@ class StemcellsProteomicsPoolMetadata(StemcellsProteomicsBaseMetadata):
                     "title": "Stemcell Proteomics Pool %s" % (pool_id),
                     "omics": "proteomics",
                     "type": self.ckan_data_type,
-	            "sequence_data_type": self.sequence_data_type,
+                    "sequence_data_type": self.sequence_data_type,
                     "date_of_transfer": ingest_utils.get_date_isoformat(
                         self._logger, track_meta.date_of_transfer
                     ),
@@ -1015,7 +1015,7 @@ class StemcellsProteomicsAnalysedMetadata(BaseMetadata):
                     "omics": "proteomics",
                     "sample_ids": ", ".join(sample_ids),
                     "type": self.ckan_data_type,
-	            "sequence_data_type": self.sequence_data_type,
+                    "sequence_data_type": self.sequence_data_type,
                     "date_of_transfer": ingest_utils.get_date_isoformat(
                         self._logger, track_meta.date_of_transfer
                     ),
@@ -1150,7 +1150,7 @@ class StemcellsMetabolomicsAnalysedMetadata(BaseMetadata):
                     "omics": "metabolomics",
                     "sample_ids": ", ".join(sample_ids),
                     "type": self.ckan_data_type,
-	            "sequence_data_type": self.sequence_data_type,
+                    "sequence_data_type": self.sequence_data_type,
                     "date_of_transfer": ingest_utils.get_date_isoformat(
                         self._logger, track_meta.date_of_transfer
                     ),
@@ -1305,7 +1305,7 @@ class StemcellsTranscriptomeAnalysedMetadata(BaseMetadata):
                     "omics": "transcriptomics",
                     "sample_ids": ", ".join(sample_ids),
                     "type": self.ckan_data_type,
-	            "sequence_data_type": self.sequence_data_type,
+                    "sequence_data_type": self.sequence_data_type,
                     "date_of_transfer": ingest_utils.get_date_isoformat(
                         self._logger, track_meta.date_of_transfer
                     ),

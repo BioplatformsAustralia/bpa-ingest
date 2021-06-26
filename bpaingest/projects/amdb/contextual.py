@@ -1366,7 +1366,7 @@ class AustralianMicrobiomeSampleContextual:
             fld("sample_metadata_ingest_file", "sample_metadata_ingest_file"),
             fld("sample_metadata_update_history", "sample_metadata_update_history"),
             fld("sample_database_file", "sample_database_file"),
-            fld("database_schema_definitions_url", "database_schema_definitions_url")
+            fld("database_schema_definitions_url", "database_schema_definitions_url"),
         ]
     }
 

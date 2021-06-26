@@ -406,7 +406,7 @@ class SepsisTranscriptomicsHiseqMetadata(BaseSepsisMetadata):
                 coerce=ingest_utils.extract_ands_id,
             ),
             fld("sample", "Sample (MGR code)"),
-	    fld("sample_notes", "sample i.d"),
+            fld("sample_notes", "sample i.d"),
             fld("library_construction_protocol", "Library construction protocol"),
             fld("barcode_tag", "Barcode tag"),
             fld("sequencer", "Sequencer"),
@@ -1944,7 +1944,7 @@ class SepsisMetabolomicsAnalysedMetadata(BaseSepsisAnalysedMetadata):
             ),
             fld(
                 "sample_id",
-		re.compile(r"sample name (i.e. )?\(?5 digit bpa id\)?"),
+                re.compile(r"sample name (i.e. )?\(?5 digit bpa id\)?"),
                 coerce=ingest_utils.extract_ands_id,
             ),
             fld("taxon_or_organism", "taxon_or_organism"),

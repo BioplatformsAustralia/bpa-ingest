@@ -91,4 +91,3 @@ ILLUMINA_HIC_PATTERN = r"""
     \.fastq\.gz$
 """
 illumina_hic_re = re.compile(ILLUMINA_HIC_PATTERN, re.VERBOSE)
-

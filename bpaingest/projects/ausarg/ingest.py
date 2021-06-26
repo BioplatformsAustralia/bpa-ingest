@@ -117,7 +117,9 @@ class AusargIlluminaFastqMetadata(AusargBaseMetadata):
             fld("library_ng_ul", "library_ng_ul"),
             fld("library_pcr_cycles", "library_pcr_cycles"),
             fld("library_pcr_reps", "library_pcr_reps"),
-            fld("n_libraries_pooled", "n_libraries_pooled", coerce=ingest_utils.get_int),
+            fld(
+                "n_libraries_pooled", "n_libraries_pooled", coerce=ingest_utils.get_int
+            ),
             fld("flowcell_type", "flowcell_type"),
             fld("flowcell_id", re.compile(r"flowcell_[Ii][Dd]")),
             fld("cell_postion", "cell_postion"),
@@ -210,7 +212,7 @@ class AusargIlluminaFastqMetadata(AusargBaseMetadata):
                         "name": name,
                         "id": name,
                         "type": self.ckan_data_type,
-			"sequence_data_type": self.sequence_data_type,
+                        "sequence_data_type": self.sequence_data_type,
                         "data_generated": True,
                         "notes": self.build_notes_without_blanks(obj),
                     }
@@ -407,7 +409,7 @@ class AusargONTPromethionMetadata(AusargBaseMetadata):
                         "name": name,
                         "id": name,
                         "type": self.ckan_data_type,
-			"sequence_data_type": self.sequence_data_type,
+                        "sequence_data_type": self.sequence_data_type,
                     }
                 )
                 ingest_utils.permissions_organization_member(self._logger, obj)
@@ -504,7 +506,9 @@ class AusargPacbioHifiMetadata(AusargBaseMetadata):
             fld("library_location", "library_location"),
             fld("library_status", "library_status"),
             fld("sequencing_facility", "sequencing_facility"),
-            fld("n_libraries_pooled", "n_libraries_pooled", coerce=ingest_utils.get_int),
+            fld(
+                "n_libraries_pooled", "n_libraries_pooled", coerce=ingest_utils.get_int
+            ),
             fld("sequencing_platform", "sequencing_platform"),
             fld("flowcell_id", "flowcell_id"),
             fld("experimental_design", "experimental design"),
@@ -610,7 +614,7 @@ class AusargPacbioHifiMetadata(AusargBaseMetadata):
                         ),
                         "dataset_url": track_get("download"),
                         "type": self.ckan_data_type,
-			"sequence_data_type": self.sequence_data_type,
+                        "sequence_data_type": self.sequence_data_type,
                     }
                 )
                 ingest_utils.permissions_organization_member(self._logger, obj)
@@ -677,6 +681,7 @@ class AusargPacbioHifiMetadata(AusargBaseMetadata):
                 )
         return resources
 
+
 class AusargExonCaptureMetadata(AusargBaseMetadata):
     organization = "ausarg"
     ckan_data_type = "ausarg-exon-capture"
@@ -697,15 +702,9 @@ class AusargExonCaptureMetadata(AusargBaseMetadata):
             fld("genus", "genus", optional=True),
             fld("species", "species", optional=True),
             fld("voucher_id", "voucher_id", optional=True),
-            fld(
-                "dataset_id", "dataset_id", coerce=ingest_utils.extract_ands_id
-            ),
-            fld(
-                "library_id", "library_id", coerce=ingest_utils.extract_ands_id
-            ),
-            fld(
-                "sample_id", "sample_id", coerce=ingest_utils.extract_ands_id,
-		),
+            fld("dataset_id", "dataset_id", coerce=ingest_utils.extract_ands_id),
+            fld("library_id", "library_id", coerce=ingest_utils.extract_ands_id),
+            fld("sample_id", "sample_id", coerce=ingest_utils.extract_ands_id,),
             fld("facility_sample_id", "facility_sample_id"),
             fld("library_type", "library_type"),
             fld(
@@ -746,29 +745,29 @@ class AusargExonCaptureMetadata(AusargBaseMetadata):
             fld("sequencing_platform", "sequencing_platform"),
             fld("flowcell_id", "flowcell_id"),
             fld("voucher_or_tissue_number", "voucher_or_tissue_number", optional=True),
-            fld('work_order', 'work_order'),
-            fld('facility_project_code', 'facility_project_code'),
-            fld('specimen_id', 'specimen_id'),
-            fld('tissue_number', 'tissue_number'),
-            fld('data_context', 'data_context'),
-            fld('library_layout', 'library_layout'),
-            fld('sequencing_model', 'sequencing_model'),
-            fld('library_construction_protocol', 'library_construction_protocol'),
-            fld('library_strategy', 'library_strategy'),
-            fld('library_selection', 'library_selection'),
-            fld('library_source', 'library_source'),
-            fld('library_index_seq_p7', 'library_index_seq_p7'),
-            fld('library_oligo_sequence_p7', 'library_oligo_sequence_p7'),
-            fld('insert_size_range', 'insert_size_range'),
-            fld('flowcell_type', 'flowcell_type'),
-            fld('cell_postion', 'cell_postion'),
-            fld('movie_length', 'movie_length'),
-            fld('sequencing_kit_chemistry_version', 'sequencing_kit_chemistry_version'),
-            fld('analysis_software', 'analysis_software'),
-            fld('analysis_software_version', 'analysis_software_version'),
-            fld('file_type', 'file_type'),
-            fld('library_index_seq_p5', 'library_index_seq_p5'),
-            fld('library_oligo_sequence_p5', 'library_oligo_sequence_p5'),
+            fld("work_order", "work_order"),
+            fld("facility_project_code", "facility_project_code"),
+            fld("specimen_id", "specimen_id"),
+            fld("tissue_number", "tissue_number"),
+            fld("data_context", "data_context"),
+            fld("library_layout", "library_layout"),
+            fld("sequencing_model", "sequencing_model"),
+            fld("library_construction_protocol", "library_construction_protocol"),
+            fld("library_strategy", "library_strategy"),
+            fld("library_selection", "library_selection"),
+            fld("library_source", "library_source"),
+            fld("library_index_seq_p7", "library_index_seq_p7"),
+            fld("library_oligo_sequence_p7", "library_oligo_sequence_p7"),
+            fld("insert_size_range", "insert_size_range"),
+            fld("flowcell_type", "flowcell_type"),
+            fld("cell_postion", "cell_postion"),
+            fld("movie_length", "movie_length"),
+            fld("sequencing_kit_chemistry_version", "sequencing_kit_chemistry_version"),
+            fld("analysis_software", "analysis_software"),
+            fld("analysis_software_version", "analysis_software_version"),
+            fld("file_type", "file_type"),
+            fld("library_index_seq_p5", "library_index_seq_p5"),
+            fld("library_oligo_sequence_p5", "library_oligo_sequence_p5"),
         ],
         "options": {
             "sheet_name": "Library_metadata",
@@ -844,9 +843,7 @@ class AusargExonCaptureMetadata(AusargBaseMetadata):
 
                 context = {}
                 for contextual_source in self.contextual_metadata:
-                    context.update(
-                        contextual_source.get(row.sample_id)
-                    )
+                    context.update(contextual_source.get(row.sample_id))
 
                 def cleanstring(s):
                     if s is not None:
@@ -883,7 +880,7 @@ class AusargExonCaptureMetadata(AusargBaseMetadata):
                         ),
                         "dataset_url": track_get("download"),
                         "type": self.ckan_data_type,
-		        "sequence_data_type": self.sequence_data_type,
+                        "sequence_data_type": self.sequence_data_type,
                     }
                 )
                 ingest_utils.permissions_organization_member(self._logger, obj)
@@ -930,6 +927,7 @@ class AusargExonCaptureMetadata(AusargBaseMetadata):
 
         return resources + self.generate_xlsx_resources()
 
+
 class AusargHiCMetadata(AusargBaseMetadata):
     organization = "ausarg"
     ckan_data_type = "ausarg-hi-c"
@@ -941,9 +939,7 @@ class AusargHiCMetadata(AusargBaseMetadata):
     ]
     contextual_classes = common_context
     metadata_patterns = [r"^.*\.md5$", r"^.*\.xlsx$"]
-    metadata_url_components = (
-        "ticket",
-    )
+    metadata_url_components = ("ticket",)
     resource_linkage = ("ticket", "library_id", "flowcell_id")
     spreadsheet = {
         "fields": [
@@ -963,46 +959,54 @@ class AusargHiCMetadata(AusargBaseMetadata):
                 coerce=ingest_utils.extract_ands_id,
             ),
             fld("run_format", "run format", optional=True),
-	    fld('facility_project_code', 'facility_project_code'),
-            fld('specimen_id', 'specimen_id'),
-            fld('tissue_number', 'tissue_number'),
-            fld('genus', 'genus'),
-            fld('species', 'species'),
-            fld('data_custodian', 'data_custodian'),
-            fld('data_context', 'data_context'),
-            fld('library_type', 'library_type'),
-            fld('library_layout', 'library_layout'),
-            fld('facility_sample_id', 'facility_sample_id'),
-            fld('sequencing_facility', 'sequencing_facility'),
-            fld('sequencing_platform', 'sequencing_platform'),
-            fld('sequencing_model', 'sequencing_model'),
-            fld('library_construction_protocol', 'library_construction_protocol'),
-            fld('library_strategy', 'library_strategy'),
-            fld('library_selection', 'library_selection'),
-            fld('library_source', 'library_source'),
-            fld('library_prep_date', 'library_prep_date', coerce=ingest_utils.get_date_isoformat),
-            fld('library_prepared_by', 'library_prepared_by'),
-            fld('library_location', 'library_location'),
-            fld('library_comments', 'library_comments'),
-            fld('dna_treatment', 'dna_treatment'),
-            fld('library_index_id', 'library_index_id'),
-            fld('library_index_seq', 'library_index_seq'),
-            fld('library_oligo_sequence', 'library_oligo_sequence'),
-            fld('insert_size_range', 'insert_size_range'),
-            fld('library_ng_ul', 'library_ng_ul'),
-            fld('library_pcr_cycles', 'library_pcr_cycles', coerce=ingest_utils.get_int),
-            fld('library_pcr_reps', 'library_pcr_reps', coerce=ingest_utils.get_int),
-            fld("n_libraries_pooled", "n_libraries_pooled", coerce=ingest_utils.get_int),
-            fld('flowcell_type', 'flowcell_type'),
-            fld('flowcell_id', 'flowcell_id'),
-            fld('cell_postion', 'cell_postion'),
-            fld('movie_length', 'movie_length'),
-            fld('sequencing_kit_chemistry_version', 'sequencing_kit_chemistry_version'),
-            fld('analysis_software', 'analysis_software'),
-            fld('analysis_software_version', 'analysis_software_version'),
-            fld('file_type', 'file_type'),
-            fld('experimental_design', 'experimental_design'),
-	    fld('work_order', 'work_order', coerce=ingest_utils.get_int),
+            fld("facility_project_code", "facility_project_code"),
+            fld("specimen_id", "specimen_id"),
+            fld("tissue_number", "tissue_number"),
+            fld("genus", "genus"),
+            fld("species", "species"),
+            fld("data_custodian", "data_custodian"),
+            fld("data_context", "data_context"),
+            fld("library_type", "library_type"),
+            fld("library_layout", "library_layout"),
+            fld("facility_sample_id", "facility_sample_id"),
+            fld("sequencing_facility", "sequencing_facility"),
+            fld("sequencing_platform", "sequencing_platform"),
+            fld("sequencing_model", "sequencing_model"),
+            fld("library_construction_protocol", "library_construction_protocol"),
+            fld("library_strategy", "library_strategy"),
+            fld("library_selection", "library_selection"),
+            fld("library_source", "library_source"),
+            fld(
+                "library_prep_date",
+                "library_prep_date",
+                coerce=ingest_utils.get_date_isoformat,
+            ),
+            fld("library_prepared_by", "library_prepared_by"),
+            fld("library_location", "library_location"),
+            fld("library_comments", "library_comments"),
+            fld("dna_treatment", "dna_treatment"),
+            fld("library_index_id", "library_index_id"),
+            fld("library_index_seq", "library_index_seq"),
+            fld("library_oligo_sequence", "library_oligo_sequence"),
+            fld("insert_size_range", "insert_size_range"),
+            fld("library_ng_ul", "library_ng_ul"),
+            fld(
+                "library_pcr_cycles", "library_pcr_cycles", coerce=ingest_utils.get_int
+            ),
+            fld("library_pcr_reps", "library_pcr_reps", coerce=ingest_utils.get_int),
+            fld(
+                "n_libraries_pooled", "n_libraries_pooled", coerce=ingest_utils.get_int
+            ),
+            fld("flowcell_type", "flowcell_type"),
+            fld("flowcell_id", "flowcell_id"),
+            fld("cell_postion", "cell_postion"),
+            fld("movie_length", "movie_length"),
+            fld("sequencing_kit_chemistry_version", "sequencing_kit_chemistry_version"),
+            fld("analysis_software", "analysis_software"),
+            fld("analysis_software_version", "analysis_software_version"),
+            fld("file_type", "file_type"),
+            fld("experimental_design", "experimental_design"),
+            fld("work_order", "work_order", coerce=ingest_utils.get_int),
         ],
         "options": {
             "sheet_name": "Library_metadata",
@@ -1048,7 +1052,9 @@ class AusargHiCMetadata(AusargBaseMetadata):
                     obj.update(track_meta._asdict())
                 raw_library_id = library_id.split("/")[-1]
                 raw_dataset_id = dataset_id.split("/")[-1]
-                name = sample_id_to_ckan_name(raw_library_id, self.ckan_data_type, row.flowcell_id)
+                name = sample_id_to_ckan_name(
+                    raw_library_id, self.ckan_data_type, row.flowcell_id
+                )
                 for contextual_source in self.contextual_metadata:
                     obj.update(contextual_source.get(sample_id))
                 obj.update(
@@ -1093,7 +1099,7 @@ class AusargHiCMetadata(AusargBaseMetadata):
                     (
                         (
                             xlsx_info["ticket"],
-			    file_info.get("library_id"),
+                            file_info.get("library_id"),
                             resource["flowcell_id"],
                         ),
                         legacy_url,
@@ -1101,4 +1107,3 @@ class AusargHiCMetadata(AusargBaseMetadata):
                     )
                 )
         return resources
-
