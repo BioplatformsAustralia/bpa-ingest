@@ -28,12 +28,11 @@ def sample_id_to_ckan_name(sample_id, suborg=None, postfix=None):
     return r.lower()
 
 
-def make_reupload_cache_path(args):
-    if (
-        (args.read_reuploads or args.write_reuploads)
-        and not args.download_path
-        and not args.project_name
-    ):
+def make_reupload_cache_path(logger, args):
+    logger.info(f"args are {args}")
+    if not args.read_reuploads and not args.write_reuploads:
+        return None
+    if not args.download_path or not args.project_name:
         raise Exception(
             "To use cache reuploads, download_path arg (and project) must also be set."
         )

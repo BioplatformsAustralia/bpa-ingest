@@ -101,9 +101,12 @@ def setup_sync(subparser):
         "--read-reuploads",
         "-r",
         action="store_const",
-        const=False,
-        default=True,
+        const=True,
+        default=False,
         help="read reuploads from disk",
+    )
+    subparser.add_argument(
+        "-p", "--download-path", required=False, default=None, help="CKAN base url"
     )
 
 
@@ -147,10 +150,11 @@ def setup_makeschema(subparser):
 def sync(args):
     """sync a project"""
     ckan = make_ckan_api(args)
+
     kwargs = {
         "write_reuploads": args.write_reuploads,
         "read_reuploads": args.read_reuploads,
-        "reuploads_path": make_reupload_cache_path(args),
+        "reuploads_path": make_reupload_cache_path(make_cli_logger(args), args),
     }
     with DownloadMetadata(
         make_cli_logger(args),
