@@ -1,3 +1,4 @@
+import os
 import re
 
 from .ops import (
@@ -235,6 +236,7 @@ def sync_resources(
     do_uploads,
     do_resource_checks,
     do_delete,
+    **kwargs,
 ):
     logger.info("syncing %d resources" % (len(resources)))
 
@@ -271,6 +273,12 @@ def sync_resources(
             "resource checks disabled: resource integrity will not be confirmed"
         )
         to_reupload = []
+    elif kwargs["read_reuploads"] is not None:
+        with open(kwargs["reuploads_path"], "r") as reader:
+            to_reupload = reader.readlines()
+            if not isinstance(to_reupload, list):
+                raise Exception("reuploads should be a list")
+        logger.info(f"Reuploads disk cache read completed.")
     else:
         # check all existing resources on all existing packages, in parallel
         to_reupload = check_package_resources(
@@ -283,6 +291,9 @@ def sync_resources(
         if package_resources is None:
             logger.warning("No resources for package `%s`" % (package_id))
             continue
+        logger.info(
+            f"Before the package resources sync, reupload count is: {len(to_reupload)}"
+        )
         to_reupload += sync_package_resources(
             ckan,
             package_obj,
@@ -291,13 +302,17 @@ def sync_resources(
             auth,
             do_delete,
         )
+    if kwargs["write_reuploads"] is not None:
+        with open(kwargs["reuploads_path"], "w") as writer:
+            writer.writelines(f"{next_reupload}\n" for next_reupload in to_reupload)
+        logger.info(f"Reuploads disk cache write completed.")
 
     if do_uploads:
         reupload_resources(ckan, to_reupload, resource_id_legacy_url, auth, num_threads)
 
 
 def sync_metadata(
-    ckan, meta, auth, num_threads, do_uploads, do_resource_checks, do_delete
+    ckan, meta, auth, num_threads, do_uploads, do_resource_checks, do_delete, **kwargs
 ):
     def unique_packages():
         by_id = dict((t["id"], t) for t in packages)
@@ -333,4 +348,5 @@ def sync_metadata(
         do_uploads,
         do_resource_checks,
         do_delete,
+        **kwargs,
     )

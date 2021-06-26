@@ -1,6 +1,7 @@
 import csv
 import datetime
 import logging
+import os
 import re
 import string
 from collections import namedtuple
@@ -25,6 +26,18 @@ def sample_id_to_ckan_name(sample_id, suborg=None, postfix=None):
         r += "-" + postfix
     # CKAN insists upon lowercase
     return r.lower()
+
+
+def make_reupload_cache_path(args):
+    if (
+        (args.read_reuploads or args.write_reuploads)
+        and not args.download_path
+        and not args.project_name
+    ):
+        raise Exception(
+            "To use cache reuploads, download_path arg (and project) must also be set."
+        )
+    return os.path.join(args.download_path, args.project_name, "reupload_resources")
 
 
 def prune_dict(d, keys):
