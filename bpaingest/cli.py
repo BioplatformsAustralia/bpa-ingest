@@ -3,7 +3,7 @@ import logging
 import sys
 import os
 
-from .util import make_registration_decorator, make_ckan_api, make_reupload_cache_path
+from .util import make_registration_decorator, make_ckan_api, make_reuploads_cache_path
 from .sync import sync_metadata
 from .schema import generate_schemas
 from .ops import print_accounts, make_organization
@@ -154,7 +154,7 @@ def sync(args):
     kwargs = {
         "write_reuploads": args.write_reuploads,
         "read_reuploads": args.read_reuploads,
-        "reuploads_path": make_reupload_cache_path(make_cli_logger(args), args),
+        "reuploads_path": make_reuploads_cache_path(make_cli_logger(args), args),
     }
     with DownloadMetadata(
         make_cli_logger(args),

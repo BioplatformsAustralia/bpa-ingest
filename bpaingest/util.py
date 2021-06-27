@@ -28,15 +28,23 @@ def sample_id_to_ckan_name(sample_id, suborg=None, postfix=None):
     return r.lower()
 
 
-def make_reupload_cache_path(logger, args):
-    logger.info(f"args are {args}")
+def make_reuploads_cache_path(logger, args):
     if not args.read_reuploads and not args.write_reuploads:
         return None
     if not args.download_path or not args.project_name:
         raise Exception(
             "To use cache reuploads, download_path arg (and project) must also be set."
         )
-    return os.path.join(args.download_path, args.project_name, "reupload_resources")
+    reuploads_dir = os.path.join(args.download_path, args.project_name)
+    os.makedirs(reuploads_dir, mode = 0o644, exist_ok = True)
+    reupload_path = os.path.join(reuploads_dir, "reupload_resources.dump")
+    msg_activation = f"Activated reupload cache at {reupload_path} for"
+    if args.read_reuploads:
+        msg_activation += " reads"
+    if args.write_reuploads:
+        msg_activation += " writes"
+    logger.info(msg_activation)
+    return reupload_path
 
 
 def prune_dict(d, keys):

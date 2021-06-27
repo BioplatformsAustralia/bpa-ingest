@@ -1,4 +1,5 @@
 import os
+import pickle
 import re
 
 from .ops import (
@@ -273,11 +274,8 @@ def sync_resources(
             "resource checks disabled: resource integrity will not be confirmed"
         )
         to_reupload = []
-    elif kwargs["read_reuploads"] is not None:
-        with open(kwargs["reuploads_path"], "r") as reader:
-            to_reupload = reader.readlines()
-            if not isinstance(to_reupload, list):
-                raise Exception("reuploads should be a list")
+    elif kwargs["read_reuploads"]:
+        to_reupload = pickle.load(open(kwargs["reuploads_path"], 'rb'))
         logger.info(f"Reuploads disk cache read completed.")
     else:
         # check all existing resources on all existing packages, in parallel
@@ -285,15 +283,15 @@ def sync_resources(
             ckan, ckan_packages, resource_id_legacy_url, auth
         )
 
+    logger.info(
+        f"Before the package resources sync, reupload count is: {len(to_reupload)}"
+    )
     for package_obj in sorted(ckan_packages, key=lambda p: p["name"]):
         package_id = package_obj["id"]
         package_resources = resource_idx.get(package_id)
         if package_resources is None:
             logger.warning("No resources for package `%s`" % (package_id))
             continue
-        logger.info(
-            f"Before the package resources sync, reupload count is: {len(to_reupload)}"
-        )
         to_reupload += sync_package_resources(
             ckan,
             package_obj,
@@ -302,10 +300,11 @@ def sync_resources(
             auth,
             do_delete,
         )
-    if kwargs["write_reuploads"] is not None:
-        with open(kwargs["reuploads_path"], "w") as writer:
-            writer.writelines(f"{next_reupload}\n" for next_reupload in to_reupload)
+    if kwargs["write_reuploads"]:
+        pickle.dump(to_reupload, open(kwargs["reuploads_path"], 'wb'))
         logger.info(f"Reuploads disk cache write completed.")
+        # with open(kwargs["reuploads_path"] + '.txt', "w") as writer:
+        #     writer.writelines(f"{next_reupload}\n" for next_reupload in to_reupload)
 
     if do_uploads:
         reupload_resources(ckan, to_reupload, resource_id_legacy_url, auth, num_threads)
