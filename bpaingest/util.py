@@ -36,7 +36,7 @@ def make_reuploads_cache_path(logger, args):
             "To use cache reuploads, download_path arg (and project) must also be set."
         )
     reuploads_dir = os.path.join(args.download_path, args.project_name)
-    os.makedirs(reuploads_dir, mode = 0o644, exist_ok = True)
+    os.makedirs(reuploads_dir, exist_ok = True)
     reupload_path = os.path.join(reuploads_dir, "reupload_resources.dump")
     msg_activation = f"Activated reupload cache at {reupload_path} for"
     if args.read_reuploads:

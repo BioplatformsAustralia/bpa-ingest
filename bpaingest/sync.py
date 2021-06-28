@@ -275,7 +275,8 @@ def sync_resources(
         )
         to_reupload = []
     elif kwargs["read_reuploads"]:
-        to_reupload = pickle.load(open(kwargs["reuploads_path"], 'rb'))
+        with open(kwargs["reuploads_path"], "r") as reader:
+            to_reupload = pickle.load(reader)
         logger.info(f"Reuploads disk cache read completed.")
     else:
         # check all existing resources on all existing packages, in parallel
@@ -301,7 +302,8 @@ def sync_resources(
             do_delete,
         )
     if kwargs["write_reuploads"]:
-        pickle.dump(to_reupload, open(kwargs["reuploads_path"], 'wb'))
+        with open(kwargs["reuploads_path"], "wb") as writer:
+            pickle.dump(to_reupload, writer)
         logger.info(f"Reuploads disk cache write completed.")
         # with open(kwargs["reuploads_path"] + '.txt', "w") as writer:
         #     writer.writelines(f"{next_reupload}\n" for next_reupload in to_reupload)

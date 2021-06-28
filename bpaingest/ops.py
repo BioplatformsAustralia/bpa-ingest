@@ -46,8 +46,8 @@ def print_accounts():
     for object_type, method in sorted(method_stats, key=lambda x: method_stats[x]):
         print(
             (
-                "  %14s  %6s  %d"
-                % (object_type, method, method_stats[(object_type, method)])
+                    "  %14s  %6s  %d"
+                    % (object_type, method, method_stats[(object_type, method)])
             )
         )
 
@@ -78,7 +78,7 @@ def diff_objects(obj1, obj2, desc, skip_differences=None):
 
 
 def patch_if_required(
-    ckan, object_type, ckan_object, patch_object, skip_differences=None
+        ckan, object_type, ckan_object, patch_object, skip_differences=None
 ):
     """
     patch ckan_object if applying patch_object would change it. ckan_object is unchanged
@@ -233,7 +233,7 @@ class ApacheArchiveInfo(BaseArchiveInfo):
 
 
 def check_resource(
-    ckan_archive_info, apache_archive_info, current_url, legacy_url, metadata_etags,
+        ckan_archive_info, apache_archive_info, current_url, legacy_url, metadata_etags,
 ):
     """
     returns None if the ckan_obj looks good (is on the CKAN server, size matches legacy url size)
@@ -269,7 +269,8 @@ def check_resource(
 
     # if we have a pre-calculated s3etag in metadata, check it matches
     current_etag = ckan_archive_info.get_etag(current_url)
-    if current_etag.strip('"') not in metadata_etags:
+    logger.info(f"current etag is {current_etag}")
+    if current_etag and current_etag.strip('"') not in metadata_etags:
         if None in metadata_etags:
             logger.warning(
                 "CKAN resource %s has no metadata etag: run genhash for this project."
@@ -281,7 +282,6 @@ def check_resource(
                 % (current_url, current_etag, metadata_etags)
             )
             return "wrong-etag"
-
     return None
 
 
