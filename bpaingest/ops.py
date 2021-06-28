@@ -46,8 +46,8 @@ def print_accounts():
     for object_type, method in sorted(method_stats, key=lambda x: method_stats[x]):
         print(
             (
-                    "  %14s  %6s  %d"
-                    % (object_type, method, method_stats[(object_type, method)])
+                "  %14s  %6s  %d"
+                % (object_type, method, method_stats[(object_type, method)])
             )
         )
 
@@ -78,7 +78,7 @@ def diff_objects(obj1, obj2, desc, skip_differences=None):
 
 
 def patch_if_required(
-        ckan, object_type, ckan_object, patch_object, skip_differences=None
+    ckan, object_type, ckan_object, patch_object, skip_differences=None
 ):
     """
     patch ckan_object if applying patch_object would change it. ckan_object is unchanged
@@ -233,7 +233,7 @@ class ApacheArchiveInfo(BaseArchiveInfo):
 
 
 def check_resource(
-        ckan_archive_info, apache_archive_info, current_url, legacy_url, metadata_etags,
+    ckan_archive_info, apache_archive_info, current_url, legacy_url, metadata_etags,
 ):
     """
     returns None if the ckan_obj looks good (is on the CKAN server, size matches legacy url size)

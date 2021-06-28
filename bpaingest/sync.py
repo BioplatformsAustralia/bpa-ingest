@@ -154,7 +154,7 @@ def check_package_resources(ckan, ckan_packages, resource_id_legacy_url, auth):
 
 
 def sync_package_resources(
-        ckan, package_obj, resource_id_legacy_url, resources, auth, do_delete
+    ckan, package_obj, resource_id_legacy_url, resources, auth, do_delete
 ):
     current_resources = package_obj["resources"]
     existing_resources = dict((t["id"], t) for t in current_resources)
@@ -228,22 +228,22 @@ def reupload_resources(ckan, to_reupload, resource_id_legacy_url, auth, num_thre
 
 
 def sync_resources(
-        ckan,
-        resources,
-        resource_linkage_attrs,
-        ckan_packages,
-        auth,
-        num_threads,
-        do_uploads,
-        do_resource_checks,
-        do_delete,
-        **kwargs,
+    ckan,
+    resources,
+    resource_linkage_attrs,
+    ckan_packages,
+    auth,
+    num_threads,
+    do_uploads,
+    do_resource_checks,
+    do_delete,
+    **kwargs,
 ):
     logger.info("syncing %d resources" % (len(resources)))
 
     resource_linkage_package_id = {}
     for package_obj in ckan_packages:
-        linkage_tpl = tuple((package_obj[t] for t in resource_linkage_attrs), )
+        linkage_tpl = tuple((package_obj[t] for t in resource_linkage_attrs),)
         if linkage_tpl in resource_linkage_package_id:
             raise Exception(
                 "more than one package linked for tuple {}".format(linkage_tpl)
@@ -313,7 +313,7 @@ def sync_resources(
 
 
 def sync_metadata(
-        ckan, meta, auth, num_threads, do_uploads, do_resource_checks, do_delete, **kwargs
+    ckan, meta, auth, num_threads, do_uploads, do_resource_checks, do_delete, **kwargs
 ):
     def unique_packages():
         by_id = dict((t["id"], t) for t in packages)
