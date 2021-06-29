@@ -474,7 +474,7 @@ class AusargPacbioHifiMetadata(AusargBaseMetadata):
                 coerce=ingest_utils.extract_ands_id,
             ),
             fld("work_order", "work_order"),
-            fld("ausarg_project", re.compile(r"[Aa]us[aA][rR][gG]_project")),
+            fld("ausarg_project", re.compile(r"[Aa]us[aA][rR][gG]_project"), optional=True),
             fld("specimen_id", re.compile(r"specimen_[Ii][Dd]"), optional=True),
             fld("tissue_number", "tissue_number"),
             fld("insert_size_range", "insert_size_range"),
@@ -514,6 +514,8 @@ class AusargPacbioHifiMetadata(AusargBaseMetadata):
             fld("experimental_design", "experimental design"),
             fld("voucher_number", "voucher_number", optional=True),
             fld("file_name", "file_name", optional=True),
+	    fld('facility_project_code', 'facility_project_code', optional=True),
+            fld('data_context', 'data_context', optional=True),
         ],
         "options": {
             "sheet_name": "Library_metadata",
