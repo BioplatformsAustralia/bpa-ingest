@@ -576,7 +576,7 @@ class TSIIlluminaFastqMetadata(TSIBaseMetadata):
             fld("library_layout", "library_layout"),
             fld("sequencing_model", "sequencing_model"),
             fld("data_context", "data_context"),
-            fld("facility_project_code", "facility_project_code"),
+            fld("facility_project_code", "facility_project_code", optional=True),
         ],
         "options": {
             "sheet_name": "Library metadata",

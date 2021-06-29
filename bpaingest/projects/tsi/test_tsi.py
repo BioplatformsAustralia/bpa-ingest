@@ -44,6 +44,7 @@ def test_fastq_filename_re():
         "355638_TSI_UNSW_H2KN2DRXY_CTCGCTTCGG-TTGACTAGTA_S26_L001_R1_001.fastq.gz",
         "355638_TSI_UNSW_H2KN2DRXY_CTCGCTTCGG-TTGACTAGTA_S26_L001_R2_001.fastq.gz",
         "355638_TSI_UNSW_H2KN2DRXY_CTCGCTTCGG-TTGACTAGTA_S26_L002_R1_001.fastq.gz",
+	"357733_TSI_AGRF_HFVFMDRXY_TTGTATCAGG-TGGCCTCTGT_L001_R1.fastq.gz",
     ]
     for filename in filenames:
         assert illumina_fastq_re.match(filename) is not None
