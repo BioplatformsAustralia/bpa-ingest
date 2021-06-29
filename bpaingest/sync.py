@@ -275,7 +275,7 @@ def sync_resources(
         )
         to_reupload = []
     elif kwargs["read_reuploads"]:
-        with open(kwargs["reuploads_path"], "r") as reader:
+        with open(kwargs["reuploads_path"], "rb") as reader:
             to_reupload = pickle.load(reader)
         logger.info(f"Reuploads disk cache read completed.")
     else:
