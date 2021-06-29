@@ -94,7 +94,7 @@ class AusargIlluminaFastqMetadata(AusargBaseMetadata):
             fld("species", "species"),
             fld("data_custodian", "data_custodian"),
             fld("experimental_design", "experimental design"),
-            fld("ausarg_project", re.compile(r"[Aa]us[aA][rR][gG]_project")),
+            fld("ausarg_project", re.compile(r"[Aa]us[aA][rR][gG]_project"), optional=True),
             fld("facility_sample_id", re.compile(r"facility_sample_[Ii][Dd]")),
             fld("sequencing_facility", "sequencing_facility"),
             fld("sequencing_platform", "sequencing_platform"),
@@ -126,6 +126,8 @@ class AusargIlluminaFastqMetadata(AusargBaseMetadata):
             fld("movie_length", "movie_length"),
             fld("analysis_software", "analysis_software"),
             fld("analysis_software_version", "analysis_software_version"),
+	    fld('facility_project_code', 'facility_project_code', optional=True),
+            fld('data_context', 'data_context', optional=True),
         ],
         "options": {
             "sheet_name": "Library_metadata",
