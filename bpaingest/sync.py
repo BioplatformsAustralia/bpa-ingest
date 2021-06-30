@@ -239,7 +239,7 @@ def reupload_resources(ckan, to_reupload, resource_id_legacy_url, auth, num_thre
             )
         finally:
             logger.info(
-                f"Resource upload progress: {total_reuploads} of {total_reuploads}."
+                f"Resource Upload progress: {len(to_reupload)} out of {total_reuploads} to do."
             )
 
 
