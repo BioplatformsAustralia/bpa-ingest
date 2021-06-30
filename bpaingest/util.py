@@ -27,6 +27,16 @@ def sample_id_to_ckan_name(sample_id, suborg=None, postfix=None):
     # CKAN insists upon lowercase
     return r.lower()
 
+def validate_write_reuploads_interval(logger, args):
+    if not args.write_reuploads_interval:
+        return None
+    if args.write_reuploads_interval and not args.write_reuploads:
+        raise Exception(
+            "To use cache reuploads write interval, the interval must be an integer and cache write reuploads must be enabled."
+        )
+    logger.info(f"Activated write reuploads interval of {args.write_reuploads_interval}")
+    return args.write_reuploads_interval
+
 
 def make_reuploads_cache_path(logger, args):
     if not args.read_reuploads and not args.write_reuploads:
@@ -34,10 +44,6 @@ def make_reuploads_cache_path(logger, args):
     if not args.download_path or not args.project_name:
         raise Exception(
             "To use cache reuploads, download_path arg (and project) must also be set."
-        )
-    if args.write_reuploads_interval and not isinstance(args.write_reuploads_interval, int) or not args.write_reuploads:
-        raise Exception(
-            "To use cache reuploads write interval, the interval must be an integer and cache write reuploads must be enabled."
         )
     reuploads_dir = os.path.join(args.download_path, args.project_name)
     os.makedirs(reuploads_dir, exist_ok=True)
