@@ -217,7 +217,7 @@ def sync_package_resources(
     return to_reupload
 
 
-def reupload_resources(ckan, to_reupload, resource_id_legacy_url, auth, num_threads):
+def reupload_resources(ckan, to_reupload, auth, write_reuploads_fn, write_reuploads_interval):
     total_reuploads = len(to_reupload)
     logger.info("%d objects to be re-uploaded" % (total_reuploads))
     destination = "bpa-ckan-prod/prodenv"
@@ -238,10 +238,25 @@ def reupload_resources(ckan, to_reupload, resource_id_legacy_url, auth, num_thre
                 f"Resource successfully uploaded. Removed {reupload_obj}{legacy_url} from reupload list..."
             )
         finally:
+            remaining_reuploads_count = len(to_reupload)
             logger.info(
-                f"Resource Upload progress: {len(to_reupload)} out of {total_reuploads} to do."
+                f"Resource Upload progress: {remaining_reuploads_count} out of {total_reuploads} to do."
             )
+            # Only write to disk when interval counter reached
+            if write_reuploads_fn and remaining_reuploads_count % int(write_reuploads_interval) == 0:
+                logger.info(f"Reached write reuploads interval: {write_reuploads_interval}")
+                write_reuploads_fn(to_reupload)
 
+
+def write_reuploads(**kwargs):
+    if kwargs["write_reuploads"] and kwargs["reuploads_path"]:
+        def dump_reload(to_reupload):
+            with open(kwargs["reuploads_path"], "wb") as writer:
+                pickle.dump(to_reupload, writer)
+            logger.info(f"Reuploads disk cache write completed.")
+        return dump_reload
+    else:
+        logger.info("Reuploads write disabled.")
 
 def sync_resources(
     ckan,
@@ -318,17 +333,13 @@ def sync_resources(
             do_delete,
         )
 
+    write_reuploads_fn = write_reuploads(**kwargs)
     if do_uploads:
-        reupload_resources(ckan, to_reupload, resource_id_legacy_url, auth, num_threads)
+        reupload_resources(ckan, to_reupload, auth, write_reuploads_fn, kwargs.get("write_reuploads_interval"))
 
     logger.info(f"Post resource upload, resources remaining: {len(to_reupload)}")
-    if kwargs["write_reuploads"]:
-        with open(kwargs["reuploads_path"], "wb") as writer:
-            pickle.dump(to_reupload, writer)
-        logger.info(f"Reuploads disk cache write completed.")
-        # with open(kwargs["reuploads_path"] + '.txt', "w") as writer:
-        #     writer.writelines(f"{next_reupload}\n" for next_reupload in to_reupload)
-
+    if write_reuploads_fn:
+        write_reuploads_fn(to_reupload)
 
 def sync_metadata(
     ckan, meta, auth, num_threads, do_uploads, do_resource_checks, do_delete, **kwargs

@@ -35,6 +35,10 @@ def make_reuploads_cache_path(logger, args):
         raise Exception(
             "To use cache reuploads, download_path arg (and project) must also be set."
         )
+    if args.write_reuploads_interval and not isinstance(args.write_reuploads_interval, int) or not args.write_reuploads:
+        raise Exception(
+            "To use cache reuploads write interval, the interval must be an integer and cache write reuploads must be enabled."
+        )
     reuploads_dir = os.path.join(args.download_path, args.project_name)
     os.makedirs(reuploads_dir, exist_ok=True)
     reupload_path = os.path.join(reuploads_dir, "reupload_resources.dump")
