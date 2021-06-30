@@ -225,7 +225,7 @@ def reupload_resources(ckan, to_reupload, resource_id_legacy_url, auth, num_thre
         destination = "bpa-ckan-devel/staging"
     logger.info("Resources will be reuploaded under: {}".format(destination))
     # copy list and loop that, so can remove safely from original during loop
-    for indx, reupload_obj, legacy_url in enumerate(to_reupload[:]):
+    for indx, (reupload_obj, legacy_url) in enumerate(to_reupload[:]):
         try:
             reupload_resource(ckan, reupload_obj, legacy_url, destination, auth)
         except Exception as e:
@@ -233,13 +233,13 @@ def reupload_resources(ckan, to_reupload, resource_id_legacy_url, auth, num_thre
             logger.info("Resource failed to upload. Continuing...")
             continue
         else:
-            to_reupload.remove(reupload_obj, legacy_url)
+            to_reupload.remove((reupload_obj, legacy_url))
             logger.info(
                 f"Resource successfully uploaded. Removed {reupload_obj}{legacy_url} from reupload list..."
             )
         finally:
             logger.info(
-                f"Resource upload progress: {total_reuploads} of {total_reuploads}."
+                f"Resource Upload progress: {len(to_reupload)} out of {total_reuploads} to do."
             )
 
 
