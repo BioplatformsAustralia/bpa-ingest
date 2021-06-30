@@ -160,7 +160,7 @@ class BASEAmpliconsMetadata(AMDFullIngestMetadata):
     contextual_classes = common_context
     metadata_patterns = [r"^.*\.md5$", r"^.*_metadata.*.*\.xlsx$"]
     metadata_urls = [
-        "https://downloads-qcif.bioplatforms.com/bpa/base/raw/amplicons/",
+        "https://downloads-qcif.bioplatforms.com/bpa/temp_amd/base/raw/amplicons/",
     ]
     metadata_url_components = ("amplicon", "facility_code", "ticket")
     resource_linkage = ("sample_extraction_id", "amplicon", "base_amplicon_linkage")
