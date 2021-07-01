@@ -459,8 +459,9 @@ def reupload_resource(ckan, ckan_obj, legacy_url, parent_destination, auth=None)
             )
         else:
             logger.error("upload failed: status {}".format(status))
-    finally:
+    except:
         logger.error("upload failure")
+    finally:
         if not stream:
             os.unlink(path)
             os.rmdir(tempdir)
