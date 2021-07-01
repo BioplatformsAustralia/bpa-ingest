@@ -275,7 +275,8 @@ def check_resource(
 
     # if we have a pre-calculated s3etag in metadata, check it matches
     current_etag = ckan_archive_info.get_etag(current_url)
-    if current_etag.strip('"') not in metadata_etags:
+    logger.info(f"current etag is {current_etag}")
+    if current_etag and current_etag.strip('"') not in metadata_etags:
         if None in metadata_etags:
             logger.warning(
                 "CKAN resource %s has no metadata etag: run genhash for this project."
@@ -287,7 +288,6 @@ def check_resource(
                 % (current_url, current_etag, metadata_etags)
             )
             return "wrong-etag"
-
     return None
 
 

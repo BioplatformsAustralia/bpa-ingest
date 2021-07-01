@@ -24,3 +24,11 @@ ingest/ingest-debug.sh
 test.db
 *.out
 *_test.json
+amd-genomics-amplicons.json
+base-genomics-amplicons-control.json
+base-genomics-amplicons.json
+base-metagenomics.json
+base-site-images.json
+marine-microbes-genomics-amplicons.json
+marine_microbes.json
+*.db

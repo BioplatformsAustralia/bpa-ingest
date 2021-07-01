@@ -71,6 +71,7 @@ class OMG10XRawIlluminaMetadata(OMGBaseMetadata):
     organization = "bpa-omg"
     ckan_data_type = "omg-10x-raw-illumina"
     technology = "10x-raw-agrf"
+    sequence_data_type = "illumina-10x"
     contextual_classes = common_context
     metadata_patterns = [r"^.*\.md5$", r"^.*_metadata.*.*\.xlsx$"]
     metadata_urls = [
@@ -191,6 +192,7 @@ class OMG10XRawIlluminaMetadata(OMGBaseMetadata):
                 "title": "OMG 10x Illumina Raw %s %s" % (bpa_sample_ids, flow_id),
                 "archive_name": fname,
                 "type": self.ckan_data_type,
+                "sequence_data_type": self.sequence_data_type,
             }
             ingest_utils.permissions_organization_member(self._logger, obj)
             # there must be only one ticket
@@ -269,6 +271,7 @@ class OMG10XRawMetadata(OMGBaseMetadata):
     organization = "bpa-omg"
     ckan_data_type = "omg-10x-raw"
     technology = "10xraw"
+    sequence_data_type = "illumina-10x"
     contextual_classes = common_context
     metadata_patterns = [r"^.*\.md5$", r"^.*_metadata.*.*\.xlsx$"]
     metadata_urls = [
@@ -408,6 +411,7 @@ class OMG10XRawMetadata(OMGBaseMetadata):
                     ),
                     "dataset_url": track_get("download"),
                     "type": self.ckan_data_type,
+                    "sequence_data_type": self.sequence_data_type,
                 }
             )
             self.library_to_sample[obj["bpa_library_id"]] = obj["bpa_sample_id"]
@@ -457,6 +461,7 @@ class OMG10XProcessedIlluminaMetadata(OMGBaseMetadata):
     organization = "bpa-omg"
     ckan_data_type = "omg-10x-processed-illumina"
     technology = "10xprocessed"
+    sequence_data_type = "illumina-10x"
     contextual_classes = common_context
     metadata_patterns = [r"^.*\.md5$", r"^.*_processed.*.*\.xlsx$"]
     metadata_urls = [
@@ -511,6 +516,7 @@ class OMG10XProcessedIlluminaMetadata(OMGBaseMetadata):
         "match": [files.tenxtar_filename_re],
         "skip": [
             re.compile(r"^.*_processed\.xlsx$"),
+            re.compile(r"^.*_metadata\.xlsx$"),
             re.compile(r"^.*SampleSheet.*"),
             re.compile(r"^.*TestFiles\.exe.*"),
         ],
@@ -594,6 +600,7 @@ class OMG10XProcessedIlluminaMetadata(OMGBaseMetadata):
                         "dataset_url": track_get("download"),
                         "ticket": row.ticket,
                         "type": self.ckan_data_type,
+                        "sequence_data_type": self.sequence_data_type,
                     }
                 )
                 ingest_utils.permissions_organization_member(self._logger, obj)
@@ -631,6 +638,7 @@ class OMGExonCaptureMetadata(OMGBaseMetadata):
     organization = "bpa-omg"
     ckan_data_type = "omg-exon-capture"
     technology = "exoncapture"
+    sequence_data_type = "illumina-exoncapture"
     contextual_classes = common_context
     metadata_patterns = [r"^.*\.md5$", r"^.*_[mM]etadata.*\.xlsx$"]
     metadata_urls = [
@@ -821,6 +829,7 @@ class OMGExonCaptureMetadata(OMGBaseMetadata):
                         ),
                         "dataset_url": track_get("download"),
                         "type": self.ckan_data_type,
+                        "sequence_data_type": self.sequence_data_type,
                     }
                 )
                 ingest_utils.permissions_organization_member(self._logger, obj)
@@ -872,6 +881,7 @@ class OMGWholeGenomeMetadata(OMGBaseMetadata):
     organization = "bpa-omg"
     ckan_data_type = "omg-novaseq-whole-genome"
     technology = "novaseq-whole-genome"
+    sequence_data_type = "illumina-shortread"
     contextual_classes = common_context
     metadata_patterns = [r"^.*\.md5$", r"^.*_metadata.*.*\.xlsx$"]
     metadata_urls = [
@@ -1066,6 +1076,7 @@ class OMGWholeGenomeMetadata(OMGBaseMetadata):
                         ),
                         "dataset_url": track_get("download"),
                         "type": self.ckan_data_type,
+                        "sequence_data_type": self.sequence_data_type,
                     }
                 )
                 ingest_utils.permissions_organization_member(self._logger, obj)
@@ -1117,6 +1128,7 @@ class OMGGenomicsNovaseqMetadata(OMGBaseMetadata):
     organization = "bpa-omg"
     ckan_data_type = "omg-novaseq"
     technology = "novaseq"
+    sequence_data_type = "illumina-shortread"
     contextual_classes = common_context
     metadata_patterns = [r"^.*\.md5$", r"^.*_metadata.*.*\.xlsx$"]
     metadata_urls = [
@@ -1248,6 +1260,7 @@ class OMGGenomicsNovaseqMetadata(OMGBaseMetadata):
                         ),
                         "dataset_url": track_get("download"),
                         "type": self.ckan_data_type,
+                        "sequence_data_type": self.sequence_data_type,
                     }
                 )
                 ingest_utils.permissions_organization_member(self._logger, obj)
@@ -1293,6 +1306,7 @@ class OMGGenomicsHiSeqMetadata(OMGBaseMetadata):
     ckan_data_type = "omg-genomics-hiseq"
     omics = "genomics"
     technology = "hiseq"
+    sequence_data_type = "illumina-shortread"
     contextual_classes = common_context
     metadata_patterns = [r"^.*\.md5$", r"^.*_metadata.*.*\.xlsx$"]
     metadata_urls = [
@@ -1428,6 +1442,7 @@ class OMGGenomicsHiSeqMetadata(OMGBaseMetadata):
                         ),
                         "dataset_url": track_get("download"),
                         "type": self.ckan_data_type,
+                        "sequence_data_type": self.sequence_data_type,
                     }
                 )
                 ingest_utils.permissions_organization_member(self._logger, obj)
@@ -1479,6 +1494,7 @@ class OMGGenomicsDDRADMetadata(OMGBaseMetadata):
     ckan_data_type = "omg-genomics-ddrad"
     omics = "genomics"
     technology = "ddrad"
+    sequence_data_type = "illumina-ddrad"
     contextual_classes = common_context
     metadata_patterns = [r"^.*\.md5$", r"^.*_metadata.*.*\.xlsx$"]
     metadata_urls = [
@@ -1651,6 +1667,7 @@ class OMGGenomicsDDRADMetadata(OMGBaseMetadata):
                         ),
                         "dataset_url": track_get("download"),
                         "type": self.ckan_data_type,
+                        "sequence_data_type": self.sequence_data_type,
                     }
                 )
                 ingest_utils.permissions_organization_member(self._logger, obj)
@@ -1694,6 +1711,7 @@ class OMGGenomicsPacbioMetadata(OMGBaseMetadata):
     organization = "bpa-omg"
     ckan_data_type = "omg-pacbio"
     technology = "pacbio"
+    sequence_data_type = "pacbio-clr"
     contextual_classes = common_context
     metadata_patterns = [r"^.*\.md5$", r"^.*_metadata.*.*\.xlsx$"]
     metadata_urls = [
@@ -1836,6 +1854,7 @@ class OMGGenomicsPacbioMetadata(OMGBaseMetadata):
                     ),
                     "dataset_url": track_get("download"),
                     "type": self.ckan_data_type,
+                    "sequence_data_type": self.sequence_data_type,
                 }
             )
             ingest_utils.permissions_organization_member(self._logger, obj)
@@ -1883,6 +1902,7 @@ class OMGONTPromethionMetadata(OMGBaseMetadata):
     organization = "bpa-omg"
     ckan_data_type = "omg-ont-promethion"
     technology = "ont-promethion"
+    sequence_data_type = "ont-promethion"
     contextual_classes = common_context
     metadata_patterns = [r"^.*\.md5$", r"^.*_metadata.*.*\.xlsx$"]
     metadata_urls = [
@@ -2022,6 +2042,7 @@ class OMGONTPromethionMetadata(OMGBaseMetadata):
                         "name": name,
                         "id": name,
                         "type": self.ckan_data_type,
+                        "sequence_data_type": self.sequence_data_type,
                     }
                 )
                 ingest_utils.permissions_organization_member(self._logger, obj)
@@ -2061,6 +2082,7 @@ class OMGTranscriptomicsNextseq(OMGBaseMetadata):
     ckan_data_type = "omg-transcriptomics-nextseq"
     omics = "transcriptomics"
     technology = "nextseq"
+    sequence_data_type = "illumina-transcriptomics"
     contextual_classes = common_context
     metadata_patterns = [r"^.*\.md5$", r"^.*_metadata.*.*\.xlsx$"]
     metadata_urls = [
@@ -2201,6 +2223,7 @@ class OMGTranscriptomicsNextseq(OMGBaseMetadata):
                         ),
                         "dataset_url": track_get("download"),
                         "type": self.ckan_data_type,
+                        "sequence_data_type": self.sequence_data_type,
                     }
                 )
                 ingest_utils.permissions_organization_member(self._logger, obj)
@@ -2244,6 +2267,7 @@ class OMGGenomicsPacBioGenomeAssemblyMetadata(SecondaryMetadata):
     organization = "bpa-omg"
     ckan_data_type = "omg-pacbio-genome-assembly"
     technology = "pacbio-genome-assembly"
+    sequence_data_type = "genome-assembly"
     contextual_classes = []
     metadata_patterns = [
         r"^.*\.md5$",
@@ -2383,6 +2407,7 @@ class OMGGenomicsPacBioGenomeAssemblyMetadata(SecondaryMetadata):
                             self._logger, track_get("date_of_transfer_to_archive")
                         ),
                         "type": self.ckan_data_type,
+                        "sequence_data_type": self.sequence_data_type,
                     }
                 )
                 ingest_utils.permissions_organization_member(self._logger, obj)

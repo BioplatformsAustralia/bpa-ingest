@@ -171,7 +171,7 @@ def extract_ands_id(logger, s, silent=False):
     if s.startswith("e.g. "):
         return None
     # duplicated 102.100.100: e.g. 102.100.100.102.100.100.25977
-    s.replace("102.100.100.102.100.100.", "102.100.100/")
+    s = s.replace("102.100.100.102.100.100.", "102.100.100/")
     # handle a sample extraction id tacked on the end with an underscore
     if "_" in s:
         s = s.rsplit("_", 1)[0]
@@ -225,6 +225,12 @@ def int_or_comment(logger, val):
         return val
 
 
+def date_or_int_or_comment(logger, val):
+    if isinstance(val, datetime.date):
+        return get_date_isoformat(logger, val)
+    return int_or_comment(logger, val)
+
+
 number_find_re = re.compile(r"(-?\d+\.?\d*)")
 
 
@@ -256,6 +262,14 @@ def get_date_isoformat(logger, s, silent=False):
     return dt.strftime("%Y-%m-%d")
 
 
+def get_date_isoformat_as_datetime(logger, s, silent=False):
+    "try to parse the date, if we can, return the date as an ISO format string"
+    dt = _get_date(logger, s, silent)
+    if dt is None:
+        return None
+    return dt.strftime("%Y-%m-%d_%H:%M:%S")
+
+
 def get_time(logger, s):
     return str(s)
 
@@ -281,6 +295,8 @@ def _get_date(logger, dt, silent=False):
     if (
         dt == "unknown"
         or dt == "Unknown"
+        or dt == "UnkNown"
+        or dt == "unkNown"
         or dt == "Not yet assigned"
         or dt == "Not applicable"
         or dt == "(null)"
@@ -338,7 +354,12 @@ def _get_date(logger, dt, silent=False):
         pass
 
     try:
-        return datetime.datetime.strptime(dt, "%y-%m-%d %H:%M:%S").date()
+        return datetime.datetime.strptime(dt, "%Y-%m-%dT%H:%M:%SZ").date()
+    except ValueError:
+        pass
+
+    try:
+        return datetime.datetime.strptime(dt, "%Y-%m-%dT%H:%MZ").date()
     except ValueError:
         pass
 

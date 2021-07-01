@@ -72,6 +72,8 @@ ausarg() {
   apply ausarg-illumina-fastq $*
   apply ausarg-pacbio-hifi $*
   apply ausarg-ont-promethion $*
+  apply ausarg-exoncapture $*
+  apply ausarg-hi-c $*
 }
 
 marine_microbes()
@@ -103,6 +105,8 @@ tsi()
   apply tsi-novaseq $*
   apply tsi-pacbio-hifi $*
   apply tsi-genomics-ddrad $*
+  apply tsi-illumina-shortread $*
+  apply tsi-illumina-fastq $*
 }
 
 sepsis()

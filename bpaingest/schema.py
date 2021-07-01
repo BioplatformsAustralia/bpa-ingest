@@ -71,6 +71,11 @@ schema_template = {
             "label": "Resource Permissions",
             "form_placeholder": "used by ckanext-initiatives",
         },
+        {
+            "field_name": "sequence_data_type",
+            "label": "Sequence Data Type",
+            "form_placeholder": "used by ckanext-bpatheme",
+        },
     ],
     "resource_fields": [
         {"field_name": "name", "label": "Name"},
@@ -109,7 +114,30 @@ schema_template = {
 def _write_schemas(
     package_keys, resource_keys, package_field_mapping, resource_field_mapping
 ):
-    skip_fields = ("id", "tags", "private", "type", "spatial", "resource_permissions")
+    skip_fields = (
+        "id",
+        "tags",
+        "private",
+        "type",
+        "spatial",
+        "resource_permissions",
+        "sequence_data_type",
+        "title",
+        "license_id",
+    )
+    skip_resource_fields = (
+        "id",
+        "tags",
+        "private",
+        "type",
+        "spatial",
+        "resource_permissions",
+        "sequence_data_type",
+        "title",
+        "name",
+        "md5",
+        "format",
+    )
     for data_type in sorted(package_keys):
         schema = deepcopy(schema_template)
         mapping = package_field_mapping[data_type]
@@ -121,7 +149,7 @@ def _write_schemas(
             )
         mapping = resource_field_mapping[data_type]
         for k in sorted(resource_keys[data_type]):
-            if k in skip_fields:
+            if k in skip_resource_fields:
                 continue
             schema["resource_fields"].append(
                 {"field_name": k, "label": mapping.get(k, k),}

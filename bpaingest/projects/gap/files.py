@@ -22,8 +22,9 @@ illumina_shortread_re = re.compile(ILLUMINA_SHORTREAD_PATTERN, re.VERBOSE)
 ILLUMINA__RNA_AND_PHYLO_SHORTREAD_PATTERN = r"""
     (?P<sample_id>\d{4,6})_
     LibID(?P<library_id>\d{4,6})_
+    (GAP_BRF_)?
     (?P<flow_cell_id>\w{9,10})_
-    (?P<index>[G|A|T|C|-]*)_
+    (?P<index>[G|A|T|C|-]{8,12}([_-][G|A|T|C|-]{8})?)_
     (?P<runsamplenum>S?\d*)_?
     (?P<lane>L\d{3})_
     (?P<read>[R|I][1|2])
@@ -37,7 +38,7 @@ illumina_shortread_rna_phylo_re = re.compile(
 
 ONT_MINION_PATTERN = r"""
     (?P<sample_id>\d{4,6})_
-    (?P<run_id>FA[KL]\d{5})_
+    (?P<flow_cell_id>FA[KL]\d{5})_
     GAP_
     (?P<facility_id>(AGRF))_
     ONTMinion_
@@ -48,14 +49,27 @@ ont_minion_re = re.compile(ONT_MINION_PATTERN, re.VERBOSE)
 
 ONT_PROMETHION_PATTERN = r"""
     (?P<sample_id>\d{4,6})_
-    (?P<run_id>PA[DE]\d{5})_
+    (?P<flow_cell_id>PA[DEFG]\d{5})_
+    (Run\d+_)?
     GAP_
-    (?P<facility_id>(AGRF))_
+    (?P<facility_id>(AGRF|BRF))_
     ONTPromethION_
     (?P<archive_type>\w+)
     \.tar
 """
 ont_promethion_re = re.compile(ONT_PROMETHION_PATTERN, re.VERBOSE)
+
+ONT_PROMETHION_PATTERN_2 = r"""
+    (?P<sample_id>\d{4,6})_
+    GAP_
+    (?P<facility_id>(AGRF|BRF))_
+    (?P<flow_cell_id>PA[DEFG]\d{5})_
+    (Run\d+_)?
+    ONTPromethION_
+    (?P<archive_type>\w+)
+    \.tar
+"""
+ont_promethion_re_2 = re.compile(ONT_PROMETHION_PATTERN_2, re.VERBOSE)
 
 GENOMICS_10X_PATTERN = r"""
     (?P<sample_id>\d{4,6})_

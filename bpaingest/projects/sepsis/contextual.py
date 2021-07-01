@@ -194,6 +194,7 @@ class SepsisGenomicsContextual:
                 "Experimental_sample_preparation_method",
             ),
             fld("data_type", "Data type"),
+            fld("contact_researcher", "contact_researcher"),
         ]
         wrapper = ExcelWrapper(
             self._logger,
@@ -276,7 +277,12 @@ class SepsisTranscriptomicsHiseqContextual:
             fld("growth_condition_time", "growth_condition_time (h)"),
             fld("growth_condition_growth_phase", "growth_condition_growth phase"),
             fld("growth_condition_od600_reading", "growth_condition_od600 reading"),
-            fld("growth_condition_temperature", "growth_condition_temperature (c)"),
+            fld(
+                "growth_condition_temperature",
+                "growth_condition_temperature (°c)",
+                units=u"\u00B0" + "C",
+                coerce=ingest_utils.get_clean_number,
+            ),
             fld("growth_condition_media", "growth_condition_media"),
             fld("omics", "omics"),
             fld("analytical_platform", "analytical platform"),
@@ -361,7 +367,12 @@ class SepsisMetabolomicsLCMSContextual:
             fld("growth_condition_time", "growth_condition_time (h)"),
             fld("growth_condition_growth_phase", "growth_condition_growth phase"),
             fld("growth_condition_od600_reading", "growth_condition_od600 reading"),
-            fld("growth_condition_temperature", "growth_condition_temperature (c)"),
+            fld(
+                "growth_condition_temperature",
+                "growth_condition_temperature (°c)",
+                units=u"\u00B0" + "C",
+                coerce=ingest_utils.get_clean_number,
+            ),
             fld("growth_condition_media", "growth_condition_media"),
             fld("omics", "omics"),
             fld("analytical_platform", "analytical platform"),
@@ -439,9 +450,18 @@ class SepsisProteomicsBaseContextual:
                 coerce=ingest_utils.extract_ands_id,
             ),
             fld("sample_type", "Sample type"),
-            # it really is ug, just unicode stripping drops the 'u'
-            fld("protein_yield_total_ug", "protein yield - total (g)"),
-            fld("protein_yield_facility_ug", "Protein Yield / Facility (g)"),
+            fld(
+                "protein_yield_total",
+                "protein yield - total (µg)",
+                units=u"\u00B5" + "g",
+                coerce=ingest_utils.get_clean_number,
+            ),
+            fld(
+                "protein_yield_facility",
+                "protein yield / facility (µg)",
+                units=u"\u00B5" + "g",
+                coerce=ingest_utils.get_clean_number,
+            ),
             fld("treatment", "Treatment"),
             fld("peptide_resuspension_protocol", "Peptide resuspension protocol"),
             fld("taxon_or_organism", "Taxon_OR_organism"),
@@ -462,6 +482,7 @@ class SepsisProteomicsBaseContextual:
             fld("analytical_platform", "Analytical platform"),
             fld("facility", "Facility"),
             fld("data_type", "Data type"),
+            fld("additional_notes", "additional notes"),
         ]
         wrapper = ExcelWrapper(
             self._logger,

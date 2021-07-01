@@ -3,7 +3,7 @@ import logging
 import sys
 import os
 
-from .util import make_registration_decorator, make_ckan_api
+from .util import make_registration_decorator, make_ckan_api, make_reuploads_cache_path
 from .sync import sync_metadata
 from .schema import generate_schemas
 from .ops import print_accounts, make_organization
@@ -14,11 +14,9 @@ from .projects import ProjectInfo
 from .organizations import ORGANIZATIONS
 from .metadata import DownloadMetadata
 
-
 register_command, command_fns = make_registration_decorator()
 project_info = ProjectInfo()
 project_cli_options = project_info.cli_options()
-
 
 LOG_LEVELS = {
     t: getattr(logging, t) for t in ("CRITICAL", "ERROR", "WARNING", "INFO", "DEBUG")
@@ -91,6 +89,25 @@ def setup_sync(subparser):
         default=False,
         help="enable package and resource deletion (dangerous: only enable after a dry-run)",
     )
+    subparser.add_argument(
+        "--write-reuploads",
+        "-w",
+        action="store_const",
+        const=True,
+        default=False,
+        help="write reuploads to disk",
+    )
+    subparser.add_argument(
+        "--read-reuploads",
+        "-r",
+        action="store_const",
+        const=True,
+        default=False,
+        help="read reuploads from disk",
+    )
+    subparser.add_argument(
+        "-p", "--download-path", required=False, default=None, help="CKAN base url"
+    )
 
 
 def setup_hash(subparser):
@@ -133,6 +150,12 @@ def setup_makeschema(subparser):
 def sync(args):
     """sync a project"""
     ckan = make_ckan_api(args)
+
+    kwargs = {
+        "write_reuploads": args.write_reuploads,
+        "read_reuploads": args.read_reuploads,
+        "reuploads_path": make_reuploads_cache_path(make_cli_logger(args), args),
+    }
     with DownloadMetadata(
         make_cli_logger(args),
         project_cli_options[args.project_name],
@@ -146,6 +169,7 @@ def sync(args):
             not args.metadata_only,
             not args.skip_resource_checks,
             args.delete,
+            **kwargs,
         )
         print_accounts()
 

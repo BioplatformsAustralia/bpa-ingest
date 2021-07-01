@@ -68,6 +68,7 @@ def test_base_amplicon():
         "8101_1_ITS_UNSW_TCGTCGATAATC_A64JJ_S3_L001_I1.fastq.gz",
         "39254_1_ITS_UNSW_CTCGAGAGGCTCTAGT_BC267_S73_L001_I2.fastq.gz",
         "42198_1_A16S_UNSW_TACGCTGC-TATCCTCT_B8RGF_S102_L001_R2.fastq.gz",
+        "7033_1_18S_UNSW_TCTTCCGCTACT_A6BRJ_S23_L001_R1.fastq.gz",
     ]
     for filename in filenames:
         assert base_amplicon_filename_re.match(filename) is not None
@@ -84,16 +85,14 @@ def test_base_amplicon_flow_index_swapped():
 
 def test_base_amplicon_index2():
     filenames = [
-        "19418_1_ITS_AGRF_GTCCGAAACACT_ANVM7_ANVM7_GTCCGAAACACT_L001_R1.fastq.gz",
+        "19418_1_ITS_AGRF_GTCCGAAACACT_ANVM7_ANVM7_GTCCGAAACACT_L001_R1.fastq.gz"
     ]
     for filename in filenames:
         assert base_amplicon_index2_filename_re.match(filename) is not None
 
 
 def test_base_amplicon_index3():
-    filenames = [
-        "13392_1_A16S_UNSW_TAGGCATG_GTAAGGAG_ACG8D_S30_L001_I1.fastq.gz",
-    ]
+    filenames = ["13392_1_A16S_UNSW_TAGGCATG_GTAAGGAG_ACG8D_S30_L001_I1.fastq.gz"]
     for filename in filenames:
         assert base_amplicon_index3_filename_re.match(filename) is not None
 
@@ -127,6 +126,8 @@ def test_mm_amplicon_control():
         "Fungal_mock_community_18S_UNSW_CGAGGCTG-AAGGCTAT_APK6N_S105_L001_I2.fastq.gz",
         "Soil_DNA_16S_UNSW_CAGCTAGA-GATAGCGT_AYBVB_S110_L001_I1.fastq.gz",
         "STAN_16S_UNSW_TATCAGGTGTGC_AL1HY_S97_L001_R1.fastq.gz",
+        "Bac_mock_community6S_UNSW_GACTCTTG-ACGACGTG_BJT3V_S60_L001_I1.fastq.gz",
+        "Soil_DNA6S_UNSW_GACTCTTG-GTCTAGTG_BJT3V_S75_L001_I1.fastq.gz",
     ]
     for filename in filenames:
         assert mm_amplicon_control_filename_re.match(filename) is not None
@@ -138,6 +139,7 @@ def test_mm_amplicon():
         "21644_1_16S_UNSW_GAACTAGTCACC_AFGB7_S61_L001_R1.fastq.gz",
         "27491_1_16S_UNSW_UNKNOWN_AHG7M_UNKNOWN_L001_R2.fastq.gz",
         "27160_1_16S_UNSW_UNKNOWN_AH55W_UNKNOWN_L001_R1.fastq.gz",
+        "37249_18S_UNSW_GCTCATGA-ACTGCATA_BFY6H_S52_L001_I1.fastq.gz",
     ]
     for filename in filenames:
         assert mm_amplicon_filename_re.match(filename) is not None

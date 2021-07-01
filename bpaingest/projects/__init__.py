@@ -19,6 +19,8 @@ from .ausarg.ingest import (
     AusargIlluminaFastqMetadata,
     AusargPacbioHifiMetadata,
     AusargONTPromethionMetadata,
+    AusargExonCaptureMetadata,
+    AusargHiCMetadata,
 )
 
 from .gbr.ingest import GbrAmpliconsMetadata, GbrPacbioMetadata
@@ -80,6 +82,8 @@ from .tsi.ingest import (
     TSINovaseqMetadata,
     TSIPacbioHifiMetadata,
     TSIGenomicsDDRADMetadata,
+    TSIIlluminaShortreadMetadata,
+    TSIIlluminaFastqMetadata,
 )
 from ..util import make_logger
 
@@ -96,6 +100,8 @@ class ProjectInfo:
             AusargIlluminaFastqMetadata,
             AusargPacbioHifiMetadata,
             AusargONTPromethionMetadata,
+            AusargExonCaptureMetadata,
+            AusargHiCMetadata,
         ],
         "base": [
             BASEAmpliconsMetadata,
@@ -132,7 +138,13 @@ class ProjectInfo:
             OMGTranscriptomicsNextseq,
             OMGGenomicsPacBioGenomeAssemblyMetadata,
         ],
-        "tsi": [TSINovaseqMetadata, TSIPacbioHifiMetadata, TSIGenomicsDDRADMetadata,],
+        "tsi": [
+            TSINovaseqMetadata,
+            TSIPacbioHifiMetadata,
+            TSIGenomicsDDRADMetadata,
+            TSIIlluminaShortreadMetadata,
+            TSIIlluminaFastqMetadata,
+        ],
         "sepsis": [
             SepsisGenomicsMiseqMetadata,
             SepsisGenomicsPacbioMetadata,

@@ -12,12 +12,12 @@ from bpaingest.util import (
 )
 
 
-def resource_metadata_from_file(linkage, fname, resource_type):
+def resource_metadata_from_file(identifier, fname, resource_type):
     """
     the same XLSX file might be on multiple packages, so we generate an ID
     which is the MD5(str(linkage) || fname)
     """
-    metadata = resource_metadata_from(linkage, fname, resource_type)
+    metadata = resource_metadata_from(identifier, fname, resource_type)
     with open(fname, "rb") as fd:
         data = fd.read()
     add_md5_from_stream_to_metadata(metadata, data)
@@ -29,10 +29,10 @@ def resource_metadata_from_file_no_data(linkage, filename, resource_type):
     return metadata
 
 
-def resource_metadata_from(linkage, filename, resource_type):
+def resource_metadata_from(identifier, filename, resource_type):
     return {
         "id": md5(
-            (str(linkage) + "||" + os.path.basename(filename)).encode("utf8")
+            (str(identifier) + "||" + os.path.basename(filename)).encode("utf8")
         ).hexdigest(),
         "name": os.path.basename(filename),
         "resource_type": resource_type,

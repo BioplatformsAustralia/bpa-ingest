@@ -1,3 +1,5 @@
+import os
+import pickle
 import re
 
 from .ops import (
@@ -216,13 +218,29 @@ def sync_package_resources(
 
 
 def reupload_resources(ckan, to_reupload, resource_id_legacy_url, auth, num_threads):
-    logger.info("%d objects to be re-uploaded" % (len(to_reupload)))
+    total_reuploads = len(to_reupload)
+    logger.info("%d objects to be re-uploaded" % (total_reuploads))
     destination = "bpa-ckan-prod/prodenv"
     if re.search("staging.bioplatforms", getattr(ckan, "address", "")):
         destination = "bpa-ckan-devel/staging"
     logger.info("Resources will be reuploaded under: {}".format(destination))
-    for reupload_obj, legacy_url in to_reupload:
-        reupload_resource(ckan, reupload_obj, legacy_url, destination, auth)
+    # copy list and loop that, so can remove safely from original during loop
+    for indx, (reupload_obj, legacy_url) in enumerate(to_reupload[:]):
+        try:
+            reupload_resource(ckan, reupload_obj, legacy_url, destination, auth)
+        except Exception as e:
+            logger.error(e)
+            logger.info("Resource failed to upload. Continuing...")
+            continue
+        else:
+            to_reupload.remove((reupload_obj, legacy_url))
+            logger.info(
+                f"Resource successfully uploaded. Removed {reupload_obj}{legacy_url} from reupload list..."
+            )
+        finally:
+            logger.info(
+                f"Resource Upload progress: {len(to_reupload)} out of {total_reuploads} to do."
+            )
 
 
 def sync_resources(
@@ -235,6 +253,7 @@ def sync_resources(
     do_uploads,
     do_resource_checks,
     do_delete,
+    **kwargs,
 ):
     logger.info("syncing %d resources" % (len(resources)))
 
@@ -271,12 +290,19 @@ def sync_resources(
             "resource checks disabled: resource integrity will not be confirmed"
         )
         to_reupload = []
+    elif kwargs["read_reuploads"]:
+        with open(kwargs["reuploads_path"], "rb") as reader:
+            to_reupload = pickle.load(reader)
+        logger.info(f"Reuploads disk cache read completed.")
     else:
         # check all existing resources on all existing packages, in parallel
         to_reupload = check_package_resources(
             ckan, ckan_packages, resource_id_legacy_url, auth
         )
 
+    logger.info(
+        f"Before the package resources sync, reupload count is: {len(to_reupload)}"
+    )
     for package_obj in sorted(ckan_packages, key=lambda p: p["name"]):
         package_id = package_obj["id"]
         package_resources = resource_idx.get(package_id)
@@ -295,9 +321,17 @@ def sync_resources(
     if do_uploads:
         reupload_resources(ckan, to_reupload, resource_id_legacy_url, auth, num_threads)
 
+    logger.info(f"Post resource upload, resources remaining: {len(to_reupload)}")
+    if kwargs["write_reuploads"]:
+        with open(kwargs["reuploads_path"], "wb") as writer:
+            pickle.dump(to_reupload, writer)
+        logger.info(f"Reuploads disk cache write completed.")
+        # with open(kwargs["reuploads_path"] + '.txt', "w") as writer:
+        #     writer.writelines(f"{next_reupload}\n" for next_reupload in to_reupload)
+
 
 def sync_metadata(
-    ckan, meta, auth, num_threads, do_uploads, do_resource_checks, do_delete
+    ckan, meta, auth, num_threads, do_uploads, do_resource_checks, do_delete, **kwargs
 ):
     def unique_packages():
         by_id = dict((t["id"], t) for t in packages)
@@ -333,4 +367,5 @@ def sync_metadata(
         do_uploads,
         do_resource_checks,
         do_delete,
+        **kwargs,
     )

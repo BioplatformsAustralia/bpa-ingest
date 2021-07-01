@@ -18,11 +18,12 @@ class WheatCultivarsMetadata(BaseMetadata):
     ]
     organization = "bpa-wheat-cultivars"
     ckan_data_type = "wheat-cultivars"
+    sequence_data_type = "illumina-shortread"
     spreadsheet = {
         "fields": [
-            fld("source_name", "BPA ID"),
+            fld("source_name", "Source Name"),
             fld("code", "CODE"),
-            fld("sample_id", "BPA ID", coerce=lambda _, s: s.replace("/", ".")),
+            fld("sample_id", "BPA ID", coerce=ingest_utils.extract_ands_id),
             fld("characteristics", "Characteristics"),
             fld("organism", "Organism"),
             fld("variety", "Variety"),
@@ -37,6 +38,13 @@ class WheatCultivarsMetadata(BaseMetadata):
             fld("soil_tolerance", "Soil tolerance"),
             fld("classification", "International classification"),
             fld("url", "Link"),
+            fld("sample_name", "sample name"),
+            fld(
+                "factor_value_variety",
+                "factor value[variety]",
+                units="variety",
+                coerce=ingest_utils.get_clean_number,
+            ),
         ],
         "options": {"sheet_name": "Characteristics", "header_length": 1},
     }
@@ -66,6 +74,7 @@ class WheatCultivarsMetadata(BaseMetadata):
                     "notes": "%s (%s): %s"
                     % (row.variety, row.code, row.classification),
                     "type": self.ckan_data_type,
+                    "sequence_data_type": self.sequence_data_type,
                 }
                 ingest_utils.permissions_public(self._logger, obj)
                 obj.update(

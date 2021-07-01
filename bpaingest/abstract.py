@@ -1,4 +1,6 @@
 import os
+import re
+from glob import glob
 from urllib.parse import urlparse, urljoin
 
 from .libs.excel_wrapper import ExcelWrapper
@@ -30,7 +32,7 @@ class BaseMetadata:
             fname,
             additional_context=metadata_info[os.path.basename(fname)],
             suggest_template=True,
-            **kwargs
+            **kwargs,
         )
         for error in wrapper.get_errors():
             self._logger.error(error)
@@ -137,6 +139,7 @@ class BaseMetadata:
         self._logger = logger
         self._packages = self._resources = None
         self._linkage_xlsx = {}
+        self._linkage_md5 = {}
 
     def track_xlsx_resource(self, obj, fname):
         """
@@ -146,14 +149,56 @@ class BaseMetadata:
         assert linkage_key not in self._linkage_xlsx
         self._linkage_xlsx[linkage_key] = fname
 
+    def track_packages_for_md5(self, obj, ticket):
+        """
+       track packages for md5s that needs to be uploaded into the packages, if metadata_info shows the ticket matches
+       """
+        linkage = tuple([obj[t] for t in self.resource_linkage])
+        for f in self.all_md5_filenames:
+            if f not in self._linkage_md5:
+                self._linkage_md5[f] = []
+            if (
+                self.metadata_info[f]["ticket"] == ticket
+                and linkage not in self._linkage_md5[f]
+            ):
+                self._linkage_md5[f].append(linkage)
+
     def generate_xlsx_resources(self):
         if len(self._linkage_xlsx) == 0:
-            self._logger.error("no XLSX resources, likely a bug in the ingest class")
+            self._logger.error(
+                "no linkage xlsx, likely a bug in the ingest class (xlsx resource needs to be tracked in package "
+                "creation) "
+            )
         resources = []
         for linkage, fname in self._linkage_xlsx.items():
             resource = resource_metadata_from_file(linkage, fname, self.ckan_data_type)
             xlsx_info = self.metadata_info[os.path.basename(fname)]
             legacy_url = urljoin(xlsx_info["base_url"], os.path.basename(fname))
+            resources.append((linkage, legacy_url, resource))
+        return resources
+
+    def md5_lines(self):
+        self._logger.info("Ingesting MD5 file information from {0}".format(self.path))
+        for md5_file in glob(self.path + "/*.md5"):
+            self._logger.info("Processing md5 file {}".format(md5_file))
+            for filename, md5, file_info in self.parse_md5file(md5_file):
+                yield filename, md5, md5_file, file_info
+
+    def generate_md5_resources(self, md5_file):
+        self._logger.info("Processing md5 file {}".format(md5_file))
+        md5_basename = os.path.basename(md5_file)
+        file_info = self.metadata_info[md5_basename]
+        if len(self._linkage_md5) < 1:
+            self._logger.error(
+                "no linkage xlsx, likely a bug in the ingest class (xlsx resource needs to be tracked in package "
+                "creation) "
+            )
+        resources = []
+        for linkage in self._linkage_md5[md5_basename]:
+            resource = resource_metadata_from_file(
+                linkage, md5_file, self.ckan_data_type
+            )
+            legacy_url = urljoin(file_info["base_url"], md5_basename)
             resources.append((linkage, legacy_url, resource))
         return resources
 

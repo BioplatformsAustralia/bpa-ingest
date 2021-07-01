@@ -4,6 +4,8 @@ from bpaingest.projects.ausarg.files import (
     ont_promethion_re,
     pacbio_hifi_filename_re,
     pacbio_hifi_metadata_sheet_re,
+    exon_filename_re,
+    illumina_hic_re,
 )
 
 
@@ -66,3 +68,27 @@ def test_pacbio_hifi_metadata_sheet():
 
     for filename in filenames:
         assert pacbio_hifi_metadata_sheet_re.match(filename) is not None
+
+
+def test_exon():
+    filenames = [
+        "349779_AHHVV2AFX2_TACGCCAAGT_S1_L001_R1_001.fastq.gz",
+        "349779_AHHVV2AFX2_TACGCCAAGT_S1_L001_R2_001.fastq.gz",
+        "349779_AHHVV2AFX2_TACGCCAAGT_S1_L002_R1_001.fastq.gz",
+    ]
+
+    for filename in filenames:
+        assert exon_filename_re.match(filename) is not None
+
+
+def test_illumina_hic():
+    filenames = [
+        "350764_AusARG_BRF_DD2M2_TGACCA_S2_L001_R1_001.fastq.gz",
+        "350769_AusARG_BRF_DD2M2_CAGATC_S5_L001_R1_001.fastq.gz",
+        "350821_AusARG_BRF_DD2M2_CGATGT_S1_L001_R1_001.fastq.gz",
+        "350752_AusARG_BRF_HCN7WDRXY_S4_L001_R1_001.fastq.gz",
+        "350752_AusARG_BRF_HCN7WDRXY_S4_L001_R2_001.fastq.gz",
+        "350752_AusARG_BRF_HCN7WDRXY_S4_L002_R1_001.fastq.gz",
+    ]
+    for filename in filenames:
+        assert illumina_hic_re.match(filename) is not None

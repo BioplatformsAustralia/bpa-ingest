@@ -136,6 +136,7 @@ class SepsisGenomicsMiseqMetadata(BaseSepsisMetadata):
     organization = "bpa-sepsis"
     ckan_data_type = "arp-genomics-miseq"
     omics = "genomics"
+    sequence_data_type = "illumina-shortread"
     technology = "miseq"
     spreadsheet = {
         "fields": [
@@ -207,6 +208,7 @@ class SepsisGenomicsMiseqMetadata(BaseSepsisMetadata):
                         "sequencer": row.sequencer,
                         "analysis_software_version": row.analysis_software_version,
                         "type": self.ckan_data_type,
+                        "sequence_data_type": self.sequence_data_type,
                         "data_generated": True,
                     }
                 )
@@ -261,6 +263,7 @@ class SepsisGenomicsPacbioMetadata(BaseSepsisMetadata):
     organization = "bpa-sepsis"
     ckan_data_type = "arp-genomics-pacbio"
     omics = "genomics"
+    sequence_data_type = "pacbio-clr"
     technology = "pacbio"
     spreadsheet = {
         "fields": [
@@ -345,6 +348,7 @@ class SepsisGenomicsPacbioMetadata(BaseSepsisMetadata):
                         "cell_position": row.cell_position,
                         "rs_version": row.rs_version,
                         "type": self.ckan_data_type,
+                        "sequence_data_type": self.sequence_data_type,
                         "data_generated": True,
                     }
                 )
@@ -392,6 +396,7 @@ class SepsisTranscriptomicsHiseqMetadata(BaseSepsisMetadata):
     organization = "bpa-sepsis"
     ckan_data_type = "arp-transcriptomics-hiseq"
     omics = "transcriptomics"
+    sequence_data_type = "illumina-transcriptomics"
     technology = "hiseq"
     spreadsheet = {
         "fields": [
@@ -401,10 +406,12 @@ class SepsisTranscriptomicsHiseqMetadata(BaseSepsisMetadata):
                 coerce=ingest_utils.extract_ands_id,
             ),
             fld("sample", "Sample (MGR code)"),
+            fld("sample_notes", "sample i.d"),
             fld("library_construction_protocol", "Library construction protocol"),
             fld("barcode_tag", "Barcode tag"),
             fld("sequencer", "Sequencer"),
             fld("casava_version", "CASAVA version"),
+            fld("additional_notes", "additional notes", optional=True),
         ],
         "options": {"header_length": 2, "column_name_row_index": 1,},
     }
@@ -499,6 +506,7 @@ class SepsisTranscriptomicsHiseqMetadata(BaseSepsisMetadata):
                     "sequencer": row.sequencer,
                     "casava_version": row.casava_version,
                     "type": self.ckan_data_type,
+                    "sequence_data_type": self.sequence_data_type,
                     "data_generated": True,
                 }
             )
@@ -551,6 +559,7 @@ class SepsisMetabolomicsGCMSMetadata(BaseSepsisMetadata):
     organization = "bpa-sepsis"
     ckan_data_type = "arp-metabolomics-gcms"
     omics = "metabolomics"
+    sequence_data_type = "metabolomics"
     technology = "gcms"
     spreadsheet = {
         "fields": [
@@ -635,6 +644,7 @@ class SepsisMetabolomicsGCMSMetadata(BaseSepsisMetadata):
                         "acquisition_mode": row.acquisition_mode,
                         "raw_file_name": row.raw_file_name,
                         "type": self.ckan_data_type,
+                        "sequence_data_type": self.sequence_data_type,
                         "data_generated": True,
                     }
                 )
@@ -679,6 +689,7 @@ class SepsisMetabolomicsLCMSMetadata(BaseSepsisMetadata):
     organization = "bpa-sepsis"
     ckan_data_type = "arp-metabolomics-lcms"
     omics = "metabolomics"
+    sequence_data_type = "metabolomics"
     technology = "lcms"
     spreadsheet = {
         "fields": [
@@ -768,6 +779,7 @@ class SepsisMetabolomicsLCMSMetadata(BaseSepsisMetadata):
                         "acquisition_mode": row.acquisition_mode,
                         "raw_file_name": row.raw_file_name,
                         "type": self.ckan_data_type,
+                        "sequence_data_type": self.sequence_data_type,
                         "data_generated": True,
                     }
                 )
@@ -815,6 +827,7 @@ class SepsisProteomicsMS1QuantificationMetadata(BaseSepsisMetadata):
     organization = "bpa-sepsis"
     ckan_data_type = "arp-proteomics-ms1quantification"
     omics = "proteomics"
+    sequence_data_type = "proteomics"
     technology = "ms1quantification"
     spreadsheet = {
         "fields": [
@@ -840,7 +853,7 @@ class SepsisProteomicsMS1QuantificationMetadata(BaseSepsisMetadata):
             fld(
                 "sample_on_column",
                 "sample on column (µg)",
-                units="µg",
+                units=u"\u00B5" + "g",
                 coerce=ingest_utils.get_clean_number,
             ),
             fld("mass_spectrometer", "mass spectrometer"),
@@ -921,6 +934,7 @@ class SepsisProteomicsMS1QuantificationMetadata(BaseSepsisMetadata):
                         "notes": "ARP Proteomics MS1Quantification Raw Data: %s %s %s Replicate %s"
                         % (taxon, strain, obj["growth_media"], obj["replicate"]),
                         "type": self.ckan_data_type,
+                        "sequence_data_type": self.sequence_data_type,
                         "data_generated": True,
                     }
                 )
@@ -978,8 +992,11 @@ class SepsisProteomicsSwathMSBaseSepsisMetadata(BaseSepsisMetadata):
                 "Gradient time (min)  /  % ACN (start-finish main gradient) / flow",
             ),
             fld(
-                "sample_on_column", "sample on column (g)"
-            ),  # Note: unicode micro stripped out
+                "sample_on_column",
+                "sample on column (µg)",
+                units=u"\u00B5" + "g",
+                coerce=ingest_utils.get_clean_number,
+            ),
             fld("mass_spectrometer", "Mass Spectrometer"),
             fld("acquisition_mode_fragmentation", "Acquisition Mode / fragmentation"),
             fld("raw_file_name", "Raw file name"),
@@ -1123,6 +1140,7 @@ class SepsisProteomicsSwathMSBaseSepsisMetadata(BaseSepsisMetadata):
                         replicate,
                     ),
                     "type": self.ckan_data_type,
+                    "sequence_data_type": self.sequence_data_type,
                     "data_generated": True,
                 }
             )
@@ -1184,6 +1202,7 @@ class SepsisProteomicsSwathMSCombinedSampleMetadata(BaseSepsisMetadata):
     ckan_data_type = "arp-proteomics-swathms-combined-sample"
     resource_linkage = ("folder_name",)
     omics = "proteomics"
+    sequence_data_type = "proteomics"
     technology = "swathms-combined-sample"
     spreadsheet = {
         "fields": [
@@ -1201,7 +1220,12 @@ class SepsisProteomicsSwathMSCombinedSampleMetadata(BaseSepsisMetadata):
                 "gradient_time_min",
                 "gradient time (min)  /  % acn (start-finish main gradient) / flow",
             ),
-            fld("sample_on_column_ug", "sample on column (g)"),
+            fld(
+                "sample_on_column",
+                "sample on column (µg)",
+                units=u"\u00B5" + "g",
+                coerce=ingest_utils.get_clean_number,
+            ),
             fld("mass_spectrometer", "mass spectrometer"),
             fld("acquisition_mode_fragmentation", "acquisition mode / fragmentation"),
             fld("raw_file_name", "raw file name"),
@@ -1254,6 +1278,7 @@ class SepsisProteomicsSwathMSCombinedSampleMetadata(BaseSepsisMetadata):
                     "omics": "proteomics",
                     "data_generated": "True",
                     "type": self.ckan_data_type,
+                    "sequence_data_type": self.sequence_data_type,
                     "date_of_transfer": ingest_utils.get_date_isoformat(
                         self._logger, track_meta.date_of_transfer
                     ),
@@ -1324,6 +1349,7 @@ class SepsisProteomics2DLibraryMetadata(BaseSepsisMetadata):
     ckan_data_type = "arp-proteomics-2dlibrary"
     resource_linkage = ("folder_name",)
     omics = "proteomics"
+    sequence_data_type = "proteomics"
     technology = "2dlibrary"
     spreadsheet = {
         "fields": [
@@ -1341,7 +1367,12 @@ class SepsisProteomics2DLibraryMetadata(BaseSepsisMetadata):
                 "gradient_time_min",
                 "gradient time (min)  /  % acn (start-finish main gradient) / flow",
             ),
-            fld("sample_on_column_ug", "sample on column (g)"),
+            fld(
+                "sample_on_column",
+                "sample on column (µg)",
+                units=u"\u00B5" + "g",
+                coerce=ingest_utils.get_clean_number,
+            ),
             fld("mass_spectrometer", "mass spectrometer"),
             fld("acquisition_mode_fragmentation", "acquisition mode / fragmentation"),
             fld("raw_file_name", "raw file name"),
@@ -1393,6 +1424,7 @@ class SepsisProteomics2DLibraryMetadata(BaseSepsisMetadata):
                     "omics": "proteomics",
                     "data_generated": "True",
                     "type": self.ckan_data_type,
+                    "sequence_data_type": self.sequence_data_type,
                     "date_of_transfer": ingest_utils.get_date_isoformat(
                         self._logger, track_meta.date_of_transfer
                     ),
@@ -1455,6 +1487,7 @@ class SepsisProteomics2DLibraryMetadata(BaseSepsisMetadata):
 
 class SepsisProteomicsSwathMSMetadata(SepsisProteomicsSwathMSBaseSepsisMetadata):
     ckan_data_type = "arp-proteomics-swathms"
+    sequence_data_type = "proteomics"
     md5 = {
         "match": [
             files.proteomics_swathms_1d_ida_filename_re,
@@ -1478,6 +1511,7 @@ class SepsisProteomicsSwathMSMetadata(SepsisProteomicsSwathMSBaseSepsisMetadata)
 
 class SepsisProteomicsSwathMSPoolMetadata(SepsisProteomicsSwathMSBaseSepsisMetadata):
     ckan_data_type = "arp-proteomics-swathms-pool"
+    sequence_data_type = "proteomics"
     pool = True
     resource_linkage = ("pool_sample_ids",)
     md5 = {
@@ -1556,6 +1590,7 @@ class SepsisProteomicsAnalysedMetadata(BaseSepsisAnalysedMetadata):
     ckan_data_type = "arp-proteomics-analysed"
     resource_linkage = ("folder_name",)
     omics = "proteomics"
+    sequence_data_type = "proteomics"
     technology = "analysed"
     spreadsheet = {
         "fields": [
@@ -1649,6 +1684,7 @@ class SepsisProteomicsAnalysedMetadata(BaseSepsisAnalysedMetadata):
                     "sample_ids": ", ".join(sample_ids),
                     "data_generated": "True",
                     "type": self.ckan_data_type,
+                    "sequence_data_type": self.sequence_data_type,
                     "date_of_transfer": ingest_utils.get_date_isoformat(
                         self._logger, track_meta.date_of_transfer
                     ),
@@ -1729,6 +1765,7 @@ class SepsisTranscriptomicsAnalysedMetadata(BaseSepsisAnalysedMetadata):
     ckan_data_type = "arp-transcriptomics-analysed"
     resource_linkage = ("ticket",)
     omics = "transcriptomics"
+    sequence_data_type = "transcriptomics-analysed"
     technology = "analysed"
     spreadsheet = {
         "fields": [
@@ -1766,7 +1803,7 @@ class SepsisTranscriptomicsAnalysedMetadata(BaseSepsisAnalysedMetadata):
                 "file_name_of_annotated_genes",
                 "file name of annotated genes used for analysis",
             ),
-            fld("approach_used", "approach used"),
+            fld("approach_used", "approach used", optional=True),
         ],
         "options": {"header_length": 8, "column_name_row_index": 7,},
     }
@@ -1825,6 +1862,7 @@ class SepsisTranscriptomicsAnalysedMetadata(BaseSepsisAnalysedMetadata):
                     "sample_ids": ", ".join(sample_ids),
                     "data_generated": "True",
                     "type": self.ckan_data_type,
+                    "sequence_data_type": self.sequence_data_type,
                     "date_of_transfer": ingest_utils.get_date_isoformat(
                         self._logger, track_meta.date_of_transfer
                     ),
@@ -1895,6 +1933,7 @@ class SepsisMetabolomicsAnalysedMetadata(BaseSepsisAnalysedMetadata):
     ckan_data_type = "arp-metabolomics-analysed"
     resource_linkage = ("folder_name",)
     omics = "metabolomics"
+    sequence_data_type = "metabolomics-analysed"
     technology = "analysed"
     spreadsheet = {
         "fields": [
@@ -1905,7 +1944,7 @@ class SepsisMetabolomicsAnalysedMetadata(BaseSepsisAnalysedMetadata):
             ),
             fld(
                 "sample_id",
-                "sample name (5 digit bpa id)",
+                re.compile(r"sample name (i.e. )?\(?5 digit bpa id\)?"),
                 coerce=ingest_utils.extract_ands_id,
             ),
             fld("taxon_or_organism", "taxon_or_organism"),
@@ -1922,8 +1961,7 @@ class SepsisMetabolomicsAnalysedMetadata(BaseSepsisAnalysedMetadata):
             fld("analytical_platform", "analytical platform"),
             fld("facility", "facility"),
             fld("data_type", "data type"),
-            fld("file_name_of_analysed_data", "file name of analysed data"),
-            fld("approach_used", "approach used"),
+            fld("approach_used", "approach used", optional=True),
         ],
         "options": {"header_length": 8, "column_name_row_index": 7,},
     }
@@ -1983,6 +2021,7 @@ class SepsisMetabolomicsAnalysedMetadata(BaseSepsisAnalysedMetadata):
                     "analytical_platform": ", ".join(analytical_platform),
                     "data_generated": "True",
                     "type": self.ckan_data_type,
+                    "sequence_data_type": self.sequence_data_type,
                     "date_of_transfer": ingest_utils.get_date_isoformat(
                         self._logger, track_meta.date_of_transfer
                     ),
@@ -2152,6 +2191,7 @@ class SepsisGenomicsAnalysedMetadata(BaseSepsisAnalysedMetadata):
                     "sample_ids": ", ".join(sample_ids),
                     "data_generated": "True",
                     "type": self.ckan_data_type,
+                    "sequence_data_type": self.sequence_data_type,
                     "date_of_transfer": ingest_utils.get_date_isoformat(
                         self._logger, track_meta.date_of_transfer
                     ),
@@ -2306,6 +2346,7 @@ class SepsisProteomicsProteinDatabaseMetadata(BaseSepsisAnalysedMetadata):
                     "sample_ids": ", ".join(sample_ids),
                     "data_generated": "True",
                     "type": self.ckan_data_type,
+                    "sequence_data_type": self.sequence_data_type,
                     "date_of_transfer": ingest_utils.get_date_isoformat(
                         self._logger, track_meta.date_of_transfer
                     ),

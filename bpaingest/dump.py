@@ -64,6 +64,12 @@ def linkage_qc(logger, state, data_type_meta, errors_callback=None):
 
         for linkage_tpl, package_id in resource_linkage_package_id.items():
             if linkage_tpl not in linked_tuples:
+                # extra_fields = get_extra_fields(packages, package_id)
+                # errors_callback(
+                #     "{}: package has no linked resources, tuple: {} and extras: {}".format(
+                #         package_id, linkage_tpl, extra_fields
+                #     )
+                # )
                 errors_callback(
                     "{}: package has no linked resources, tuple: {}".format(
                         package_id, linkage_tpl
@@ -72,6 +78,18 @@ def linkage_qc(logger, state, data_type_meta, errors_callback=None):
 
     for data_type, (p, r) in counts.items():
         logger.info("{}: {} packages, {} resources".format(data_type, p, r))
+
+
+# convenience method to find extra helpful values when debugging resource_linkage issues
+# def get_extra_fields(packages, package_id):
+#     next_package = next(item for item in packages if item["id"] == package_id)
+#     return tuple(
+#         next_package[t]
+#         for t in (
+#             "ticket",
+#             "basefilename"
+#         )
+#     )
 
 
 def dump_state(args):

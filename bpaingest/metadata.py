@@ -3,6 +3,9 @@ import shutil
 import json
 import os
 from contextlib import suppress
+
+import requests as requests
+
 from .libs.fetch_data import Fetcher, get_password, get_env_username
 
 
@@ -36,6 +39,10 @@ class DownloadMetadata:
         self.contextual = [
             (os.path.join(self.path, c.name), c) for c in contextual_classes
         ]
+        schema_classes = getattr(project_class, "schema_classes", [])
+        self.schema_definitions = [
+            (os.path.join(self.path, c.name), c) for c in schema_classes
+        ]
 
         if self.fetch or force_fetch:
             self._fetch_metadata(project_class, self.contextual, metadata_info)
@@ -50,6 +57,10 @@ class DownloadMetadata:
         if self.contextual:
             meta_kwargs["contextual_metadata"] = [
                 c(self._logger, p) for (p, c) in self.contextual
+            ]
+        if self.schema_definitions:
+            meta_kwargs["schema_definitions"] = [
+                c(self._logger, p) for (p, c) in self.schema_definitions
             ]
         return self.project_class(logger, self.path, **meta_kwargs)
 
@@ -89,10 +100,47 @@ class DownloadMetadata:
                     metadata_info,
                     getattr(contextual_cls, "metadata_url_components", []),
                 )
+        self.init_schema_classes(project_class, metadata_info)
         tmpf = self.info_json + ".new"
         with open(tmpf, "w") as fd:
             json.dump(metadata_info, fd)
         os.replace(tmpf, self.info_json)
+
+    def init_schema_classes(self, project_class, metadata_info):
+        if not self.schema_definitions:
+            self._logger.info(
+                f"No schema definitions exist for {getattr(project_class, 'ckan_data_type', '')}. Ignoring..."
+            )
+        for schema_path, schema_cls in self.schema_definitions:
+            if not os.path.isdir(schema_path):
+                os.mkdir(schema_path)
+            else:
+                self._logger.info(
+                    "Metadata schema definitions path: {} already exists. Moving on.".format(
+                        schema_path
+                    )
+                )
+            self._logger.info(
+                "fetching schema definitions metadata: %s" % (schema_cls.metadata_urls)
+            )
+            for metadata_url in schema_cls.metadata_urls:
+                local_filename = metadata_url.split("/")[-1]
+                response = requests.get(url=metadata_url, timeout=10, stream=True)
+                error_message = f"Unable to download: {metadata_url}"
+                try:
+                    if response is None or not response.ok:
+                        self._logger.error(error_message)
+                    destination = os.path.join(schema_path, local_filename)
+                    with open(destination, "wb") as f:
+                        for chunk in response.iter_content(chunk_size=1024):
+                            f.write(chunk)
+                    self._logger.info(
+                        "updating metadata info for schema definitions..."
+                    )
+                    metadata_info[local_filename] = dict()
+                    metadata_info[local_filename]["base_url"] = schema_path
+                finally:
+                    self._logger.info("schema download complete.")
 
     def _set_auth(self, project_class):
         env_auth_user = get_env_username()
