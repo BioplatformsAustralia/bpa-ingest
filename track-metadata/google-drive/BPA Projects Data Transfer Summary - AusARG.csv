@@ -27,3 +27,4 @@ BRF,11/6/2021,Illumina-HiC,HiC-QC,20210513_AusARG_BRF_DD2M2,"349751, 349763, 349
 BRF,15/6/2021,Illumina-HiC,HiC,20210611_AusARG_BRF_HCN7WDRXY,"349751, 349763, 349765, 349764, 349775, 349811","350752, 350764, 350769, 350768, 350781, 350821",351742,Platyplectrum ornatum/Chelodina expansa/Bassiana duperreyi/Pogona vitticeps/Tiliqua rugosa/(Emydura macquarii?),Reference genome,16/06/21,,BPAOPS-1084,
 AGRF,21/6/2021,PacBio-HiFi,HiFi,20210621_AusARG_AGRF_DA064169,349749,350750,351739,Lampropholis delicata,Reference genome,24/6/21,,BPAOPS-1091,
 UNSW,24/06/2021,Illumina-shortread,Short reads,20210621_AusARG_UNSW_HF7CFDRXY,349770,350774,351750,Litoria serrata,Reference genome,24/6/21,,BPAOPS-1097,
+RamaciottiGarvan,7/7/2021,ONT-promethion,PromethION,20210705_AusARG_RamaciottiGarvan_PAG89453,349750,350751,351740,Platyplectrum ornatum,Reference genome,7/7/21,,BPAOPS-1106,

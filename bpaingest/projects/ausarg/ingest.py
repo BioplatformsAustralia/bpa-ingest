@@ -299,7 +299,7 @@ class AusargONTPromethionMetadata(AusargBaseMetadata):
             ),
             fld("library_prepared_by", "library_prepared_by"),
             # fld("library_prep_method", "library_prep_method"),
-            fld("experimental_design", "experimental design"),
+            fld("experimental_design", re.compile("experimental[ _]design")),
             fld(
                 "ausarg_project",
                 re.compile(r"[Aa]us[aA][rR][gG]_project"),
@@ -316,7 +316,7 @@ class AusargONTPromethionMetadata(AusargBaseMetadata):
             fld("library_ng_ul", "library_ng_ul", optional=True),
             fld("library_comments", "library_comments"),
             fld("library_location", "library_location"),
-            fld("library_status", "library_status"),
+            fld("library_status", "library_status", optional=True),
             fld("sequencing_facility", "sequencing_facility"),
             fld(
                 "n_libraries_pooled",
@@ -340,6 +340,15 @@ class AusargONTPromethionMetadata(AusargBaseMetadata):
             fld("movie_length", "movie_length"),
             fld("analysis_software", "analysis_software"),
             fld("analysis_software_version", "analysis_software_version"),
+            fld('library_layout', 'library_layout', optional=True),
+            fld('sequencing_model', 'sequencing_model', optional=True),
+            fld('library_strategy', 'library_strategy', optional=True),
+            fld('library_selection', 'library_selection', optional=True),
+            fld('library_source', 'library_source', optional=True),
+            fld('sequencing_kit_chemistry_version', 'sequencing_kit_chemistry_version', optional=True),
+            fld('file_type', 'file_type', optional=True),
+            fld('fast5_compression', 'fast5_compression', optional=True),
+            fld('model_base_caller', 'model_base_caller', optional=True),
         ],
         "options": {
             "sheet_name": "Library_metadata",
