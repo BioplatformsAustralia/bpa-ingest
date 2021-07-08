@@ -34,7 +34,9 @@ ONT_PROMETHION_PATTERN = r"""
     (?P<facility_id>(AGRF|RamaciottiGarvan))_
     ONTPromethION_
     (?P<archive_type>\w+)
-    \.tar
+    (\.tar
+      |\.html
+      |\.txt)
 """
 ont_promethion_re = re.compile(ONT_PROMETHION_PATTERN, re.VERBOSE)
 

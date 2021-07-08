@@ -35,6 +35,8 @@ def test_ont_promethion_re():
         "350767_PAG18256_AusARG_RamaciottiGarvan_ONTPromethION_fastq_pass.tar",
         "350767_PAG18256_AusARG_RamaciottiGarvan_ONTPromethION_plots.tar",
         "350767_PAG18256_AusARG_RamaciottiGarvan_ONTPromethION_sequencing_summary.tar",
+        "350751_PAG89453_AusARG_RamaciottiGarvan_ONTPromethION_plots.html",
+        "350751_PAG89453_AusARG_RamaciottiGarvan_ONTPromethION_sequencing_summary.txt",
     ]
     for filename in filenames:
         assert ont_promethion_re.match(filename) is not None
