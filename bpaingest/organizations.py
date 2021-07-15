@@ -105,4 +105,11 @@ ORGANIZATIONS = [
         "image_url": "https://data.bioplatforms.com/Threatened-Species-Initiative-Logo-150dpi-RGB.png",
         "groups": [{"capacity": "public", "name": BPA_ORGANIZATION_ID}],
     },
+    {
+        "name": "grasslands",
+        "title": "Australian Grasslands Initiative",
+        "display_name": "Australian Grasslands Initiative",
+        "image_url": "https://data.bioplatforms.com/Australian-Grasslands.png",
+        "groups": [{"capacity": "public", "name": BPA_ORGANIZATION_ID}],
+    },
 ]
