@@ -290,6 +290,7 @@ def _get_date(logger, dt, silent=False):
     The following date formats are supported:
        YYYY-mm-dd
        dd/mm/YYYY 
+       dd-mm-YYYY
 
        YYYY-mm (convert to first date of month)
        mm/YYYY (convert to first date of month)
@@ -338,6 +339,11 @@ def _get_date(logger, dt, silent=False):
 
     try:
         return datetime.datetime.strptime(dt, "%d/%m/%Y").date()
+    except ValueError:
+        pass
+
+    try:
+        return datetime.datetime.strptime(dt, "%d-%m-%Y").date()
     except ValueError:
         pass
 
