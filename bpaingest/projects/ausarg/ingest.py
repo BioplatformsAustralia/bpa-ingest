@@ -465,7 +465,7 @@ class AusargPacbioHifiMetadata(AusargBaseMetadata):
     technology = "pacbio-hifi"
     sequence_data_type = "pacbio-hifi"
     contextual_classes = common_context
-    metadata_patterns = [r"^.*\.md5$", r"^.*_metadata.*.*\.xlsx$"]
+    metadata_patterns = [r"^.*\.md5$", r"^.*[\._]metadata.*.*\.xlsx$"]
     metadata_urls = [
         "https://downloads-qcif.bioplatforms.com/bpa/ausarg_staging/pacbio-hifi/",
     ]
@@ -552,7 +552,7 @@ class AusargPacbioHifiMetadata(AusargBaseMetadata):
     md5 = {
         "match": [files.pacbio_hifi_filename_re, files.pacbio_hifi_metadata_sheet_re],
         "skip": [
-            re.compile(r"^.*_metadata\.xlsx$"),
+            re.compile(r"^.*[\._]metadata\.xlsx$"),
             re.compile(r"^.*SampleSheet.*"),
             re.compile(r"^.*TestFiles\.exe.*"),
         ],
@@ -696,7 +696,7 @@ class AusargPacbioHifiMetadata(AusargBaseMetadata):
                     )
                 else:
                     # otherwise if no download_info, then raise error
-                    raise Exception("No download info for {}".format(filename))
+                    raise Exception("No download info for {} in {}".format(filename, md5_file))
                 resources.append(
                     (
                         (
