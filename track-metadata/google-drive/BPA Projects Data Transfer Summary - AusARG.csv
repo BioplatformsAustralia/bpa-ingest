@@ -34,3 +34,4 @@ RamaciottiGarvan,16/7/2021,ONT-promethion,PromethION,20210714_PAG86924_AusARG_Ra
 RamaciottiGarvan,16/7/2021,ONT-promethion,PromethION,20210714_PAG99323_AusARG_RamaciottiGarvan_350823,349814,350823,351771,Emydura macquarii,Reference genome,17/7/2021,,BPAOPS-1112,these are 2 runs of the same thing
 RamaciottiGarvan,19/7/2021,ONT-promethion,PromethION,20210714_AusARG_RamaciottiGarvan_350836,349828,350836,351775,Carettochelys insculpta,Reference genome,20/7/2021,,BPAOPS-1113,
 AGRF,19/7/2021,PacBio-HiFi,HiFi,20210714_AusARG_AGRF_DA087270,349813,350837,351769,Pseudemoia entrecasteauxii,Reference genome,19/7/2021,,BPAOPS-1114,
+BRF,21/7/2021,Illumina-HiC,HiC,20210716_AusARG_BRF_HFYWKDRXY,349835-349836,350846-350847,351782,Gehyra lapistola and Gehyra paranana,Reference genome,21/7/2021,,BPAOPS-1115,"there should be the QC run as well (dataset ID 351781 with same other IDs) but not sure if they have sent it with it, looks like only the main run"

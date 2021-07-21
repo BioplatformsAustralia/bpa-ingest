@@ -1035,6 +1035,11 @@ class AusargHiCMetadata(AusargBaseMetadata):
             fld("file_type", "file_type"),
             fld("experimental_design", "experimental_design"),
             fld("work_order", "work_order", coerce=ingest_utils.get_int),
+            fld('library_index_id_dual', 'library_index_id_dual', optional=True),
+            fld('library_index_seq_dual', 'library_index_seq_dual', optional=True),
+            fld('library_oligo_sequence_dual', 'library_oligo_sequence_dual', optional=True),
+            fld('fast5_compression', 'fast5_compression', optional=True),
+            fld('model_base_caller', 'model_base_caller', optional=True)
         ],
         "options": {
             "sheet_name": "Library_metadata",
