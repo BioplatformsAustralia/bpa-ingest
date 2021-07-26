@@ -45,13 +45,13 @@ novaseq_filename_re = re.compile(NOVASEQ_FILENAME_PATTERN, re.VERBOSE)
 PACBIO_HIFI_PATTERN = r"""
     (?P<library_id>\d{4,6})_
     TSI_
-    (?P<facility>AGRF)_
+    (?P<facility>(AGRF)|C?(AGRF)\d+)_
     (PacBio_)?
     (?P<flowcell_id>\w{8})
     (_ccs_statistics\.csv
       |_final\.consensusreadset\.xml
       |\.ccs\.bam
-      |\.subreads\.bam
+      |[\._]subreads\.bam
       |_HiFi_qc\.pdf
       |\.pdf)
 """
@@ -60,7 +60,7 @@ pacbio_hifi_filename_re = re.compile(PACBIO_HIFI_PATTERN, re.VERBOSE)
 PACBIO_HIFI_METADATA_SHEET_PATTERN = r"""
     (?P<library_id>\d{4,6})_
     TSI_
-    (?P<facility>AGRF)_
+    (?P<facility>(AGRF)|C?(AGRF)\d+)_
     (PacBio_)?
     (?P<flowcell_id>\w{8})
     (_metadata\.xlsx)

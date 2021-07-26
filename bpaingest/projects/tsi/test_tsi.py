@@ -62,6 +62,7 @@ def test_pacbio_hifi():
         "357368_TSI_AGRF_DA060252_HiFi_qc.pdf",
         "357368_TSI_AGRF_DA060252_ccs_statistics.csv",
         "357368_TSI_AGRF_DA060252_final.consensusreadset.xml",
+	"357368_TSI_CAGRF20114490_DA060254_subreads.bam",
     ]
 
     for filename in filenames:
@@ -72,6 +73,7 @@ def test_pacbio_hifi_metadata_sheet():
     filenames = [
         "355356_TSI_AGRF_PacBio_DA052899_metadata.xlsx",
         "357368_TSI_AGRF_DA060252_metadata.xlsx",
+	"357368_TSI_CAGRF20114490_DA060254_metadata.xlsx",
     ]
 
     for filename in filenames:

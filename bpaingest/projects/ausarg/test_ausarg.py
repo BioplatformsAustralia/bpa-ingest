@@ -35,6 +35,8 @@ def test_ont_promethion_re():
         "350767_PAG18256_AusARG_RamaciottiGarvan_ONTPromethION_fastq_pass.tar",
         "350767_PAG18256_AusARG_RamaciottiGarvan_ONTPromethION_plots.tar",
         "350767_PAG18256_AusARG_RamaciottiGarvan_ONTPromethION_sequencing_summary.tar",
+        "350751_PAG89453_AusARG_RamaciottiGarvan_ONTPromethION_plots.html",
+        "350751_PAG89453_AusARG_RamaciottiGarvan_ONTPromethION_sequencing_summary.txt",
     ]
     for filename in filenames:
         assert ont_promethion_re.match(filename) is not None
@@ -54,6 +56,7 @@ def test_pacbio_hifi():
         "350719_AusARG_AGRF_PacBio_DA052873.pdf",
         "350719_AusARG_AGRF_PacBio_DA052894.pdf",
         "349741_AusARG_AGRF_PacBio_DA043669.pdf",
+        "350837_AusARG_AGRF_DA087270.HiFi_qc.pdf",
     ]
 
     for filename in filenames:
@@ -64,6 +67,7 @@ def test_pacbio_hifi_metadata_sheet():
     filenames = [
         "355356_AusARG_AGRF_PacBio_DA052899_metadata.xlsx",
         "350719_AusARG_AGRF_PacBio_DA052894_DA052873_metadata.xlsx",
+        "350837_AusARG_AGRF_DA087270.metadata.xlsx",
     ]
 
     for filename in filenames:

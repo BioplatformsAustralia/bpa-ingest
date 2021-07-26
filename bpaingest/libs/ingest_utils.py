@@ -170,6 +170,14 @@ def extract_ands_id(logger, s, silent=False):
     # header row left in
     if s.startswith("e.g. "):
         return None
+    # remove junk
+    if s.startswith("don't use"):
+        return None
+    if s.startswith("missing"):
+        return None
+    if s.startswith("NA"):
+        return None
+
     # duplicated 102.100.100: e.g. 102.100.100.102.100.100.25977
     s = s.replace("102.100.100.102.100.100.", "102.100.100/")
     # handle a sample extraction id tacked on the end with an underscore
@@ -282,6 +290,7 @@ def _get_date(logger, dt, silent=False):
     The following date formats are supported:
        YYYY-mm-dd
        dd/mm/YYYY 
+       dd-mm-YYYY
 
        YYYY-mm (convert to first date of month)
        mm/YYYY (convert to first date of month)
@@ -330,6 +339,11 @@ def _get_date(logger, dt, silent=False):
 
     try:
         return datetime.datetime.strptime(dt, "%d/%m/%Y").date()
+    except ValueError:
+        pass
+
+    try:
+        return datetime.datetime.strptime(dt, "%d-%m-%Y").date()
     except ValueError:
         pass
 

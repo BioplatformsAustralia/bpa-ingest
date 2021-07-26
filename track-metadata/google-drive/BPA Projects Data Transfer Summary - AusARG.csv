@@ -27,3 +27,11 @@ BRF,11/6/2021,Illumina-HiC,HiC-QC,20210513_AusARG_BRF_DD2M2,"349751, 349763, 349
 BRF,15/6/2021,Illumina-HiC,HiC,20210611_AusARG_BRF_HCN7WDRXY,"349751, 349763, 349765, 349764, 349775, 349811","350752, 350764, 350769, 350768, 350781, 350821",351742,Platyplectrum ornatum/Chelodina expansa/Bassiana duperreyi/Pogona vitticeps/Tiliqua rugosa/(Emydura macquarii?),Reference genome,16/06/21,,BPAOPS-1084,
 AGRF,21/6/2021,PacBio-HiFi,HiFi,20210621_AusARG_AGRF_DA064169,349749,350750,351739,Lampropholis delicata,Reference genome,24/6/21,,BPAOPS-1091,
 UNSW,24/06/2021,Illumina-shortread,Short reads,20210621_AusARG_UNSW_HF7CFDRXY,349770,350774,351750,Litoria serrata,Reference genome,24/6/21,,BPAOPS-1097,
+RamaciottiGarvan,7/7/2021,ONT-promethion,PromethION,20210705_AusARG_RamaciottiGarvan_PAG89453,349750,350751,351740,Platyplectrum ornatum,Reference genome,7/7/21,,BPAOPS-1106,
+AGRF,9/7/2021,PacBio-HiFi,HiFi,20210709_AusARG_AGRF_DA080843,349812,350822,351768,Saiphos equalis,Reference genome,10/7/21,,BPAOPS-1107,
+RamaciottiGarvan,12/7/2021,ONT-promethion,PromethION,20210708_AusARG_RamaciottiGarvan_350753,349752,350753,351743-351744,Chelodina expansa,Reference genome,13/7/2021,,BPAOPS-1108,
+RamaciottiGarvan,16/7/2021,ONT-promethion,PromethION,20210714_PAG86924_AusARG_RamaciottiGarvan_350823,349814,350823,351770,Emydura macquarii,Reference genome,17/7/2021,,BPAOPS-1111,not sure of the order of the datasets
+RamaciottiGarvan,16/7/2021,ONT-promethion,PromethION,20210714_PAG99323_AusARG_RamaciottiGarvan_350823,349814,350823,351771,Emydura macquarii,Reference genome,17/7/2021,,BPAOPS-1112,these are 2 runs of the same thing
+RamaciottiGarvan,19/7/2021,ONT-promethion,PromethION,20210714_AusARG_RamaciottiGarvan_350836,349828,350836,351775,Carettochelys insculpta,Reference genome,20/7/2021,,BPAOPS-1113,
+AGRF,19/7/2021,PacBio-HiFi,HiFi,20210714_AusARG_AGRF_DA087270,349813,350837,351769,Pseudemoia entrecasteauxii,Reference genome,19/7/2021,,BPAOPS-1114,
+BRF,21/7/2021,Illumina-HiC,HiC,20210716_AusARG_BRF_HFYWKDRXY,349835-349836,350846-350847,351782,Gehyra lapistola and Gehyra paranana,Reference genome,21/7/2021,,BPAOPS-1115,"there should be the QC run as well (dataset ID 351781 with same other IDs) but not sure if they have sent it with it, looks like only the main run"

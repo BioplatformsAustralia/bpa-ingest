@@ -51,5 +51,7 @@ BRF,20/05/2021,376315,380533,83683,xanthorrhoea_johnsonii_WGS_1_longDNAprep,Refe
 BRF,20/05/2021,376315,380534,83683,xanthorrhoea_johnsonii_WGS_2_shortDNAprep,Reference Genomes,Main dataset,Illumina Short Read,20210517_GAP_BRF_AH5TJYDRXY,27/5/2021,28/5/2021,BPAOPS-1076,https://data.bioplatforms.com/dataset?q=ticket%3ABPAOPS-1076
 AGRF,11/06/2021,,,83671,Isopogon,Conservation genomics,Main dataset,ddRAD,AGRF_GAP_HFF2NDRXY_83671,11/6/2021,14/6/2021,BPAOPS-1082,https://data.bioplatforms.com/dataset?ext_search_by=&q=ticket%3ABPAOPS-1082
 AGRF,11/06/2021,,,83672,Synaphea,Conservation genomics,Main dataset,ddRAD,AGRF_GAP_H5FWTDRXY_83672,11/6/2021,14/6/2021,BPAOPS-1083,https://data.bioplatforms.com/dataset?ext_search_by=&q=ticket%3ABPAOPS-1083
-AGRF,1/7/2021,,,83656,,Phylogenomics - AATOL (VIC),Main dataset,Illumina Short Read,20210630_GAP_AGRF_CAGRF21025255_HFVFMDRXY,1/7/2021,,BPAOPS-1101,
-AGRF,1/7/2021,,,83656,,Phylogenomics - AATOL (VIC),Main dataset,Illumina Short Read,20210630_GAP_AGRF_CAGRF20052378_HFVFMDRXY,1/7/2021,,BPAOPS-1102,
+AGRF,1/7/2021,,,83656,,Phylogenomics - AATOL (VIC) - 30 samples,Main dataset,Illumina Short Read,20210630_GAP_AGRF_CAGRF21025255_HFVFMDRXY,1/7/2021,2/7/21,BPAOPS-1101,https://data.bioplatforms.com/dataset?ext_search_by=&q=ticket%3ABPAOPS-1101
+AGRF,1/7/2021,,,83656,,Phylogenomics - AATOL (VIC) - 192 samples,Main dataset,Illumina Short Read,20210630_GAP_AGRF_CAGRF20052378_HFVFMDRXY,1/7/2021,2/7/21,BPAOPS-1102,https://data.bioplatforms.com/dataset?ext_search_by=&q=ticket%3ABPAOPS-1102
+AGRF,12/7/2021,,,83667,Cassia,Conservation genomics,Main dataset,ddRAD,AGRF_GAP_HFTHLDRXY_83667,13/7/2021,13/7/2021,BPAOPS-1110,https://data.bioplatforms.com/dataset?ext_search_by=&q=ticket%3ABPAOPS-1110
+AGRF,26/7/2021,,,83662,Zieria,Conservation genomics,Main dataset,ddRAD,AGRF_GAP_H3YW3AFX3_83662,26/7/2021,,BPAOPS-1119,

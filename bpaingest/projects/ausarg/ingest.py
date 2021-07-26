@@ -299,7 +299,7 @@ class AusargONTPromethionMetadata(AusargBaseMetadata):
             ),
             fld("library_prepared_by", "library_prepared_by"),
             # fld("library_prep_method", "library_prep_method"),
-            fld("experimental_design", "experimental design"),
+            fld("experimental_design", re.compile("experimental[ _]design")),
             fld(
                 "ausarg_project",
                 re.compile(r"[Aa]us[aA][rR][gG]_project"),
@@ -316,7 +316,7 @@ class AusargONTPromethionMetadata(AusargBaseMetadata):
             fld("library_ng_ul", "library_ng_ul", optional=True),
             fld("library_comments", "library_comments"),
             fld("library_location", "library_location"),
-            fld("library_status", "library_status"),
+            fld("library_status", "library_status", optional=True),
             fld("sequencing_facility", "sequencing_facility"),
             fld(
                 "n_libraries_pooled",
@@ -340,6 +340,15 @@ class AusargONTPromethionMetadata(AusargBaseMetadata):
             fld("movie_length", "movie_length"),
             fld("analysis_software", "analysis_software"),
             fld("analysis_software_version", "analysis_software_version"),
+            fld('library_layout', 'library_layout', optional=True),
+            fld('sequencing_model', 'sequencing_model', optional=True),
+            fld('library_strategy', 'library_strategy', optional=True),
+            fld('library_selection', 'library_selection', optional=True),
+            fld('library_source', 'library_source', optional=True),
+            fld('sequencing_kit_chemistry_version', 'sequencing_kit_chemistry_version', optional=True),
+            fld('file_type', 'file_type', optional=True),
+            fld('fast5_compression', 'fast5_compression', optional=True),
+            fld('model_base_caller', 'model_base_caller', optional=True),
         ],
         "options": {
             "sheet_name": "Library_metadata",
@@ -456,7 +465,7 @@ class AusargPacbioHifiMetadata(AusargBaseMetadata):
     technology = "pacbio-hifi"
     sequence_data_type = "pacbio-hifi"
     contextual_classes = common_context
-    metadata_patterns = [r"^.*\.md5$", r"^.*_metadata.*.*\.xlsx$"]
+    metadata_patterns = [r"^.*\.md5$", r"^.*[\._]metadata.*.*\.xlsx$"]
     metadata_urls = [
         "https://downloads-qcif.bioplatforms.com/bpa/ausarg_staging/pacbio-hifi/",
     ]
@@ -514,18 +523,25 @@ class AusargPacbioHifiMetadata(AusargBaseMetadata):
             fld("library_ng_ul", "library_ng_ul"),
             fld("library_comments", "library_comments"),
             fld("library_location", "library_location"),
-            fld("library_status", "library_status"),
+            fld("library_status", "library_status", optional=True),
             fld("sequencing_facility", "sequencing_facility"),
             fld(
                 "n_libraries_pooled", "n_libraries_pooled", coerce=ingest_utils.get_int
             ),
             fld("sequencing_platform", "sequencing_platform"),
             fld("flowcell_id", "flowcell_id"),
-            fld("experimental_design", "experimental design"),
+            fld("experimental_design", re.compile("experimental[_ ]design")),
             fld("voucher_number", "voucher_number", optional=True),
             fld("file_name", "file_name", optional=True),
             fld("facility_project_code", "facility_project_code", optional=True),
             fld("data_context", "data_context", optional=True),
+            fld('library_layout', 'library_layout', optional=True),
+            fld('sequencing_model', 'sequencing_model', optional=True),
+            fld('library_strategy', 'library_strategy', optional=True),
+            fld('library_selection', 'library_selection', optional=True),
+            fld('library_source', 'library_source', optional=True),
+            fld('sequencing_kit_chemistry_version', 'sequencing_kit_chemistry_version', optional=True),
+            fld('file_type', 'file_type', optional=True),
         ],
         "options": {
             "sheet_name": "Library_metadata",
@@ -536,7 +552,7 @@ class AusargPacbioHifiMetadata(AusargBaseMetadata):
     md5 = {
         "match": [files.pacbio_hifi_filename_re, files.pacbio_hifi_metadata_sheet_re],
         "skip": [
-            re.compile(r"^.*_metadata\.xlsx$"),
+            re.compile(r"^.*[\._]metadata\.xlsx$"),
             re.compile(r"^.*SampleSheet.*"),
             re.compile(r"^.*TestFiles\.exe.*"),
         ],
@@ -680,7 +696,7 @@ class AusargPacbioHifiMetadata(AusargBaseMetadata):
                     )
                 else:
                     # otherwise if no download_info, then raise error
-                    raise Exception("No download info for {}".format(filename))
+                    raise Exception("No download info for {} in {}".format(filename, md5_file))
                 resources.append(
                     (
                         (
@@ -1019,6 +1035,11 @@ class AusargHiCMetadata(AusargBaseMetadata):
             fld("file_type", "file_type"),
             fld("experimental_design", "experimental_design"),
             fld("work_order", "work_order", coerce=ingest_utils.get_int),
+            fld('library_index_id_dual', 'library_index_id_dual', optional=True),
+            fld('library_index_seq_dual', 'library_index_seq_dual', optional=True),
+            fld('library_oligo_sequence_dual', 'library_oligo_sequence_dual', optional=True),
+            fld('fast5_compression', 'fast5_compression', optional=True),
+            fld('model_base_caller', 'model_base_caller', optional=True)
         ],
         "options": {
             "sheet_name": "Library_metadata",
