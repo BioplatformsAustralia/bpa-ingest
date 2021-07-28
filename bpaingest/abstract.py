@@ -97,6 +97,12 @@ class BaseMetadata:
                 resource_obj["format"] = "FASTQ"
             elif filename.lower().endswith(".fasta.gz"):
                 resource_obj["format"] = "FASTA"
+            elif filename.lower().endswith(".vcf.gz"):
+                resource_obj["format"] = "VCF"
+            elif filename.lower().endswith(".gvcf.gz"):
+                resource_obj["format"] = "GVCF"
+            elif filename.lower().endswith(".md5sum"):
+                resource_obj["format"] = "MD5"
             elif extension in (
                 "PNG",
                 "XLSX",
@@ -120,6 +126,8 @@ class BaseMetadata:
                 "WIFF",
                 "JSON",
                 "BAM",
+                "HTML",
+                "MD5",
             ):
                 resource_obj["format"] = extension
 

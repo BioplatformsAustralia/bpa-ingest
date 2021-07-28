@@ -2456,3 +2456,173 @@ class OMGGenomicsPacBioGenomeAssemblyMetadata(SecondaryMetadata):
         return (
             resources + self.generate_xlsx_resources() + self.generate_raw_resources()
         )
+
+class OMGAnalysedDataMetadata(OMGBaseMetadata):
+    organization = "bpa-omg"
+    ckan_data_type = "omg-analysed-data"
+    technology = "analysed-data"
+    sequence_data_type = "analysed-data"
+    contextual_classes = common_context
+    metadata_patterns = [r"^.*\.md5$", r"^.*\.xlsx$"]
+    metadata_urls = [
+        "https://downloads-qcif.bioplatforms.com/bpa/omg_staging/analysed/",
+    ]
+    metadata_url_components = ("ticket",)
+    resource_linkage = ("bioplatforms_secondarydata_id",)
+    spreadsheet = {
+        "fields": [
+	    fld('bioplatforms_secondarydata_id', 'bioplatforms_secondarydata_id', coerce=ingest_utils.extract_ands_id),
+            fld('sample_id', 'sample_id', coerce=ingest_utils.get_int),
+            fld('sample_id_description', 'sample_id_description'),
+            fld('library_id', 'library_id', coerce=ingest_utils.get_int),
+            fld('library_id_description', 'library_id_description'),
+            fld('dataset_id', 'dataset_id', coerce=ingest_utils.get_int),
+            fld('dataset_id_description', 'dataset_id_description'),
+            fld('bioplatforms_project', 'bioplatforms_project'),
+            fld('contact_person', 'contact_person'),
+            fld('scientific_name', 'scientific_name'),
+            fld('common_name', 'common_name'),
+            fld('dataset_context', 'dataset_context'),
+            fld('analysis_name', 'analysis_name'),
+            fld('analysis_date', 'analysis_date', coerce=ingest_utils.get_date_isoformat),
+            fld('reference_genome', 'reference_genome'),
+            fld('reference_genome_link', 'reference_genome_link'),
+            fld('sequencing_technology', 'sequencing_technology'),
+            fld('genome_coverage', 'genome_coverage'),
+            fld('analysis_method', 'analysis_method'),
+            fld('analysis_method_version', 'analysis_method_version'),
+            fld('version_method_version_link', 'version_method_version_link'),
+            fld('analysis_qc', 'analysis_qc'),
+            fld('computational_infrastructure', 'computational_infrastructure'),
+            fld('system_used', 'system_used'),
+            fld('analysis_description', 'analysis_description'),
+        ],
+        "options": {
+            "sheet_name": "fields",
+            "header_length": 1,
+            "column_name_row_index": 0,
+        },
+    }
+    md5 = {
+        "match": [files.analysed_data_filename_re],
+        "skip": [
+            re.compile(r"^.*\.xlsx$"),
+        ],
+    }
+
+    def __init__(
+        self, logger, metadata_path, contextual_metadata=None, metadata_info=None
+    ):
+        super().__init__(logger, metadata_path)
+        self.path = Path(metadata_path)
+        self.contextual_metadata = contextual_metadata
+        self.metadata_info = metadata_info
+        self.track_meta = OMGTrackMetadata()
+
+    def _get_packages(self):
+        self._logger.info("Ingesting OMG Analysed Data metadata from {0}".format(self.path))
+        packages = []
+        for fname in glob(self.path + "/*.xlsx"):
+            self._logger.info("Processing OMG metadata file {0}".format(fname))
+            rows = self.parse_spreadsheet(fname, self.metadata_info)
+
+            def track_get(k):
+                if track_meta is None:
+                    return None
+                return getattr(track_meta, k)
+
+            for row in rows:
+                track_meta = self.track_meta.get(row.ticket)
+                bioplatforms_secondarydata_id = row.bioplatforms_secondarydata_id
+                scientific_name = row.scientific_name
+                #bpa_library_id = row.bpa_library_id
+                #flowcell_id = row.flowcell_id
+                obj = row._asdict()
+                name = sample_id_to_ckan_name(
+                    bioplatforms_secondarydata_id.split("/")[-1], self.ckan_data_type
+                )
+
+                # explode sample_id, library_id
+                sample_ids = re.split(",\s*",str(row.sample_id))
+                library_ids = re.split(",\s*",str(row.library_id))
+
+		# check same length
+                if len(sample_ids) != len(library_ids):
+                    raise Exception("mismatch count of sample and library IDs")
+
+		# if single item, add bpa_sample_id and bpa_library_id to metadata
+                if len(sample_ids) == 1:
+                    obj["bpa_sample_id"] = ingest_utils.extract_ands_id(self._logger, row.sample_id)
+                    obj["bpa_library_id"] = ingest_utils.extract_ands_id(self._logger, row.library_id)
+
+                for contextual_source in self.contextual_metadata:
+                    context = []
+                    for i in range(0,len(sample_ids)):
+                        context.append(
+			    contextual_source.get(
+		                ingest_utils.extract_ands_id(self._logger, sample_ids[i]),
+		                ingest_utils.extract_ands_id(self._logger, library_ids[i])
+                            )
+                        )
+                    obj.update(
+                        common_values(context)
+                    )
+
+                obj.update(
+                    {
+                        "title": "OMG Analysed Data {}".format(
+                            obj["bioplatforms_secondarydata_id"]
+                        ),
+                        "notes": self.generate_notes_field(obj),
+                        "date_of_transfer": ingest_utils.get_date_isoformat(
+                            self._logger, track_get("date_of_transfer")
+                        ),
+                        "data_type": track_get("data_type"),
+                        "description": track_get("description"),
+                        "folder_name": track_get("folder_name"),
+                        "sample_submission_date": ingest_utils.get_date_isoformat(
+                            self._logger, track_get("date_of_transfer")
+                        ),
+                        "contextual_data_submission_date": None,
+                        "data_generated": ingest_utils.get_date_isoformat(
+                            self._logger, track_get("date_of_transfer_to_archive")
+                        ),
+                        "archive_ingestion_date": ingest_utils.get_date_isoformat(
+                            self._logger, track_get("date_of_transfer_to_archive")
+                        ),
+                        "dataset_url": track_get("download"),
+                        "name": name,
+                        "id": name,
+                        "type": self.ckan_data_type,
+                        "sequence_data_type": self.sequence_data_type,
+                    }
+                )
+                ingest_utils.permissions_organization_member(self._logger, obj)
+                tag_names = ["omg-analysed-data"]
+                obj["tags"] = [{"name": t} for t in tag_names]
+                packages.append(obj)
+        return self.apply_location_generalisation(packages)
+
+    def _get_resources(self):
+        self._logger.info("Ingesting md5 file information from {0}".format(self.path))
+        resources = []
+        for md5_file in glob(self.path + "/*.md5"):
+            self._logger.info("Processing md5 file {0}".format(md5_file))
+            for filename, md5, file_info in self.parse_md5file(md5_file):
+                resource = file_info.copy()
+                resource["bioplatforms_secondarydata_id"] = ingest_utils.extract_ands_id(
+                    self._logger, resource["bioplatforms_secondarydata_id"]
+                )
+                resource["md5"] = resource["id"] = md5
+                resource["name"] = filename
+                resource["resource_type"] = self.ckan_data_type
+                xlsx_info = self.metadata_info[os.path.basename(md5_file)]
+                legacy_url = urljoin(xlsx_info["base_url"], filename)
+                resources.append(
+                    (
+                        (resource["bioplatforms_secondarydata_id"],),
+                        legacy_url,
+                        resource,
+                    )
+                )
+        return resources
