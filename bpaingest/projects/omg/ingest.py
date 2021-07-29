@@ -2472,9 +2472,9 @@ class OMGAnalysedDataMetadata(OMGBaseMetadata):
     spreadsheet = {
         "fields": [
 	    fld('bioplatforms_secondarydata_id', 'bioplatforms_secondarydata_id', coerce=ingest_utils.extract_ands_id),
-            fld('sample_id', 'sample_id', coerce=ingest_utils.get_int),
+            fld('sample_id', 'sample_id', coerce=ingest_utils.int_or_comment),
             fld('sample_id_description', 'sample_id_description'),
-            fld('library_id', 'library_id', coerce=ingest_utils.get_int),
+            fld('library_id', 'library_id', coerce=ingest_utils.int_or_comment),
             fld('library_id_description', 'library_id_description'),
             fld('dataset_id', 'dataset_id', coerce=ingest_utils.get_int),
             fld('dataset_id_description', 'dataset_id_description'),
@@ -2535,8 +2535,6 @@ class OMGAnalysedDataMetadata(OMGBaseMetadata):
                 track_meta = self.track_meta.get(row.ticket)
                 bioplatforms_secondarydata_id = row.bioplatforms_secondarydata_id
                 scientific_name = row.scientific_name
-                #bpa_library_id = row.bpa_library_id
-                #flowcell_id = row.flowcell_id
                 obj = row._asdict()
                 name = sample_id_to_ckan_name(
                     bioplatforms_secondarydata_id.split("/")[-1], self.ckan_data_type
@@ -2554,6 +2552,9 @@ class OMGAnalysedDataMetadata(OMGBaseMetadata):
                 if len(sample_ids) == 1:
                     obj["bpa_sample_id"] = ingest_utils.extract_ands_id(self._logger, row.sample_id)
                     obj["bpa_library_id"] = ingest_utils.extract_ands_id(self._logger, row.library_id)
+                else:
+                    obj["bpa_sample_id"] = None
+                    obj["bpa_library_id"] = None
 
                 for contextual_source in self.contextual_metadata:
                     context = []
