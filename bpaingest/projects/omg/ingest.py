@@ -2574,7 +2574,11 @@ class OMGAnalysedDataMetadata(OMGBaseMetadata):
                         "title": "OMG Analysed Data {}".format(
                             obj["bioplatforms_secondarydata_id"]
                         ),
-                        "notes": self.generate_notes_field(obj),
+                        "notes": "{} ({}), {}".format(
+                            obj["common_name"],
+                            obj["scientific_name"],
+                            obj["dataset_context"],
+			),
                         "date_of_transfer": ingest_utils.get_date_isoformat(
                             self._logger, track_get("date_of_transfer")
                         ),
