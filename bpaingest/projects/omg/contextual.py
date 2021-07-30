@@ -7,7 +7,7 @@ from ...util import one
 
 class OMGSampleContextual:
     metadata_urls = [
-        "https://downloads-qcif.bioplatforms.com/bpa/omg_staging/metadata/2021-07-27/"
+        "https://downloads-qcif.bioplatforms.com/bpa/omg_staging/metadata/2021-07-30/"
     ]
     metadata_patterns = [re.compile(r"^OMG_samples_metadata.*\.xlsx$")]
     name = "omg-sample-contextual"
