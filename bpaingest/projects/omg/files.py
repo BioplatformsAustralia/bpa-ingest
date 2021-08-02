@@ -115,12 +115,14 @@ pacbio_filename_re = re.compile(PACBIO_PATTERN, re.VERBOSE)
 
 ONT_PROMETHION_PATTERN = r"""
     (?P<bpa_library_id>\d{4,6})_
-    (?P<flowcell_id>PA[DE]\d{5})_
-    OMG_
-    (?P<facility_id>(AGRF))_
+    (?P<flowcell_id>PA[DEFG]\d{5})
+    (_(?P<flowcell2_id>PA[DEFG]\d{5}))?
+    _OMG_
+    (?P<facility_id>(AGRF|WEHI))_
     ONTPromethion_
     (?P<archive_type>\w+)
-    \.tar
+    \.
+    (tar|fastq\.gz)
 """
 ont_promethion_re = re.compile(ONT_PROMETHION_PATTERN, re.VERBOSE)
 
