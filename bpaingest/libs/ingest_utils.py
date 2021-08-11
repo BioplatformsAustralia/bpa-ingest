@@ -291,6 +291,7 @@ def _get_date(logger, dt, silent=False):
        YYYY-mm-dd
        dd/mm/YYYY 
        dd-mm-YYYY
+       dd.mm.YYYY
 
        YYYY-mm (convert to first date of month)
        mm/YYYY (convert to first date of month)
@@ -310,6 +311,7 @@ def _get_date(logger, dt, silent=False):
         or dt == "Not applicable"
         or dt == "(null)"
         or dt == "NA"
+        or dt == "n/a"
     ):
         return None
 
@@ -344,6 +346,11 @@ def _get_date(logger, dt, silent=False):
 
     try:
         return datetime.datetime.strptime(dt, "%d-%m-%Y").date()
+    except ValueError:
+        pass
+
+    try:
+        return datetime.datetime.strptime(dt, "%d.%m.%Y").date()
     except ValueError:
         pass
 
