@@ -307,6 +307,7 @@ def _get_date(logger, dt, silent=False):
         or dt == "Unknown"
         or dt == "UnkNown"
         or dt == "unkNown"
+	or dt == "event date not recorded"
         or dt == "Not yet assigned"
         or dt == "Not applicable"
 	or dt == "not applicable"
