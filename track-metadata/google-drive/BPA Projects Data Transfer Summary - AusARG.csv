@@ -36,3 +36,4 @@ RamaciottiGarvan,19/7/2021,ONT-promethion,PromethION,20210714_AusARG_RamaciottiG
 AGRF,19/7/2021,PacBio-HiFi,HiFi,20210714_AusARG_AGRF_DA087270,349813,350837,351769,Pseudemoia entrecasteauxii,Reference genome,19/7/2021,,BPAOPS-1114,
 BRF,21/7/2021,Illumina-HiC,HiC,20210716_AusARG_BRF_HFYWKDRXY,349835-349836,350846-350847,351782,Gehyra lapistola and Gehyra paranana,Reference genome,21/7/2021,,BPAOPS-1115,"there should be the QC run as well (dataset ID 351781 with same other IDs) but not sure if they have sent it with it, looks like only the main run"
 UNSW,06/08/2021,Illumina-transcriptomics,RNA-seq,20210726_AusARG_UNSW_HCWGYDRXY,349829-349832,350840-350843,351777,Hydrophis major,Reference genome,9/8/2021,,BPAOPS-1125,
+AGRF,01/09/21,PacBio-HiFi,HiFi,20210818_AusARG_CAGRF21056800_DA087259,349813,350837,351805,Pseudemoia entrecasteauxii,Reference genome,2/9/2021,,BPAOPS-1129,rerun of the prepvious BPAOPS-1114
