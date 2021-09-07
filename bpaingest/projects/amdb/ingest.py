@@ -20,7 +20,7 @@ from ...util import (
     common_values,
     one,
 )
-from .contextual import AustralianMicrobiomeSampleContextual
+from .contextual import AustralianMicrobiomeSampleContextual, BASENCBIContextual, MarineMicrobesNCBIContextual
 from .tracking import (
     AustralianMicrobiomeGoogleTrackMetadata,
     BASETrackMetadata,
@@ -29,6 +29,10 @@ from .tracking import (
 )
 
 common_context = [AustralianMicrobiomeSampleContextual]
+ncbi_context = [
+    BASENCBIContextual,
+    MarineMicrobesNCBIContextual,
+]
 
 # fixed read lengths provided by AB at CSIRO
 amplicon_read_length = {
@@ -132,7 +136,7 @@ class AccessAMDContextualMetadata(AMDBaseMetadata):
     AMD data, but not package or resource metadata
     """
 
-    contextual_classes = common_context
+    contextual_classes = common_context + ncbi_context
     metadata_urls = []
 
     def __init__(self, logger, metadata_path, **kwargs):
@@ -157,7 +161,7 @@ class BASEAmpliconsMetadata(AMDFullIngestMetadata):
     omics = "genomics"
     technology = "amplicons"
     sequence_data_type = "illumina-amplicons"
-    contextual_classes = common_context
+    contextual_classes = common_context + ncbi_context
     metadata_patterns = [r"^.*\.md5$", r"^.*_metadata.*.*\.xlsx$"]
     metadata_urls = [
         "https://downloads-qcif.bioplatforms.com/bpa/base/raw/amplicons/",
@@ -443,6 +447,9 @@ class BASEAmpliconsControlMetadata(AMDFullIngestMetadata):
     omics = "genomics"
     technology = "amplicons-control"
     sequence_data_type = "illumina-amplicons"
+    ## TODO: control classes don't normally have context, but historically this has always been here. Probably harmless
+    # as without the relevant ID, context will be skipped over, but at some point sequencing metadata IDs should be checked to see
+    # if it is TRUE that none exist in context and then safely removed.
     contextual_classes = common_context
     metadata_patterns = [r"^.*\.md5$", r"^.*_metadata.*.*\.xlsx$"]
     metadata_urls = [
@@ -553,7 +560,7 @@ class BASEMetagenomicsMetadata(AMDFullIngestMetadata):
     ckan_data_type = "base-metagenomics"
     omics = "metagenomics"
     sequence_data_type = "illumina-shortread"
-    contextual_classes = common_context
+    contextual_classes = common_context + ncbi_context
     metadata_patterns = [r"^.*\.md5$", r"^.*_metadata.*.*\.xlsx$"]
     metadata_urls = [
         "https://downloads-qcif.bioplatforms.com/bpa/base/raw/metagenomics/",
@@ -1008,7 +1015,7 @@ class MarineMicrobesAmpliconsMetadata(AMDFullIngestMetadata):
     organization = "australian-microbiome"
     ckan_data_type = "mm-genomics-amplicon"
     omics = "genomics"
-    contextual_classes = common_context
+    contextual_classes = common_context + ncbi_context
     sequence_data_type = "illumina-amplicons"
     metadata_patterns = [r"^.*\.md5", r"^.*_metadata.*.*\.xlsx"]
     resource_linkage = ("sample_id", "mm_amplicon_linkage")
@@ -1358,7 +1365,7 @@ class MarineMicrobesMetagenomicsMetadata(BaseMarineMicrobesMetadata):
     ckan_data_type = "mm-metagenomics"
     sequence_data_type = "illumina-shortread"
     omics = "metagenomics"
-    contextual_classes = common_context
+    contextual_classes = common_context + ncbi_context
     metadata_patterns = [r"^.*\.md5", r"^.*_metadata.*\.xlsx"]
     metadata_urls = [
         "https://downloads-qcif.bioplatforms.com/bpa/marine_microbes/raw/metagenomics/"
@@ -1501,7 +1508,7 @@ class MarineMicrobesMetatranscriptomeMetadata(BaseMarineMicrobesMetadata):
     organization = "australian-microbiome"
     ckan_data_type = "mm-metatranscriptome"
     sequence_data_type = "illumina-transcriptomics"
-    contextual_classes = common_context
+    contextual_classes = common_context + ncbi_context
     omics = "metatranscriptomics"
     metadata_patterns = [r"^.*\.md5", r"^.*_metadata.*\.xlsx"]
     metadata_urls = [

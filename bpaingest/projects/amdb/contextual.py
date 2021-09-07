@@ -7,6 +7,7 @@ from ...libs.excel_wrapper import (
     FieldDefinition,
     make_field_definition as fld,
 )
+from ...ncbi import NCBISRAContextual
 from ...util import one
 
 
@@ -1445,3 +1446,17 @@ class AustralianMicrobiomeSampleContextual:
 
     def filename_metadata(self, *args, **kwargs):
         return {}
+
+
+class MarineMicrobesNCBIContextual(NCBISRAContextual):
+    metadata_urls = [
+        "https://downloads-qcif.bioplatforms.com/bpa/marine_microbes/metadata/ncbi/"
+    ]
+    name = "mm-ncbi-contextual"
+    bioproject_accession = "PRJNA385736"
+
+
+class BASENCBIContextual(NCBISRAContextual):
+    metadata_urls = ["https://downloads-qcif.bioplatforms.com/bpa/base/metadata/ncbi/"]
+    name = "base-ncbi-contextual"
+    bioproject_accession = "PRJNA317932"

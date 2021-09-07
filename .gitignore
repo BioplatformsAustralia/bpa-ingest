@@ -20,6 +20,7 @@ ingest.log
 .idea/
 temp/
 staging-bpa.env
+local-bpa.env
 ingest/ingest-debug.sh
 test.db
 *.out
