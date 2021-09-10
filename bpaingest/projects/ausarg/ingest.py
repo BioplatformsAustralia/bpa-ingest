@@ -530,6 +530,9 @@ class AusargPacbioHifiMetadata(AusargBaseMetadata):
             fld("library_index_id", "library_index_id"),
             fld("library_index_sequence", "library_index_seq"),
             fld("library_oligo_sequence", "library_oligo_sequence"),
+            fld('library_index_id_dual', 'library_index_id_dual', optional=True),
+            fld('library_index_seq_dual', 'library_index_seq_dual', optional=True),
+            fld('library_oligo_sequence_dual', 'library_oligo_sequence_dual', optional=True),
             fld("library_pcr_reps", "library_pcr_reps"),
             fld("library_pcr_cycles", "library_pcr_cycles"),
             fld("library_ng_ul", "library_ng_ul"),
@@ -554,6 +557,8 @@ class AusargPacbioHifiMetadata(AusargBaseMetadata):
             fld('library_source', 'library_source', optional=True),
             fld('sequencing_kit_chemistry_version', 'sequencing_kit_chemistry_version', optional=True),
             fld('file_type', 'file_type', optional=True),
+            fld('fast5_compression', 'fast5_compression', optional=True),
+            fld('model_base_caller', 'model_base_caller', optional=True),
         ],
         "options": {
             "sheet_name": "Library_metadata",
