@@ -223,10 +223,10 @@ def reupload_resources(ckan, to_reupload, auth, write_reuploads_fn, write_reuplo
     #TODO: there is no bucket for anything other than prod - however it's unclear whether this breaks in non-prod environments
     ## Test this by setting it to None or '' any that way we don't accidentally send data to a bucket that is inadvertently created in S3
     destination = None
-    if re.search("^data.bioplatforms", getattr(ckan, "address", "")):
+    if re.search("^https://data.bioplatforms.com", getattr(ckan, "address", "")):
         destination = "bpa-ckan-prod/prodenv"
         logger.info("Resources will be reuploaded under: {}".format(destination))
-    else: logger.warn("Resources have no bucket to send to.")
+    else: logger.warn("Resources have no bucket to send to. Address was: {}".format(getattr(ckan, "address", "")))
     # copy list and loop that, so can remove safely from original during loop
     for indx, (reupload_obj, legacy_url) in enumerate(to_reupload[:]):
         try:
