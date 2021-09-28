@@ -8,6 +8,7 @@ import tqdm
 import os
 
 import boto3
+import boto3.session
 from botocore.exceptions import ClientError, WaiterError
 
 from urllib.parse import urlparse
@@ -376,7 +377,7 @@ def reupload_resource(ckan, ckan_obj, legacy_url, parent_destination, auth=None)
         logger.info(f"S3 destination is: {s3_destination}")
 
         if stream:
-            session = boto3.Session()
+            session = boto3.session.Session()
             s3_client = session.client("s3")
             s3_resource = session.client("s3")
 
@@ -405,6 +406,8 @@ def reupload_resource(ckan, ckan_obj, legacy_url, parent_destination, auth=None)
                         bucket = s3_resource.Bucket(parent_destination)
                     except ClientError as e:
                         bucket = None
+
+                    bucketName = parent_destination
 
                     # handle pre-existing file case
                     try:
