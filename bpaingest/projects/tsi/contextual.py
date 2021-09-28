@@ -18,7 +18,7 @@ def date_or_str(logger, v):
 
 class TSILibraryContextual:
     metadata_urls = [
-        "https://downloads-qcif.bioplatforms.com/bpa/tsi_staging/metadata/2021-06-21/"
+        "https://downloads-qcif.bioplatforms.com/bpa/tsi_staging/metadata/2021-08-11/"
     ]
     metadata_patterns = [re.compile(r"^.*\.xlsx$")]
     name = "tsi-library-contextual"
@@ -42,7 +42,7 @@ class TSILibraryContextual:
             # sample_ID
             fld(
                 "sample_id",
-                re.compile(r"sample_[Ii][Dd]"),
+                re.compile(r"(bioplatforms_)?sample_[Ii][Dd]"),
                 coerce=ingest_utils.extract_ands_id,
             ),
             # specimen_ID
@@ -59,14 +59,17 @@ class TSILibraryContextual:
             fld("institution_name", "institution_name"),
             # tissue_collection
             fld("tissue_collection", "tissue_collection"),
+            fld('tissue_collection_type', 'tissue_collection_type'),
             # sample_custodian
             fld("sample_custodian", "sample_custodian"),
+            fld('sample_type', 'sample_type'),
             # access_rights
             fld("access_rights", "access_rights"),
             # tissue_type
             fld("tissue_type", "tissue_type"),
             # tissue_preservation
             fld("tissue_preservation", "tissue_preservation"),
+            fld('tissue_preservation_temperature', 'tissue_preservation_temperature'),
             # sample_quality
             fld("sample_quality", "sample_quality"),
             # taxon_id
@@ -85,10 +88,11 @@ class TSILibraryContextual:
             fld("species", "species"),
             # subspecies
             fld("subspecies", "subspecies"),
+            fld('scientific_name', 'scientific_name'),
+            fld('scientific_name_note', 'scientific_name_note'),
+            fld('scientific_name_authorship', 'scientific_name_authorship'),
             # common_name
             fld("common_name", "common_name"),
-            # identified_by
-            fld("identified_by", "identified_by"),
             # collection_date
             fld(
                 "collection_date",
@@ -133,11 +137,12 @@ class TSILibraryContextual:
             # certainty
             fld("certainty", "certainty"),
             # life-stage
-            fld("lifestage", "life-stage"),
+            fld("lifestage", re.compile("life[_-]stage")),
             # birth_date
             fld("birth_date", "birth_date", coerce=ingest_utils.get_date_isoformat),
             # death_date
             fld("death_date", "death_date", coerce=ingest_utils.get_date_isoformat),
+            fld('health_state', 'health_state'),
             # associated_media
             fld("associated_media", "associated_media"),
             # ancillary_notes

@@ -14,6 +14,7 @@ from .files import (
     transcriptomics_nextseq_fastq_filename_re,
     pacbio_secondary_filename_re,
     pacbio_secondary_raw_filename_re,
+    analysed_data_filename_re,
 )
 
 
@@ -170,3 +171,20 @@ def test_pacbio_raw_secondary_re():
     ]
     for filename in filenames:
         assert pacbio_secondary_raw_filename_re.match(filename) is not None
+
+def test_analysed_data_re():
+    filenames = [
+        "352388_0007C7B720.bam",
+        "352388_0007C7B720.bam.bai",
+        "352388_0007C7B720.bam.md5sum",
+        "352388_0007C7B720.hard-filtered.gvcf.gz",
+        "352388_0007C7B720.hard-filtered.gvcf.gz.md5sum",
+        "352388_0007C7B720.hard-filtered.vcf.gz",
+        "352388_0007C7B720.hard-filtered.vcf.gz.md5sum",
+        "352388_0007C7B720.multiqc_report.html",
+        "352342_dragen_joint_greaterbilby.hard-filtered.vcf.gz",
+        "352342_dragen_joint_greaterbilby.hard-filtered.vcf.gz.md5sum",
+        "352342_dragen_joint_greaterbilby.vc_metrics.csv",
+    ]
+    for filename in filenames:
+        assert analysed_data_filename_re.match(filename) is not None

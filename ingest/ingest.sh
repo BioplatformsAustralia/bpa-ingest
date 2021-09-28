@@ -96,6 +96,7 @@ omg()
   apply omg-novaseq $*
   apply omg-novaseq-whole-genome $*
   apply omg-ont-promethion $*
+  apply omg-analysed-data $*
   apply omg-pacbio $*
   apply omg-pacbio-genome-assembly $*
 }

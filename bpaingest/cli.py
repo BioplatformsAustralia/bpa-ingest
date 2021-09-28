@@ -3,7 +3,8 @@ import logging
 import sys
 import os
 
-from .util import make_registration_decorator, make_ckan_api, make_reuploads_cache_path
+from .util import make_registration_decorator, make_ckan_api, make_reuploads_cache_path, \
+    validate_write_reuploads_interval
 from .sync import sync_metadata
 from .schema import generate_schemas
 from .ops import print_accounts, make_organization
@@ -98,6 +99,12 @@ def setup_sync(subparser):
         help="write reuploads to disk",
     )
     subparser.add_argument(
+        "--write-reuploads-interval",
+        "-i",
+        type=int,
+        help="write reuploads to disk interval when uploading resources (e.g., 100 means a reupload write occurs after 100 resources uploaded).",
+    )
+    subparser.add_argument(
         "--read-reuploads",
         "-r",
         action="store_const",
@@ -151,13 +158,15 @@ def sync(args):
     """sync a project"""
     ckan = make_ckan_api(args)
 
+    logger = make_cli_logger(args)
     kwargs = {
         "write_reuploads": args.write_reuploads,
         "read_reuploads": args.read_reuploads,
-        "reuploads_path": make_reuploads_cache_path(make_cli_logger(args), args),
+        "reuploads_path": make_reuploads_cache_path(logger, args),
+        "write_reuploads_interval": validate_write_reuploads_interval(logger, args)
     }
     with DownloadMetadata(
-        make_cli_logger(args),
+        logger,
         project_cli_options[args.project_name],
         path=args.download_path,
     ) as dlmeta:

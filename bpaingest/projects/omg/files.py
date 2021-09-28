@@ -115,12 +115,14 @@ pacbio_filename_re = re.compile(PACBIO_PATTERN, re.VERBOSE)
 
 ONT_PROMETHION_PATTERN = r"""
     (?P<bpa_library_id>\d{4,6})_
-    (?P<flowcell_id>PA[DE]\d{5})_
-    OMG_
-    (?P<facility_id>(AGRF))_
+    (?P<flowcell_id>PA[DEFG]\d{5})
+    (_(?P<flowcell2_id>PA[DEFG]\d{5}))?
+    _OMG_
+    (?P<facility_id>(AGRF|WEHI))_
     ONTPromethion_
     (?P<archive_type>\w+)
-    \.tar
+    \.
+    (tar|fastq\.gz)
 """
 ont_promethion_re = re.compile(ONT_PROMETHION_PATTERN, re.VERBOSE)
 
@@ -156,3 +158,19 @@ PACBIO_SECONDARY_RAW_PATTERN = r"""
     \.bam
 """
 pacbio_secondary_raw_filename_re = re.compile(PACBIO_SECONDARY_RAW_PATTERN, re.VERBOSE)
+
+ANALYSED_DATA_PATTERN = r"""
+    (?P<bioplatforms_secondarydata_id>\d{4,6})_
+    .*
+    \.
+    (bam
+      |bam\.bai
+      |bam\.md5sum
+      |hard-filtered\.gvcf\.gz
+      |hard-filtered\.gvcf\.gz\.md5sum
+      |hard-filtered\.vcf\.gz
+      |hard-filtered\.vcf\.gz\.md5sum
+      |multiqc_report\.html
+      |vc_metrics\.csv)
+"""
+analysed_data_filename_re = re.compile(ANALYSED_DATA_PATTERN, re.VERBOSE)
