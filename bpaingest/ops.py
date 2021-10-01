@@ -381,6 +381,10 @@ def reupload_resource(ckan, ckan_obj, legacy_url, parent_destination, auth=None)
             s3_client = stream_session.client("s3")
             s3_resource = stream_session.resource("s3")
 
+            config = TransferConfig(multipart_threshold=1024*20,
+                multipart_chunksize=1024*20,
+                use_threads=False)
+
             basic_auth = requests.auth.HTTPBasicAuth(auth[0], auth[1])
 
             response = requests.get(legacy_url, stream=True, auth=basic_auth)
@@ -429,7 +433,7 @@ def reupload_resource(ckan, ckan_obj, legacy_url, parent_destination, auth=None)
 
                     # upload with progress bar
                     try:
-                        s3_obj.upload_fileobj(data, Callback=progress.update)
+                        s3_obj.upload_fileobj(data, Callback=progress.update, Config=config)
                     except ClientError as e:
                         pass
                     except AttributeError as e:
