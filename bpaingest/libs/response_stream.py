@@ -68,7 +68,7 @@ class ResponseStream(object):
         current_position = self._bytes.seek(0, SEEK_END)
         while current_position < goal_position:
             try:
-                current_position = self._bytes.write(next(self._iterator))
+                current_position += self._bytes.write(next(self._iterator))
             except StopIteration:
                 break
 
