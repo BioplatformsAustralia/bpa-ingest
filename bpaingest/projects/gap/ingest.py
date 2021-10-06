@@ -922,8 +922,6 @@ class GAPPacbioHifiMetadata(BaseMetadata):
                     {
                         "name": name,
                         "id": name,
-                        #"title": "GAP Pacbio HiFi {}".format(row.library_id),
-                        #"notes": self.generate_notes_field(context),
                         "date_of_transfer": ingest_utils.get_date_isoformat(
                             self._logger, track_get("date_of_transfer")
                         ),
@@ -945,9 +943,9 @@ class GAPPacbioHifiMetadata(BaseMetadata):
                         "sequence_data_type": self.sequence_data_type,
                     }
                 )
+                obj.update(context)
                 gap_describe(obj, self.description)
                 ingest_utils.permissions_organization_member(self._logger, obj)
-                obj.update(context)
 
                 ingest_utils.add_spatial_extra(self._logger, obj)
                 tag_names = ["pacbio-hifi"]
