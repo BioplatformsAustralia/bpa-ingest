@@ -109,7 +109,7 @@ PACBIO_HIFI_PATTERN = r"""
       |[\._]subreads\.bam
       |_HiFi_qc\.pdf
       |\.xlsx
-      |\.pdf)
+      |.*\.pdf)
 """
 pacbio_hifi_filename_re = re.compile(PACBIO_HIFI_PATTERN, re.VERBOSE)
 
