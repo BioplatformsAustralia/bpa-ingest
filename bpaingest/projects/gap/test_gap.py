@@ -7,6 +7,8 @@ from .files import (
     illumina_shortread_rna_phylo_re,
     ddrad_fastq_filename_re,
     ddrad_metadata_sheet_re,
+    pacbio_hifi_filename_re,
+    pacbio_hifi_metadata_sheet_re,
 )
 
 
@@ -94,3 +96,28 @@ def test_genomics_ddrad_metadata_sheet():
 
     for filename in filenames:
         assert ddrad_metadata_sheet_re.match(filename) is not None
+
+
+def test_pacbio_hifi():
+    filenames = [
+        "376315_GAP_GWA_DA110323.ccs.bam",
+        "376315_GAP_GWA_DA110323.pdf",
+        "376315_GAP_GWA_DA110323.subreads.bam",
+        "376315_GAP_GWA_DA110323.xlsx",
+        "376315_GAP_GWA_DA110323_ccs_statistics.csv",
+        "376315_GAP_GWA_DA110323_final.consensusreadset.xml",
+    ]
+
+    for filename in filenames:
+        assert pacbio_hifi_filename_re.match(filename) is not None
+
+
+def test_pacbio_hifi_metadata_sheet():
+    filenames = [
+        "GAP_GWA_DA110323_metadata.xlsx",
+    ]
+
+    for filename in filenames:
+        assert pacbio_hifi_metadata_sheet_re.match(filename) is not None
+
+

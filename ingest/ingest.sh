@@ -154,6 +154,7 @@ gap() {
   apply gap-genomics-10x $*
   apply gap-hi-c $*
   apply gap-genomics-ddrad $*
+  apply gap-pacbio-hifi $*
 }
 
 amd() {

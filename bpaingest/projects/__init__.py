@@ -62,6 +62,7 @@ from .gap.ingest import (
     GAPGenomics10XMetadata,
     GAPHiCMetadata,
     GAPGenomicsDDRADMetadata,
+    GAPPacbioHifiMetadata,
 )
 from .omg.ingest import (
     OMG10XProcessedIlluminaMetadata,
@@ -117,6 +118,7 @@ class ProjectInfo:
             GAPGenomics10XMetadata,
             GAPHiCMetadata,
             GAPGenomicsDDRADMetadata,
+            GAPPacbioHifiMetadata,
         ],
         "gbr": [GbrAmpliconsMetadata, GbrPacbioMetadata],
         "marine-microbes": [

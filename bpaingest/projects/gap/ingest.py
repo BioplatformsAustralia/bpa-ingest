@@ -10,6 +10,7 @@ from unipath import Path
 from ...abstract import BaseMetadata
 from ...libs import ingest_utils
 from ...libs.excel_wrapper import make_field_definition as fld
+from ...libs.fetch_data import Fetcher, get_password
 from ...util import sample_id_to_ckan_name, common_values, clean_tag_name
 from . import files
 from .contextual import GAPLibraryContextual
@@ -783,3 +784,232 @@ class GAPGenomicsDDRADMetadata(BaseMetadata):
                     )
                 )
         return resources + self.generate_xlsx_resources()
+
+class GAPPacbioHifiMetadata(BaseMetadata):
+    organization = "bpa-plants"
+    ckan_data_type = "gap-pacbio-hifi"
+    technology = "pacbio-hifi"
+    sequence_data_type = "pacbio-hifi"
+    description = "PacBio HiFi"
+    contextual_classes = common_context
+    metadata_patterns = [r"^.*\.md5$", r"^.*_metadata.*.*\.xlsx$"]
+    metadata_urls = [
+        "https://downloads-qcif.bioplatforms.com/bpa/plants_staging/pacbio-hifi/",
+    ]
+    metadata_url_components = ("ticket",)
+    resource_linkage = ("ticket", "sample_id", "flowcell_id")
+    spreadsheet = {
+        "fields": [
+            fld(
+                "sample_id",
+                "sample_id",
+                coerce=ingest_utils.extract_ands_id,
+            ),
+            fld(
+                "library_id",
+                "library_id",
+                coerce=ingest_utils.extract_ands_id,
+            ),
+            fld(
+                "dataset_id",
+                "dataset_id",
+                coerce=ingest_utils.extract_ands_id,
+            ),
+            fld('library_type', 'library_type'),
+            fld('library_layout', 'library_layout'),
+            fld('facility_sample_id', 'facility_sample_id'),
+            fld('sequencing_facility', 'sequencing_facility'),
+            fld('sequencing_platform', 'sequencing_platform'),
+            fld('sequencing_model', 'sequencing_model'),
+            fld('library_construction_protocol', 'library_construction_protocol'),
+            fld('library_strategy', 'library_strategy'),
+            fld('library_selection', 'library_selection'),
+            fld('library_source', 'library_source'),
+            fld('library_prep_date', 'library_prep_date', coerce=ingest_utils.get_date_isoformat),
+            fld('library_prepared_by', 'library_prepared_by'),
+            fld('library_location', 'library_location'),
+            fld('library_status', 'library_status'),
+            fld('library_comments', 'library_comments'),
+            fld('dna_treatment', 'dna_treatment'),
+            fld('insert_size_range', 'insert_size_range'),
+            fld('library_ng_ul', 'library_ng_ul'),
+            fld('library_pcr_cycles', 'library_pcr_cycles', coerce=ingest_utils.get_int),
+            fld('library_pcr_reps', 'library_pcr_reps', coerce=ingest_utils.get_int),
+            fld('n_libraries_pooled', 'n_libraries_pooled', coerce=ingest_utils.get_int),
+            fld('flowcell_type', 'flowcell_type'),
+            fld('flowcell_id', 'flowcell_id'),
+            fld('cell_postion', 'cell_postion'),
+            fld('movie_length', 'movie_length'),
+            fld('analysis_software', 'analysis_software'),
+            fld('analysis_software_version', 'analysis_software_version'),
+        ],
+        "options": {
+            "sheet_name": "Sequencing metadata",
+            "header_length": 1,
+            "column_name_row_index": 0,
+        },
+    }
+    md5 = {
+        "match": [files.pacbio_hifi_filename_re, files.pacbio_hifi_metadata_sheet_re],
+        "skip": [
+            re.compile(r"^.*_metadata\.xlsx$"),
+            re.compile(r"^.*SampleSheet.*"),
+            re.compile(r"^.*TestFiles\.exe.*"),
+        ],
+    }
+
+    def __init__(
+        self, logger, metadata_path, contextual_metadata=None, metadata_info=None
+    ):
+        super().__init__(logger, metadata_path)
+        self.path = Path(metadata_path)
+        self.contextual_metadata = contextual_metadata
+        self.metadata_info = metadata_info
+        self.google_track_meta = GAPTrackMetadata()
+
+    def _get_packages(self):
+        self._logger.info("Ingesting GAP metadata from {0}".format(self.path))
+        packages = []
+
+        filename_re = files.pacbio_hifi_metadata_sheet_re
+
+        objs = []
+        for fname in glob(self.path + "/*.xlsx"):
+            self._logger.info(
+                "Processing GAP metadata file {0}".format(os.path.basename(fname))
+            )
+
+            metadata_sheet_dict = re.match(
+                filename_re, os.path.basename(fname)
+            ).groupdict()
+            metadata_sheet_flowcell_ids = []
+            for f in ["flowcell_id", "flowcell2_id"]:
+                if f in metadata_sheet_dict:
+                    metadata_sheet_flowcell_ids.append(metadata_sheet_dict[f])
+
+            rows = self.parse_spreadsheet(fname, self.metadata_info)
+            xlsx_info = self.metadata_info[os.path.basename(fname)]
+            ticket = xlsx_info["ticket"]
+            track_meta = self.google_track_meta.get(ticket)
+
+            def track_get(k):
+                if track_meta is None:
+                    return None
+                return getattr(track_meta, k)
+
+            for row in rows:
+                if not row.library_id and not row.flowcell_id:
+                    # skip empty rows
+                    continue
+                obj = row._asdict()
+                if row.flowcell_id not in metadata_sheet_flowcell_ids:
+                    raise Exception(
+                        "The metadata row for library ID: {} has a flow cell ID of {}, which cannot be found in the metadata sheet name: {}".format(
+                            row.library_id, row.flowcell_id, fname
+                        )
+                    )
+                name = sample_id_to_ckan_name(
+                    "{}".format(row.library_id.split("/")[-1]),
+                    self.ckan_data_type,
+                    "{}".format(row.flowcell_id),
+                )
+
+                context = {}
+                for contextual_source in self.contextual_metadata:
+                    context.update(contextual_source.get(row.library_id, row.dataset_id))
+
+                obj.update(
+                    {
+                        "name": name,
+                        "id": name,
+                        #"title": "GAP Pacbio HiFi {}".format(row.library_id),
+                        #"notes": self.generate_notes_field(context),
+                        "date_of_transfer": ingest_utils.get_date_isoformat(
+                            self._logger, track_get("date_of_transfer")
+                        ),
+                        "data_type": track_get("data_type"),
+                        "description": track_get("description"),
+                        "folder_name": track_get("folder_name"),
+                        "sample_submission_date": ingest_utils.get_date_isoformat(
+                            self._logger, track_get("date_of_transfer")
+                        ),
+                        "contextual_data_submission_date": None,
+                        "data_generated": ingest_utils.get_date_isoformat(
+                            self._logger, track_get("date_of_transfer_to_archive")
+                        ),
+                        "archive_ingestion_date": ingest_utils.get_date_isoformat(
+                            self._logger, track_get("date_of_transfer_to_archive")
+                        ),
+                        "dataset_url": track_get("download"),
+                        "type": self.ckan_data_type,
+                        "sequence_data_type": self.sequence_data_type,
+                    }
+                )
+                gap_describe(obj, self.description)
+                ingest_utils.permissions_organization_member(self._logger, obj)
+                obj.update(context)
+
+                ingest_utils.add_spatial_extra(self._logger, obj)
+                tag_names = ["pacbio-hifi"]
+                obj["tags"] = [{"name": t} for t in tag_names]
+                packages.append(obj)
+
+        return packages
+
+    def _get_resource_info(self, metadata_info):
+        auth_user, auth_env_name = self.auth
+        ri_auth = (auth_user, get_password(auth_env_name))
+
+        for metadata_url in self.metadata_urls:
+            self._logger.info("fetching resource metadata: %s" % (self.metadata_urls))
+            fetcher = Fetcher(self._logger, self.path, metadata_url, ri_auth)
+            fetcher.fetch_metadata_from_folder(
+                [files.pacbio_hifi_filename_re,],
+                metadata_info,
+                getattr(self, "metadata_url_components", []),
+                download=False,
+            )
+
+    def _get_resources(self):
+        self._logger.info(
+            "Ingesting GAP md5 file information from {0}".format(self.path)
+        )
+        resources = []
+        resource_info = {}
+        self._get_resource_info(resource_info)
+
+        for md5_file in glob(self.path + "/*.md5"):
+            self._logger.info("Processing md5 file {}".format(md5_file))
+            for filename, md5, file_info in self.parse_md5file(md5_file):
+                resource = file_info.copy()
+                resource["md5"] = resource["id"] = md5
+                resource["name"] = filename
+                resource["resource_type"] = self.ckan_data_type
+                resource["sample_id"] = ingest_utils.extract_ands_id(
+                    self._logger, resource["sample_id"]
+                )
+                xlsx_info = self.metadata_info[os.path.basename(md5_file)]
+                #
+                raw_resources_info = resource_info.get(os.path.basename(filename), "")
+                # if download_info exists for raw_resources, then use remote URL
+                if raw_resources_info:
+                    legacy_url = urljoin(
+                        raw_resources_info["base_url"], os.path.basename(filename)
+                    )
+                else:
+                    # otherwise if no download_info, then raise error
+                    raise Exception("No download info for {}".format(filename))
+                resources.append(
+                    (
+                        (
+                            xlsx_info["ticket"],
+                            resource["sample_id"],
+                            resource["flowcell_id"],
+                        ),
+                        legacy_url,
+                        resource,
+                    )
+                )
+        return resources
+
+

@@ -96,3 +96,30 @@ DDRAD_METADATA_SHEET_PATTERN = r"""
     \.xlsx
 """
 ddrad_metadata_sheet_re = re.compile(DDRAD_METADATA_SHEET_PATTERN, re.VERBOSE)
+
+PACBIO_HIFI_PATTERN = r"""
+    (?P<sample_id>\d{4,6})_
+    GAP_
+    (?P<facility>(GWA))_
+    (PacBio_)?
+    (?P<flowcell_id>\w{8})
+    (_ccs_statistics\.csv
+      |_final\.consensusreadset\.xml
+      |\.ccs\.bam
+      |[\._]subreads\.bam
+      |_HiFi_qc\.pdf
+      |\.xlsx
+      |\.pdf)
+"""
+pacbio_hifi_filename_re = re.compile(PACBIO_HIFI_PATTERN, re.VERBOSE)
+
+PACBIO_HIFI_METADATA_SHEET_PATTERN = r"""
+    GAP_
+    (?P<facility>(GWA))_
+    (PacBio_)?
+    (?P<flowcell_id>\w{8})
+    (_metadata\.xlsx)
+"""
+pacbio_hifi_metadata_sheet_re = re.compile(
+    PACBIO_HIFI_METADATA_SHEET_PATTERN, re.VERBOSE
+)
