@@ -52,7 +52,7 @@ PACBIO_HIFI_PATTERN = r"""
       |_final\.consensusreadset\.xml
       |\.ccs\.bam
       |[\._]subreads\.bam
-      |_HiFi_qc\.pdf
+      |[\._]HiFi_qc\.pdf
       |\.pdf)
 """
 pacbio_hifi_filename_re = re.compile(PACBIO_HIFI_PATTERN, re.VERBOSE)
@@ -63,7 +63,7 @@ PACBIO_HIFI_METADATA_SHEET_PATTERN = r"""
     (?P<facility>(AGRF)|C?(AGRF)\d+)_
     (PacBio_)?
     (?P<flowcell_id>\w{8})
-    (_metadata\.xlsx)
+    ([\._]metadata\.xlsx)
 """
 pacbio_hifi_metadata_sheet_re = re.compile(
     PACBIO_HIFI_METADATA_SHEET_PATTERN, re.VERBOSE
