@@ -18,7 +18,7 @@ def date_or_str(logger, v):
 
 class AusargLibraryContextual:
     metadata_urls = [
-        "https://downloads-qcif.bioplatforms.com/bpa/ausarg_staging/metadata/2021-07-20/"
+        "https://downloads-qcif.bioplatforms.com/bpa/ausarg_staging/metadata/2021-11-02/"
     ]
     metadata_patterns = [re.compile(r"^.*\.xlsx$")]
     name = "ausarg-library-contextual"
@@ -117,6 +117,7 @@ class AusargLibraryContextual:
                 re.compile(r"[Mm]aterial_extraction_method"),
             ),
             fld("material_conc_ng_ul", re.compile(r"[Mm]aterial_conc_ng_ul")),
+            skp("notes_pm"),
         ]
 
         library_metadata = {}
