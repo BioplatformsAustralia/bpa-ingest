@@ -31,7 +31,11 @@ class OMGSampleContextual:
         field_spec = [
             fld("bpa_sample_id", "bpa_sample_id", coerce=ingest_utils.extract_ands_id),
             fld("voucher_number", "voucher_number", coerce=ingest_utils.int_or_comment),
-            fld("voucher_or_tissue_number", "voucher_or_tissue_number", coerce=ingest_utils.int_or_comment),
+            fld(
+                "voucher_or_tissue_number",
+                "voucher_or_tissue_number",
+                coerce=ingest_utils.int_or_comment,
+            ),
             fld("tissue_number", "tissue_number"),
             fld("institution_name", "institution_name"),
             fld("tissue_collection", "collection"),

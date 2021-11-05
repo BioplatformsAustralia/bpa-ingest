@@ -5,6 +5,7 @@ from .files import (
     exon_filename_re,
     whole_genome_filename_re,
     novaseq_filename_re,
+    novaseq_filename_2_re,
     hiseq_filename_re,
     ddrad_fastq_filename_re,
     ddrad_metadata_sheet_re,
@@ -71,6 +72,15 @@ def test_novaseq():
 
     for filename in filenames:
         assert novaseq_filename_re.match(filename) is not None
+
+
+def test_novaseq_2():
+    filenames = [
+        "352334_OMG_UNSW_HM7TVDRXY_CGATGT_S1_L001_R1_001.fastq.gz",
+    ]
+
+    for filename in filenames:
+        assert novaseq_filename_2_re.match(filename) is not None
 
 
 def test_hiseq():
@@ -171,6 +181,7 @@ def test_pacbio_raw_secondary_re():
     ]
     for filename in filenames:
         assert pacbio_secondary_raw_filename_re.match(filename) is not None
+
 
 def test_analysed_data_re():
     filenames = [

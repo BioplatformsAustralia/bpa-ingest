@@ -1188,7 +1188,7 @@ class OMGGenomicsNovaseqMetadata(OMGBaseMetadata):
         },
     }
     md5 = {
-        "match": [files.novaseq_filename_re],
+        "match": [files.novaseq_filename_re, files.novaseq_filename_2_re,],
         "skip": [
             re.compile(r"^.*_metadata\.xlsx$"),
             re.compile(r"^.*SampleSheet.*"),
@@ -1284,7 +1284,7 @@ class OMGGenomicsNovaseqMetadata(OMGBaseMetadata):
             for filename, md5, file_info in self.parse_md5file(md5_file):
                 resource = file_info.copy()
                 resource["md5"] = resource["id"] = md5
-                resource["name"] = filename
+                resource["name"] = os.path.basename(filename)
                 resource["resource_type"] = self.ckan_data_type
                 library_id = ingest_utils.extract_ands_id(
                     self._logger, resource["bpa_library_id"]
@@ -2457,6 +2457,7 @@ class OMGGenomicsPacBioGenomeAssemblyMetadata(SecondaryMetadata):
             resources + self.generate_xlsx_resources() + self.generate_raw_resources()
         )
 
+
 class OMGAnalysedDataMetadata(OMGBaseMetadata):
     organization = "bpa-omg"
     ckan_data_type = "omg-analysed-data"
@@ -2471,31 +2472,37 @@ class OMGAnalysedDataMetadata(OMGBaseMetadata):
     resource_linkage = ("bioplatforms_secondarydata_id",)
     spreadsheet = {
         "fields": [
-	    fld('bioplatforms_secondarydata_id', 'bioplatforms_secondarydata_id', coerce=ingest_utils.extract_ands_id),
-            fld('sample_id', 'sample_id', coerce=ingest_utils.int_or_comment),
-            fld('sample_id_description', 'sample_id_description'),
-            fld('library_id', 'library_id', coerce=ingest_utils.int_or_comment),
-            fld('library_id_description', 'library_id_description'),
-            fld('dataset_id', 'dataset_id', coerce=ingest_utils.get_int),
-            fld('dataset_id_description', 'dataset_id_description'),
-            fld('bioplatforms_project', 'bioplatforms_project'),
-            fld('contact_person', 'contact_person'),
-            fld('scientific_name', 'scientific_name'),
-            fld('common_name', 'common_name'),
-            fld('dataset_context', 'dataset_context'),
-            fld('analysis_name', 'analysis_name'),
-            fld('analysis_date', 'analysis_date', coerce=ingest_utils.get_date_isoformat),
-            fld('reference_genome', 'reference_genome'),
-            fld('reference_genome_link', 'reference_genome_link'),
-            fld('sequencing_technology', 'sequencing_technology'),
-            fld('genome_coverage', 'genome_coverage'),
-            fld('analysis_method', 'analysis_method'),
-            fld('analysis_method_version', 'analysis_method_version'),
-            fld('version_method_version_link', 'version_method_version_link'),
-            fld('analysis_qc', 'analysis_qc'),
-            fld('computational_infrastructure', 'computational_infrastructure'),
-            fld('system_used', 'system_used'),
-            fld('analysis_description', 'analysis_description'),
+            fld(
+                "bioplatforms_secondarydata_id",
+                "bioplatforms_secondarydata_id",
+                coerce=ingest_utils.extract_ands_id,
+            ),
+            fld("sample_id", "sample_id", coerce=ingest_utils.int_or_comment),
+            fld("sample_id_description", "sample_id_description"),
+            fld("library_id", "library_id", coerce=ingest_utils.int_or_comment),
+            fld("library_id_description", "library_id_description"),
+            fld("dataset_id", "dataset_id", coerce=ingest_utils.get_int),
+            fld("dataset_id_description", "dataset_id_description"),
+            fld("bioplatforms_project", "bioplatforms_project"),
+            fld("contact_person", "contact_person"),
+            fld("scientific_name", "scientific_name"),
+            fld("common_name", "common_name"),
+            fld("dataset_context", "dataset_context"),
+            fld("analysis_name", "analysis_name"),
+            fld(
+                "analysis_date", "analysis_date", coerce=ingest_utils.get_date_isoformat
+            ),
+            fld("reference_genome", "reference_genome"),
+            fld("reference_genome_link", "reference_genome_link"),
+            fld("sequencing_technology", "sequencing_technology"),
+            fld("genome_coverage", "genome_coverage"),
+            fld("analysis_method", "analysis_method"),
+            fld("analysis_method_version", "analysis_method_version"),
+            fld("version_method_version_link", "version_method_version_link"),
+            fld("analysis_qc", "analysis_qc"),
+            fld("computational_infrastructure", "computational_infrastructure"),
+            fld("system_used", "system_used"),
+            fld("analysis_description", "analysis_description"),
         ],
         "options": {
             "sheet_name": "fields",
@@ -2505,9 +2512,7 @@ class OMGAnalysedDataMetadata(OMGBaseMetadata):
     }
     md5 = {
         "match": [files.analysed_data_filename_re],
-        "skip": [
-            re.compile(r"^.*\.xlsx$"),
-        ],
+        "skip": [re.compile(r"^.*\.xlsx$"),],
     }
 
     def __init__(
@@ -2520,7 +2525,9 @@ class OMGAnalysedDataMetadata(OMGBaseMetadata):
         self.track_meta = OMGTrackMetadata()
 
     def _get_packages(self):
-        self._logger.info("Ingesting OMG Analysed Data metadata from {0}".format(self.path))
+        self._logger.info(
+            "Ingesting OMG Analysed Data metadata from {0}".format(self.path)
+        )
         packages = []
         for fname in glob(self.path + "/*.xlsx"):
             self._logger.info("Processing OMG metadata file {0}".format(fname))
@@ -2541,33 +2548,39 @@ class OMGAnalysedDataMetadata(OMGBaseMetadata):
                 )
 
                 # explode sample_id, library_id
-                sample_ids = re.split(",\s*",str(row.sample_id))
-                library_ids = re.split(",\s*",str(row.library_id))
+                sample_ids = re.split(",\s*", str(row.sample_id))
+                library_ids = re.split(",\s*", str(row.library_id))
 
-		# check same length
+                # check same length
                 if len(sample_ids) != len(library_ids):
                     raise Exception("mismatch count of sample and library IDs")
 
-		# if single item, add bpa_sample_id and bpa_library_id to metadata
+                # if single item, add bpa_sample_id and bpa_library_id to metadata
                 if len(sample_ids) == 1:
-                    obj["bpa_sample_id"] = ingest_utils.extract_ands_id(self._logger, row.sample_id)
-                    obj["bpa_library_id"] = ingest_utils.extract_ands_id(self._logger, row.library_id)
+                    obj["bpa_sample_id"] = ingest_utils.extract_ands_id(
+                        self._logger, row.sample_id
+                    )
+                    obj["bpa_library_id"] = ingest_utils.extract_ands_id(
+                        self._logger, row.library_id
+                    )
                 else:
                     obj["bpa_sample_id"] = None
                     obj["bpa_library_id"] = None
 
                 for contextual_source in self.contextual_metadata:
                     context = []
-                    for i in range(0,len(sample_ids)):
+                    for i in range(0, len(sample_ids)):
                         context.append(
-			    contextual_source.get(
-		                ingest_utils.extract_ands_id(self._logger, sample_ids[i]),
-		                ingest_utils.extract_ands_id(self._logger, library_ids[i])
+                            contextual_source.get(
+                                ingest_utils.extract_ands_id(
+                                    self._logger, sample_ids[i]
+                                ),
+                                ingest_utils.extract_ands_id(
+                                    self._logger, library_ids[i]
+                                ),
                             )
                         )
-                    obj.update(
-                        common_values(context)
-                    )
+                    obj.update(common_values(context))
 
                 obj.update(
                     {
@@ -2578,7 +2591,7 @@ class OMGAnalysedDataMetadata(OMGBaseMetadata):
                             obj["common_name"],
                             obj["scientific_name"],
                             obj["dataset_context"],
-			),
+                        ),
                         "date_of_transfer": ingest_utils.get_date_isoformat(
                             self._logger, track_get("date_of_transfer")
                         ),
@@ -2615,7 +2628,9 @@ class OMGAnalysedDataMetadata(OMGBaseMetadata):
             self._logger.info("Processing md5 file {0}".format(md5_file))
             for filename, md5, file_info in self.parse_md5file(md5_file):
                 resource = file_info.copy()
-                resource["bioplatforms_secondarydata_id"] = ingest_utils.extract_ands_id(
+                resource[
+                    "bioplatforms_secondarydata_id"
+                ] = ingest_utils.extract_ands_id(
                     self._logger, resource["bioplatforms_secondarydata_id"]
                 )
                 resource["md5"] = resource["id"] = md5
