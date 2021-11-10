@@ -24,7 +24,7 @@ def ands_orSAMN(logger, s, silent=False):
 
 class AustralianMicrobiomeSampleContextual:
     metadata_urls = [
-        "https://downloads-qcif.bioplatforms.com/bpa/amd/metadata/contextual/2021-05-28/"
+        "https://downloads-qcif.bioplatforms.com/bpa/amd/metadata/contextual/2021-11-08/"
     ]
     metadata_patterns = [re.compile(r"^.*\.xlsx$")]
     name = "amd-samplecontextual"
@@ -213,6 +213,7 @@ class AustralianMicrobiomeSampleContextual:
                 coerce=ingest_utils.get_clean_number,
             ),
             fld("carbonate_bicarbonate_meth", "carbonate_bicarbonate_meth"),
+            fld('cast_id', 'cast_id'),
             fld(
                 "cation_exchange_capacity",
                 "cation_exchange_capacity",
@@ -989,6 +990,7 @@ class AustralianMicrobiomeSampleContextual:
                 coerce=ingest_utils.get_clean_number,
             ),
             fld("root_length_meth", "root_length_meth"),
+            fld('rosette_position', 'rosette_position'),
             fld(
                 "rubidium",
                 "rubidium",
@@ -1181,6 +1183,7 @@ class AustralianMicrobiomeSampleContextual:
                 coerce=ingest_utils.get_clean_number,
             ),
             fld("synecochoccus_meth", "synecochoccus_meth"),
+            fld('synonyms', 'synonyms'),
             fld(
                 "tantalum",
                 "tantalum",
