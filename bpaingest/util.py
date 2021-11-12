@@ -204,7 +204,7 @@ def apply_license(archive_ingestion_date):
     if archive_ingestion_date + relativedelta(months=3) > datetime.date.today():
         return "other-closed"
     else:
-        return "CC-BY-4.0-AU"
+        return apply_cc_by_license()
 
 
 def apply_cc_by_license():
