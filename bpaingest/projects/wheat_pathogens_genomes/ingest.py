@@ -20,6 +20,7 @@ class WheatPathogensGenomesMetadata(BaseMetadata):
     ckan_data_type = "wheat-pathogens"
     omics = "genomics"
     sequence_data_type = "illumina-shortread"
+    embargo_days = 365
     spreadsheet = {
         "fields": [
             fld("sample_id", "BPA ID", coerce=ingest_utils.extract_ands_id),

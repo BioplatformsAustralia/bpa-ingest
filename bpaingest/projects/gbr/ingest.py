@@ -40,6 +40,7 @@ class GbrPacbioMetadata(BaseMetadata):
     omics = "genomics"
     technology = "pacbio"
     sequence_data_type = "pacbio-rsii"
+    embargo_days = 365
     resource_linkage = ("ticket", "sample_id", "pacbio_linkage")
     spreadsheet = {
         "fields": [
@@ -151,6 +152,7 @@ class GbrAmpliconsMetadata(BaseMetadata):
     omics = "genomics"
     technology = "amplicons"
     sequence_data_type = "illumina-amplicons"
+    embargo_days = 365
     resource_linkage = ("sample_id", "amplicon", "index")
     extract_index_re = re.compile("^.*_([GATC]{8}_[GATC]{8})$")
     spreadsheet = {

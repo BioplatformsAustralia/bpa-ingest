@@ -19,6 +19,7 @@ class WheatCultivarsMetadata(BaseMetadata):
     organization = "bpa-wheat-cultivars"
     ckan_data_type = "wheat-cultivars"
     sequence_data_type = "illumina-shortread"
+    embargo_days = 365
     spreadsheet = {
         "fields": [
             fld("source_name", "Source Name"),

@@ -72,6 +72,7 @@ class OMG10XRawIlluminaMetadata(OMGBaseMetadata):
     ckan_data_type = "omg-10x-raw-illumina"
     technology = "10x-raw-agrf"
     sequence_data_type = "illumina-10x"
+    embargo_days = 365
     contextual_classes = common_context
     metadata_patterns = [r"^.*\.md5$", r"^.*_metadata.*.*\.xlsx$"]
     metadata_urls = [
@@ -272,6 +273,7 @@ class OMG10XRawMetadata(OMGBaseMetadata):
     ckan_data_type = "omg-10x-raw"
     technology = "10xraw"
     sequence_data_type = "illumina-10x"
+    embargo_days = 365
     contextual_classes = common_context
     metadata_patterns = [r"^.*\.md5$", r"^.*_metadata.*.*\.xlsx$"]
     metadata_urls = [
@@ -462,6 +464,7 @@ class OMG10XProcessedIlluminaMetadata(OMGBaseMetadata):
     ckan_data_type = "omg-10x-processed-illumina"
     technology = "10xprocessed"
     sequence_data_type = "illumina-10x"
+    embargo_days = 365
     contextual_classes = common_context
     metadata_patterns = [r"^.*\.md5$", r"^.*_processed.*.*\.xlsx$"]
     metadata_urls = [
@@ -639,6 +642,7 @@ class OMGExonCaptureMetadata(OMGBaseMetadata):
     ckan_data_type = "omg-exon-capture"
     technology = "exoncapture"
     sequence_data_type = "illumina-exoncapture"
+    embargo_days = 365
     contextual_classes = common_context
     metadata_patterns = [r"^.*\.md5$", r"^.*_[mM]etadata.*\.xlsx$"]
     metadata_urls = [
@@ -882,6 +886,7 @@ class OMGWholeGenomeMetadata(OMGBaseMetadata):
     ckan_data_type = "omg-novaseq-whole-genome"
     technology = "novaseq-whole-genome"
     sequence_data_type = "illumina-shortread"
+    embargo_days = 365
     contextual_classes = common_context
     metadata_patterns = [r"^.*\.md5$", r"^.*_metadata.*.*\.xlsx$"]
     metadata_urls = [
@@ -1129,6 +1134,7 @@ class OMGGenomicsNovaseqMetadata(OMGBaseMetadata):
     ckan_data_type = "omg-novaseq"
     technology = "novaseq"
     sequence_data_type = "illumina-shortread"
+    embargo_days = 365
     contextual_classes = common_context
     metadata_patterns = [r"^.*\.md5$", r"^.*_metadata.*.*\.xlsx$"]
     metadata_urls = [
@@ -1307,6 +1313,7 @@ class OMGGenomicsHiSeqMetadata(OMGBaseMetadata):
     omics = "genomics"
     technology = "hiseq"
     sequence_data_type = "illumina-shortread"
+    embargo_days = 365
     contextual_classes = common_context
     metadata_patterns = [r"^.*\.md5$", r"^.*_metadata.*.*\.xlsx$"]
     metadata_urls = [
@@ -1495,6 +1502,7 @@ class OMGGenomicsDDRADMetadata(OMGBaseMetadata):
     omics = "genomics"
     technology = "ddrad"
     sequence_data_type = "illumina-ddrad"
+    embargo_days = 365
     contextual_classes = common_context
     metadata_patterns = [r"^.*\.md5$", r"^.*_metadata.*.*\.xlsx$"]
     metadata_urls = [
@@ -1712,6 +1720,7 @@ class OMGGenomicsPacbioMetadata(OMGBaseMetadata):
     ckan_data_type = "omg-pacbio"
     technology = "pacbio"
     sequence_data_type = "pacbio-clr"
+    embargo_days = 365
     contextual_classes = common_context
     metadata_patterns = [r"^.*\.md5$", r"^.*_metadata.*.*\.xlsx$"]
     metadata_urls = [
@@ -1903,6 +1912,7 @@ class OMGONTPromethionMetadata(OMGBaseMetadata):
     ckan_data_type = "omg-ont-promethion"
     technology = "ont-promethion"
     sequence_data_type = "ont-promethion"
+    embargo_days = 365
     contextual_classes = common_context
     metadata_patterns = [r"^.*\.md5$", r"^.*_metadata.*.*\.xlsx$"]
     metadata_urls = [
@@ -2083,6 +2093,7 @@ class OMGTranscriptomicsNextseq(OMGBaseMetadata):
     omics = "transcriptomics"
     technology = "nextseq"
     sequence_data_type = "illumina-transcriptomics"
+    embargo_days = 365
     contextual_classes = common_context
     metadata_patterns = [r"^.*\.md5$", r"^.*_metadata.*.*\.xlsx$"]
     metadata_urls = [
@@ -2268,6 +2279,7 @@ class OMGGenomicsPacBioGenomeAssemblyMetadata(SecondaryMetadata):
     ckan_data_type = "omg-pacbio-genome-assembly"
     technology = "pacbio-genome-assembly"
     sequence_data_type = "genome-assembly"
+    embargo_days = 365
     contextual_classes = []
     metadata_patterns = [
         r"^.*\.md5$",
@@ -2463,6 +2475,7 @@ class OMGAnalysedDataMetadata(OMGBaseMetadata):
     ckan_data_type = "omg-analysed-data"
     technology = "analysed-data"
     sequence_data_type = "analysed-data"
+    embargo_days = 365
     contextual_classes = common_context
     metadata_patterns = [r"^.*\.md5$", r"^.*\.xlsx$"]
     metadata_urls = [

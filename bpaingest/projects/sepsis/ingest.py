@@ -137,6 +137,7 @@ class SepsisGenomicsMiseqMetadata(BaseSepsisMetadata):
     ckan_data_type = "arp-genomics-miseq"
     omics = "genomics"
     sequence_data_type = "illumina-shortread"
+    embargo_days = 365
     technology = "miseq"
     spreadsheet = {
         "fields": [
@@ -264,6 +265,7 @@ class SepsisGenomicsPacbioMetadata(BaseSepsisMetadata):
     ckan_data_type = "arp-genomics-pacbio"
     omics = "genomics"
     sequence_data_type = "pacbio-clr"
+    embargo_days = 365
     technology = "pacbio"
     spreadsheet = {
         "fields": [
@@ -397,6 +399,7 @@ class SepsisTranscriptomicsHiseqMetadata(BaseSepsisMetadata):
     ckan_data_type = "arp-transcriptomics-hiseq"
     omics = "transcriptomics"
     sequence_data_type = "illumina-transcriptomics"
+    embargo_days = 365
     technology = "hiseq"
     spreadsheet = {
         "fields": [
@@ -560,6 +563,7 @@ class SepsisMetabolomicsGCMSMetadata(BaseSepsisMetadata):
     ckan_data_type = "arp-metabolomics-gcms"
     omics = "metabolomics"
     sequence_data_type = "metabolomics"
+    embargo_days = 365
     technology = "gcms"
     spreadsheet = {
         "fields": [
@@ -690,6 +694,7 @@ class SepsisMetabolomicsLCMSMetadata(BaseSepsisMetadata):
     ckan_data_type = "arp-metabolomics-lcms"
     omics = "metabolomics"
     sequence_data_type = "metabolomics"
+    embargo_days = 365
     technology = "lcms"
     spreadsheet = {
         "fields": [
@@ -828,6 +833,7 @@ class SepsisProteomicsMS1QuantificationMetadata(BaseSepsisMetadata):
     ckan_data_type = "arp-proteomics-ms1quantification"
     omics = "proteomics"
     sequence_data_type = "proteomics"
+    embargo_days = 365
     technology = "ms1quantification"
     spreadsheet = {
         "fields": [
@@ -1203,6 +1209,7 @@ class SepsisProteomicsSwathMSCombinedSampleMetadata(BaseSepsisMetadata):
     resource_linkage = ("folder_name",)
     omics = "proteomics"
     sequence_data_type = "proteomics"
+    embargo_days = 365
     technology = "swathms-combined-sample"
     spreadsheet = {
         "fields": [
@@ -1350,6 +1357,7 @@ class SepsisProteomics2DLibraryMetadata(BaseSepsisMetadata):
     resource_linkage = ("folder_name",)
     omics = "proteomics"
     sequence_data_type = "proteomics"
+    embargo_days = 365
     technology = "2dlibrary"
     spreadsheet = {
         "fields": [
@@ -1488,6 +1496,7 @@ class SepsisProteomics2DLibraryMetadata(BaseSepsisMetadata):
 class SepsisProteomicsSwathMSMetadata(SepsisProteomicsSwathMSBaseSepsisMetadata):
     ckan_data_type = "arp-proteomics-swathms"
     sequence_data_type = "proteomics"
+    embargo_days = 365
     md5 = {
         "match": [
             files.proteomics_swathms_1d_ida_filename_re,
@@ -1512,6 +1521,7 @@ class SepsisProteomicsSwathMSMetadata(SepsisProteomicsSwathMSBaseSepsisMetadata)
 class SepsisProteomicsSwathMSPoolMetadata(SepsisProteomicsSwathMSBaseSepsisMetadata):
     ckan_data_type = "arp-proteomics-swathms-pool"
     sequence_data_type = "proteomics"
+    embargo_days = 365
     pool = True
     resource_linkage = ("pool_sample_ids",)
     md5 = {
@@ -1591,6 +1601,7 @@ class SepsisProteomicsAnalysedMetadata(BaseSepsisAnalysedMetadata):
     resource_linkage = ("folder_name",)
     omics = "proteomics"
     sequence_data_type = "proteomics"
+    embargo_days = 365
     technology = "analysed"
     spreadsheet = {
         "fields": [
@@ -1766,6 +1777,7 @@ class SepsisTranscriptomicsAnalysedMetadata(BaseSepsisAnalysedMetadata):
     resource_linkage = ("ticket",)
     omics = "transcriptomics"
     sequence_data_type = "transcriptomics-analysed"
+    embargo_days = 365
     technology = "analysed"
     spreadsheet = {
         "fields": [
@@ -1934,6 +1946,7 @@ class SepsisMetabolomicsAnalysedMetadata(BaseSepsisAnalysedMetadata):
     resource_linkage = ("folder_name",)
     omics = "metabolomics"
     sequence_data_type = "metabolomics-analysed"
+    embargo_days = 365
     technology = "analysed"
     spreadsheet = {
         "fields": [

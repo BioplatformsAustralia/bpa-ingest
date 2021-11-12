@@ -63,6 +63,7 @@ class AusargIlluminaFastqMetadata(AusargBaseMetadata):
     ckan_data_type = "ausarg-illumina-fastq"
     technology = "illumina-fastq"
     sequence_data_type = "illumina-shortread"
+    embargo_days = 365
     contextual_classes = common_context
     metadata_patterns = [r"^.*\.md5$", r"^.*_metadata.*.*\.xlsx$"]
     metadata_urls = [
@@ -272,6 +273,7 @@ class AusargONTPromethionMetadata(AusargBaseMetadata):
     ckan_data_type = "ausarg-ont-promethion"
     technology = "ont-promethion"
     sequence_data_type = "ont-promethion"
+    embargo_days = 365
     contextual_classes = common_context
     metadata_patterns = [r"^.*\.md5$", r"^.*_metadata.*.*\.xlsx$"]
     metadata_urls = [
@@ -476,6 +478,7 @@ class AusargPacbioHifiMetadata(AusargBaseMetadata):
     ckan_data_type = "ausarg-pacbio-hifi"
     technology = "pacbio-hifi"
     sequence_data_type = "pacbio-hifi"
+    embargo_days = 365
     contextual_classes = common_context
     metadata_patterns = [r"^.*\.md5$", r"^.*[\._]metadata.*.*\.xlsx$"]
     metadata_urls = [
@@ -732,6 +735,7 @@ class AusargExonCaptureMetadata(AusargBaseMetadata):
     ckan_data_type = "ausarg-exon-capture"
     technology = "exoncapture"
     sequence_data_type = "illumina-exoncapture"
+    embargo_days = 365
     contextual_classes = common_context
     metadata_patterns = [r"^.*\.md5$", r"^.*[lL]ibrary[mM]etadata.*\.xlsx$"]
     metadata_urls = [
@@ -979,6 +983,7 @@ class AusargHiCMetadata(AusargBaseMetadata):
     description = "Hi-C"
     technology = "hi-c"
     sequence_data_type = "illumina-hic"
+    embargo_days = 365
     metadata_urls = [
         "https://downloads-qcif.bioplatforms.com/bpa/ausarg_staging/genomics-hi-c/",
     ]

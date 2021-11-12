@@ -52,6 +52,7 @@ class GAPIlluminaShortreadMetadata(BaseMetadata):
     ckan_data_type = "gap-illumina-shortread"
     technology = "illumina-shortread"
     sequence_data_type = "illumina-shortread"
+    embargo_days = 365
     contextual_classes = common_context
     metadata_patterns = [r"^.*\.md5$", r"^.*_metadata.*.*\.xlsx$"]
     metadata_urls = [
@@ -188,6 +189,7 @@ class GAPHiCMetadata(GAPIlluminaShortreadMetadata):
     description = "Hi-C"
     technology = "hi-c"
     sequence_data_type = "illumina-hic"
+    embargo_days = 365
     metadata_urls = [
         "https://downloads-qcif.bioplatforms.com/bpa/plants_staging/genomics-hi-c/",
     ]
@@ -198,6 +200,7 @@ class GAPONTMinionMetadata(BaseMetadata):
     ckan_data_type = "gap-ont-minion"
     technology = "ont-minion"
     sequence_data_type = "ont-minion"
+    embargo_days = 365
     contextual_classes = common_context
     metadata_patterns = [r"^.*\.md5$", r"^.*_metadata.*.*\.xlsx$"]
     metadata_urls = [
@@ -328,6 +331,7 @@ class GAPONTPromethionMetadata(BaseMetadata):
     ckan_data_type = "gap-ont-promethion"
     technology = "ont-promethion"
     sequence_data_type = "ont-promethion"
+    embargo_days = 365
     contextual_classes = common_context
     metadata_patterns = [r"^.*\.md5$", r"^.*_metadata.*.*\.xlsx$"]
     metadata_urls = [
@@ -458,6 +462,7 @@ class GAPGenomics10XMetadata(BaseMetadata):
     ckan_data_type = "gap-genomics-10x"
     technology = "genomics-10x"
     sequence_data_type = "illumina-10x"
+    embargo_days = 365
     contextual_classes = common_context
     metadata_patterns = [r"^.*\.md5$", r"^.*_metadata.*.*\.xlsx$"]
     metadata_urls = [
@@ -575,6 +580,7 @@ class GAPGenomicsDDRADMetadata(BaseMetadata):
     omics = "genomics"
     technology = "ddrad"
     sequence_data_type = "illumina-ddrad"
+    embargo_days = 365
     contextual_classes = common_context
     metadata_patterns = [r"^.*\.md5$", r"^.*_metadata.*.*\.xlsx$"]
     metadata_urls = [
@@ -790,6 +796,7 @@ class GAPPacbioHifiMetadata(BaseMetadata):
     ckan_data_type = "gap-pacbio-hifi"
     technology = "pacbio-hifi"
     sequence_data_type = "pacbio-hifi"
+    embargo_days = 365
     description = "PacBio HiFi"
     contextual_classes = common_context
     metadata_patterns = [r"^.*\.md5$", r"^.*_metadata.*.*\.xlsx$"]

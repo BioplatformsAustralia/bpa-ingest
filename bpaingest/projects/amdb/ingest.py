@@ -161,6 +161,7 @@ class BASEAmpliconsMetadata(AMDFullIngestMetadata):
     omics = "genomics"
     technology = "amplicons"
     sequence_data_type = "illumina-amplicons"
+    embargo_days = 90
     contextual_classes = common_context + ncbi_context
     metadata_patterns = [r"^.*\.md5$", r"^.*_metadata.*.*\.xlsx$"]
     metadata_urls = [
@@ -375,7 +376,7 @@ class BASEAmpliconsMetadata(AMDFullIngestMetadata):
                     }
                 )
                 ingest_utils.permissions_organization_member_after_embargo(
-                    self._logger, obj, "archive_ingestion_date", 90, CONSORTIUM_ORG_NAME
+                    self._logger, obj, "archive_ingestion_date", self.embargo_days, CONSORTIUM_ORG_NAME
                 )
                 for contextual_source in self.contextual_metadata:
                     filter_out_metadata_fields(contextual_source.get(sample_id))
@@ -447,6 +448,7 @@ class BASEAmpliconsControlMetadata(AMDFullIngestMetadata):
     omics = "genomics"
     technology = "amplicons-control"
     sequence_data_type = "illumina-amplicons"
+    embargo_days = 90
     ## TODO: control classes don't normally have context, but historically this has always been here. Probably harmless
     # as without the relevant ID, context will be skipped over, but at some point sequencing metadata IDs should be checked to see
     # if it is TRUE that none exist in context and then safely removed.
@@ -524,7 +526,7 @@ class BASEAmpliconsControlMetadata(AMDFullIngestMetadata):
                 }
             )
             ingest_utils.permissions_organization_member_after_embargo(
-                self._logger, obj, "archive_ingestion_date", 90, CONSORTIUM_ORG_NAME
+                self._logger, obj, "archive_ingestion_date", self.embargo_days, CONSORTIUM_ORG_NAME
             )
             ingest_utils.add_spatial_extra(self._logger, obj)
             self.build_notes_into_object(obj)
@@ -560,6 +562,7 @@ class BASEMetagenomicsMetadata(AMDFullIngestMetadata):
     ckan_data_type = "base-metagenomics"
     omics = "metagenomics"
     sequence_data_type = "illumina-shortread"
+    embargo_days = 90
     contextual_classes = common_context + ncbi_context
     metadata_patterns = [r"^.*\.md5$", r"^.*_metadata.*.*\.xlsx$"]
     metadata_urls = [
@@ -690,7 +693,7 @@ class BASEMetagenomicsMetadata(AMDFullIngestMetadata):
             "sequence_data_type": self.sequence_data_type,
         }
         ingest_utils.permissions_organization_member_after_embargo(
-            self._logger, obj, "archive_ingestion_date", 90, CONSORTIUM_ORG_NAME
+            self._logger, obj, "archive_ingestion_date", self.embargo_days, CONSORTIUM_ORG_NAME
         )
         for contextual_source in self.contextual_metadata:
             obj.update(contextual_source.get(sample_id))
@@ -849,6 +852,7 @@ class BASESiteImagesMetadata(AMDFullIngestMetadata):
     omics = None
     technology = "site-images"
     sequence_data_type = "image"
+    embargo_days = 90
     metadata_urls = [
         "https://downloads-qcif.bioplatforms.com/bpa/base/site-images/",
     ]
@@ -1017,6 +1021,7 @@ class MarineMicrobesAmpliconsMetadata(AMDFullIngestMetadata):
     omics = "genomics"
     contextual_classes = common_context + ncbi_context
     sequence_data_type = "illumina-amplicons"
+    embargo_days = 90
     metadata_patterns = [r"^.*\.md5", r"^.*_metadata.*.*\.xlsx"]
     resource_linkage = ("sample_id", "mm_amplicon_linkage")
     amplicon_tracker = {
@@ -1191,7 +1196,7 @@ class MarineMicrobesAmpliconsMetadata(AMDFullIngestMetadata):
                     }
                 )
                 ingest_utils.permissions_organization_member_after_embargo(
-                    self._logger, obj, "archive_ingestion_date", 90, CONSORTIUM_ORG_NAME
+                    self._logger, obj, "archive_ingestion_date", self.embargo_days, CONSORTIUM_ORG_NAME
                 )
                 for contextual_source in self.contextual_metadata:
                     obj.update(contextual_source.get(sample_id))
@@ -1253,6 +1258,7 @@ class MarineMicrobesAmpliconsControlMetadata(AMDFullIngestMetadata):
     omics = "genomics"
     technology = "amplicons-control"
     sequence_data_type = "illumina-amplicons"
+    embargo_days = 90
     contextual_classes = []
     metadata_patterns = [r"^.*\.md5"]
     resource_linkage = ("amplicon", "flow_id")
@@ -1320,7 +1326,7 @@ class MarineMicrobesAmpliconsControlMetadata(AMDFullIngestMetadata):
                 }
             )
             ingest_utils.permissions_organization_member_after_embargo(
-                self._logger, obj, "archive_ingestion_date", 90, CONSORTIUM_ORG_NAME
+                self._logger, obj, "archive_ingestion_date", self.embargo_days, CONSORTIUM_ORG_NAME
             )
             ingest_utils.add_spatial_extra(self._logger, obj)
             self.build_notes_into_object(obj)
@@ -1364,6 +1370,7 @@ class MarineMicrobesMetagenomicsMetadata(BaseMarineMicrobesMetadata):
     organization = "australian-microbiome"
     ckan_data_type = "mm-metagenomics"
     sequence_data_type = "illumina-shortread"
+    embargo_days = 90
     omics = "metagenomics"
     contextual_classes = common_context + ncbi_context
     metadata_patterns = [r"^.*\.md5", r"^.*_metadata.*\.xlsx"]
@@ -1466,7 +1473,7 @@ class MarineMicrobesMetagenomicsMetadata(BaseMarineMicrobesMetadata):
                     }
                 )
                 ingest_utils.permissions_organization_member_after_embargo(
-                    self._logger, obj, "archive_ingestion_date", 90, CONSORTIUM_ORG_NAME
+                    self._logger, obj, "archive_ingestion_date", self.embargo_days, CONSORTIUM_ORG_NAME
                 )
                 for contextual_source in self.contextual_metadata:
                     obj.update(contextual_source.get(sample_id))
@@ -1508,6 +1515,7 @@ class MarineMicrobesMetatranscriptomeMetadata(BaseMarineMicrobesMetadata):
     organization = "australian-microbiome"
     ckan_data_type = "mm-metatranscriptome"
     sequence_data_type = "illumina-transcriptomics"
+    embargo_days = 90
     contextual_classes = common_context + ncbi_context
     omics = "metatranscriptomics"
     metadata_patterns = [r"^.*\.md5", r"^.*_metadata.*\.xlsx"]
@@ -1614,7 +1622,7 @@ class MarineMicrobesMetatranscriptomeMetadata(BaseMarineMicrobesMetadata):
                 }
             )
             ingest_utils.permissions_organization_member_after_embargo(
-                self._logger, obj, "archive_ingestion_date", 90, CONSORTIUM_ORG_NAME
+                self._logger, obj, "archive_ingestion_date", self.embargo_days, CONSORTIUM_ORG_NAME
             )
             for contextual_source in self.contextual_metadata:
                 obj.update(contextual_source.get(sample_id))
@@ -1658,6 +1666,7 @@ class AustralianMicrobiomeMetagenomicsNovaseqMetadata(AMDFullIngestMetadata):
     omics = "metagenomics"
     technology = "novaseq"
     sequence_data_type = "illumina-shortread"
+    embargo_days = 90
     contextual_classes = common_context
     metadata_patterns = [r"^.*\.md5", r"^.*_metadata.*\.xlsx"]
     metadata_urls = [
@@ -1764,7 +1773,7 @@ class AustralianMicrobiomeMetagenomicsNovaseqMetadata(AMDFullIngestMetadata):
                     }
                 )
                 ingest_utils.permissions_organization_member_after_embargo(
-                    self._logger, obj, "archive_ingestion_date", 90, CONSORTIUM_ORG_NAME
+                    self._logger, obj, "archive_ingestion_date", self.embargo_days, CONSORTIUM_ORG_NAME
                 )
                 for contextual_source in self.contextual_metadata:
                     obj.update(contextual_source.get(sample_id))
@@ -1809,6 +1818,7 @@ class AustralianMicrobiomeMetagenomicsNovaseqControlMetadata(AMDFullIngestMetada
     omics = "metagenomics"
     technology = "novaseq-control"
     sequence_data_type = "illumina-shortread"
+    embargo_days = 90
     contextual_classes = []
     metadata_patterns = [r"^.*\.md5"]
     resource_linkage = ("flowcell",)
@@ -1872,7 +1882,7 @@ class AustralianMicrobiomeMetagenomicsNovaseqControlMetadata(AMDFullIngestMetada
                 }
             )
             ingest_utils.permissions_organization_member_after_embargo(
-                self._logger, obj, "archive_ingestion_date", 90, CONSORTIUM_ORG_NAME
+                self._logger, obj, "archive_ingestion_date", self.embargo_days, CONSORTIUM_ORG_NAME
             )
             ingest_utils.add_spatial_extra(self._logger, obj)
             self.build_notes_into_object(obj)
@@ -1904,6 +1914,7 @@ class AustralianMicrobiomeAmpliconsMetadata(AMDFullIngestMetadata):
     ckan_data_type = "amdb-genomics-amplicon"
     omics = "genomics"
     sequence_data_type = "illumina-amplicons"
+    embargo_days = 90
     contextual_classes = common_context
     metadata_patterns = [r"^.*\.md5", r"^.*_metadata.*.*\.xlsx"]
     resource_linkage = ("sample_id", "flow_id", "index")
@@ -2014,7 +2025,7 @@ class AustralianMicrobiomeAmpliconsMetadata(AMDFullIngestMetadata):
                     self._logger,
                     obj,
                     "date_of_transfer_to_archive",
-                    90,
+                    self.embargo_days,
                     CONSORTIUM_ORG_NAME,
                 )
                 for contextual_source in self.contextual_metadata:
@@ -2065,6 +2076,7 @@ class AustralianMicrobiomeAmpliconsControlMetadata(AMDFullIngestMetadata):
     omics = "genomics"
     technology = "amplicons-control"
     sequence_data_type = "illumina-amplicons"
+    embargo_days = 90
     contextual_classes = []
     metadata_patterns = [r"^.*\.md5"]
     resource_linkage = ("amplicon", "flow_id")
@@ -2129,7 +2141,7 @@ class AustralianMicrobiomeAmpliconsControlMetadata(AMDFullIngestMetadata):
                 }
             )
             ingest_utils.permissions_organization_member_after_embargo(
-                self._logger, obj, "archive_ingestion_date", 90, CONSORTIUM_ORG_NAME
+                self._logger, obj, "archive_ingestion_date", self.embargo_days, CONSORTIUM_ORG_NAME
             )
             ingest_utils.add_spatial_extra(self._logger, obj)
             self.build_notes_into_object(obj)

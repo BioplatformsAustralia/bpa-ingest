@@ -47,6 +47,7 @@ class StemcellsTranscriptomeMetadata(BaseMetadata):
     organization = "bpa-stemcells"
     ckan_data_type = "stemcells-transcriptomics"
     sequence_data_type = "transcriptomics-analysed"
+    embargo_days = 365
     spreadsheet = {
         "fields": [
             fld(
@@ -167,6 +168,7 @@ class StemcellsSmallRNAMetadata(BaseMetadata):
     technology = "smallrna"
     ckan_data_type = "stemcells-smallrna"
     sequence_data_type = "illumina-shortread"
+    embargo_days = 365
     spreadsheet = {
         "fields": [
             fld(
@@ -291,6 +293,7 @@ class StemcellsSingleCellRNASeqMetadata(BaseMetadata):
     technology = "singlecellrna"
     ckan_data_type = "stemcells-singlecellrnaseq"
     sequence_data_type = "illumina-10x"
+    embargo_days = 365
     resource_linkage = ("sample_id_range", "flow_id")
     spreadsheet = {
         "fields": [
@@ -450,6 +453,7 @@ class StemcellsMetabolomicsMetadata(BaseMetadata):
     resource_linkage = ("sample_id", "analytical_platform")
     ckan_data_type = "stemcells-metabolomic"
     sequence_data_type = "metabolomics"
+    embargo_days = 365
     spreadsheet = {
         "fields": [
             fld(
@@ -684,6 +688,7 @@ class StemcellsProteomicsBaseMetadata(BaseMetadata):
 class StemcellsProteomicsMetadata(StemcellsProteomicsBaseMetadata):
     ckan_data_type = "stemcells-proteomic"
     sequence_data_type = "proteomics"
+    embargo_days = 365
     md5 = {
         "match": [files.proteomics_filename_re, files.proteomics_filename2_re],
         "skip": common_skip,
@@ -796,6 +801,7 @@ class StemcellsProteomicsMetadata(StemcellsProteomicsBaseMetadata):
 class StemcellsProteomicsPoolMetadata(StemcellsProteomicsBaseMetadata):
     ckan_data_type = "stemcells-proteomic-pool"
     sequence_data_type = "proteomics"
+    embargo_days = 365
     resource_linkage = ("pool_id",)
     pool = True
     md5 = {"match": [files.proteomics_pool_filename_re], "skip": common_skip}
@@ -917,6 +923,7 @@ class StemcellsProteomicsAnalysedMetadata(BaseMetadata):
     analysed = True
     ckan_data_type = "stemcells-proteomics-analysed"
     sequence_data_type = "proteomics-analysed"
+    embargo_days = 365
     resource_linkage = ("ticket",)
     spreadsheet = {
         "fields": [
@@ -1078,6 +1085,7 @@ class StemcellsMetabolomicsAnalysedMetadata(BaseMetadata):
     ckan_data_type = "stemcells-metabolomics-analysed"
     omics = "metabolomics"
     sequence_data_type = "metabolomics-analysed"
+    embargo_days = 365
     analysed = True
     resource_linkage = ("folder_name",)
     spreadsheet = {
@@ -1232,6 +1240,7 @@ class StemcellsTranscriptomeAnalysedMetadata(BaseMetadata):
     ckan_data_type = "stemcells-transcriptome-analysed"
     omics = "transcriptome"
     sequence_data_type = "transcriptomics-analysed"
+    embargo_days = 365
     analysed = True
     resource_linkage = ("folder_name",)
     spreadsheet = {

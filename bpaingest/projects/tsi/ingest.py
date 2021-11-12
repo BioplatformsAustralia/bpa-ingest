@@ -335,6 +335,7 @@ class TSIIlluminaShortreadMetadata(TSIBaseMetadata):
     ckan_data_type = "tsi-illumina-shortread"
     technology = "illumina-shortread"
     sequence_data_type = "illumina-shortread"
+    embargo_days = 365
     contextual_classes = common_context
     metadata_patterns = [r"^.*\.md5$", r"^.*_metadata.*.*\.xlsx$"]
     metadata_urls = [
@@ -508,6 +509,7 @@ class TSIIlluminaFastqMetadata(TSIBaseMetadata):
     ckan_data_type = "tsi-illumina-fastq"
     technology = "illumina-fastq"
     sequence_data_type = "illumina-shortread"
+    embargo_days = 365
     contextual_classes = common_context
     metadata_patterns = [r"^.*\.md5$", r"^.*_metadata.*.*\.xlsx$"]
     metadata_urls = [
@@ -698,6 +700,7 @@ class TSIPacbioHifiMetadata(TSIBaseMetadata):
     ckan_data_type = "tsi-pacbio-hifi"
     technology = "pacbio-hifi"
     sequence_data_type = "pacbio-hifi"
+    embargo_days = 365
     contextual_classes = common_context
     metadata_patterns = [r"^.*\.md5$", r"^.*[\._]metadata.*.*\.xlsx$"]
     metadata_urls = [
@@ -946,6 +949,7 @@ class TSIGenomicsDDRADMetadata(TSIBaseMetadata):
     omics = "genomics"
     technology = "ddrad"
     sequence_data_type = "illumina-ddrad"
+    embargo_days = 365
     contextual_classes = common_context
     metadata_patterns = [r"^.*\.md5$", r"^.*_metadata.*.*\.xlsx$"]
     metadata_urls = [
