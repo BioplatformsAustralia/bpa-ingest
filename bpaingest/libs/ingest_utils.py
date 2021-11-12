@@ -2,6 +2,8 @@ import datetime
 import json
 import math
 import re
+import inspect
+import os
 
 from .bpa_constants import BPA_PREFIX
 
@@ -462,3 +464,130 @@ def from_comma_or_space_separated_to_list(logger, raw):
         if len(result) > 1:
             return result
     raise Exception("Raw input must be separated by one of {}".format(separators))
+
+
+def apply_access_control(logger, metadata, obj):
+    # access_control_mode is set here, but not by the user
+    # usually set closed when object is created, but may have been
+    # changed elsewhere
+
+    # (EMPTY,EMPTY,NO DEFAULT) = open
+    # (EMPTY,EMPTY,DEFAULT) = date
+    # (DATE, anything, anything) = date
+    # (EMPTY, REASON, anything) = closed
+
+    def _log_access_control_error(logger, obj):
+        # 0 represents this line
+        # 1 represents line at caller
+        callerframerecord = inspect.stack()[1]
+        frame = callerframerecord[0]
+        info = inspect.getframeinfo(frame)
+        logger.error(
+            "Missing access control field - {}:{}".format((info.filename.split(os.path.sep))[-1], info.lineno)
+        )
+
+        obj["access_control_mode"] = "closed"
+        obj[
+            "access_control_reason"
+        ] = "Unable to determine correct embargo period. {}".format(
+            obj.get("access_control_reason", "")
+        ).rstrip()
+
+    # date of transfer is needed for calculations
+    if (
+	"date_of_transfer" not in obj
+    ):
+        _log_access_control_error(logger, obj)
+        return
+
+    if (
+        "access_control_mode" not in obj
+        or "access_control_date" not in obj
+        or "access_control_reason" not in obj
+    ):
+        obj.setdefault("access_control_mode","closed")
+        obj.setdefault("access_control_date","")
+        obj.setdefault("access_control_reason","")
+
+    if obj["access_control_mode"] in (None, ""):
+        _log_access_control_error(logger, obj)
+        return
+
+    obj["access_control_mode"] = obj["access_control_mode"].lower()
+
+    # mode has been set to open elsewhere
+    if obj["access_control_mode"] in ("open"):
+        return
+
+    # Need transfer date for rest
+
+    transfer_date = _get_date(logger, obj.get("date_of_transfer", None))
+    logger.warn("transfer date {}".format(transfer_date))
+    if transfer_date is None:
+        # can't parse the date of transfer
+        _log_access_control_error(logger, obj)
+        return
+
+    # if date field is empty
+    access_date = obj.get("access_control_date","")
+    logger.warn("access_control date {}".format(access_date))
+    logger.warn(obj)
+    if not access_date or not access_date.strip():
+        # if default defined and no reason given, use default
+        if getattr(metadata, "embargo_days", None) and not obj["access_control_reason"].strip():
+            # date becomes date of transfer plus default embargo period
+            embargo_days = int(getattr(metadata, "embargo_days"))
+            obj["access_control_mode"] = "date"
+            obj["access_control_date"] = get_date_isoformat(
+                logger, transfer_date + datetime.timedelta(days=embargo_days)
+            )
+            return
+        # but we have a reason, but no date - assume closed
+        elif obj["access_control_reason"].strip():
+            obj["access_control_mode"] = "closed"
+            return
+        # no date, no reason - assume open
+        else:
+            obj["access_control_mode"] = "open"
+            return
+
+    # date in normal formats
+    embargo_date = _get_date(logger, obj.get("access_control_date", None))
+    if embargo_date:
+        #  check if earlier than date of transfer, if so note error
+        if embargo_date <= transfer_date:
+            _log_access_control_error(logger, obj)
+            logger.error("Embargo date is before Transfer date")
+            obj["access_control_date"] = ""
+            return
+        obj["access_control_mode"] = "date"
+        obj["access_control_date"] = get_date_isoformat(logger, embargo_date)
+        return
+
+    # if date is integer, greater than zero and less than five years (1827 days max)
+    #     date becomes date of transfer integer
+    embargo_days = None
+    try:
+        embargo_days = int(obj["access_control_date"])
+        if embargo_days > 1827:
+            # looks too much like a year, only support up to five years
+            _log_access_control_error(logger, obj)
+            logger.error("Integer Embargo is out of range")
+            obj["access_control_date"] = ""
+            return
+
+        obj["access_control_mode"] = "date"
+        obj["access_control_date"] = get_date_isoformat(
+            logger, transfer_date + datetime.timedelta(days=embargo_days)
+        )
+        return
+    except ValueError:
+        pass
+
+    # if date fails to parses
+    if obj["access_control_mode"] not in ("date",):
+        _log_access_control_error(logger, obj)
+        return
+
+    # We shouldn't get here
+    _log_access_control_error(logger, obj)
