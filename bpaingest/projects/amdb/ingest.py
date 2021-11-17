@@ -1977,9 +1977,13 @@ class AustralianMicrobiomeAmpliconsMetadata(AMDFullIngestMetadata):
                     self._logger.warning(
                         "no google tracking metadata for ticket {}".format(row.ticket)
                     )
+                    archive_transfer_date = None
                     archive_ingestion_date = None
                 else:
                     obj.update(google_track_meta._asdict())
+                    archive_transfer_date = ingest_utils.get_date_isoformat(
+                        self._logger, google_track_meta.date_of_transfer
+                    )
                     archive_ingestion_date = ingest_utils.get_date_isoformat(
                         self._logger, google_track_meta.date_of_transfer_to_archive
                     )
@@ -2001,6 +2005,7 @@ class AustralianMicrobiomeAmpliconsMetadata(AMDFullIngestMetadata):
                         "license_id": apply_license(archive_ingestion_date),
                         "ticket": row.ticket,
                         "type": self.ckan_data_type,
+                        "date_of_transfer": archive_transfer_date,
                         "date_of_transfer_to_archive": archive_ingestion_date,
                         "sequence_data_type": self.sequence_data_type,
                     }
