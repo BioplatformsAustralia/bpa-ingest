@@ -310,11 +310,11 @@ def _get_date(logger, dt, silent=False):
         or dt == "Unknown"
         or dt == "UnkNown"
         or dt == "unkNown"
-	or dt == "event date not recorded"
+        or dt == "event date not recorded"
         or dt == "Not yet assigned"
         or dt == "Not applicable"
-	or dt == "not applicable"
-	or dt == "no information"
+        or dt == "not applicable"
+        or dt == "no information"
         or dt == "(null)"
         or dt == "NA"
         or dt == "n/a"
@@ -522,7 +522,6 @@ def apply_access_control(logger, metadata, obj):
     # Need transfer date for rest
 
     transfer_date = _get_date(logger, obj.get("date_of_transfer", None))
-    logger.warn("transfer date {}".format(transfer_date))
     if transfer_date is None:
         # can't parse the date of transfer
         _log_access_control_error(logger, obj)
@@ -530,8 +529,6 @@ def apply_access_control(logger, metadata, obj):
 
     # if date field is empty
     access_date = obj.get("access_control_date","")
-    logger.warn("access_control date {}".format(access_date))
-    logger.warn(obj)
     if not access_date or not access_date.strip():
         # if default defined and no reason given, use default
         if getattr(metadata, "embargo_days", None) and not obj["access_control_reason"].strip():
