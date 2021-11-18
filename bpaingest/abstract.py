@@ -3,9 +3,15 @@ import re
 from glob import glob
 from urllib.parse import urlparse, urljoin
 
-from .libs.excel_wrapper import ExcelWrapper
+from .libs import ingest_utils
+from .libs.excel_wrapper import (
+    ExcelWrapper,
+    make_field_definition as fld,
+    make_skip_column as skp,
+)
 from .libs.md5lines import MD5Parser
 from .resource_metadata import resource_metadata_from_file
+from .util import make_logger, one
 
 
 class BaseMetadata:
@@ -230,3 +236,76 @@ class BaseMetadata:
     def get_resources(self):
         self._get_packages_and_resources()
         return self._resources
+
+
+class BaseDatasetControlContextual:
+    metadata_patterns = [re.compile(r"^.*\.xlsx$")]
+    sheet_names = [
+        "Dataset Control",
+    ]
+
+    def __init__(self, logger, path):
+        self._logger = logger
+        self._logger.info("dataset control path is: {}".format(path))
+        self.dataset_metadata = self._read_metadata(one(glob(path + "/*.xlsx")))
+
+    def get(self, library_id, dataset_id):
+        if (library_id, dataset_id) in self.dataset_metadata:
+            return self.dataset_metadata[(library_id, dataset_id)]
+        self._logger.warning(
+            "no %s dataset control metadata available for: (%s,%s)"
+            % (type(self).__name__, repr(library_id), repr(dataset_id))
+        )
+        return {}
+
+    def _read_metadata(self, fname):
+
+        field_spec = [
+            fld(
+                "access_control_date",
+                "access_control_date",
+                coerce=ingest_utils.date_or_int_or_comment,
+            ),
+            fld("access_control_reason", "access_control_reason"),
+            fld("related_data", "related_data"),
+            fld("sample_id", "sample_id", coerce=ingest_utils.extract_ands_id,),
+            fld("library_id", "library_id", coerce=ingest_utils.extract_ands_id,),
+            fld("dataset_id", "dataset_id", coerce=ingest_utils.extract_ands_id,),
+        ]
+
+        dataset_metadata = {}
+        for sheet_name in self.sheet_names:
+            wrapper = ExcelWrapper(
+                self._logger,
+                field_spec,
+                fname,
+                sheet_name=sheet_name,
+                header_length=1,
+                column_name_row_index=0,
+                suggest_template=True,
+            )
+            for error in wrapper.get_errors():
+                self._logger.error(error)
+
+            name_mapping = {}
+
+            for row in wrapper.get_all():
+                if not row.library_id or not row.dataset_id:
+                    continue
+                if (row.library_id, row.dataset_id) in dataset_metadata:
+                    raise Exception(
+                        "duplicate library / dataset id: {} {}".format(
+                            row.library_id, row.dataset_id
+                        )
+                    )
+                library_id = ingest_utils.extract_ands_id(self._logger, row.library_id)
+                dataset_id = ingest_utils.extract_ands_id(self._logger, row.dataset_id)
+                dataset_metadata[(library_id, dataset_id)] = row_meta = {}
+                for field in row._fields:
+                    value = getattr(row, field)
+                    if field == "library_id" or field == "dataset_id":
+                        continue
+                    row_meta[name_mapping.get(field, field)] = value
+        return dataset_metadata
+
+
