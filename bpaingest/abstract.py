@@ -251,11 +251,11 @@ class BaseDatasetControlContextual:
 
     def get(self, library_id, dataset_id):
         if (library_id, dataset_id) in self.dataset_metadata:
+            self._logger.info(
+                "Dataset Control metadata found for: (%s,%s)"
+                % (repr(library_id), repr(dataset_id))
+            )
             return self.dataset_metadata[(library_id, dataset_id)]
-        self._logger.warning(
-            "no %s dataset control metadata available for: (%s,%s)"
-            % (type(self).__name__, repr(library_id), repr(dataset_id))
-        )
         return {}
 
     def _read_metadata(self, fname):
