@@ -549,7 +549,7 @@ def apply_access_control(logger, metadata, obj):
             return
 
     # date in normal formats
-    embargo_date = _get_date(logger, obj.get("access_control_date", None))
+    embargo_date = _get_date(logger, obj.get("access_control_date", None), silent=True)
     if embargo_date:
         #  check if earlier than date of transfer, if so note error
         if embargo_date <= transfer_date:
