@@ -243,20 +243,29 @@ class BaseDatasetControlContextual:
     sheet_names = [
         "Dataset Control",
     ]
+    contextual_linkage = ()
 
     def __init__(self, logger, path):
         self._logger = logger
         self._logger.info("dataset control path is: {}".format(path))
         self.dataset_metadata = self._read_metadata(one(glob(path + "/*.xlsx")))
 
-    def get(self, library_id, dataset_id):
-        if (library_id, dataset_id) in self.dataset_metadata:
-            self._logger.info(
-                "Dataset Control metadata found for: (%s,%s)"
-                % (repr(library_id), repr(dataset_id))
+    def get(self, *context):
+        if len(context) != len(self.contextual_linkage):
+            self._logger.error(
+                "Dataset Control context wanted %s does not match linkage %s"
+                % (repr(context), repr(self.contextual_linkage))
             )
-            return self.dataset_metadata[(library_id, dataset_id)]
+            return {}
+        if context in self.dataset_metadata:
+            self._logger.info("Dataset Control metadata found for: %s" % repr(context))
+            return self.dataset_metadata[context]
         return {}
+
+    def _coerce_ands(self, name, value):
+        if name in ("sample_id", "library_id", "dataset_id"):
+            return ingest_utils.extract_ands_id(self._logger, value)
+        return value
 
     def _read_metadata(self, fname):
 
@@ -290,22 +299,27 @@ class BaseDatasetControlContextual:
             name_mapping = {}
 
             for row in wrapper.get_all():
-                if not row.library_id or not row.dataset_id:
+                context = tuple(
+                    [
+                        self._coerce_ands(v, row._asdict().get(v, None))
+                        for v in self.contextual_linkage
+                    ]
+                )
+                # keys not existing in row to create linkage
+                if None in context:
                     continue
-                if (row.library_id, row.dataset_id) in dataset_metadata:
+
+                if context in dataset_metadata:
                     raise Exception(
-                        "duplicate library / dataset id: {} {}".format(
-                            row.library_id, row.dataset_id
+                        "duplicate ids for linkage {}: {}".format(
+                            repr(self.contextual_linkage), repr(context)
                         )
                     )
-                library_id = ingest_utils.extract_ands_id(self._logger, row.library_id)
-                dataset_id = ingest_utils.extract_ands_id(self._logger, row.dataset_id)
-                dataset_metadata[(library_id, dataset_id)] = row_meta = {}
+
+                dataset_metadata[context] = row_meta = {}
                 for field in row._fields:
                     value = getattr(row, field)
-                    if field == "library_id" or field == "dataset_id":
+                    if field in self.contextual_linkage:
                         continue
                     row_meta[name_mapping.get(field, field)] = value
         return dataset_metadata
-
-
