@@ -289,7 +289,7 @@ class BaseDatasetControlContextual:
 
         # Handle some data types using prepending bpa_ to the linkage fields
         if len(
-            set(self.contextual_linkage).union(
+            set(self.contextual_linkage).intersection(
                 {"bpa_sample_id", "bpa_library_id", "bpa_dataset_id"},
             )
         ):
