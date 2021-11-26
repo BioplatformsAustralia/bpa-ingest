@@ -244,6 +244,7 @@ class BaseDatasetControlContextual:
         "Dataset Control",
     ]
     contextual_linkage = ()
+    name_mapping = {}
 
     def __init__(self, logger, path):
         self._logger = logger
@@ -263,7 +264,14 @@ class BaseDatasetControlContextual:
         return {}
 
     def _coerce_ands(self, name, value):
-        if name in ("sample_id", "library_id", "dataset_id"):
+        if name in (
+            "sample_id",
+            "library_id",
+            "dataset_id",
+            "bpa_sample_id",
+            "bpa_library_id",
+            "bpa_dataset_id",
+        ):
             return ingest_utils.extract_ands_id(self._logger, value)
         return value
 
@@ -277,10 +285,23 @@ class BaseDatasetControlContextual:
             ),
             fld("access_control_reason", "access_control_reason"),
             fld("related_data", "related_data"),
-            fld("sample_id", "sample_id", coerce=ingest_utils.extract_ands_id,),
-            fld("library_id", "library_id", coerce=ingest_utils.extract_ands_id,),
-            fld("dataset_id", "dataset_id", coerce=ingest_utils.extract_ands_id,),
         ]
+
+        # Handle some data types using prepending bpa_ to the linkage fields
+        if len(
+            set(self.contextual_linkage).union(
+                {"bpa_sample_id", "bpa_library_id", "bpa_dataset_id"},
+            )
+        ):
+            for field in ("bpa_sample_id", "bpa_library_id", "bpa_dataset_id"):
+                field_spec.append(
+                    fld(field, field, coerce=ingest_utils.extract_ands_id,)
+                )
+        else:
+            for field in ("sample_id", "library_id", "dataset_id"):
+                field_spec.append(
+                    fld(field, field, coerce=ingest_utils.extract_ands_id,)
+                )
 
         dataset_metadata = {}
         for sheet_name in self.sheet_names:
@@ -296,7 +317,7 @@ class BaseDatasetControlContextual:
             for error in wrapper.get_errors():
                 self._logger.error(error)
 
-            name_mapping = {}
+            name_mapping = self.name_mapping
 
             for row in wrapper.get_all():
                 context = tuple(
