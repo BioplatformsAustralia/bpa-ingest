@@ -1931,6 +1931,7 @@ class AustralianMicrobiomeAmpliconsMetadata(AMDFullIngestMetadata):
             fld("analysis_software_version", "analysissoftwareversion"),
             fld("comments", "comments"),
             fld("index", "index"),
+            fld('pcr_plate_name', 'pcr plate name', optional=True),
         ],
         "options": {"header_length": 1, "column_name_row_index": 0,},
     }
