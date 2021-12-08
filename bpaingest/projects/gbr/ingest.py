@@ -5,7 +5,7 @@ from . import files
 from ...libs.excel_wrapper import make_field_definition as fld
 from unipath import Path
 from glob import glob
-from ...util import sample_id_to_ckan_name
+from ...util import apply_cc_by_license, sample_id_to_ckan_name
 from ...libs import ingest_utils
 from urllib.parse import urljoin
 from ...abstract import BaseMetadata
@@ -99,6 +99,7 @@ class GbrPacbioMetadata(BaseMetadata):
                     "tags": [{"name": "Pacbio"}],
                     "type": self.ckan_data_type,
                     "sequence_data_type": self.sequence_data_type,
+                    "license_id": apply_cc_by_license(),
                     "sample_id": sample_id,
                     "sequencing_facility": row.sequencing_facility,
                     "ticket": xlsx_info["ticket"],
@@ -220,6 +221,7 @@ class GbrAmpliconsMetadata(BaseMetadata):
                     "tags": [{"name": "Amplicon"}],
                     "type": self.ckan_data_type,
                     "sequence_data_type": self.sequence_data_type,
+                    "license_id": apply_cc_by_license(),
                     "sample_extraction_id": row.sample_extraction_id,
                     "sequencing_facility": row.sequencing_facility,
                     "amplicon": amplicon,
