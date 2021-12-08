@@ -7,6 +7,7 @@ from ...libs.excel_wrapper import (
     make_skip_column as skp,
 )
 from ...util import make_logger, one
+from ...abstract import BaseDatasetControlContextual
 
 
 def date_or_str(logger, v):
@@ -14,6 +15,14 @@ def date_or_str(logger, v):
     if d is not None:
         return d
     return v
+
+
+class GAPDatasetControlContextual(BaseDatasetControlContextual):
+    metadata_urls = [
+        "https://downloads-qcif.bioplatforms.com/bpa/plants_staging/dataset_control/2021-11-11/"
+    ]
+    name = "gap-dataset-contextual"
+    contextual_linkage = ("library_id", "dataset_id")
 
 
 class GAPLibraryContextual:
