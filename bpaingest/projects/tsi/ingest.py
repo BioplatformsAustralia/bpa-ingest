@@ -7,7 +7,7 @@ from glob import glob
 from unipath import Path
 
 from . import files
-from .contextual import TSILibraryContextual
+from .contextual import TSILibraryContextual, TSIDatasetControlContextual
 from .tracking import TSIGoogleTrackMetadata
 from ...abstract import BaseMetadata
 from ...libs import ingest_utils
@@ -21,7 +21,7 @@ from ...util import (
     clean_tag_name,
 )
 
-common_context = [TSILibraryContextual]
+common_context = [TSILibraryContextual, TSIDatasetControlContextual]
 
 
 class TSIBaseMetadata(BaseMetadata):
@@ -287,6 +287,7 @@ class TSINovaseqMetadata(TSIBaseMetadata):
                     }
                 )
                 ingest_utils.permissions_organization_member(self._logger, obj)
+                ingest_utils.apply_access_control(self._logger, self, obj)
                 obj.update(context)
 
                 ingest_utils.add_spatial_extra(self._logger, obj)
@@ -464,6 +465,7 @@ class TSIIlluminaShortreadMetadata(TSIBaseMetadata):
                         "id": name,
                         "type": self.ckan_data_type,
                         "sequence_data_type": self.sequence_data_type,
+                        "license_id": apply_cc_by_license(),
                         "flow_cell_id": flow_cell_id,
                         "data_generated": True,
                         "library_id": raw_library_id,
@@ -473,6 +475,7 @@ class TSIIlluminaShortreadMetadata(TSIBaseMetadata):
                     }
                 )
                 ingest_utils.permissions_organization_member(self._logger, obj)
+                ingest_utils.apply_access_control(self._logger, self, obj)
                 tag_names = ["genomics", self.description.replace(" ", "-").lower()]
                 obj["tags"] = [{"name": "{:.100}".format(t)} for t in tag_names]
                 packages.append(obj)
@@ -654,6 +657,7 @@ class TSIIlluminaFastqMetadata(TSIBaseMetadata):
                         "id": name,
                         "type": self.ckan_data_type,
                         "sequence_data_type": self.sequence_data_type,
+                        "license_id": apply_cc_by_license(),
                         "data_generated": True,
                         "title": "TSI Illumina FastQ %s %s"
                         % (row.library_id, row.flowcell_id),
@@ -661,6 +665,7 @@ class TSIIlluminaFastqMetadata(TSIBaseMetadata):
                     }
                 )
                 ingest_utils.permissions_organization_member(self._logger, obj)
+                ingest_utils.apply_access_control(self._logger, self, obj)
                 tag_names = ["illumina-fastq"]
                 scientific_name = obj.get("scientific_name", "").strip()
                 if scientific_name:
@@ -872,9 +877,11 @@ class TSIPacbioHifiMetadata(TSIBaseMetadata):
                         "dataset_url": track_get("download"),
                         "type": self.ckan_data_type,
                         "sequence_data_type": self.sequence_data_type,
+                        "license_id": apply_cc_by_license(),
                     }
                 )
                 ingest_utils.permissions_organization_member(self._logger, obj)
+                ingest_utils.apply_access_control(self._logger, self, obj)
                 obj.update(context)
 
                 ingest_utils.add_spatial_extra(self._logger, obj)
@@ -1119,6 +1126,7 @@ class TSIGenomicsDDRADMetadata(TSIBaseMetadata):
                     }
                 )
                 ingest_utils.permissions_organization_member(self._logger, obj)
+                ingest_utils.apply_access_control(self._logger, self, obj)
                 ingest_utils.add_spatial_extra(self._logger, obj)
                 tag_names = ["genomics-ddrad"]
                 obj["tags"] = [{"name": t} for t in tag_names]
