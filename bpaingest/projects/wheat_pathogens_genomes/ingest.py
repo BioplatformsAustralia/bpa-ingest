@@ -8,7 +8,7 @@ from glob import glob
 from ...libs.excel_wrapper import make_field_definition as fld
 from ...libs import ingest_utils
 
-from ...util import sample_id_to_ckan_name, common_values
+from ...util import sample_id_to_ckan_name, apply_cc_by_license, common_values
 from ...abstract import BaseMetadata
 
 
@@ -95,6 +95,7 @@ class WheatPathogensGenomesMetadata(BaseMetadata):
                     "notes": "%s" % (data["official_variety"]),
                     "type": self.ckan_data_type,
                     "sequence_data_type": self.sequence_data_type,
+                    "license_id": apply_cc_by_license(),
                     "sample_id": sample_id,
                     "kingdom": data["kingdom"],
                     "phylum": data["phylum"],

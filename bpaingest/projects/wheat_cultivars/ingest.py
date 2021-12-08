@@ -5,9 +5,8 @@ from urllib.parse import urljoin
 
 from ...libs.excel_wrapper import make_field_definition as fld
 from ...libs import ingest_utils
-from ...util import sample_id_to_ckan_name
 from ...abstract import BaseMetadata
-from ...util import clean_tag_name
+from ...util import sample_id_to_ckan_name, apply_cc_by_license, clean_tag_name
 from . import files
 from .runs import parse_run_data, BLANK_RUN
 
@@ -76,6 +75,7 @@ class WheatCultivarsMetadata(BaseMetadata):
                     % (row.variety, row.code, row.classification),
                     "type": self.ckan_data_type,
                     "sequence_data_type": self.sequence_data_type,
+                    "license_id": apply_cc_by_license(),
                 }
                 ingest_utils.permissions_public(self._logger, obj)
                 obj.update(
