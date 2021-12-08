@@ -144,6 +144,7 @@ def _write_schemas(
         "access_control_date",
         "access_control_reason",
         "access_control_mode",
+        "related_data",
         "sequence_data_type",
         "title",
         "license_id",
