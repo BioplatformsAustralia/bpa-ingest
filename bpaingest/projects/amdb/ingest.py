@@ -20,7 +20,7 @@ from ...util import (
     common_values,
     one,
 )
-from .contextual import AustralianMicrobiomeSampleContextual, BASENCBIContextual, MarineMicrobesNCBIContextual
+from .contextual import AustralianMicrobiomeSampleContextual, BASENCBIContextual, MarineMicrobesNCBIContextual, AustralianMicrobiomeDatasetControlContextual
 from .tracking import (
     AustralianMicrobiomeGoogleTrackMetadata,
     BASETrackMetadata,
@@ -28,7 +28,7 @@ from .tracking import (
     MarineMicrobesTrackMetadata,
 )
 
-common_context = [AustralianMicrobiomeSampleContextual]
+common_context = [AustralianMicrobiomeSampleContextual, AustralianMicrobiomeDatasetControlContextual]
 ncbi_context = [
     BASENCBIContextual,
     MarineMicrobesNCBIContextual,
@@ -381,6 +381,7 @@ class BASEAmpliconsMetadata(AMDFullIngestMetadata):
                 for contextual_source in self.contextual_metadata:
                     filter_out_metadata_fields(contextual_source.get(sample_id))
                     obj.update(contextual_source.get(sample_id))
+                ingest_utils.apply_access_control(self._logger, self, obj)
                 ingest_utils.add_spatial_extra(self._logger, obj)
                 self.build_notes_into_object(obj)
                 tag_names = ["amplicons", amplicon, obj["sample_type"]]
@@ -528,6 +529,7 @@ class BASEAmpliconsControlMetadata(AMDFullIngestMetadata):
             ingest_utils.permissions_organization_member_after_embargo(
                 self._logger, obj, "archive_ingestion_date", self.embargo_days, CONSORTIUM_ORG_NAME
             )
+            ingest_utils.apply_access_control(self._logger, self, obj)
             ingest_utils.add_spatial_extra(self._logger, obj)
             self.build_notes_into_object(obj)
             tag_names = ["amplicons-control", amplicon, "raw"]
@@ -697,6 +699,7 @@ class BASEMetagenomicsMetadata(AMDFullIngestMetadata):
         )
         for contextual_source in self.contextual_metadata:
             obj.update(contextual_source.get(sample_id))
+        ingest_utils.apply_access_control(self._logger, self, obj)
         ingest_utils.add_spatial_extra(self._logger, obj)
         self.build_notes_into_object(obj)
         tag_names = ["metagenomics", obj["sample_type"]]
@@ -922,6 +925,7 @@ class BASESiteImagesMetadata(AMDFullIngestMetadata):
             )
             ingest_utils.permissions_organization_member(self._logger, obj)
             self.build_notes_into_object(obj)
+            ingest_utils.apply_access_control(self._logger, self, obj)
             ingest_utils.add_spatial_extra(self._logger, obj)
             tag_names = ["site-images"]
             obj["tags"] = [{"name": t} for t in tag_names]
@@ -1202,6 +1206,7 @@ class MarineMicrobesAmpliconsMetadata(AMDFullIngestMetadata):
                     obj.update(contextual_source.get(sample_id))
                 ingest_utils.add_spatial_extra(self._logger, obj)
                 self.build_notes_into_object(obj)
+                ingest_utils.apply_access_control(self._logger, self, obj)
                 tag_names = ["amplicons", amplicon]
                 if obj.get("sample_type"):
                     tag_names.append(obj["sample_type"])
@@ -1330,6 +1335,7 @@ class MarineMicrobesAmpliconsControlMetadata(AMDFullIngestMetadata):
             )
             ingest_utils.add_spatial_extra(self._logger, obj)
             self.build_notes_into_object(obj)
+            ingest_utils.apply_access_control(self._logger, self, obj)
             tag_names = ["amplicons-control", amplicon, "raw"]
             obj["tags"] = [{"name": t} for t in tag_names]
             self.track_packages_for_md5(obj, info["ticket"])
@@ -1479,6 +1485,7 @@ class MarineMicrobesMetagenomicsMetadata(BaseMarineMicrobesMetadata):
                     obj.update(contextual_source.get(sample_id))
                 ingest_utils.add_spatial_extra(self._logger, obj)
                 self.build_notes_into_object(obj)
+                ingest_utils.apply_access_control(self._logger, self, obj)
                 tag_names = ["metagenomics", "raw"]
                 if obj.get("sample_type"):
                     tag_names.append(obj["sample_type"])
@@ -1628,6 +1635,7 @@ class MarineMicrobesMetatranscriptomeMetadata(BaseMarineMicrobesMetadata):
                 obj.update(contextual_source.get(sample_id))
             ingest_utils.add_spatial_extra(self._logger, obj)
             self.build_notes_into_object(obj)
+            ingest_utils.apply_access_control(self._logger, self, obj)
             tag_names = ["metatranscriptome", "raw"]
             if obj.get("sample_type"):
                 tag_names.append(obj["sample_type"])
@@ -1779,6 +1787,7 @@ class AustralianMicrobiomeMetagenomicsNovaseqMetadata(AMDFullIngestMetadata):
                     obj.update(contextual_source.get(sample_id))
                 ingest_utils.add_spatial_extra(self._logger, obj)
                 self.build_notes_into_object(obj)
+                ingest_utils.apply_access_control(self._logger, self, obj)
                 tag_names = ["metagenomics", "raw"]
                 if obj.get("sample_type"):
                     tag_names.append(obj["sample_type"])
@@ -1886,6 +1895,7 @@ class AustralianMicrobiomeMetagenomicsNovaseqControlMetadata(AMDFullIngestMetada
             )
             ingest_utils.add_spatial_extra(self._logger, obj)
             self.build_notes_into_object(obj)
+            ingest_utils.apply_access_control(self._logger, self, obj)
             tag_names = ["novaseq-control", "raw"]
             obj["tags"] = [{"name": t} for t in tag_names]
             self.track_packages_for_md5(obj, info["ticket"])
@@ -2033,6 +2043,7 @@ class AustralianMicrobiomeAmpliconsMetadata(AMDFullIngestMetadata):
                     obj.update(contextual_source.get(sample_id))
                 ingest_utils.add_spatial_extra(self._logger, obj)
                 self.build_notes_into_object(obj)
+                ingest_utils.apply_access_control(self._logger, self, obj)
                 tag_names = ["amplicons", amplicon]
                 if obj.get("sample_type"):
                     tag_names.append(obj["sample_type"])
@@ -2146,6 +2157,7 @@ class AustralianMicrobiomeAmpliconsControlMetadata(AMDFullIngestMetadata):
             )
             ingest_utils.add_spatial_extra(self._logger, obj)
             self.build_notes_into_object(obj)
+            ingest_utils.apply_access_control(self._logger, self, obj)
             tag_names = ["amplicons-control", amplicon, "raw"]
             obj["tags"] = [{"name": t} for t in tag_names]
             self.track_packages_for_md5(obj, info["ticket"])

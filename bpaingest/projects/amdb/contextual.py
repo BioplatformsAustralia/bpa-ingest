@@ -9,6 +9,7 @@ from ...libs.excel_wrapper import (
 )
 from ...ncbi import NCBISRAContextual
 from ...util import one
+from ...abstract import BaseDatasetControlContextual
 
 
 class NotInVocabulary(Exception):
@@ -1475,3 +1476,12 @@ class BASENCBIContextual(NCBISRAContextual):
     metadata_urls = ["https://downloads-qcif.bioplatforms.com/bpa/base/metadata/ncbi/"]
     name = "base-ncbi-contextual"
     bioproject_accession = "PRJNA317932"
+
+
+class AustralianMicrobiomeDatasetControlContextual(BaseDatasetControlContextual):
+    metadata_urls = [
+        "https://downloads-qcif.bioplatforms.com/bpa/amd/dataset_control/2021-11-24/"
+    ]
+    name = "amd-dataset-contextual"
+    contextual_linkage = ("sample_id",)
+
