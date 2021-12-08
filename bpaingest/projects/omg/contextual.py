@@ -3,6 +3,7 @@ from glob import glob
 from ...libs import ingest_utils
 from ...libs.excel_wrapper import ExcelWrapper, make_field_definition as fld
 from ...util import one
+from ...abstract import BaseDatasetControlContextual
 
 
 class OMGSampleContextual:
@@ -213,3 +214,11 @@ class OMGLibraryContextual:
                     continue
                 row_meta[field] = value
         return library_metadata
+
+
+class OMGDatasetControlContextual(BaseDatasetControlContextual):
+    metadata_urls = [
+        "https://downloads-qcif.bioplatforms.com/bpa/omg_staging/dataset_control/2021-11-24/"
+    ]
+    name = "omg-dataset-contextual"
+    contextual_linkage = ("bpa_sample_id", "bpa_library_id")
