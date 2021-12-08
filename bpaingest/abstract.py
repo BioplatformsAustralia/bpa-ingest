@@ -344,3 +344,7 @@ class BaseDatasetControlContextual:
                         continue
                     row_meta[name_mapping.get(field, field)] = value
         return dataset_metadata
+
+    def filename_metadata(self, *args, **kwargs):
+        return {}
+
