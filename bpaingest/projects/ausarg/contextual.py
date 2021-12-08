@@ -7,6 +7,7 @@ from ...libs.excel_wrapper import (
     make_skip_column as skp,
 )
 from ...util import make_logger, one
+from ...abstract import BaseDatasetControlContextual
 
 
 def date_or_str(logger, v):
@@ -14,6 +15,13 @@ def date_or_str(logger, v):
     if d is not None:
         return d
     return v
+
+class AusargDatasetControlContextual(BaseDatasetControlContextual):
+    metadata_urls = [
+        "https://downloads-qcif.bioplatforms.com/bpa/ausarg_staging/dataset_control/2021-11-24/"
+    ]
+    name = "ausarg-dataset-contextual"
+    contextual_linkage = ("sample_id",)
 
 
 class AusargLibraryContextual:
