@@ -1036,7 +1036,9 @@ class TSIGenomicsDDRADMetadata(TSIBaseMetadata):
     }
     md5 = {
         "match": [files.ddrad_fastq_filename_re, files.ddrad_metadata_sheet_re,],
-        "skip": None,
+        "skip": [
+            re.compile(r"^.*_metadata.*\.xlsx$"),
+        ],
     }
 
     def __init__(

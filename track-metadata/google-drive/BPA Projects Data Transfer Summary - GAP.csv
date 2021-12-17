@@ -55,8 +55,9 @@ AGRF,1/7/2021,,,83656,,Phylogenomics - AATOL (VIC) - 30 samples,Main dataset,Ill
 AGRF,1/7/2021,,,83656,,Phylogenomics - AATOL (VIC) - 192 samples,Main dataset,Illumina Short Read,20210630_GAP_AGRF_CAGRF20052378_HFVFMDRXY,1/7/2021,2/7/21,BPAOPS-1102,https://data.bioplatforms.com/dataset?ext_search_by=&q=ticket%3ABPAOPS-1102
 AGRF,12/7/2021,,,83667,Cassia,Conservation genomics,Main dataset,ddRAD,AGRF_GAP_HFTHLDRXY_83667,13/7/2021,13/7/2021,BPAOPS-1110,https://data.bioplatforms.com/dataset?ext_search_by=&q=ticket%3ABPAOPS-1110
 AGRF,26/7/2021,,,83662,Zieria,Conservation genomics,Main dataset,ddRAD,AGRF_GAP_H3YW3AFX3_83662,26/7/2021,27/7/2021,BPAOPS-1119,https://data.bioplatforms.com/dataset?ext_search_by=&q=ticket%3ABPAOPS-1119
-GWA,1/10/2021,376315,380535,83684,Xanthorrhoea,Reference Genomes,Main dataset,PacBio-HiFi,20210909_GAP_GWA_GWA-AJ-236_DA110376,4/10/2021,,BPAOPS-1140,
-GWA,1/10/2021,376315,382897,83712,Xanthorrhoea,Reference Genomes,Main dataset,PacBio-HiFi,20210909_GAP_GWA_GWA-AJ-236_DA110323,4/10/2021,,BPAOPS-1139,
-GWA,1/10/2021,376316,380537,83686,Phebalium,Reference Genomes,Main dataset,PacBio-HiFi,20210909_GAP_GWA_GWA-AJ-236_DA110355,4/10/2021,,BPAOPS-1141,
-GWA,1/10/2021,376318,380536,83685,Wahlenbergia,Reference Genomes,Main dataset,PacBio-HiFi,20210902_GAP_GWA_GWA-AJ-236_DA088487,4/10/2021,,BPAOPS-1142,
-GWA,1/10/2021,376318,382896,83711,Wahlenbergia,Reference Genomes,Main dataset,PacBio-HiFi,20210909_GAP_GWA_GWA-AJ-236_DA110366,4/10/2021,,BPAOPS-1143,
+GWA,1/10/2021,376315,380535,83684,Xanthorrhoea johnsonii,Reference Genomes,Main dataset,PacBio-HiFi,20210909_GAP_GWA_GWA-AJ-236_DA110376,4/10/2021,11/10/2021,BPAOPS-1140,https://data.bioplatforms.com/dataset/bpa-gap-pacbio-hifi-380535-da110376
+GWA,1/10/2021,376315,382897,83712,Xanthorrhoea johnsonii,Reference Genomes,Main dataset,PacBio-HiFi,20210909_GAP_GWA_GWA-AJ-236_DA110323,4/10/2021,11/10/2021,BPAOPS-1139,https://data.bioplatforms.com/dataset/bpa-gap-pacbio-hifi-382897-da110323
+GWA,1/10/2021,376316,380537,83686,Phebalium stellatum,Reference Genomes,Main dataset,PacBio-HiFi,20210909_GAP_GWA_GWA-AJ-236_DA110355,4/10/2021,11/10/2021,BPAOPS-1141,https://data.bioplatforms.com/dataset/bpa-gap-pacbio-hifi-380537-da110355
+GWA,1/10/2021,376318,380536,83685,Wahlenbergia ceracea,Reference Genomes,Main dataset,PacBio-HiFi,20210902_GAP_GWA_GWA-AJ-236_DA088487,4/10/2021,11/10/2021,BPAOPS-1142,https://data.bioplatforms.com/dataset/bpa-gap-pacbio-hifi-380536-da088487
+GWA,1/10/2021,376318,382896,83711,Wahlenbergia ceracea,Reference Genomes,Main dataset,PacBio-HiFi,20210909_GAP_GWA_GWA-AJ-236_DA110366,4/10/2021,11/10/2021,BPAOPS-1143,https://data.bioplatforms.com/dataset/bpa-gap-pacbio-hifi-382896-da110366
+AGRF,10/12/2021,,,83668,Gompholobium,Conservation genomics,Main dataset,ddRAD,AGRF_GAP_HNH57DRXY_83668,11/12/2021,,BPAOPS-1179,

@@ -291,6 +291,7 @@ amd_metagenomics_novaseq_re = re.compile(
     r"""
     (?P<id>\d{4,6})_
     MGE_
+    (?P<vendor>UNSW)?_?
     (?P<flowcell>\w{9})_
     (?P<index>[G|A|T|C|-]*)_
     (?P<runsamplenum>S\d+)_
@@ -303,8 +304,9 @@ amd_metagenomics_novaseq_re = re.compile(
 
 amd_metagenomics_novaseq_control_re = re.compile(
     r"""
-    (?P<control_type>SOIL_DNA|Soil_DNA)_
+    (?P<control_type>SOIL_DNA|Soil_DNA|SOIL_MOCK)_
     MGE_
+    (?P<vendor>UNSW)?_?
     (?P<flowcell>\w{9})(-|_)
     (?P<index>[G|A|T|C|-]*)_
     (?P<runsamplenum>S\d+)_
