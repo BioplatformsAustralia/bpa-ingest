@@ -1788,7 +1788,7 @@ class AustralianMicrobiomeMetagenomicsNovaseqMetadata(AMDFullIngestMetadata):
             for filename, md5, file_info in self.parse_md5file(md5_file):
                 resource = file_info.copy()
                 resource["md5"] = resource["id"] = md5
-                resource["name"] = filename
+                resource["name"] = os.path.basename(filename)
                 resource["resource_type"] = self.ckan_data_type
                 for contextual_source in self.contextual_metadata:
                     resource.update(contextual_source.filename_metadata(filename))
@@ -1891,7 +1891,7 @@ class AustralianMicrobiomeMetagenomicsNovaseqControlMetadata(AMDFullIngestMetada
                 xlsx_info = self.metadata_info[os.path.basename(md5_file)]
                 resource = file_info.copy()
                 resource["md5"] = resource["id"] = md5
-                resource["name"] = filename
+                resource["name"] = os.path.basename(filename)
                 resource["resource_type"] = self.ckan_data_type
                 legacy_url = urljoin(xlsx_info["base_url"], filename)
                 resources.append(((resource["flowcell"],), legacy_url, resource))
