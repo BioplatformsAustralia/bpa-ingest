@@ -116,7 +116,7 @@ ORGANIZATIONS = [
         "name": "plant-pathogen",
         "title": "Plant Pathogen 'Omics",
         "display_name": "Plant Pathogen 'Omics",
-        "image_url": "https://data.bioplatforms.com/plant_pathgen.png",
+        "image_url": "https://data.bioplatforms.com/plant_pathogen.png",
         "groups": [{"capacity": "public", "name": BPA_ORGANIZATION_ID}],
     },
 ]
