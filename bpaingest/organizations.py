@@ -112,4 +112,11 @@ ORGANIZATIONS = [
         "image_url": "https://data.bioplatforms.com/Australian-Grasslands.png",
         "groups": [{"capacity": "public", "name": BPA_ORGANIZATION_ID}],
     },
+    {
+        "name": "plant-pathogen",
+        "title": "Plant Pathogen 'Omics",
+        "display_name": "Plant Pathogen 'Omics",
+        "image_url": "https://data.bioplatforms.com/plant_pathgen.png",
+        "groups": [{"capacity": "public", "name": BPA_ORGANIZATION_ID}],
+    },
 ]
