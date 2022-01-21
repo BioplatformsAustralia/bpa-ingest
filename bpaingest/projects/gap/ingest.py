@@ -11,12 +11,12 @@ from ...abstract import BaseMetadata
 from ...libs import ingest_utils
 from ...libs.excel_wrapper import make_field_definition as fld
 from ...libs.fetch_data import Fetcher, get_password
-from ...util import sample_id_to_ckan_name, common_values, clean_tag_name
+from ...util import sample_id_to_ckan_name, common_values, apply_cc_by_license, clean_tag_name
 from . import files
-from .contextual import GAPLibraryContextual
+from .contextual import GAPLibraryContextual, GAPDatasetControlContextual
 from .tracking import GAPTrackMetadata
 
-common_context = [GAPLibraryContextual]
+common_context = [GAPLibraryContextual, GAPDatasetControlContextual]
 
 
 def gap_describe(obj, description):
@@ -52,6 +52,7 @@ class GAPIlluminaShortreadMetadata(BaseMetadata):
     ckan_data_type = "gap-illumina-shortread"
     technology = "illumina-shortread"
     sequence_data_type = "illumina-shortread"
+    embargo_days = 365
     contextual_classes = common_context
     metadata_patterns = [r"^.*\.md5$", r"^.*_metadata.*.*\.xlsx$"]
     metadata_urls = [
@@ -140,6 +141,7 @@ class GAPIlluminaShortreadMetadata(BaseMetadata):
                         "id": name,
                         "type": self.ckan_data_type,
                         "sequence_data_type": self.sequence_data_type,
+                        "license_id": apply_cc_by_license(),
                         "flow_cell_id": flow_cell_id,
                         "data_generated": True,
                         "library_id": raw_library_id,
@@ -147,6 +149,7 @@ class GAPIlluminaShortreadMetadata(BaseMetadata):
                 )
                 gap_describe(obj, self.description)
                 ingest_utils.permissions_organization_member(self._logger, obj)
+                ingest_utils.apply_access_control(self._logger, self, obj)
                 tag_names = ["genomics", self.description.replace(" ", "-").lower()]
                 obj["tags"] = [{"name": "{:.100}".format(t)} for t in tag_names]
                 packages.append(obj)
@@ -188,6 +191,7 @@ class GAPHiCMetadata(GAPIlluminaShortreadMetadata):
     description = "Hi-C"
     technology = "hi-c"
     sequence_data_type = "illumina-hic"
+    embargo_days = 365
     metadata_urls = [
         "https://downloads-qcif.bioplatforms.com/bpa/plants_staging/genomics-hi-c/",
     ]
@@ -198,6 +202,7 @@ class GAPONTMinionMetadata(BaseMetadata):
     ckan_data_type = "gap-ont-minion"
     technology = "ont-minion"
     sequence_data_type = "ont-minion"
+    embargo_days = 365
     contextual_classes = common_context
     metadata_patterns = [r"^.*\.md5$", r"^.*_metadata.*.*\.xlsx$"]
     metadata_urls = [
@@ -284,11 +289,13 @@ class GAPONTMinionMetadata(BaseMetadata):
                         "id": name,
                         "type": self.ckan_data_type,
                         "sequence_data_type": self.sequence_data_type,
+                        "license_id": apply_cc_by_license(),
                         "data_generated": True,
                     }
                 )
                 gap_describe(obj, "ONT MinION")
                 ingest_utils.permissions_organization_member(self._logger, obj)
+                ingest_utils.apply_access_control(self._logger, self, obj)
                 tag_names = ["ont-minion"]
                 obj["tags"] = [{"name": t} for t in tag_names]
                 packages.append(obj)
@@ -328,6 +335,7 @@ class GAPONTPromethionMetadata(BaseMetadata):
     ckan_data_type = "gap-ont-promethion"
     technology = "ont-promethion"
     sequence_data_type = "ont-promethion"
+    embargo_days = 365
     contextual_classes = common_context
     metadata_patterns = [r"^.*\.md5$", r"^.*_metadata.*.*\.xlsx$"]
     metadata_urls = [
@@ -414,11 +422,13 @@ class GAPONTPromethionMetadata(BaseMetadata):
                         "id": name,
                         "type": self.ckan_data_type,
                         "sequence_data_type": self.sequence_data_type,
+                        "license_id": apply_cc_by_license(),
                         "data_generated": True,
                     }
                 )
                 gap_describe(obj, "PromethION")
                 ingest_utils.permissions_organization_member(self._logger, obj)
+                ingest_utils.apply_access_control(self._logger, self, obj)
                 tag_names = ["ont-promethion"]
                 obj["tags"] = [{"name": t} for t in tag_names]
                 packages.append(obj)
@@ -458,6 +468,7 @@ class GAPGenomics10XMetadata(BaseMetadata):
     ckan_data_type = "gap-genomics-10x"
     technology = "genomics-10x"
     sequence_data_type = "illumina-10x"
+    embargo_days = 365
     contextual_classes = common_context
     metadata_patterns = [r"^.*\.md5$", r"^.*_metadata.*.*\.xlsx$"]
     metadata_urls = [
@@ -533,12 +544,14 @@ class GAPGenomics10XMetadata(BaseMetadata):
                         "id": name,
                         "type": self.ckan_data_type,
                         "sequence_data_type": self.sequence_data_type,
+                        "license_id": apply_cc_by_license(),
                         "flow_cell_id": flow_cell_id,
                         "data_generated": True,
                     }
                 )
                 gap_describe(obj, "Genomics 10X")
                 ingest_utils.permissions_organization_member(self._logger, obj)
+                ingest_utils.apply_access_control(self._logger, self, obj)
                 tag_names = ["genomics", "10x"]
                 obj["tags"] = [{"name": t} for t in tag_names]
                 packages.append(obj)
@@ -575,6 +588,7 @@ class GAPGenomicsDDRADMetadata(BaseMetadata):
     omics = "genomics"
     technology = "ddrad"
     sequence_data_type = "illumina-ddrad"
+    embargo_days = 365
     contextual_classes = common_context
     metadata_patterns = [r"^.*\.md5$", r"^.*_metadata.*.*\.xlsx$"]
     metadata_urls = [
@@ -746,10 +760,12 @@ class GAPGenomicsDDRADMetadata(BaseMetadata):
                         "dataset_url": track_get("download"),
                         "type": self.ckan_data_type,
                         "sequence_data_type": self.sequence_data_type,
+                        "license_id": apply_cc_by_license(),
                     }
                 )
                 gap_describe_ddrad(obj, "ddRAD")
                 ingest_utils.permissions_organization_member(self._logger, obj)
+                ingest_utils.apply_access_control(self._logger, self, obj)
                 ingest_utils.add_spatial_extra(self._logger, obj)
                 tag_names = ["genomics-ddrad"]
                 obj["tags"] = [{"name": t} for t in tag_names]
@@ -790,6 +806,7 @@ class GAPPacbioHifiMetadata(BaseMetadata):
     ckan_data_type = "gap-pacbio-hifi"
     technology = "pacbio-hifi"
     sequence_data_type = "pacbio-hifi"
+    embargo_days = 365
     description = "PacBio HiFi"
     contextual_classes = common_context
     metadata_patterns = [r"^.*\.md5$", r"^.*_metadata.*.*\.xlsx$"]
@@ -941,11 +958,13 @@ class GAPPacbioHifiMetadata(BaseMetadata):
                         "dataset_url": track_get("download"),
                         "type": self.ckan_data_type,
                         "sequence_data_type": self.sequence_data_type,
+                        "license_id": apply_cc_by_license(),
                     }
                 )
                 obj.update(context)
                 gap_describe(obj, self.description)
                 ingest_utils.permissions_organization_member(self._logger, obj)
+                ingest_utils.apply_access_control(self._logger, self, obj)
 
                 ingest_utils.add_spatial_extra(self._logger, obj)
                 tag_names = ["pacbio-hifi"]

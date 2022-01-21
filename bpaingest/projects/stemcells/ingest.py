@@ -4,7 +4,7 @@ from collections import defaultdict
 from hashlib import md5 as md5hash
 
 from ...libs import ingest_utils
-from ...util import sample_id_to_ckan_name, common_values, clean_tag_name
+from ...util import sample_id_to_ckan_name, common_values, apply_cc_by_license, clean_tag_name
 from ...abstract import BaseMetadata
 from ...libs.excel_wrapper import (
     ExcelWrapper,
@@ -47,6 +47,7 @@ class StemcellsTranscriptomeMetadata(BaseMetadata):
     organization = "bpa-stemcells"
     ckan_data_type = "stemcells-transcriptomics"
     sequence_data_type = "transcriptomics-analysed"
+    embargo_days = 365
     spreadsheet = {
         "fields": [
             fld(
@@ -109,6 +110,7 @@ class StemcellsTranscriptomeMetadata(BaseMetadata):
                     "facility": row.facility_code.upper(),
                     "type": self.ckan_data_type,
                     "sequence_data_type": self.sequence_data_type,
+                    "license_id": apply_cc_by_license(),
                     "date_of_transfer": ingest_utils.get_date_isoformat(
                         self._logger, track_meta.date_of_transfer
                     ),
@@ -167,6 +169,7 @@ class StemcellsSmallRNAMetadata(BaseMetadata):
     technology = "smallrna"
     ckan_data_type = "stemcells-smallrna"
     sequence_data_type = "illumina-shortread"
+    embargo_days = 365
     spreadsheet = {
         "fields": [
             fld(
@@ -232,6 +235,7 @@ class StemcellsSmallRNAMetadata(BaseMetadata):
                         "facility": row.facility_code.upper(),
                         "type": self.ckan_data_type,
                         "sequence_data_type": self.sequence_data_type,
+                        "license_id": apply_cc_by_license(),
                         "date_of_transfer": ingest_utils.get_date_isoformat(
                             self._logger, track_meta.date_of_transfer
                         ),
@@ -291,6 +295,7 @@ class StemcellsSingleCellRNASeqMetadata(BaseMetadata):
     technology = "singlecellrna"
     ckan_data_type = "stemcells-singlecellrnaseq"
     sequence_data_type = "illumina-10x"
+    embargo_days = 365
     resource_linkage = ("sample_id_range", "flow_id")
     spreadsheet = {
         "fields": [
@@ -383,6 +388,7 @@ class StemcellsSingleCellRNASeqMetadata(BaseMetadata):
                     "facility": row.facility_code.upper(),
                     "type": self.ckan_data_type,
                     "sequence_data_type": self.sequence_data_type,
+                    "license_id": apply_cc_by_license(),
                     "date_of_transfer": ingest_utils.get_date_isoformat(
                         self._logger, track_meta.date_of_transfer
                     ),
@@ -450,6 +456,7 @@ class StemcellsMetabolomicsMetadata(BaseMetadata):
     resource_linkage = ("sample_id", "analytical_platform")
     ckan_data_type = "stemcells-metabolomic"
     sequence_data_type = "metabolomics"
+    embargo_days = 365
     spreadsheet = {
         "fields": [
             fld(
@@ -540,6 +547,7 @@ class StemcellsMetabolomicsMetadata(BaseMetadata):
                     "facility": row.facility_code.upper(),
                     "type": self.ckan_data_type,
                     "sequence_data_type": self.sequence_data_type,
+                    "license_id": apply_cc_by_license(),
                     "date_of_transfer": ingest_utils.get_date_isoformat(
                         self._logger, track_meta.date_of_transfer
                     ),
@@ -684,6 +692,7 @@ class StemcellsProteomicsBaseMetadata(BaseMetadata):
 class StemcellsProteomicsMetadata(StemcellsProteomicsBaseMetadata):
     ckan_data_type = "stemcells-proteomic"
     sequence_data_type = "proteomics"
+    embargo_days = 365
     md5 = {
         "match": [files.proteomics_filename_re, files.proteomics_filename2_re],
         "skip": common_skip,
@@ -728,6 +737,7 @@ class StemcellsProteomicsMetadata(StemcellsProteomicsBaseMetadata):
                     "omics": "proteomics",
                     "type": self.ckan_data_type,
                     "sequence_data_type": self.sequence_data_type,
+                    "license_id": apply_cc_by_license(),
                     "date_of_transfer": ingest_utils.get_date_isoformat(
                         self._logger, track_meta.date_of_transfer
                     ),
@@ -796,6 +806,7 @@ class StemcellsProteomicsMetadata(StemcellsProteomicsBaseMetadata):
 class StemcellsProteomicsPoolMetadata(StemcellsProteomicsBaseMetadata):
     ckan_data_type = "stemcells-proteomic-pool"
     sequence_data_type = "proteomics"
+    embargo_days = 365
     resource_linkage = ("pool_id",)
     pool = True
     md5 = {"match": [files.proteomics_pool_filename_re], "skip": common_skip}
@@ -837,6 +848,7 @@ class StemcellsProteomicsPoolMetadata(StemcellsProteomicsBaseMetadata):
                     "omics": "proteomics",
                     "type": self.ckan_data_type,
                     "sequence_data_type": self.sequence_data_type,
+                    "license_id": apply_cc_by_license(),
                     "date_of_transfer": ingest_utils.get_date_isoformat(
                         self._logger, track_meta.date_of_transfer
                     ),
@@ -917,6 +929,7 @@ class StemcellsProteomicsAnalysedMetadata(BaseMetadata):
     analysed = True
     ckan_data_type = "stemcells-proteomics-analysed"
     sequence_data_type = "proteomics-analysed"
+    embargo_days = 365
     resource_linkage = ("ticket",)
     spreadsheet = {
         "fields": [
@@ -1016,6 +1029,7 @@ class StemcellsProteomicsAnalysedMetadata(BaseMetadata):
                     "sample_ids": ", ".join(sample_ids),
                     "type": self.ckan_data_type,
                     "sequence_data_type": self.sequence_data_type,
+                    "license_id": apply_cc_by_license(),
                     "date_of_transfer": ingest_utils.get_date_isoformat(
                         self._logger, track_meta.date_of_transfer
                     ),
@@ -1078,6 +1092,7 @@ class StemcellsMetabolomicsAnalysedMetadata(BaseMetadata):
     ckan_data_type = "stemcells-metabolomics-analysed"
     omics = "metabolomics"
     sequence_data_type = "metabolomics-analysed"
+    embargo_days = 365
     analysed = True
     resource_linkage = ("folder_name",)
     spreadsheet = {
@@ -1151,6 +1166,7 @@ class StemcellsMetabolomicsAnalysedMetadata(BaseMetadata):
                     "sample_ids": ", ".join(sample_ids),
                     "type": self.ckan_data_type,
                     "sequence_data_type": self.sequence_data_type,
+                    "license_id": apply_cc_by_license(),
                     "date_of_transfer": ingest_utils.get_date_isoformat(
                         self._logger, track_meta.date_of_transfer
                     ),
@@ -1232,6 +1248,7 @@ class StemcellsTranscriptomeAnalysedMetadata(BaseMetadata):
     ckan_data_type = "stemcells-transcriptome-analysed"
     omics = "transcriptome"
     sequence_data_type = "transcriptomics-analysed"
+    embargo_days = 365
     analysed = True
     resource_linkage = ("folder_name",)
     spreadsheet = {
@@ -1306,6 +1323,7 @@ class StemcellsTranscriptomeAnalysedMetadata(BaseMetadata):
                     "sample_ids": ", ".join(sample_ids),
                     "type": self.ckan_data_type,
                     "sequence_data_type": self.sequence_data_type,
+                    "license_id": apply_cc_by_license(),
                     "date_of_transfer": ingest_utils.get_date_isoformat(
                         self._logger, track_meta.date_of_transfer
                     ),

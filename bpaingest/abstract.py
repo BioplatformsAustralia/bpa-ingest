@@ -3,9 +3,15 @@ import re
 from glob import glob
 from urllib.parse import urlparse, urljoin
 
-from .libs.excel_wrapper import ExcelWrapper
+from .libs import ingest_utils
+from .libs.excel_wrapper import (
+    ExcelWrapper,
+    make_field_definition as fld,
+    make_skip_column as skp,
+)
 from .libs.md5lines import MD5Parser
 from .resource_metadata import resource_metadata_from_file
+from .util import make_logger, one
 
 
 class BaseMetadata:
@@ -230,3 +236,115 @@ class BaseMetadata:
     def get_resources(self):
         self._get_packages_and_resources()
         return self._resources
+
+
+class BaseDatasetControlContextual:
+    metadata_patterns = [re.compile(r"^.*\.xlsx$")]
+    sheet_names = [
+        "Dataset Control",
+    ]
+    contextual_linkage = ()
+    name_mapping = {}
+
+    def __init__(self, logger, path):
+        self._logger = logger
+        self._logger.info("dataset control path is: {}".format(path))
+        self.dataset_metadata = self._read_metadata(one(glob(path + "/*.xlsx")))
+
+    def get(self, *context):
+        if len(context) != len(self.contextual_linkage):
+            self._logger.error(
+                "Dataset Control context wanted %s does not match linkage %s"
+                % (repr(context), repr(self.contextual_linkage))
+            )
+            return {}
+        if context in self.dataset_metadata:
+            self._logger.info("Dataset Control metadata found for: %s" % repr(context))
+            return self.dataset_metadata[context]
+        return {}
+
+    def _coerce_ands(self, name, value):
+        if name in (
+            "sample_id",
+            "library_id",
+            "dataset_id",
+            "bpa_sample_id",
+            "bpa_library_id",
+            "bpa_dataset_id",
+        ):
+            return ingest_utils.extract_ands_id(self._logger, value)
+        return value
+
+    def _read_metadata(self, fname):
+
+        field_spec = [
+            fld(
+                "access_control_date",
+                "access_control_date",
+                coerce=ingest_utils.date_or_int_or_comment,
+            ),
+            fld("access_control_reason", "access_control_reason"),
+            fld("related_data", "related_data"),
+        ]
+
+        # Handle some data types using prepending bpa_ to the linkage fields
+        if len(
+            set(self.contextual_linkage).intersection(
+                {"bpa_sample_id", "bpa_library_id", "bpa_dataset_id"},
+            )
+        ):
+            for field in ("bpa_sample_id", "bpa_library_id", "bpa_dataset_id"):
+                field_spec.append(
+                    fld(field, field, coerce=ingest_utils.extract_ands_id,)
+                )
+        else:
+            for field in ("sample_id", "library_id", "dataset_id"):
+                field_spec.append(
+                    fld(field, field, coerce=ingest_utils.extract_ands_id,)
+                )
+
+        dataset_metadata = {}
+        for sheet_name in self.sheet_names:
+            wrapper = ExcelWrapper(
+                self._logger,
+                field_spec,
+                fname,
+                sheet_name=sheet_name,
+                header_length=1,
+                column_name_row_index=0,
+                suggest_template=True,
+            )
+            for error in wrapper.get_errors():
+                self._logger.error(error)
+
+            name_mapping = self.name_mapping
+
+            for row in wrapper.get_all():
+                context = tuple(
+                    [
+                        self._coerce_ands(v, row._asdict().get(v, None))
+                        for v in self.contextual_linkage
+                    ]
+                )
+                # keys not existing in row to create linkage
+                if None in context:
+                    continue
+
+                if context in dataset_metadata:
+                    raise Exception(
+                        "duplicate ids for linkage {}: {}".format(
+                            repr(self.contextual_linkage), repr(context)
+                        )
+                    )
+
+                dataset_metadata[context] = row_meta = {}
+                for field in row._fields:
+                    value = getattr(row, field)
+                    if field in self.contextual_linkage:
+                        continue
+                    row_meta[name_mapping.get(field, field)] = value
+        return dataset_metadata
+
+    def filename_metadata(self, *args, **kwargs):
+        return {}
+

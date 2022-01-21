@@ -6,7 +6,7 @@ from glob import glob
 from unipath import Path
 
 from . import files
-from .contextual import AusargLibraryContextual
+from .contextual import AusargLibraryContextual, AusargDatasetControlContextual
 from .tracking import AusArgGoogleTrackMetadata
 from ...abstract import BaseMetadata
 from ...libs import ingest_utils
@@ -16,9 +16,10 @@ from ...sensitive_species_wrapper import SensitiveSpeciesWrapper
 from ...util import (
     sample_id_to_ckan_name,
     clean_tag_name,
+    apply_cc_by_license,
 )
 
-common_context = [AusargLibraryContextual]
+common_context = [AusargLibraryContextual, AusargDatasetControlContextual]
 
 
 class AusargBaseMetadata(BaseMetadata):
@@ -63,6 +64,7 @@ class AusargIlluminaFastqMetadata(AusargBaseMetadata):
     ckan_data_type = "ausarg-illumina-fastq"
     technology = "illumina-fastq"
     sequence_data_type = "illumina-shortread"
+    embargo_days = 365
     contextual_classes = common_context
     metadata_patterns = [r"^.*\.md5$", r"^.*_metadata.*.*\.xlsx$"]
     metadata_urls = [
@@ -231,11 +233,13 @@ class AusargIlluminaFastqMetadata(AusargBaseMetadata):
                         "id": name,
                         "type": self.ckan_data_type,
                         "sequence_data_type": self.sequence_data_type,
+                        "license_id": apply_cc_by_license(),
                         "data_generated": True,
                         "notes": self.build_notes_without_blanks(obj),
                     }
                 )
                 ingest_utils.permissions_organization_member(self._logger, obj)
+                ingest_utils.apply_access_control(self._logger, self, obj)
                 tag_names = ["illumina-fastq"]
                 obj["tags"] = [{"name": "{:.100}".format(t)} for t in tag_names]
                 packages.append(obj)
@@ -272,6 +276,7 @@ class AusargONTPromethionMetadata(AusargBaseMetadata):
     ckan_data_type = "ausarg-ont-promethion"
     technology = "ont-promethion"
     sequence_data_type = "ont-promethion"
+    embargo_days = 365
     contextual_classes = common_context
     metadata_patterns = [r"^.*\.md5$", r"^.*_metadata.*.*\.xlsx$"]
     metadata_urls = [
@@ -437,9 +442,11 @@ class AusargONTPromethionMetadata(AusargBaseMetadata):
                         "id": name,
                         "type": self.ckan_data_type,
                         "sequence_data_type": self.sequence_data_type,
+                        "license_id": apply_cc_by_license(),
                     }
                 )
                 ingest_utils.permissions_organization_member(self._logger, obj)
+                ingest_utils.apply_access_control(self._logger, self, obj)
                 tag_names = ["ont-promethion"]
                 obj["tags"] = [{"name": t} for t in tag_names]
                 self.track_xlsx_resource(obj, fname)
@@ -476,6 +483,7 @@ class AusargPacbioHifiMetadata(AusargBaseMetadata):
     ckan_data_type = "ausarg-pacbio-hifi"
     technology = "pacbio-hifi"
     sequence_data_type = "pacbio-hifi"
+    embargo_days = 365
     contextual_classes = common_context
     metadata_patterns = [r"^.*\.md5$", r"^.*[\._]metadata.*.*\.xlsx$"]
     metadata_urls = [
@@ -660,10 +668,12 @@ class AusargPacbioHifiMetadata(AusargBaseMetadata):
                         "dataset_url": track_get("download"),
                         "type": self.ckan_data_type,
                         "sequence_data_type": self.sequence_data_type,
+                        "license_id": apply_cc_by_license(),
                     }
                 )
-                ingest_utils.permissions_organization_member(self._logger, obj)
                 obj.update(context)
+                ingest_utils.permissions_organization_member(self._logger, obj)
+                ingest_utils.apply_access_control(self._logger, self, obj)
 
                 ingest_utils.add_spatial_extra(self._logger, obj)
                 tag_names = ["pacbio-hifi"]
@@ -732,6 +742,7 @@ class AusargExonCaptureMetadata(AusargBaseMetadata):
     ckan_data_type = "ausarg-exon-capture"
     technology = "exoncapture"
     sequence_data_type = "illumina-exoncapture"
+    embargo_days = 365
     contextual_classes = common_context
     metadata_patterns = [r"^.*\.md5$", r"^.*[lL]ibrary[mM]etadata.*\.xlsx$"]
     metadata_urls = [
@@ -926,10 +937,12 @@ class AusargExonCaptureMetadata(AusargBaseMetadata):
                         "dataset_url": track_get("download"),
                         "type": self.ckan_data_type,
                         "sequence_data_type": self.sequence_data_type,
+                        "license_id": apply_cc_by_license(),
                     }
                 )
-                ingest_utils.permissions_organization_member(self._logger, obj)
                 obj.update(context)
+                ingest_utils.permissions_organization_member(self._logger, obj)
+                ingest_utils.apply_access_control(self._logger, self, obj)
 
                 # remove obsoleted fields
                 obj.pop("library_index_id", False)
@@ -979,6 +992,7 @@ class AusargHiCMetadata(AusargBaseMetadata):
     description = "Hi-C"
     technology = "hi-c"
     sequence_data_type = "illumina-hic"
+    embargo_days = 365
     metadata_urls = [
         "https://downloads-qcif.bioplatforms.com/bpa/ausarg_staging/genomics-hi-c/",
     ]
@@ -1117,6 +1131,7 @@ class AusargHiCMetadata(AusargBaseMetadata):
                         "id": name,
                         "type": self.ckan_data_type,
                         "sequence_data_type": self.sequence_data_type,
+                        "license_id": apply_cc_by_license(),
                         "flowcell_id": row.flowcell_id,
                         "data_generated": True,
                         "library_id": raw_library_id,
@@ -1124,6 +1139,7 @@ class AusargHiCMetadata(AusargBaseMetadata):
                     }
                 )
                 ingest_utils.permissions_organization_member(self._logger, obj)
+                ingest_utils.apply_access_control(self._logger, self, obj)
                 tag_names = ["genomics"]
                 obj["tags"] = [{"name": "{:.100}".format(t)} for t in tag_names]
                 packages.append(obj)

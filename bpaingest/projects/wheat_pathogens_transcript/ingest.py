@@ -9,6 +9,7 @@ class WheatPathogensTranscriptMetadata(BaseMetadata):
     ]
     organization = "bpa-wheat-pathogens-transcript"
     omics = "transcriptomics"
+    embargo_days = 365
 
     def __init__(self, logger, metadata_path):
         super().__init__(logger, metadata_path)

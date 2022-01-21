@@ -11,6 +11,7 @@ from ...util import (
     csv_to_named_tuple,
     common_values,
     clean_tag_name,
+    apply_cc_by_license,
 )
 from ...abstract import BaseMetadata
 from ...libs.excel_wrapper import make_field_definition as fld
@@ -137,6 +138,7 @@ class SepsisGenomicsMiseqMetadata(BaseSepsisMetadata):
     ckan_data_type = "arp-genomics-miseq"
     omics = "genomics"
     sequence_data_type = "illumina-shortread"
+    embargo_days = 365
     technology = "miseq"
     spreadsheet = {
         "fields": [
@@ -209,6 +211,7 @@ class SepsisGenomicsMiseqMetadata(BaseSepsisMetadata):
                         "analysis_software_version": row.analysis_software_version,
                         "type": self.ckan_data_type,
                         "sequence_data_type": self.sequence_data_type,
+                        "license_id": apply_cc_by_license(),
                         "data_generated": True,
                     }
                 )
@@ -264,6 +267,7 @@ class SepsisGenomicsPacbioMetadata(BaseSepsisMetadata):
     ckan_data_type = "arp-genomics-pacbio"
     omics = "genomics"
     sequence_data_type = "pacbio-clr"
+    embargo_days = 365
     technology = "pacbio"
     spreadsheet = {
         "fields": [
@@ -349,6 +353,7 @@ class SepsisGenomicsPacbioMetadata(BaseSepsisMetadata):
                         "rs_version": row.rs_version,
                         "type": self.ckan_data_type,
                         "sequence_data_type": self.sequence_data_type,
+                        "license_id": apply_cc_by_license(),
                         "data_generated": True,
                     }
                 )
@@ -397,6 +402,7 @@ class SepsisTranscriptomicsHiseqMetadata(BaseSepsisMetadata):
     ckan_data_type = "arp-transcriptomics-hiseq"
     omics = "transcriptomics"
     sequence_data_type = "illumina-transcriptomics"
+    embargo_days = 365
     technology = "hiseq"
     spreadsheet = {
         "fields": [
@@ -507,6 +513,7 @@ class SepsisTranscriptomicsHiseqMetadata(BaseSepsisMetadata):
                     "casava_version": row.casava_version,
                     "type": self.ckan_data_type,
                     "sequence_data_type": self.sequence_data_type,
+                    "license_id": apply_cc_by_license(),
                     "data_generated": True,
                 }
             )
@@ -560,6 +567,7 @@ class SepsisMetabolomicsGCMSMetadata(BaseSepsisMetadata):
     ckan_data_type = "arp-metabolomics-gcms"
     omics = "metabolomics"
     sequence_data_type = "metabolomics"
+    embargo_days = 365
     technology = "gcms"
     spreadsheet = {
         "fields": [
@@ -645,6 +653,7 @@ class SepsisMetabolomicsGCMSMetadata(BaseSepsisMetadata):
                         "raw_file_name": row.raw_file_name,
                         "type": self.ckan_data_type,
                         "sequence_data_type": self.sequence_data_type,
+                        "license_id": apply_cc_by_license(),
                         "data_generated": True,
                     }
                 )
@@ -690,6 +699,7 @@ class SepsisMetabolomicsLCMSMetadata(BaseSepsisMetadata):
     ckan_data_type = "arp-metabolomics-lcms"
     omics = "metabolomics"
     sequence_data_type = "metabolomics"
+    embargo_days = 365
     technology = "lcms"
     spreadsheet = {
         "fields": [
@@ -780,6 +790,7 @@ class SepsisMetabolomicsLCMSMetadata(BaseSepsisMetadata):
                         "raw_file_name": row.raw_file_name,
                         "type": self.ckan_data_type,
                         "sequence_data_type": self.sequence_data_type,
+                        "license_id": apply_cc_by_license(),
                         "data_generated": True,
                     }
                 )
@@ -828,6 +839,7 @@ class SepsisProteomicsMS1QuantificationMetadata(BaseSepsisMetadata):
     ckan_data_type = "arp-proteomics-ms1quantification"
     omics = "proteomics"
     sequence_data_type = "proteomics"
+    embargo_days = 365
     technology = "ms1quantification"
     spreadsheet = {
         "fields": [
@@ -935,6 +947,7 @@ class SepsisProteomicsMS1QuantificationMetadata(BaseSepsisMetadata):
                         % (taxon, strain, obj["growth_media"], obj["replicate"]),
                         "type": self.ckan_data_type,
                         "sequence_data_type": self.sequence_data_type,
+                        "license_id": apply_cc_by_license(),
                         "data_generated": True,
                     }
                 )
@@ -1141,6 +1154,7 @@ class SepsisProteomicsSwathMSBaseSepsisMetadata(BaseSepsisMetadata):
                     ),
                     "type": self.ckan_data_type,
                     "sequence_data_type": self.sequence_data_type,
+                    "license_id": apply_cc_by_license(),
                     "data_generated": True,
                 }
             )
@@ -1203,6 +1217,7 @@ class SepsisProteomicsSwathMSCombinedSampleMetadata(BaseSepsisMetadata):
     resource_linkage = ("folder_name",)
     omics = "proteomics"
     sequence_data_type = "proteomics"
+    embargo_days = 365
     technology = "swathms-combined-sample"
     spreadsheet = {
         "fields": [
@@ -1279,6 +1294,7 @@ class SepsisProteomicsSwathMSCombinedSampleMetadata(BaseSepsisMetadata):
                     "data_generated": "True",
                     "type": self.ckan_data_type,
                     "sequence_data_type": self.sequence_data_type,
+                    "license_id": apply_cc_by_license(),
                     "date_of_transfer": ingest_utils.get_date_isoformat(
                         self._logger, track_meta.date_of_transfer
                     ),
@@ -1350,6 +1366,7 @@ class SepsisProteomics2DLibraryMetadata(BaseSepsisMetadata):
     resource_linkage = ("folder_name",)
     omics = "proteomics"
     sequence_data_type = "proteomics"
+    embargo_days = 365
     technology = "2dlibrary"
     spreadsheet = {
         "fields": [
@@ -1425,6 +1442,7 @@ class SepsisProteomics2DLibraryMetadata(BaseSepsisMetadata):
                     "data_generated": "True",
                     "type": self.ckan_data_type,
                     "sequence_data_type": self.sequence_data_type,
+                    "license_id": apply_cc_by_license(),
                     "date_of_transfer": ingest_utils.get_date_isoformat(
                         self._logger, track_meta.date_of_transfer
                     ),
@@ -1488,6 +1506,7 @@ class SepsisProteomics2DLibraryMetadata(BaseSepsisMetadata):
 class SepsisProteomicsSwathMSMetadata(SepsisProteomicsSwathMSBaseSepsisMetadata):
     ckan_data_type = "arp-proteomics-swathms"
     sequence_data_type = "proteomics"
+    embargo_days = 365
     md5 = {
         "match": [
             files.proteomics_swathms_1d_ida_filename_re,
@@ -1512,6 +1531,7 @@ class SepsisProteomicsSwathMSMetadata(SepsisProteomicsSwathMSBaseSepsisMetadata)
 class SepsisProteomicsSwathMSPoolMetadata(SepsisProteomicsSwathMSBaseSepsisMetadata):
     ckan_data_type = "arp-proteomics-swathms-pool"
     sequence_data_type = "proteomics"
+    embargo_days = 365
     pool = True
     resource_linkage = ("pool_sample_ids",)
     md5 = {
@@ -1591,6 +1611,7 @@ class SepsisProteomicsAnalysedMetadata(BaseSepsisAnalysedMetadata):
     resource_linkage = ("folder_name",)
     omics = "proteomics"
     sequence_data_type = "proteomics"
+    embargo_days = 365
     technology = "analysed"
     spreadsheet = {
         "fields": [
@@ -1685,6 +1706,7 @@ class SepsisProteomicsAnalysedMetadata(BaseSepsisAnalysedMetadata):
                     "data_generated": "True",
                     "type": self.ckan_data_type,
                     "sequence_data_type": self.sequence_data_type,
+                    "license_id": apply_cc_by_license(),
                     "date_of_transfer": ingest_utils.get_date_isoformat(
                         self._logger, track_meta.date_of_transfer
                     ),
@@ -1766,6 +1788,7 @@ class SepsisTranscriptomicsAnalysedMetadata(BaseSepsisAnalysedMetadata):
     resource_linkage = ("ticket",)
     omics = "transcriptomics"
     sequence_data_type = "transcriptomics-analysed"
+    embargo_days = 365
     technology = "analysed"
     spreadsheet = {
         "fields": [
@@ -1863,6 +1886,7 @@ class SepsisTranscriptomicsAnalysedMetadata(BaseSepsisAnalysedMetadata):
                     "data_generated": "True",
                     "type": self.ckan_data_type,
                     "sequence_data_type": self.sequence_data_type,
+                    "license_id": apply_cc_by_license(),
                     "date_of_transfer": ingest_utils.get_date_isoformat(
                         self._logger, track_meta.date_of_transfer
                     ),
@@ -1934,6 +1958,7 @@ class SepsisMetabolomicsAnalysedMetadata(BaseSepsisAnalysedMetadata):
     resource_linkage = ("folder_name",)
     omics = "metabolomics"
     sequence_data_type = "metabolomics-analysed"
+    embargo_days = 365
     technology = "analysed"
     spreadsheet = {
         "fields": [
@@ -2022,6 +2047,7 @@ class SepsisMetabolomicsAnalysedMetadata(BaseSepsisAnalysedMetadata):
                     "data_generated": "True",
                     "type": self.ckan_data_type,
                     "sequence_data_type": self.sequence_data_type,
+                    "license_id": apply_cc_by_license(),
                     "date_of_transfer": ingest_utils.get_date_isoformat(
                         self._logger, track_meta.date_of_transfer
                     ),
@@ -2192,6 +2218,7 @@ class SepsisGenomicsAnalysedMetadata(BaseSepsisAnalysedMetadata):
                     "data_generated": "True",
                     "type": self.ckan_data_type,
                     "sequence_data_type": self.sequence_data_type,
+                    "license_id": apply_cc_by_license(),
                     "date_of_transfer": ingest_utils.get_date_isoformat(
                         self._logger, track_meta.date_of_transfer
                     ),
@@ -2347,6 +2374,7 @@ class SepsisProteomicsProteinDatabaseMetadata(BaseSepsisAnalysedMetadata):
                     "data_generated": "True",
                     "type": self.ckan_data_type,
                     "sequence_data_type": self.sequence_data_type,
+                    "license_id": apply_cc_by_license(),
                     "date_of_transfer": ingest_utils.get_date_isoformat(
                         self._logger, track_meta.date_of_transfer
                     ),
