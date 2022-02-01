@@ -955,11 +955,11 @@ class BASESiteImagesMetadata(AMDFullIngestMetadata):
 
 
 marine_read_lengths = {
-    "16s": "300bp",
-    "a16s": "300bp",
-    "18s": "250bp",
-    "a16": "300bp",
-    "its": "300bp",
+    "16S": "300bp",
+    "A16S": "300bp",
+    "18S": "250bp",
+    "A16": "300bp",
+    "ITS": "300bp",
 }
 
 
@@ -1166,7 +1166,7 @@ class MarineMicrobesAmpliconsMetadata(AMDFullIngestMetadata):
                         "sample_extraction_id": ingest_utils.make_sample_extraction_id(
                             row.sample_extraction_id, sample_id
                         ),
-                        "read_length": mm_amplicon_read_length(row.amplicon),
+                        "read_length": mm_amplicon_read_length(amplicon),
                         "target": row.target,
                         "pass_fail": ingest_utils.merge_pass_fail(row),
                         "dilution_used": row.dilution_used,
@@ -1288,7 +1288,7 @@ class MarineMicrobesAmpliconsControlMetadata(AMDFullIngestMetadata):
         packages = []
         for flow_id, info in sorted(flow_id_info.items()):
             obj = {}
-            amplicon = info["amplicon"]
+            amplicon = info["amplicon"].upper()
             name = sample_id_to_ckan_name(
                 "control", self.ckan_data_type + "-" + amplicon, flow_id
             ).lower()
@@ -1349,7 +1349,7 @@ class MarineMicrobesAmpliconsControlMetadata(AMDFullIngestMetadata):
             self._logger.info("Processing md5 file {}".format(md5_file))
             for filename, md5, file_info in self.parse_md5file(md5_file):
                 xlsx_info = self.metadata_info[os.path.basename(md5_file)]
-                amplicon = xlsx_info["amplicon"]
+                amplicon = xlsx_info["amplicon"].upper()
                 resource = file_info.copy()
                 resource["md5"] = resource["id"] = md5
                 resource["name"] = filename
@@ -2111,7 +2111,7 @@ class AustralianMicrobiomeAmpliconsControlMetadata(AMDFullIngestMetadata):
         packages = []
         for flow_id, info in sorted(flow_id_info.items()):
             obj = {}
-            amplicon = info["amplicon"]
+            amplicon = info["amplicon"].upper()
             name = sample_id_to_ckan_name(
                 "control", self.ckan_data_type + "-" + amplicon, flow_id
             ).lower()
@@ -2171,7 +2171,7 @@ class AustralianMicrobiomeAmpliconsControlMetadata(AMDFullIngestMetadata):
             self._logger.info("Processing md5 file {}".format(md5_file))
             for filename, md5, file_info in self.parse_md5file(md5_file):
                 xlsx_info = self.metadata_info[os.path.basename(md5_file)]
-                amplicon = xlsx_info["amplicon"]
+                amplicon = xlsx_info["amplicon"].upper()
                 resource = file_info.copy()
                 resource["md5"] = resource["id"] = md5
                 resource["name"] = filename
