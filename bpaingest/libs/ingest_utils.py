@@ -405,6 +405,8 @@ def add_spatial_extra(logger, package):
     lat = get_clean_number(logger, package.get("latitude"))
     lng = get_clean_number(logger, package.get("longitude"))
     if not lat or not lng:
+        # Ensure spatial field is cleared
+        package["spatial"] = ""
         return
     geo = {"type": "Point", "coordinates": [lng, lat]}
     package["spatial"] = json.dumps(geo, sort_keys=True)
