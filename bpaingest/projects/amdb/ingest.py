@@ -343,7 +343,7 @@ class BASEAmpliconsMetadata(AMDFullIngestMetadata):
                     {
                         "name": name,
                         "id": name,
-                        "sample_type": "soil",
+                        "sample_type": "Soil",
                         "read_length": base_amplicon_read_length(
                             amplicon
                         ),  # hard-coded for now, on advice of AB at CSIRO
@@ -662,7 +662,7 @@ class BASEMetagenomicsMetadata(AMDFullIngestMetadata):
 
         obj = {
             "name": name,
-            "sample_type": "soil",
+            "sample_type": "Soil",
             "id": name,
             "sample_id": sample_id,
             "flow_id": flow_id,
