@@ -20,7 +20,12 @@ from ...util import (
     common_values,
     one,
 )
-from .contextual import AustralianMicrobiomeSampleContextual, BASENCBIContextual, MarineMicrobesNCBIContextual, AustralianMicrobiomeDatasetControlContextual
+from .contextual import (
+    AustralianMicrobiomeSampleContextual,
+    BASENCBIContextual,
+    MarineMicrobesNCBIContextual,
+    AustralianMicrobiomeDatasetControlContextual,
+)
 from .tracking import (
     AustralianMicrobiomeGoogleTrackMetadata,
     BASETrackMetadata,
@@ -28,7 +33,10 @@ from .tracking import (
     MarineMicrobesTrackMetadata,
 )
 
-common_context = [AustralianMicrobiomeSampleContextual, AustralianMicrobiomeDatasetControlContextual]
+common_context = [
+    AustralianMicrobiomeSampleContextual,
+    AustralianMicrobiomeDatasetControlContextual,
+]
 ncbi_context = [
     BASENCBIContextual,
     MarineMicrobesNCBIContextual,
@@ -376,7 +384,11 @@ class BASEAmpliconsMetadata(AMDFullIngestMetadata):
                     }
                 )
                 ingest_utils.permissions_organization_member_after_embargo(
-                    self._logger, obj, "archive_ingestion_date", self.embargo_days, CONSORTIUM_ORG_NAME
+                    self._logger,
+                    obj,
+                    "archive_ingestion_date",
+                    self.embargo_days,
+                    CONSORTIUM_ORG_NAME,
                 )
                 for contextual_source in self.contextual_metadata:
                     filter_out_metadata_fields(contextual_source.get(sample_id))
@@ -483,10 +495,10 @@ class BASEAmpliconsControlMetadata(AMDFullIngestMetadata):
             ).lower()
             track_meta = self.track_meta.get(info["ticket"])
 
-            def track_get(k):
+            def track_get(k, default=None):
                 if track_meta is None:
                     return None
-                return getattr(track_meta, k)
+                return getattr(track_meta, k, default)
 
             archive_ingestion_date = ingest_utils.get_date_isoformat(
                 self._logger, track_get("date_of_transfer_to_archive")
@@ -504,7 +516,8 @@ class BASEAmpliconsControlMetadata(AMDFullIngestMetadata):
                     "omics": "Genomics",
                     "analytical_platform": "MiSeq",
                     "date_of_transfer": ingest_utils.get_date_isoformat(
-                        self._logger, track_get("date_of_transfer")
+                        self._logger,
+                        track_get("date_of_transfer", default=archive_ingestion_date),
                     ),
                     "data_type": track_get("data_type"),
                     "description": track_get("description"),
@@ -527,7 +540,11 @@ class BASEAmpliconsControlMetadata(AMDFullIngestMetadata):
                 }
             )
             ingest_utils.permissions_organization_member_after_embargo(
-                self._logger, obj, "archive_ingestion_date", self.embargo_days, CONSORTIUM_ORG_NAME
+                self._logger,
+                obj,
+                "archive_ingestion_date",
+                self.embargo_days,
+                CONSORTIUM_ORG_NAME,
             )
             ingest_utils.apply_access_control(self._logger, self, obj)
             ingest_utils.add_spatial_extra(self._logger, obj)
@@ -634,16 +651,29 @@ class BASEMetagenomicsMetadata(AMDFullIngestMetadata):
 
     bad_flow_ids = ["H8AABADXX"]
 
+    missing_ingest_dates = [
+        "BRLOPS-638",
+        "BRLOPS-649",
+        "BRLOPS-650",
+        "BRLOPS-652",
+        "BPAOPS-117",
+        "BPAOPS-140",
+    ]
+
     def __init__(self, logger, metadata_path, **kwargs):
         super().__init__(logger, metadata_path, **kwargs)
         self.contextual_metadata = kwargs["contextual_metadata"]
         self.track_meta = BASETrackMetadata()
 
     def assemble_obj(self, sample_id, sample_extraction_id, flow_id, row, track_meta):
-        def track_get(k):
+        def track_get(k, default=None):
+            if row.ticket.strip() in self.missing_ingest_dates and k.startswith(
+                "date_of_transfer"
+            ):
+                return "2017-05-11"
             if track_meta is None:
                 return None
-            return getattr(track_meta, k)
+            return getattr(track_meta, k, default)
 
         def row_get(k, v_fn=None):
             if row is None:
@@ -677,7 +707,8 @@ class BASEMetagenomicsMetadata(AMDFullIngestMetadata):
             "ticket": row_get("ticket"),
             "facility": row_get("facility_code", lambda v: v.upper()),
             "date_of_transfer": ingest_utils.get_date_isoformat(
-                self._logger, track_get("date_of_transfer")
+                self._logger,
+                track_get("date_of_transfer", default=archive_ingestion_date),
             ),
             "sample_submission_date": ingest_utils.get_date_isoformat(
                 self._logger, track_get("date_of_transfer")
@@ -695,7 +726,11 @@ class BASEMetagenomicsMetadata(AMDFullIngestMetadata):
             "sequence_data_type": self.sequence_data_type,
         }
         ingest_utils.permissions_organization_member_after_embargo(
-            self._logger, obj, "archive_ingestion_date", self.embargo_days, CONSORTIUM_ORG_NAME
+            self._logger,
+            obj,
+            "archive_ingestion_date",
+            self.embargo_days,
+            CONSORTIUM_ORG_NAME,
         )
         for contextual_source in self.contextual_metadata:
             obj.update(contextual_source.get(sample_id))
@@ -781,7 +816,7 @@ class BASEMetagenomicsMetadata(AMDFullIngestMetadata):
             for row in uniq_rows:
                 track_meta = self.track_meta.get(row.ticket)
                 if not track_meta:
-                    self._logger.critical(
+                    self._logger.error(
                         "No tracking metadata for: {}".format(xlsx_info)
                     )
                 # pilot data has the flow cell in the spreadsheet; in the main dataset
@@ -923,6 +958,10 @@ class BASESiteImagesMetadata(AMDFullIngestMetadata):
                     "sequence_data_type": self.sequence_data_type,
                 }
             )
+
+            # date if none provided
+            obj.setdefault("date_of_transfer", "2017-04-28")
+
             ingest_utils.permissions_organization_member(self._logger, obj)
             self.build_notes_into_object(obj)
             ingest_utils.apply_access_control(self._logger, self, obj)
@@ -1200,7 +1239,11 @@ class MarineMicrobesAmpliconsMetadata(AMDFullIngestMetadata):
                     }
                 )
                 ingest_utils.permissions_organization_member_after_embargo(
-                    self._logger, obj, "archive_ingestion_date", self.embargo_days, CONSORTIUM_ORG_NAME
+                    self._logger,
+                    obj,
+                    "archive_ingestion_date",
+                    self.embargo_days,
+                    CONSORTIUM_ORG_NAME,
                 )
                 for contextual_source in self.contextual_metadata:
                     obj.update(contextual_source.get(sample_id))
@@ -1331,7 +1374,11 @@ class MarineMicrobesAmpliconsControlMetadata(AMDFullIngestMetadata):
                 }
             )
             ingest_utils.permissions_organization_member_after_embargo(
-                self._logger, obj, "archive_ingestion_date", self.embargo_days, CONSORTIUM_ORG_NAME
+                self._logger,
+                obj,
+                "archive_ingestion_date",
+                self.embargo_days,
+                CONSORTIUM_ORG_NAME,
             )
             ingest_utils.add_spatial_extra(self._logger, obj)
             self.build_notes_into_object(obj)
@@ -1479,7 +1526,11 @@ class MarineMicrobesMetagenomicsMetadata(BaseMarineMicrobesMetadata):
                     }
                 )
                 ingest_utils.permissions_organization_member_after_embargo(
-                    self._logger, obj, "archive_ingestion_date", self.embargo_days, CONSORTIUM_ORG_NAME
+                    self._logger,
+                    obj,
+                    "archive_ingestion_date",
+                    self.embargo_days,
+                    CONSORTIUM_ORG_NAME,
                 )
                 for contextual_source in self.contextual_metadata:
                     obj.update(contextual_source.get(sample_id))
@@ -1629,7 +1680,11 @@ class MarineMicrobesMetatranscriptomeMetadata(BaseMarineMicrobesMetadata):
                 }
             )
             ingest_utils.permissions_organization_member_after_embargo(
-                self._logger, obj, "archive_ingestion_date", self.embargo_days, CONSORTIUM_ORG_NAME
+                self._logger,
+                obj,
+                "archive_ingestion_date",
+                self.embargo_days,
+                CONSORTIUM_ORG_NAME,
             )
             for contextual_source in self.contextual_metadata:
                 obj.update(contextual_source.get(sample_id))
@@ -1781,7 +1836,11 @@ class AustralianMicrobiomeMetagenomicsNovaseqMetadata(AMDFullIngestMetadata):
                     }
                 )
                 ingest_utils.permissions_organization_member_after_embargo(
-                    self._logger, obj, "archive_ingestion_date", self.embargo_days, CONSORTIUM_ORG_NAME
+                    self._logger,
+                    obj,
+                    "archive_ingestion_date",
+                    self.embargo_days,
+                    CONSORTIUM_ORG_NAME,
                 )
                 for contextual_source in self.contextual_metadata:
                     obj.update(contextual_source.get(sample_id))
@@ -1891,7 +1950,11 @@ class AustralianMicrobiomeMetagenomicsNovaseqControlMetadata(AMDFullIngestMetada
                 }
             )
             ingest_utils.permissions_organization_member_after_embargo(
-                self._logger, obj, "archive_ingestion_date", self.embargo_days, CONSORTIUM_ORG_NAME
+                self._logger,
+                obj,
+                "archive_ingestion_date",
+                self.embargo_days,
+                CONSORTIUM_ORG_NAME,
             )
             ingest_utils.add_spatial_extra(self._logger, obj)
             self.build_notes_into_object(obj)
@@ -1941,7 +2004,7 @@ class AustralianMicrobiomeAmpliconsMetadata(AMDFullIngestMetadata):
             fld("analysis_software_version", "analysissoftwareversion"),
             fld("comments", "comments"),
             fld("index", "index"),
-            fld('pcr_plate_name', 'pcr plate name', optional=True),
+            fld("pcr_plate_name", "pcr plate name", optional=True),
         ],
         "options": {"header_length": 1, "column_name_row_index": 0,},
     }
@@ -2153,7 +2216,11 @@ class AustralianMicrobiomeAmpliconsControlMetadata(AMDFullIngestMetadata):
                 }
             )
             ingest_utils.permissions_organization_member_after_embargo(
-                self._logger, obj, "archive_ingestion_date", self.embargo_days, CONSORTIUM_ORG_NAME
+                self._logger,
+                obj,
+                "archive_ingestion_date",
+                self.embargo_days,
+                CONSORTIUM_ORG_NAME,
             )
             ingest_utils.add_spatial_extra(self._logger, obj)
             self.build_notes_into_object(obj)
