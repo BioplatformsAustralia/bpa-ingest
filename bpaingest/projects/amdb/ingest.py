@@ -1989,7 +1989,7 @@ class AustralianMicrobiomeAmpliconsMetadata(AMDFullIngestMetadata):
     sequence_data_type = "illumina-amplicons"
     embargo_days = 90
     contextual_classes = common_context
-    metadata_patterns = [r"^.*\.md5", r"^.*_metadata.*.*\.xlsx"]
+    metadata_patterns = [r"^.*\.md5$", r"^.*_metadata.*.*\.xlsx"]
     resource_linkage = ("sample_id", "flow_id", "index")
     spreadsheet = {
         "fields": [
