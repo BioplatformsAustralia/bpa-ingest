@@ -1065,7 +1065,7 @@ class MarineMicrobesAmpliconsMetadata(AMDFullIngestMetadata):
     contextual_classes = common_context + ncbi_context
     sequence_data_type = "illumina-amplicons"
     embargo_days = 90
-    metadata_patterns = [r"^.*\.md5", r"^.*_metadata.*.*\.xlsx"]
+    metadata_patterns = [r"^.*\.md5$", r"^.*_metadata.*.*\.xlsx"]
     resource_linkage = ("sample_id", "mm_amplicon_linkage")
     amplicon_tracker = {
         "16s": "Amplicon16STrack",
@@ -1308,7 +1308,7 @@ class MarineMicrobesAmpliconsControlMetadata(AMDFullIngestMetadata):
     sequence_data_type = "illumina-amplicons"
     embargo_days = 90
     contextual_classes = []
-    metadata_patterns = [r"^.*\.md5"]
+    metadata_patterns = [r"^.*\.md5$"]
     resource_linkage = ("amplicon", "flow_id")
     md5 = {
         "match": [files.mm_amplicon_control_filename_re],
@@ -1426,7 +1426,7 @@ class MarineMicrobesMetagenomicsMetadata(BaseMarineMicrobesMetadata):
     embargo_days = 90
     omics = "metagenomics"
     contextual_classes = common_context + ncbi_context
-    metadata_patterns = [r"^.*\.md5", r"^.*_metadata.*\.xlsx"]
+    metadata_patterns = [r"^.*\.md5$", r"^.*_metadata.*\.xlsx"]
     metadata_urls = [
         "https://downloads-qcif.bioplatforms.com/bpa/marine_microbes/raw/metagenomics/"
     ]
@@ -1576,7 +1576,7 @@ class MarineMicrobesMetatranscriptomeMetadata(BaseMarineMicrobesMetadata):
     embargo_days = 90
     contextual_classes = common_context + ncbi_context
     omics = "metatranscriptomics"
-    metadata_patterns = [r"^.*\.md5", r"^.*_metadata.*\.xlsx"]
+    metadata_patterns = [r"^.*\.md5$", r"^.*_metadata.*\.xlsx"]
     metadata_urls = [
         "https://downloads-qcif.bioplatforms.com/bpa/marine_microbes/raw/metatranscriptome/"
     ]
