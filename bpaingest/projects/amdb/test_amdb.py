@@ -167,6 +167,7 @@ def test_amd_amplicon_control_re():
         "Fungal_mock_community_ITS_J9GNL_AATGTCCG-GACACTGA_S1_L001_R2.fastq.gz",
         "No_Template_Control_ITS_J9GNL_AATGTCCG-TAGTGTAG_S3_L001_R2.fastq.gz",
         "Soil_DNA_ITS_J9GNL_AATGTCCG-TGCGTACG_S2_L001_I1.fastq.gz",
+        "NEG_16S_K9276_ATTCCTGT-ACGACGTG_S56_L001_I1.fastq.gz",
     ]
     for filename in filenames:
         assert amd_amplicon_control_filename_re.match(filename) is not None
