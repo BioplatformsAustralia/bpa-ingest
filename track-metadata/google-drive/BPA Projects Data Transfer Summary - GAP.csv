@@ -60,4 +60,5 @@ GWA,1/10/2021,376315,382897,83712,Xanthorrhoea johnsonii,Reference Genomes,Main 
 GWA,1/10/2021,376316,380537,83686,Phebalium stellatum,Reference Genomes,Main dataset,PacBio-HiFi,20210909_GAP_GWA_GWA-AJ-236_DA110355,4/10/2021,11/10/2021,BPAOPS-1141,https://data.bioplatforms.com/dataset/bpa-gap-pacbio-hifi-380537-da110355
 GWA,1/10/2021,376318,380536,83685,Wahlenbergia ceracea,Reference Genomes,Main dataset,PacBio-HiFi,20210902_GAP_GWA_GWA-AJ-236_DA088487,4/10/2021,11/10/2021,BPAOPS-1142,https://data.bioplatforms.com/dataset/bpa-gap-pacbio-hifi-380536-da088487
 GWA,1/10/2021,376318,382896,83711,Wahlenbergia ceracea,Reference Genomes,Main dataset,PacBio-HiFi,20210909_GAP_GWA_GWA-AJ-236_DA110366,4/10/2021,11/10/2021,BPAOPS-1143,https://data.bioplatforms.com/dataset/bpa-gap-pacbio-hifi-382896-da110366
-AGRF,10/12/2021,,,83668,Gompholobium,Conservation genomics,Main dataset,ddRAD,AGRF_GAP_HNH57DRXY_83668,11/12/2021,,BPAOPS-1179,
+AGRF,10/12/2021,,,83668,Gompholobium,Conservation genomics,Main dataset,ddRAD,AGRF_GAP_HNH57DRXY_83668,11/12/2021,15/12/2021,BPAOPS-1179,https://data.bioplatforms.com/dataset/bpa-gap-genomics-ddrad-102_100_100_83668-hnh57drxy
+AGRF,23/02/2022,,,83692,Ericaceae,Phylogenomics - AATOL Stage 2 (Ericaceae) - 96 samples,Main dataset,Illumina Short Read,20220221_GAP_AGRF_CAGRF22029587_HVW2CDRXY,23/2/2022,,BPAOPS-1198,
