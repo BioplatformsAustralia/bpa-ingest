@@ -315,6 +315,7 @@ def _get_date(logger, dt, silent=False):
         or dt == "Not applicable"
         or dt == "not applicable"
         or dt == "no information"
+        or dt == "Not submitted"
         or dt == "(null)"
         or dt == "NA"
         or dt == "n/a"
