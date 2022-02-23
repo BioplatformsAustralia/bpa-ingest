@@ -489,6 +489,7 @@ def apply_access_control(logger, metadata, obj):
         )
 
         obj["access_control_mode"] = "closed"
+        obj["access_control_date"] = ""
         obj[
             "access_control_reason"
         ] = "Unable to determine correct embargo period. {}".format(
