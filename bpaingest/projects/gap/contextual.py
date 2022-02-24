@@ -19,7 +19,7 @@ def date_or_str(logger, v):
 
 class GAPDatasetControlContextual(BaseDatasetControlContextual):
     metadata_urls = [
-        "https://downloads-qcif.bioplatforms.com/bpa/plants_staging/dataset_control/2021-11-11/"
+        "https://downloads-qcif.bioplatforms.com/bpa/plants_staging/dataset_control/2021-11-24/"
     ]
     name = "gap-dataset-contextual"
     contextual_linkage = ("library_id", "dataset_id")
@@ -27,7 +27,7 @@ class GAPDatasetControlContextual(BaseDatasetControlContextual):
 
 class GAPLibraryContextual:
     metadata_urls = [
-        "https://downloads-qcif.bioplatforms.com/bpa/plants_staging/metadata/2022-02-23/"
+        "https://downloads-qcif.bioplatforms.com/bpa/plants_staging/metadata/2022-02-24/"
     ]
     metadata_patterns = [re.compile(r"^.*\.xlsx$")]
     name = "gap-library-contextual"
@@ -36,6 +36,8 @@ class GAPLibraryContextual:
         "Phylogenomics_pilot",
         "Phylo AATOL - Run 1",
         "Phylo AATOL - Run 2",
+        "Phylo Stage 2_single bait",
+        "Phylo Stage 2_2xbaits",
         "Conservation ",
     ]
 
@@ -168,6 +170,13 @@ class GAPLibraryContextual:
             fld("location_notes", "location_notes", optional=True),
             fld("population_group", "population_group", optional=True),
             fld("species_complex", "species_complex", optional=True),
+            # decimal_latitude
+            fld("decimal_latitude", "decimal_latitude", optional=True),
+            fld("decimal_latitude_public", "decimal_latitude", optional=True),
+            # decimal_longitude
+            fld("decimal_longitude", "decimal_longitude", optional=True),
+            fld("decimal_longitude_public", "decimal_longitude", optional=True),
+            #
             skp("decimal_latitude (will not be made public)"),
             skp("decimal_longitude (will not be made public)"),
             skp("description_googledoc_(remove before sending to gb)"),
