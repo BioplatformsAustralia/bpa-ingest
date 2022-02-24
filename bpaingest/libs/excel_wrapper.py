@@ -86,6 +86,12 @@ class ExcelWrapper:
         else:
             self.sheet = self.workbook.sheet_by_name(sheet_name)
 
+        if self.sheet.visibility > 0:
+            raise Exception(
+                "Sheet named '%s' in %s is not visible.  Correct and re-run"
+                % (sheet_name, file_name)
+            )
+
         self.missing_headers = []
         self.header, self.name_to_column_map = self.set_name_to_column_map()
         self.field_names = self._set_field_names()
