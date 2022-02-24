@@ -74,6 +74,13 @@ class ExcelWrapper:
         self.suggest_template = suggest_template
 
         self.workbook = xlrd.open_workbook(file_name)
+
+        if sheet_name is not None:
+            if sheet_name not in self.workbook.sheet_names():
+                raise Exception(
+                    "Missing sheet named '%s' in %s" % (sheet_name, file_name)
+                )
+
         if sheet_name is None:
             self.sheet = self.workbook.sheet_by_index(0)
         else:
