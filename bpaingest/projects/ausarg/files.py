@@ -8,7 +8,7 @@ logger = make_logger(__name__)
 ILLUMINA_FASTQ_PATTERN = r"""
     (?P<library_id>\d{4,6})_
     AusARG_
-    (?P<facility_id>(UNSW))_
+    (?P<facility_id>(UNSW|BRF))_
     (?P<flowcell_id>\w{9,10})_
     (?P<index>[G|A|T|C|-]*)_
     (?P<runsamplenum>S\d*)_
@@ -21,7 +21,7 @@ illumina_fastq_re = re.compile(ILLUMINA_FASTQ_PATTERN, re.VERBOSE)
 
 METADATA_SHEET_PATTERN = r"""
     AusARG_
-    (?P<facility_id>(UNSW))_
+    (?P<facility_id>(UNSW|BRF))_
     (?P<flowcell_id>\w{9,10})_
     metadata.xlsx
 """
