@@ -42,12 +42,14 @@ class AustralianMicrobiomeSchema:
         context_definitions = {c.column_name: c.units for c in context_field_specs}
         for s in schema_definitions:
             if s not in context_definitions:
-                raise Exception(
+                self._logger.error(
                     f"Schema definition column: {s} not found in context class"
                 )
         for c in context_definitions:
             if c not in schema_definitions:
-                raise Exception(f"Context Class column: {c} not found in schema class")
+                self._logger.error(
+                    f"Context Class column: {c} not found in schema class"
+                )
             if (
                 schema_definitions[c] in missing_values
                 and context_definitions[c] in missing_values
