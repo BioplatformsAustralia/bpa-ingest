@@ -26,7 +26,7 @@ class AustralianMicrobiomeSchema:
             if pandas_format is None:
                 pandas_format = "records"
             schema_as_dataframes = pandas.read_excel(
-                self.source_path, sheet_name=0, usecols=use_cols
+                self.source_path, sheet_name=self.sheet_name, usecols=use_cols
             )
             self.schema_definitions = schema_as_dataframes.to_dict(pandas_format)
         return self.schema_definitions
