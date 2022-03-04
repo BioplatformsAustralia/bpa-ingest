@@ -112,16 +112,22 @@ class AMDBaseMetadata(BaseMetadata):
         self._logger.info(
             "validating current schema units against current schema definitions file..."
         )
-        if len(self.contextual_classes) != 1:
-            raise Exception("Can only compare 1 contextual metadata file")
-        context_object = self.contextual_classes[0]
-        context_sheet_name = context_object.sheet_name
+        if len(self.contextual_classes) == 0:
+                self._logger.warn("No contextual data available.")
+                self._logger.info("Validation terminated.")
+                return
         if len(self.schema_definitions) != 1:
-            raise Exception("Can only compare 1 contextual metadata file")
-        schema_object = self.schema_definitions[0]
-        schema_object.validate_schema_units(
-            context_object.field_specs[context_sheet_name]
-        )
+            raise Exception("Can only compare 1 schema definitions file")
+        for context_object in self.contextual_classes:
+            if not hasattr(context_object, 'sheet_name'):
+                self._logger.warn("Skipping context object %s" % context_object)
+                continue
+            self._logger.info("Validating context object %s" % context_object)
+            context_sheet_name = context_object.sheet_name
+            schema_object = self.schema_definitions[0]
+            schema_object.validate_schema_units(
+                context_object.field_specs[context_sheet_name]
+            )
         self._logger.info("Validation completed.")
 
 
