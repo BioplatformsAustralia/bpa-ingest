@@ -89,8 +89,8 @@ class AMDBaseMetadata(BaseMetadata):
     sql_to_excel_context_classes = [
         AustralianMicrobiomeSampleContextualSQLiteToExcelCopy
     ]
-    # to validate schema class, uncomment this attribute
-    # schema_classes = [AustralianMicrobiomeSchema]
+
+    schema_classes = [AustralianMicrobiomeSchema]
 
     notes_mapping = [
         {"key": "env_material_control_vocab_0", "separator": ", "},

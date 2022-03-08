@@ -138,6 +138,9 @@ def setup_dump(subparser):
     subparser.add_argument(
         "--sql-context", help="generate excel file from sql db if available"
     )
+    subparser.add_argument(
+        "--validate-schema", help="validate schema if applicable"
+    )
     subparser.add_argument("-k", "--api-key", required=False, help="CKAN API Key")
     subparser.add_argument("-u", "--ckan-url", required=False, help="CKAN base url")
     subparser.add_argument(
@@ -151,6 +154,9 @@ def setup_dump(subparser):
 
 def setup_makeschema(subparser):
     subparser.add_argument("--dump-re", help="restrict dump by slug", default="")
+    subparser.add_argument(
+        "--validate-schema", help="validate schema if applicable"
+    )
 
 
 @register_command

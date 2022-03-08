@@ -113,6 +113,7 @@ def dump_state(args):
         classes = new_classes
     logger.info("dumping: {}".format(", ".join(t["slug"] for t in classes)))
     has_sql_context = True if args.sql_context == "True" else False
+    has_validate_schema = True if args.validate_schema == "True" else False
 
     data_type_meta = {}
     # download metadata for all project types and aggregate metadata keys
@@ -127,6 +128,7 @@ def dump_state(args):
             class_info["cls"],
             path=dlpath,
             has_sql_context=has_sql_context,
+            has_validate_schema=has_validate_schema,
         ) as dlmeta:
             meta = dlmeta.meta
             data_type = meta.ckan_data_type

@@ -18,6 +18,7 @@ class DownloadMetadata:
         force_fetch=False,
         metadata_info=None,
         has_sql_context=False,
+        has_validate_schema=False,
     ):
         self.cleanup = True
         self.fetch = True
@@ -39,7 +40,12 @@ class DownloadMetadata:
         self.contextual = [
             (os.path.join(self.path, c.name), c) for c in contextual_classes
         ]
-        schema_classes = getattr(project_class, "schema_classes", [])
+
+        if has_validate_schema == True:
+            schema_classes = getattr(project_class, "schema_classes", [])
+        else:
+            schema_classes = []
+
         self.schema_definitions = [
             (os.path.join(self.path, c.name), c) for c in schema_classes
         ]

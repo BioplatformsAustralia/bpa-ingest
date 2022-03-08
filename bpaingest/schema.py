@@ -207,6 +207,8 @@ def generate_schemas(args):
         r = re.compile(args.dump_re, re.IGNORECASE)
         classes = list(filter(lambda x: r.match(x["slug"]), classes))
 
+    has_validate_schema = True if args.validate_schema == "True" else False
+
     for class_info in classes:
         project_cls = class_info["cls"]
         logger.info(
@@ -214,7 +216,10 @@ def generate_schemas(args):
         )
         dlpath = os.path.join(args.download_path, class_info["slug"])
         with DownloadMetadata(
-            make_logger(class_info["slug"]), project_cls, path=dlpath
+            make_logger(class_info["slug"]),
+            project_cls,
+            path=dlpath,
+            has_validate_schema=has_validate_schema,
         ) as dlmeta:
             meta = dlmeta.meta
             data_type = meta.ckan_data_type
