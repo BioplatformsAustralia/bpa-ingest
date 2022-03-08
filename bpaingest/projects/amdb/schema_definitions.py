@@ -7,10 +7,10 @@ from ...util import one
 
 class AustralianMicrobiomeSchema:
     metadata_urls = [
-        "https://github.com/AusMicrobiome/contextualdb_doc/raw/3.0.1/db_schema_definitions/db_schema_definitions.xlsx"
+        "https://github.com/AusMicrobiome/contextualdb_doc/raw/3.2.0/db_schema_definitions/db_schema_definitions.xlsx"
     ]
     name = "amd-schema_definitions"
-    sheet_name = "Schema_3.0.1"
+    sheet_name = "Schema_3.2.0"
     source_pattern = "/*.xlsx"
 
     def __init__(self, logger, path):
