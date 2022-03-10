@@ -323,6 +323,7 @@ class AustralianMicrobiomeSampleContextual:
                 coerce=ingest_utils.get_clean_number,
             ),
             fld("coarse_sand_meth", "coarse_sand_meth"),
+            fld("collection_permit", "collection_permit", optional=True),
             fld(
                 "cphlide_a",
                 "cphlide_a",
@@ -579,6 +580,8 @@ class AustralianMicrobiomeSampleContextual:
             fld("host_species_variety", "host_species_variety"),
             fld("host_state", "host_state"),
             fld("host_type", "host_type"),
+            fld("hyperspectral_analysis", "hyperspectral_analysis", optional=True),
+            fld("hyperspectral_analysis_meth", "hyperspectral_analysis_meth", optional=True),
             fld(
                 "icp_te_boron",
                 "icp_te_boron",
