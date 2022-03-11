@@ -252,13 +252,13 @@ def check_resource(
     legacy_size = apache_archive_info.get_size(legacy_url)
     if legacy_size is None:
         logger.error("error getting size of: %s" % (legacy_url))
-        return "error-getting-size"
+        return "error-getting-size-legacy"
 
     # determine the URL of the proxied s3 resource, and then its size
     current_size = ckan_archive_info.get_size(current_url)
     if current_size is None:
         logger.error("error getting size of: %s" % (current_url))
-        return "error-getting-size"
+        return "error-getting-size-s3"
 
     if current_size != legacy_size:
         logger.error(
