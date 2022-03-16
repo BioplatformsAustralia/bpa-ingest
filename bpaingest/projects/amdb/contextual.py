@@ -1488,3 +1488,5 @@ class AustralianMicrobiomeDatasetControlContextual(BaseDatasetControlContextual)
     name = "amd-dataset-contextual"
     contextual_linkage = ("sample_id",)
 
+    def sample_ids(self):
+        return list(self.dataset_metadata.keys())
