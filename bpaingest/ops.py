@@ -371,7 +371,7 @@ def reupload_resource(ckan, ckan_obj, legacy_url, parent_destination, auth=None)
 
         s3cmd_args = [
             "aws",
-            "s3",
+            "s3api",
             "put-object-tagging",
             "--bucket",
             bucket,
