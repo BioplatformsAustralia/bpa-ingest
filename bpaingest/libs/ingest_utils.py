@@ -319,6 +319,7 @@ def _get_date(logger, dt, silent=False):
         or dt == "(null)"
         or dt == "NA"
         or dt == "n/a"
+        or dt == "TBA"
     ):
         return None
 
