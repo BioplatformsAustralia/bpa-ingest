@@ -23,6 +23,7 @@ def test_fastq_filename_re():
         "350733_AusARG_UNSW_HGGKCBGXH_ATATGCAT-CCAGGCAC_S5_R2_001.fastq.gz",
         "350734_AusARG_UNSW_HGGKCBGXH_ATGGCGCC-AGGCCGTG_S6_R1_001.fastq.gz",
         "353928_AusARG_BRF_HWHLKDRXY_GTTTCTGTGC_S66_L002_R1_001.fastq.gz",
+        "354323_AusARG_AGRF_HJLC5DSX3_GTCTATGA-CGGTTGTT_L001_R1.fastq.gz",
     ]
     for filename in filenames:
         assert illumina_fastq_re.match(filename) is not None
