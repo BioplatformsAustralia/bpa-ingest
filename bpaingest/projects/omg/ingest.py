@@ -15,7 +15,13 @@ from ...libs.excel_wrapper import make_field_definition as fld, make_skip_column
 from ...secondarydata import SecondaryMetadata
 from ...sensitive_species_wrapper import SensitiveSpeciesWrapper
 
-from ...util import sample_id_to_ckan_name, common_values, apply_cc_by_license, clean_tag_name
+from ...util import (
+    sample_id_to_ckan_name, 
+    common_values, 
+    merge_values,
+    apply_cc_by_license, 
+    clean_tag_name,
+)
 
 common_context = [OMGSampleContextual, OMGLibraryContextual, OMGDatasetControlContextual]
 
@@ -1653,6 +1659,13 @@ class OMGGenomicsDDRADMetadata(OMGBaseMetadata):
                 if bpa_dataset_id is None or flowcell_id is None:
                     continue
 
+                context_objs = []
+                for row in row_objs:
+                    context = {}
+                    for contextual_source in self.contextual_metadata:
+                        context.update(contextual_source.get(row.get("bpa_sample_id"),row.get("bpa_libary_id")))
+                    context_objs.append(context)
+
                 obj = common_values(row_objs)
                 track_meta = self.track_meta.get(obj["ticket"])
 
@@ -1693,6 +1706,8 @@ class OMGGenomicsDDRADMetadata(OMGBaseMetadata):
                         "license_id": apply_cc_by_license(),
                     }
                 )
+                obj.update(common_values(context_objs))
+                obj.update(merge_values("scientific_name", " , ", context_objs))
                 ingest_utils.permissions_organization_member(self._logger, obj)
                 ingest_utils.apply_access_control(self._logger, self, obj)
                 ingest_utils.add_spatial_extra(self._logger, obj)
