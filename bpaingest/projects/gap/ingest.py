@@ -46,7 +46,8 @@ def gap_describe_ddrad(obj, description):
         obj.get("project_aim", ""),
         obj.get("dataset_id", "").split("/")[-1],
     )
-    obj["notes"] = "{}, {}, {}".format(
+    obj["notes"] = "{}, {}, {}, {}".format(
+        obj.get("scientific_name", ""),
         obj.get("species_complex", ""),
         obj.get("family", ""),
         obj.get("sample_submitter_name", ""),

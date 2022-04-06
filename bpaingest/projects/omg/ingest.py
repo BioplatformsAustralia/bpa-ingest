@@ -1624,9 +1624,8 @@ class OMGGenomicsDDRADMetadata(OMGBaseMetadata):
         self.flow_lookup = {}
 
     def generate_notes_field(self, row_object):
-        notes = "%s %s\nddRAD dataset not demultiplexed" % (
-            row_object.get("genus", ""),
-            row_object.get("species", ""),
+        notes = "%s\nddRAD dataset not demultiplexed" % (
+            row_object.get("scientific_name", ""),
         )
         return notes
 
