@@ -11,7 +11,13 @@ from ...abstract import BaseMetadata
 from ...libs import ingest_utils
 from ...libs.excel_wrapper import make_field_definition as fld
 from ...libs.fetch_data import Fetcher, get_password
-from ...util import sample_id_to_ckan_name, common_values, apply_cc_by_license, clean_tag_name
+from ...util import (
+    sample_id_to_ckan_name,
+    common_values,
+    merge_values,
+    apply_cc_by_license,
+    clean_tag_name,
+)
 from . import files
 from .contextual import GAPLibraryContextual, GAPDatasetControlContextual
 from .tracking import GAPTrackMetadata
@@ -729,6 +735,13 @@ class GAPGenomicsDDRADMetadata(BaseMetadata):
                 if dataset_id is None or flowcell_id is None:
                     continue
 
+                context_objs = []
+                for row in row_objs:
+                    context = {}
+                    for contextual_source in self.contextual_metadata:
+                        context.update(contextual_source.get(row.get("library_id"),row.get("dataset_id")))
+                    context_objs.append(context)
+
                 obj = common_values(row_objs)
                 track_meta = self.track_meta.get(obj["ticket"])
 
@@ -764,6 +777,8 @@ class GAPGenomicsDDRADMetadata(BaseMetadata):
                     }
                 )
                 gap_describe_ddrad(obj, "ddRAD")
+                obj.update(common_values(context_objs))
+                obj.update(merge_values("scientific_name", " , ", context_objs))
                 ingest_utils.permissions_organization_member(self._logger, obj)
                 ingest_utils.apply_access_control(self._logger, self, obj)
                 ingest_utils.add_spatial_extra(self._logger, obj)
