@@ -193,6 +193,23 @@ def common_values(dicts):
     return r
 
 
+def merge_values(key, sep, dicts):
+    """
+    given a list of dicts, return a dict with the set of values
+    for a specific key joined by the seperator provided
+    """
+    # bullet-proof this against being handed an iterator
+    dicts = list(dicts)
+    all_keys = set()
+    for d in dicts:
+        all_keys = all_keys.union(set(d.keys()))
+    r = {}
+    if key in all_keys:
+        vals = set(filter(None,[d.get(key) for d in dicts]))
+        r[key] = sep.join(list(vals))
+    return r
+
+
 def apply_license(archive_ingestion_date):
     if not archive_ingestion_date:
         return "notspecified"
