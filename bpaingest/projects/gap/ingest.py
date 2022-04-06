@@ -777,9 +777,9 @@ class GAPGenomicsDDRADMetadata(BaseMetadata):
                         "license_id": apply_cc_by_license(),
                     }
                 )
-                gap_describe_ddrad(obj, "ddRAD")
                 obj.update(common_values(context_objs))
                 obj.update(merge_values("scientific_name", " , ", context_objs))
+                gap_describe_ddrad(obj, "ddRAD")
                 ingest_utils.permissions_organization_member(self._logger, obj)
                 ingest_utils.apply_access_control(self._logger, self, obj)
                 ingest_utils.add_spatial_extra(self._logger, obj)

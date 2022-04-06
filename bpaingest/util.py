@@ -206,7 +206,7 @@ def merge_values(key, sep, dicts):
     r = {}
     if key in all_keys:
         vals = set(filter(None,[d.get(key) for d in dicts]))
-        r[key] = sep.join(list(vals))
+        r[key] = sep.join(sorted(list(vals)))
     return r
 
 

@@ -1625,7 +1625,7 @@ class OMGGenomicsDDRADMetadata(OMGBaseMetadata):
 
     def generate_notes_field(self, row_object):
         notes = "%s\nddRAD dataset not demultiplexed" % (
-            row_object.get("scientific_name", ""),
+            row_object.get("scientific_name", "%s %s" % (row_object.get("genus", ""), row_object.get("species", ""))),
         )
         return notes
 
@@ -1687,7 +1687,6 @@ class OMGGenomicsDDRADMetadata(OMGBaseMetadata):
                         ),
                         "data_type": track_get("data_type"),
                         "description": track_get("description"),
-                        "notes": self.generate_notes_field(obj),
                         "folder_name": track_get("folder_name"),
                         "sample_submission_date": ingest_utils.get_date_isoformat(
                             self._logger, track_get("date_of_transfer")
@@ -1707,6 +1706,11 @@ class OMGGenomicsDDRADMetadata(OMGBaseMetadata):
                 )
                 obj.update(common_values(context_objs))
                 obj.update(merge_values("scientific_name", " , ", context_objs))
+                obj.update(
+                    {
+                        "notes": self.generate_notes_field(obj),
+                    }
+                )
                 ingest_utils.permissions_organization_member(self._logger, obj)
                 ingest_utils.apply_access_control(self._logger, self, obj)
                 ingest_utils.add_spatial_extra(self._logger, obj)
