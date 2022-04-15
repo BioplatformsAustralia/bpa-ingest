@@ -1184,3 +1184,192 @@ class TSIGenomicsDDRADMetadata(TSIBaseMetadata):
                     )
                 )
         return resources + self.generate_xlsx_resources()
+
+
+class TSIGenomeAssemblyMetadata(TSIBaseMetadata):
+    organization = "threatened-species"
+    ckan_data_type = "tsi-genome-assembly"
+    technology = "genome-assembly"
+    sequence_data_type = "genome-assembly"
+    embargo_days = 365
+    contextual_classes = common_context
+    metadata_patterns = [r"^.*\.md5$", r"^.*\.xlsx$"]
+    metadata_urls = [
+        "https://downloads-qcif.bioplatforms.com/bpa/tsi_staging/assembly/",
+    ]
+    metadata_url_components = ("ticket",)
+    resource_linkage = ("bioplatforms_secondarydata_id",)
+    spreadsheet = {
+        "fields": [
+            fld(
+                "bioplatforms_secondarydata_id",
+                "bioplatforms_secondarydata_id",
+                coerce=ingest_utils.extract_ands_id,
+            ),
+            fld("sample_id", "bioplatforms_sample_id", coerce=ingest_utils.int_or_comment),
+            fld("library_id", "bioplatforms_library_id", coerce=ingest_utils.int_or_comment),
+            fld("dataset_id", "bioplatforms_dataset_id", coerce=ingest_utils.get_int),
+            fld("bioplatforms_project", "bioplatforms_project"),
+            fld("contact_person", "contact_person"),
+            fld("scientific_name", "scientific_name"),
+            fld("common_name", "common_name"),
+            fld("sequencing_technology", "sequencing_technology"),
+            fld("genome_coverage", "genome_coverage"),
+            fld("computational_infrastructure", "computational_infrastructure"),
+            fld("system_used", "system_used"),
+            fld("analysis_description", "analysis_description"),
+            fld('assembly_date', 'assembly_date', coerce=ingest_utils.get_date_isoformat),
+            fld('reference_genome', 'reference_genome'),
+            fld('assembly_method', 'assembly_method'),
+            fld('assembly_method_version', 'assembly_method_version'),
+            fld('hybrid', 'hybrid'),
+            fld('hybrid_details', 'hybrid_details'),
+            fld('polishing_scaffolding_method', 'polishing_scaffolding_method'),
+            fld('polishing_scaffolding_data', 'polishing_scaffolding_data'),
+            fld('n_scaffolds', 'n_scaffolds'),
+            fld('n50', 'n50'),
+            fld('min_gap_length_bp', 'min_gap_length_bp'),
+            fld('genome_size', 'genome_size'),
+            fld('completion_score', 'completion_score'),
+            fld('completion_score_method', 'completion_score_method')
+        ],
+        "options": {
+            "sheet_name": "Metadata",
+            "header_length": 1,
+            "column_name_row_index": 0,
+        },
+    }
+    md5 = {
+        "match": [files.genome_assembly_filename_re],
+        "skip": [re.compile(r"^.*\.xlsx$"),],
+    }
+
+    def __init__(
+        self, logger, metadata_path, contextual_metadata=None, metadata_info=None
+    ):
+        super().__init__(logger, metadata_path)
+        self.path = Path(metadata_path)
+        self.contextual_metadata = contextual_metadata
+        self.metadata_info = metadata_info
+        self.track_meta = TSIGoogleTrackMetadata()
+
+    def _get_packages(self):
+        self._logger.info(
+            "Ingesting TSI Genome Assembly metadata from {0}".format(self.path)
+        )
+        packages = []
+        for fname in glob(self.path + "/*.xlsx"):
+            self._logger.info("Processing TSI metadata file {0}".format(fname))
+            rows = self.parse_spreadsheet(fname, self.metadata_info)
+
+            def track_get(k):
+                if track_meta is None:
+                    return None
+                return getattr(track_meta, k)
+
+            for row in rows:
+                track_meta = self.track_meta.get(row.ticket)
+                bioplatforms_secondarydata_id = row.bioplatforms_secondarydata_id
+                scientific_name = row.scientific_name
+                obj = row._asdict()
+                name = sample_id_to_ckan_name(
+                    bioplatforms_secondarydata_id.split("/")[-1], self.ckan_data_type
+                )
+
+                # explode sample_id, library_id
+                sample_ids = re.split(",\s*", str(row.sample_id))
+                library_ids = re.split(",\s*", str(row.library_id))
+
+                # check same length
+                if len(sample_ids) != len(library_ids):
+                    raise Exception("mismatch count of sample and library IDs")
+
+                # if single item, add bpa_sample_id and bpa_library_id to metadata
+                if len(sample_ids) == 1:
+                    obj["bpa_sample_id"] = ingest_utils.extract_ands_id(
+                        self._logger, row.sample_id
+                    )
+                    obj["bpa_library_id"] = ingest_utils.extract_ands_id(
+                        self._logger, row.library_id
+                    )
+                else:
+                    obj["bpa_sample_id"] = None
+                    obj["bpa_library_id"] = None
+
+                for contextual_source in self.contextual_metadata:
+                    context = []
+                    for i in range(0, len(sample_ids)):
+                        context.append(
+                            contextual_source.get(
+                                ingest_utils.extract_ands_id(
+                                    self._logger, sample_ids[i]
+                                ),
+                            )
+                        )
+                    obj.update(common_values(context))
+
+                obj.update(
+                    {
+                        "title": "TSI Genome Assembly {}".format(
+                            obj["bioplatforms_secondarydata_id"]
+                        ),
+                        "notes": "{} ({})".format(
+                            obj["common_name"],
+                            obj["scientific_name"],
+                        ),
+                        "date_of_transfer": ingest_utils.get_date_isoformat(
+                            self._logger, track_get("date_of_transfer")
+                        ),
+                        "data_type": track_get("data_type"),
+                        "description": track_get("description"),
+                        "folder_name": track_get("folder_name"),
+                        "sample_submission_date": ingest_utils.get_date_isoformat(
+                            self._logger, track_get("date_of_transfer")
+                        ),
+                        "contextual_data_submission_date": None,
+                        "data_generated": ingest_utils.get_date_isoformat(
+                            self._logger, track_get("date_of_transfer_to_archive")
+                        ),
+                        "archive_ingestion_date": ingest_utils.get_date_isoformat(
+                            self._logger, track_get("date_of_transfer_to_archive")
+                        ),
+                        "dataset_url": track_get("download"),
+                        "name": name,
+                        "id": name,
+                        "type": self.ckan_data_type,
+                        "sequence_data_type": self.sequence_data_type,
+                        "license_id": apply_cc_by_license(),
+                    }
+                )
+                ingest_utils.permissions_organization_member(self._logger, obj)
+                ingest_utils.apply_access_control(self._logger, self, obj)
+                tag_names = ["tsi-genome-assembly"]
+                obj["tags"] = [{"name": t} for t in tag_names]
+                packages.append(obj)
+        return self.apply_location_generalisation(packages)
+
+    def _get_resources(self):
+        self._logger.info("Ingesting md5 file information from {0}".format(self.path))
+        resources = []
+        for md5_file in glob(self.path + "/*.md5"):
+            self._logger.info("Processing md5 file {0}".format(md5_file))
+            for filename, md5, file_info in self.parse_md5file(md5_file):
+                resource = file_info.copy()
+                resource[
+                    "bioplatforms_secondarydata_id"
+                ] = ingest_utils.extract_ands_id(
+                    self._logger, resource["bioplatforms_secondarydata_id"]
+                )
+                resource["md5"] = resource["id"] = md5
+                resource["name"] = filename
+                resource["resource_type"] = self.ckan_data_type
+                xlsx_info = self.metadata_info[os.path.basename(md5_file)]
+                legacy_url = urljoin(xlsx_info["base_url"], filename)
+                resources.append(
+                    (
+                        (resource["bioplatforms_secondarydata_id"],),
+                        legacy_url,
+                        resource,
+                    )
+                )
+        return resources

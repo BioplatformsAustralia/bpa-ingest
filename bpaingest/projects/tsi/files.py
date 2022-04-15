@@ -95,3 +95,11 @@ METADATA_SHEET_PATTERN = r"""
     metadata.xlsx
 """
 metadata_sheet_re = re.compile(METADATA_SHEET_PATTERN, re.VERBOSE)
+
+GENOME_ASSEMBLY_PATTERN = r"""
+    (?P<bioplatforms_secondarydata_id>\d{4,6})_
+    .*
+    \.
+    fasta
+"""
+genome_assembly_filename_re = re.compile(GENOME_ASSEMBLY_PATTERN, re.VERBOSE)

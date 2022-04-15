@@ -8,6 +8,7 @@ from bpaingest.projects.tsi.files import (
     metadata_sheet_re,
     ddrad_fastq_filename_re,
     ddrad_metadata_sheet_re,
+    genome_assembly_filename_re,
 )
 
 
@@ -102,3 +103,11 @@ def test_tsi_ddrad_metadata_sheet():
 
     for filename in filenames:
         assert ddrad_metadata_sheet_re.match(filename) is not None
+
+
+def test_genome_assembly_filename_re():
+    filenames = [
+        "359774_Galaxy63-Purge_overlaps_on_data_23_split.fasta",
+    ]
+    for filename in filenames:
+        assert genome_assembly_filename_re.match(filename) is not None
