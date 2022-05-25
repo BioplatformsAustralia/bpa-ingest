@@ -1196,7 +1196,7 @@ class OMGGenomicsNovaseqMetadata(OMGBaseMetadata):
             fld(
                 "n_libraries_pooled", "n_libraries_pooled", coerce=ingest_utils.get_int
             ),
-            fld("bpa_work_order", "bpa_work_order"),
+            fld("bpa_work_order", "bpa_work_order", coerce=ingest_utils.get_int),
             fld("sequencing_platform", "sequencing_platform"),
             fld("sequence_length", "sequence_length"),
             fld("flowcell_id", "flowcell_id"),
@@ -1800,7 +1800,7 @@ class OMGGenomicsPacbioMetadata(OMGBaseMetadata):
             fld(
                 "n_libraries_pooled", "n_libraries_pooled", coerce=ingest_utils.get_int
             ),
-            fld("bpa_work_order", "bpa_work_order"),
+            fld("bpa_work_order", "bpa_work_order", coerce=ingest_utils.get_int),
             fld("sequencing_platform", "sequencing_platform"),
             fld("sequence_length", "sequence_length"),
             fld("flowcell_id", "flowcell_id"),
@@ -2180,7 +2180,7 @@ class OMGTranscriptomicsNextseq(OMGBaseMetadata):
             fld(
                 "n_libraries_pooled", "n_libraries_pooled", coerce=ingest_utils.get_int
             ),
-            fld("bpa_work_order", "bpa_work_order"),
+            fld("bpa_work_order", "bpa_work_order", coerce=ingest_utils.get_int),
             fld("sequencing_platform", "sequencing_platform"),
             fld("sequence_length", "sequence_length"),
             fld("flowcell_id", "flowcell_id"),
