@@ -152,16 +152,19 @@ class BaseMetadata:
     def __init__(self, logger, *args, **kwargs):
         self._logger = logger
         self._packages = self._resources = None
-        self._linkage_xlsx = {}
+        self._linkage_xlsx_linkage = {}
+        self._linkage_xlsx_file = {}
         self._linkage_md5 = {}
 
     def track_xlsx_resource(self, obj, fname):
         """
         track a spreadsheet that needs to be uploaded into the packages generated from it
         """
-        linkage_key = tuple([obj[t] for t in self.resource_linkage])
-        assert linkage_key not in self._linkage_xlsx
-        self._linkage_xlsx[linkage_key] = fname
+        linkage = tuple([obj[t] for t in self.resource_linkage])
+        linkage_key = (fname, linkage)
+        assert linkage_key not in self._linkage_xlsx_linkage
+        self._linkage_xlsx_linkage[linkage_key] = linkage
+        self._linkage_xlsx_file[linkage_key] = fname
 
     def track_packages_for_md5(self, obj, ticket):
         """
@@ -178,13 +181,17 @@ class BaseMetadata:
                 self._linkage_md5[f].append(linkage)
 
     def generate_xlsx_resources(self):
-        if len(self._linkage_xlsx) == 0:
+        if len(self._linkage_xlsx_linkage) == 0:
             self._logger.error(
                 "no linkage xlsx, likely a bug in the ingest class (xlsx resource needs to be tracked in package "
                 "creation) "
             )
         resources = []
-        for linkage, fname in self._linkage_xlsx.items():
+        self._logger.info(self._linkage_xlsx_linkage)
+        self._logger.info(self._linkage_xlsx_file)
+        for key in self._linkage_xlsx_linkage:
+            linkage = self._linkage_xlsx_linkage[key]
+            fname = self._linkage_xlsx_file[key]
             resource = resource_metadata_from_file(linkage, fname, self.ckan_data_type)
             xlsx_info = self.metadata_info[os.path.basename(fname)]
             legacy_url = urljoin(xlsx_info["base_url"], os.path.basename(fname))
