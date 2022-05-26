@@ -187,8 +187,6 @@ class BaseMetadata:
                 "creation) "
             )
         resources = []
-        self._logger.info(self._linkage_xlsx_linkage)
-        self._logger.info(self._linkage_xlsx_file)
         for key in self._linkage_xlsx_linkage:
             linkage = self._linkage_xlsx_linkage[key]
             fname = self._linkage_xlsx_file[key]
