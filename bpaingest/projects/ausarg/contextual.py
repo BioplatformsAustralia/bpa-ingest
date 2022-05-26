@@ -16,6 +16,7 @@ def date_or_str(logger, v):
         return d
     return v
 
+
 class AusargDatasetControlContextual(BaseDatasetControlContextual):
     metadata_urls = [
         "https://downloads-qcif.bioplatforms.com/bpa/ausarg_staging/dataset_control/2021-11-24/"
@@ -26,7 +27,7 @@ class AusargDatasetControlContextual(BaseDatasetControlContextual):
 
 class AusargLibraryContextual:
     metadata_urls = [
-        "https://downloads-qcif.bioplatforms.com/bpa/ausarg_staging/metadata/2022-03-28/"
+        "https://downloads-qcif.bioplatforms.com/bpa/ausarg_staging/metadata/2022-05-24/"
     ]
     metadata_patterns = [re.compile(r"^.*\.xlsx$")]
     name = "ausarg-library-contextual"
