@@ -74,6 +74,7 @@ ausarg() {
   apply ausarg-ont-promethion $*
   apply ausarg-exoncapture $*
   apply ausarg-hi-c $*
+  apply ausarg-genomics-dart $*
 }
 
 marine_microbes()

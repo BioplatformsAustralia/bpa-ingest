@@ -1,5 +1,6 @@
 import os
 import re
+from collections import defaultdict
 from urllib.parse import urljoin
 
 from glob import glob
@@ -15,6 +16,8 @@ from ...libs.fetch_data import Fetcher, get_password
 from ...sensitive_species_wrapper import SensitiveSpeciesWrapper
 from ...util import (
     sample_id_to_ckan_name,
+    common_values,
+    merge_values,
     clean_tag_name,
     apply_cc_by_license,
 )
@@ -1173,3 +1176,298 @@ class AusargHiCMetadata(AusargBaseMetadata):
                     )
                 )
         return resources
+
+
+class AusargGenomicsDArTMetadata(AusargBaseMetadata):
+    """
+    This data conforms to the BPA Genomics DArT workflow. future data
+    will use this ingest class.
+    """
+
+    organization = "ausarg"
+    ckan_data_type = "ausarg-genomics-dart"
+    omics = "genomics"
+    technology = "dart"
+    sequence_data_type = "illumina-dart"
+    embargo_days = 365
+    contextual_classes = common_context
+    metadata_patterns = [
+        r"^.*\.md5$",
+        r"^.*\.xlsx$",
+    ]
+    metadata_urls = [
+        "https://downloads-qcif.bioplatforms.com/bpa/ausarg_staging/dart/",
+    ]
+    metadata_url_components = ("ticket",)
+    resource_linkage = ("dataset_id",)
+    spreadsheet = {
+        "fields": [
+            fld("genus", "genus"),
+            fld("species", "species"),
+            fld(
+                "library_id",
+                re.compile(r"library_[Ii][Dd]"),
+                coerce=ingest_utils.extract_ands_id,
+            ),
+            fld(
+                "sample_id",
+                re.compile(r"sample_[Ii][Dd]"),
+                coerce=ingest_utils.extract_ands_id,
+            ),
+            fld(
+                "dataset_id",
+                re.compile(r"dataset_[Ii][Dd]"),
+                coerce=ingest_utils.extract_ands_id,
+            ),
+            fld("work_order", "work_order", coerce=ingest_utils.get_int),
+            fld("specimen_id", re.compile(r"specimen_[Ii][Dd]")),
+            fld("facility_sample_id", "facility_sample_id"),
+            fld("facility_project_code", "facility_project_code", optional=True),
+            fld("library_type", "library_type"),
+            fld(
+                "library_prep_date",
+                "library_prep_date",
+                coerce=ingest_utils.get_date_isoformat,
+            ),
+            fld("library_prepared_by", "library_prepared_by"),
+            fld("experimental_design", "experimental_design"),
+            fld("data_custodian", "data_custodian"),
+            fld("dna_treatment", "dna_treatment"),
+            fld("library_index_id", "library_index_id"),
+            fld("library_oligo_sequence", "library_oligo_sequence"),
+            fld("library_pcr_reps", "library_pcr_reps"),
+            fld("library_pcr_cycles", "library_pcr_cycles"),
+            fld("library_ng_ul", "library_ng_ul"),
+            fld("library_comments", "library_comments"),
+            fld("library_location", "library_location"),
+            fld("sequencing_facility", "sequencing_facility"),
+            fld(
+                "n_libraries_pooled", "n_libraries_pooled", coerce=ingest_utils.get_int
+            ),
+            fld("sequencing_platform", "sequencing_platform"),
+            fld("flowcell_id", "flowcell_id"),
+            fld("library_pool_index_id", "library_pool_index_id", optional=True),
+            fld(
+                "library_pool_index_sequence",
+                "library_pool_index_sequence",
+                optional=True,
+            ),
+            fld(
+                "library_pool_oligo_sequence",
+                "library_pool_oligo_sequence",
+                optional=True,
+            ),
+            fld("voucher_number", "voucher_number", optional=True),
+            fld("tissue_number", "tissue_number", optional=True),
+            fld("voucher_or_tissue_number", "voucher_or_tissue_number", optional=True),
+            fld("library_layout", "library_layout"),
+            fld("sequencing_model", "sequencing_model"),
+            fld("library_strategy", "library_strategy"),
+            fld("library_selection", "library_selection"),
+            fld("cell_postion", "cell_postion"),
+            fld("data_context", "data_context"),
+            fld("sequencing_kit_chemistry_version", "sequencing_kit_chemistry_version"),
+            fld("analysis_software", "analysis_software"),
+            fld("analysis_software_version", "analysis_software_version"),
+            fld("library_construction_protocol", "library_construction_protocol"),
+            fld("library_index_seq", "library_index_seq"),
+            fld("library_index_id_dual", "library_index_id_dual"),
+            fld("library_index_seq_dual", "library_index_seq_dual"),
+            fld("library_oligo_sequence_dual", "library_oligo_sequence_dual"),
+            fld("library_source", "library_source"),
+            fld("fast5_compression", "fast5_compression"),
+            fld("model_base_caller", "model_base_caller"),
+            fld("insert_size_range", "insert_size_range"),
+            fld("movie_length", "movie_length"),
+            fld("file_type", "file_type"),
+            fld("flowcell_type", "flowcell_type"),
+        ],
+        "options": {
+            "sheet_name": "Library_metadata",
+            "header_length": 1,
+            "column_name_row_index": 0,
+        },
+    }
+    md5 = {
+        "match": [
+            files.dart_filename_re,
+        ],
+        "skip": [
+            files.dart_xlsx_filename_re,
+            re.compile(r"^.*TestFiles\.exe.*"),
+            re.compile(r"^err$"),
+            re.compile(r"^out$"),
+            re.compile(r"^.*DataValidation\.pdf.*"),
+        ],
+    }
+
+    def __init__(
+        self, logger, metadata_path, contextual_metadata=None, metadata_info=None
+    ):
+        super().__init__(logger, metadata_path)
+        self.path = Path(metadata_path)
+        self.contextual_metadata = contextual_metadata
+        self.metadata_info = metadata_info
+        self.track_meta = AusArgGoogleTrackMetadata()
+        self.flow_lookup = {}
+
+    def generate_notes_field(self, row_object):
+        notes = "%s\nDArT dataset not demultiplexed" % (
+            row_object.get(
+                "scientific_name",
+                "%s %s" % (row_object.get("genus", ""), row_object.get("species", "")),
+            ),
+        )
+        return notes
+
+    def _get_packages(self):
+        self._logger.info("Ingesting AusARG metadata from {0}".format(self.path))
+        packages = []
+
+        # this is a folder-oriented ingest, so we crush each xlsx down into a single row
+        filename_re = re.compile(r"^AusARG.*_(\d{5,6})_librarymetadata\.xlsx")
+
+        objs = []
+        flattened_objs = defaultdict(list)
+        for fname in glob(self.path + "/*librarymetadata.xlsx"):
+            row_objs = []
+            self._logger.info(
+                "Processing AusARG metadata file {0}".format(os.path.basename(fname))
+            )
+
+            file_dataset_id = ingest_utils.extract_ands_id(
+                self._logger, filename_re.match(os.path.basename(fname)).groups()[0]
+            )
+
+            for row in self.parse_spreadsheet(fname, self.metadata_info):
+                obj = row._asdict()
+
+                if not obj["dataset_id"]:
+                    continue
+                if file_dataset_id != obj["dataset_id"]:
+                    self._logger.warn(
+                        "Skipping metadata row related to unrelated dataset {0} (should be {1})".format(
+                            obj["dataset_id"], file_dataset_id
+                        )
+                    )
+                    continue
+
+                # Add sample contextual metadata
+                for contextual_source in self.contextual_metadata:
+                    obj.update(contextual_source.get(obj.get("sample_id")))
+
+                # obj.pop("file")
+
+                row_objs.append(obj)
+                # self._logger.info(obj)
+
+            combined_obj = common_values(row_objs)
+            # self._logger.info("cv")
+            # self._logger.info(combined_obj)
+            combined_obj.update(merge_values("scientific_name", " , ", row_objs))
+            # self._logger.info("add context")
+            # self._logger.debug(combined_obj)
+
+            objs.append((fname, combined_obj))
+
+        for (fname, obj) in objs:
+            track_meta = self.track_meta.get(obj["ticket"])
+
+            def track_get(k):
+                if track_meta is None:
+                    self._logger.warn("Tracking data missing")
+                    return None
+                return getattr(track_meta, k)
+
+            name = sample_id_to_ckan_name(
+                obj["dataset_id"], self.ckan_data_type, obj["ticket"]
+            )
+            obj.update(
+                {
+                    "name": name,
+                    "id": name,
+                    # "bpa_dataset_id": bpa_dataset_id,
+                    "title": "AusARG DArT %s" % (obj["dataset_id"],),
+                    "date_of_transfer": ingest_utils.get_date_isoformat(
+                        self._logger, track_get("date_of_transfer")
+                    ),
+                    "data_type": track_get("data_type"),
+                    "description": track_get("description"),
+                    "folder_name": track_get("folder_name"),
+                    "sample_submission_date": ingest_utils.get_date_isoformat(
+                        self._logger, track_get("date_of_transfer")
+                    ),
+                    "contextual_data_submission_date": None,
+                    "data_generated": ingest_utils.get_date_isoformat(
+                        self._logger, track_get("date_of_transfer_to_archive")
+                    ),
+                    "archive_ingestion_date": ingest_utils.get_date_isoformat(
+                        self._logger, track_get("date_of_transfer_to_archive")
+                    ),
+                    "dataset_url": track_get("download"),
+                    "type": self.ckan_data_type,
+                    "sequence_data_type": self.sequence_data_type,
+                    "license_id": apply_cc_by_license(),
+                    "related_data": "",
+                }
+            )
+            obj.update(
+                {
+                    "notes": self.generate_notes_field(obj),
+                }
+            )
+            ingest_utils.permissions_organization_member(self._logger, obj)
+            ingest_utils.apply_access_control(self._logger, self, obj)
+            obj[
+                "related_data"
+            ] = "Attached metadata spreadsheets were produced when data was generated. {0}".format(
+                obj["related_data"]
+            )
+            ingest_utils.add_spatial_extra(self._logger, obj)
+            tag_names = ["genomics-dart"]
+            obj["tags"] = [{"name": t} for t in tag_names]
+            self.track_xlsx_resource(obj, fname)
+            for sample_metadata_file in glob(
+                self.path
+                + "/*_"
+                + ingest_utils.short_ands_id(self._logger, obj["dataset_id"])
+                + "_samplemetadata_ingest.xlsx"
+            ):
+                self.track_xlsx_resource(obj, sample_metadata_file)
+            packages.append(obj)
+        return self.apply_location_generalisation(packages)
+
+    def _get_resources(self):
+        def __dataset_id_from_md5_file(fname):
+            fname = os.path.basename(fname)
+            assert files.dart_md5_filename_re.match(fname) is not None
+            md5match = files.dart_md5_filename_re.match(fname)
+            assert "dataset_id" in md5match.groupdict()
+            return md5match.groupdict()["dataset_id"]
+
+        self._logger.info(
+            "Ingesting AusARG md5 file information from {0}".format(self.path)
+        )
+        resources = []
+        for md5_file in glob(self.path + "/*.md5"):
+            self._logger.info("Processing md5 file {}".format(md5_file))
+            for filename, md5, file_info in self.parse_md5file(md5_file):
+                resource = file_info.copy()
+                resource["md5"] = resource["id"] = md5
+                resource["name"] = filename
+                resource["resource_type"] = self.ckan_data_type
+                resource["dataset_id"] = __dataset_id_from_md5_file(md5_file)
+                xlsx_info = self.metadata_info[os.path.basename(md5_file)]
+                legacy_url = urljoin(xlsx_info["base_url"], filename)
+                resources.append(
+                    (
+                        (
+                            ingest_utils.extract_ands_id(
+                                self._logger, resource["dataset_id"]
+                            ),
+                        ),
+                        legacy_url,
+                        resource,
+                    )
+                )
+        return resources + self.generate_xlsx_resources()

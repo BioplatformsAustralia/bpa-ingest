@@ -6,6 +6,9 @@ from bpaingest.projects.ausarg.files import (
     pacbio_hifi_metadata_sheet_re,
     exon_filename_re,
     illumina_hic_re,
+    dart_filename_re,
+    dart_xlsx_filename_re,
+    dart_md5_filename_re,
 )
 
 
@@ -98,3 +101,31 @@ def test_illumina_hic():
     ]
     for filename in filenames:
         assert illumina_hic_re.match(filename) is not None
+
+
+def test_dart_filename_re():
+    filenames = [
+        "20210504_AusARG_BRFDArT_HGKTCDRXY.tar",
+        "20210504_AusARG_BRFDArT_CD58NANXX.tar",
+        "20210504_AusARG_BRFDArT_CD9F8ANXX.tar",
+    ]
+    for filename in filenames:
+        assert dart_filename_re.match(filename) is not None
+
+
+def test_dart_xlsx_filename_re():
+    filenames = [
+        "AusARG_BRFDArT_351796_samplemetadata_ingest.xlsx",
+        "AusARG_BRFDArT_351795_librarymetadata.xlsx",
+    ]
+    for filename in filenames:
+        assert dart_xlsx_filename_re.match(filename) is not None
+
+
+def test_dart_md5_filename_re():
+    filenames = [
+        "AusARG_BRFDArT_351796_checksums.md5",
+        "AusARG_BRFDArT_351795_checksums.md5",
+    ]
+    for filename in filenames:
+        assert dart_md5_filename_re.match(filename) is not None

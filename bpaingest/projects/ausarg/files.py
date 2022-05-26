@@ -93,3 +93,31 @@ ILLUMINA_HIC_PATTERN = r"""
     \.fastq\.gz$
 """
 illumina_hic_re = re.compile(ILLUMINA_HIC_PATTERN, re.VERBOSE)
+
+DART_PATTERN = r"""
+    (?P<file_archive_date>\d{8})_
+    AusARG_
+    (?P<facility_id>(BRFDArT))_
+    (?P<flowcell_id>\w{9})
+    \.
+    tar
+"""
+dart_filename_re = re.compile(DART_PATTERN, re.VERBOSE)
+
+DART_XLSX_PATTERN = r"""
+    AusARG_
+    (?P<facility_id>(BRFDArT))_
+    (?P<dataset_id>\d{4,6})_
+    (librarymetadata|samplemetadata_ingest)
+    \.xlsx
+"""
+dart_xlsx_filename_re = re.compile(DART_XLSX_PATTERN, re.VERBOSE)
+
+DART_MD5_PATTERN = r"""
+    AusARG_
+    (?P<facility_id>(BRFDArT))_
+    (?P<dataset_id>\d{4,6})_
+    checksums
+    \.md5
+"""
+dart_md5_filename_re = re.compile(DART_MD5_PATTERN, re.VERBOSE)
