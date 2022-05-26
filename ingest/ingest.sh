@@ -99,6 +99,7 @@ omg()
   apply omg-analysed-data $*
   apply omg-pacbio $*
   apply omg-pacbio-genome-assembly $*
+  apply omg-genomics-dart $*
 }
 
 tsi()

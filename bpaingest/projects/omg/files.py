@@ -187,3 +187,31 @@ ANALYSED_DATA_PATTERN = r"""
       |vc_metrics\.csv)
 """
 analysed_data_filename_re = re.compile(ANALYSED_DATA_PATTERN, re.VERBOSE)
+
+DART_PATTERN = r"""
+    (?P<file_archive_date>\d{8})_
+    OMG_
+    (?P<facility_id>(BRFDArT))_
+    (?P<flowcell_id>\w{9})
+    \.
+    tar
+"""
+dart_filename_re = re.compile(DART_PATTERN, re.VERBOSE)
+
+DART_XLSX_PATTERN = r"""
+    OMG_
+    (?P<facility_id>(BRFDArT))_
+    (?P<bpa_dataset_id>\d{4,6})_
+    (librarymetadata|samplemetadata_ingest)
+    \.xlsx
+"""
+dart_xlsx_filename_re = re.compile(DART_XLSX_PATTERN, re.VERBOSE)
+
+DART_MD5_PATTERN = r"""
+    OMG_
+    (?P<facility_id>(BRFDArT))_
+    (?P<bpa_dataset_id>\d{4,6})_
+    checksums
+    \.md5
+"""
+dart_md5_filename_re = re.compile(DART_MD5_PATTERN, re.VERBOSE)

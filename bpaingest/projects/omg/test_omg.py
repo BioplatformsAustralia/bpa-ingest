@@ -16,6 +16,9 @@ from .files import (
     pacbio_secondary_filename_re,
     pacbio_secondary_raw_filename_re,
     analysed_data_filename_re,
+    dart_filename_re,
+    dart_xlsx_filename_re,
+    dart_md5_filename_re,
 )
 
 
@@ -199,3 +202,31 @@ def test_analysed_data_re():
     ]
     for filename in filenames:
         assert analysed_data_filename_re.match(filename) is not None
+
+
+def test_dart_filename_re():
+    filenames = [
+        "20210504_OMG_BRFDArT_HGKTCDRXY.tar",
+        "20210504_OMG_BRFDArT_HH5VLDRXY.tar",
+        "20210504_OMG_BRFDArT_CD58NANXX.tar",
+    ]
+    for filename in filenames:
+        assert dart_filename_re.match(filename) is not None
+
+
+def test_dart_xlsx_filename_re():
+    filenames = [
+        "OMG_BRFDArT_351829_samplemetadata_ingest.xlsx",
+        "OMG_BRFDArT_351829_librarymetadata.xlsx",
+    ]
+    for filename in filenames:
+        assert dart_xlsx_filename_re.match(filename) is not None
+
+
+def test_dart_md5_filename_re():
+    filenames = [
+        "OMG_BRFDArT_351829_checksums.md5",
+        "OMG_BRFDArT_52655_checksums.md5",
+    ]
+    for filename in filenames:
+        assert dart_md5_filename_re.match(filename) is not None

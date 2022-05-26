@@ -78,6 +78,7 @@ from .omg.ingest import (
     OMGTranscriptomicsNextseq,
     OMGGenomicsPacBioGenomeAssemblyMetadata,
     OMGAnalysedDataMetadata,
+    OMGGenomicsDArTMetadata,
 )
 
 from .tsi.ingest import (
@@ -141,7 +142,8 @@ class ProjectInfo:
             OMGONTPromethionMetadata,
             OMGTranscriptomicsNextseq,
             OMGGenomicsPacBioGenomeAssemblyMetadata,
-	    OMGAnalysedDataMetadata,
+            OMGAnalysedDataMetadata,
+            OMGGenomicsDArTMetadata,
         ],
         "tsi": [
             TSINovaseqMetadata,
