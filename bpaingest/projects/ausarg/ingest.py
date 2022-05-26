@@ -122,9 +122,13 @@ class AusargIlluminaFastqMetadata(AusargBaseMetadata):
             fld("library_index_id", re.compile(r"library_index_[Ii][Dd]")),
             fld("library_index_seq", "library_index_seq"),
             fld("library_oligo_sequence", "library_oligo_sequence"),
-            fld('library_index_id_dual', 'library_index_id_dual', optional=True),
-            fld('library_index_seq_dual', 'library_index_seq_dual', optional=True),
-            fld('library_oligo_sequence_dual', 'library_oligo_sequence_dual', optional=True),
+            fld("library_index_id_dual", "library_index_id_dual", optional=True),
+            fld("library_index_seq_dual", "library_index_seq_dual", optional=True),
+            fld(
+                "library_oligo_sequence_dual",
+                "library_oligo_sequence_dual",
+                optional=True,
+            ),
             fld("insert_size_range", "insert_size_range"),
             fld("library_ng_ul", "library_ng_ul"),
             fld("library_pcr_cycles", "library_pcr_cycles"),
@@ -140,15 +144,19 @@ class AusargIlluminaFastqMetadata(AusargBaseMetadata):
             fld("analysis_software_version", "analysis_software_version"),
             fld("facility_project_code", "facility_project_code", optional=True),
             fld("data_context", "data_context", optional=True),
-            fld('library_layout', 'library_layout', optional=True),
-            fld('sequencing_model', 'sequencing_model', optional=True),
-            fld('library_strategy', 'library_strategy', optional=True),
-            fld('library_selection', 'library_selection', optional=True),
-            fld('library_source', 'library_source', optional=True),
-            fld('sequencing_kit_chemistry_version', 'sequencing_kit_chemistry_version', optional=True),
-            fld('file_type', 'file_type', optional=True),
-            fld('fast5_compression', 'fast5_compression', optional=True),
-            fld('model_base_caller', 'model_base_caller', optional=True),
+            fld("library_layout", "library_layout", optional=True),
+            fld("sequencing_model", "sequencing_model", optional=True),
+            fld("library_strategy", "library_strategy", optional=True),
+            fld("library_selection", "library_selection", optional=True),
+            fld("library_source", "library_source", optional=True),
+            fld(
+                "sequencing_kit_chemistry_version",
+                "sequencing_kit_chemistry_version",
+                optional=True,
+            ),
+            fld("file_type", "file_type", optional=True),
+            fld("fast5_compression", "fast5_compression", optional=True),
+            fld("model_base_caller", "model_base_caller", optional=True),
         ],
         "options": {
             "sheet_name": "Library_metadata",
@@ -266,7 +274,10 @@ class AusargIlluminaFastqMetadata(AusargBaseMetadata):
                 # This will be used by sync/dump later to check resource_linkage in resources against that in packages
                 resources.append(
                     (
-                        (resource["library_id"], resource["flowcell_id"],),
+                        (
+                            resource["library_id"],
+                            resource["flowcell_id"],
+                        ),
                         legacy_url,
                         resource,
                     )
@@ -360,15 +371,19 @@ class AusargONTPromethionMetadata(AusargBaseMetadata):
             fld("movie_length", "movie_length"),
             fld("analysis_software", "analysis_software"),
             fld("analysis_software_version", "analysis_software_version"),
-            fld('library_layout', 'library_layout', optional=True),
-            fld('sequencing_model', 'sequencing_model', optional=True),
-            fld('library_strategy', 'library_strategy', optional=True),
-            fld('library_selection', 'library_selection', optional=True),
-            fld('library_source', 'library_source', optional=True),
-            fld('sequencing_kit_chemistry_version', 'sequencing_kit_chemistry_version', optional=True),
-            fld('file_type', 'file_type', optional=True),
-            fld('fast5_compression', 'fast5_compression', optional=True),
-            fld('model_base_caller', 'model_base_caller', optional=True),
+            fld("library_layout", "library_layout", optional=True),
+            fld("sequencing_model", "sequencing_model", optional=True),
+            fld("library_strategy", "library_strategy", optional=True),
+            fld("library_selection", "library_selection", optional=True),
+            fld("library_source", "library_source", optional=True),
+            fld(
+                "sequencing_kit_chemistry_version",
+                "sequencing_kit_chemistry_version",
+                optional=True,
+            ),
+            fld("file_type", "file_type", optional=True),
+            fld("fast5_compression", "fast5_compression", optional=True),
+            fld("model_base_caller", "model_base_caller", optional=True),
         ],
         "options": {
             "sheet_name": "Library_metadata",
@@ -541,9 +556,13 @@ class AusargPacbioHifiMetadata(AusargBaseMetadata):
             fld("library_index_id", "library_index_id"),
             fld("library_index_sequence", "library_index_seq"),
             fld("library_oligo_sequence", "library_oligo_sequence"),
-            fld('library_index_id_dual', 'library_index_id_dual', optional=True),
-            fld('library_index_seq_dual', 'library_index_seq_dual', optional=True),
-            fld('library_oligo_sequence_dual', 'library_oligo_sequence_dual', optional=True),
+            fld("library_index_id_dual", "library_index_id_dual", optional=True),
+            fld("library_index_seq_dual", "library_index_seq_dual", optional=True),
+            fld(
+                "library_oligo_sequence_dual",
+                "library_oligo_sequence_dual",
+                optional=True,
+            ),
             fld("library_pcr_reps", "library_pcr_reps"),
             fld("library_pcr_cycles", "library_pcr_cycles"),
             fld("library_ng_ul", "library_ng_ul"),
@@ -561,15 +580,19 @@ class AusargPacbioHifiMetadata(AusargBaseMetadata):
             fld("file_name", "file_name", optional=True),
             fld("facility_project_code", "facility_project_code", optional=True),
             fld("data_context", "data_context", optional=True),
-            fld('library_layout', 'library_layout', optional=True),
-            fld('sequencing_model', 'sequencing_model', optional=True),
-            fld('library_strategy', 'library_strategy', optional=True),
-            fld('library_selection', 'library_selection', optional=True),
-            fld('library_source', 'library_source', optional=True),
-            fld('sequencing_kit_chemistry_version', 'sequencing_kit_chemistry_version', optional=True),
-            fld('file_type', 'file_type', optional=True),
-            fld('fast5_compression', 'fast5_compression', optional=True),
-            fld('model_base_caller', 'model_base_caller', optional=True),
+            fld("library_layout", "library_layout", optional=True),
+            fld("sequencing_model", "sequencing_model", optional=True),
+            fld("library_strategy", "library_strategy", optional=True),
+            fld("library_selection", "library_selection", optional=True),
+            fld("library_source", "library_source", optional=True),
+            fld(
+                "sequencing_kit_chemistry_version",
+                "sequencing_kit_chemistry_version",
+                optional=True,
+            ),
+            fld("file_type", "file_type", optional=True),
+            fld("fast5_compression", "fast5_compression", optional=True),
+            fld("model_base_caller", "model_base_caller", optional=True),
         ],
         "options": {
             "sheet_name": "Library_metadata",
@@ -693,7 +716,9 @@ class AusargPacbioHifiMetadata(AusargBaseMetadata):
             self._logger.info("fetching resource metadata: %s" % (self.metadata_urls))
             fetcher = Fetcher(self._logger, self.path, metadata_url, ri_auth)
             fetcher.fetch_metadata_from_folder(
-                [files.pacbio_hifi_filename_re,],
+                [
+                    files.pacbio_hifi_filename_re,
+                ],
                 metadata_info,
                 getattr(self, "metadata_url_components", []),
                 download=False,
@@ -715,7 +740,8 @@ class AusargPacbioHifiMetadata(AusargBaseMetadata):
                 resource["name"] = os.path.basename(filename)
                 resource["resource_type"] = self.ckan_data_type
                 library_id = ingest_utils.extract_ands_id(
-                    self._logger, resource["library_id"],
+                    self._logger,
+                    resource["library_id"],
                 )
                 #
                 raw_resources_info = resource_info.get(os.path.basename(filename), "")
@@ -726,7 +752,9 @@ class AusargPacbioHifiMetadata(AusargBaseMetadata):
                     )
                 else:
                     # otherwise if no download_info, then raise error
-                    raise Exception("No download info for {} in {}".format(filename, md5_file))
+                    raise Exception(
+                        "No download info for {} in {}".format(filename, md5_file)
+                    )
                 resources.append(
                     (
                         (
@@ -763,7 +791,11 @@ class AusargExonCaptureMetadata(AusargBaseMetadata):
             fld("voucher_id", "voucher_id", optional=True),
             fld("dataset_id", "dataset_id", coerce=ingest_utils.extract_ands_id),
             fld("library_id", "library_id", coerce=ingest_utils.extract_ands_id),
-            fld("sample_id", "sample_id", coerce=ingest_utils.extract_ands_id,),
+            fld(
+                "sample_id",
+                "sample_id",
+                coerce=ingest_utils.extract_ands_id,
+            ),
             fld("facility_sample_id", "facility_sample_id"),
             fld("library_type", "library_type"),
             fld(
@@ -1069,11 +1101,15 @@ class AusargHiCMetadata(AusargBaseMetadata):
             fld("file_type", "file_type"),
             fld("experimental_design", "experimental_design"),
             fld("work_order", "work_order", coerce=ingest_utils.get_int),
-            fld('library_index_id_dual', 'library_index_id_dual', optional=True),
-            fld('library_index_seq_dual', 'library_index_seq_dual', optional=True),
-            fld('library_oligo_sequence_dual', 'library_oligo_sequence_dual', optional=True),
-            fld('fast5_compression', 'fast5_compression', optional=True),
-            fld('model_base_caller', 'model_base_caller', optional=True)
+            fld("library_index_id_dual", "library_index_id_dual", optional=True),
+            fld("library_index_seq_dual", "library_index_seq_dual", optional=True),
+            fld(
+                "library_oligo_sequence_dual",
+                "library_oligo_sequence_dual",
+                optional=True,
+            ),
+            fld("fast5_compression", "fast5_compression", optional=True),
+            fld("model_base_caller", "model_base_caller", optional=True),
         ],
         "options": {
             "sheet_name": "Library_metadata",

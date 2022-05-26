@@ -132,7 +132,10 @@ class OMG10XRawIlluminaMetadata(OMGBaseMetadata):
             fld("software_version", "software_version"),
             fld("file", "file"),
         ],
-        "options": {"header_length": 1, "column_name_row_index": 0,},
+        "options": {
+            "header_length": 1,
+            "column_name_row_index": 0,
+        },
     }
     md5 = {
         "match": [files.tenxtar_filename_re],
@@ -531,7 +534,10 @@ class OMG10XProcessedIlluminaMetadata(OMGBaseMetadata):
             fld("species", "species", optional=True),
             fld("voucher_id", "voucher_id", optional=True),
         ],
-        "options": {"header_length": 1, "column_name_row_index": 0,},
+        "options": {
+            "header_length": 1,
+            "column_name_row_index": 0,
+        },
     }
     md5 = {
         "match": [files.tenxtar_filename_re],
@@ -1218,7 +1224,10 @@ class OMGGenomicsNovaseqMetadata(OMGBaseMetadata):
         },
     }
     md5 = {
-        "match": [files.novaseq_filename_re, files.novaseq_filename_2_re,],
+        "match": [
+            files.novaseq_filename_re,
+            files.novaseq_filename_2_re,
+        ],
         "skip": [
             re.compile(r"^.*_metadata\.xlsx$"),
             re.compile(r"^.*SampleSheet.*"),
@@ -1385,7 +1394,10 @@ class OMGGenomicsHiSeqMetadata(OMGBaseMetadata):
             fld("software_version", "software_version"),
             fld("file", "file"),
         ],
-        "options": {"header_length": 1, "column_name_row_index": 0,},
+        "options": {
+            "header_length": 1,
+            "column_name_row_index": 0,
+        },
     }
     md5 = {
         "match": [files.hiseq_filename_re],
@@ -1633,7 +1645,10 @@ class OMGGenomicsDDRADMetadata(OMGBaseMetadata):
 
     def generate_notes_field(self, row_object):
         notes = "%s\nddRAD dataset not demultiplexed" % (
-            row_object.get("scientific_name", "%s %s" % (row_object.get("genus", ""), row_object.get("species", ""))),
+            row_object.get(
+                "scientific_name",
+                "%s %s" % (row_object.get("genus", ""), row_object.get("species", "")),
+            ),
         )
         return notes
 
@@ -1670,7 +1685,11 @@ class OMGGenomicsDDRADMetadata(OMGBaseMetadata):
                 for row in row_objs:
                     context = {}
                     for contextual_source in self.contextual_metadata:
-                        context.update(contextual_source.get(row.get("bpa_sample_id"),row.get("bpa_libary_id")))
+                        context.update(
+                            contextual_source.get(
+                                row.get("bpa_sample_id"), row.get("bpa_libary_id")
+                            )
+                        )
                     context_objs.append(context)
 
                 obj = common_values(row_objs)
@@ -2575,7 +2594,9 @@ class OMGAnalysedDataMetadata(OMGBaseMetadata):
     }
     md5 = {
         "match": [files.analysed_data_filename_re],
-        "skip": [re.compile(r"^.*\.xlsx$"),],
+        "skip": [
+            re.compile(r"^.*\.xlsx$"),
+        ],
     }
 
     def __init__(

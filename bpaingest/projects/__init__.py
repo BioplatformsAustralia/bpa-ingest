@@ -183,7 +183,9 @@ class ProjectInfo:
             StemcellsMetabolomicsAnalysedMetadata,
             StemcellsTranscriptomeAnalysedMetadata,
         ],
-        "wheat-cultivars": [WheatCultivarsMetadata,],
+        "wheat-cultivars": [
+            WheatCultivarsMetadata,
+        ],
         "wheat-pathogens": [
             WheatPathogensGenomesMetadata,  # the first half of wheat pathogens
         ],
