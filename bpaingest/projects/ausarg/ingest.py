@@ -1444,7 +1444,6 @@ class AusargGenomicsDArTMetadata(AusargBaseMetadata):
                     "type": self.ckan_data_type,
                     "sequence_data_type": self.sequence_data_type,
                     "license_id": apply_cc_by_license(),
-                    "related_data": "",
                 }
             )
             obj.update(
@@ -1453,12 +1452,16 @@ class AusargGenomicsDArTMetadata(AusargBaseMetadata):
                 }
             )
             ingest_utils.permissions_organization_member(self._logger, obj)
-            ingest_utils.apply_access_control(self._logger, self, obj)
-            obj[
-                "related_data"
-            ] = "Attached metadata spreadsheets were produced when data was generated. {0}".format(
-                obj["related_data"]
+            attach_message = (
+                "Attached metadata spreadsheets were produced when data was generated."
             )
+            if "related_data" not in obj:
+                obj["related_data"] = attach_message
+            else:
+                obj["related_data"] = "{0} {1}".format(
+                    attach_message, obj["related_data"]
+                )
+            ingest_utils.apply_access_control(self._logger, self, obj)
             ingest_utils.add_spatial_extra(self._logger, obj)
             tag_names = ["genomics-dart"]
             obj["tags"] = [{"name": t} for t in tag_names]
