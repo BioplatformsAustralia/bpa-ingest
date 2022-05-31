@@ -1049,6 +1049,8 @@ class TSIGenomicsDDRADMetadata(TSIBaseMetadata):
         "match": [files.ddrad_fastq_filename_re, files.ddrad_metadata_sheet_re,],
         "skip": [
             re.compile(r"^.*_metadata.*\.xlsx$"),
+            re.compile(r"^.*TestFiles\.exe.*"),
+            re.compile(r"^.*DataValidation\.pdf.*"),
         ],
     }
 
