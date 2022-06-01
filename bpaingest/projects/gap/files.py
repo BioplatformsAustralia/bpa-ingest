@@ -49,13 +49,13 @@ ont_minion_re = re.compile(ONT_MINION_PATTERN, re.VERBOSE)
 
 ONT_PROMETHION_PATTERN = r"""
     (?P<sample_id>\d{4,6})_
-    (?P<flow_cell_id>PA[DEFG]\d{5})_
+    (?P<flow_cell_id>PA[DEFGH]\d{5})_
     (Run\d+_)?
     GAP_
     (?P<facility_id>(AGRF|BRF))_
     ONTPromethION_
     (?P<archive_type>\w+)
-    \.tar
+    \.(tar|html|txt)
 """
 ont_promethion_re = re.compile(ONT_PROMETHION_PATTERN, re.VERBOSE)
 
