@@ -151,6 +151,10 @@ class CKANArchiveInfo(BaseArchiveInfo):
         # the archive will issue an S3 link with auth token
         response = self.session.head(url, headers={"Authorization": self.ckan.apikey})
         self.check_status_code(response)
+        if response.status_code != 302:
+            logger.error(
+                "Unexpected status (%s) for URL %s" % (response.status_code, url)
+            )
         assert response.status_code == 302
         return response.headers["location"]
 
@@ -233,7 +237,11 @@ class ApacheArchiveInfo(BaseArchiveInfo):
 
 
 def check_resource(
-    ckan_archive_info, apache_archive_info, current_url, legacy_url, metadata_etags,
+    ckan_archive_info,
+    apache_archive_info,
+    current_url,
+    legacy_url,
+    metadata_etags,
 ):
     """
     returns None if the ckan_obj looks good (is on the CKAN server, size matches legacy url size)

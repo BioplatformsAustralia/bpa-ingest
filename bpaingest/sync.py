@@ -241,7 +241,7 @@ def reupload_resources(ckan, to_reupload, auth, write_reuploads_fn, write_reuplo
         else:
             to_reupload.remove((reupload_obj, legacy_url))
             logger.info(
-                f"Resource successfully uploaded. Removed {reupload_obj}{legacy_url} from reupload list..."
+                f"Resource successfully uploaded. Removed {reupload_obj} at {legacy_url} from reupload list..."
             )
         finally:
             remaining_reuploads_count = len(to_reupload)
