@@ -27,6 +27,7 @@ def test_illumina_rna_and_phylo_shortread():
         "79638_LibID81644_HLCH5DSXX_CAATTAAC-CGAGATAT_S7_L003_R1_001.fastq.gz",
         "376315_LibID380534_GAP_BRF_AH5TJYDRXY_AAGAACCG_CTAGAATT_S7_L002_R2_001.fastq.gz",
         "376316_LibID380531_GAP_BRF_AH5TJYDRXY_AAGAACCG_GCATTCGG_S4_L001_R1_001.fastq.gz",
+        "378099_LibID382905_GAP_UNSW_H2T7NDRX2_CTCGCTTCGG-TACTAGTCAA_S1_L001_R1_001.fastq.gz",
     ]
     for filename in filenames:
         assert illumina_shortread_rna_phylo_re.match(filename) is not None
