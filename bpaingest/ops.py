@@ -189,9 +189,9 @@ class CKANArchiveInfo(BaseArchiveInfo):
         return response.headers.get("etag")
 
     def get_size(self, url):
-        logger.info("start get_size `%s' " % url)
         if not url:
             return None
+        logger.info("start get_size `%s' " % url)
         if url not in self._size_cache:
             # a URL on S3 with auth token
             resolved = self.resolve_url(url)
@@ -300,7 +300,7 @@ def check_resource(
                 % (current_url, current_etag, metadata_etags)
             )
             return "wrong-etag"
-    logger.info("end check_resource `%s' " % url)
+    logger.info("end check_resource `%s' " % current_url)
     return None
 
 
