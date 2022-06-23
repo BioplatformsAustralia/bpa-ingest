@@ -51,9 +51,9 @@ ont_minion_re = re.compile(ONT_MINION_PATTERN, re.VERBOSE)
 ONT_PROMETHION_PATTERN = r"""
     (?P<sample_id>\d{4,6})_
     (?P<flow_cell_id>PA[DEFGH]\d{5})_
-    (Run\d+_)?
     GAP_
     (?P<facility_id>(AGRF|BRF))_
+    (Run(?P<run_number>\d+)_)?
     ONTPromethION_
     (?P<archive_type>\w+)
     \.(tar|html|txt)
@@ -63,12 +63,13 @@ ont_promethion_re = re.compile(ONT_PROMETHION_PATTERN, re.VERBOSE)
 ONT_PROMETHION_PATTERN_2 = r"""
     (?P<sample_id>\d{4,6})_
     GAP_
-    (?P<facility_id>(AGRF|BRF))_
-    (?P<flow_cell_id>PA[DEFG]\d{5})_
-    (Run\d+_)?
+    (?P<facility_id>(AGRF|BRF|UNSW))_
+    (?P<flow_cell_id>PA[DEFGK]\d{5})_
+    (Run(?P<run_number>\d+)_)?
     ONTPromethION_
+    (\w+_)?
     (?P<archive_type>\w+)
-    \.tar
+    \.(tar|fastq.gz|blow5)
 """
 ont_promethion_re_2 = re.compile(ONT_PROMETHION_PATTERN_2, re.VERBOSE)
 

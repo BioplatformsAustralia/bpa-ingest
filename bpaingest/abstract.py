@@ -134,6 +134,7 @@ class BaseMetadata:
                 "BAM",
                 "HTML",
                 "MD5",
+                "BLOW5",
             ):
                 resource_obj["format"] = extension
 
