@@ -145,9 +145,11 @@ def same_netloc(u1, u2):
 
 
 class CKANArchiveInfo(BaseArchiveInfo):
+
     def __init__(self, ckan):
         self.ckan = ckan
         self.session = requests.Session()
+        self._etag_cache = {}
         super().__init__()
 
     def on_ckan(self, url):
@@ -173,39 +175,29 @@ class CKANArchiveInfo(BaseArchiveInfo):
         # content-range header
         return requests.get(url, headers={"Range": "bytes=0-0"})
 
-    def get_etag(self, url):
-        logger.info("start get_etag `%s' " % url)
+    def get_size_and_etag(self, url):
         if not url:
             return None
-        # a URL on S3 with auth token
-        resolved = self.resolve_url(url)
-        if resolved is None:
-            return None
-        response = self.s3_simulated_head(resolved)
-        self.check_status_code(response)
-        if response.status_code not in (200, 206):
-            return None
-        logger.info("end get_etag `%s' " % url)
-        return response.headers.get("etag")
-
-    def get_size(self, url):
-        if not url:
-            return None
-        logger.info("start get_size `%s' " % url)
+        logger.info("start get_size_and_etag `%s' " % url)
         if url not in self._size_cache:
+
             # a URL on S3 with auth token
             resolved = self.resolve_url(url)
             if resolved is None:
                 return None
-            # we have to do a range request for the first byte, as S3 doesn't let us head
-            # with an authorization token. however, we can still get the full size from the
-            # content-range header
             response = self.s3_simulated_head(resolved)
+            self.check_status_code(response)
+            if response.status_code not in (200, 206):
+                return None
             self._size_cache[url] = self._size_cache[
                 resolved
             ] = self.size_from_response(response)
-        logger.info("end get_size `%s' " % url)
-        return self._size_cache[url]
+            self._etag_cache[url] = self._etag_cache[
+                resolved
+            ] = response.headers.get("etag")
+
+        logger.info("end get_size_and_etag `%s' " % url)
+        return self._size_cache[url], self._etag_cache[url]
 
 
 class ApacheArchiveInfo(BaseArchiveInfo):
@@ -272,8 +264,10 @@ def check_resource(
         logger.error("error getting size of: %s" % (legacy_url))
         return "error-getting-size-legacy"
 
+    # single call to s3 from this function to speed up checks
+    current_size, current_etag = ckan_archive_info.get_size_and_etag(current_url)
+
     # determine the URL of the proxied s3 resource, and then its size
-    current_size = ckan_archive_info.get_size(current_url)
     if current_size is None:
         logger.error("error getting size of: %s" % (current_url))
         return "error-getting-size-s3"
@@ -286,7 +280,6 @@ def check_resource(
         return "wrong-size"
 
     # if we have a pre-calculated s3etag in metadata, check it matches
-    current_etag = ckan_archive_info.get_etag(current_url)
     logger.info(f"current etag is {current_etag}")
     if current_etag and current_etag.strip('"') not in metadata_etags:
         if None in metadata_etags:
