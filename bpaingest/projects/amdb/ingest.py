@@ -140,7 +140,7 @@ class AMDFullIngestMetadata(AMDBaseMetadata):
         super().__init__(logger, metadata_path, **kwargs)
         self.metadata_info = kwargs["metadata_info"]
         self.all_md5_filenames = [
-            f for f in self.metadata_info.keys() if re.match(".*\.md5", f)
+            f for f in self.metadata_info.keys() if re.match(r".*\.md5", f)
         ]
 
 
