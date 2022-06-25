@@ -67,9 +67,9 @@ ONT_PROMETHION_PATTERN_2 = r"""
     (?P<flow_cell_id>PA[DEFGK]\d{5})_
     (Run(?P<run_number>\d+)_)?
     ONTPromethION_
-    (\w+_)?
+    ((?P<experiment_run_name>[A-Z]{4}\d{5})_)?
     (?P<archive_type>\w+)
-    \.(tar|fastq.gz|blow5)
+    \.(tar|fastq.gz|blow5|html)
 """
 ont_promethion_re_2 = re.compile(ONT_PROMETHION_PATTERN_2, re.VERBOSE)
 

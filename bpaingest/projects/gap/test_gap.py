@@ -70,6 +70,7 @@ def test_ont_promethion_re_2():
         "378099_GAP_UNSW_PAK15599_ONTPromethION_PVXP22262_fail.fastq.gz",
         "378099_GAP_UNSW_PAK15599_ONTPromethION_PVXP22262_pass.fastq.gz",
         "378099_GAP_UNSW_PAK15599_ONTPromethION_PVXP22262_reads.blow5",
+        "378099_GAP_UNSW_PAK15599_ONTPromethION_PVXP22262.html",
     ]
     for filename in filenames:
         assert ont_promethion_re_2.match(filename) is not None
