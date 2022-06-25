@@ -1729,6 +1729,161 @@ class MarineMicrobesMetatranscriptomeMetadata(BaseMarineMicrobesMetadata):
         return resources
 
 
+class AustralianMicrobiomeMetagenomicsAnalysedMetadata(AMDFullIngestMetadata):
+    organization = "australian-microbiome"
+    ckan_data_type = "amdb-metagenomics-analysed"
+    omics = "metagenomics"
+    technology = "analysed"
+    sequence_data_type = "metagenomics-analysed"
+    embargo_days = 90
+    contextual_classes = common_context
+    metadata_patterns = [r"^AM.*\.md5$", r"^AM.*_metadata\.xlsx$"]
+    metadata_urls = [
+        "https://downloads-qcif.bioplatforms.com/bpa/amd/metagenomics-analysed/"
+    ]
+    metadata_url_components = ("ticket","folder")
+    resource_linkage = ("sample_id",)
+    spreadsheet = {
+        "fields": [
+            fld(
+                "sample_id",
+                re.compile(r"sample_?[Ii][Dd]"),
+                coerce=ingest_utils.extract_ands_id,
+            ),
+            fld('sample_id_description', 'sample_id_description'),
+            fld(
+                "dataset_id",
+                re.compile(r"dataset_?[Ii][Dd]"),
+                coerce=ingest_utils.extract_ands_id,
+            ),
+            fld('dataset_id_description', 'dataset_id_description'),
+            fld('bioplatforms_project', 'bioplatforms_project'),
+            fld('data_custodian', 'data_custodian'),
+            fld('data_context', 'data_context'),
+            fld('analysis_name', 'analysis_name'),
+            fld('analysis_date', 'analysis_date', coerce=ingest_utils.get_date_isoformat),
+            fld('sequencing_technology', 'sequencing_technology'),
+            fld('analysis_method', 'analysis_method'),
+            fld('analysis_method_version', 'analysis_method_version'),
+            fld('version_method_version_link', 'version_method_version_link'),
+            fld('analysis_qc', 'analysis_qc'),
+            fld('computational_infrastructure', 'computational_infrastructure'),
+            fld('system_used', 'system_used'),
+            fld('analysis_description', 'analysis_description'),
+        ],
+        "options": {"header_length": 1, "column_name_row_index": 0,},
+    }
+    md5 = {
+        "match": [files.amd_metagenomics_analysed_re,],
+        "skip": [re.compile(r"^.*\.xlsx$"),],
+    }
+
+    def __init__(self, logger, metadata_path, **kwargs):
+        super().__init__(logger, metadata_path, **kwargs)
+        self.contextual_metadata = kwargs["contextual_metadata"]
+        self.google_track_meta = AustralianMicrobiomeGoogleTrackMetadata()
+
+    def _get_packages(self):
+        self._logger.info(
+            "Ingesting AM Metagenome Assembly metadata from {0}".format(self.path)
+        )
+        packages = []
+
+        for fname in glob(self.path + "/*.xlsx"):
+            self._logger.info(
+                "Processing Australian Microbiome metadata file {0}".format(
+                    os.path.basename(fname)
+                )
+            )
+            for row in self.parse_spreadsheet(fname, self.metadata_info):
+                sample_id = row.sample_id
+                if sample_id is None:
+                    continue
+                google_track_meta = self.google_track_meta.get(row.ticket)
+                name = sample_id_to_ckan_name(
+                    sample_id.split("/")[-1], self.ckan_data_type
+                )
+                archive_ingestion_date = ingest_utils.get_date_isoformat(
+                    self._logger, google_track_meta.date_of_transfer_to_archive
+                )
+
+                obj = row._asdict()
+
+                obj.update(
+                    {
+                        "name": name,
+                        "id": name,
+                        "title": "Australian Microbiome Metagenomics Analysed %s"
+                        % (sample_id),
+                        "omics": "metagenomics",
+                        "date_of_transfer": ingest_utils.get_date_isoformat(
+                            self._logger, google_track_meta.date_of_transfer
+                        ),
+                        "data_type": google_track_meta.data_type,
+                        "description": google_track_meta.description,
+                        "folder_name": google_track_meta.folder_name,
+                        "sample_submission_date": ingest_utils.get_date_isoformat(
+                            self._logger, google_track_meta.date_of_transfer
+                        ),
+                        "data_generated": ingest_utils.get_date_isoformat(
+                            self._logger, google_track_meta.date_of_transfer_to_archive
+                        ),
+                        "archive_ingestion_date": archive_ingestion_date,
+                        "license_id": apply_license(archive_ingestion_date),
+                        "dataset_url": google_track_meta.download,
+                        "type": self.ckan_data_type,
+                        "sequence_data_type": self.sequence_data_type,
+                    }
+                )
+                ingest_utils.permissions_organization_member_after_embargo(
+                    self._logger,
+                    obj,
+                    "archive_ingestion_date",
+                    self.embargo_days,
+                    CONSORTIUM_ORG_NAME,
+                )
+                for contextual_source in self.contextual_metadata:
+                    obj.update(contextual_source.get(sample_id))
+                ingest_utils.add_spatial_extra(self._logger, obj)
+                self.build_notes_into_object(obj)
+                ingest_utils.apply_access_control(self._logger, self, obj)
+                tag_names = ["metagenomics", "analysed"]
+                if obj.get("sample_type"):
+                    tag_names.append(obj["sample_type"])
+                obj["tags"] = [{"name": t} for t in tag_names]
+                self.track_packages_for_md5(obj, row.ticket)
+                packages.append(obj)
+        return packages
+
+    def _get_resources(self):
+        self._logger.info(
+            "Ingesting AM MGEA md5 file information from {0}".format(self.path)
+        )
+        resources = []
+        for md5_file in glob(self.path + "/AM_*.md5"):
+            self._logger.info("Processing md5 file {0}".format(md5_file))
+            for filename, md5, file_info in self.parse_md5file(md5_file):
+                resource = file_info.copy()
+                resource[
+                    "sample_id"
+                ] = ingest_utils.extract_ands_id(
+                    self._logger, resource["sample_id"]
+                )
+                resource["md5"] = resource["id"] = md5
+                resource["name"] = os.path.basename(filename)
+                resource["resource_type"] = self.ckan_data_type
+                xlsx_info = self.metadata_info[os.path.basename(md5_file)]
+                legacy_url = urljoin(xlsx_info["base_url"], filename)
+                resources.append(
+                    (
+                        (resource["sample_id"],),
+                        legacy_url,
+                        resource,
+                    )
+                )
+        return resources
+
+
 class AustralianMicrobiomeMetagenomicsNovaseqMetadata(AMDFullIngestMetadata):
     organization = "australian-microbiome"
     ckan_data_type = "amdb-metagenomics-novaseq"

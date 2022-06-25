@@ -165,6 +165,7 @@ amd() {
   apply amd-genomics-amplicons-control $*
   apply amd-metagenomics-novaseq $*
   apply amd-metagenomics-novaseq-control $*
+  apply amd-metagenomics-analysed $*
 }
 
 run() {

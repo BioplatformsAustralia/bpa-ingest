@@ -1,4 +1,5 @@
 from .files import (
+    amd_metagenomics_analysed_re,
     amd_metagenomics_novaseq_re,
     amd_metagenomics_novaseq_control_re,
     amd_amplicon_filename_re,
@@ -218,6 +219,18 @@ def test_mm_metagenomics_v2():
     ]
     for filename in filenames:
         assert mm_metagenomics_filename_v2_re.match(filename) is not None
+
+
+def test_amd_metagenomics_analysed():
+    filenames = [
+        "21645_MGEA_CSIRO_annotation.tar",
+        "21645_MGEA_CSIRO_assembly.tar",
+        "21645_MGEA_CSIRO_SQM_03.gff",
+        "21645_MGEA_CSIRO_SQM.md5",
+        "21645_MGEA_CSIRO_taxonomy.tar",
+    ]
+    for filename in filenames:
+        assert amd_metagenomics_analysed_re.match(filename) is not None
 
 
 def test_amd_metagenomics_novaseq():

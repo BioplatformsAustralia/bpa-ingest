@@ -287,6 +287,21 @@ def parse_md5_file(md5_file, regexps):
                 yield path, md5, None
 
 
+amd_metagenomics_analysed_re = re.compile(
+    r"""
+    (?P<sample_id>\d{4,6})_
+    MGEA_
+    (?P<vendor>CSIRO)_
+    .*
+    \.
+    (tar
+      |md5
+      |gff)
+""",
+    re.VERBOSE,
+)
+
+
 amd_metagenomics_novaseq_re = re.compile(
     r"""
     (?P<id>\d{4,6})_

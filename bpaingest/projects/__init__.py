@@ -1,6 +1,7 @@
 import logging
 
 from .amdb.ingest import (
+    AustralianMicrobiomeMetagenomicsAnalysedMetadata,
     AustralianMicrobiomeMetagenomicsNovaseqMetadata,
     AustralianMicrobiomeMetagenomicsNovaseqControlMetadata,
     AustralianMicrobiomeAmpliconsMetadata,
@@ -96,6 +97,7 @@ from ..util import make_logger
 class ProjectInfo:
     projects = {
         "amd": [
+            AustralianMicrobiomeMetagenomicsAnalysedMetadata,
             AustralianMicrobiomeMetagenomicsNovaseqMetadata,
             AustralianMicrobiomeMetagenomicsNovaseqControlMetadata,
             AustralianMicrobiomeAmpliconsMetadata,
