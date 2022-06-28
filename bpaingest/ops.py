@@ -341,14 +341,16 @@ def download_legacy_file(legacy_url, auth):
     wget_args.append(resolved_url)
     status = subprocess.call(wget_args)
     if status != 0:
+        logger.error("wget failed, returned %s" % (str(status)))
+        logger.error("wget args were: %s" % (str(wget_args)))
         try:
             os.unlink(path)
         except OSError:
-            pass
+            logger.error("failed to unlink temp file")
         try:
             os.rmdir(tempdir)
         except OSError:
-            pass
+            logger.error("failed to remove temp directory")
         return None, None
     logger.info("end download_legacy_file `%s' " % legacy_url)
     return tempdir, path
