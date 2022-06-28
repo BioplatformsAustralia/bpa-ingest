@@ -290,12 +290,37 @@ def parse_md5_file(md5_file, regexps):
 amd_metagenomics_analysed_re = re.compile(
     r"""
     (?P<sample_id>\d{4,6})_
-    MGEA_
-    (?P<vendor>CSIRO)_
+    MGSD_
+    (?P<vendor>CSIRO)[\._]
     .*
     \.
     (tar
+      |allreads
+      |bam
+      |bintable
+      |checkM
+      |cog
+      |contigcov
+      |contigtable
+      |faa
+      |fastq\.gz
+      |fasta
+      |fna
+      |lon
+      |kegg
+      |mapcount
+      |mappingstat
+      |mcount
       |md5
+      |orftable
+      |pathways
+      |pfam
+      |rnas
+      |stats
+      |trnas
+      |txt
+      |wranks
+      |zip
       |gff)
 """,
     re.VERBOSE,
