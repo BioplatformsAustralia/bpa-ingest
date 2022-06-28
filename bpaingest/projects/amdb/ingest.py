@@ -1787,7 +1787,7 @@ class AustralianMicrobiomeMetagenomicsAnalysedMetadata(AMDFullIngestMetadata):
 
     def _get_packages(self):
         self._logger.info(
-            "Ingesting AM Metagenome Assembly metadata from {0}".format(self.path)
+            "Ingesting AM Metagenome Analysed metadata from {0}".format(self.path)
         )
         packages = []
 
@@ -1861,7 +1861,7 @@ class AustralianMicrobiomeMetagenomicsAnalysedMetadata(AMDFullIngestMetadata):
 
     def _get_resources(self):
         self._logger.info(
-            "Ingesting AM MGEA md5 file information from {0}".format(self.path)
+            "Ingesting AM MGSD md5 file information from {0}".format(self.path)
         )
         resources = []
         for md5_file in glob(self.path + "/AM_*.md5"):
