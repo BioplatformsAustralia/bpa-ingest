@@ -1730,7 +1730,9 @@ class MarineMicrobesMetatranscriptomeMetadata(BaseMarineMicrobesMetadata):
 
 
 class AustralianMicrobiomeMetagenomicsAnalysedMetadata(AMDFullIngestMetadata):
-    organization = "australian-microbiome"
+    #organization = "australian-microbiome"
+    # NOTE: change this back to make proof of concept widely available
+    organization = "am-csiro-team"
     ckan_data_type = "amdb-metagenomics-analysed"
     omics = "metagenomics"
     technology = "analysed"
@@ -1835,13 +1837,15 @@ class AustralianMicrobiomeMetagenomicsAnalysedMetadata(AMDFullIngestMetadata):
                         "sequence_data_type": self.sequence_data_type,
                     }
                 )
-                ingest_utils.permissions_organization_member_after_embargo(
-                    self._logger,
-                    obj,
-                    "archive_ingestion_date",
-                    self.embargo_days,
-                    CONSORTIUM_ORG_NAME,
-                )
+                # NOTE: change this back to make proof of concept widely available
+                #ingest_utils.permissions_organization_member_after_embargo(
+                #    self._logger,
+                #    obj,
+                #    "archive_ingestion_date",
+                #    self.embargo_days,
+                #    CONSORTIUM_ORG_NAME,
+                #)
+                ingest_utils.permissions_organization_member(self._logger, obj)
                 for contextual_source in self.contextual_metadata:
                     obj.update(contextual_source.get(sample_id))
                 ingest_utils.add_spatial_extra(self._logger, obj)
