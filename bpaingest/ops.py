@@ -1,6 +1,7 @@
 import subprocess
 import tempfile
 import urllib
+import shutil
 
 import requests
 import ckanapi
@@ -307,12 +308,30 @@ def download_legacy_file(legacy_url, auth):
     tempdir = tempfile.mkdtemp(prefix="bpaingest-data-")
     path = os.path.join(tempdir, basename)
     archive_info = ApacheArchiveInfo(auth)
+
+    # resolve URL
     resolved_url = archive_info.resolve_url(legacy_url)
     logger.info("Resolved `%s' to `%s'" % (legacy_url, resolved_url))
     if not resolved_url:
         logger.error("unable to resolve `%s' - file missing?" % (legacy_url))
         os.rmdir(tempdir)
         return None, None
+
+    # check transfer space
+    resolved_size = archive_info.get_size(legacy_url)
+    usage = shutil.disk_usage(tempdir)
+    free_space = usage.free
+    if resolved_size > free_space:
+        logger.error(
+            "Not enough free space to download to %s from archive" % (tempdir, )
+        )
+        logger.error("Have %d but needed %d bytes" % (free_space, resolved_size))
+    else:
+        logger.info(
+            "Space OK for transfer - Have %d - Require %d bytes"
+            % (free_space, resolved_size)
+        )
+
     # wget will resume downloads, which is a huge win when dealing with
     # mirrors that sometimes close connections. ugly, but pragmatic.
     wget_args = ["wget", "-q", "-c", "-t", "0", "-O", path]
