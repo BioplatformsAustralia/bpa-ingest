@@ -107,6 +107,7 @@ PACBIO_HIFI_PATTERN = r"""
     (?P<flowcell_id>\w{8})
     (_ccs_statistics\.csv
       |_final\.consensusreadset\.xml
+      |_with_5mC\.consensusreadset\.xml
       |\.ccs\.bam
       |[\._]subreads\.bam
       |_HiFi_qc\.pdf
