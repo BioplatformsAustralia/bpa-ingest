@@ -253,7 +253,7 @@ def check_resource(
     # determine the size of the original file in the legacy archive
     legacy_size = apache_archive_info.get_size(legacy_url)
     if legacy_size is None:
-        logger.error("error getting size of: %s" % (legacy_url))
+        logger.error("error getting legacy size of: %s" % (legacy_url))
         return "error-getting-size-legacy"
 
     # single call to s3 from this function to speed up checks
@@ -261,7 +261,7 @@ def check_resource(
 
     # determine the URL of the proxied s3 resource, and then its size
     if current_size is None:
-        logger.error("error getting size of: %s" % (current_url))
+        logger.error("error getting s3 size of: %s" % (current_url))
         return "error-getting-size-s3"
 
     if current_size != legacy_size:
