@@ -2,6 +2,7 @@ import subprocess
 import tempfile
 import urllib
 import shutil
+import bitmath
 
 import requests
 import ckanapi
@@ -14,16 +15,6 @@ from .util import make_logger
 
 logger = make_logger(__name__)
 UPLOAD_RETRY = 3
-
-
-# https://stackoverflow.com/questions/1094841/reusable-library-to-get-human-readable-version-of-file-size
-def sizeof_fmt(num, suffix="B"):
-    for unit in ["", "Ki", "Mi", "Gi", "Ti", "Pi", "Ei", "Zi"]:
-        if abs(num) < 1024.0:
-            return "%3.1f%s%s" % (num, unit, suffix)
-        num /= 1024.0
-    return "%.1f%s%s" % (num, "Yi", suffix)
-
 
 method_stats = defaultdict(int)
 
@@ -55,6 +46,7 @@ def print_accounts():
 
 def diff_objects(obj1, obj2, desc, skip_differences=None):
     logger.info("start diff_objects")
+
     def sort_if_list(v):
         if isinstance(v, list):
             return list(sorted(v, key=lambda v: repr(v)))
@@ -146,7 +138,6 @@ def same_netloc(u1, u2):
 
 
 class CKANArchiveInfo(BaseArchiveInfo):
-
     def __init__(self, ckan):
         self.ckan = ckan
         self.session = requests.Session()
@@ -193,9 +184,9 @@ class CKANArchiveInfo(BaseArchiveInfo):
             self._size_cache[url] = self._size_cache[
                 resolved
             ] = self.size_from_response(response)
-            self._etag_cache[url] = self._etag_cache[
-                resolved
-            ] = response.headers.get("etag")
+            self._etag_cache[url] = self._etag_cache[resolved] = response.headers.get(
+                "etag"
+            )
 
         logger.info("end get_size_and_etag `%s' " % url)
         return self._size_cache[url], self._etag_cache[url]
@@ -319,17 +310,27 @@ def download_legacy_file(legacy_url, auth):
 
     # check transfer space
     resolved_size = archive_info.get_size(legacy_url)
+    if resolved_size is None:
+        logger.error("unable to retrieve file size for `%s' " % (legacy_url))
     usage = shutil.disk_usage(tempdir)
     free_space = usage.free
-    if resolved_size > free_space:
+    if resolved_size is not None and resolved_size > free_space:
         logger.error(
-            "Not enough free space to download to %s from archive" % (tempdir, )
+            "Not enough free space to download to %s from archive" % (tempdir,)
         )
-        logger.error("Have %d but needed %d bytes" % (free_space, resolved_size))
+        logger.error("Have %d free but needed %d" % (free_space, resolved_size))
+
     else:
         logger.info(
-            "Space OK for transfer - Have %d - Require %d bytes"
-            % (free_space, resolved_size)
+            "Space OK for transfer - Have %s - Require %s"
+            % (
+                bitmath.Byte(bytes=free_space)
+                .best_prefix()
+                .format("{value:.2f} {unit}"),
+                bitmath.Byte(bytes=resolved_size)
+                .best_prefix()
+                .format("{value:.2f} {unit}"),
+            )
         )
 
     # wget will resume downloads, which is a huge win when dealing with
