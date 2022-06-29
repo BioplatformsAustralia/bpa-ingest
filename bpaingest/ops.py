@@ -201,7 +201,9 @@ class ApacheArchiveInfo(BaseArchiveInfo):
         super().__init__()
 
     def head(self, url):
-        return self.session.head(url, auth=self.auth)
+        # Force requested item to be sent as-is
+        headers={'Accept-Encoding': None}
+        return self.session.head(url, auth=self.auth, headers=headers)
 
     def resolve_url(self, url):
         """
@@ -209,11 +211,9 @@ class ApacheArchiveInfo(BaseArchiveInfo):
         archive that need to be walked
         """
 
-        # Force requested item to be sent as-is
-        headers={'Accept-Encoding': None}
         new_url = url
         for i in range(4):
-            response = self.session.head(new_url, auth=self.auth, headers=headers)
+            response = self.session.head(new_url, auth=self.auth)
             self.check_status_code(response)
             if response.status_code == 301 or response.status_code == 302:
                 new_url = response.headers.get("location")
