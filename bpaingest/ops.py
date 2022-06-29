@@ -129,6 +129,8 @@ class BaseArchiveInfo:
             return int(response.headers.get("content-range").rsplit("/", 1)[-1])
         if "content-length" in response.headers:
             return int(response.headers["content-length"])
+        logger.error("Unable to determine size, headers are: %s" % (response.headers,))
+        return None
 
 
 def same_netloc(u1, u2):
