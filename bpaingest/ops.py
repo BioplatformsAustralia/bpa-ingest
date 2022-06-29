@@ -208,9 +208,12 @@ class ApacheArchiveInfo(BaseArchiveInfo):
         follow redirects until we get the final URL; unfortunately there are symlinks in the flat-file
         archive that need to be walked
         """
+
+        # Force requested item to be sent as-is
+        headers={'Accept-Encoding': None}
         new_url = url
         for i in range(4):
-            response = self.session.head(new_url, auth=self.auth)
+            response = self.session.head(new_url, auth=self.auth, headers=headers)
             self.check_status_code(response)
             if response.status_code == 301 or response.status_code == 302:
                 new_url = response.headers.get("location")
