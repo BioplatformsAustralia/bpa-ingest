@@ -45,7 +45,7 @@ def print_accounts():
 
 
 def diff_objects(obj1, obj2, desc, skip_differences=None):
-    logger.info("start diff_objects")
+    logger.debug("start diff_objects")
 
     def sort_if_list(v):
         if isinstance(v, list):
@@ -68,7 +68,7 @@ def diff_objects(obj1, obj2, desc, skip_differences=None):
         logger.info("   -  %s=%s (%s)" % (k, v2, type(v2).__name__))
     for k, v1, v2 in differences:
         logger.info("   +  %s=%s (%s)" % (k, v1, type(v1).__name__))
-    logger.info("end diff_objects")
+    logger.debug("end diff_objects")
     return len(differences) > 0
 
 
@@ -79,16 +79,16 @@ def patch_if_required(
     patch ckan_object if applying patch_object would change it. ckan_object is unchanged
     for any keys which are not mentioned in patch_object
     """
-    logger.info("start patch if required")
+    logger.debug("start patch if required")
     patch_needed = diff_objects(patch_object, ckan_object, object_type)
     if patch_needed:
         ckan_object = ckan_method(ckan, object_type, "patch")(**patch_object)
-    logger.info("end patch_if_required")
+    logger.debug("end patch_if_required")
     return patch_needed, ckan_object
 
 
 def make_obj(ckan, obj_type, obj):
-    logger.info("start make_obj")
+    logger.debug("start make_obj")
     try:
         ckan_obj = ckan_method(ckan, obj_type, "show")(id=obj["name"])
     except ckanapi.errors.NotFound:
@@ -99,7 +99,7 @@ def make_obj(ckan, obj_type, obj):
     was_patched, ckan_obj = patch_if_required(ckan, obj_type, ckan_obj, obj)
     if was_patched:
         logger.info("updated %s `%s'" % (obj_type, obj["name"]))
-    logger.info("end make_obj")
+    logger.debug("end make_obj")
     return ckan_obj
 
 
@@ -172,7 +172,7 @@ class CKANArchiveInfo(BaseArchiveInfo):
     def get_size_and_etag(self, url):
         if not url:
             return None
-        logger.info("start get_size_and_etag `%s' " % url)
+        logger.debug("start get_size_and_etag `%s' " % url)
         if url not in self._size_cache:
 
             # a URL on S3 with auth token
@@ -190,7 +190,7 @@ class CKANArchiveInfo(BaseArchiveInfo):
                 "etag"
             )
 
-        logger.info("end get_size_and_etag `%s' " % url)
+        logger.debug("end get_size_and_etag `%s' " % url)
         return self._size_cache[url], self._etag_cache[url]
 
 
@@ -246,7 +246,7 @@ def check_resource(
     returns None if the ckan_obj looks good (is on the CKAN server, size matches legacy url size)
     otherwise returns a short string describing the problem
     """
-    logger.info("start check_resource `%s' " % current_url)
+    logger.debug("start check_resource `%s' " % current_url)
     if current_url is None:
         logger.error("resource missing (no current URL)")
         return "missing"
@@ -290,12 +290,12 @@ def check_resource(
                 % (current_url, current_etag, metadata_etags)
             )
             return "wrong-etag"
-    logger.info("end check_resource `%s' " % current_url)
+    logger.debug("end check_resource `%s' " % current_url)
     return None
 
 
 def download_legacy_file(legacy_url, auth):
-    logger.info("start download_legacy_file `%s' " % legacy_url)
+    logger.debug("start download_legacy_file `%s' " % legacy_url)
     if legacy_url and legacy_url.startswith("file:///"):
         raise Exception(
             "Cannot download local file. URL reference must be via http or https"
@@ -358,13 +358,13 @@ def download_legacy_file(legacy_url, auth):
         except OSError:
             logger.error("failed to remove temp directory")
         return None, None
-    logger.info("end download_legacy_file `%s' " % legacy_url)
+    logger.debug("end download_legacy_file `%s' " % legacy_url)
     return tempdir, path
 
 
 def reupload_resource(ckan, ckan_obj, legacy_url, parent_destination, auth=None):
     "reupload data from legacy_url to ckan_obj"
-    logger.info("start reupload_resource `%s' " % legacy_url)
+    logger.debug("start reupload_resource `%s' " % legacy_url)
 
     if legacy_url is None:
         logger.error("download from legacy archive URL failed - legacy_url not set")
@@ -429,12 +429,12 @@ def reupload_resource(ckan, ckan_obj, legacy_url, parent_destination, auth=None)
     finally:
         os.unlink(path)
         os.rmdir(tempdir)
-        logger.info("end reupload_resource `%s' " % legacy_url)
+        logger.debug("end reupload_resource `%s' " % legacy_url)
 
 
 def create_resource(ckan, ckan_obj):
     "create resource, uploading data from legacy_url"
-    logger.info("start create_resource - ckan resource create call")
+    logger.debug("start create_resource - ckan resource create call")
     return ckan_method(ckan, "resource", "create")(**ckan_obj)
 
 
@@ -443,7 +443,7 @@ def get_organization(ckan, id):
 
 
 def ckan_get_from_dict(logger, ckan, dict):
-    logger.info("start ckan_get_from_dict (package search) ")
+    logger.debug("start ckan_get_from_dict (package search) ")
     fq = ApiFqBuilder.from_collection(logger, dict)
     ## keep search parameters as broad as possible (the raw metadata may be from different project/organization
     #     # ckan api will only return first 1000 responses for some calls - so set very high limit.
