@@ -198,10 +198,19 @@ class BaseMetadata:
         return resources
 
     def md5_lines(self):
+        files_in_md5 = set({})
         self._logger.info("Ingesting MD5 file information from {0}".format(self.path))
         for md5_file in glob(self.path + "/*.md5"):
             self._logger.info("Processing md5 file {}".format(md5_file))
             for filename, md5, file_info in self.parse_md5file(md5_file):
+                if filename not in files_in_md5:
+                    files_in_md5.add(filename)
+                else:
+                    ticket = self.metadata_info[os.path.basename(md5_file)]["ticket"]
+                    self._logger.error(
+                       "Duplicate filename {0} in md5 file {1} in ticket {2} may lead to duplicate resources"
+                       .format(filename, md5_file, ticket))
+
                 yield filename, md5, md5_file, file_info
 
     def generate_md5_resources(self, md5_file):
