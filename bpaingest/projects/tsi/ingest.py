@@ -307,28 +307,26 @@ class TSINovaseqMetadata(TSIBaseMetadata):
             "Ingesting TSI md5 file information from {0}".format(self.path)
         )
         resources = []
-        for md5_file in glob(self.path + "/*.md5"):
-            self._logger.info("Processing md5 file {}".format(md5_file))
-            for filename, md5, file_info in self.parse_md5file(md5_file):
-                resource = file_info.copy()
-                resource["md5"] = resource["id"] = md5
-                resource["name"] = filename
-                resource["resource_type"] = self.ckan_data_type
-                library_id = ingest_utils.extract_ands_id(
-                    # VERIFY
-                    self._logger,
-                    resource["library_id"],
-                )
-                xlsx_info = self.metadata_info[os.path.basename(md5_file)]
-                legacy_url = urljoin(xlsx_info["base_url"], filename)
+        for filename, md5, md5_file, file_info in self.md5_lines():
+            resource = file_info.copy()
+            resource["md5"] = resource["id"] = md5
+            resource["name"] = filename
+            resource["resource_type"] = self.ckan_data_type
+            library_id = ingest_utils.extract_ands_id(
                 # VERIFY
-                resources.append(
-                    (
-                        (library_id, resource["flow_cell_id"], resource["index"]),
-                        legacy_url,
-                        resource,
-                    )
+                self._logger,
+                resource["library_id"],
+            )
+            xlsx_info = self.metadata_info[os.path.basename(md5_file)]
+            legacy_url = urljoin(xlsx_info["base_url"], filename)
+            # VERIFY
+            resources.append(
+                (
+                    (library_id, resource["flow_cell_id"], resource["index"]),
+                    legacy_url,
+                    resource,
                 )
+            )
         return resources + self.generate_xlsx_resources()
 
 
@@ -487,26 +485,24 @@ class TSIIlluminaShortreadMetadata(TSIBaseMetadata):
     def _get_resources(self):
         self._logger.info("Ingesting md5 file information from {0}".format(self.path))
         resources = []
-        for md5_file in glob(self.path + "/*.md5"):
-            self._logger.info("Processing md5 file {0}".format(md5_file))
-            for filename, md5, file_info in self.parse_md5file(md5_file):
-                resource = file_info.copy()
-                resource["library_id"] = ingest_utils.extract_ands_id(
-                    self._logger, resource["library_id"]
+        for filename, md5, md5_file, file_info in self.md5_lines():
+            resource = file_info.copy()
+            resource["library_id"] = ingest_utils.extract_ands_id(
+                 self._logger, resource["library_id"]
+            )
+            resource["md5"] = resource["id"] = md5
+            resource["name"] = filename
+            resource["resource_type"] = self.ckan_data_type
+            xlsx_info = self.metadata_info[os.path.basename(md5_file)]
+            legacy_url = urljoin(xlsx_info["base_url"], filename)
+            # This will be used by sync/dump later to check resource_linkage in resources against that in packages
+            resources.append(
+                (
+                    (file_info.get("library_id"), resource["flow_cell_id"],),
+                    legacy_url,
+                    resource,
                 )
-                resource["md5"] = resource["id"] = md5
-                resource["name"] = filename
-                resource["resource_type"] = self.ckan_data_type
-                xlsx_info = self.metadata_info[os.path.basename(md5_file)]
-                legacy_url = urljoin(xlsx_info["base_url"], filename)
-                # This will be used by sync/dump later to check resource_linkage in resources against that in packages
-                resources.append(
-                    (
-                        (file_info.get("library_id"), resource["flow_cell_id"],),
-                        legacy_url,
-                        resource,
-                    )
-                )
+            )
         return resources
 
 
@@ -680,26 +676,24 @@ class TSIIlluminaFastqMetadata(TSIBaseMetadata):
     def _get_resources(self):
         self._logger.info("Ingesting md5 file information from {0}".format(self.path))
         resources = []
-        for md5_file in glob(self.path + "/*.md5"):
-            self._logger.info("Processing md5 file {0}".format(md5_file))
-            for filename, md5, file_info in self.parse_md5file(md5_file):
-                resource = file_info.copy()
-                resource["library_id"] = ingest_utils.extract_ands_id(
-                    self._logger, resource["library_id"]
+        for filename, md5, md5_file, file_info in self.md5_lines():
+            resource = file_info.copy()
+            resource["library_id"] = ingest_utils.extract_ands_id(
+                self._logger, resource["library_id"]
+            )
+            resource["md5"] = resource["id"] = md5
+            resource["name"] = filename
+            resource["resource_type"] = self.ckan_data_type
+            xlsx_info = self.metadata_info[os.path.basename(md5_file)]
+            legacy_url = urljoin(xlsx_info["base_url"], filename)
+            # This will be used by sync/dump later to check resource_linkage in resources against that in packages
+            resources.append(
+                (
+                    (resource["library_id"], resource["flowcell_id"],),
+                    legacy_url,
+                    resource,
                 )
-                resource["md5"] = resource["id"] = md5
-                resource["name"] = filename
-                resource["resource_type"] = self.ckan_data_type
-                xlsx_info = self.metadata_info[os.path.basename(md5_file)]
-                legacy_url = urljoin(xlsx_info["base_url"], filename)
-                # This will be used by sync/dump later to check resource_linkage in resources against that in packages
-                resources.append(
-                    (
-                        (resource["library_id"], resource["flowcell_id"],),
-                        legacy_url,
-                        resource,
-                    )
-                )
+            )
         return resources
 
 
@@ -1165,27 +1159,25 @@ class TSIGenomicsDDRADMetadata(TSIBaseMetadata):
             "Ingesting TSI md5 file information from {0}".format(self.path)
         )
         resources = []
-        for md5_file in glob(self.path + "/*.md5"):
-            self._logger.info("Processing md5 file {}".format(md5_file))
-            for filename, md5, file_info in self.parse_md5file(md5_file):
-                resource = file_info.copy()
-                resource["md5"] = resource["id"] = md5
-                resource["name"] = filename
-                resource["resource_type"] = self.ckan_data_type
-                xlsx_info = self.metadata_info[os.path.basename(md5_file)]
-                legacy_url = urljoin(xlsx_info["base_url"], filename)
-                resources.append(
+        for filename, md5, md5_file, file_info in self.md5_lines():
+            resource = file_info.copy()
+            resource["md5"] = resource["id"] = md5
+            resource["name"] = filename
+            resource["resource_type"] = self.ckan_data_type
+            xlsx_info = self.metadata_info[os.path.basename(md5_file)]
+            legacy_url = urljoin(xlsx_info["base_url"], filename)
+            resources.append(
+                (
                     (
-                        (
-                            ingest_utils.extract_ands_id(
-                                self._logger, resource["bpa_dataset_id"]
-                            ),
-                            resource["flowcell_id"],
+                        ingest_utils.extract_ands_id(
+                            self._logger, resource["bpa_dataset_id"]
                         ),
-                        legacy_url,
-                        resource,
-                    )
+                        resource["flowcell_id"],
+                    ),
+                    legacy_url,
+                    resource,
                 )
+            )
         return resources + self.generate_xlsx_resources()
 
 
@@ -1254,7 +1246,7 @@ class TSIGenomeAssemblyMetadata(TSIBaseMetadata):
         self.path = Path(metadata_path)
         self.contextual_metadata = contextual_metadata
         self.metadata_info = metadata_info
-        self.track_meta = TSIGoogleTrackMetadata()
+        self.track_meta = TSIGoogleTrackMetadata(logger)
 
     def _get_packages(self):
         self._logger.info(
@@ -1352,27 +1344,25 @@ class TSIGenomeAssemblyMetadata(TSIBaseMetadata):
         return self.apply_location_generalisation(packages)
 
     def _get_resources(self):
-        self._logger.info("Ingesting md5 file information from {0}".format(self.path))
+        self._logger.info(
+            "Ingesting TSI md5 file information from {0}".format(self.path)
+        )
         resources = []
-        for md5_file in glob(self.path + "/*.md5"):
-            self._logger.info("Processing md5 file {0}".format(md5_file))
-            for filename, md5, file_info in self.parse_md5file(md5_file):
-                resource = file_info.copy()
-                resource[
-                    "bioplatforms_secondarydata_id"
-                ] = ingest_utils.extract_ands_id(
-                    self._logger, resource["bioplatforms_secondarydata_id"]
+        for filename, md5, md5_file, file_info in self.md5_lines():
+            resource = file_info.copy()
+            resource["bioplatforms_secondarydata_id"] = ingest_utils.extract_ands_id(
+                self._logger, resource["bioplatforms_secondarydata_id"]
+            )
+            resource["md5"] = resource["id"] = md5
+            resource["name"] = filename
+            resource["resource_type"] = self.ckan_data_type
+            xlsx_info = self.metadata_info[os.path.basename(md5_file)]
+            legacy_url = urljoin(xlsx_info["base_url"], filename)
+            resources.append(
+                (
+                    (resource["bioplatforms_secondarydata_id"],),
+                    legacy_url,
+                    resource,
                 )
-                resource["md5"] = resource["id"] = md5
-                resource["name"] = filename
-                resource["resource_type"] = self.ckan_data_type
-                xlsx_info = self.metadata_info[os.path.basename(md5_file)]
-                legacy_url = urljoin(xlsx_info["base_url"], filename)
-                resources.append(
-                    (
-                        (resource["bioplatforms_secondarydata_id"],),
-                        legacy_url,
-                        resource,
-                    )
-                )
+            )
         return resources
