@@ -153,7 +153,7 @@ class OMG10XRawIlluminaMetadata(OMGBaseMetadata):
         self.path = Path(metadata_path)
         self.contextual_metadata = contextual_metadata
         self.metadata_info = metadata_info
-        self.track_meta = OMGTrackMetadata()
+        self.track_meta = OMGTrackMetadata(logger)
         # each row in the spreadsheet maps through to a single tar file
         self.file_package = {}
 
@@ -366,7 +366,7 @@ class OMG10XRawMetadata(OMGBaseMetadata):
         self.path = Path(metadata_path)
         self.contextual_metadata = contextual_metadata
         self.metadata_info = metadata_info
-        self.track_meta = OMGTrackMetadata()
+        self.track_meta = OMGTrackMetadata(logger)
         self.flow_lookup = {}
         self.library_to_sample = {}
 
@@ -553,7 +553,7 @@ class OMG10XProcessedIlluminaMetadata(OMGBaseMetadata):
         self.path = Path(metadata_path)
         self.contextual_metadata = contextual_metadata
         self.metadata_info = metadata_info
-        self.track_meta = OMGTrackMetadata()
+        self.track_meta = OMGTrackMetadata(logger)
         # each row in the spreadsheet maps through to a single tar file
         self.file_package = {}
 
@@ -764,7 +764,7 @@ class OMGExonCaptureMetadata(OMGBaseMetadata):
         self.path = Path(metadata_path)
         self.contextual_metadata = contextual_metadata
         self.metadata_info = metadata_info
-        self.track_meta = OMGTrackMetadata()
+        self.track_meta = OMGTrackMetadata(logger)
         self.linkage_xlsx = {}
 
     @classmethod
@@ -1012,7 +1012,7 @@ class OMGWholeGenomeMetadata(OMGBaseMetadata):
         self.path = Path(metadata_path)
         self.contextual_metadata = contextual_metadata
         self.metadata_info = metadata_info
-        self.track_meta = OMGTrackMetadata()
+        self.track_meta = OMGTrackMetadata(logger)
         self.linkage_xlsx = {}
 
     @classmethod
@@ -1233,7 +1233,7 @@ class OMGGenomicsNovaseqMetadata(OMGBaseMetadata):
         self.path = Path(metadata_path)
         self.contextual_metadata = contextual_metadata
         self.metadata_info = metadata_info
-        self.track_meta = OMGTrackMetadata()
+        self.track_meta = OMGTrackMetadata(logger)
 
     def _get_packages(self):
         self._logger.info("Ingesting OMG metadata from {0}".format(self.path))
@@ -1404,7 +1404,7 @@ class OMGGenomicsHiSeqMetadata(OMGBaseMetadata):
         self.path = Path(metadata_path)
         self.contextual_metadata = contextual_metadata
         self.metadata_info = metadata_info
-        self.track_meta = OMGTrackMetadata()
+        self.track_meta = OMGTrackMetadata(logger)
 
     def _get_packages(self):
         xlsx_re = re.compile(r"^.*_(\w+)_metadata.*\.xlsx$")
@@ -1627,7 +1627,7 @@ class OMGGenomicsDDRADMetadata(OMGBaseMetadata):
         self.path = Path(metadata_path)
         self.contextual_metadata = contextual_metadata
         self.metadata_info = metadata_info
-        self.track_meta = OMGTrackMetadata()
+        self.track_meta = OMGTrackMetadata(logger)
         self.flow_lookup = {}
 
     def generate_notes_field(self, row_object):
@@ -1841,7 +1841,7 @@ class OMGGenomicsPacbioMetadata(OMGBaseMetadata):
         self.path = Path(metadata_path)
         self.contextual_metadata = contextual_metadata
         self.metadata_info = metadata_info
-        self.track_meta = OMGTrackMetadata()
+        self.track_meta = OMGTrackMetadata(logger)
 
     def _get_packages(self):
         self._logger.info("Ingesting OMG metadata from {0}".format(self.path))
@@ -2042,7 +2042,7 @@ class OMGONTPromethionMetadata(OMGBaseMetadata):
         self.path = Path(metadata_path)
         self.contextual_metadata = contextual_metadata
         self.metadata_info = metadata_info
-        self.track_meta = OMGTrackMetadata()
+        self.track_meta = OMGTrackMetadata(logger)
 
     def _get_packages(self):
         self._logger.info("Ingesting OMG metadata from {0}".format(self.path))
@@ -2213,7 +2213,7 @@ class OMGTranscriptomicsNextseq(OMGBaseMetadata):
         self.path = Path(metadata_path)
         self.contextual_metadata = contextual_metadata
         self.metadata_info = metadata_info
-        self.track_meta = OMGTrackMetadata()
+        self.track_meta = OMGTrackMetadata(logger)
         self.flow_lookup = {}
 
     def _get_packages(self):
@@ -2403,7 +2403,7 @@ class OMGGenomicsPacBioGenomeAssemblyMetadata(SecondaryMetadata):
         self.path = Path(metadata_path)
         self.contextual_metadata = contextual_metadata
         self.metadata_info = metadata_info
-        self.google_track_meta = OMGTrackGenomeAssemblyMetadata()
+        self.google_track_meta = OMGTrackGenomeAssemblyMetadata(logger)
         # self.create_metadata_info_for_raw_resources()
 
     def _get_packages(self):
@@ -2583,7 +2583,7 @@ class OMGAnalysedDataMetadata(OMGBaseMetadata):
         self.path = Path(metadata_path)
         self.contextual_metadata = contextual_metadata
         self.metadata_info = metadata_info
-        self.track_meta = OMGTrackMetadata()
+        self.track_meta = OMGTrackMetadata(logger)
 
     def _get_packages(self):
         self._logger.info(
@@ -2816,7 +2816,7 @@ class OMGGenomicsDArTMetadata(OMGBaseMetadata):
         self.path = Path(metadata_path)
         self.contextual_metadata = contextual_metadata
         self.metadata_info = metadata_info
-        self.track_meta = OMGTrackMetadata()
+        self.track_meta = OMGTrackMetadata(logger)
         self.flow_lookup = {}
 
     def generate_notes_field(self, row_object):

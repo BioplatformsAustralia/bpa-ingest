@@ -124,7 +124,7 @@ def dump_state(args):
         )
         dlpath = os.path.join(args.download_path, class_info["slug"])
         with DownloadMetadata(
-            make_logger(class_info["slug"]),
+            make_logger(class_info["slug"], args.log_level),
             class_info["cls"],
             path=dlpath,
             has_sql_context=has_sql_context,

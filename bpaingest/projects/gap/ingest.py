@@ -115,7 +115,7 @@ class GAPIlluminaShortreadMetadata(BaseMetadata):
         self.path = Path(metadata_path)
         self.contextual_metadata = contextual_metadata
         self.metadata_info = metadata_info
-        self.google_track_meta = GAPTrackMetadata()
+        self.google_track_meta = GAPTrackMetadata(logger)
 
     def _get_packages(self):
         self._logger.info("Ingesting GAP metadata from {0}".format(self.path))
@@ -262,7 +262,7 @@ class GAPONTMinionMetadata(BaseMetadata):
         self.path = Path(metadata_path)
         self.contextual_metadata = contextual_metadata
         self.metadata_info = metadata_info
-        self.google_track_meta = GAPTrackMetadata()
+        self.google_track_meta = GAPTrackMetadata(logger)
 
     def _get_packages(self):
         self._logger.info("Ingesting GAP metadata from {0}".format(self.path))
@@ -393,7 +393,7 @@ class GAPONTPromethionMetadata(BaseMetadata):
         self.path = Path(metadata_path)
         self.contextual_metadata = contextual_metadata
         self.metadata_info = metadata_info
-        self.google_track_meta = GAPTrackMetadata()
+        self.google_track_meta = GAPTrackMetadata(logger)
 
     def _get_packages(self):
         self._logger.info("Ingesting GAP metadata from {0}".format(self.path))
@@ -512,7 +512,7 @@ class GAPGenomics10XMetadata(BaseMetadata):
         self.path = Path(metadata_path)
         self.contextual_metadata = contextual_metadata
         self.metadata_info = metadata_info
-        self.google_track_meta = GAPTrackMetadata()
+        self.google_track_meta = GAPTrackMetadata(logger)
 
     def _get_packages(self):
         self._logger.info("Ingesting GAP metadata from {0}".format(self.path))
@@ -693,7 +693,7 @@ class GAPGenomicsDDRADMetadata(BaseMetadata):
         self.path = Path(metadata_path)
         self.contextual_metadata = contextual_metadata
         self.metadata_info = metadata_info
-        self.track_meta = GAPTrackMetadata()
+        self.track_meta = GAPTrackMetadata(logger)
         self.flow_lookup = {}
 
     def _get_packages(self):
@@ -888,7 +888,7 @@ class GAPPacbioHifiMetadata(BaseMetadata):
         self.path = Path(metadata_path)
         self.contextual_metadata = contextual_metadata
         self.metadata_info = metadata_info
-        self.google_track_meta = GAPTrackMetadata()
+        self.google_track_meta = GAPTrackMetadata(logger)
 
     def _get_packages(self):
         self._logger.info("Ingesting GAP metadata from {0}".format(self.path))

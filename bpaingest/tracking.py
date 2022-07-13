@@ -2,10 +2,6 @@ import os
 from .util import make_logger, csv_to_named_tuple, one
 from glob import glob
 
-
-logger = make_logger(__name__)
-
-
 def get_track_dir(platform, project=None):
     if project is not None:
         rel_path = "../track-metadata/" + platform + "/" + project + "/"
@@ -21,7 +17,7 @@ def get_track_csv(platform, glob_pattern, project=None):
 class GoogleDriveTrackMetadata:
     platform = "google-drive"
 
-    def __init__(self):
+    def __init__(self, logger):
         fname = get_track_csv(self.platform, "*" + self.name + ".csv")
         logger.info("Reading track CSV file: " + fname)
         self.track_meta = self.read_track_csv(fname)

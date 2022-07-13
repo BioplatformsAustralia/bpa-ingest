@@ -72,7 +72,7 @@ class StemcellsTranscriptomeMetadata(BaseMetadata):
         self.path = Path(metadata_path)
         self.contextual_metadata = contextual_metadata
         self.metadata_info = metadata_info
-        self.track_meta = StemcellsTrackMetadata()
+        self.track_meta = StemcellsTrackMetadata(logger)
 
     def _get_packages(self):
         self._logger.info(
@@ -192,7 +192,7 @@ class StemcellsSmallRNAMetadata(BaseMetadata):
         self.path = Path(metadata_path)
         self.contextual_metadata = contextual_metadata
         self.metadata_info = metadata_info
-        self.track_meta = StemcellsTrackMetadata()
+        self.track_meta = StemcellsTrackMetadata(logger)
 
     def _get_packages(self):
         self._logger.info(
@@ -326,7 +326,7 @@ class StemcellsSingleCellRNASeqMetadata(BaseMetadata):
         self.path = Path(metadata_path)
         self.contextual_metadata = contextual_metadata
         self.metadata_info = metadata_info
-        self.track_meta = StemcellsTrackMetadata()
+        self.track_meta = StemcellsTrackMetadata(logger)
         self.flow_lookup = {}
 
     def _get_packages(self):
@@ -493,7 +493,7 @@ class StemcellsMetabolomicsMetadata(BaseMetadata):
         self.path = Path(metadata_path)
         self.contextual_metadata = contextual_metadata
         self.metadata_info = metadata_info
-        self.track_meta = StemcellsTrackMetadata()
+        self.track_meta = StemcellsTrackMetadata(logger)
 
     def _get_packages(self):
         self._logger.info(
@@ -697,7 +697,7 @@ class StemcellsProteomicsMetadata(StemcellsProteomicsBaseMetadata):
         self.path = Path(metadata_path)
         self.contextual_metadata = contextual_metadata
         self.metadata_info = metadata_info
-        self.track_meta = StemcellsTrackMetadata()
+        self.track_meta = StemcellsTrackMetadata(logger)
 
     def _get_packages(self):
         self._logger.info(
@@ -805,7 +805,7 @@ class StemcellsProteomicsPoolMetadata(StemcellsProteomicsBaseMetadata):
         self.path = Path(metadata_path)
         self.contextual_metadata = contextual_metadata
         self.metadata_info = metadata_info
-        self.track_meta = StemcellsTrackMetadata()
+        self.track_meta = StemcellsTrackMetadata(logger)
 
     def _get_packages(self):
         self._logger.info(
@@ -969,7 +969,7 @@ class StemcellsProteomicsAnalysedMetadata(BaseMetadata):
         self.path = Path(metadata_path)
         self.contextual_metadata = contextual_metadata
         self.metadata_info = metadata_info
-        self.track_meta = StemcellsTrackMetadata()
+        self.track_meta = StemcellsTrackMetadata(logger)
 
     def _get_packages(self):
         self._logger.info("Ingesting Stemcells metadata from {0}".format(self.path))
@@ -1111,7 +1111,7 @@ class StemcellsMetabolomicsAnalysedMetadata(BaseMetadata):
         self.path = Path(metadata_path)
         self.contextual_metadata = contextual_metadata
         self.metadata_info = metadata_info
-        self.track_meta = StemcellsTrackMetadata()
+        self.track_meta = StemcellsTrackMetadata(logger)
 
     def _get_packages(self):
         self._logger.info("Ingesting Stemcells metadata from {0}".format(self.path))
@@ -1262,7 +1262,7 @@ class StemcellsTranscriptomeAnalysedMetadata(BaseMetadata):
         self.path = Path(metadata_path)
         self.contextual_metadata = contextual_metadata
         self.metadata_info = metadata_info
-        self.track_meta = StemcellsTrackMetadata()
+        self.track_meta = StemcellsTrackMetadata(logger)
 
     def _get_packages(self):
         self._logger.info("Ingesting Stemcells metadata from {0}".format(self.path))

@@ -229,7 +229,7 @@ class TSINovaseqMetadata(TSIBaseMetadata):
         self.path = Path(metadata_path)
         self.contextual_metadata = contextual_metadata
         self.metadata_info = metadata_info
-        self.track_meta = TSIGoogleTrackMetadata()
+        self.track_meta = TSIGoogleTrackMetadata(logger)
 
     def _get_packages(self):
         self._logger.info("Ingesting TSI metadata from {0}".format(self.path))
@@ -433,7 +433,7 @@ class TSIIlluminaShortreadMetadata(TSIBaseMetadata):
         self.path = Path(metadata_path)
         self.contextual_metadata = contextual_metadata
         self.metadata_info = metadata_info
-        self.google_track_meta = TSIGoogleTrackMetadata()
+        self.google_track_meta = TSIGoogleTrackMetadata(logger)
 
     def _get_packages(self):
         self._logger.info("Ingesting TSI metadata from {0}".format(self.path))
@@ -605,7 +605,7 @@ class TSIIlluminaFastqMetadata(TSIBaseMetadata):
         self.path = Path(metadata_path)
         self.contextual_metadata = contextual_metadata
         self.metadata_info = metadata_info
-        self.google_track_meta = TSIGoogleTrackMetadata()
+        self.google_track_meta = TSIGoogleTrackMetadata(logger)
 
     def _get_packages(self):
         self._logger.info("Ingesting TSI metadata from {0}".format(self.path))
@@ -796,7 +796,7 @@ class TSIPacbioHifiMetadata(TSIBaseMetadata):
         self.path = Path(metadata_path)
         self.contextual_metadata = contextual_metadata
         self.metadata_info = metadata_info
-        self.google_track_meta = TSIGoogleTrackMetadata()
+        self.google_track_meta = TSIGoogleTrackMetadata(logger)
 
     def _get_packages(self):
         self._logger.info("Ingesting TSI metadata from {0}".format(self.path))
@@ -1054,7 +1054,7 @@ class TSIGenomicsDDRADMetadata(TSIBaseMetadata):
         self.path = Path(metadata_path)
         self.contextual_metadata = contextual_metadata
         self.metadata_info = metadata_info
-        self.track_meta = TSIGoogleTrackMetadata()
+        self.track_meta = TSIGoogleTrackMetadata(logger)
         self.flow_lookup = {}
 
     def generate_notes_field(self, row_object):

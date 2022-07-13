@@ -295,7 +295,7 @@ class BASEAmpliconsMetadata(AMDFullIngestMetadata):
     def __init__(self, logger, metadata_path, **kwargs):
         super().__init__(logger, metadata_path, **kwargs)
         self.contextual_metadata = kwargs["contextual_metadata"]
-        self.track_meta = BASETrackMetadata()
+        self.track_meta = BASETrackMetadata(logger)
 
     def _get_packages(self):
         xlsx_re = re.compile(r"^.*_(\w+)_metadata.*\.xlsx$")
@@ -484,7 +484,7 @@ class BASEAmpliconsControlMetadata(AMDFullIngestMetadata):
     def __init__(self, logger, metadata_path, **kwargs):
         super().__init__(logger, metadata_path, **kwargs)
         self.contextual_metadata = kwargs["contextual_metadata"]
-        self.track_meta = BASETrackMetadata()
+        self.track_meta = BASETrackMetadata(logger)
 
     def _get_packages(self):
         flow_id_ticket = dict(
@@ -665,7 +665,7 @@ class BASEMetagenomicsMetadata(AMDFullIngestMetadata):
     def __init__(self, logger, metadata_path, **kwargs):
         super().__init__(logger, metadata_path, **kwargs)
         self.contextual_metadata = kwargs["contextual_metadata"]
-        self.track_meta = BASETrackMetadata()
+        self.track_meta = BASETrackMetadata(logger)
 
     def assemble_obj(self, sample_id, sample_extraction_id, flow_id, row, track_meta):
         def track_get(k, default=None):
@@ -1131,7 +1131,7 @@ class MarineMicrobesAmpliconsMetadata(AMDFullIngestMetadata):
 
     def __init__(self, logger, metadata_path, **kwargs):
         super().__init__(logger, metadata_path, **kwargs)
-        self.google_track_meta = MarineMicrobesGoogleTrackMetadata()
+        self.google_track_meta = MarineMicrobesGoogleTrackMetadata(logger)
         self.contextual_metadata = kwargs["contextual_metadata"]
         self.track_meta = {
             amplicon: MarineMicrobesTrackMetadata(self._logger, fname)
@@ -1323,7 +1323,7 @@ class MarineMicrobesAmpliconsControlMetadata(AMDFullIngestMetadata):
 
     def __init__(self, logger, metadata_path, **kwargs):
         super().__init__(logger, metadata_path, **kwargs)
-        self.google_track_meta = MarineMicrobesGoogleTrackMetadata()
+        self.google_track_meta = MarineMicrobesGoogleTrackMetadata(logger)
 
     def _get_packages(self):
         flow_id_info = {
@@ -1415,7 +1415,7 @@ class MarineMicrobesAmpliconsControlMetadata(AMDFullIngestMetadata):
 class BaseMarineMicrobesMetadata(AMDFullIngestMetadata):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        self.google_track_meta = MarineMicrobesGoogleTrackMetadata()
+        self.google_track_meta = MarineMicrobesGoogleTrackMetadata(logger)
         self.track_meta = MarineMicrobesTrackMetadata(
             self._logger, self.tracker_filename
         )
@@ -1779,7 +1779,7 @@ class AustralianMicrobiomeMetagenomicsAnalysedMetadata(AMDFullIngestMetadata):
     def __init__(self, logger, metadata_path, **kwargs):
         super().__init__(logger, metadata_path, **kwargs)
         self.contextual_metadata = kwargs["contextual_metadata"]
-        self.google_track_meta = AustralianMicrobiomeGoogleTrackMetadata()
+        self.google_track_meta = AustralianMicrobiomeGoogleTrackMetadata(logger)
 
     def _get_packages(self):
         self._logger.info(
@@ -1936,7 +1936,7 @@ class AustralianMicrobiomeMetagenomicsNovaseqMetadata(AMDFullIngestMetadata):
     def __init__(self, logger, metadata_path, **kwargs):
         super().__init__(logger, metadata_path, **kwargs)
         self.contextual_metadata = kwargs["contextual_metadata"]
-        self.google_track_meta = AustralianMicrobiomeGoogleTrackMetadata()
+        self.google_track_meta = AustralianMicrobiomeGoogleTrackMetadata(logger)
 
     def _get_packages(self):
         packages = []
@@ -2062,7 +2062,7 @@ class AustralianMicrobiomeMetagenomicsNovaseqControlMetadata(AMDFullIngestMetada
 
     def __init__(self, logger, metadata_path, **kwargs):
         super().__init__(logger, metadata_path, **kwargs)
-        self.google_track_meta = AustralianMicrobiomeGoogleTrackMetadata()
+        self.google_track_meta = AustralianMicrobiomeGoogleTrackMetadata(logger)
 
     def _get_packages(self):
         flowcell_info = {
@@ -2179,7 +2179,7 @@ class AustralianMicrobiomeAmpliconsMetadata(AMDFullIngestMetadata):
 
     def __init__(self, logger, metadata_path, **kwargs):
         super().__init__(logger, metadata_path, **kwargs)
-        self.google_track_meta = AustralianMicrobiomeGoogleTrackMetadata()
+        self.google_track_meta = AustralianMicrobiomeGoogleTrackMetadata(logger)
         self.contextual_metadata = kwargs["contextual_metadata"]
 
     def _get_packages(self):
@@ -2325,7 +2325,7 @@ class AustralianMicrobiomeAmpliconsControlMetadata(AMDFullIngestMetadata):
 
     def __init__(self, logger, metadata_path, **kwargs):
         super().__init__(logger, metadata_path, **kwargs)
-        self.google_track_meta = AustralianMicrobiomeGoogleTrackMetadata()
+        self.google_track_meta = AustralianMicrobiomeGoogleTrackMetadata(logger)
 
     def _get_packages(self):
         flow_id_info = {
