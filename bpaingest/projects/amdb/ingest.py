@@ -426,37 +426,35 @@ class BASEAmpliconsMetadata(AMDFullIngestMetadata):
         )
         resources = []
 
-        for md5_file in glob(self.path + "/*.md5"):
+        for filename, md5, md5_file, file_info in self.md5_lines():
             index_linkage = os.path.basename(md5_file) in self.index_linkage_md5s
-            self._logger.info("Processing md5 file {}".format(md5_file))
-            for filename, md5, file_info in self.parse_md5file(md5_file):
-                sample_id = ingest_utils.extract_ands_id(
-                    self._logger, file_info.get("id")
-                )
-                resource = file_info.copy()
-                resource["md5"] = resource["id"] = md5
-                resource["name"] = filename
-                resource["resource_type"] = self.ckan_data_type
-                for contextual_source in self.contextual_metadata:
-                    resource.update(contextual_source.filename_metadata(filename))
-                sample_extraction_id = (
-                    sample_id.split("/")[-1] + "_" + file_info.get("extraction")
-                )
-                xlsx_info = self.metadata_info[os.path.basename(md5_file)]
-                legacy_url = urljoin(xlsx_info["base_url"], filename)
-                resources.append(
+            sample_id = ingest_utils.extract_ands_id(
+                self._logger, file_info.get("id")
+            )
+            resource = file_info.copy()
+            resource["md5"] = resource["id"] = md5
+            resource["name"] = filename
+            resource["resource_type"] = self.ckan_data_type
+            for contextual_source in self.contextual_metadata:
+                resource.update(contextual_source.filename_metadata(filename))
+            sample_extraction_id = (
+                sample_id.split("/")[-1] + "_" + file_info.get("extraction")
+            )
+            xlsx_info = self.metadata_info[os.path.basename(md5_file)]
+            legacy_url = urljoin(xlsx_info["base_url"], filename)
+            resources.append(
+                (
                     (
-                        (
-                            sample_extraction_id,
-                            resource["amplicon"],
-                            build_base_amplicon_linkage(
-                                index_linkage, resource["flow_id"], resource["index"]
-                            ),
+                        sample_extraction_id,
+                        resource["amplicon"],
+                        build_base_amplicon_linkage(
+                            index_linkage, resource["flow_id"], resource["index"]
                         ),
-                        legacy_url,
-                        resource,
-                    )
+                    ),
+                    legacy_url,
+                    resource,
                 )
+            )
             resources.extend(self.generate_md5_resources(md5_file))
         return resources
 
@@ -564,20 +562,18 @@ class BASEAmpliconsControlMetadata(AMDFullIngestMetadata):
     def _get_resources(self):
         resources = []
         self._logger.info("Ingesting MD5 file information from {0}".format(self.path))
-        for md5_file in glob(self.path + "/*.md5"):
-            self._logger.info("Processing md5 file {}".format(md5_file))
-            for filename, md5, file_info in self.parse_md5file(md5_file):
-                resource = file_info.copy()
-                resource["md5"] = resource["id"] = md5
-                resource["name"] = filename
-                resource["resource_type"] = self.ckan_data_type
-                for contextual_source in self.contextual_metadata:
-                    resource.update(contextual_source.filename_metadata(filename))
-                xlsx_info = self.metadata_info[os.path.basename(md5_file)]
-                legacy_url = urljoin(xlsx_info["base_url"], filename)
-                resources.append(
-                    ((resource["amplicon"], resource["flow_id"]), legacy_url, resource)
-                )
+        for filename, md5, md5_file, file_info in self.md5_lines():
+            resource = file_info.copy()
+            resource["md5"] = resource["id"] = md5
+            resource["name"] = filename
+            resource["resource_type"] = self.ckan_data_type
+            for contextual_source in self.contextual_metadata:
+                resource.update(contextual_source.filename_metadata(filename))
+            xlsx_info = self.metadata_info[os.path.basename(md5_file)]
+            legacy_url = urljoin(xlsx_info["base_url"], filename)
+            resources.append(
+                ((resource["amplicon"], resource["flow_id"]), legacy_url, resource)
+            )
             resources.extend(self.generate_md5_resources(md5_file))
         return resources
 
