@@ -426,35 +426,37 @@ class BASEAmpliconsMetadata(AMDFullIngestMetadata):
         )
         resources = []
 
-        for filename, md5, md5_file, file_info in self.md5_lines():
+        for md5_file in glob(self.path + "/*.md5"):
             index_linkage = os.path.basename(md5_file) in self.index_linkage_md5s
-            sample_id = ingest_utils.extract_ands_id(
-                self._logger, file_info.get("id")
-            )
-            resource = file_info.copy()
-            resource["md5"] = resource["id"] = md5
-            resource["name"] = filename
-            resource["resource_type"] = self.ckan_data_type
-            for contextual_source in self.contextual_metadata:
-                resource.update(contextual_source.filename_metadata(filename))
-            sample_extraction_id = (
-                sample_id.split("/")[-1] + "_" + file_info.get("extraction")
-            )
-            xlsx_info = self.metadata_info[os.path.basename(md5_file)]
-            legacy_url = urljoin(xlsx_info["base_url"], filename)
-            resources.append(
-                (
-                    (
-                        sample_extraction_id,
-                        resource["amplicon"],
-                        build_base_amplicon_linkage(
-                            index_linkage, resource["flow_id"], resource["index"]
-                        ),
-                    ),
-                    legacy_url,
-                    resource,
+            self._logger.info("Processing md5 file {}".format(md5_file))
+            for filename, md5, file_info in self.parse_md5file(md5_file):
+                sample_id = ingest_utils.extract_ands_id(
+                    self._logger, file_info.get("id")
                 )
-            )
+                resource = file_info.copy()
+                resource["md5"] = resource["id"] = md5
+                resource["name"] = filename
+                resource["resource_type"] = self.ckan_data_type
+                for contextual_source in self.contextual_metadata:
+                    resource.update(contextual_source.filename_metadata(filename))
+                sample_extraction_id = (
+                    sample_id.split("/")[-1] + "_" + file_info.get("extraction")
+                )
+                xlsx_info = self.metadata_info[os.path.basename(md5_file)]
+                legacy_url = urljoin(xlsx_info["base_url"], filename)
+                resources.append(
+                    (
+                        (
+                            sample_extraction_id,
+                            resource["amplicon"],
+                            build_base_amplicon_linkage(
+                                index_linkage, resource["flow_id"], resource["index"]
+                            ),
+                        ),
+                        legacy_url,
+                        resource,
+                    )
+                )
             resources.extend(self.generate_md5_resources(md5_file))
         return resources
 
@@ -562,18 +564,20 @@ class BASEAmpliconsControlMetadata(AMDFullIngestMetadata):
     def _get_resources(self):
         resources = []
         self._logger.info("Ingesting MD5 file information from {0}".format(self.path))
-        for filename, md5, md5_file, file_info in self.md5_lines():
-            resource = file_info.copy()
-            resource["md5"] = resource["id"] = md5
-            resource["name"] = filename
-            resource["resource_type"] = self.ckan_data_type
-            for contextual_source in self.contextual_metadata:
-                resource.update(contextual_source.filename_metadata(filename))
-            xlsx_info = self.metadata_info[os.path.basename(md5_file)]
-            legacy_url = urljoin(xlsx_info["base_url"], filename)
-            resources.append(
-                ((resource["amplicon"], resource["flow_id"]), legacy_url, resource)
-            )
+        for md5_file in glob(self.path + "/*.md5"):
+            self._logger.info("Processing md5 file {}".format(md5_file))
+            for filename, md5, file_info in self.parse_md5file(md5_file):
+                resource = file_info.copy()
+                resource["md5"] = resource["id"] = md5
+                resource["name"] = filename
+                resource["resource_type"] = self.ckan_data_type
+                for contextual_source in self.contextual_metadata:
+                    resource.update(contextual_source.filename_metadata(filename))
+                xlsx_info = self.metadata_info[os.path.basename(md5_file)]
+                legacy_url = urljoin(xlsx_info["base_url"], filename)
+                resources.append(
+                    ((resource["amplicon"], resource["flow_id"]), legacy_url, resource)
+                )
             resources.extend(self.generate_md5_resources(md5_file))
         return resources
 
@@ -1131,7 +1135,7 @@ class MarineMicrobesAmpliconsMetadata(AMDFullIngestMetadata):
 
     def __init__(self, logger, metadata_path, **kwargs):
         super().__init__(logger, metadata_path, **kwargs)
-        self.google_track_meta = MarineMicrobesGoogleTrackMetadata(logger)
+        self.google_track_meta = MarineMicrobesGoogleTrackMetadata()
         self.contextual_metadata = kwargs["contextual_metadata"]
         self.track_meta = {
             amplicon: MarineMicrobesTrackMetadata(self._logger, fname)
@@ -1323,7 +1327,7 @@ class MarineMicrobesAmpliconsControlMetadata(AMDFullIngestMetadata):
 
     def __init__(self, logger, metadata_path, **kwargs):
         super().__init__(logger, metadata_path, **kwargs)
-        self.google_track_meta = MarineMicrobesGoogleTrackMetadata(logger)
+        self.google_track_meta = MarineMicrobesGoogleTrackMetadata()
 
     def _get_packages(self):
         flow_id_info = {
@@ -1415,7 +1419,7 @@ class MarineMicrobesAmpliconsControlMetadata(AMDFullIngestMetadata):
 class BaseMarineMicrobesMetadata(AMDFullIngestMetadata):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        self.google_track_meta = MarineMicrobesGoogleTrackMetadata(logger)
+        self.google_track_meta = MarineMicrobesGoogleTrackMetadata()
         self.track_meta = MarineMicrobesTrackMetadata(
             self._logger, self.tracker_filename
         )
@@ -1779,7 +1783,7 @@ class AustralianMicrobiomeMetagenomicsAnalysedMetadata(AMDFullIngestMetadata):
     def __init__(self, logger, metadata_path, **kwargs):
         super().__init__(logger, metadata_path, **kwargs)
         self.contextual_metadata = kwargs["contextual_metadata"]
-        self.google_track_meta = AustralianMicrobiomeGoogleTrackMetadata(logger)
+        self.google_track_meta = AustralianMicrobiomeGoogleTrackMetadata()
 
     def _get_packages(self):
         self._logger.info(
@@ -1936,7 +1940,7 @@ class AustralianMicrobiomeMetagenomicsNovaseqMetadata(AMDFullIngestMetadata):
     def __init__(self, logger, metadata_path, **kwargs):
         super().__init__(logger, metadata_path, **kwargs)
         self.contextual_metadata = kwargs["contextual_metadata"]
-        self.google_track_meta = AustralianMicrobiomeGoogleTrackMetadata(logger)
+        self.google_track_meta = AustralianMicrobiomeGoogleTrackMetadata()
 
     def _get_packages(self):
         packages = []
@@ -2062,7 +2066,7 @@ class AustralianMicrobiomeMetagenomicsNovaseqControlMetadata(AMDFullIngestMetada
 
     def __init__(self, logger, metadata_path, **kwargs):
         super().__init__(logger, metadata_path, **kwargs)
-        self.google_track_meta = AustralianMicrobiomeGoogleTrackMetadata(logger)
+        self.google_track_meta = AustralianMicrobiomeGoogleTrackMetadata()
 
     def _get_packages(self):
         flowcell_info = {
@@ -2179,7 +2183,7 @@ class AustralianMicrobiomeAmpliconsMetadata(AMDFullIngestMetadata):
 
     def __init__(self, logger, metadata_path, **kwargs):
         super().__init__(logger, metadata_path, **kwargs)
-        self.google_track_meta = AustralianMicrobiomeGoogleTrackMetadata(logger)
+        self.google_track_meta = AustralianMicrobiomeGoogleTrackMetadata()
         self.contextual_metadata = kwargs["contextual_metadata"]
 
     def _get_packages(self):
@@ -2325,7 +2329,7 @@ class AustralianMicrobiomeAmpliconsControlMetadata(AMDFullIngestMetadata):
 
     def __init__(self, logger, metadata_path, **kwargs):
         super().__init__(logger, metadata_path, **kwargs)
-        self.google_track_meta = AustralianMicrobiomeGoogleTrackMetadata(logger)
+        self.google_track_meta = AustralianMicrobiomeGoogleTrackMetadata()
 
     def _get_packages(self):
         flow_id_info = {
