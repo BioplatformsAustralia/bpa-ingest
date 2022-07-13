@@ -266,18 +266,17 @@ class OMG10XRawIlluminaMetadata(OMGBaseMetadata):
             "Ingesting OMG md5 file information from {0}".format(self.path)
         )
         resources = []
-        for md5_file in glob(self.path + "/*.md5"):
-            for filename, md5, file_info in self.parse_md5file(md5_file):
-                archive_name = self.file_package[filename]
-                resource = file_info.copy()
-                # waiting on filename convention from AGRF
-                del resource["basename"]
-                resource["md5"] = resource["id"] = md5
-                resource["name"] = filename
-                resource["resource_type"] = self.ckan_data_type
-                xlsx_info = self.metadata_info[os.path.basename(md5_file)]
-                legacy_url = urljoin(xlsx_info["base_url"], filename)
-                resources.append(((archive_name,), legacy_url, resource))
+        for filename, md5, md5_file, file_info in self.md5_lines():
+            archive_name = self.file_package[filename]
+            resource = file_info.copy()
+            # waiting on filename convention from AGRF
+            del resource["basename"]
+            resource["md5"] = resource["id"] = md5
+            resource["name"] = filename
+            resource["resource_type"] = self.ckan_data_type
+            xlsx_info = self.metadata_info[os.path.basename(md5_file)]
+            legacy_url = urljoin(xlsx_info["base_url"], filename)
+            resources.append(((archive_name,), legacy_url, resource))
 
         return resources + self.generate_xlsx_resources()
 
@@ -452,30 +451,28 @@ class OMG10XRawMetadata(OMGBaseMetadata):
             "Ingesting OMG md5 file information from {0}".format(self.path)
         )
         resources = []
-        for md5_file in glob(self.path + "/*.md5"):
-            self._logger.info("Processing md5 file {}".format(md5_file))
-            for filename, md5, file_info in self.parse_md5file(md5_file):
-                xlsx_info = self.metadata_info[os.path.basename(md5_file)]
-                ticket = xlsx_info["ticket"]
-                flow_id = self.flow_lookup[ticket]
+        for filename, md5, md5_file, file_info in self.md5_lines():
+            xlsx_info = self.metadata_info[os.path.basename(md5_file)]
+            ticket = xlsx_info["ticket"]
+            flow_id = self.flow_lookup[ticket]
 
-                # FIXME: we have inconsistently named files, raise with Anna M after
-                # urgent ingest complete.
-                bpa_sample_id = ingest_utils.extract_ands_id(
-                    self._logger, file_info["bpa_sample_id"]
-                )
-                if bpa_sample_id.split("/", 1)[1].startswith("5"):
-                    # actually a library ID, map back
-                    bpa_sample_id = file_info["bpa_sample_id"] = self.library_to_sample[
-                        bpa_sample_id
-                    ]
+            # FIXME: we have inconsistently named files, raise with Anna M after
+            # urgent ingest complete.
+            bpa_sample_id = ingest_utils.extract_ands_id(
+                self._logger, file_info["bpa_sample_id"]
+            )
+            if bpa_sample_id.split("/", 1)[1].startswith("5"):
+                # actually a library ID, map back
+                bpa_sample_id = file_info["bpa_sample_id"] = self.library_to_sample[
+                    bpa_sample_id
+                ]
 
-                resource = file_info.copy()
-                resource["md5"] = resource["id"] = md5
-                resource["name"] = filename
-                resource["resource_type"] = self.ckan_data_type
-                legacy_url = urljoin(xlsx_info["base_url"], filename)
-                resources.append(((bpa_sample_id, flow_id), legacy_url, resource))
+            resource = file_info.copy()
+            resource["md5"] = resource["id"] = md5
+            resource["name"] = filename
+            resource["resource_type"] = self.ckan_data_type
+            legacy_url = urljoin(xlsx_info["base_url"], filename)
+            resources.append(((bpa_sample_id, flow_id), legacy_url, resource))
 
         return resources + self.generate_xlsx_resources()
 
@@ -646,19 +643,17 @@ class OMG10XProcessedIlluminaMetadata(OMGBaseMetadata):
             "Ingesting OMG md5 file information from {0}".format(self.path)
         )
         resources = []
-        for md5_file in glob(self.path + "/*.md5"):
-            self._logger.info("Processing md5 file {}".format(md5_file))
-            for filename, md5, file_info in self.parse_md5file(md5_file):
-                bpa_sample_id, flow_id = self.file_package[filename]
-                resource = file_info.copy()
-                # waiting on filename convention from AGRF
-                del resource["basename"]
-                resource["md5"] = resource["id"] = md5
-                resource["name"] = filename
-                resource["resource_type"] = self.ckan_data_type
-                xlsx_info = self.metadata_info[os.path.basename(md5_file)]
-                legacy_url = urljoin(xlsx_info["base_url"], filename)
-                resources.append(((bpa_sample_id, flow_id), legacy_url, resource))
+        for filename, md5, md5_file, file_info in self.md5_lines():
+            bpa_sample_id, flow_id = self.file_package[filename]
+            resource = file_info.copy()
+            # waiting on filename convention from AGRF
+            del resource["basename"]
+            resource["md5"] = resource["id"] = md5
+            resource["name"] = filename
+            resource["resource_type"] = self.ckan_data_type
+            xlsx_info = self.metadata_info[os.path.basename(md5_file)]
+            legacy_url = urljoin(xlsx_info["base_url"], filename)
+            resources.append(((bpa_sample_id, flow_id), legacy_url, resource))
 
         return resources + self.generate_xlsx_resources()
 
@@ -886,25 +881,23 @@ class OMGExonCaptureMetadata(OMGBaseMetadata):
             "Ingesting OMG md5 file information from {0}".format(self.path)
         )
         resources = []
-        for md5_file in glob(self.path + "/*.md5"):
-            self._logger.info("Processing md5 file {}".format(md5_file))
-            for filename, md5, file_info in self.parse_md5file(md5_file):
-                resource = file_info.copy()
-                resource["md5"] = resource["id"] = md5
-                resource["name"] = filename
-                resource["resource_type"] = self.ckan_data_type
-                library_id = ingest_utils.extract_ands_id(
-                    self._logger, resource["bpa_library_id"]
+        for filename, md5, md5_file, file_info in self.md5_lines():
+            resource = file_info.copy()
+            resource["md5"] = resource["id"] = md5
+            resource["name"] = filename
+            resource["resource_type"] = self.ckan_data_type
+            library_id = ingest_utils.extract_ands_id(
+                self._logger, resource["bpa_library_id"]
+            )
+            xlsx_info = self.metadata_info[os.path.basename(md5_file)]
+            legacy_url = urljoin(xlsx_info["base_url"], filename)
+            resources.append(
+                (
+                    (library_id, resource["flow_cell_id"], resource["index"]),
+                    legacy_url,
+                    resource,
                 )
-                xlsx_info = self.metadata_info[os.path.basename(md5_file)]
-                legacy_url = urljoin(xlsx_info["base_url"], filename)
-                resources.append(
-                    (
-                        (library_id, resource["flow_cell_id"], resource["index"]),
-                        legacy_url,
-                        resource,
-                    )
-                )
+            )
 
         return resources + self.generate_xlsx_resources()
 
@@ -1136,25 +1129,23 @@ class OMGWholeGenomeMetadata(OMGBaseMetadata):
             "Ingesting OMG md5 file information from {0}".format(self.path)
         )
         resources = []
-        for md5_file in glob(self.path + "/*.md5"):
-            self._logger.info("Processing md5 file {}".format(md5_file))
-            for filename, md5, file_info in self.parse_md5file(md5_file):
-                resource = file_info.copy()
-                resource["md5"] = resource["id"] = md5
-                resource["name"] = filename
-                resource["resource_type"] = self.ckan_data_type
-                library_id = ingest_utils.extract_ands_id(
-                    self._logger, resource["bpa_library_id"]
+        for filename, md5, md5_file, file_info in self.md5_lines():
+            resource = file_info.copy()
+            resource["md5"] = resource["id"] = md5
+            resource["name"] = filename
+            resource["resource_type"] = self.ckan_data_type
+            library_id = ingest_utils.extract_ands_id(
+                self._logger, resource["bpa_library_id"]
+            )
+            xlsx_info = self.metadata_info[os.path.basename(md5_file)]
+            legacy_url = urljoin(xlsx_info["base_url"], filename)
+            resources.append(
+                (
+                    (library_id, resource["flow_cell_id"], resource["index"]),
+                    legacy_url,
+                    resource,
                 )
-                xlsx_info = self.metadata_info[os.path.basename(md5_file)]
-                legacy_url = urljoin(xlsx_info["base_url"], filename)
-                resources.append(
-                    (
-                        (library_id, resource["flow_cell_id"], resource["index"]),
-                        legacy_url,
-                        resource,
-                    )
-                )
+            )
 
         return resources + self.generate_xlsx_resources()
 
@@ -1320,25 +1311,23 @@ class OMGGenomicsNovaseqMetadata(OMGBaseMetadata):
             "Ingesting OMG md5 file information from {0}".format(self.path)
         )
         resources = []
-        for md5_file in glob(self.path + "/*.md5"):
-            self._logger.info("Processing md5 file {}".format(md5_file))
-            for filename, md5, file_info in self.parse_md5file(md5_file):
-                resource = file_info.copy()
-                resource["md5"] = resource["id"] = md5
-                resource["name"] = os.path.basename(filename)
-                resource["resource_type"] = self.ckan_data_type
-                library_id = ingest_utils.extract_ands_id(
-                    self._logger, resource["bpa_library_id"]
+        for filename, md5, md5_file, file_info in self.md5_lines():
+            resource = file_info.copy()
+            resource["md5"] = resource["id"] = md5
+            resource["name"] = os.path.basename(filename)
+            resource["resource_type"] = self.ckan_data_type
+            library_id = ingest_utils.extract_ands_id(
+                self._logger, resource["bpa_library_id"]
+            )
+            xlsx_info = self.metadata_info[os.path.basename(md5_file)]
+            legacy_url = urljoin(xlsx_info["base_url"], filename)
+            resources.append(
+                (
+                    (library_id, resource["flow_cell_id"], resource["index"]),
+                    legacy_url,
+                    resource,
                 )
-                xlsx_info = self.metadata_info[os.path.basename(md5_file)]
-                legacy_url = urljoin(xlsx_info["base_url"], filename)
-                resources.append(
-                    (
-                        (library_id, resource["flow_cell_id"], resource["index"]),
-                        legacy_url,
-                        resource,
-                    )
-                )
+            )
         return resources + self.generate_xlsx_resources()
 
 
@@ -1506,27 +1495,25 @@ class OMGGenomicsHiSeqMetadata(OMGBaseMetadata):
             "Ingesting OMG md5 file information from {0}".format(self.path)
         )
         resources = []
-        for md5_file in glob(self.path + "/*.md5"):
-            self._logger.info("Processing md5 file {}".format(md5_file))
-            for filename, md5, file_info in self.parse_md5file(md5_file):
-                resource = file_info.copy()
-                resource["md5"] = resource["id"] = md5
-                resource["name"] = filename
-                resource["resource_type"] = self.ckan_data_type
-                xlsx_info = self.metadata_info[os.path.basename(md5_file)]
-                legacy_url = urljoin(xlsx_info["base_url"], filename)
-                resources.append(
+        for filename, md5, md5_file, file_info in self.md5_lines():
+            resource = file_info.copy()
+            resource["md5"] = resource["id"] = md5
+            resource["name"] = filename
+            resource["resource_type"] = self.ckan_data_type
+            xlsx_info = self.metadata_info[os.path.basename(md5_file)]
+            legacy_url = urljoin(xlsx_info["base_url"], filename)
+            resources.append(
+                (
                     (
-                        (
-                            ingest_utils.extract_ands_id(
-                                self._logger, resource["bpa_sample_id"]
-                            ),
-                            resource["flow_cell_id"],
+                        ingest_utils.extract_ands_id(
+                            self._logger, resource["bpa_sample_id"]
                         ),
-                        legacy_url,
-                        resource,
-                    )
+                        resource["flow_cell_id"],
+                    ),
+                    legacy_url,
+                    resource,
                 )
+            )
         return resources + self.generate_xlsx_resources()
 
 
@@ -1752,27 +1739,25 @@ class OMGGenomicsDDRADMetadata(OMGBaseMetadata):
             "Ingesting OMG md5 file information from {0}".format(self.path)
         )
         resources = []
-        for md5_file in glob(self.path + "/*.md5"):
-            self._logger.info("Processing md5 file {}".format(md5_file))
-            for filename, md5, file_info in self.parse_md5file(md5_file):
-                resource = file_info.copy()
-                resource["md5"] = resource["id"] = md5
-                resource["name"] = filename
-                resource["resource_type"] = self.ckan_data_type
-                xlsx_info = self.metadata_info[os.path.basename(md5_file)]
-                legacy_url = urljoin(xlsx_info["base_url"], filename)
-                resources.append(
+        for filename, md5, md5_file, file_info in self.md5_lines():
+            resource = file_info.copy()
+            resource["md5"] = resource["id"] = md5
+            resource["name"] = filename
+            resource["resource_type"] = self.ckan_data_type
+            xlsx_info = self.metadata_info[os.path.basename(md5_file)]
+            legacy_url = urljoin(xlsx_info["base_url"], filename)
+            resources.append(
+                (
                     (
-                        (
-                            ingest_utils.extract_ands_id(
-                                self._logger, resource["bpa_dataset_id"]
-                            ),
-                            resource["flowcell_id"],
+                        ingest_utils.extract_ands_id(
+                            self._logger, resource["bpa_dataset_id"]
                         ),
-                        legacy_url,
-                        resource,
-                    )
+                        resource["flowcell_id"],
+                    ),
+                    legacy_url,
+                    resource,
                 )
+            )
         return resources + self.generate_xlsx_resources()
 
 
@@ -1945,28 +1930,26 @@ class OMGGenomicsPacbioMetadata(OMGBaseMetadata):
             "Ingesting OMG md5 file information from {0}".format(self.path)
         )
         resources = []
-        for md5_file in glob(self.path + "/*.md5"):
-            self._logger.info("Processing md5 file {}".format(md5_file))
-            for filename, md5, file_info in self.parse_md5file(md5_file):
-                resource = file_info.copy()
-                resource["md5"] = resource["id"] = md5
-                resource["name"] = filename
-                resource["resource_type"] = self.ckan_data_type
-                library_id = ingest_utils.extract_ands_id(
-                    self._logger, resource["bpa_library_id"]
-                )
-                xlsx_info = self.metadata_info[os.path.basename(md5_file)]
-                legacy_url = urljoin(xlsx_info["base_url"], filename)
-                resources.append(
+        for filename, md5, md5_file, file_info in self.md5_lines():
+            resource = file_info.copy()
+            resource["md5"] = resource["id"] = md5
+            resource["name"] = filename
+            resource["resource_type"] = self.ckan_data_type
+            library_id = ingest_utils.extract_ands_id(
+                self._logger, resource["bpa_library_id"]
+            )
+            xlsx_info = self.metadata_info[os.path.basename(md5_file)]
+            legacy_url = urljoin(xlsx_info["base_url"], filename)
+            resources.append(
+                (
                     (
-                        (
-                            ingest_utils.extract_ands_id(self._logger, library_id),
-                            resource["run_date"],
-                        ),
-                        legacy_url,
-                        resource,
-                    )
+                        ingest_utils.extract_ands_id(self._logger, library_id),
+                        resource["run_date"],
+                    ),
+                    legacy_url,
+                    resource,
                 )
+            )
         return resources + self.generate_xlsx_resources()
 
 
@@ -2130,25 +2113,23 @@ class OMGONTPromethionMetadata(OMGBaseMetadata):
     def _get_resources(self):
         self._logger.info("Ingesting md5 file information from {0}".format(self.path))
         resources = []
-        for md5_file in glob(self.path + "/*.md5"):
-            self._logger.info("Processing md5 file {0}".format(md5_file))
-            for filename, md5, file_info in self.parse_md5file(md5_file):
-                resource = file_info.copy()
-                resource["bpa_library_id"] = ingest_utils.extract_ands_id(
-                    self._logger, resource["bpa_library_id"]
+        for filename, md5, md5_file, file_info in self.md5_lines():
+            resource = file_info.copy()
+            resource["bpa_library_id"] = ingest_utils.extract_ands_id(
+                self._logger, resource["bpa_library_id"]
+            )
+            resource["md5"] = resource["id"] = md5
+            resource["name"] = filename
+            resource["resource_type"] = self.ckan_data_type
+            xlsx_info = self.metadata_info[os.path.basename(md5_file)]
+            legacy_url = urljoin(xlsx_info["base_url"], filename)
+            resources.append(
+                (
+                    (resource["bpa_library_id"], resource["flowcell_id"]),
+                    legacy_url,
+                    resource,
                 )
-                resource["md5"] = resource["id"] = md5
-                resource["name"] = filename
-                resource["resource_type"] = self.ckan_data_type
-                xlsx_info = self.metadata_info[os.path.basename(md5_file)]
-                legacy_url = urljoin(xlsx_info["base_url"], filename)
-                resources.append(
-                    (
-                        (resource["bpa_library_id"], resource["flowcell_id"]),
-                        legacy_url,
-                        resource,
-                    )
-                )
+            )
         return resources + self.generate_xlsx_resources()
 
 
@@ -2317,27 +2298,25 @@ class OMGTranscriptomicsNextseq(OMGBaseMetadata):
             "Ingesting OMG md5 file information from {0}".format(self.path)
         )
         resources = []
-        for md5_file in glob(self.path + "/*.md5"):
-            self._logger.info("Processing md5 file {}".format(md5_file))
-            for filename, md5, file_info in self.parse_md5file(md5_file):
-                resource = file_info.copy()
-                resource["md5"] = resource["id"] = md5
-                resource["name"] = filename
-                resource["resource_type"] = self.ckan_data_type
-                xlsx_info = self.metadata_info[os.path.basename(md5_file)]
-                legacy_url = urljoin(xlsx_info["base_url"], filename)
-                resources.append(
+        for filename, md5, md5_file, file_info in self.md5_lines():
+            resource = file_info.copy()
+            resource["md5"] = resource["id"] = md5
+            resource["name"] = filename
+            resource["resource_type"] = self.ckan_data_type
+            xlsx_info = self.metadata_info[os.path.basename(md5_file)]
+            legacy_url = urljoin(xlsx_info["base_url"], filename)
+            resources.append(
+                (
                     (
-                        (
-                            ingest_utils.extract_ands_id(
-                                self._logger, resource["bpa_library_id"]
-                            ),
-                            resource["flowcell_id"],
+                        ingest_utils.extract_ands_id(
+                            self._logger, resource["bpa_library_id"]
                         ),
-                        legacy_url,
-                        resource,
-                    )
+                        resource["flowcell_id"],
+                    ),
+                    legacy_url,
+                    resource,
                 )
+            )
         return resources + self.generate_xlsx_resources()
 
 
@@ -2515,25 +2494,23 @@ class OMGGenomicsPacBioGenomeAssemblyMetadata(SecondaryMetadata):
             "Ingesting OMG md5 file information from {0}".format(self.path)
         )
         resources = []
-        for md5_file in glob(self.path + "/*.md5"):
-            self._logger.info("Processing md5 file {}".format(md5_file))
-            for filename, md5, file_info in self.parse_md5file(md5_file):
-                resource = file_info.copy()
-                resource["md5"] = resource["id"] = md5
-                resource["name"] = filename
-                resource["resource_type"] = self.ckan_data_type
-                library_id = ingest_utils.extract_ands_id(
-                    self._logger, resource["bpa_library_id"]
+        for filename, md5, md5_file, file_info in self.md5_lines():
+            resource = file_info.copy()
+            resource["md5"] = resource["id"] = md5
+            resource["name"] = filename
+            resource["resource_type"] = self.ckan_data_type
+            library_id = ingest_utils.extract_ands_id(
+                self._logger, resource["bpa_library_id"]
+            )
+            xlsx_info = self.metadata_info[os.path.basename(md5_file)]
+            legacy_url = urljoin(xlsx_info["base_url"], filename)
+            resources.append(
+                (
+                    (ingest_utils.extract_ands_id(self._logger, library_id),),
+                    legacy_url,
+                    resource,
                 )
-                xlsx_info = self.metadata_info[os.path.basename(md5_file)]
-                legacy_url = urljoin(xlsx_info["base_url"], filename)
-                resources.append(
-                    (
-                        (ingest_utils.extract_ands_id(self._logger, library_id),),
-                        legacy_url,
-                        resource,
-                    )
-                )
+            )
         return (
             resources + self.generate_xlsx_resources() + self.generate_raw_resources()
         )
@@ -2710,27 +2687,24 @@ class OMGAnalysedDataMetadata(OMGBaseMetadata):
     def _get_resources(self):
         self._logger.info("Ingesting md5 file information from {0}".format(self.path))
         resources = []
-        for md5_file in glob(self.path + "/*.md5"):
-            self._logger.info("Processing md5 file {0}".format(md5_file))
-            for filename, md5, file_info in self.parse_md5file(md5_file):
-                resource = file_info.copy()
-                resource[
-                    "bioplatforms_secondarydata_id"
+        for filename, md5, md5_file, file_info in self.md5_lines():
+            resource = file_info.copy()
+            resource["bioplatforms_secondarydata_id"
                 ] = ingest_utils.extract_ands_id(
                     self._logger, resource["bioplatforms_secondarydata_id"]
                 )
-                resource["md5"] = resource["id"] = md5
-                resource["name"] = filename
-                resource["resource_type"] = self.ckan_data_type
-                xlsx_info = self.metadata_info[os.path.basename(md5_file)]
-                legacy_url = urljoin(xlsx_info["base_url"], filename)
-                resources.append(
-                    (
-                        (resource["bioplatforms_secondarydata_id"],),
-                        legacy_url,
-                        resource,
-                    )
+            resource["md5"] = resource["id"] = md5
+            resource["name"] = filename
+            resource["resource_type"] = self.ckan_data_type
+            xlsx_info = self.metadata_info[os.path.basename(md5_file)]
+            legacy_url = urljoin(xlsx_info["base_url"], filename)
+            resources.append(
+                (
+                    (resource["bioplatforms_secondarydata_id"],),
+                    legacy_url,
+                    resource,
                 )
+            )
         return resources
 
 
@@ -2982,25 +2956,23 @@ class OMGGenomicsDArTMetadata(OMGBaseMetadata):
             "Ingesting OMG md5 file information from {0}".format(self.path)
         )
         resources = []
-        for md5_file in glob(self.path + "/*.md5"):
-            self._logger.info("Processing md5 file {}".format(md5_file))
-            for filename, md5, file_info in self.parse_md5file(md5_file):
-                resource = file_info.copy()
-                resource["md5"] = resource["id"] = md5
-                resource["name"] = filename
-                resource["resource_type"] = self.ckan_data_type
-                resource["bpa_dataset_id"] = __dataset_id_from_md5_file(md5_file)
-                xlsx_info = self.metadata_info[os.path.basename(md5_file)]
-                legacy_url = urljoin(xlsx_info["base_url"], filename)
-                resources.append(
+        for filename, md5, md5_file, file_info in self.md5_lines():
+            resource = file_info.copy()
+            resource["md5"] = resource["id"] = md5
+            resource["name"] = filename
+            resource["resource_type"] = self.ckan_data_type
+            resource["bpa_dataset_id"] = __dataset_id_from_md5_file(md5_file)
+            xlsx_info = self.metadata_info[os.path.basename(md5_file)]
+            legacy_url = urljoin(xlsx_info["base_url"], filename)
+            resources.append(
+                (
                     (
-                        (
-                            ingest_utils.extract_ands_id(
-                                self._logger, resource["bpa_dataset_id"]
-                            ),
+                        ingest_utils.extract_ands_id(
+                            self._logger, resource["bpa_dataset_id"]
                         ),
-                        legacy_url,
-                        resource,
-                    )
+                    ),
+                    legacy_url,
+                    resource,
                 )
+            )
         return resources + self.generate_xlsx_resources()
