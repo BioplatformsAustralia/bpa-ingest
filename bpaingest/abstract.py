@@ -199,8 +199,17 @@ class BaseMetadata:
 
     def md5_lines(self):
         files_in_md5 = set({})
+        md5_files = set({})
         self._logger.info("Ingesting MD5 file information from {0}".format(self.path))
         for md5_file in glob(self.path + "/*.md5"):
+            if md5_file not in md5_files:
+                md5_files.add(md5_file)
+            else:
+                ticket = self.metadata_info[os.path.basename(md5_file)]["ticket"]
+                self._logger.error(
+                    "Duplicate MD5 file {0} in ticket {1} may lead to duplicate resources or other issues"
+                    .format(md5_file, ticket))
+
             self._logger.info("Processing md5 file {}".format(md5_file))
             for filename, md5, file_info in self.parse_md5file(md5_file):
                 if filename not in files_in_md5:
