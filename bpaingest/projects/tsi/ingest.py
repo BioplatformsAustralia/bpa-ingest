@@ -310,7 +310,7 @@ class TSINovaseqMetadata(TSIBaseMetadata):
         for filename, md5, md5_file, file_info in self.md5_lines():
             resource = file_info.copy()
             resource["md5"] = resource["id"] = md5
-            resource["name"] = filename
+            resource["name"] = os.path.basename(filename)
             resource["resource_type"] = self.ckan_data_type
             library_id = ingest_utils.extract_ands_id(
                 # VERIFY
@@ -491,7 +491,7 @@ class TSIIlluminaShortreadMetadata(TSIBaseMetadata):
                  self._logger, resource["library_id"]
             )
             resource["md5"] = resource["id"] = md5
-            resource["name"] = filename
+            resource["name"] = os.path.basename(filename)
             resource["resource_type"] = self.ckan_data_type
             xlsx_info = self.metadata_info[os.path.basename(md5_file)]
             legacy_url = urljoin(xlsx_info["base_url"], filename)
@@ -682,7 +682,7 @@ class TSIIlluminaFastqMetadata(TSIBaseMetadata):
                 self._logger, resource["library_id"]
             )
             resource["md5"] = resource["id"] = md5
-            resource["name"] = filename
+            resource["name"] = os.path.basename(filename)
             resource["resource_type"] = self.ckan_data_type
             xlsx_info = self.metadata_info[os.path.basename(md5_file)]
             legacy_url = urljoin(xlsx_info["base_url"], filename)
@@ -1162,7 +1162,7 @@ class TSIGenomicsDDRADMetadata(TSIBaseMetadata):
         for filename, md5, md5_file, file_info in self.md5_lines():
             resource = file_info.copy()
             resource["md5"] = resource["id"] = md5
-            resource["name"] = filename
+            resource["name"] = os.path.basename(filename)
             resource["resource_type"] = self.ckan_data_type
             xlsx_info = self.metadata_info[os.path.basename(md5_file)]
             legacy_url = urljoin(xlsx_info["base_url"], filename)
@@ -1354,7 +1354,7 @@ class TSIGenomeAssemblyMetadata(TSIBaseMetadata):
                 self._logger, resource["bioplatforms_secondarydata_id"]
             )
             resource["md5"] = resource["id"] = md5
-            resource["name"] = filename
+            resource["name"] = os.path.basename(filename)
             resource["resource_type"] = self.ckan_data_type
             xlsx_info = self.metadata_info[os.path.basename(md5_file)]
             legacy_url = urljoin(xlsx_info["base_url"], filename)
