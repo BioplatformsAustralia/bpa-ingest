@@ -33,6 +33,7 @@ common_context = [
     OMGDatasetControlContextual,
 ]
 
+CONSORTIUM_ORG_NAME = "omg-consortium-members"
 
 class OMGBaseMetadata(BaseMetadata):
     def __init__(self, *args, **kwargs):
@@ -251,7 +252,13 @@ class OMG10XRawIlluminaMetadata(OMGBaseMetadata):
             )
 
             ingest_utils.add_spatial_extra(self._logger, obj)
-            ingest_utils.permissions_organization_member(self._logger, obj)
+            ingest_utils.permissions_organization_member_after_embargo(
+                self._logger,
+                obj,
+                "archive_ingestion_date",
+                self.embargo_days,
+                CONSORTIUM_ORG_NAME,
+            )
             ingest_utils.apply_access_control(self._logger, self, obj)
             obj.update(common_values([make_row_metadata(row) for row in rows]))
             tag_names = ["10x-raw"]
@@ -437,7 +444,13 @@ class OMG10XRawMetadata(OMGBaseMetadata):
             )
             self.library_to_sample[obj["bpa_library_id"]] = obj["bpa_sample_id"]
             obj.update(context)
-            ingest_utils.permissions_organization_member(self._logger, obj)
+            ingest_utils.permissions_organization_member_after_embargo(
+                self._logger,
+                obj,
+                "archive_ingestion_date",
+                self.embargo_days,
+                CONSORTIUM_ORG_NAME,
+            )
             ingest_utils.apply_access_control(self._logger, self, obj)
             ingest_utils.add_spatial_extra(self._logger, obj)
             tag_names = ["10x-raw"]
@@ -629,7 +642,13 @@ class OMG10XProcessedIlluminaMetadata(OMGBaseMetadata):
                     }
                 )
                 obj.update(context)
-                ingest_utils.permissions_organization_member(self._logger, obj)
+                ingest_utils.permissions_organization_member_after_embargo(
+                    self._logger,
+                    obj,
+                    "archive_ingestion_date",
+                    self.embargo_days,
+                    CONSORTIUM_ORG_NAME,
+                )
                 ingest_utils.apply_access_control(self._logger, self, obj)
                 ingest_utils.add_spatial_extra(self._logger, obj)
                 tag_names = ["10x-processed"]
@@ -859,7 +878,13 @@ class OMGExonCaptureMetadata(OMGBaseMetadata):
                     }
                 )
                 obj.update(context)
-                ingest_utils.permissions_organization_member(self._logger, obj)
+                ingest_utils.permissions_organization_member_after_embargo(
+                    self._logger,
+                    obj,
+                    "archive_ingestion_date",
+                    self.embargo_days,
+                    CONSORTIUM_ORG_NAME,
+                )
                 ingest_utils.apply_access_control(self._logger, self, obj)
 
                 # remove obsoleted fields
@@ -1107,7 +1132,13 @@ class OMGWholeGenomeMetadata(OMGBaseMetadata):
                     }
                 )
                 obj.update(context)
-                ingest_utils.permissions_organization_member(self._logger, obj)
+                ingest_utils.permissions_organization_member_after_embargo(
+                    self._logger,
+                    obj,
+                    "archive_ingestion_date",
+                    self.embargo_days,
+                    CONSORTIUM_ORG_NAME,
+                )
                 ingest_utils.apply_access_control(self._logger, self, obj)
 
                 # remove obsoleted fields
@@ -1295,7 +1326,13 @@ class OMGGenomicsNovaseqMetadata(OMGBaseMetadata):
                     }
                 )
                 obj.update(context)
-                ingest_utils.permissions_organization_member(self._logger, obj)
+                ingest_utils.permissions_organization_member_after_embargo(
+                    self._logger,
+                    obj,
+                    "archive_ingestion_date",
+                    self.embargo_days,
+                    CONSORTIUM_ORG_NAME,
+                )
                 ingest_utils.apply_access_control(self._logger, self, obj)
 
                 ingest_utils.add_spatial_extra(self._logger, obj)
@@ -1481,7 +1518,13 @@ class OMGGenomicsHiSeqMetadata(OMGBaseMetadata):
                     }
                 )
                 obj.update(context)
-                ingest_utils.permissions_organization_member(self._logger, obj)
+                ingest_utils.permissions_organization_member_after_embargo(
+                    self._logger,
+                    obj,
+                    "archive_ingestion_date",
+                    self.embargo_days,
+                    CONSORTIUM_ORG_NAME,
+                )
                 ingest_utils.apply_access_control(self._logger, self, obj)
                 ingest_utils.add_spatial_extra(self._logger, obj)
                 tag_names = ["genomics-hiseq"]
@@ -1725,7 +1768,13 @@ class OMGGenomicsDDRADMetadata(OMGBaseMetadata):
                         "notes": self.generate_notes_field(obj),
                     }
                 )
-                ingest_utils.permissions_organization_member(self._logger, obj)
+                ingest_utils.permissions_organization_member_after_embargo(
+                    self._logger,
+                    obj,
+                    "archive_ingestion_date",
+                    self.embargo_days,
+                    CONSORTIUM_ORG_NAME,
+                )
                 ingest_utils.apply_access_control(self._logger, self, obj)
                 ingest_utils.add_spatial_extra(self._logger, obj)
                 tag_names = ["genomics-ddrad"]
@@ -1914,7 +1963,13 @@ class OMGGenomicsPacbioMetadata(OMGBaseMetadata):
                 }
             )
             obj.update(context)
-            ingest_utils.permissions_organization_member(self._logger, obj)
+            ingest_utils.permissions_organization_member_after_embargo(
+                self._logger,
+                obj,
+                "archive_ingestion_date",
+                self.embargo_days,
+                CONSORTIUM_ORG_NAME,
+            )
             ingest_utils.apply_access_control(self._logger, self, obj)
 
             ingest_utils.add_spatial_extra(self._logger, obj)
@@ -2102,7 +2157,13 @@ class OMGONTPromethionMetadata(OMGBaseMetadata):
                         "license_id": apply_cc_by_license(),
                     }
                 )
-                ingest_utils.permissions_organization_member(self._logger, obj)
+                ingest_utils.permissions_organization_member_after_embargo(
+                    self._logger,
+                    obj,
+                    "archive_ingestion_date",
+                    self.embargo_days,
+                    CONSORTIUM_ORG_NAME,
+                )
                 ingest_utils.apply_access_control(self._logger, self, obj)
                 tag_names = ["ont-promethion"]
                 obj["tags"] = [{"name": t} for t in tag_names]
@@ -2284,7 +2345,13 @@ class OMGTranscriptomicsNextseq(OMGBaseMetadata):
                         "license_id": apply_cc_by_license(),
                     }
                 )
-                ingest_utils.permissions_organization_member(self._logger, obj)
+                ingest_utils.permissions_organization_member_after_embargo(
+                    self._logger,
+                    obj,
+                    "archive_ingestion_date",
+                    self.embargo_days,
+                    CONSORTIUM_ORG_NAME,
+                )
                 ingest_utils.apply_access_control(self._logger, self, obj)
                 ingest_utils.add_spatial_extra(self._logger, obj)
                 tag_names = ["transcriptomics-nextseq"]
@@ -2469,7 +2536,13 @@ class OMGGenomicsPacBioGenomeAssemblyMetadata(SecondaryMetadata):
                         "license_id": apply_cc_by_license(),
                     }
                 )
-                ingest_utils.permissions_organization_member(self._logger, obj)
+                ingest_utils.permissions_organization_member_after_embargo(
+                    self._logger,
+                    obj,
+                    "archive_ingestion_date",
+                    self.embargo_days,
+                    CONSORTIUM_ORG_NAME,
+                )
                 ingest_utils.apply_access_control(self._logger, self, obj)
                 self._logger.info(
                     "No context metadata for this data type, so no object merge....Continuing"
@@ -2677,7 +2750,13 @@ class OMGAnalysedDataMetadata(OMGBaseMetadata):
                         "license_id": apply_cc_by_license(),
                     }
                 )
-                ingest_utils.permissions_organization_member(self._logger, obj)
+                ingest_utils.permissions_organization_member_after_embargo(
+                    self._logger,
+                    obj,
+                    "archive_ingestion_date",
+                    self.embargo_days,
+                    CONSORTIUM_ORG_NAME,
+                )
                 ingest_utils.apply_access_control(self._logger, self, obj)
                 tag_names = ["omg-analysed-data"]
                 obj["tags"] = [{"name": t} for t in tag_names]
@@ -2919,7 +2998,13 @@ class OMGGenomicsDArTMetadata(OMGBaseMetadata):
                     "notes": self.generate_notes_field(obj),
                 }
             )
-            ingest_utils.permissions_organization_member(self._logger, obj)
+            ingest_utils.permissions_organization_member_after_embargo(
+                self._logger,
+                obj,
+                "archive_ingestion_date",
+                self.embargo_days,
+                CONSORTIUM_ORG_NAME,
+            )
             attach_message = (
                 "Attached metadata spreadsheets were produced when data was generated."
             )
