@@ -163,32 +163,20 @@ class GAPIlluminaShortreadMetadata(BaseMetadata):
         return packages
 
     def _get_resources(self):
-        self._logger.info("Ingesting md5 file information from {0}".format(self.path))
-        resources = []
-        for filename, md5, md5_file, file_info in self.md5_lines():
-            resource = file_info.copy()
-            resource["sample_id"] = ingest_utils.extract_ands_id(
-                self._logger, resource["sample_id"]
-            )
-            resource["md5"] = resource["id"] = md5
-            resource["name"] = filename
-            resource["resource_type"] = self.ckan_data_type
-            xlsx_info = self.metadata_info[os.path.basename(md5_file)]
-            legacy_url = urljoin(xlsx_info["base_url"], filename)
-            # This will be used by sync/dump later to check resource_linkage in resources against that in packages
-            resources.append(
-                (
-                    (
+        return self._get_common_resources()
+
+    def _add_datatype_specific_info_to_resource(self, resource):
+        resource["sample_id"] = ingest_utils.extract_ands_id(
+            self._logger, resource["sample_id"]
+        )
+
+    def _build_resource_linkage(self, xlsx_info, resource, file_info):
+        return (
                         xlsx_info["ticket"],
                         resource["sample_id"],
                         file_info.get("library_id"),
                         resource["flow_cell_id"],
-                    ),
-                    legacy_url,
-                    resource,
-                )
-            )
-        return resources
+                    )
 
 
 class GAPHiCMetadata(GAPIlluminaShortreadMetadata):
@@ -307,30 +295,19 @@ class GAPONTMinionMetadata(BaseMetadata):
         return packages
 
     def _get_resources(self):
-        self._logger.info("Ingesting md5 file information from {0}".format(self.path))
-        resources = []
-        for filename, md5, md5_file, file_info in self.md5_lines():
-            resource = file_info.copy()
-            resource["sample_id"] = ingest_utils.extract_ands_id(
-                self._logger, resource["sample_id"]
-            )
-            resource["md5"] = resource["id"] = md5
-            resource["name"] = filename
-            resource["resource_type"] = self.ckan_data_type
-            xlsx_info = self.metadata_info[os.path.basename(md5_file)]
-            legacy_url = urljoin(xlsx_info["base_url"], filename)
-            resources.append(
-                (
-                    (
-                        xlsx_info["ticket"],
-                        resource["sample_id"],
-                        resource["flow_cell_id"],
-                    ),
-                    legacy_url,
-                    resource,
-                )
-            )
-        return resources
+        return self._get_common_resources()
+
+    def _add_datatype_specific_info_to_resource(self, resource):
+        resource["sample_id"] = ingest_utils.extract_ands_id(
+            self._logger, resource["sample_id"]
+        )
+
+    def _build_resource_linkage(self, xlsx_info, resource, file_info):
+        return (
+            xlsx_info["ticket"],
+            resource["sample_id"],
+            resource["flow_cell_id"],
+        )
 
 
 class GAPONTPromethionMetadata(BaseMetadata):
@@ -438,30 +415,19 @@ class GAPONTPromethionMetadata(BaseMetadata):
         return packages
 
     def _get_resources(self):
-        self._logger.info("Ingesting md5 file information from {0}".format(self.path))
-        resources = []
-        for filename, md5, md5_file, file_info in self.md5_lines():
-            resource = file_info.copy()
-            resource["sample_id"] = ingest_utils.extract_ands_id(
-                self._logger, resource["sample_id"]
-            )
-            resource["md5"] = resource["id"] = md5
-            resource["name"] = filename
-            resource["resource_type"] = self.ckan_data_type
-            xlsx_info = self.metadata_info[os.path.basename(md5_file)]
-            legacy_url = urljoin(xlsx_info["base_url"], filename)
-            resources.append(
-                (
-                    (
-                        xlsx_info["ticket"],
-                        resource["sample_id"],
-                        resource["flow_cell_id"],
-                    ),
-                    legacy_url,
-                    resource,
-                )
-            )
-        return resources
+        return self._get_common_resources()
+
+    def _add_datatype_specific_info_to_resource(self, resource):
+        resource["sample_id"] = ingest_utils.extract_ands_id(
+            self._logger, resource["sample_id"]
+        )
+
+    def _build_resource_linkage(self, xlsx_info, resource, file_info):
+        return (
+            xlsx_info["ticket"],
+            resource["sample_id"],
+            resource["flow_cell_id"],
+        )
 
 
 class GAPGenomics10XMetadata(BaseMetadata):
@@ -559,20 +525,17 @@ class GAPGenomics10XMetadata(BaseMetadata):
         return packages
 
     def _get_resources(self):
-        self._logger.info("Ingesting md5 file information from {0}".format(self.path))
-        resources = []
-        for filename, md5, md5_file, file_info in self.md5_lines():
-            resource = file_info.copy()
-            resource["sample_id"] = ingest_utils.extract_ands_id(
-                self._logger, resource["sample_id"]
-            )
-            resource["md5"] = resource["id"] = md5
-            resource["name"] = filename
-            resource["resource_type"] = self.ckan_data_type
-            xlsx_info = self.metadata_info[os.path.basename(md5_file)]
-            legacy_url = urljoin(xlsx_info["base_url"], filename)
-            resources.append(((xlsx_info["ticket"],), legacy_url, resource))
-        return resources
+        return self._get_common_resources()
+
+    def _add_datatype_specific_info_to_resource(self, resource):
+        resource["sample_id"] = ingest_utils.extract_ands_id(
+            self._logger, resource["sample_id"]
+        )
+
+    def _build_resource_linkage(self, xlsx_info, resource, file_info):
+        return (
+            xlsx_info["ticket"],
+        )
 
 
 class GAPGenomicsDDRADMetadata(BaseMetadata):
@@ -782,30 +745,21 @@ class GAPGenomicsDDRADMetadata(BaseMetadata):
         return packages
 
     def _get_resources(self):
-        self._logger.info(
-            "Ingesting GAP md5 file information from {0}".format(self.path)
-        )
-        resources = []
-        for filename, md5, md5_file, file_info in self.md5_lines():
-            resource = file_info.copy()
-            resource["md5"] = resource["id"] = md5
-            resource["name"] = filename
-            resource["resource_type"] = self.ckan_data_type
-            xlsx_info = self.metadata_info[os.path.basename(md5_file)]
-            legacy_url = urljoin(xlsx_info["base_url"], filename)
-            resources.append(
-                (
-                    (
-                        ingest_utils.extract_ands_id(
-                            self._logger, resource["dataset_id"]
-                        ),
-                        resource["flowcell_id"],
+        return self._get_common_resources() + self.generate_xlsx_resources()
+
+    def _add_datatype_specific_info_to_resource(self, resource):
+        # no additional data for ddrad
+        return
+
+    def _build_resource_linkage(self, xlsx_info, resource, file_info):
+        return(
+                    ingest_utils.extract_ands_id(
+                        self._logger, resource["dataset_id"]
                     ),
-                    legacy_url,
-                    resource,
-                )
+                    resource["flowcell_id"],
+
             )
-        return resources + self.generate_xlsx_resources()
+
 
 class GAPPacbioHifiMetadata(BaseMetadata):
     organization = "bpa-plants"
@@ -994,43 +948,30 @@ class GAPPacbioHifiMetadata(BaseMetadata):
             )
 
     def _get_resources(self):
-        self._logger.info(
-            "Ingesting GAP md5 file information from {0}".format(self.path)
+        return self._get_common_resources()
+
+    def _add_datatype_specific_info_to_resource(self, resource):
+
+        resource["sample_id"] = ingest_utils.extract_ands_id(
+            self._logger, resource["sample_id"]
         )
-        resources = []
         resource_info = {}
         self._get_resource_info(resource_info)
+        raw_resources_info = resource_info.get(resource["name"], "")
+        # if download_info exists for raw_resources, then use remote URL
+        if raw_resources_info:
+            legacy_url = urljoin(
+                raw_resources_info["base_url"], resource["name"]
+            )
+        else:
+            # otherwise if no download_info, then raise error
+            raise Exception("No download info for {}".format(filename))
 
-        for filename, md5, md5_file, file_info in self.md5_lines():
-            resource = file_info.copy()
-            resource["md5"] = resource["id"] = md5
-            resource["name"] = os.path.basename(filename)
-            resource["resource_type"] = self.ckan_data_type
-            resource["sample_id"] = ingest_utils.extract_ands_id(
-                self._logger, resource["sample_id"]
+    def _build_resource_linkage(self, xlsx_info, resource, file_info):
+        return (
+                xlsx_info["ticket"],
+                resource["sample_id"],
+                resource["flowcell_id"],
             )
-            xlsx_info = self.metadata_info[os.path.basename(md5_file)]
-            #
-            raw_resources_info = resource_info.get(os.path.basename(filename), "")
-            # if download_info exists for raw_resources, then use remote URL
-            if raw_resources_info:
-                legacy_url = urljoin(
-                    raw_resources_info["base_url"], os.path.basename(filename)
-                )
-            else:
-                # otherwise if no download_info, then raise error
-                raise Exception("No download info for {}".format(filename))
-            resources.append(
-                (
-                    (
-                        xlsx_info["ticket"],
-                        resource["sample_id"],
-                        resource["flowcell_id"],
-                    ),
-                    legacy_url,
-                    resource,
-                )
-            )
-        return resources
 
 
