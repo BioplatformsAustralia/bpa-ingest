@@ -55,6 +55,7 @@ def test_ont_promethion_re():
         "376315_PAH92712_GAP_BRF_ONTPromethION_report.html",
         "376315_PAH92712_GAP_BRF_ONTPromethION_sequencing_summary.txt",
         "376315_PAH92172_GAP_BRF_Run3_ONTPromethION_fastq_fail.tar",
+        "376315_PAK19021_GAP_BRF_ONTPromethION_sequencing_summary.txt"
 
     ]
     for filename in filenames:
