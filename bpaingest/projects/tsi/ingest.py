@@ -1366,3 +1366,195 @@ class TSIGenomeAssemblyMetadata(TSIBaseMetadata):
                 )
             )
         return resources
+
+
+class TSIHiCMetadata(TSIBaseMetadata):
+    organization = "threatened-species"
+    ckan_data_type = "tsi-hi-c"
+    description = "Hi-C"
+    technology = "hi-c"
+    sequence_data_type = "illumina-hic"
+    embargo_days = 365
+    metadata_urls = [
+        "https://downloads-qcif.bioplatforms.com/bpa/tsi_staging/genomics-hi-c/",
+    ]
+    contextual_classes = common_context
+    metadata_patterns = [r"^.*\.md5$", r"^.*\.xlsx$"]
+    metadata_url_components = ("ticket",)
+    resource_linkage = ("ticket", "library_id", "flowcell_id")
+    spreadsheet = {
+        "fields": [
+            fld(
+                "library_id",
+                re.compile(r"library_[Ii][Dd]"),
+                coerce=ingest_utils.extract_ands_id,
+            ),
+            fld(
+                "sample_id",
+                re.compile(r"sample_[Ii][Dd]"),
+                coerce=ingest_utils.extract_ands_id,
+            ),
+            fld(
+                "dataset_id",
+                re.compile(r"dataset_[Ii][Dd]"),
+                coerce=ingest_utils.extract_ands_id,
+            ),
+            fld("run_format", "run format", optional=True),
+            fld("facility_project_code", "facility_project_code"),
+            fld("specimen_id", "specimen_id"),
+            fld("tissue_number", "tissue_number"),
+            fld("genus", "genus"),
+            fld("species", "species"),
+            fld("data_custodian", "data_custodian"),
+            fld("data_context", "data_context"),
+            fld("library_type", "library_type"),
+            fld("library_layout", "library_layout"),
+            fld("facility_sample_id", "facility_sample_id"),
+            fld("sequencing_facility", "sequencing_facility"),
+            fld("sequencing_platform", "sequencing_platform"),
+            fld("sequencing_model", "sequencing_model"),
+            fld("library_construction_protocol", "library_construction_protocol"),
+            fld("library_strategy", "library_strategy"),
+            fld("library_selection", "library_selection"),
+            fld("library_source", "library_source"),
+            fld(
+                "library_prep_date",
+                "library_prep_date",
+                coerce=ingest_utils.get_date_isoformat,
+            ),
+            fld("library_prepared_by", "library_prepared_by"),
+            fld("library_location", "library_location"),
+            fld("library_comments", "library_comments"),
+            fld("dna_treatment", "dna_treatment"),
+            fld("library_index_id", "library_index_id"),
+            fld("library_index_seq", "library_index_seq"),
+            fld("library_oligo_sequence", "library_oligo_sequence"),
+            fld("insert_size_range", "insert_size_range"),
+            fld("library_ng_ul", "library_ng_ul"),
+            fld(
+                "library_pcr_cycles", "library_pcr_cycles", coerce=ingest_utils.get_int
+            ),
+            fld("library_pcr_reps", "library_pcr_reps", coerce=ingest_utils.get_int),
+            fld(
+                "n_libraries_pooled", "n_libraries_pooled", coerce=ingest_utils.get_int
+            ),
+            fld("flowcell_type", "flowcell_type"),
+            fld("flowcell_id", "flowcell_id"),
+            fld("cell_postion", "cell_postion"),
+            fld("movie_length", "movie_length"),
+            fld("sequencing_kit_chemistry_version", "sequencing_kit_chemistry_version"),
+            fld("analysis_software", "analysis_software"),
+            fld("analysis_software_version", "analysis_software_version"),
+            fld("file_type", "file_type"),
+            fld("experimental_design", "experimental_design"),
+            fld("work_order", "work_order", coerce=ingest_utils.get_int),
+            fld("library_index_id_dual", "library_index_id_dual", optional=True),
+            fld("library_index_seq_dual", "library_index_seq_dual", optional=True),
+            fld(
+                "library_oligo_sequence_dual",
+                "library_oligo_sequence_dual",
+                optional=True,
+            ),
+            fld("fast5_compression", "fast5_compression", optional=True),
+            fld("model_base_caller", "model_base_caller", optional=True),
+        ],
+        "options": {
+            "sheet_name": "Library_metadata",
+            "header_length": 1,
+            "column_name_row_index": 0,
+        },
+    }
+    md5 = {
+        "match": [files.illumina_hic_re],
+        "skip": [
+            re.compile(r"^.*\.xlsx$"),
+            re.compile(r"^.*SampleSheet.*"),
+            re.compile(r"^.*TestFiles\.exe.*"),
+            re.compile(r"^.*DataValidation\.pdf.*"),
+            re.compile(r"^.*checksums\.(exf|md5)$"),
+        ],
+    }
+
+    def __init__(
+        self, logger, metadata_path, contextual_metadata=None, metadata_info=None
+    ):
+        super().__init__(logger, metadata_path)
+        self.path = Path(metadata_path)
+        self.contextual_metadata = contextual_metadata
+        self.metadata_info = metadata_info
+        self.google_track_meta = TSIGoogleTrackMetadata(logger)
+
+    def _get_packages(self):
+        self._logger.info("Ingesting TSI metadata from {0}".format(self.path))
+        packages = []
+        for fname in glob(self.path + "/*.xlsx"):
+            self._logger.info("Processing TSI metadata file {0}".format(fname))
+            rows = self.parse_spreadsheet(fname, self.metadata_info)
+            xlsx_info = self.metadata_info[os.path.basename(fname)]
+            ticket = xlsx_info["ticket"]
+            track_meta = self.google_track_meta.get(ticket)
+            for row in rows:
+                sample_id = row.sample_id
+                library_id = row.library_id
+                dataset_id = row.dataset_id
+                obj = row._asdict()
+                if track_meta is not None:
+                    obj.update(track_meta._asdict())
+                raw_library_id = library_id.split("/")[-1]
+                raw_dataset_id = dataset_id.split("/")[-1]
+                name = sample_id_to_ckan_name(
+                    raw_library_id, self.ckan_data_type, row.flowcell_id
+                )
+                for contextual_source in self.contextual_metadata:
+                    obj.update(contextual_source.get(sample_id))
+                obj.update(
+                    {
+                        "title": "TSI Hi-C {} {}".format(
+                            obj["sample_id"], row.flowcell_id
+                        ),
+                        "sample_id": sample_id,
+                        "name": name,
+                        "id": name,
+                        "type": self.ckan_data_type,
+                        "sequence_data_type": self.sequence_data_type,
+                        "license_id": apply_cc_by_license(),
+                        "flowcell_id": row.flowcell_id,
+                        "data_generated": True,
+                        "library_id": raw_library_id,
+                        "notes": self.generate_notes_field_with_id(obj, library_id),
+                    }
+                )
+                ingest_utils.permissions_organization_member(self._logger, obj)
+                ingest_utils.apply_access_control(self._logger, self, obj)
+                tag_names = ["genomics"]
+                obj["tags"] = [{"name": "{:.100}".format(t)} for t in tag_names]
+                packages.append(obj)
+        return packages
+
+    def _get_resources(self):
+        self._logger.info("Ingesting md5 file information from {0}".format(self.path))
+        resources = []
+        for filename, md5, md5_file, file_info in self.md5_lines():
+            resource = file_info.copy()
+            resource["library_id"] = ingest_utils.extract_ands_id(
+                self._logger, resource["library_id"]
+            )
+            resource["md5"] = resource["id"] = md5
+            resource["name"] = os.path.basename(filename)
+            resource["resource_type"] = self.ckan_data_type
+            xlsx_info = self.metadata_info[os.path.basename(md5_file)]
+            legacy_url = urljoin(xlsx_info["base_url"], filename)
+            # This will be used by sync/dump later to check resource_linkage in resources against that in packages
+            resources.append(
+                (
+                    (
+                        xlsx_info["ticket"],
+                        file_info.get("library_id"),
+                        resource["flowcell_id"],
+                    ),
+                    legacy_url,
+                    resource,
+                )
+            )
+        return resources
+

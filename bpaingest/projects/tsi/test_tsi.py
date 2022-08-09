@@ -9,6 +9,7 @@ from bpaingest.projects.tsi.files import (
     ddrad_fastq_filename_re,
     ddrad_metadata_sheet_re,
     genome_assembly_filename_re,
+    illumina_hic_re,
 )
 
 
@@ -111,3 +112,19 @@ def test_genome_assembly_filename_re():
     ]
     for filename in filenames:
         assert genome_assembly_filename_re.match(filename) is not None
+
+
+def test_illumina_hic():
+    filenames = [
+        "350764_TSI_BRF_DD2M2_TGACCA_S2_L001_R1_001.fastq.gz",
+        "350769_TSI_BRF_DD2M2_CAGATC_S5_L001_R1_001.fastq.gz",
+        "350821_TSI_BRF_DD2M2_CGATGT_S1_L001_R1_001.fastq.gz",
+        "350752_TSI_BRF_HCN7WDRXY_S4_L001_R1_001.fastq.gz",
+        "350752_TSI_BRF_HCN7WDRXY_S4_L001_R2_001.fastq.gz",
+        "350752_TSI_BRF_HCN7WDRXY_S4_L002_R1_001.fastq.gz",
+        "408042_TSI_BRF_HG5YLDMXY_S2_L001_R1_001.fastq.gz",
+        "408044_TSI_BRF_HG5YLDMXY_S4_L002_R1_001.fastq.gz",
+    ]
+    for filename in filenames:
+        assert illumina_hic_re.match(filename) is not None
+

@@ -90,6 +90,7 @@ from .tsi.ingest import (
     TSIIlluminaShortreadMetadata,
     TSIIlluminaFastqMetadata,
     TSIGenomeAssemblyMetadata,
+    TSIHiCMetadata,
 )
 from ..util import make_logger
 
@@ -156,6 +157,7 @@ class ProjectInfo:
             TSIIlluminaShortreadMetadata,
             TSIIlluminaFastqMetadata,
             TSIGenomeAssemblyMetadata,
+            TSIHiCMetadata,
         ],
         "sepsis": [
             SepsisGenomicsMiseqMetadata,

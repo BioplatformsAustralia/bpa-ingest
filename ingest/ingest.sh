@@ -111,6 +111,7 @@ tsi()
   apply tsi-illumina-shortread $*
   apply tsi-illumina-fastq $*
   apply tsi-genome-assembly $*
+  apply tsi-hi-c $*
 }
 
 sepsis()
