@@ -180,6 +180,13 @@ class AustralianMicrobiomeSampleContextual:
             fld("beta_beta_car_meth", "beta_beta_car_meth"),
             fld("beta_epi_car", "beta_epi_car", coerce=ingest_utils.get_clean_number,),
             fld("beta_epi_car_meth", "beta_epi_car_meth"),
+            fld(
+                "bicarbonate",
+                "bicarbonate",
+                units="mg/L",
+                coerce=ingest_utils.get_clean_number,
+            ),
+            fld("bicarbonate_meth", "bicarbonate_meth"),
             fld("bleaching", "bleaching", coerce=ingest_utils.get_clean_number,),
             fld("bleaching_meth", "bleaching_meth"),
             fld(
@@ -208,12 +215,12 @@ class AustralianMicrobiomeSampleContextual:
             ),
             fld("cantha_meth", "cantha_meth"),
             fld(
-                "carbonate_bicarbonate",
-                "carbonate_bicarbonate",
+                "carbonate",
+                "carbonate",
                 units="mg/L",
                 coerce=ingest_utils.get_clean_number,
             ),
-            fld("carbonate_bicarbonate_meth", "carbonate_bicarbonate_meth"),
+            fld("carbonate_meth", "carbonate_meth"),
             fld('cast_id', 'cast_id'),
             fld(
                 "cation_exchange_capacity",
@@ -1181,12 +1188,12 @@ class AustralianMicrobiomeSampleContextual:
             ),
             fld("sulphur_meth", "sulphur_meth"),
             fld(
-                "synecochoccus",
-                "synecochoccus",
+                "synechococcus",
+                "synechococcus",
                 units="cells/mL",
                 coerce=ingest_utils.get_clean_number,
             ),
-            fld("synecochoccus_meth", "synecochoccus_meth"),
+            fld("synechococcus_meth", "synechococcus_meth"),
             fld('synonyms', 'synonyms'),
             fld(
                 "tantalum",
