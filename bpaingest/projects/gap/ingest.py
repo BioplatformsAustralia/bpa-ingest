@@ -165,7 +165,7 @@ class GAPIlluminaShortreadMetadata(BaseMetadata):
     def _get_resources(self):
         return self._get_common_resources()
 
-    def _add_datatype_specific_info_to_resource(self, resource):
+    def _add_datatype_specific_info_to_resource(self, resource, md5_file=None):
         resource["sample_id"] = ingest_utils.extract_ands_id(
             self._logger, resource["sample_id"]
         )
@@ -297,7 +297,7 @@ class GAPONTMinionMetadata(BaseMetadata):
     def _get_resources(self):
         return self._get_common_resources()
 
-    def _add_datatype_specific_info_to_resource(self, resource):
+    def _add_datatype_specific_info_to_resource(self, resource, md5_file=None):
         resource["sample_id"] = ingest_utils.extract_ands_id(
             self._logger, resource["sample_id"]
         )
@@ -417,7 +417,7 @@ class GAPONTPromethionMetadata(BaseMetadata):
     def _get_resources(self):
         return self._get_common_resources()
 
-    def _add_datatype_specific_info_to_resource(self, resource):
+    def _add_datatype_specific_info_to_resource(self, resource, md5_file=None):
         resource["sample_id"] = ingest_utils.extract_ands_id(
             self._logger, resource["sample_id"]
         )
@@ -527,7 +527,7 @@ class GAPGenomics10XMetadata(BaseMetadata):
     def _get_resources(self):
         return self._get_common_resources()
 
-    def _add_datatype_specific_info_to_resource(self, resource):
+    def _add_datatype_specific_info_to_resource(self, resource, md5_file=None):
         resource["sample_id"] = ingest_utils.extract_ands_id(
             self._logger, resource["sample_id"]
         )
@@ -747,7 +747,7 @@ class GAPGenomicsDDRADMetadata(BaseMetadata):
     def _get_resources(self):
         return self._get_common_resources() + self.generate_xlsx_resources()
 
-    def _add_datatype_specific_info_to_resource(self, resource):
+    def _add_datatype_specific_info_to_resource(self, resource, md5_file=None):
         # no additional data for ddrad
         return
 
@@ -933,39 +933,14 @@ class GAPPacbioHifiMetadata(BaseMetadata):
 
         return packages
 
-    def _get_resource_info(self, metadata_info):
-        auth_user, auth_env_name = self.auth
-        ri_auth = (auth_user, get_password(auth_env_name))
-
-        for metadata_url in self.metadata_urls:
-            self._logger.info("fetching resource metadata: %s" % (self.metadata_urls))
-            fetcher = Fetcher(self._logger, self.path, metadata_url, ri_auth)
-            fetcher.fetch_metadata_from_folder(
-                [files.pacbio_hifi_filename_re,],
-                metadata_info,
-                getattr(self, "metadata_url_components", []),
-                download=False,
-            )
-
     def _get_resources(self):
         return self._get_common_resources()
 
-    def _add_datatype_specific_info_to_resource(self, resource):
+    def _add_datatype_specific_info_to_resource(self, resource, md5_file=None):
 
         resource["sample_id"] = ingest_utils.extract_ands_id(
             self._logger, resource["sample_id"]
         )
-        resource_info = {}
-        self._get_resource_info(resource_info)
-        raw_resources_info = resource_info.get(resource["name"], "")
-        # if download_info exists for raw_resources, then use remote URL
-        if raw_resources_info:
-            legacy_url = urljoin(
-                raw_resources_info["base_url"], resource["name"]
-            )
-        else:
-            # otherwise if no download_info, then raise error
-            raise Exception("No download info for {}".format(filename))
 
     def _build_resource_linkage(self, xlsx_info, resource, file_info):
         return (

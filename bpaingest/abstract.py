@@ -17,6 +17,7 @@ from .util import make_logger, one
 class BaseMetadata:
     auth = ("bpaingest", "bpaingest")
     resource_linkage = ("sample_id",)
+    resource_info = {}
 
     def build_notes_into_object(self, obj):
         obj.update({"notes": self.build_notes_without_blanks(obj)})
@@ -57,9 +58,13 @@ class BaseMetadata:
         for tpl in p.no_match:
             self._logger.error("No match for filename: `%s'" % tpl)
 
+    def _get_resource_info(self, resource_info):
+    # subclasses may choose to implement this, not required tho. TSI pacbio-hifi as an example
+        return
     def _get_common_resources(self):
         self._logger.info("Ingesting md5 file information from {0}".format(self.path))
         resources = []
+        self._get_resource_info(self.resource_info)
         for filename, md5, md5_file, file_info in self.md5_lines():
             resource = file_info.copy()
             resource["md5"] = resource["id"] = md5
@@ -67,7 +72,13 @@ class BaseMetadata:
             resource["resource_type"] = self.ckan_data_type
             xlsx_info = self.metadata_info[os.path.basename(md5_file)]
             legacy_url = urljoin(xlsx_info["base_url"], filename)
-            self._add_datatype_specific_info_to_resource(resource)
+            raw_resources_info = self.resource_info.get(os.path.basename(filename), "")
+            # if download_info exists for raw_resources, then use remote URL
+            if raw_resources_info:
+                legacy_url = urljoin(
+                    raw_resources_info["base_url"], os.path.basename(filename)
+                )
+            self._add_datatype_specific_info_to_resource(resource, md5_file)
             resources.append(
                 (
                     self._build_resource_linkage(xlsx_info, resource, file_info),
@@ -77,7 +88,7 @@ class BaseMetadata:
             )
         return resources
 
-    def _add_datatype_specific_info_to_resource(self, resource):
+    def _add_datatype_specific_info_to_resource(self, resource, md5_file=None):
         """
         Add datatype specific items to the resource dict (eg sample_id)
         """

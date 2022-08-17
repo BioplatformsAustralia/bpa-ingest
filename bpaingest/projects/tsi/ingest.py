@@ -223,7 +223,7 @@ class TSINovaseqMetadata(TSIBaseMetadata):
     }
 
     def __init__(
-        self, logger, metadata_path, contextual_metadata=None, metadata_info=None
+            self, logger, metadata_path, contextual_metadata=None, metadata_info=None
     ):
         super().__init__(logger, metadata_path)
         self.path = Path(metadata_path)
@@ -265,7 +265,7 @@ class TSINovaseqMetadata(TSIBaseMetadata):
                         "name": name,
                         "id": name,
                         "title": "TSI Novaseq %s %s %s"
-                        % (library_id, row.flowcell_id, row.library_index_sequence),
+                                 % (library_id, row.flowcell_id, row.library_index_sequence),
                         "notes": self.generate_notes_field(context),
                         "date_of_transfer": ingest_utils.get_date_isoformat(
                             self._logger, track_get("date_of_transfer")
@@ -303,31 +303,21 @@ class TSINovaseqMetadata(TSIBaseMetadata):
         return packages
 
     def _get_resources(self):
-        self._logger.info(
-            "Ingesting TSI md5 file information from {0}".format(self.path)
-        )
-        resources = []
-        for filename, md5, md5_file, file_info in self.md5_lines():
-            resource = file_info.copy()
-            resource["md5"] = resource["id"] = md5
-            resource["name"] = os.path.basename(filename)
-            resource["resource_type"] = self.ckan_data_type
-            library_id = ingest_utils.extract_ands_id(
-                # VERIFY
+        return self._get_common_resources() + self.generate_xlsx_resources()
+
+    def _add_datatype_specific_info_to_resource(self, resource, md5_file=None):
+        # no special fields for TSINovaseq
+        return
+
+    def _build_resource_linkage(self, xlsx_info, resource, file_info):
+        return (
+            (ingest_utils.extract_ands_id(
                 self._logger,
                 resource["library_id"],
-            )
-            xlsx_info = self.metadata_info[os.path.basename(md5_file)]
-            legacy_url = urljoin(xlsx_info["base_url"], filename)
-            # VERIFY
-            resources.append(
-                (
-                    (library_id, resource["flow_cell_id"], resource["index"]),
-                    legacy_url,
-                    resource,
-                )
-            )
-        return resources + self.generate_xlsx_resources()
+            ),
+             resource["flow_cell_id"],
+             resource["index"]),
+        )
 
 
 class TSIIlluminaShortreadMetadata(TSIBaseMetadata):
@@ -415,7 +405,7 @@ class TSIIlluminaShortreadMetadata(TSIBaseMetadata):
         },
     }
     md5 = {
-        "match": [files.illumina_shortread_re,],
+        "match": [files.illumina_shortread_re, ],
         "skip": [
             re.compile(r"^.*_metadata.*\.xlsx$"),
             re.compile(r"^.*SampleSheet.*"),
@@ -427,7 +417,7 @@ class TSIIlluminaShortreadMetadata(TSIBaseMetadata):
     description = "Illumina short read"
 
     def __init__(
-        self, logger, metadata_path, contextual_metadata=None, metadata_info=None
+            self, logger, metadata_path, contextual_metadata=None, metadata_info=None
     ):
         super().__init__(logger, metadata_path)
         self.path = Path(metadata_path)
@@ -471,7 +461,7 @@ class TSIIlluminaShortreadMetadata(TSIBaseMetadata):
                         "data_generated": True,
                         "library_id": raw_library_id,
                         "title": "TSI Illumina Shortread %s %s"
-                        % (library_id, flow_cell_id),
+                                 % (library_id, flow_cell_id),
                         "notes": self.generate_notes_field(obj),
                     }
                 )
@@ -483,27 +473,19 @@ class TSIIlluminaShortreadMetadata(TSIBaseMetadata):
         return self.apply_location_generalisation(packages)
 
     def _get_resources(self):
-        self._logger.info("Ingesting md5 file information from {0}".format(self.path))
-        resources = []
-        for filename, md5, md5_file, file_info in self.md5_lines():
-            resource = file_info.copy()
-            resource["library_id"] = ingest_utils.extract_ands_id(
-                 self._logger, resource["library_id"]
-            )
-            resource["md5"] = resource["id"] = md5
-            resource["name"] = os.path.basename(filename)
-            resource["resource_type"] = self.ckan_data_type
-            xlsx_info = self.metadata_info[os.path.basename(md5_file)]
-            legacy_url = urljoin(xlsx_info["base_url"], filename)
-            # This will be used by sync/dump later to check resource_linkage in resources against that in packages
-            resources.append(
-                (
-                    (file_info.get("library_id"), resource["flow_cell_id"],),
-                    legacy_url,
-                    resource,
-                )
-            )
-        return resources
+        return self._get_common_resources()
+
+    def _add_datatype_specific_info_to_resource(self, resource, md5_file=None):
+        resource["library_id"] = ingest_utils.extract_ands_id(
+            self._logger, resource["library_id"]
+        )
+        return
+
+    def _build_resource_linkage(self, xlsx_info, resource, file_info):
+        return (
+            file_info.get("library_id"),
+            resource["flow_cell_id"],
+        )
 
 
 class TSIIlluminaFastqMetadata(TSIBaseMetadata):
@@ -581,7 +563,7 @@ class TSIIlluminaFastqMetadata(TSIBaseMetadata):
             fld("sequencing_model", "sequencing_model"),
             fld("data_context", "data_context"),
             fld("facility_project_code", "facility_project_code", optional=True),
-	        fld('sequencing_kit_chemistry_version', 'sequencing_kit_chemistry_version', optional=True),
+            fld('sequencing_kit_chemistry_version', 'sequencing_kit_chemistry_version', optional=True),
         ],
         "options": {
             "sheet_name": "Library metadata",
@@ -599,7 +581,7 @@ class TSIIlluminaFastqMetadata(TSIBaseMetadata):
     }
 
     def __init__(
-        self, logger, metadata_path, contextual_metadata=None, metadata_info=None
+            self, logger, metadata_path, contextual_metadata=None, metadata_info=None
     ):
         super().__init__(logger, metadata_path)
         self.path = Path(metadata_path)
@@ -659,7 +641,7 @@ class TSIIlluminaFastqMetadata(TSIBaseMetadata):
                         "license_id": apply_cc_by_license(),
                         "data_generated": True,
                         "title": "TSI Illumina FastQ %s %s"
-                        % (row.library_id, row.flowcell_id),
+                                 % (row.library_id, row.flowcell_id),
                         "notes": self.generate_notes_field(obj),
                     }
                 )
@@ -674,27 +656,19 @@ class TSIIlluminaFastqMetadata(TSIBaseMetadata):
         return packages
 
     def _get_resources(self):
-        self._logger.info("Ingesting md5 file information from {0}".format(self.path))
-        resources = []
-        for filename, md5, md5_file, file_info in self.md5_lines():
-            resource = file_info.copy()
-            resource["library_id"] = ingest_utils.extract_ands_id(
-                self._logger, resource["library_id"]
-            )
-            resource["md5"] = resource["id"] = md5
-            resource["name"] = os.path.basename(filename)
-            resource["resource_type"] = self.ckan_data_type
-            xlsx_info = self.metadata_info[os.path.basename(md5_file)]
-            legacy_url = urljoin(xlsx_info["base_url"], filename)
-            # This will be used by sync/dump later to check resource_linkage in resources against that in packages
-            resources.append(
-                (
-                    (resource["library_id"], resource["flowcell_id"],),
-                    legacy_url,
-                    resource,
-                )
-            )
-        return resources
+        return self._get_common_resources()
+
+    def _add_datatype_specific_info_to_resource(self, resource, md5_file=None):
+        resource["library_id"] = ingest_utils.extract_ands_id(
+            self._logger, resource["library_id"]
+        )
+        return
+
+    def _build_resource_linkage(self, xlsx_info, resource, file_info):
+        return (
+            resource["library_id"],
+            resource["flowcell_id"],
+        )
 
 
 class TSIPacbioHifiMetadata(TSIBaseMetadata):
@@ -771,8 +745,8 @@ class TSIPacbioHifiMetadata(TSIBaseMetadata):
             fld("n_libraries_pooled", "n_libraries_pooled"),
             fld("sequencing_platform", "sequencing_platform"),
             fld("flowcell_id", "flowcell_id"),
-	    fld('sequencing_kit_chemistry_version', 'sequencing_kit_chemistry_version', optional=True),
-	    fld('facility_project_code', 'facility_project_code', optional=True),
+            fld('sequencing_kit_chemistry_version', 'sequencing_kit_chemistry_version', optional=True),
+            fld('facility_project_code', 'facility_project_code', optional=True),
         ],
         "options": {
             "sheet_name": "Library metadata",
@@ -790,7 +764,7 @@ class TSIPacbioHifiMetadata(TSIBaseMetadata):
     }
 
     def __init__(
-        self, logger, metadata_path, contextual_metadata=None, metadata_info=None
+            self, logger, metadata_path, contextual_metadata=None, metadata_info=None
     ):
         super().__init__(logger, metadata_path)
         self.path = Path(metadata_path)
@@ -891,55 +865,30 @@ class TSIPacbioHifiMetadata(TSIBaseMetadata):
     def _get_resource_info(self, metadata_info):
         auth_user, auth_env_name = self.auth
         ri_auth = (auth_user, get_password(auth_env_name))
+        self._logger.info(metadata_info)
 
         for metadata_url in self.metadata_urls:
             self._logger.info("fetching resource metadata: %s" % (self.metadata_urls))
             fetcher = Fetcher(self._logger, self.path, metadata_url, ri_auth)
             fetcher.fetch_metadata_from_folder(
-                [files.pacbio_hifi_filename_re,],
+                [files.pacbio_hifi_filename_re, ],
                 metadata_info,
                 getattr(self, "metadata_url_components", []),
                 download=False,
             )
 
     def _get_resources(self):
-        self._logger.info(
-            "Ingesting TSI md5 file information from {0}".format(self.path)
+         return self._get_common_resources()
+
+    def _add_datatype_specific_info_to_resource(self, resource, md5_file=None):
+        # none for PACbio-hifi
+        return
+
+    def _build_resource_linkage(self, xlsx_info, resource, file_info):
+        return (
+            (ingest_utils.extract_ands_id(self._logger, resource["library_id"]),
+             resource["flowcell_id"],)
         )
-        resources = []
-        resource_info = {}
-        self._get_resource_info(resource_info)
-
-        for filename, md5, md5_file, file_info in self.md5_lines():
-            resource = file_info.copy()
-            resource["md5"] = resource["id"] = md5
-            resource["name"] = os.path.basename(filename)
-            resource["resource_type"] = self.ckan_data_type
-            library_id = ingest_utils.extract_ands_id(
-                self._logger, resource["library_id"],
-            )
-            #
-            raw_resources_info = resource_info.get(os.path.basename(filename), "")
-            # if download_info exists for raw_resources, then use remote URL
-            if raw_resources_info:
-                legacy_url = urljoin(
-                    raw_resources_info["base_url"], os.path.basename(filename)
-                )
-            else:
-                # otherwise if no download_info, then raise error
-                raise Exception("No download info for {}".format(filename))
-
-            resources.append(
-                (
-                    (
-                        ingest_utils.extract_ands_id(self._logger, library_id),
-                        resource["flowcell_id"],
-                    ),
-                    legacy_url,
-                    resource,
-                 )
-            )
-        return resources
 
 
 class TSIGenomicsDDRADMetadata(TSIBaseMetadata):
@@ -1024,8 +973,10 @@ class TSIGenomicsDDRADMetadata(TSIBaseMetadata):
             fld('sequencing_kit_chemistry_version', 'sequencing_kit_chemistry_version', optional=True),
             fld('facility_project_code', 'facility_project_code', optional=True),
             fld('library_index_id_dual', re.compile(r"(library_index_id_dual|library_dual_index_id)"), optional=True),
-            fld('library_index_seq_dual', re.compile(r"(library_index_seq_dual|library_dual_index_seq)"), optional=True),
-            fld('library_oligo_sequence_dual', re.compile(r"(library_oligo_sequence_dual|library_dual_oligo_sequence)"), optional=True),
+            fld('library_index_seq_dual', re.compile(r"(library_index_seq_dual|library_dual_index_seq)"),
+                optional=True),
+            fld('library_oligo_sequence_dual', re.compile(r"(library_oligo_sequence_dual|library_dual_oligo_sequence)"),
+                optional=True),
             fld('fast5_compression', 'fast5_compression', optional=True),
             fld('model_base_caller', 'model_base_caller', optional=True),
             fld("bait_set_name", "bait_set_name", optional=True),
@@ -1039,7 +990,7 @@ class TSIGenomicsDDRADMetadata(TSIBaseMetadata):
         },
     }
     md5 = {
-        "match": [files.ddrad_fastq_filename_re, files.ddrad_metadata_sheet_re,],
+        "match": [files.ddrad_fastq_filename_re, files.ddrad_metadata_sheet_re, ],
         "skip": [
             re.compile(r"^.*_metadata.*\.xlsx$"),
             re.compile(r"^.*TestFiles\.exe.*"),
@@ -1048,7 +999,7 @@ class TSIGenomicsDDRADMetadata(TSIBaseMetadata):
     }
 
     def __init__(
-        self, logger, metadata_path, contextual_metadata=None, metadata_info=None
+            self, logger, metadata_path, contextual_metadata=None, metadata_info=None
     ):
         super().__init__(logger, metadata_path)
         self.path = Path(metadata_path)
@@ -1155,30 +1106,19 @@ class TSIGenomicsDDRADMetadata(TSIBaseMetadata):
         return self.apply_location_generalisation(packages)
 
     def _get_resources(self):
-        self._logger.info(
-            "Ingesting TSI md5 file information from {0}".format(self.path)
+        return self._get_common_resources() + self.generate_xlsx_resources()
+
+    def _add_datatype_specific_info_to_resource(self, resource, md5_file=None):
+        # none for Genomics ddrad
+        return
+
+    def _build_resource_linkage(self, xlsx_info, resource, file_info):
+        return (
+            (ingest_utils.extract_ands_id(
+                self._logger, resource["bpa_dataset_id"]
+            ),
+             resource["flowcell_id"],)
         )
-        resources = []
-        for filename, md5, md5_file, file_info in self.md5_lines():
-            resource = file_info.copy()
-            resource["md5"] = resource["id"] = md5
-            resource["name"] = os.path.basename(filename)
-            resource["resource_type"] = self.ckan_data_type
-            xlsx_info = self.metadata_info[os.path.basename(md5_file)]
-            legacy_url = urljoin(xlsx_info["base_url"], filename)
-            resources.append(
-                (
-                    (
-                        ingest_utils.extract_ands_id(
-                            self._logger, resource["bpa_dataset_id"]
-                        ),
-                        resource["flowcell_id"],
-                    ),
-                    legacy_url,
-                    resource,
-                )
-            )
-        return resources + self.generate_xlsx_resources()
 
 
 class TSIGenomeAssemblyMetadata(TSIBaseMetadata):
@@ -1236,11 +1176,11 @@ class TSIGenomeAssemblyMetadata(TSIBaseMetadata):
     }
     md5 = {
         "match": [files.genome_assembly_filename_re],
-        "skip": [re.compile(r"^.*\.xlsx$"),],
+        "skip": [re.compile(r"^.*\.xlsx$"), ],
     }
 
     def __init__(
-        self, logger, metadata_path, contextual_metadata=None, metadata_info=None
+            self, logger, metadata_path, contextual_metadata=None, metadata_info=None
     ):
         super().__init__(logger, metadata_path)
         self.path = Path(metadata_path)
@@ -1344,28 +1284,17 @@ class TSIGenomeAssemblyMetadata(TSIBaseMetadata):
         return self.apply_location_generalisation(packages)
 
     def _get_resources(self):
-        self._logger.info(
-            "Ingesting TSI md5 file information from {0}".format(self.path)
+        return self._get_common_resources()
+
+    def _add_datatype_specific_info_to_resource(self, resource, md5_file=None):
+        resource["bioplatforms_secondarydata_id"] = ingest_utils.extract_ands_id(
+            self._logger, resource["bioplatforms_secondarydata_id"]
         )
-        resources = []
-        for filename, md5, md5_file, file_info in self.md5_lines():
-            resource = file_info.copy()
-            resource["bioplatforms_secondarydata_id"] = ingest_utils.extract_ands_id(
-                self._logger, resource["bioplatforms_secondarydata_id"]
-            )
-            resource["md5"] = resource["id"] = md5
-            resource["name"] = os.path.basename(filename)
-            resource["resource_type"] = self.ckan_data_type
-            xlsx_info = self.metadata_info[os.path.basename(md5_file)]
-            legacy_url = urljoin(xlsx_info["base_url"], filename)
-            resources.append(
-                (
-                    (resource["bioplatforms_secondarydata_id"],),
-                    legacy_url,
-                    resource,
+        return
+
+    def _build_resource_linkage(self, xlsx_info, resource, file_info):
+        return (resource["bioplatforms_secondarydata_id"],
                 )
-            )
-        return resources
 
 
 class TSIHiCMetadata(TSIBaseMetadata):
@@ -1476,7 +1405,7 @@ class TSIHiCMetadata(TSIBaseMetadata):
     }
 
     def __init__(
-        self, logger, metadata_path, contextual_metadata=None, metadata_info=None
+            self, logger, metadata_path, contextual_metadata=None, metadata_info=None
     ):
         super().__init__(logger, metadata_path)
         self.path = Path(metadata_path)
@@ -1532,29 +1461,16 @@ class TSIHiCMetadata(TSIBaseMetadata):
         return packages
 
     def _get_resources(self):
-        self._logger.info("Ingesting md5 file information from {0}".format(self.path))
-        resources = []
-        for filename, md5, md5_file, file_info in self.md5_lines():
-            resource = file_info.copy()
-            resource["library_id"] = ingest_utils.extract_ands_id(
-                self._logger, resource["library_id"]
-            )
-            resource["md5"] = resource["id"] = md5
-            resource["name"] = os.path.basename(filename)
-            resource["resource_type"] = self.ckan_data_type
-            xlsx_info = self.metadata_info[os.path.basename(md5_file)]
-            legacy_url = urljoin(xlsx_info["base_url"], filename)
-            # This will be used by sync/dump later to check resource_linkage in resources against that in packages
-            resources.append(
-                (
-                    (
-                        xlsx_info["ticket"],
-                        file_info.get("library_id"),
-                        resource["flowcell_id"],
-                    ),
-                    legacy_url,
-                    resource,
-                )
-            )
-        return resources
+        return self._get_common_resources()
 
+    def _add_datatype_specific_info_to_resource(self, resource, md5_file=None):
+        resource["library_id"] = ingest_utils.extract_ands_id(
+            self._logger, resource["library_id"]
+        )
+        return
+
+    def _build_resource_linkage(self, xlsx_info, resource, file_info):
+        return (xlsx_info["ticket"],
+                file_info.get("library_id"),
+                resource["flowcell_id"],
+                )

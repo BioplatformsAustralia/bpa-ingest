@@ -35,6 +35,7 @@ common_context = [
 
 CONSORTIUM_ORG_NAME = "omg-consortium-members"
 
+
 class OMGBaseMetadata(BaseMetadata):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
@@ -269,23 +270,15 @@ class OMG10XRawIlluminaMetadata(OMGBaseMetadata):
         return self.apply_location_generalisation(packages)
 
     def _get_resources(self):
-        self._logger.info(
-            "Ingesting OMG md5 file information from {0}".format(self.path)
-        )
-        resources = []
-        for filename, md5, md5_file, file_info in self.md5_lines():
-            archive_name = self.file_package[filename]
-            resource = file_info.copy()
-            # waiting on filename convention from AGRF
-            del resource["basename"]
-            resource["md5"] = resource["id"] = md5
-            resource["name"] = filename
-            resource["resource_type"] = self.ckan_data_type
-            xlsx_info = self.metadata_info[os.path.basename(md5_file)]
-            legacy_url = urljoin(xlsx_info["base_url"], filename)
-            resources.append(((archive_name,), legacy_url, resource))
+        return self._get_common_resources() + self.generate_xlsx_resources()
 
-        return resources + self.generate_xlsx_resources()
+    def _add_datatype_specific_info_to_resource(self, resource, md5_file=None):
+        del resource["basename"]
+
+    def _build_resource_linkage(self, xlsx_info, resource, file_info):
+        return (
+            (self.file_package[filename])  # this is the archive name
+                )
 
 
 class OMG10XRawMetadata(OMGBaseMetadata):
@@ -460,34 +453,29 @@ class OMG10XRawMetadata(OMGBaseMetadata):
         return self.apply_location_generalisation(packages)
 
     def _get_resources(self):
-        self._logger.info(
-            "Ingesting OMG md5 file information from {0}".format(self.path)
+        return self._get_common_resources() + self.generate_xlsx_resources()
+
+    def _add_datatype_specific_info_to_resource(self, resource, md5_file=None):
+        # no additional fields for OMG 10x Raw
+        return
+
+    def _build_resource_linkage(self, xlsx_info, resource, file_info):
+        ticket = xlsx_info["ticket"]
+        flow_id = self.flow_lookup[ticket]
+        # FIXME: we have inconsistently named files, raise with Anna M after
+        # urgent ingest complete.
+        bpa_sample_id = ingest_utils.extract_ands_id(
+            self._logger, file_info["bpa_sample_id"]
         )
-        resources = []
-        for filename, md5, md5_file, file_info in self.md5_lines():
-            xlsx_info = self.metadata_info[os.path.basename(md5_file)]
-            ticket = xlsx_info["ticket"]
-            flow_id = self.flow_lookup[ticket]
 
-            # FIXME: we have inconsistently named files, raise with Anna M after
-            # urgent ingest complete.
-            bpa_sample_id = ingest_utils.extract_ands_id(
-                self._logger, file_info["bpa_sample_id"]
-            )
-            if bpa_sample_id.split("/", 1)[1].startswith("5"):
-                # actually a library ID, map back
-                bpa_sample_id = file_info["bpa_sample_id"] = self.library_to_sample[
-                    bpa_sample_id
-                ]
-
-            resource = file_info.copy()
-            resource["md5"] = resource["id"] = md5
-            resource["name"] = filename
-            resource["resource_type"] = self.ckan_data_type
-            legacy_url = urljoin(xlsx_info["base_url"], filename)
-            resources.append(((bpa_sample_id, flow_id), legacy_url, resource))
-
-        return resources + self.generate_xlsx_resources()
+        if bpa_sample_id.split("/", 1)[1].startswith("5"):
+            # actually a library ID, map back
+            bpa_sample_id = self.library_to_sample[
+                bpa_sample_id
+            ]
+            resource["bpa_sample_id"] = bpa_sample_id
+        return (bpa_sample_id,
+                flow_id)
 
 
 class OMG10XProcessedIlluminaMetadata(OMGBaseMetadata):
@@ -658,23 +646,17 @@ class OMG10XProcessedIlluminaMetadata(OMGBaseMetadata):
         return self.apply_location_generalisation(packages)
 
     def _get_resources(self):
-        self._logger.info(
-            "Ingesting OMG md5 file information from {0}".format(self.path)
-        )
-        resources = []
-        for filename, md5, md5_file, file_info in self.md5_lines():
-            bpa_sample_id, flow_id = self.file_package[filename]
-            resource = file_info.copy()
-            # waiting on filename convention from AGRF
-            del resource["basename"]
-            resource["md5"] = resource["id"] = md5
-            resource["name"] = filename
-            resource["resource_type"] = self.ckan_data_type
-            xlsx_info = self.metadata_info[os.path.basename(md5_file)]
-            legacy_url = urljoin(xlsx_info["base_url"], filename)
-            resources.append(((bpa_sample_id, flow_id), legacy_url, resource))
+        return self._get_common_resources() + self.generate_xlsx_resources()
 
-        return resources + self.generate_xlsx_resources()
+    def _add_datatype_specific_info_to_resource(self, resource, md5_file=None):
+        # no additional fields for OMG 10x Raw
+        del resource["basename"]
+        return
+
+    def _build_resource_linkage(self, xlsx_info, resource, file_info):
+        bpa_sample_id, flow_id = self.file_package[resource["name"]]
+        return (bpa_sample_id,
+                flow_id)
 
 
 class OMGExonCaptureMetadata(OMGBaseMetadata):
@@ -902,30 +884,21 @@ class OMGExonCaptureMetadata(OMGBaseMetadata):
         return self.apply_location_generalisation(packages)
 
     def _get_resources(self):
-        self._logger.info(
-            "Ingesting OMG md5 file information from {0}".format(self.path)
+        return self._get_common_resources() + self.generate_xlsx_resources()
+
+    def _add_datatype_specific_info_to_resource(self, resource, md5_file=None):
+        # no additional fields for OMG Exon Capture
+        return
+
+    def _build_resource_linkage(self, xlsx_info, resource, file_info):
+        library_id = ingest_utils.extract_ands_id(
+            self._logger, resource["bpa_library_id"])
+
+        return(
+            (library_id,
+               resource["flow_cell_id"],
+               resource["index"])
         )
-        resources = []
-        for filename, md5, md5_file, file_info in self.md5_lines():
-            resource = file_info.copy()
-            resource["md5"] = resource["id"] = md5
-            resource["name"] = filename
-            resource["resource_type"] = self.ckan_data_type
-            library_id = ingest_utils.extract_ands_id(
-                self._logger, resource["bpa_library_id"]
-            )
-            xlsx_info = self.metadata_info[os.path.basename(md5_file)]
-            legacy_url = urljoin(xlsx_info["base_url"], filename)
-            resources.append(
-                (
-                    (library_id, resource["flow_cell_id"], resource["index"]),
-                    legacy_url,
-                    resource,
-                )
-            )
-
-        return resources + self.generate_xlsx_resources()
-
 
 class OMGWholeGenomeMetadata(OMGBaseMetadata):
     organization = "bpa-omg"
@@ -1156,30 +1129,21 @@ class OMGWholeGenomeMetadata(OMGBaseMetadata):
         return self.apply_location_generalisation(packages)
 
     def _get_resources(self):
-        self._logger.info(
-            "Ingesting OMG md5 file information from {0}".format(self.path)
+        return self._get_common_resources() + self.generate_xlsx_resources()
+
+    def _add_datatype_specific_info_to_resource(self, resource, md5_file=None):
+        # no additional fields for OMG Whole Genome Metadata
+        return
+
+    def _build_resource_linkage(self, xlsx_info, resource, file_info):
+        library_id = ingest_utils.extract_ands_id(
+            self._logger, resource["bpa_library_id"])
+
+        return (
+            (library_id,
+             resource["flow_cell_id"],
+             resource["index"])
         )
-        resources = []
-        for filename, md5, md5_file, file_info in self.md5_lines():
-            resource = file_info.copy()
-            resource["md5"] = resource["id"] = md5
-            resource["name"] = filename
-            resource["resource_type"] = self.ckan_data_type
-            library_id = ingest_utils.extract_ands_id(
-                self._logger, resource["bpa_library_id"]
-            )
-            xlsx_info = self.metadata_info[os.path.basename(md5_file)]
-            legacy_url = urljoin(xlsx_info["base_url"], filename)
-            resources.append(
-                (
-                    (library_id, resource["flow_cell_id"], resource["index"]),
-                    legacy_url,
-                    resource,
-                )
-            )
-
-        return resources + self.generate_xlsx_resources()
-
 
 class OMGGenomicsNovaseqMetadata(OMGBaseMetadata):
     organization = "bpa-omg"
@@ -1343,30 +1307,23 @@ class OMGGenomicsNovaseqMetadata(OMGBaseMetadata):
                 packages.append(obj)
         return self.apply_location_generalisation(packages)
 
-    def _get_resources(self):
-        self._logger.info(
-            "Ingesting OMG md5 file information from {0}".format(self.path)
-        )
-        resources = []
-        for filename, md5, md5_file, file_info in self.md5_lines():
-            resource = file_info.copy()
-            resource["md5"] = resource["id"] = md5
-            resource["name"] = os.path.basename(filename)
-            resource["resource_type"] = self.ckan_data_type
-            library_id = ingest_utils.extract_ands_id(
-                self._logger, resource["bpa_library_id"]
-            )
-            xlsx_info = self.metadata_info[os.path.basename(md5_file)]
-            legacy_url = urljoin(xlsx_info["base_url"], filename)
-            resources.append(
-                (
-                    (library_id, resource["flow_cell_id"], resource["index"]),
-                    legacy_url,
-                    resource,
-                )
-            )
-        return resources + self.generate_xlsx_resources()
 
+    def _get_resources(self):
+        return self._get_common_resources() + self.generate_xlsx_resources()
+
+    def _add_datatype_specific_info_to_resource(self, resource, md5_file=None):
+        # no additional fields for OMG Genomics Novaseq Metadata
+        return
+
+    def _build_resource_linkage(self, xlsx_info, resource, file_info):
+        library_id = ingest_utils.extract_ands_id(
+            self._logger, resource["bpa_library_id"])
+
+        return (
+            (library_id,
+             resource["flow_cell_id"],
+             resource["index"])
+        )
 
 class OMGGenomicsHiSeqMetadata(OMGBaseMetadata):
     organization = "bpa-omg"
@@ -1534,31 +1491,19 @@ class OMGGenomicsHiSeqMetadata(OMGBaseMetadata):
         return self.apply_location_generalisation(packages)
 
     def _get_resources(self):
-        self._logger.info(
-            "Ingesting OMG md5 file information from {0}".format(self.path)
-        )
-        resources = []
-        for filename, md5, md5_file, file_info in self.md5_lines():
-            resource = file_info.copy()
-            resource["md5"] = resource["id"] = md5
-            resource["name"] = filename
-            resource["resource_type"] = self.ckan_data_type
-            xlsx_info = self.metadata_info[os.path.basename(md5_file)]
-            legacy_url = urljoin(xlsx_info["base_url"], filename)
-            resources.append(
-                (
-                    (
-                        ingest_utils.extract_ands_id(
+        return self._get_common_resources() + self.generate_xlsx_resources()
+
+    def _add_datatype_specific_info_to_resource(self, resource, md5_file=None):
+        # no additional fields for OMG Whole Genome Metadata
+        return
+
+    def _build_resource_linkage(self, xlsx_info, resource, file_info):
+        return (
+            (ingest_utils.extract_ands_id(
                             self._logger, resource["bpa_sample_id"]
                         ),
-                        resource["flow_cell_id"],
-                    ),
-                    legacy_url,
-                    resource,
-                )
-            )
-        return resources + self.generate_xlsx_resources()
-
+             resource["flow_cell_id"])
+        )
 
 class OMGGenomicsDDRADMetadata(OMGBaseMetadata):
     """
@@ -1784,30 +1729,19 @@ class OMGGenomicsDDRADMetadata(OMGBaseMetadata):
         return self.apply_location_generalisation(packages)
 
     def _get_resources(self):
-        self._logger.info(
-            "Ingesting OMG md5 file information from {0}".format(self.path)
-        )
-        resources = []
-        for filename, md5, md5_file, file_info in self.md5_lines():
-            resource = file_info.copy()
-            resource["md5"] = resource["id"] = md5
-            resource["name"] = filename
-            resource["resource_type"] = self.ckan_data_type
-            xlsx_info = self.metadata_info[os.path.basename(md5_file)]
-            legacy_url = urljoin(xlsx_info["base_url"], filename)
-            resources.append(
-                (
-                    (
-                        ingest_utils.extract_ands_id(
+        return self._get_common_resources() + self.generate_xlsx_resources()
+
+    def _add_datatype_specific_info_to_resource(self, resource, md5_file=None):
+        # no additional fields for OMG ddrad Metadata
+        return
+
+    def _build_resource_linkage(self, xlsx_info, resource, file_info):
+        return (
+            (ingest_utils.extract_ands_id(
                             self._logger, resource["bpa_dataset_id"]
                         ),
-                        resource["flowcell_id"],
-                    ),
-                    legacy_url,
-                    resource,
-                )
-            )
-        return resources + self.generate_xlsx_resources()
+             resource["flowcell_id"])
+        )
 
 
 class OMGGenomicsPacbioMetadata(OMGBaseMetadata):
@@ -1981,32 +1915,21 @@ class OMGGenomicsPacbioMetadata(OMGBaseMetadata):
         return self.apply_location_generalisation(packages)
 
     def _get_resources(self):
-        self._logger.info(
-            "Ingesting OMG md5 file information from {0}".format(self.path)
-        )
-        resources = []
-        for filename, md5, md5_file, file_info in self.md5_lines():
-            resource = file_info.copy()
-            resource["md5"] = resource["id"] = md5
-            resource["name"] = filename
-            resource["resource_type"] = self.ckan_data_type
-            library_id = ingest_utils.extract_ands_id(
-                self._logger, resource["bpa_library_id"]
-            )
-            xlsx_info = self.metadata_info[os.path.basename(md5_file)]
-            legacy_url = urljoin(xlsx_info["base_url"], filename)
-            resources.append(
-                (
-                    (
-                        ingest_utils.extract_ands_id(self._logger, library_id),
-                        resource["run_date"],
-                    ),
-                    legacy_url,
-                    resource,
-                )
-            )
-        return resources + self.generate_xlsx_resources()
+        return self._get_common_resources() + self.generate_xlsx_resources()
 
+    def _add_datatype_specific_info_to_resource(self, resource, md5_file=None):
+        # no additional fields for OMG pacbio Metadata
+        return
+
+    def _build_resource_linkage(self, xlsx_info, resource, file_info):
+        library_id = ingest_utils.extract_ands_id(
+            self._logger, resource["bpa_library_id"]
+        )
+
+        return (
+                (  ingest_utils.extract_ands_id(self._logger, library_id),
+                   resource["run_date"],)
+        )
 
 class OMGONTPromethionMetadata(OMGBaseMetadata):
     organization = "bpa-omg"
@@ -2172,26 +2095,16 @@ class OMGONTPromethionMetadata(OMGBaseMetadata):
         return self.apply_location_generalisation(packages)
 
     def _get_resources(self):
-        self._logger.info("Ingesting md5 file information from {0}".format(self.path))
-        resources = []
-        for filename, md5, md5_file, file_info in self.md5_lines():
-            resource = file_info.copy()
-            resource["bpa_library_id"] = ingest_utils.extract_ands_id(
-                self._logger, resource["bpa_library_id"]
-            )
-            resource["md5"] = resource["id"] = md5
-            resource["name"] = filename
-            resource["resource_type"] = self.ckan_data_type
-            xlsx_info = self.metadata_info[os.path.basename(md5_file)]
-            legacy_url = urljoin(xlsx_info["base_url"], filename)
-            resources.append(
-                (
-                    (resource["bpa_library_id"], resource["flowcell_id"]),
-                    legacy_url,
-                    resource,
-                )
-            )
-        return resources + self.generate_xlsx_resources()
+        return self._get_common_resources() + self.generate_xlsx_resources()
+
+    def _add_datatype_specific_info_to_resource(self, resource, md5_file=None):
+        resource["bpa_library_id"] = ingest_utils.extract_ands_id(
+            self._logger, resource["bpa_library_id"]
+        )
+        return
+
+    def _build_resource_linkage(self, xlsx_info, resource, file_info):
+        return resource["bpa_library_id"], resource["flowcell_id"],
 
 
 class OMGTranscriptomicsNextseq(OMGBaseMetadata):
@@ -2361,31 +2274,19 @@ class OMGTranscriptomicsNextseq(OMGBaseMetadata):
         return self.apply_location_generalisation(packages)
 
     def _get_resources(self):
-        self._logger.info(
-            "Ingesting OMG md5 file information from {0}".format(self.path)
-        )
-        resources = []
-        for filename, md5, md5_file, file_info in self.md5_lines():
-            resource = file_info.copy()
-            resource["md5"] = resource["id"] = md5
-            resource["name"] = filename
-            resource["resource_type"] = self.ckan_data_type
-            xlsx_info = self.metadata_info[os.path.basename(md5_file)]
-            legacy_url = urljoin(xlsx_info["base_url"], filename)
-            resources.append(
-                (
-                    (
+        return self._get_common_resources() + self.generate_xlsx_resources()
+
+    def _add_datatype_specific_info_to_resource(self, resource, md5_file=None):
+        # no additional fields for OMG transcriptomicsMetadata
+        return
+
+    def _build_resource_linkage(self, xlsx_info, resource, file_info):
+         return ((
                         ingest_utils.extract_ands_id(
                             self._logger, resource["bpa_library_id"]
                         ),
                         resource["flowcell_id"],
-                    ),
-                    legacy_url,
-                    resource,
-                )
-            )
-        return resources + self.generate_xlsx_resources()
-
+                    ),)
 
 class OMGGenomicsPacBioGenomeAssemblyMetadata(SecondaryMetadata):
     organization = "bpa-omg"
@@ -2563,6 +2464,11 @@ class OMGGenomicsPacBioGenomeAssemblyMetadata(SecondaryMetadata):
         return packages
 
     def _get_resources(self):
+        """
+        Note: This get_resources has not been refactored as the original code
+        is broken. This datatype has not been used, and needs to be revisited
+        before being used for ingests in the future. BCG 18/08/2022
+        """
         self._logger.info(
             "Ingesting OMG md5 file information from {0}".format(self.path)
         )
@@ -2763,28 +2669,21 @@ class OMGAnalysedDataMetadata(OMGBaseMetadata):
                 packages.append(obj)
         return self.apply_location_generalisation(packages)
 
+
     def _get_resources(self):
-        self._logger.info("Ingesting md5 file information from {0}".format(self.path))
-        resources = []
-        for filename, md5, md5_file, file_info in self.md5_lines():
-            resource = file_info.copy()
-            resource["bioplatforms_secondarydata_id"
-                ] = ingest_utils.extract_ands_id(
-                    self._logger, resource["bioplatforms_secondarydata_id"]
-                )
-            resource["md5"] = resource["id"] = md5
-            resource["name"] = filename
-            resource["resource_type"] = self.ckan_data_type
-            xlsx_info = self.metadata_info[os.path.basename(md5_file)]
-            legacy_url = urljoin(xlsx_info["base_url"], filename)
-            resources.append(
-                (
-                    (resource["bioplatforms_secondarydata_id"],),
-                    legacy_url,
-                    resource,
-                )
-            )
-        return resources
+        return self._get_common_resources()
+
+    def _add_datatype_specific_info_to_resource(self, resource, md5_file=None):
+        resource["bioplatforms_secondarydata_id"
+        ] = ingest_utils.extract_ands_id(
+            self._logger, resource["bioplatforms_secondarydata_id"]
+        )
+        return
+
+    def _build_resource_linkage(self, xlsx_info, resource, file_info):
+
+        return (resource["bioplatforms_secondarydata_id"],
+         )
 
 
 class OMGGenomicsDArTMetadata(OMGBaseMetadata):
@@ -3030,6 +2929,9 @@ class OMGGenomicsDArTMetadata(OMGBaseMetadata):
         return self.apply_location_generalisation(packages)
 
     def _get_resources(self):
+        return self._get_common_resources() + self.generate_xlsx_resources()
+
+    def _add_datatype_specific_info_to_resource(self, resource, md5_file=None):
         def __dataset_id_from_md5_file(fname):
             fname = os.path.basename(fname)
             assert files.dart_md5_filename_re.match(fname) is not None
@@ -3037,27 +2939,16 @@ class OMGGenomicsDArTMetadata(OMGBaseMetadata):
             assert "bpa_dataset_id" in md5match.groupdict()
             return md5match.groupdict()["bpa_dataset_id"]
 
-        self._logger.info(
-            "Ingesting OMG md5 file information from {0}".format(self.path)
-        )
-        resources = []
-        for filename, md5, md5_file, file_info in self.md5_lines():
-            resource = file_info.copy()
-            resource["md5"] = resource["id"] = md5
-            resource["name"] = filename
-            resource["resource_type"] = self.ckan_data_type
-            resource["bpa_dataset_id"] = __dataset_id_from_md5_file(md5_file)
-            xlsx_info = self.metadata_info[os.path.basename(md5_file)]
-            legacy_url = urljoin(xlsx_info["base_url"], filename)
-            resources.append(
-                (
-                    (
-                        ingest_utils.extract_ands_id(
-                            self._logger, resource["bpa_dataset_id"]
+        resource["bpa_dataset_id"] = __dataset_id_from_md5_file(md5_file)
+
+        return
+
+    def _build_resource_linkage(self, xlsx_info, resource, file_info):
+
+        return (
+                   (ingest_utils.extract_ands_id(
+                    self._logger, resource["bpa_dataset_id"]
                         ),
-                    ),
-                    legacy_url,
-                    resource,
-                )
-            )
-        return resources + self.generate_xlsx_resources()
+                   )
+
+         )
