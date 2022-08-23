@@ -298,10 +298,17 @@ amd_metagenomics_analysed_re = re.compile(
       |allreads
       |bam
       |bintable
+      |bincov
+      |bintax
       |checkM
       |cog
       |contigcov
+      |contiglog
+      |contiglog_allranks
+      |contiglog\.noidfilter
+      |contigsinbins
       |contigtable
+      |diamond
       |faa
       |fastq\.gz
       |fasta

@@ -267,6 +267,16 @@ def test_amd_metagenomics_analysed():
         "21645_MGSD_CSIRO_sqm_reads.out.allreads.funkegg",
         "21645_MGSD_CSIRO_sqm_reads.out.allreads.mcount",
         "21645_MGSD_CSIRO_sqm_reads.out.mappingstat",
+        "139747_MGSD_CSIRO.sqm.18.bincov",
+        "139747_MGSD_CSIRO.sqm.09.contiglog_allranks",
+        "139747_MGSD_CSIRO.sqm.04.nr.diamond",
+        "139747_MGSD_CSIRO.sqm.09.contiglog.noidfilter",
+        "139747_MGSD_CSIRO.sqm.09.contiglog_allranks.noidfilter",
+        "139747_MGSD_CSIRO.sqm.16.bintax",
+        "139747_MGSD_CSIRO.sqm.04.eggnog.diamond",
+        "139747_MGSD_CSIRO.sqm.09.contiglog",
+        "139741_MGSD_CSIRO.sqm.18.contigsinbins",
+        "21645_MGSD_CSIRO_report.txt",
     ]
     for filename in filenames:
         assert amd_metagenomics_analysed_re.match(filename) is not None
