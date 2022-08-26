@@ -291,6 +291,7 @@ class BASEAmpliconsMetadata(AMDFullIngestMetadata):
         "match": files.base_amplicon_regexps,
         "skip": common_skip + files.base_amplicon_control_regexps,
     }
+    add_md5_as_resource = True
 
     def __init__(self, logger, metadata_path, **kwargs):
         super().__init__(logger, metadata_path, **kwargs)
@@ -421,45 +422,27 @@ class BASEAmpliconsMetadata(AMDFullIngestMetadata):
         ) or package_link in self.bad_resource_linkages
 
     def _get_resources(self):
-        self._logger.info(
-            "Ingesting BASE Amplicon md5 file information from {0}".format(self.path)
+        return self._get_common_resources()
+
+    def _add_datatype_specific_info_to_resource(self, resource, md5_file=None):
+        for contextual_source in self.contextual_metadata:
+            resource.update(contextual_source.filename_metadata(resource["name"]))
+        self._current_md5 = md5_file
+
+    def _build_resource_linkage(self, xlsx_info, resource, file_info):
+        use_index_linkage = os.path.basename(self._current_md5) in self.index_linkage_md5s
+        sample_id = ingest_utils.extract_ands_id(
+            self._logger, file_info.get("id")
         )
-        resources = []
+        sample_extraction_id = (
+                sample_id.split("/")[-1] + "_" + file_info.get("extraction")
+        )
 
-        for md5_file in glob(self.path + "/*.md5"):
-            index_linkage = os.path.basename(md5_file) in self.index_linkage_md5s
-            self._logger.info("Processing md5 file {}".format(md5_file))
-            for filename, md5, file_info in self.parse_md5file(md5_file):
-                sample_id = ingest_utils.extract_ands_id(
-                    self._logger, file_info.get("id")
-                )
-                resource = file_info.copy()
-                resource["md5"] = resource["id"] = md5
-                resource["name"] = filename
-                resource["resource_type"] = self.ckan_data_type
-                for contextual_source in self.contextual_metadata:
-                    resource.update(contextual_source.filename_metadata(filename))
-                sample_extraction_id = (
-                    sample_id.split("/")[-1] + "_" + file_info.get("extraction")
-                )
-                xlsx_info = self.metadata_info[os.path.basename(md5_file)]
-                legacy_url = urljoin(xlsx_info["base_url"], filename)
-                resources.append(
-                    (
-                        (
-                            sample_extraction_id,
-                            resource["amplicon"],
-                            build_base_amplicon_linkage(
-                                index_linkage, resource["flow_id"], resource["index"]
-                            ),
-                        ),
-                        legacy_url,
-                        resource,
-                    )
-                )
-            resources.extend(self.generate_md5_resources(md5_file))
-        return resources
-
+        return (sample_extraction_id,
+                resource["amplicon"],
+                build_base_amplicon_linkage(
+                    use_index_linkage, resource["flow_id"], resource["index"]
+                ))
 
 class BASEAmpliconsControlMetadata(AMDFullIngestMetadata):
     organization = "australian-microbiome"
@@ -482,6 +465,7 @@ class BASEAmpliconsControlMetadata(AMDFullIngestMetadata):
         "match": files.base_amplicon_control_regexps,
         "skip": common_skip + files.base_amplicon_regexps,
     }
+    add_md5_as_resource = True
 
     def __init__(self, logger, metadata_path, **kwargs):
         super().__init__(logger, metadata_path, **kwargs)
@@ -562,24 +546,18 @@ class BASEAmpliconsControlMetadata(AMDFullIngestMetadata):
         return packages
 
     def _get_resources(self):
-        resources = []
-        self._logger.info("Ingesting MD5 file information from {0}".format(self.path))
-        for md5_file in glob(self.path + "/*.md5"):
-            self._logger.info("Processing md5 file {}".format(md5_file))
-            for filename, md5, file_info in self.parse_md5file(md5_file):
-                resource = file_info.copy()
-                resource["md5"] = resource["id"] = md5
-                resource["name"] = filename
-                resource["resource_type"] = self.ckan_data_type
-                for contextual_source in self.contextual_metadata:
-                    resource.update(contextual_source.filename_metadata(filename))
-                xlsx_info = self.metadata_info[os.path.basename(md5_file)]
-                legacy_url = urljoin(xlsx_info["base_url"], filename)
-                resources.append(
-                    ((resource["amplicon"], resource["flow_id"]), legacy_url, resource)
-                )
-            resources.extend(self.generate_md5_resources(md5_file))
+        resources = self._get_common_resources()
         return resources
+
+    def _add_datatype_specific_info_to_resource(self, resource, md5_file=None):
+        for contextual_source in self.contextual_metadata:
+            resource.update(contextual_source.filename_metadata(resource["name"]))
+        return
+
+    def _build_resource_linkage(self, xlsx_info, resource, file_info):
+        return (
+            (resource["amplicon"], resource["flow_id"])
+        )
 
 
 class BASEMetagenomicsMetadata(AMDFullIngestMetadata):
@@ -637,6 +615,7 @@ class BASEMetagenomicsMetadata(AMDFullIngestMetadata):
         "match": files.base_metagenomics_regexps,
         "skip": common_skip,
     }
+    add_md5_as_resource = True
     # these are packages from the pilot, which have missing metadata
     # we synthethise minimal packages for this data - see
     # https://github.com/BioplatformsAustralia/bpa-archive-ops/issues/140
@@ -858,34 +837,24 @@ class BASEMetagenomicsMetadata(AMDFullIngestMetadata):
         return packages
 
     def _get_resources(self):
-        self._logger.info(
-            "Ingesting BASE Metagenomics md5 file information from {0}".format(
-                self.path
-            )
-        )
-        resources = []
-        for md5_file in glob(self.path + "/*.md5"):
-            self._logger.info("Processing md5 file {}".format(md5_file))
-            for filename, md5, file_info in self.parse_md5file(md5_file):
-                sample_id = ingest_utils.extract_ands_id(
-                    self._logger, file_info.get("id")
-                )
-                resource = file_info.copy()
-                resource["md5"] = resource["id"] = md5
-                resource["name"] = filename
-                resource["resource_type"] = self.ckan_data_type
-                for contextual_source in self.contextual_metadata:
-                    resource.update(contextual_source.filename_metadata(filename))
-                sample_extraction_id = (
-                    sample_id.split("/")[-1] + "_" + file_info.get("extraction")
-                )
-                xlsx_info = self.metadata_info[os.path.basename(md5_file)]
-                legacy_url = urljoin(xlsx_info["base_url"], filename)
-                resources.append(
-                    ((sample_extraction_id, resource["flow_id"]), legacy_url, resource)
-                )
-            resources.extend(self.generate_md5_resources(md5_file))
+        resources = self._get_common_resources()
         return resources
+
+    def _add_datatype_specific_info_to_resource(self, resource, md5_file=None):
+        for contextual_source in self.contextual_metadata:
+            resource.update(contextual_source.filename_metadata(resource["name"]))
+        return
+
+    def _build_resource_linkage(self, xlsx_info, resource, file_info):
+        sample_id = ingest_utils.extract_ands_id(
+            self._logger, file_info.get("id")
+        )
+        sample_extraction_id = (
+                sample_id.split("/")[-1] + "_" + file_info.get("extraction")
+        )
+        return (
+            (sample_extraction_id, resource["flow_id"])
+        )
 
 
 class BASESiteImagesMetadata(AMDFullIngestMetadata):
@@ -906,6 +875,7 @@ class BASESiteImagesMetadata(AMDFullIngestMetadata):
         "match": [files.base_site_image_filename_re],
         "skip": None,
     }
+    add_md5_as_resource = True
 
     def __init__(self, logger, metadata_path, **kwargs):
         super().__init__(logger, metadata_path, **kwargs)
@@ -1131,6 +1101,7 @@ class MarineMicrobesAmpliconsMetadata(AMDFullIngestMetadata):
         "match": [files.mm_amplicon_filename_re],
         "skip": common_skip + [files.mm_amplicon_control_filename_re],
     }
+    add_md5_as_resource = True
     missing_resources = [("102.100.100/34937", "AUWLK"), ("102.100.100/37712", "BHHYV")]
 
     def __init__(self, logger, metadata_path, **kwargs):
@@ -1267,43 +1238,21 @@ class MarineMicrobesAmpliconsMetadata(AMDFullIngestMetadata):
         return packages
 
     def _get_resources(self):
-        self._logger.info(
-            "Ingesting MM md5 file information from {0}".format(self.path)
+        return self._get_common_resources()
+
+    def _add_datatype_specific_info_to_resource(self, resource, md5_file=None):
+        for contextual_source in self.contextual_metadata:
+            resource.update(contextual_source.filename_metadata(resource["name"]))
+        self._current_md5 = md5_file
+
+    def _build_resource_linkage(self, xlsx_info, resource, file_info):
+        use_index_linkage = os.path.basename(self._current_md5) in self.index_linkage_md5s
+        sample_id = ingest_utils.extract_ands_id(
+            self._logger, file_info.get("id")
         )
-        resources = []
-        for md5_file in glob(self.path + "/*.md5"):
-            use_index_linkage = os.path.basename(md5_file) in self.index_linkage_md5s
-            self._logger.info(
-                "Processing md5 file {} {}".format(md5_file, use_index_linkage)
-            )
-            for filename, md5, file_info in self.parse_md5file(md5_file):
-                resource = file_info.copy()
-                resource["md5"] = resource["id"] = md5
-                resource["name"] = filename
-                resource["resource_type"] = self.ckan_data_type
-                for contextual_source in self.contextual_metadata:
-                    resource.update(contextual_source.filename_metadata(filename))
-                sample_id = ingest_utils.extract_ands_id(
-                    self._logger, file_info.get("id")
-                )
-                xlsx_info = self.metadata_info[os.path.basename(md5_file)]
-                legacy_url = urljoin(xlsx_info["base_url"], filename)
-                resources.append(
-                    (
-                        (
-                            sample_id,
-                            build_mm_amplicon_linkage(
-                                use_index_linkage,
-                                resource["flow_id"],
-                                resource["index"],
-                            ),
-                        ),
-                        legacy_url,
-                        resource,
-                    )
-                )
-            resources.extend(self.generate_md5_resources(md5_file))
-        return resources
+
+        return sample_id, build_mm_amplicon_linkage(
+                    use_index_linkage, resource["flow_id"], resource["index"])
 
 
 class MarineMicrobesAmpliconsControlMetadata(AMDFullIngestMetadata):
@@ -1324,6 +1273,7 @@ class MarineMicrobesAmpliconsControlMetadata(AMDFullIngestMetadata):
         "https://downloads-qcif.bioplatforms.com/bpa/marine_microbes/raw/amplicons/"
     ]
     metadata_url_components = ("amplicon", "facility_code", "ticket")
+    add_md5_as_resource = True
 
     def __init__(self, logger, metadata_path, **kwargs):
         super().__init__(logger, metadata_path, **kwargs)
@@ -1396,24 +1346,15 @@ class MarineMicrobesAmpliconsControlMetadata(AMDFullIngestMetadata):
         return packages
 
     def _get_resources(self):
-        resources = []
-        self._logger.info("Ingesting MD5 file information from {0}".format(self.path))
-        for md5_file in glob(self.path + "/*.md5"):
-            self._logger.info("Processing md5 file {}".format(md5_file))
-            for filename, md5, file_info in self.parse_md5file(md5_file):
-                xlsx_info = self.metadata_info[os.path.basename(md5_file)]
-                amplicon = xlsx_info["amplicon"].upper()
-                resource = file_info.copy()
-                resource["md5"] = resource["id"] = md5
-                resource["name"] = filename
-                resource["resource_type"] = self.ckan_data_type
-                resource["amplicon"] = amplicon
-                legacy_url = urljoin(xlsx_info["base_url"], filename)
-                resources.append(
-                    ((amplicon, resource["flow_id"]), legacy_url, resource)
-                )
-            resources.extend(self.generate_md5_resources(md5_file))
-        return resources
+        return self._get_common_resources()
+
+    def _add_datatype_specific_info_to_resource(self, resource, md5_file=None):
+        self._current_md5 = md5_file
+
+    def _build_resource_linkage(self, xlsx_info, resource, file_info):
+        amplicon = xlsx_info["amplicon"].upper()
+        resource["amplicon"] = amplicon
+        return resource["amplicon"], resource["flow_id"]
 
 
 class BaseMarineMicrobesMetadata(AMDFullIngestMetadata):
@@ -1464,6 +1405,7 @@ class MarineMicrobesMetagenomicsMetadata(BaseMarineMicrobesMetadata):
         ],
         "skip": common_skip,
     }
+    add_md5_as_resource = True
 
     def __init__(self, logger, metadata_path, **kwargs):
         super().__init__(logger, metadata_path, **kwargs)
@@ -1552,27 +1494,17 @@ class MarineMicrobesMetagenomicsMetadata(BaseMarineMicrobesMetadata):
         return packages
 
     def _get_resources(self):
-        self._logger.info(
-            "Ingesting MM md5 file information from {0}".format(self.path)
-        )
-        resources = []
-        for md5_file in glob(self.path + "/*.md5"):
-            self._logger.info("Processing md5 file {0}".format(md5_file))
-            for filename, md5, file_info in self.parse_md5file(md5_file):
-                resource = file_info.copy()
-                resource["md5"] = resource["id"] = md5
-                resource["name"] = filename
-                resource["resource_type"] = self.ckan_data_type
-                for contextual_source in self.contextual_metadata:
-                    resource.update(contextual_source.filename_metadata(filename))
-                sample_id = ingest_utils.extract_ands_id(
-                    self._logger, file_info.get("id")
-                )
-                xlsx_info = self.metadata_info[os.path.basename(md5_file)]
-                legacy_url = urljoin(xlsx_info["base_url"], filename)
-                resources.append(((sample_id,), legacy_url, resource))
-            resources.extend(self.generate_md5_resources(md5_file))
-        return resources
+        return self._get_common_resources()
+
+    def _add_datatype_specific_info_to_resource(self, resource, md5_file=None):
+        for contextual_source in self.contextual_metadata:
+            resource.update(contextual_source.filename_metadata(resource["name"]))
+        self._current_md5 = md5_file
+
+    def _build_resource_linkage(self, xlsx_info, resource, file_info):
+        sample_id = ingest_utils.extract_ands_id(
+            self._logger, file_info.get("id"))
+        return sample_id,
 
 
 class MarineMicrobesMetatranscriptomeMetadata(BaseMarineMicrobesMetadata):
@@ -1613,6 +1545,7 @@ class MarineMicrobesMetatranscriptomeMetadata(BaseMarineMicrobesMetadata):
         ],
         "skip": None,
     }
+    add_md5_as_resource = True
 
     def __init__(self, logger, metadata_path, **kwargs):
         super().__init__(logger, metadata_path, **kwargs)
@@ -1706,28 +1639,17 @@ class MarineMicrobesMetatranscriptomeMetadata(BaseMarineMicrobesMetadata):
         return packages
 
     def _get_resources(self):
-        self._logger.info(
-            "Ingesting MM md5 file information from {0}".format(self.path)
-        )
-        resources = []
-        for md5_file in glob(self.path + "/*.md5"):
-            self._logger.info("Processing md5 file {0}".format(md5_file))
-            for filename, md5, file_info in self.parse_md5file(md5_file):
-                resource = file_info.copy()
-                resource["md5"] = resource["id"] = md5
-                resource["name"] = filename
-                resource["resource_type"] = self.ckan_data_type
-                for contextual_source in self.contextual_metadata:
-                    resource.update(contextual_source.filename_metadata(filename))
-                sample_id = ingest_utils.extract_ands_id(
-                    self._logger, file_info.get("id")
-                )
-                xlsx_info = self.metadata_info[os.path.basename(md5_file)]
-                legacy_url = urljoin(xlsx_info["base_url"], filename)
-                resources.append(((sample_id,), legacy_url, resource))
-            resources.extend(self.generate_md5_resources(md5_file))
-        return resources
+        return self._get_common_resources()
 
+    def _add_datatype_specific_info_to_resource(self, resource, md5_file=None):
+        for contextual_source in self.contextual_metadata:
+            resource.update(contextual_source.filename_metadata(resource["name"]))
+        self._current_md5 = md5_file
+
+    def _build_resource_linkage(self, xlsx_info, resource, file_info):
+        sample_id = ingest_utils.extract_ands_id(
+            self._logger, file_info.get("id"))
+        return (sample_id,)
 
 class AustralianMicrobiomeMetagenomicsAnalysedMetadata(AMDFullIngestMetadata):
     #organization = "australian-microbiome"
@@ -1859,33 +1781,21 @@ class AustralianMicrobiomeMetagenomicsAnalysedMetadata(AMDFullIngestMetadata):
                 packages.append(obj)
         return packages
 
+
     def _get_resources(self):
-        self._logger.info(
-            "Ingesting AM MGSD md5 file information from {0}".format(self.path)
-        )
-        resources = []
-        for md5_file in glob(self.path + "/AM_*.md5"):
-            self._logger.info("Processing md5 file {0}".format(md5_file))
-            for filename, md5, file_info in self.parse_md5file(md5_file):
-                resource = file_info.copy()
-                resource[
-                    "sample_id"
-                ] = ingest_utils.extract_ands_id(
-                    self._logger, resource["sample_id"]
-                )
-                resource["md5"] = resource["id"] = md5
-                resource["name"] = os.path.basename(filename)
-                resource["resource_type"] = self.ckan_data_type
-                xlsx_info = self.metadata_info[os.path.basename(md5_file)]
-                legacy_url = urljoin(xlsx_info["base_url"], filename)
-                resources.append(
-                    (
-                        (resource["sample_id"],),
-                        legacy_url,
-                        resource,
-                    )
-                )
+        resources = self._get_common_resources()
         return resources
+
+    def _add_datatype_specific_info_to_resource(self, resource, md5_file=None):
+        resource[
+            "sample_id"
+        ] = ingest_utils.extract_ands_id(
+            self._logger, resource["sample_id"]
+        )
+        return
+
+    def _build_resource_linkage(self, xlsx_info, resource, file_info):
+        return resource["sample_id"],
 
 
 class AustralianMicrobiomeMetagenomicsNovaseqMetadata(AMDFullIngestMetadata):
@@ -1936,6 +1846,7 @@ class AustralianMicrobiomeMetagenomicsNovaseqMetadata(AMDFullIngestMetadata):
         "match": [files.amd_metagenomics_novaseq_re,],
         "skip": [files.amd_metagenomics_novaseq_control_re,],
     }
+    add_md5_as_resource = True
 
     def __init__(self, logger, metadata_path, **kwargs):
         super().__init__(logger, metadata_path, **kwargs)
@@ -2326,6 +2237,7 @@ class AustralianMicrobiomeAmpliconsControlMetadata(AMDFullIngestMetadata):
     }
     metadata_urls = ["https://downloads-qcif.bioplatforms.com/bpa/amd/amplicons-miseq/"]
     metadata_url_components = ("amplicon", "ticket")
+    add_md5_as_resource = True
 
     def __init__(self, logger, metadata_path, **kwargs):
         super().__init__(logger, metadata_path, **kwargs)

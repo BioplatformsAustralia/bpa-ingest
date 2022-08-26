@@ -64,6 +64,7 @@ class BaseMetadata:
     def _get_common_resources(self):
         self._logger.info("Ingesting md5 file information from {0}".format(self.path))
         resources = []
+        md5_files_added_as_resources = set({})
         self._get_resource_info(self.resource_info)
         for filename, md5, md5_file, file_info in self.md5_lines():
             resource = file_info.copy()
@@ -86,6 +87,19 @@ class BaseMetadata:
                     resource,
                 )
             )
+
+        # could add similar code to call to the generae_md5_resources, but it would
+        # need to migrate to the ambd base class, otherwise it will be in existance
+        #  for all datatypes (as it is in abstract)
+        #             from inspect import ismethod
+        #
+        #             def method_exists(instance, method):
+        #                 return hasattr(instance, method) and ismethod(getattr(instance, method))
+            if hasattr(self, 'add_md5_as_resource'):
+                if self.add_md5_as_resource is not None and self.add_md5_as_resource is True:
+                    if md5_file not in md5_files_added_as_resources:
+                        resources.extend(self.generate_md5_resources(md5_file))
+                        md5_files_added_as_resources.add(md5_file)
         return resources
 
     def _add_datatype_specific_info_to_resource(self, resource, md5_file=None):
