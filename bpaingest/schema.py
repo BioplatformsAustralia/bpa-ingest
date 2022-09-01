@@ -148,6 +148,10 @@ def _write_schemas(
         "sequence_data_type",
         "title",
         "license_id",
+        "notes",
+        "name",
+        "owner_org",
+        "tag_string",
     )
     skip_resource_fields = (
         "id",
