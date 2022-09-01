@@ -277,7 +277,7 @@ class OMG10XRawIlluminaMetadata(OMGBaseMetadata):
 
     def _build_resource_linkage(self, xlsx_info, resource, file_info):
         return (
-            (resource["name"])  # this is the archive name
+            (resource["name"],)  # this is the archive name
                 )
 
 
