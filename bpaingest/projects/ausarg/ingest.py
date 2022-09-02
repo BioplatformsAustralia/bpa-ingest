@@ -257,30 +257,18 @@ class AusargIlluminaFastqMetadata(AusargBaseMetadata):
         return packages
 
     def _get_resources(self):
-        self._logger.info("Ingesting md5 file information from {0}".format(self.path))
-        resources = []
-        for filename, md5, md5_file, file_info in self.md5_lines():
-            resource = file_info.copy()
-            resource["library_id"] = ingest_utils.extract_ands_id(
-                self._logger, resource["library_id"]
-            )
-            resource["md5"] = resource["id"] = md5
-            resource["name"] = os.path.basename(filename)
-            resource["resource_type"] = self.ckan_data_type
-            xlsx_info = self.metadata_info[os.path.basename(md5_file)]
-            legacy_url = urljoin(xlsx_info["base_url"], filename)
-            # This will be used by sync/dump later to check resource_linkage in resources against that in packages
-            resources.append(
-                (
-                    (
+        return self._get_common_resources()
+
+    def _add_datatype_specific_info_to_resource(self, resource, md5_file):
+        resource["library_id"] = ingest_utils.extract_ands_id(
+            self._logger, resource["library_id"]
+        )
+
+    def _build_resource_linkage(self, xlsx_info, resource, file_info):
+        return (
                         resource["library_id"],
                         resource["flowcell_id"],
-                    ),
-                    legacy_url,
-                    resource,
-                )
-            )
-        return resources
+                    )
 
 
 class AusargONTPromethionMetadata(AusargBaseMetadata):
@@ -470,26 +458,18 @@ class AusargONTPromethionMetadata(AusargBaseMetadata):
         return self.apply_location_generalisation(packages)
 
     def _get_resources(self):
-        self._logger.info("Ingesting md5 file information from {0}".format(self.path))
-        resources = []
-        for filename, md5, md5_file, file_info in self.md5_lines():
-            resource = file_info.copy()
-            resource["library_id"] = ingest_utils.extract_ands_id(
-                self._logger, resource["library_id"]
-            )
-            resource["md5"] = resource["id"] = md5
-            resource["name"] = os.path.basename(filename)
-            resource["resource_type"] = self.ckan_data_type
-            xlsx_info = self.metadata_info[os.path.basename(md5_file)]
-            legacy_url = urljoin(xlsx_info["base_url"], filename)
-            resources.append(
-                (
-                    (resource["library_id"], resource["flowcell_id"]),
-                    legacy_url,
-                    resource,
-                )
-            )
-        return resources + self.generate_xlsx_resources()
+        return self._get_common_resources() + self.generate_xlsx_resources()
+
+    def _add_datatype_specific_info_to_resource(self, resource, md5_file):
+        resource["library_id"] = ingest_utils.extract_ands_id(
+            self._logger, resource["library_id"]
+        )
+
+    def _build_resource_linkage(self, xlsx_info, resource, file_info):
+        return (
+                        resource["library_id"],
+                        resource["flowcell_id"],
+                    )
 
 
 class AusargPacbioHifiMetadata(AusargBaseMetadata):
