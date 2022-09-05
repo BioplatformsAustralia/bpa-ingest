@@ -39,6 +39,7 @@ class TSIBaseMetadata(BaseMetadata):
             package.update({"decimal_latitude_public": package.get("latitude")})
         return packages
 
+    """
     def generate_notes_field(self, row_object):
         notes = "%s %s, %s %s %s" % (
             row_object.get("genus", ""),
@@ -64,8 +65,19 @@ class TSIBaseMetadata(BaseMetadata):
         notes = "%s\n" % (ids)
         return notes + ". ".join(self.generate_notes_field(t) for t in row_list)
 
+    """
 
-# VERIFY
+    notes_mapping = [
+        {"key": "genus", "separator": " "},
+        {"key": "species", "separator": ", "},
+        {"key": "voucher_or_tissue_number", "separator": " "},
+        {"key": "country", "separator": " "},
+        {"key": "state_or_region"},
+    ]
+
+    # VERIFY
+
+
 class TSINovaseqMetadata(TSIBaseMetadata):
     organization = "threatened-species"
     # VERIFY
@@ -221,6 +233,7 @@ class TSINovaseqMetadata(TSIBaseMetadata):
             re.compile(r"^.*TestFiles\.exe.*"),
         ],
     }
+    tag_names = ["novaseq"]
 
     def __init__(
             self, logger, metadata_path, contextual_metadata=None, metadata_info=None
@@ -266,23 +279,19 @@ class TSINovaseqMetadata(TSIBaseMetadata):
                         "id": name,
                         "title": "TSI Novaseq %s %s %s"
                                  % (library_id, row.flowcell_id, row.library_index_sequence),
-                        "notes": self.generate_notes_field(context),
+                        "notes": self.build_notes_without_blanks(context),
                         "date_of_transfer": ingest_utils.get_date_isoformat(
-                            self._logger, track_get("date_of_transfer")
-                        ),
+                            self._logger, track_get("date_of_transfer")),
                         "data_type": track_get("data_type"),
                         "description": track_get("description"),
                         "folder_name": track_get("folder_name"),
                         "sample_submission_date": ingest_utils.get_date_isoformat(
-                            self._logger, track_get("date_of_transfer")
-                        ),
+                            self._logger, track_get("date_of_transfer")),
                         "contextual_data_submission_date": None,
                         "data_generated": ingest_utils.get_date_isoformat(
-                            self._logger, track_get("date_of_transfer_to_archive")
-                        ),
+                            self._logger, track_get("date_of_transfer_to_archive")),
                         "archive_ingestion_date": ingest_utils.get_date_isoformat(
-                            self._logger, track_get("date_of_transfer_to_archive")
-                        ),
+                            self._logger, track_get("date_of_transfer_to_archive")),
                         "dataset_url": track_get("download"),
                         "type": self.ckan_data_type,
                     }
@@ -290,10 +299,7 @@ class TSINovaseqMetadata(TSIBaseMetadata):
                 ingest_utils.permissions_organization_member(self._logger, obj)
                 ingest_utils.apply_access_control(self._logger, self, obj)
                 obj.update(context)
-
                 ingest_utils.add_spatial_extra(self._logger, obj)
-                # VERIFY
-                tag_names = ["novaseq"]
                 obj["tags"] = [{"name": t} for t in tag_names]
                 self.track_xlsx_resource(obj, fname)
 
@@ -415,6 +421,7 @@ class TSIIlluminaShortreadMetadata(TSIBaseMetadata):
         ],
     }
     description = "Illumina short read"
+    tag_names = ["genomics", description.replace(" ", "-").lower()]
 
     def __init__(
             self, logger, metadata_path, contextual_metadata=None, metadata_info=None
@@ -429,7 +436,7 @@ class TSIIlluminaShortreadMetadata(TSIBaseMetadata):
         self._logger.info("Ingesting TSI metadata from {0}".format(self.path))
         packages = []
         for fname in glob(self.path + "/*.xlsx"):
-            self._logger.info("Processing GAP metadata file {0}".format(fname))
+            self._logger.info("Processing TSI metadata file {0}".format(fname))
             flow_cell_id = re.match(r"^.*_([^_]+)_metadata.*\.xlsx", fname).groups()[0]
             rows = self.parse_spreadsheet(fname, self.metadata_info)
             xlsx_info = self.metadata_info[os.path.basename(fname)]
@@ -462,13 +469,12 @@ class TSIIlluminaShortreadMetadata(TSIBaseMetadata):
                         "library_id": raw_library_id,
                         "title": "TSI Illumina Shortread %s %s"
                                  % (library_id, flow_cell_id),
-                        "notes": self.generate_notes_field(obj),
                     }
                 )
+                self.build_notes_into_object(obj)
                 ingest_utils.permissions_organization_member(self._logger, obj)
                 ingest_utils.apply_access_control(self._logger, self, obj)
-                tag_names = ["genomics", self.description.replace(" ", "-").lower()]
-                obj["tags"] = [{"name": "{:.100}".format(t)} for t in tag_names]
+                obj["tags"] = [{"name": "{:.100}".format(t)} for t in self.tag_names]
                 packages.append(obj)
         return self.apply_location_generalisation(packages)
 
@@ -602,6 +608,7 @@ class TSIIlluminaFastqMetadata(TSIBaseMetadata):
             ticket = xlsx_info["ticket"]
             track_meta = self.google_track_meta.get(ticket)
             for row in rows:
+                tag_names = ["illumina-fastq"]   # set the tag name here, as we add different tags to the row based on species
                 if not row.library_id and not row.flowcell_id:
                     # skip empty rows
                     continue
@@ -642,12 +649,11 @@ class TSIIlluminaFastqMetadata(TSIBaseMetadata):
                         "data_generated": True,
                         "title": "TSI Illumina FastQ %s %s"
                                  % (row.library_id, row.flowcell_id),
-                        "notes": self.generate_notes_field(obj),
                     }
                 )
+                self.build_notes_into_object(obj)
                 ingest_utils.permissions_organization_member(self._logger, obj)
                 ingest_utils.apply_access_control(self._logger, self, obj)
-                tag_names = ["illumina-fastq"]
                 scientific_name = obj.get("scientific_name", "").strip()
                 if scientific_name:
                     tag_names.append(clean_tag_name(obj["scientific_name"]))
@@ -762,6 +768,7 @@ class TSIPacbioHifiMetadata(TSIBaseMetadata):
             re.compile(r"^.*TestFiles\.exe.*"),
         ],
     }
+    tag_names = ["pacbio-hifi"]
 
     def __init__(
             self, logger, metadata_path, contextual_metadata=None, metadata_info=None
@@ -828,7 +835,6 @@ class TSIPacbioHifiMetadata(TSIBaseMetadata):
                         "name": name,
                         "id": name,
                         "title": "TSI Pacbio HiFi {}".format(row.library_id),
-                        "notes": self.generate_notes_field(context),
                         "date_of_transfer": ingest_utils.get_date_isoformat(
                             self._logger, track_get("date_of_transfer")
                         ),
@@ -851,13 +857,13 @@ class TSIPacbioHifiMetadata(TSIBaseMetadata):
                         "license_id": apply_cc_by_license(),
                     }
                 )
+                obj.update(context)
+                self.build_notes_into_object(obj)
                 ingest_utils.permissions_organization_member(self._logger, obj)
                 ingest_utils.apply_access_control(self._logger, self, obj)
-                obj.update(context)
 
                 ingest_utils.add_spatial_extra(self._logger, obj)
-                tag_names = ["pacbio-hifi"]
-                obj["tags"] = [{"name": t} for t in tag_names]
+                obj["tags"] = [{"name": t} for t in self.tag_names]
                 packages.append(obj)
 
         return self.apply_location_generalisation(packages)
@@ -997,6 +1003,11 @@ class TSIGenomicsDDRADMetadata(TSIBaseMetadata):
             re.compile(r"^.*DataValidation\.pdf.*"),
         ],
     }
+    notes_mapping = [
+        {"key": "scientific_name", "separator": "\n"},
+        {"key": "additional_notes"},
+    ]
+    tag_names = ["genomics-ddrad"]
 
     def __init__(
             self, logger, metadata_path, contextual_metadata=None, metadata_info=None
@@ -1007,12 +1018,6 @@ class TSIGenomicsDDRADMetadata(TSIBaseMetadata):
         self.metadata_info = metadata_info
         self.track_meta = TSIGoogleTrackMetadata(logger)
         self.flow_lookup = {}
-
-    def generate_notes_field(self, row_object):
-        notes = "%s\nddRAD dataset not demultiplexed" % (
-            row_object.get("scientific_name", ""),
-        )
-        return notes
 
     def _get_packages(self):
         xlsx_re = re.compile(r"^.*_(\w+)_metadata.*\.xlsx$")
@@ -1091,16 +1096,12 @@ class TSIGenomicsDDRADMetadata(TSIBaseMetadata):
                 )
                 obj.update(common_values(context_objs))
                 obj.update(merge_values("scientific_name", " , ", context_objs))
-                obj.update(
-                    {
-                        "notes": self.generate_notes_field(obj),
-                    }
-                )
+                additional_notes = "ddRAD dataset not demultiplexed"
+                self.build_notes_into_object(obj, {"additional_notes": additional_notes})
                 ingest_utils.permissions_organization_member(self._logger, obj)
                 ingest_utils.apply_access_control(self._logger, self, obj)
                 ingest_utils.add_spatial_extra(self._logger, obj)
-                tag_names = ["genomics-ddrad"]
-                obj["tags"] = [{"name": t} for t in tag_names]
+                obj["tags"] = [{"name": t} for t in self.tag_names]
                 self.track_xlsx_resource(obj, fname)
                 packages.append(obj)
         return self.apply_location_generalisation(packages)
@@ -1178,6 +1179,13 @@ class TSIGenomeAssemblyMetadata(TSIBaseMetadata):
         "match": [files.genome_assembly_filename_re],
         "skip": [re.compile(r"^.*\.xlsx$"), ],
     }
+    notes_mapping = [
+        {"key": "common_name", "separator": " "},
+        {"key": "left-paren", "separator": ""},
+        {"key": "scientific_name", "separator": ""},
+        {"key": "right-paren"},
+    ]
+    tag_names = ["tsi-genome-assembly"]
 
     def __init__(
             self, logger, metadata_path, contextual_metadata=None, metadata_info=None
@@ -1248,10 +1256,6 @@ class TSIGenomeAssemblyMetadata(TSIBaseMetadata):
                         "title": "TSI Genome Assembly {}".format(
                             obj["bioplatforms_secondarydata_id"]
                         ),
-                        "notes": "{} ({})".format(
-                            obj["common_name"],
-                            obj["scientific_name"],
-                        ),
                         "date_of_transfer": ingest_utils.get_date_isoformat(
                             self._logger, track_get("date_of_transfer")
                         ),
@@ -1276,10 +1280,13 @@ class TSIGenomeAssemblyMetadata(TSIBaseMetadata):
                         "license_id": apply_cc_by_license(),
                     }
                 )
+                self.build_notes_into_object(obj, {"left-paren": "(",
+                                                   "right-paren": ")",
+                                                   }
+                                             )
                 ingest_utils.permissions_organization_member(self._logger, obj)
                 ingest_utils.apply_access_control(self._logger, self, obj)
-                tag_names = ["tsi-genome-assembly"]
-                obj["tags"] = [{"name": t} for t in tag_names]
+                obj["tags"] = [{"name": t} for t in self.tag_names]
                 packages.append(obj)
         return self.apply_location_generalisation(packages)
 
@@ -1403,6 +1410,15 @@ class TSIHiCMetadata(TSIBaseMetadata):
             re.compile(r"^.*checksums\.(exf|md5)$"),
         ],
     }
+    notes_mapping = [
+        {"key": "complete_library_id", "separator": "\n"},
+        {"key": "genus", "separator": " "},
+        {"key": "species", "separator": ", "},
+        {"key": "voucher_or_tissue_number", "separator": " "},
+        {"key": "country", "separator": " "},
+        {"key": "state_or_region"},
+    ]
+    tag_names = ["genomics"]
 
     def __init__(
             self, logger, metadata_path, contextual_metadata=None, metadata_info=None
@@ -1450,13 +1466,12 @@ class TSIHiCMetadata(TSIBaseMetadata):
                         "flowcell_id": row.flowcell_id,
                         "data_generated": True,
                         "library_id": raw_library_id,
-                        "notes": self.generate_notes_field_with_id(obj, library_id),
                     }
                 )
+                self.build_notes_into_object(obj, {"complete_library_id": library_id,})
                 ingest_utils.permissions_organization_member(self._logger, obj)
                 ingest_utils.apply_access_control(self._logger, self, obj)
-                tag_names = ["genomics"]
-                obj["tags"] = [{"name": "{:.100}".format(t)} for t in tag_names]
+                obj["tags"] = [{"name": "{:.100}".format(t)} for t in self.tag_names]
                 packages.append(obj)
         return packages
 
