@@ -36,30 +36,13 @@ class AusargBaseMetadata(BaseMetadata):
     def apply_location_generalisation(self, packages):
         return self.generaliser.apply_location_generalisation(packages)
 
-    def generate_notes_field(self, row_object):
-        notes = "%s %s, %s %s %s" % (
-            row_object.get("genus", ""),
-            row_object.get("species", ""),
-            row_object.get("voucher_or_tissue_number", ""),
-            row_object.get("country", ""),
-            row_object.get("state_or_region", ""),
-        )
-        return notes
-
-    def generate_notes_field_with_id(self, row_object, id):
-        notes = "%s\n%s %s, %s %s %s" % (
-            id,
-            row_object.get("genus", ""),
-            row_object.get("species", ""),
-            row_object.get("voucher_or_tissue_number", ""),
-            row_object.get("country", ""),
-            row_object.get("state_or_region", ""),
-        )
-        return notes
-
-    def generate_notes_field_from_lists(self, row_list, ids):
-        notes = "%s\n" % (ids)
-        return notes + ". ".join(self.generate_notes_field(t) for t in row_list)
+    notes_mapping = [
+        {"key": "genus", "separator": " "},
+        {"key": "species", "separator": ", "},
+        {"key": "voucher_or_tissue_number", "separator": " "},
+        {"key": "country", "separator": " "},
+        {"key": "state_or_region"},
+    ]
 
 
 class AusargIlluminaFastqMetadata(AusargBaseMetadata):
@@ -385,6 +368,14 @@ class AusargONTPromethionMetadata(AusargBaseMetadata):
             re.compile(r"^.*TestFiles\.exe.*"),
         ],
     }
+    notes_mapping = [
+        {"key": "library_id", "separator": "\n"},
+        {"key": "genus", "separator": " "},
+        {"key": "species", "separator": ", "},
+        {"key": "voucher_or_tissue_number", "separator": " "},
+        {"key": "country", "separator": " "},
+        {"key": "state_or_region"},
+    ]
 
     def __init__(
         self, logger, metadata_path, contextual_metadata=None, metadata_info=None
@@ -418,13 +409,12 @@ class AusargONTPromethionMetadata(AusargBaseMetadata):
 
                 for contextual_source in self.contextual_metadata:
                     obj.update(contextual_source.get(obj["sample_id"]))
-
                 obj.update(
                     {
                         "title": "AusARG ONT PromethION {} {}".format(
                             obj["sample_id"], row.flowcell_id
                         ),
-                        "notes": self.generate_notes_field_with_id(obj, bpa_library_id),
+                        "notes": self.build_notes_without_blanks(obj),
                         "date_of_transfer": ingest_utils.get_date_isoformat(
                             self._logger, track_get("date_of_transfer")
                         ),
@@ -651,7 +641,7 @@ class AusargPacbioHifiMetadata(AusargBaseMetadata):
                         "name": name,
                         "id": name,
                         "title": "AusARG Pacbio HiFi {}".format(row.library_id),
-                        "notes": self.generate_notes_field(context),
+                        "notes": self.build_notes_without_blanks(context),
                         "date_of_transfer": ingest_utils.get_date_isoformat(
                             self._logger, track_get("date_of_transfer")
                         ),
@@ -899,7 +889,7 @@ class AusargExonCaptureMetadata(AusargBaseMetadata):
                             "AusARG Exon Capture Raw %s %s %s"
                             % (library_id, row.flowcell_id, index_sequence)
                         ).rstrip(),
-                        "notes": self.generate_notes_field(context),
+                        "notes": self.build_notes_without_blanks(context),
                         "date_of_transfer": ingest_utils.get_date_isoformat(
                             self._logger, track_get("date_of_transfer")
                         ),
@@ -1062,6 +1052,15 @@ class AusargHiCMetadata(AusargBaseMetadata):
         ],
     }
 
+    notes_mapping = [
+        {"key": "library_id", "separator": "\n"},
+        {"key": "genus", "separator": " "},
+        {"key": "species", "separator": ", "},
+        {"key": "voucher_or_tissue_number", "separator": " "},
+        {"key": "country", "separator": " "},
+        {"key": "state_or_region"},
+    ]
+
     def __init__(
         self, logger, metadata_path, contextual_metadata=None, metadata_info=None
     ):
@@ -1108,7 +1107,7 @@ class AusargHiCMetadata(AusargBaseMetadata):
                         "flowcell_id": row.flowcell_id,
                         "data_generated": True,
                         "library_id": raw_library_id,
-                        "notes": self.generate_notes_field_with_id(obj, library_id),
+                        "notes": self.build_notes_without_blanks(obj),
                     }
                 )
                 ingest_utils.permissions_organization_member(self._logger, obj)
@@ -1257,6 +1256,11 @@ class AusargGenomicsDArTMetadata(AusargBaseMetadata):
         ],
     }
 
+    notes_mapping = [
+        {"key": "organism_scientific_name", "separator": "\n"},
+        {"key": "additional_notes"},
+    ]
+
     def __init__(
         self, logger, metadata_path, contextual_metadata=None, metadata_info=None
     ):
@@ -1266,15 +1270,6 @@ class AusargGenomicsDArTMetadata(AusargBaseMetadata):
         self.metadata_info = metadata_info
         self.track_meta = AusArgGoogleTrackMetadata(logger)
         self.flow_lookup = {}
-
-    def generate_notes_field(self, row_object):
-        notes = "%s\nDArT dataset not demultiplexed" % (
-            row_object.get(
-                "scientific_name",
-                "%s %s" % (row_object.get("genus", ""), row_object.get("species", "")),
-            ),
-        )
-        return notes
 
     def _get_packages(self):
         self._logger.info("Ingesting AusARG metadata from {0}".format(self.path))
@@ -1366,9 +1361,14 @@ class AusargGenomicsDArTMetadata(AusargBaseMetadata):
                     "license_id": apply_cc_by_license(),
                 }
             )
+            organism_scientific_name = obj.get(
+                "scientific_name",
+                "%s %s" % (obj.get("genus", ""), obj.get("species", "")))
+            additional_notes = "DArT dataset not demultiplexed"
             obj.update(
                 {
-                    "notes": self.generate_notes_field(obj),
+                    "notes": self.build_notes_without_blanks(obj, {"organism_scientific_name": organism_scientific_name,
+                                                                   "additional_notes": additional_notes})
                 }
             )
             ingest_utils.permissions_organization_member(self._logger, obj)

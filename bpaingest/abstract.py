@@ -19,17 +19,18 @@ class BaseMetadata:
     resource_linkage = ("sample_id",)
     resource_info = {}
 
-    def build_notes_into_object(self, obj):
-        obj.update({"notes": self.build_notes_without_blanks(obj)})
+    def build_notes_into_object(self, obj, additional={}):
+        obj.update({"notes": self.build_notes_without_blanks(obj, additional)})
 
-    def build_notes_without_blanks(self, obj):
+    def build_notes_without_blanks(self, obj, additional={}):
         notes = ""
         # ensure blank fields are not used
         for next_note in self.notes_mapping:
-            next_value = obj.get(next_note["key"], "")
+            next_value = obj.get(next_note["key"], additional.get(next_note["key"], ""))
             if next_value:
                 notes += next_value + next_note.get("separator", "")
-        return notes
+        # remove any additional trailing blanks before returning
+        return notes.rstrip()
 
     def parse_spreadsheet(self, fname, metadata_info):
         kwargs = self.spreadsheet["options"]
