@@ -24,37 +24,25 @@ from .tracking import GAPTrackMetadata
 
 common_context = [GAPLibraryContextual, GAPDatasetControlContextual]
 
+class GAPBaseMetadata(BaseMetadata):
+    def _build_title_into_object(self, obj):
 
-def gap_describe(obj, description):
-    obj["title"] = "GAP {}, {}, {}, {}".format(
-        description,
-        obj.get("project_aim", ""),
-        obj.get("sample_id", "").split("/")[-1],
-        obj.get("bait_set_name", ""),
-    )
-    obj["notes"] = "{} {}, {}, {}".format(
-        obj.get("scientific_name", ""),
-        obj.get("scientific_name_authorship", ""),
-        obj.get("family", ""),
-        obj.get("sample_submitter_name", ""),
-    )
+        obj["title"] = "GAP {}, {}, {}, {}".format(
+            self.description,
+            obj.get("project_aim", ""),
+            obj.get("sample_id", "").split("/")[-1],
+            obj.get("bait_set_name", ""),
+        )
 
-
-def gap_describe_ddrad(obj, description):
-    obj["title"] = "GAP {}, {}, Dataset ID {}".format(
-        description,
-        obj.get("project_aim", ""),
-        obj.get("dataset_id", "").split("/")[-1],
-    )
-    obj["notes"] = "{}, {}, {}, {}".format(
-        obj.get("scientific_name", ""),
-        obj.get("species_complex", ""),
-        obj.get("family", ""),
-        obj.get("sample_submitter_name", ""),
-    )
+    notes_mapping = [
+        {"key": "scientific_name", "separator": " "},
+        {"key": "scientific_name_authorship", "separator": ", "},
+        {"key": "family", "separator": ", "},
+        {"key": "sample_submitter_name", "separator": ""},
+    ]
 
 
-class GAPIlluminaShortreadMetadata(BaseMetadata):
+class GAPIlluminaShortreadMetadata(GAPBaseMetadata):
     organization = "bpa-plants"
     ckan_data_type = "gap-illumina-shortread"
     technology = "illumina-shortread"
@@ -107,6 +95,7 @@ class GAPIlluminaShortreadMetadata(BaseMetadata):
         ],
     }
     description = "Illumina short read"
+    tag_names = ["genomics", description.replace(" ", "-").lower()]
 
     def __init__(
         self, logger, metadata_path, contextual_metadata=None, metadata_info=None
@@ -154,11 +143,11 @@ class GAPIlluminaShortreadMetadata(BaseMetadata):
                         "library_id": raw_library_id,
                     }
                 )
-                gap_describe(obj, self.description)
+                self._build_title_into_object(obj)
+                self.build_notes_into_object(obj)
                 ingest_utils.permissions_organization_member(self._logger, obj)
                 ingest_utils.apply_access_control(self._logger, self, obj)
-                tag_names = ["genomics", self.description.replace(" ", "-").lower()]
-                obj["tags"] = [{"name": "{:.100}".format(t)} for t in tag_names]
+                obj["tags"] = [{"name": "{:.100}".format(t)} for t in self.tag_names]
                 packages.append(obj)
         return packages
 
@@ -188,9 +177,10 @@ class GAPHiCMetadata(GAPIlluminaShortreadMetadata):
     metadata_urls = [
         "https://downloads-qcif.bioplatforms.com/bpa/plants_staging/genomics-hi-c/",
     ]
+    tag_names = ["genomics", description.replace(" ", "-").lower()]
 
 
-class GAPONTMinionMetadata(BaseMetadata):
+class GAPONTMinionMetadata(GAPBaseMetadata):
     organization = "bpa-plants"
     ckan_data_type = "gap-ont-minion"
     technology = "ont-minion"
@@ -242,6 +232,8 @@ class GAPONTMinionMetadata(BaseMetadata):
             re.compile(r"^.*TestFiles\.exe.*"),
         ],
     }
+    description = "ONT MinION"
+    tag_names = ["ont-minion"]
 
     def __init__(
         self, logger, metadata_path, contextual_metadata=None, metadata_info=None
@@ -286,11 +278,11 @@ class GAPONTMinionMetadata(BaseMetadata):
                         "data_generated": True,
                     }
                 )
-                gap_describe(obj, "ONT MinION")
+                self._build_title_into_object(obj)
+                self.build_notes_into_object(obj)
                 ingest_utils.permissions_organization_member(self._logger, obj)
                 ingest_utils.apply_access_control(self._logger, self, obj)
-                tag_names = ["ont-minion"]
-                obj["tags"] = [{"name": t} for t in tag_names]
+                obj["tags"] = [{"name": t} for t in self.tag_names]
                 packages.append(obj)
         return packages
 
@@ -310,7 +302,7 @@ class GAPONTMinionMetadata(BaseMetadata):
         )
 
 
-class GAPONTPromethionMetadata(BaseMetadata):
+class GAPONTPromethionMetadata(GAPBaseMetadata):
     organization = "bpa-plants"
     ckan_data_type = "gap-ont-promethion"
     technology = "ont-promethion"
@@ -362,6 +354,8 @@ class GAPONTPromethionMetadata(BaseMetadata):
             re.compile(r"^.*TestFiles\.exe.*"),
         ],
     }
+    description = "PromethION"
+    tag_names = ["ont-promethion"]
 
     def __init__(
         self, logger, metadata_path, contextual_metadata=None, metadata_info=None
@@ -406,11 +400,11 @@ class GAPONTPromethionMetadata(BaseMetadata):
                         "data_generated": True,
                     }
                 )
-                gap_describe(obj, "PromethION")
+                self._build_title_into_object(obj)
+                self.build_notes_into_object(obj)
                 ingest_utils.permissions_organization_member(self._logger, obj)
                 ingest_utils.apply_access_control(self._logger, self, obj)
-                tag_names = ["ont-promethion"]
-                obj["tags"] = [{"name": t} for t in tag_names]
+                obj["tags"] = [{"name": t} for t in self.tag_names]
                 packages.append(obj)
         return packages
 
@@ -430,7 +424,7 @@ class GAPONTPromethionMetadata(BaseMetadata):
         )
 
 
-class GAPGenomics10XMetadata(BaseMetadata):
+class GAPGenomics10XMetadata(GAPBaseMetadata):
     organization = "bpa-plants"
     ckan_data_type = "gap-genomics-10x"
     technology = "genomics-10x"
@@ -470,6 +464,8 @@ class GAPGenomics10XMetadata(BaseMetadata):
             re.compile(r"^.*TestFiles\.exe.*"),
         ],
     }
+    description = "Genomics 10X"
+    tag_names = ["genomics", "10x"]
 
     def __init__(
         self, logger, metadata_path, contextual_metadata=None, metadata_info=None
@@ -516,11 +512,11 @@ class GAPGenomics10XMetadata(BaseMetadata):
                         "data_generated": True,
                     }
                 )
-                gap_describe(obj, "Genomics 10X")
+                self._build_title_into_object(obj)
+                self.build_notes_into_object(obj)
                 ingest_utils.permissions_organization_member(self._logger, obj)
                 ingest_utils.apply_access_control(self._logger, self, obj)
-                tag_names = ["genomics", "10x"]
-                obj["tags"] = [{"name": t} for t in tag_names]
+                obj["tags"] = [{"name": t} for t in self.tag_names]
                 packages.append(obj)
         return packages
 
@@ -538,7 +534,7 @@ class GAPGenomics10XMetadata(BaseMetadata):
         )
 
 
-class GAPGenomicsDDRADMetadata(BaseMetadata):
+class GAPGenomicsDDRADMetadata(GAPBaseMetadata):
     """
     This data conforms to the BPA Genomics ddRAD workflow. future data
     will use this ingest class.
@@ -648,6 +644,22 @@ class GAPGenomicsDDRADMetadata(BaseMetadata):
             re.compile(r"^.*checksums\.(exf|md5)$"),
         ],
     }
+    description = "ddRAD"
+    tag_names = ["genomics-ddrad"]
+
+    notes_mapping = [
+        {"key": "scientific_name", "separator": ", "},
+        {"key": "species_complex", "separator": ", "},
+        {"key": "family", "separator": ", "},
+        {"key": "sample_submitter_name", "separator": ""},
+    ]
+
+    def build_title_into_object(self, obj):
+        obj["title"] = "GAP {}, {}, Dataset ID {}".format(
+            self.description,
+            obj.get("project_aim", ""),
+            obj.get("dataset_id", "").split("/")[-1],
+        )
 
     def __init__(
         self, logger, metadata_path, contextual_metadata=None, metadata_info=None
@@ -734,12 +746,12 @@ class GAPGenomicsDDRADMetadata(BaseMetadata):
                 )
                 obj.update(common_values(context_objs))
                 obj.update(merge_values("scientific_name", " , ", context_objs))
-                gap_describe_ddrad(obj, "ddRAD")
+                self.build_title_into_object(obj)
+                self.build_notes_into_object(obj)
                 ingest_utils.permissions_organization_member(self._logger, obj)
                 ingest_utils.apply_access_control(self._logger, self, obj)
                 ingest_utils.add_spatial_extra(self._logger, obj)
-                tag_names = ["genomics-ddrad"]
-                obj["tags"] = [{"name": t} for t in tag_names]
+                obj["tags"] = [{"name": t} for t in self.tag_names]
                 self.track_xlsx_resource(obj, fname)
                 packages.append(obj)
         return packages
@@ -761,7 +773,7 @@ class GAPGenomicsDDRADMetadata(BaseMetadata):
             )
 
 
-class GAPPacbioHifiMetadata(BaseMetadata):
+class GAPPacbioHifiMetadata(GAPBaseMetadata):
     organization = "bpa-plants"
     ckan_data_type = "gap-pacbio-hifi"
     technology = "pacbio-hifi"
@@ -834,6 +846,8 @@ class GAPPacbioHifiMetadata(BaseMetadata):
             re.compile(r"^.*TestFiles\.exe.*"),
         ],
     }
+    description = ""
+    tag_names = ["pacbio-hifi"]
 
     def __init__(
         self, logger, metadata_path, contextual_metadata=None, metadata_info=None
@@ -922,13 +936,13 @@ class GAPPacbioHifiMetadata(BaseMetadata):
                     }
                 )
                 obj.update(context)
-                gap_describe(obj, self.description)
+                self.description = obj.get("description") # set the description for the title, it comes from the spreadsheet
+                self._build_title_into_object(obj)
+                self.build_notes_into_object(obj)
                 ingest_utils.permissions_organization_member(self._logger, obj)
                 ingest_utils.apply_access_control(self._logger, self, obj)
-
                 ingest_utils.add_spatial_extra(self._logger, obj)
-                tag_names = ["pacbio-hifi"]
-                obj["tags"] = [{"name": t} for t in tag_names]
+                obj["tags"] = [{"name": t} for t in self.tag_names]
                 packages.append(obj)
 
         return packages
