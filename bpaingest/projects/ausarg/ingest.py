@@ -164,6 +164,7 @@ class AusargIlluminaFastqMetadata(AusargBaseMetadata):
         {"key": "state_or_origin", "separator": ", "},
         {"key": "country"},
     ]
+    tag_names = ["illumina-fastq"]
 
     def __init__(
         self, logger, metadata_path, contextual_metadata=None, metadata_info=None
@@ -234,8 +235,7 @@ class AusargIlluminaFastqMetadata(AusargBaseMetadata):
                 )
                 ingest_utils.permissions_organization_member(self._logger, obj)
                 ingest_utils.apply_access_control(self._logger, self, obj)
-                tag_names = ["illumina-fastq"]
-                obj["tags"] = [{"name": "{:.100}".format(t)} for t in tag_names]
+                obj["tags"] = [{"name": "{:.100}".format(t)} for t in self.tag_names]
                 packages.append(obj)
         return packages
 
@@ -376,6 +376,7 @@ class AusargONTPromethionMetadata(AusargBaseMetadata):
         {"key": "country", "separator": " "},
         {"key": "state_or_region"},
     ]
+    tag_names = ["ont-promethion"]
 
     def __init__(
         self, logger, metadata_path, contextual_metadata=None, metadata_info=None
@@ -441,8 +442,7 @@ class AusargONTPromethionMetadata(AusargBaseMetadata):
                 )
                 ingest_utils.permissions_organization_member(self._logger, obj)
                 ingest_utils.apply_access_control(self._logger, self, obj)
-                tag_names = ["ont-promethion"]
-                obj["tags"] = [{"name": t} for t in tag_names]
+                obj["tags"] = [{"name": t} for t in self.tag_names]
                 self.track_xlsx_resource(obj, fname)
                 packages.append(obj)
         return self.apply_location_generalisation(packages)
@@ -575,6 +575,7 @@ class AusargPacbioHifiMetadata(AusargBaseMetadata):
             re.compile(r"^.*TestFiles\.exe.*"),
         ],
     }
+    tag_names = ["pacbio-hifi"]
 
     def __init__(
         self, logger, metadata_path, contextual_metadata=None, metadata_info=None
@@ -669,8 +670,7 @@ class AusargPacbioHifiMetadata(AusargBaseMetadata):
                 ingest_utils.apply_access_control(self._logger, self, obj)
 
                 ingest_utils.add_spatial_extra(self._logger, obj)
-                tag_names = ["pacbio-hifi"]
-                obj["tags"] = [{"name": t} for t in tag_names]
+                obj["tags"] = [{"name": t} for t in self.tag_names]
                 packages.append(obj)
 
         return self.apply_location_generalisation(packages)
@@ -811,6 +811,7 @@ class AusargExonCaptureMetadata(AusargBaseMetadata):
             re.compile(r"^.*TestFiles\.exe.*"),
         ],
     }
+    tag_names = ["exon-capture", "raw"]
 
     def __init__(
         self, logger, metadata_path, contextual_metadata=None, metadata_info=None
@@ -922,8 +923,7 @@ class AusargExonCaptureMetadata(AusargBaseMetadata):
                 obj.pop("library_oligo_sequence_p7", False)
 
                 ingest_utils.add_spatial_extra(self._logger, obj)
-                tag_names = ["exon-capture", "raw"]
-                obj["tags"] = [{"name": t} for t in tag_names]
+                obj["tags"] = [{"name": t} for t in self.tag_names]
 
                 self.track_xlsx_resource(obj, fname)
 
@@ -1060,6 +1060,7 @@ class AusargHiCMetadata(AusargBaseMetadata):
         {"key": "country", "separator": " "},
         {"key": "state_or_region"},
     ]
+    tag_names = ["genomics"]
 
     def __init__(
         self, logger, metadata_path, contextual_metadata=None, metadata_info=None
@@ -1112,8 +1113,7 @@ class AusargHiCMetadata(AusargBaseMetadata):
                 )
                 ingest_utils.permissions_organization_member(self._logger, obj)
                 ingest_utils.apply_access_control(self._logger, self, obj)
-                tag_names = ["genomics"]
-                obj["tags"] = [{"name": "{:.100}".format(t)} for t in tag_names]
+                obj["tags"] = [{"name": "{:.100}".format(t)} for t in self.tag_names]
                 packages.append(obj)
         return packages
 
@@ -1260,6 +1260,7 @@ class AusargGenomicsDArTMetadata(AusargBaseMetadata):
         {"key": "organism_scientific_name", "separator": "\n"},
         {"key": "additional_notes"},
     ]
+    tag_names = ["genomics-dart"]
 
     def __init__(
         self, logger, metadata_path, contextual_metadata=None, metadata_info=None
@@ -1383,8 +1384,7 @@ class AusargGenomicsDArTMetadata(AusargBaseMetadata):
                 )
             ingest_utils.apply_access_control(self._logger, self, obj)
             ingest_utils.add_spatial_extra(self._logger, obj)
-            tag_names = ["genomics-dart"]
-            obj["tags"] = [{"name": t} for t in tag_names]
+            obj["tags"] = [{"name": t} for t in self.tag_names]
             self.track_xlsx_resource(obj, fname)
             for sample_metadata_file in glob(
                 self.path
