@@ -84,7 +84,6 @@ from .omg.ingest import (
 )
 
 from .tsi.ingest import (
-    TSINovaseqMetadata,
     TSIPacbioHifiMetadata,
     TSIGenomicsDDRADMetadata,
     TSIIlluminaShortreadMetadata,
@@ -151,7 +150,6 @@ class ProjectInfo:
             OMGGenomicsDArTMetadata,
         ],
         "tsi": [
-            TSINovaseqMetadata,
             TSIPacbioHifiMetadata,
             TSIGenomicsDDRADMetadata,
             TSIIlluminaShortreadMetadata,
