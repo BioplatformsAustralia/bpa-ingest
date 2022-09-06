@@ -39,34 +39,6 @@ class TSIBaseMetadata(BaseMetadata):
             package.update({"decimal_latitude_public": package.get("latitude")})
         return packages
 
-    """
-    def generate_notes_field(self, row_object):
-        notes = "%s %s, %s %s %s" % (
-            row_object.get("genus", ""),
-            row_object.get("species", ""),
-            row_object.get("voucher_or_tissue_number", ""),
-            row_object.get("country", ""),
-            row_object.get("state_or_region", ""),
-        )
-        return notes
-
-    def generate_notes_field_with_id(self, row_object, id):
-        notes = "%s\n%s %s, %s %s %s" % (
-            id,
-            row_object.get("genus", ""),
-            row_object.get("species", ""),
-            row_object.get("voucher_or_tissue_number", ""),
-            row_object.get("country", ""),
-            row_object.get("state_or_region", ""),
-        )
-        return notes
-
-    def generate_notes_field_from_lists(self, row_list, ids):
-        notes = "%s\n" % (ids)
-        return notes + ". ".join(self.generate_notes_field(t) for t in row_list)
-
-    """
-
     notes_mapping = [
         {"key": "genus", "separator": " "},
         {"key": "species", "separator": ", "},
@@ -74,256 +46,6 @@ class TSIBaseMetadata(BaseMetadata):
         {"key": "country", "separator": " "},
         {"key": "state_or_region"},
     ]
-
-    # VERIFY
-
-
-class TSINovaseqMetadata(TSIBaseMetadata):
-    organization = "threatened-species"
-    # VERIFY
-    ckan_data_type = "tsi-novaseq"
-    technology = "novaseq"
-    contextual_classes = common_context
-    metadata_patterns = [r"^.*\.md5$", r"^.*_metadata.*.*\.xlsx$"]
-    metadata_urls = [
-        # VERIFY
-        "https://downloads-qcif.bioplatforms.com/bpa/tsi_staging/tsi-novaseq/",
-    ]
-    metadata_url_components = ("ticket",)
-    # FIX
-    resource_linkage = ("bpa_library_id", "flowcell_id", "library_index_sequence")
-    spreadsheet = {
-        "fields": [
-            # ADD library_ID
-            fld(
-                "library_id",
-                re.compile(r"library_[Ii][Dd]"),
-                coerce=ingest_utils.extract_ands_id,
-            ),
-            # ADD sample_ID
-            fld(
-                "sample_id",
-                re.compile(r"sample_[Ii][Dd]"),
-                coerce=ingest_utils.extract_ands_id,
-            ),
-            # ADD dataset_ID
-            fld(
-                "dataset_id",
-                re.compile(r"dataset_[Ii][Dd]"),
-                coerce=ingest_utils.extract_ands_id,
-            ),
-            # ADD work_order
-            fld("work_order", "work_order"),
-            # ADD specimen_ID
-            fld("specimen_id", re.compile(r"specimen_[Ii][Dd]")),
-            # ADD tissue_number
-            fld("tissue_number", "tissue_number"),
-            # ADD data_context
-            fld("data_context", "data_context"),
-            # ADD library_layout
-            fld("library_layout", "library_layout"),
-            # ADD sequencing_model
-            fld("sequencing_model", "sequencing_model"),
-            # ADD insert_size_range
-            fld("insert_size_range", "insert_size_range"),
-            # ADD flowcell_type
-            fld("flowcell_type", "flowcell_type"),
-            # ADD cell_postion
-            fld("cell_postion", "cell_postion"),
-            # ADD movie_length
-            fld("movie_length", "movie_length"),
-            # ADD analysis_software
-            fld("analysis_software", "analysis_software"),
-            # ADD analysis_software_version
-            fld("analysis_software_version", "analysis_software_version"),
-            # ADD file_name QUERY - tracking??
-            fld("file_name", "file_name"),
-            # ADD file_type QUERY - tracking??
-            fld("file_type", "file_type"),
-            # ADD library_construction_protocol
-            fld("library_construction_protocol", "library_construction_protocol"),
-            # ADD library_strategy
-            fld("library_strategy", "library_strategy"),
-            # ADD library_selection
-            fld("library_selection", "library_selection"),
-            # ADD library_source
-            fld("library_source", "library_source"),
-            # genus
-            fld("genus", "genus"),
-            # species
-            # FIX
-            #           fld("species", "species"),
-            # FIX
-            #           fld("voucher_id", "voucher_id"),
-            # FIX
-            #           fld(
-            #                "bpa_dataset_id", "bpa_dataset_id", coerce=ingest_utils.extract_ands_id
-            #            ),
-            # FIX
-            #           fld(
-            #                "bpa_library_id", "bpa_library_id", coerce=ingest_utils.extract_ands_id
-            #            ),
-            # FIX
-            #           fld("bpa_sample_id", "bpa_sample_id", coerce=ingest_utils.extract_ands_id),
-            # facility_sample_ID
-            fld("facility_sample_id", "facility_sample_id"),
-            # library_type
-            fld("library_type", "library_type"),
-            # library_prep_date
-            fld(
-                "library_prep_date",
-                "library_prep_date",
-                coerce=ingest_utils.get_date_isoformat,
-            ),
-            # library_prepared_by
-            fld("library_prepared_by", "library_prepared_by"),
-            # experimental_design
-            fld("experimental_design", "experimental_design"),
-            # data_custodian
-            fld("data_custodian", "data_custodian"),
-            # DNA_treatment
-            fld("dna_treatment", "dna_treatment"),
-            # library_index_ID
-            fld("library_index_id", "library_index_id"),
-            # library_index_seq
-            fld("library_index_sequence", "library_index_sequence"),
-            # library_oligo_sequence
-            fld("library_oligo_sequence", "library_oligo_sequence"),
-            # library_pcr_reps
-            fld("library_pcr_reps", "library_pcr_reps"),
-            # library_pcr_cycles
-            fld("library_pcr_cycles", "library_pcr_cycles"),
-            # library_ng_ul
-            fld("library_ng_ul", "library_ng_ul"),
-            # library_comments
-            fld("library_comments", "library_comments"),
-            # library_location
-            fld("library_location", "library_location"),
-            # library_status
-            fld("library_status", "library_status"),
-            # sequencing_facility
-            fld("sequencing_facility", "sequencing_facility"),
-            # n_libraries_pooled
-            fld("n_libraries_pooled", "n_libraries_pooled"),
-            # FIX
-            #           fld("bpa_work_order", "bpa_work_order"),
-            # sequencing_platform
-            fld("sequencing_platform", "sequencing_platform"),
-            # FIX
-            #           fld("sequence_length", "sequence_length"),
-            # flowcell_ID
-            fld("flowcell_id", "flowcell_id"),
-            # FIX
-            #           fld("software_version", "software_version"),
-            # FIX
-            #           fld("file", "file"),
-        ],
-        "options": {
-            # VERIFY
-            "sheet_name": "Library metadata",
-            "header_length": 1,
-            "column_name_row_index": 0,
-        },
-    }
-    md5 = {
-        "match": [files.novaseq_filename_re],
-        "skip": [
-            re.compile(r"^.*_metadata\.xlsx$"),
-            re.compile(r"^.*SampleSheet.*"),
-            re.compile(r"^.*TestFiles\.exe.*"),
-        ],
-    }
-    tag_names = ["novaseq"]
-
-    def __init__(
-            self, logger, metadata_path, contextual_metadata=None, metadata_info=None
-    ):
-        super().__init__(logger, metadata_path)
-        self.path = Path(metadata_path)
-        self.contextual_metadata = contextual_metadata
-        self.metadata_info = metadata_info
-        self.track_meta = TSIGoogleTrackMetadata(logger)
-
-    def _get_packages(self):
-        self._logger.info("Ingesting TSI metadata from {0}".format(self.path))
-        packages = []
-        for fname in glob(self.path + "/*.xlsx"):
-            self._logger.info(
-                "Processing TSI metadata file {0}".format(os.path.basename(fname))
-            )
-            for row in self.parse_spreadsheet(fname, self.metadata_info):
-                track_meta = self.track_meta.get(row.ticket)
-
-                def track_get(k):
-                    if track_meta is None:
-                        return None
-                    return getattr(track_meta, k)
-
-                # VERIFY
-                library_id = row.library_id
-                if library_id is None:
-                    continue
-
-                obj = row._asdict()
-                name = sample_id_to_ckan_name(
-                    library_id, self.ckan_data_type, row.flowcell_id
-                )
-
-                context = {}
-                for contextual_source in self.contextual_metadata:
-                    context.update(contextual_source.get(row.sample_id, row.library_id))
-
-                obj.update(
-                    {
-                        "name": name,
-                        "id": name,
-                        "title": "TSI Novaseq %s %s %s"
-                                 % (library_id, row.flowcell_id, row.library_index_sequence),
-                        "notes": self.build_notes_without_blanks(context),
-                        "date_of_transfer": ingest_utils.get_date_isoformat(
-                            self._logger, track_get("date_of_transfer")),
-                        "data_type": track_get("data_type"),
-                        "description": track_get("description"),
-                        "folder_name": track_get("folder_name"),
-                        "sample_submission_date": ingest_utils.get_date_isoformat(
-                            self._logger, track_get("date_of_transfer")),
-                        "contextual_data_submission_date": None,
-                        "data_generated": ingest_utils.get_date_isoformat(
-                            self._logger, track_get("date_of_transfer_to_archive")),
-                        "archive_ingestion_date": ingest_utils.get_date_isoformat(
-                            self._logger, track_get("date_of_transfer_to_archive")),
-                        "dataset_url": track_get("download"),
-                        "type": self.ckan_data_type,
-                    }
-                )
-                ingest_utils.permissions_organization_member(self._logger, obj)
-                ingest_utils.apply_access_control(self._logger, self, obj)
-                obj.update(context)
-                ingest_utils.add_spatial_extra(self._logger, obj)
-                obj["tags"] = [{"name": t} for t in tag_names]
-                self.track_xlsx_resource(obj, fname)
-
-                packages.append(obj)
-        # VERIFY
-        # return self.apply_location_generalisation(packages)
-        return packages
-
-    def _get_resources(self):
-        return self._get_common_resources() + self.generate_xlsx_resources()
-
-    def _add_datatype_specific_info_to_resource(self, resource, md5_file=None):
-        # no special fields for TSINovaseq
-        return
-
-    def _build_resource_linkage(self, xlsx_info, resource, file_info):
-        return (
-            (ingest_utils.extract_ands_id(
-                self._logger,
-                resource["library_id"],
-            ),
-             resource["flow_cell_id"],
-             resource["index"]),
-        )
 
 
 class TSIIlluminaShortreadMetadata(TSIBaseMetadata):
@@ -585,6 +307,7 @@ class TSIIlluminaFastqMetadata(TSIBaseMetadata):
             re.compile(r"^.*TestFiles\.exe.*"),
         ],
     }
+    tag_names = ["illumina-fastq"]
 
     def __init__(
             self, logger, metadata_path, contextual_metadata=None, metadata_info=None
@@ -608,7 +331,6 @@ class TSIIlluminaFastqMetadata(TSIBaseMetadata):
             ticket = xlsx_info["ticket"]
             track_meta = self.google_track_meta.get(ticket)
             for row in rows:
-                tag_names = ["illumina-fastq"]   # set the tag name here, as we add different tags to the row based on species
                 if not row.library_id and not row.flowcell_id:
                     # skip empty rows
                     continue
@@ -654,10 +376,7 @@ class TSIIlluminaFastqMetadata(TSIBaseMetadata):
                 self.build_notes_into_object(obj)
                 ingest_utils.permissions_organization_member(self._logger, obj)
                 ingest_utils.apply_access_control(self._logger, self, obj)
-                scientific_name = obj.get("scientific_name", "").strip()
-                if scientific_name:
-                    tag_names.append(clean_tag_name(obj["scientific_name"]))
-                obj["tags"] = [{"name": "{:.100}".format(t)} for t in tag_names]
+                obj["tags"] = [{"name": "{:.100}".format(t)} for t in self.tag_names]
                 packages.append(obj)
         return packages
 
@@ -1468,7 +1187,7 @@ class TSIHiCMetadata(TSIBaseMetadata):
                         "library_id": raw_library_id,
                     }
                 )
-                self.build_notes_into_object(obj, {"complete_library_id": library_id,})
+                self.build_notes_into_object(obj, {"complete_library_id": library_id, })
                 ingest_utils.permissions_organization_member(self._logger, obj)
                 ingest_utils.apply_access_control(self._logger, self, obj)
                 obj["tags"] = [{"name": "{:.100}".format(t)} for t in self.tag_names]
