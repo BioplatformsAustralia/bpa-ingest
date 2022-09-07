@@ -4,11 +4,11 @@ BPA_ORGANIZATION_ID = "bioplatforms-australia"
 
 ORGANIZATIONS = [
     {
-        "display_name": "BioPlatforms Australia",
+        "display_name": "Bioplatforms Australia",
         "name": BPA_ORGANIZATION_ID,
         "image_display_url": "https://data.bioplatforms.com/bpalogo.png",
         "image_url": "https://data.bioplatforms.com/bpalogo.png",
-        "title": "BioPlatforms Australia",
+        "title": "Bioplatforms Australia",
         "approval_status": "approved",
         "is_organization": True,
         "state": "active",
