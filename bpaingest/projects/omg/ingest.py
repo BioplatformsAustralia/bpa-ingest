@@ -44,32 +44,13 @@ class OMGBaseMetadata(BaseMetadata):
     # this method just for here for backwards compatibility
     def apply_location_generalisation(self, packages):
         return self.generaliser.apply_location_generalisation(packages)
-
-    def generate_notes_field(self, row_object):
-        notes = "%s %s, %s %s %s" % (
-            row_object.get("genus", ""),
-            row_object.get("species", ""),
-            row_object.get("voucher_or_tissue_number", ""),
-            row_object.get("country", ""),
-            row_object.get("state_or_region", ""),
-        )
-        return notes
-
-    def generate_notes_field_with_id(self, row_object, id):
-        notes = "%s\n%s %s, %s %s %s" % (
-            id,
-            row_object.get("genus", ""),
-            row_object.get("species", ""),
-            row_object.get("voucher_or_tissue_number", ""),
-            row_object.get("country", ""),
-            row_object.get("state_or_region", ""),
-        )
-        return notes
-
-    def generate_notes_field_from_lists(self, row_list, ids):
-        notes = "%s\n" % (ids)
-        return notes + ". ".join(self.generate_notes_field(t) for t in row_list)
-
+    notes_mapping = [
+        {"key": "genus", "separator": " "},
+        {"key": "species", "separator": ", "},
+        {"key": "voucher_or_tissue_number", "separator": " "},
+        {"key": "country", "separator": " "},
+        {"key": "state_or_region"},
+    ]
 
 class OMG10XRawIlluminaMetadata(OMGBaseMetadata):
     """
@@ -147,6 +128,18 @@ class OMG10XRawIlluminaMetadata(OMGBaseMetadata):
             re.compile(r"^.*TestFiles\.exe.*"),
         ],
     }
+    tag_names = ["10x-raw"]
+    notes_mapping = [
+        {"key": "library_ids", "separator": "\n"},
+        {"key": "mapped_rows"},
+    ]
+    row_mapping = [
+        {"key": "genus", "separator": " "},
+        {"key": "species", "separator": ", "},
+        {"key": "voucher_or_tissue_number", "separator": " "},
+        {"key": "country", "separator": " "},
+        {"key": "state_or_region"},
+    ]
 
     def __init__(
         self, logger, metadata_path, contextual_metadata=None, metadata_info=None
@@ -226,8 +219,6 @@ class OMG10XRawIlluminaMetadata(OMGBaseMetadata):
                     return None
                 return getattr(track_meta, k)
 
-            notes = self.generate_notes_field_from_lists(row_metadata, bpa_library_ids)
-
             obj.update(
                 {
                     "ticket": ticket,
@@ -248,10 +239,12 @@ class OMG10XRawIlluminaMetadata(OMGBaseMetadata):
                         self._logger, track_get("date_of_transfer_to_archive")
                     ),
                     "dataset_url": track_get("download"),
-                    "notes": notes,
-                }
+                 }
             )
+            mapped_rows = ". ".join(self.build_string_from_map_without_blanks(self.row_mapping, t) for t in row_metadata)
 
+            self.build_notes_into_object(obj, {"library_ids": bpa_library_ids,
+                                               "mapped_rows": mapped_rows})
             ingest_utils.add_spatial_extra(self._logger, obj)
             ingest_utils.permissions_organization_member_after_embargo(
                 self._logger,
@@ -262,8 +255,7 @@ class OMG10XRawIlluminaMetadata(OMGBaseMetadata):
             )
             ingest_utils.apply_access_control(self._logger, self, obj)
             obj.update(common_values([make_row_metadata(row) for row in rows]))
-            tag_names = ["10x-raw"]
-            obj["tags"] = [{"name": t} for t in tag_names]
+            obj["tags"] = [{"name": t} for t in self.tag_names]
             self.track_xlsx_resource(obj, xlsx_fname)
             packages.append(obj)
 
@@ -358,6 +350,15 @@ class OMG10XRawMetadata(OMGBaseMetadata):
             re.compile(r"^.*TestFiles\.exe.*"),
         ],
     }
+    tag_names = ["10x-raw"]
+    notes_mapping = [
+        {"key": "bpa_library_id", "separator": "\n"},
+        {"key": "genus", "separator": " "},
+        {"key": "species", "separator": ", "},
+        {"key": "voucher_or_tissue_number", "separator": " "},
+        {"key": "country", "separator": " "},
+        {"key": "state_or_region"},
+    ]
 
     def __init__(
         self, logger, metadata_path, contextual_metadata=None, metadata_info=None
@@ -412,7 +413,6 @@ class OMG10XRawMetadata(OMGBaseMetadata):
                     "id": name,
                     "bpa_sample_id": bpa_sample_id,
                     "title": "OMG 10x Raw %s %s" % (bpa_sample_id, flow_id),
-                    "notes": self.generate_notes_field_with_id(context, bpa_library_id),
                     "date_of_transfer": ingest_utils.get_date_isoformat(
                         self._logger, track_get("date_of_transfer")
                     ),
@@ -437,6 +437,7 @@ class OMG10XRawMetadata(OMGBaseMetadata):
             )
             self.library_to_sample[obj["bpa_library_id"]] = obj["bpa_sample_id"]
             obj.update(context)
+            self.build_notes_into_object(obj)
             ingest_utils.permissions_organization_member_after_embargo(
                 self._logger,
                 obj,
@@ -446,8 +447,7 @@ class OMG10XRawMetadata(OMGBaseMetadata):
             )
             ingest_utils.apply_access_control(self._logger, self, obj)
             ingest_utils.add_spatial_extra(self._logger, obj)
-            tag_names = ["10x-raw"]
-            obj["tags"] = [{"name": t} for t in tag_names]
+            obj["tags"] = [{"name": t} for t in self.tag_names]
             self.track_xlsx_resource(obj, fname)
             packages.append(obj)
         return self.apply_location_generalisation(packages)
@@ -546,6 +546,15 @@ class OMG10XProcessedIlluminaMetadata(OMGBaseMetadata):
             re.compile(r"^.*TestFiles\.exe.*"),
         ],
     }
+    tag_names = ["10x-processed"]
+    notes_mapping = [
+        {"key": "bpa_library_id", "separator": "\n"},
+        {"key": "genus", "separator": " "},
+        {"key": "species", "separator": ", "},
+        {"key": "voucher_or_tissue_number", "separator": " "},
+        {"key": "country", "separator": " "},
+        {"key": "state_or_region"},
+    ]
 
     def __init__(
         self, logger, metadata_path, contextual_metadata=None, metadata_info=None
@@ -603,9 +612,6 @@ class OMG10XProcessedIlluminaMetadata(OMGBaseMetadata):
                         "flow_id": flow_id,
                         "title": "OMG 10x Illumina Processed %s %s"
                         % (bpa_sample_id, flow_id),
-                        "notes": self.generate_notes_field_with_id(
-                            context, bpa_library_id
-                        ),
                         "date_of_transfer": ingest_utils.get_date_isoformat(
                             self._logger, track_get("date_of_transfer")
                         ),
@@ -630,6 +636,7 @@ class OMG10XProcessedIlluminaMetadata(OMGBaseMetadata):
                     }
                 )
                 obj.update(context)
+                self.build_notes_into_object(obj)
                 ingest_utils.permissions_organization_member_after_embargo(
                     self._logger,
                     obj,
@@ -639,8 +646,7 @@ class OMG10XProcessedIlluminaMetadata(OMGBaseMetadata):
                 )
                 ingest_utils.apply_access_control(self._logger, self, obj)
                 ingest_utils.add_spatial_extra(self._logger, obj)
-                tag_names = ["10x-processed"]
-                obj["tags"] = [{"name": t} for t in tag_names]
+                obj["tags"] = [{"name": t} for t in self.tag_names]
                 self.track_xlsx_resource(obj, fname)
                 packages.append(obj)
         return self.apply_location_generalisation(packages)
@@ -757,6 +763,7 @@ class OMGExonCaptureMetadata(OMGBaseMetadata):
             re.compile(r"^.*TestFiles\.exe.*"),
         ],
     }
+    tag_names = ["exon-capture", "raw"]
 
     def __init__(
         self, logger, metadata_path, contextual_metadata=None, metadata_info=None
@@ -836,7 +843,6 @@ class OMGExonCaptureMetadata(OMGBaseMetadata):
                             "OMG Exon Capture Raw %s %s %s"
                             % (library_id, row.flowcell_id, index_sequence)
                         ).rstrip(),
-                        "notes": self.generate_notes_field(context),
                         "date_of_transfer": ingest_utils.get_date_isoformat(
                             self._logger, track_get("date_of_transfer")
                         ),
@@ -860,6 +866,7 @@ class OMGExonCaptureMetadata(OMGBaseMetadata):
                     }
                 )
                 obj.update(context)
+                self.build_notes_into_object(obj)
                 ingest_utils.permissions_organization_member_after_embargo(
                     self._logger,
                     obj,
@@ -875,8 +882,7 @@ class OMGExonCaptureMetadata(OMGBaseMetadata):
                 obj.pop("library_oligo_sequence", False)
 
                 ingest_utils.add_spatial_extra(self._logger, obj)
-                tag_names = ["exon-capture", "raw"]
-                obj["tags"] = [{"name": t} for t in tag_names]
+                obj["tags"] = [{"name": t} for t in self.tag_names]
 
                 self.track_xlsx_resource(obj, fname)
 
@@ -1002,6 +1008,7 @@ class OMGWholeGenomeMetadata(OMGBaseMetadata):
             re.compile(r"^.*TestFiles\.exe.*"),
         ],
     }
+    tag_names = ["whole-genome-resequence", "genomics"]
 
     def __init__(
         self, logger, metadata_path, contextual_metadata=None, metadata_info=None
@@ -1081,7 +1088,6 @@ class OMGWholeGenomeMetadata(OMGBaseMetadata):
                             "OMG Whole Genome %s %s %s"
                             % (library_id, row.flowcell_id, index_sequence)
                         ).rstrip(),
-                        "notes": self.generate_notes_field(context),
                         "date_of_transfer": ingest_utils.get_date_isoformat(
                             self._logger, track_get("date_of_transfer")
                         ),
@@ -1105,6 +1111,7 @@ class OMGWholeGenomeMetadata(OMGBaseMetadata):
                     }
                 )
                 obj.update(context)
+                self.build_notes_into_object(obj)
                 ingest_utils.permissions_organization_member_after_embargo(
                     self._logger,
                     obj,
@@ -1120,8 +1127,7 @@ class OMGWholeGenomeMetadata(OMGBaseMetadata):
                 obj.pop("library_oligo_sequence", False)
 
                 ingest_utils.add_spatial_extra(self._logger, obj)
-                tag_names = ["whole-genome-resequence", "genomics"]
-                obj["tags"] = [{"name": t} for t in tag_names]
+                obj["tags"] = [{"name": t} for t in self.tag_names]
 
                 self.track_xlsx_resource(obj, fname)
 
@@ -1220,6 +1226,7 @@ class OMGGenomicsNovaseqMetadata(OMGBaseMetadata):
             re.compile(r"^.*TestFiles\.exe.*"),
         ],
     }
+    tag_names = ["novaseq", "genomics", "raw"]
 
     def __init__(
         self, logger, metadata_path, contextual_metadata=None, metadata_info=None
@@ -1266,7 +1273,6 @@ class OMGGenomicsNovaseqMetadata(OMGBaseMetadata):
                         "id": name,
                         "title": "OMG Novaseq Raw %s %s %s"
                         % (library_id, row.flowcell_id, row.library_index_sequence),
-                        "notes": self.generate_notes_field(context),
                         "date_of_transfer": ingest_utils.get_date_isoformat(
                             self._logger, track_get("date_of_transfer")
                         ),
@@ -1290,6 +1296,7 @@ class OMGGenomicsNovaseqMetadata(OMGBaseMetadata):
                     }
                 )
                 obj.update(context)
+                self.build_notes_into_object(obj)
                 ingest_utils.permissions_organization_member_after_embargo(
                     self._logger,
                     obj,
@@ -1300,8 +1307,7 @@ class OMGGenomicsNovaseqMetadata(OMGBaseMetadata):
                 ingest_utils.apply_access_control(self._logger, self, obj)
 
                 ingest_utils.add_spatial_extra(self._logger, obj)
-                tag_names = ["novaseq", "genomics", "raw"]
-                obj["tags"] = [{"name": t} for t in tag_names]
+                obj["tags"] = [{"name": t} for t in self.tag_names]
                 self.track_xlsx_resource(obj, fname)
 
                 packages.append(obj)
@@ -1390,6 +1396,15 @@ class OMGGenomicsHiSeqMetadata(OMGBaseMetadata):
             re.compile(r"^.*TestFiles\.exe.*"),
         ],
     }
+    notes_mapping = [
+        {"key": "bpa_library_id", "separator": "\n"},
+        {"key": "genus", "separator": " "},
+        {"key": "species", "separator": ", "},
+        {"key": "voucher_or_tissue_number", "separator": " "},
+        {"key": "country", "separator": " "},
+        {"key": "state_or_region"},
+    ]
+    tag_names = ["genomics-hiseq"]
 
     def __init__(
         self, logger, metadata_path, contextual_metadata=None, metadata_info=None
@@ -1449,9 +1464,6 @@ class OMGGenomicsHiSeqMetadata(OMGBaseMetadata):
                         "flow_id": flow_id,
                         "title": "OMG Genomics HiSeq Raw %s %s"
                         % (bpa_sample_id, flow_id),
-                        "notes": self.generate_notes_field_with_id(
-                            context, bpa_library_id
-                        ),
                         "date_of_transfer": ingest_utils.get_date_isoformat(
                             self._logger, track_get("date_of_transfer")
                         ),
@@ -1475,6 +1487,7 @@ class OMGGenomicsHiSeqMetadata(OMGBaseMetadata):
                     }
                 )
                 obj.update(context)
+                self.build_notes_into_object(obj)
                 ingest_utils.permissions_organization_member_after_embargo(
                     self._logger,
                     obj,
@@ -1484,8 +1497,7 @@ class OMGGenomicsHiSeqMetadata(OMGBaseMetadata):
                 )
                 ingest_utils.apply_access_control(self._logger, self, obj)
                 ingest_utils.add_spatial_extra(self._logger, obj)
-                tag_names = ["genomics-hiseq"]
-                obj["tags"] = [{"name": t} for t in tag_names]
+                obj["tags"] = [{"name": t} for t in self.tag_names]
                 self.track_xlsx_resource(obj, fname)
                 packages.append(obj)
         return self.apply_location_generalisation(packages)
@@ -1504,6 +1516,7 @@ class OMGGenomicsHiSeqMetadata(OMGBaseMetadata):
                         ),
              resource["flow_cell_id"])
         )
+
 
 class OMGGenomicsDDRADMetadata(OMGBaseMetadata):
     """
@@ -1607,6 +1620,12 @@ class OMGGenomicsDDRADMetadata(OMGBaseMetadata):
             re.compile(r"^.*DataValidation\.pdf.*"),
         ],
     }
+    tag_names = ["genomics-ddrad"]
+    notes_mapping = [
+        {"key": "genus", "separator": " "},
+        {"key": "species", "separator": "\n"},
+        {"key": "additional_notes"},
+    ]
 
     def __init__(
         self, logger, metadata_path, contextual_metadata=None, metadata_info=None
@@ -1708,11 +1727,8 @@ class OMGGenomicsDDRADMetadata(OMGBaseMetadata):
                 )
                 obj.update(common_values(context_objs))
                 obj.update(merge_values("scientific_name", " , ", context_objs))
-                obj.update(
-                    {
-                        "notes": self.generate_notes_field(obj),
-                    }
-                )
+                additional_notes = "ddRAD dataset not demultiplexed"
+                self.build_notes_into_object(obj, {"additional_notes": additional_notes})
                 ingest_utils.permissions_organization_member_after_embargo(
                     self._logger,
                     obj,
@@ -1722,8 +1738,7 @@ class OMGGenomicsDDRADMetadata(OMGBaseMetadata):
                 )
                 ingest_utils.apply_access_control(self._logger, self, obj)
                 ingest_utils.add_spatial_extra(self._logger, obj)
-                tag_names = ["genomics-ddrad"]
-                obj["tags"] = [{"name": t} for t in tag_names]
+                obj["tags"] = [{"name": t} for t in self.tag_names]
                 self.track_xlsx_resource(obj, fname)
                 packages.append(obj)
         return self.apply_location_generalisation(packages)
@@ -1816,6 +1831,7 @@ class OMGGenomicsPacbioMetadata(OMGBaseMetadata):
             re.compile(r"^.*TestFiles\.exe.*"),
         ],
     }
+    tag_names = ["pacbio", "genomics", "raw"]
 
     def __init__(
         self, logger, metadata_path, contextual_metadata=None, metadata_info=None
@@ -1873,7 +1889,6 @@ class OMGGenomicsPacbioMetadata(OMGBaseMetadata):
                     "name": name,
                     "id": name,
                     "title": "OMG Pacbio Raw {} {}".format(library_id, obj["run_date"]),
-                    "notes": self.generate_notes_field(context),
                     "date_of_transfer": ingest_utils.get_date_isoformat(
                         self._logger, track_get("date_of_transfer")
                     ),
@@ -1897,6 +1912,7 @@ class OMGGenomicsPacbioMetadata(OMGBaseMetadata):
                 }
             )
             obj.update(context)
+            self.build_notes_into_object(obj)
             ingest_utils.permissions_organization_member_after_embargo(
                 self._logger,
                 obj,
@@ -1907,8 +1923,7 @@ class OMGGenomicsPacbioMetadata(OMGBaseMetadata):
             ingest_utils.apply_access_control(self._logger, self, obj)
 
             ingest_utils.add_spatial_extra(self._logger, obj)
-            tag_names = ["pacbio", "genomics", "raw"]
-            obj["tags"] = [{"name": t} for t in tag_names]
+            obj["tags"] = [{"name": t} for t in self.tag_names]
             self.track_xlsx_resource(obj, fname)
             packages.append(obj)
 
@@ -2012,6 +2027,16 @@ class OMGONTPromethionMetadata(OMGBaseMetadata):
             re.compile(r"^.*TestFiles\.exe.*"),
         ],
     }
+    tag_names = ["ont-promethion"]
+    notes_mapping = [
+        {"key": "bpa_library_id", "separator": "\n"},
+        {"key": "genus", "separator": " "},
+        {"key": "species", "separator": ", "},
+        {"key": "voucher_or_tissue_number", "separator": " "},
+        {"key": "country", "separator": " "},
+        {"key": "state_or_region"},
+    ]
+
 
     def __init__(
         self, logger, metadata_path, contextual_metadata=None, metadata_info=None
@@ -2055,7 +2080,6 @@ class OMGONTPromethionMetadata(OMGBaseMetadata):
                         "title": "OMG ONT PromethION {} {}".format(
                             obj["bpa_sample_id"], row.flowcell_id
                         ),
-                        "notes": self.generate_notes_field_with_id(obj, bpa_library_id),
                         "date_of_transfer": ingest_utils.get_date_isoformat(
                             self._logger, track_get("date_of_transfer")
                         ),
@@ -2080,6 +2104,7 @@ class OMGONTPromethionMetadata(OMGBaseMetadata):
                         "license_id": apply_cc_by_license(),
                     }
                 )
+                self.build_notes_into_object(obj)
                 ingest_utils.permissions_organization_member_after_embargo(
                     self._logger,
                     obj,
@@ -2088,8 +2113,7 @@ class OMGONTPromethionMetadata(OMGBaseMetadata):
                     CONSORTIUM_ORG_NAME,
                 )
                 ingest_utils.apply_access_control(self._logger, self, obj)
-                tag_names = ["ont-promethion"]
-                obj["tags"] = [{"name": t} for t in tag_names]
+                obj["tags"] = [{"name": t} for t in self.tag_names]
                 self.track_xlsx_resource(obj, fname)
                 packages.append(obj)
         return self.apply_location_generalisation(packages)
@@ -2179,6 +2203,7 @@ class OMGTranscriptomicsNextseq(OMGBaseMetadata):
         "match": [files.transcriptomics_nextseq_fastq_filename_re],
         "skip": None,
     }
+    tag_names = ["transcriptomics-nextseq"]
 
     def __init__(
         self, logger, metadata_path, contextual_metadata=None, metadata_info=None
@@ -2240,7 +2265,6 @@ class OMGTranscriptomicsNextseq(OMGBaseMetadata):
                         ),
                         "data_type": track_get("data_type"),
                         "description": track_get("description"),
-                        "notes": self.generate_notes_field(obj),
                         "folder_name": track_get("folder_name"),
                         "sample_submission_date": ingest_utils.get_date_isoformat(
                             self._logger, track_get("date_of_transfer")
@@ -2258,6 +2282,7 @@ class OMGTranscriptomicsNextseq(OMGBaseMetadata):
                         "license_id": apply_cc_by_license(),
                     }
                 )
+                self.build_notes_into_object(obj)
                 ingest_utils.permissions_organization_member_after_embargo(
                     self._logger,
                     obj,
@@ -2267,8 +2292,7 @@ class OMGTranscriptomicsNextseq(OMGBaseMetadata):
                 )
                 ingest_utils.apply_access_control(self._logger, self, obj)
                 ingest_utils.add_spatial_extra(self._logger, obj)
-                tag_names = ["transcriptomics-nextseq"]
-                obj["tags"] = [{"name": t} for t in tag_names]
+                obj["tags"] = [{"name": t} for t in self.tag_names]
                 self.track_xlsx_resource(obj, fname)
                 packages.append(obj)
         return self.apply_location_generalisation(packages)
@@ -2281,12 +2305,13 @@ class OMGTranscriptomicsNextseq(OMGBaseMetadata):
         return
 
     def _build_resource_linkage(self, xlsx_info, resource, file_info):
-         return ((
+        return ((
                         ingest_utils.extract_ands_id(
                             self._logger, resource["bpa_library_id"]
                         ),
                         resource["flowcell_id"],
                     ),)
+
 
 class OMGGenomicsPacBioGenomeAssemblyMetadata(SecondaryMetadata):
     organization = "bpa-omg"
@@ -2362,7 +2387,15 @@ class OMGGenomicsPacBioGenomeAssemblyMetadata(SecondaryMetadata):
             re.compile(r"^.*TestFiles\.exe.*"),
         ],
     }
+    tag_names = [
+        "pacbio",
+        "genomics",
+        "genome assembly",
+    ]
     raw = {"match": [files.pacbio_secondary_raw_filename_re], "skip": []}
+    notes_mapping = [
+        {"key": "name"},
+    ]
 
     def __init__(
         self, logger, metadata_path, contextual_metadata=[], metadata_info=None
@@ -2419,7 +2452,6 @@ class OMGGenomicsPacBioGenomeAssemblyMetadata(SecondaryMetadata):
                             obj["bpa_library_id"],
                             obj["assembly_method_version_or_date"],
                         ),
-                        "notes": name,
                         "date_of_transfer": ingest_utils.get_date_isoformat(
                             self._logger, track_get("date_of_transfer")
                         ),
@@ -2437,6 +2469,7 @@ class OMGGenomicsPacBioGenomeAssemblyMetadata(SecondaryMetadata):
                         "license_id": apply_cc_by_license(),
                     }
                 )
+                self.build_notes_into_object(obj)
                 ingest_utils.permissions_organization_member_after_embargo(
                     self._logger,
                     obj,
@@ -2448,16 +2481,7 @@ class OMGGenomicsPacBioGenomeAssemblyMetadata(SecondaryMetadata):
                 self._logger.info(
                     "No context metadata for this data type, so no object merge....Continuing"
                 )
-                tag_names = [
-                    "pacbio",
-                    "genomics",
-                    "genome assembly",
-                ]
-                for f in ["genus", "species"]:
-                    next_to_clean = obj.get(f, "").strip()
-                    if next_to_clean:
-                        tag_names.append(clean_tag_name(next_to_clean))
-                obj["tags"] = [{"name": "{:.100}".format(t)} for t in tag_names]
+                obj["tags"] = [{"name": "{:.100}".format(t)} for t in self.tag_names]
                 self.track_xlsx_resource(obj, fname)
                 packages.append(obj)
 
@@ -2554,6 +2578,14 @@ class OMGAnalysedDataMetadata(OMGBaseMetadata):
             re.compile(r"^.*\.xlsx$"),
         ],
     }
+    tag_names = ["omg-analysed-data"]
+    notes_mapping = [
+        {"key": "common_name", "separator": " "},
+        {"key": "left-paren", "separator": ""},
+        {"key": "scientific_name", "separator": ""},
+        {"key": "right-paren", "separator": ", "},
+        {"key": "dataset_context"},
+    ]
 
     def __init__(
         self, logger, metadata_path, contextual_metadata=None, metadata_info=None
@@ -2627,11 +2659,6 @@ class OMGAnalysedDataMetadata(OMGBaseMetadata):
                         "title": "OMG Analysed Data {}".format(
                             obj["bioplatforms_secondarydata_id"]
                         ),
-                        "notes": "{} ({}), {}".format(
-                            obj["common_name"],
-                            obj["scientific_name"],
-                            obj["dataset_context"],
-                        ),
                         "date_of_transfer": ingest_utils.get_date_isoformat(
                             self._logger, track_get("date_of_transfer")
                         ),
@@ -2656,6 +2683,11 @@ class OMGAnalysedDataMetadata(OMGBaseMetadata):
                         "license_id": apply_cc_by_license(),
                     }
                 )
+
+                self.build_notes_into_object(obj, {"left-paren": "(",
+                                                   "right-paren": ")",
+                                                   }
+                                             )
                 ingest_utils.permissions_organization_member_after_embargo(
                     self._logger,
                     obj,
@@ -2664,11 +2696,9 @@ class OMGAnalysedDataMetadata(OMGBaseMetadata):
                     CONSORTIUM_ORG_NAME,
                 )
                 ingest_utils.apply_access_control(self._logger, self, obj)
-                tag_names = ["omg-analysed-data"]
-                obj["tags"] = [{"name": t} for t in tag_names]
+                obj["tags"] = [{"name": t} for t in self.tag_names]
                 packages.append(obj)
         return self.apply_location_generalisation(packages)
-
 
     def _get_resources(self):
         return self._get_common_resources()
@@ -2786,6 +2816,11 @@ class OMGGenomicsDArTMetadata(OMGBaseMetadata):
             re.compile(r"^.*DataValidation\.pdf.*"),
         ],
     }
+    tag_names = ["genomics-dart"]
+    notes_mapping = [
+        {"key": "organism_scientific_name", "separator": "\n"},
+        {"key": "additional_notes"},
+    ]
 
     def __init__(
         self, logger, metadata_path, contextual_metadata=None, metadata_info=None
@@ -2796,15 +2831,6 @@ class OMGGenomicsDArTMetadata(OMGBaseMetadata):
         self.metadata_info = metadata_info
         self.track_meta = OMGTrackMetadata(logger)
         self.flow_lookup = {}
-
-    def generate_notes_field(self, row_object):
-        notes = "%s\nDArT dataset not demultiplexed" % (
-            row_object.get(
-                "scientific_name",
-                "%s %s" % (row_object.get("genus", ""), row_object.get("species", "")),
-            ),
-        )
-        return notes
 
     def _get_packages(self):
         self._logger.info("Ingesting OMG metadata from {0}".format(self.path))
@@ -2892,11 +2918,12 @@ class OMGGenomicsDArTMetadata(OMGBaseMetadata):
                     "license_id": apply_cc_by_license(),
                 }
             )
-            obj.update(
-                {
-                    "notes": self.generate_notes_field(obj),
-                }
-            )
+            organism_scientific_name = obj.get(
+                "scientific_name",
+                "%s %s" % (obj.get("genus", ""), obj.get("species", "")))
+            additional_notes = "DArT dataset not demultiplexed"
+            self.build_notes_into_object(obj, {"organism_scientific_name": organism_scientific_name,
+                                               "additional_notes": additional_notes})
             ingest_utils.permissions_organization_member_after_embargo(
                 self._logger,
                 obj,
@@ -2915,8 +2942,7 @@ class OMGGenomicsDArTMetadata(OMGBaseMetadata):
                 )
             ingest_utils.apply_access_control(self._logger, self, obj)
             ingest_utils.add_spatial_extra(self._logger, obj)
-            tag_names = ["genomics-dart"]
-            obj["tags"] = [{"name": t} for t in tag_names]
+            obj["tags"] = [{"name": t} for t in self.tag_names]
             self.track_xlsx_resource(obj, fname)
             for sample_metadata_file in glob(
                 self.path

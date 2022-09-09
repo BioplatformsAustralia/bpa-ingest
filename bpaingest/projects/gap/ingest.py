@@ -24,15 +24,18 @@ from .tracking import GAPTrackMetadata
 
 common_context = [GAPLibraryContextual, GAPDatasetControlContextual]
 
-class GAPBaseMetadata(BaseMetadata):
-    def _build_title_into_object(self, obj):
 
-        obj["title"] = "GAP {}, {}, {}, {}".format(
-            self.description,
-            obj.get("project_aim", ""),
-            obj.get("sample_id", "").split("/")[-1],
-            obj.get("bait_set_name", ""),
-        )
+class GAPBaseMetadata(BaseMetadata):
+    organization = "bpa-plants"
+    initiative = "GAP"
+
+    title_mapping = [
+        {"key": "initiative", "separator": " "},
+        {"key": "title_description", "separator": ", "},
+        {"key": "project_aim", "separator": ", "},
+        {"key": "split_sample_id", "separator": ", "},
+        {"key": "bait_set_name", "separator": ""},
+    ]
 
     notes_mapping = [
         {"key": "scientific_name", "separator": " "},
@@ -41,9 +44,13 @@ class GAPBaseMetadata(BaseMetadata):
         {"key": "sample_submitter_name", "separator": ""},
     ]
 
+    def _build_title_into_object(self, obj):
+        self.build_title_into_object(obj, {"initiative": self.initiative,
+                                            "title_description": self.description,
+                                            "split_sample_id": obj.get("sample_id", "").split("/")[-1], })
+
 
 class GAPIlluminaShortreadMetadata(GAPBaseMetadata):
-    organization = "bpa-plants"
     ckan_data_type = "gap-illumina-shortread"
     technology = "illumina-shortread"
     sequence_data_type = "illumina-shortread"
@@ -181,7 +188,6 @@ class GAPHiCMetadata(GAPIlluminaShortreadMetadata):
 
 
 class GAPONTMinionMetadata(GAPBaseMetadata):
-    organization = "bpa-plants"
     ckan_data_type = "gap-ont-minion"
     technology = "ont-minion"
     sequence_data_type = "ont-minion"
@@ -303,7 +309,6 @@ class GAPONTMinionMetadata(GAPBaseMetadata):
 
 
 class GAPONTPromethionMetadata(GAPBaseMetadata):
-    organization = "bpa-plants"
     ckan_data_type = "gap-ont-promethion"
     technology = "ont-promethion"
     sequence_data_type = "ont-promethion"
@@ -425,7 +430,6 @@ class GAPONTPromethionMetadata(GAPBaseMetadata):
 
 
 class GAPGenomics10XMetadata(GAPBaseMetadata):
-    organization = "bpa-plants"
     ckan_data_type = "gap-genomics-10x"
     technology = "genomics-10x"
     sequence_data_type = "illumina-10x"
@@ -541,7 +545,6 @@ class GAPGenomicsDDRADMetadata(GAPBaseMetadata):
     Issue: bpa-archive-ops#699
     """
 
-    organization = "bpa-plants"
     ckan_data_type = "gap-genomics-ddrad"
     omics = "genomics"
     technology = "ddrad"
@@ -654,13 +657,30 @@ class GAPGenomicsDDRADMetadata(GAPBaseMetadata):
         {"key": "sample_submitter_name", "separator": ""},
     ]
 
+    title_mapping = [
+        {"key": "initiative", "separator": " "},
+        {"key": "title_description", "separator": ", "},
+        {"key": "project_aim", "separator": ", "},
+        {"key": "dataset_label", "separator": " "},
+        {"key": "split_dataset_id", "separator": ""},
+    ]
+
+    def _build_title_into_object(self, obj):
+        self.build_title_into_object(obj, {"initiative": self.initiative,
+                                            "title_description": self.description,
+                                            "dataset_label": "Dataset ID",
+                                            "split_dataset_id": obj.get("dataset_id", "").split("/")[-1], })
+
+
+
+    """
     def build_title_into_object(self, obj):
         obj["title"] = "GAP {}, {}, Dataset ID {}".format(
             self.description,
             obj.get("project_aim", ""),
             obj.get("dataset_id", "").split("/")[-1],
         )
-
+    """
     def __init__(
         self, logger, metadata_path, contextual_metadata=None, metadata_info=None
     ):
@@ -746,7 +766,7 @@ class GAPGenomicsDDRADMetadata(GAPBaseMetadata):
                 )
                 obj.update(common_values(context_objs))
                 obj.update(merge_values("scientific_name", " , ", context_objs))
-                self.build_title_into_object(obj)
+                self._build_title_into_object(obj)
                 self.build_notes_into_object(obj)
                 ingest_utils.permissions_organization_member(self._logger, obj)
                 ingest_utils.apply_access_control(self._logger, self, obj)
@@ -774,7 +794,6 @@ class GAPGenomicsDDRADMetadata(GAPBaseMetadata):
 
 
 class GAPPacbioHifiMetadata(GAPBaseMetadata):
-    organization = "bpa-plants"
     ckan_data_type = "gap-pacbio-hifi"
     technology = "pacbio-hifi"
     sequence_data_type = "pacbio-hifi"

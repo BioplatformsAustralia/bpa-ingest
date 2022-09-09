@@ -20,17 +20,21 @@ class BaseMetadata:
     resource_info = {}
 
     def build_notes_into_object(self, obj, additional={}):
-        obj.update({"notes": self.build_notes_without_blanks(obj, additional)})
+        # obj.update({"notes": self.build_notes_without_blanks(obj, additional)})
+        obj.update({"notes": self.build_string_from_map_without_blanks(self.notes_mapping, obj, additional)})
 
-    def build_notes_without_blanks(self, obj, additional={}):
-        notes = ""
+    def build_string_from_map_without_blanks(self, field_map, obj, additional={}):
+        result = ""
         # ensure blank fields are not used
-        for next_note in self.notes_mapping:
-            next_value = obj.get(next_note["key"], additional.get(next_note["key"], ""))
+        for next_field in field_map:
+            next_value = obj.get(next_field["key"], additional.get(next_field["key"], ""))
             if next_value:
-                notes += next_value + next_note.get("separator", "")
-        # remove any additional trailing blanks before returning
-        return notes.rstrip()
+                result += next_value + next_field.get("separator", "")
+        # remove any additional trailing blanks and commas before returning
+        return result.rstrip(', ')
+
+    def build_title_into_object(self, obj, additional={}):
+        obj.update({"title": self.build_string_from_map_without_blanks(self.title_mapping, obj, additional)})
 
     def parse_spreadsheet(self, fname, metadata_info):
         kwargs = self.spreadsheet["options"]

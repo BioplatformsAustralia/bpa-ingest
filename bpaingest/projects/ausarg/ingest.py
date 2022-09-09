@@ -18,7 +18,6 @@ from ...util import (
     sample_id_to_ckan_name,
     common_values,
     merge_values,
-    clean_tag_name,
     apply_cc_by_license,
 )
 
@@ -26,6 +25,17 @@ common_context = [AusargLibraryContextual, AusargDatasetControlContextual]
 
 
 class AusargBaseMetadata(BaseMetadata):
+    initiative = "AusARG"
+    organization = "ausarg"
+
+    notes_mapping = [
+        {"key": "genus", "separator": " "},
+        {"key": "species", "separator": ", "},
+        {"key": "voucher_or_tissue_number", "separator": " "},
+        {"key": "country", "separator": " "},
+        {"key": "state_or_region"},
+    ]
+
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.generaliser = SensitiveSpeciesWrapper(
@@ -36,17 +46,14 @@ class AusargBaseMetadata(BaseMetadata):
     def apply_location_generalisation(self, packages):
         return self.generaliser.apply_location_generalisation(packages)
 
-    notes_mapping = [
-        {"key": "genus", "separator": " "},
-        {"key": "species", "separator": ", "},
-        {"key": "voucher_or_tissue_number", "separator": " "},
-        {"key": "country", "separator": " "},
-        {"key": "state_or_region"},
-    ]
+    def _build_title_into_object(self, obj):
+        self.build_title_into_object(obj, {"initiative": self.initiative,
+                                           "title_description": self.description}
+                                     )
+
 
 
 class AusargIlluminaFastqMetadata(AusargBaseMetadata):
-    organization = "ausarg"
     ckan_data_type = "ausarg-illumina-fastq"
     technology = "illumina-fastq"
     sequence_data_type = "illumina-shortread"
@@ -230,9 +237,9 @@ class AusargIlluminaFastqMetadata(AusargBaseMetadata):
                         "sequence_data_type": self.sequence_data_type,
                         "license_id": apply_cc_by_license(),
                         "data_generated": True,
-                        "notes": self.build_notes_without_blanks(obj),
-                    }
+                     }
                 )
+                self.build_notes_into_object(obj)
                 ingest_utils.permissions_organization_member(self._logger, obj)
                 ingest_utils.apply_access_control(self._logger, self, obj)
                 obj["tags"] = [{"name": "{:.100}".format(t)} for t in self.tag_names]
@@ -255,7 +262,6 @@ class AusargIlluminaFastqMetadata(AusargBaseMetadata):
 
 
 class AusargONTPromethionMetadata(AusargBaseMetadata):
-    organization = "ausarg"
     ckan_data_type = "ausarg-ont-promethion"
     technology = "ont-promethion"
     sequence_data_type = "ont-promethion"
@@ -376,6 +382,13 @@ class AusargONTPromethionMetadata(AusargBaseMetadata):
         {"key": "country", "separator": " "},
         {"key": "state_or_region"},
     ]
+    title_mapping = [
+        {"key": "initiative", "separator": " "},
+        {"key": "title_description", "separator": " "},
+        {"key": "sample_id", "separator": " "},
+        {"key": "flowcell_id", "separator": ""},
+    ]
+    description = "ONT PromethION"
     tag_names = ["ont-promethion"]
 
     def __init__(
@@ -412,10 +425,6 @@ class AusargONTPromethionMetadata(AusargBaseMetadata):
                     obj.update(contextual_source.get(obj["sample_id"]))
                 obj.update(
                     {
-                        "title": "AusARG ONT PromethION {} {}".format(
-                            obj["sample_id"], row.flowcell_id
-                        ),
-                        "notes": self.build_notes_without_blanks(obj),
                         "date_of_transfer": ingest_utils.get_date_isoformat(
                             self._logger, track_get("date_of_transfer")
                         ),
@@ -440,6 +449,8 @@ class AusargONTPromethionMetadata(AusargBaseMetadata):
                         "license_id": apply_cc_by_license(),
                     }
                 )
+                self._build_title_into_object(obj)
+                self.build_notes_into_object(obj)
                 ingest_utils.permissions_organization_member(self._logger, obj)
                 ingest_utils.apply_access_control(self._logger, self, obj)
                 obj["tags"] = [{"name": t} for t in self.tag_names]
@@ -463,7 +474,6 @@ class AusargONTPromethionMetadata(AusargBaseMetadata):
 
 
 class AusargPacbioHifiMetadata(AusargBaseMetadata):
-    organization = "ausarg"
     ckan_data_type = "ausarg-pacbio-hifi"
     technology = "pacbio-hifi"
     sequence_data_type = "pacbio-hifi"
@@ -575,6 +585,12 @@ class AusargPacbioHifiMetadata(AusargBaseMetadata):
             re.compile(r"^.*TestFiles\.exe.*"),
         ],
     }
+    title_mapping = [
+        {"key": "initiative", "separator": " "},
+        {"key": "title_description", "separator": " "},
+        {"key": "library_id", "separator": ""},
+    ]
+    description = "Pacbio HiFi"
     tag_names = ["pacbio-hifi"]
 
     def __init__(
@@ -641,8 +657,6 @@ class AusargPacbioHifiMetadata(AusargBaseMetadata):
                     {
                         "name": name,
                         "id": name,
-                        "title": "AusARG Pacbio HiFi {}".format(row.library_id),
-                        "notes": self.build_notes_without_blanks(context),
                         "date_of_transfer": ingest_utils.get_date_isoformat(
                             self._logger, track_get("date_of_transfer")
                         ),
@@ -666,6 +680,8 @@ class AusargPacbioHifiMetadata(AusargBaseMetadata):
                     }
                 )
                 obj.update(context)
+                self._build_title_into_object(obj)
+                self.build_notes_into_object(obj)
                 ingest_utils.permissions_organization_member(self._logger, obj)
                 ingest_utils.apply_access_control(self._logger, self, obj)
 
@@ -706,7 +722,6 @@ class AusargPacbioHifiMetadata(AusargBaseMetadata):
 
 
 class AusargExonCaptureMetadata(AusargBaseMetadata):
-    organization = "ausarg"
     ckan_data_type = "ausarg-exon-capture"
     technology = "exoncapture"
     sequence_data_type = "illumina-exoncapture"
@@ -811,6 +826,14 @@ class AusargExonCaptureMetadata(AusargBaseMetadata):
             re.compile(r"^.*TestFiles\.exe.*"),
         ],
     }
+    title_mapping = [
+        {"key": "initiative", "separator": " "},
+        {"key": "title_description", "separator": " "},
+        {"key": "library_id", "separator": " "},
+        {"key": "flowcell_id", "separator": " "},
+        {"key": "p7_library_index_sequence", "separator": ""},
+    ]
+    description = "Exon Capture Raw"
     tag_names = ["exon-capture", "raw"]
 
     def __init__(
@@ -874,23 +897,10 @@ class AusargExonCaptureMetadata(AusargBaseMetadata):
                 for contextual_source in self.contextual_metadata:
                     context.update(contextual_source.get(row.sample_id))
 
-                def cleanstring(s):
-                    if s is not None:
-                        return s
-                    else:
-                        return ""
-
-                index_sequence = cleanstring(obj["p7_library_index_sequence"])
-
                 obj.update(
                     {
                         "name": name,
                         "id": name,
-                        "title": (
-                            "AusARG Exon Capture Raw %s %s %s"
-                            % (library_id, row.flowcell_id, index_sequence)
-                        ).rstrip(),
-                        "notes": self.build_notes_without_blanks(context),
                         "date_of_transfer": ingest_utils.get_date_isoformat(
                             self._logger, track_get("date_of_transfer")
                         ),
@@ -914,6 +924,8 @@ class AusargExonCaptureMetadata(AusargBaseMetadata):
                     }
                 )
                 obj.update(context)
+                self._build_title_into_object(obj)
+                self.build_notes_into_object(obj)
                 ingest_utils.permissions_organization_member(self._logger, obj)
                 ingest_utils.apply_access_control(self._logger, self, obj)
 
@@ -946,7 +958,6 @@ class AusargExonCaptureMetadata(AusargBaseMetadata):
 
 
 class AusargHiCMetadata(AusargBaseMetadata):
-    organization = "ausarg"
     ckan_data_type = "ausarg-hi-c"
     description = "Hi-C"
     technology = "hi-c"
@@ -1053,12 +1064,18 @@ class AusargHiCMetadata(AusargBaseMetadata):
     }
 
     notes_mapping = [
-        {"key": "library_id", "separator": "\n"},
+        {"key": "complete_library_id", "separator": "\n"},
         {"key": "genus", "separator": " "},
         {"key": "species", "separator": ", "},
         {"key": "voucher_or_tissue_number", "separator": " "},
         {"key": "country", "separator": " "},
         {"key": "state_or_region"},
+    ]
+    title_mapping = [
+        {"key": "initiative", "separator": " "},
+        {"key": "title_description", "separator": " "},
+        {"key": "sample_id", "separator": " "},
+        {"key": "flowcell_id", "separator": ""},
     ]
     tag_names = ["genomics"]
 
@@ -1070,6 +1087,12 @@ class AusargHiCMetadata(AusargBaseMetadata):
         self.contextual_metadata = contextual_metadata
         self.metadata_info = metadata_info
         self.google_track_meta = AusArgGoogleTrackMetadata(logger)
+
+    def _build_notes_into_object(self, obj, library_id):
+        self.build_notes_into_object(obj, {"initiative": self.initiative,
+                                           "title_description": self.description,
+                                           "complete_library_id": library_id, }
+                                     )
 
     def _get_packages(self):
         self._logger.info("Ingesting AusARG metadata from {0}".format(self.path))
@@ -1083,12 +1106,10 @@ class AusargHiCMetadata(AusargBaseMetadata):
             for row in rows:
                 sample_id = row.sample_id
                 library_id = row.library_id
-                dataset_id = row.dataset_id
                 obj = row._asdict()
                 if track_meta is not None:
                     obj.update(track_meta._asdict())
                 raw_library_id = library_id.split("/")[-1]
-                raw_dataset_id = dataset_id.split("/")[-1]
                 name = sample_id_to_ckan_name(
                     raw_library_id, self.ckan_data_type, row.flowcell_id
                 )
@@ -1096,9 +1117,6 @@ class AusargHiCMetadata(AusargBaseMetadata):
                     obj.update(contextual_source.get(sample_id))
                 obj.update(
                     {
-                        "title": "AusARG Hi-C {} {}".format(
-                            obj["sample_id"], row.flowcell_id
-                        ),
                         "sample_id": sample_id,
                         "name": name,
                         "id": name,
@@ -1108,9 +1126,10 @@ class AusargHiCMetadata(AusargBaseMetadata):
                         "flowcell_id": row.flowcell_id,
                         "data_generated": True,
                         "library_id": raw_library_id,
-                        "notes": self.build_notes_without_blanks(obj),
                     }
                 )
+                self._build_title_into_object(obj)
+                self._build_notes_into_object(obj, library_id)
                 ingest_utils.permissions_organization_member(self._logger, obj)
                 ingest_utils.apply_access_control(self._logger, self, obj)
                 obj["tags"] = [{"name": "{:.100}".format(t)} for t in self.tag_names]
@@ -1139,7 +1158,6 @@ class AusargGenomicsDArTMetadata(AusargBaseMetadata):
     will use this ingest class.
     """
 
-    organization = "ausarg"
     ckan_data_type = "ausarg-genomics-dart"
     omics = "genomics"
     technology = "dart"
@@ -1260,6 +1278,12 @@ class AusargGenomicsDArTMetadata(AusargBaseMetadata):
         {"key": "organism_scientific_name", "separator": "\n"},
         {"key": "additional_notes"},
     ]
+    title_mapping = [
+        {"key": "initiative", "separator": " "},
+        {"key": "title_description", "separator": " "},
+        {"key": "dataset_id", "separator": ""},
+    ]
+    description = "DArT"
     tag_names = ["genomics-dart"]
 
     def __init__(
@@ -1339,7 +1363,6 @@ class AusargGenomicsDArTMetadata(AusargBaseMetadata):
                     "name": name,
                     "id": name,
                     # "bpa_dataset_id": bpa_dataset_id,
-                    "title": "AusARG DArT %s" % (obj["dataset_id"],),
                     "date_of_transfer": ingest_utils.get_date_isoformat(
                         self._logger, track_get("date_of_transfer")
                     ),
@@ -1366,12 +1389,9 @@ class AusargGenomicsDArTMetadata(AusargBaseMetadata):
                 "scientific_name",
                 "%s %s" % (obj.get("genus", ""), obj.get("species", "")))
             additional_notes = "DArT dataset not demultiplexed"
-            obj.update(
-                {
-                    "notes": self.build_notes_without_blanks(obj, {"organism_scientific_name": organism_scientific_name,
-                                                                   "additional_notes": additional_notes})
-                }
-            )
+            self._build_title_into_object(obj)
+            self.build_notes_into_object(obj, {"organism_scientific_name": organism_scientific_name,
+                                               "additional_notes": additional_notes})
             ingest_utils.permissions_organization_member(self._logger, obj)
             attach_message = (
                 "Attached metadata spreadsheets were produced when data was generated."

@@ -26,6 +26,9 @@ common_context = [TSILibraryContextual, TSIDatasetControlContextual]
 
 
 class TSIBaseMetadata(BaseMetadata):
+    initiative = "TSI"
+    organization = "threatened-species"
+
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
 
@@ -39,6 +42,17 @@ class TSIBaseMetadata(BaseMetadata):
             package.update({"decimal_latitude_public": package.get("latitude")})
         return packages
 
+    def _build_title_into_object(self, obj):
+        self.build_title_into_object(obj, {"initiative": self.initiative,
+                                           "title_description": self.description, }
+                                     )
+
+    def _build_title_into_object(self, obj, field_value):
+        self.build_title_into_object(obj, {"initiative": self.initiative,
+                                           "title_description": self.description,
+                                           "field_value": field_value}
+                                     )
+
     notes_mapping = [
         {"key": "genus", "separator": " "},
         {"key": "species", "separator": ", "},
@@ -46,10 +60,15 @@ class TSIBaseMetadata(BaseMetadata):
         {"key": "country", "separator": " "},
         {"key": "state_or_region"},
     ]
+    title_mapping = [
+        {"key": "initiative", "separator": " "},
+        {"key": "title_description", "separator": " "},
+        {"key": "field_value", "separator": " "},
+        {"key": "flowcell_id", "separator": ""},
+    ]
 
 
 class TSIIlluminaShortreadMetadata(TSIBaseMetadata):
-    organization = "threatened-species"
     ckan_data_type = "tsi-illumina-shortread"
     technology = "illumina-shortread"
     sequence_data_type = "illumina-shortread"
@@ -142,8 +161,8 @@ class TSIIlluminaShortreadMetadata(TSIBaseMetadata):
             re.compile(r"^.*checksums\.(exf|md5)$"),
         ],
     }
-    description = "Illumina short read"
-    tag_names = ["genomics", description.replace(" ", "-").lower()]
+    description = "Illumina Shortread"
+    tag_names = ["genomics", "illumina-short-read"]
 
     def __init__(
             self, logger, metadata_path, contextual_metadata=None, metadata_info=None
@@ -172,7 +191,6 @@ class TSIIlluminaShortreadMetadata(TSIBaseMetadata):
                 if track_meta is not None:
                     obj.update(track_meta._asdict())
                 raw_library_id = library_id.split("/")[-1]
-                raw_dataset_id = dataset_id.split("/")[-1]
                 name = sample_id_to_ckan_name(
                     raw_library_id, self.ckan_data_type, "{}".format(row.flowcell_id),
                 )
@@ -189,10 +207,9 @@ class TSIIlluminaShortreadMetadata(TSIBaseMetadata):
                         "flow_cell_id": flow_cell_id,
                         "data_generated": True,
                         "library_id": raw_library_id,
-                        "title": "TSI Illumina Shortread %s %s"
-                                 % (library_id, flow_cell_id),
                     }
                 )
+                self._build_title_into_object(obj, library_id)
                 self.build_notes_into_object(obj)
                 ingest_utils.permissions_organization_member(self._logger, obj)
                 ingest_utils.apply_access_control(self._logger, self, obj)
@@ -217,7 +234,6 @@ class TSIIlluminaShortreadMetadata(TSIBaseMetadata):
 
 
 class TSIIlluminaFastqMetadata(TSIBaseMetadata):
-    organization = "threatened-species"
     ckan_data_type = "tsi-illumina-fastq"
     technology = "illumina-fastq"
     sequence_data_type = "illumina-shortread"
@@ -307,6 +323,13 @@ class TSIIlluminaFastqMetadata(TSIBaseMetadata):
             re.compile(r"^.*TestFiles\.exe.*"),
         ],
     }
+    title_mapping = [
+        {"key": "initiative", "separator": " "},
+        {"key": "title_description", "separator": " "},
+        {"key": "field_value", "separator": " "},
+        {"key": "flowcell_id", "separator": ""},
+    ]
+    description = "Illumina FastQ"
     tag_names = ["illumina-fastq"]
 
     def __init__(
@@ -369,10 +392,9 @@ class TSIIlluminaFastqMetadata(TSIBaseMetadata):
                         "sequence_data_type": self.sequence_data_type,
                         "license_id": apply_cc_by_license(),
                         "data_generated": True,
-                        "title": "TSI Illumina FastQ %s %s"
-                                 % (row.library_id, row.flowcell_id),
                     }
                 )
+                self._build_title_into_object(obj, row.library_id)
                 self.build_notes_into_object(obj)
                 ingest_utils.permissions_organization_member(self._logger, obj)
                 ingest_utils.apply_access_control(self._logger, self, obj)
@@ -397,7 +419,6 @@ class TSIIlluminaFastqMetadata(TSIBaseMetadata):
 
 
 class TSIPacbioHifiMetadata(TSIBaseMetadata):
-    organization = "threatened-species"
     ckan_data_type = "tsi-pacbio-hifi"
     technology = "pacbio-hifi"
     sequence_data_type = "pacbio-hifi"
@@ -487,6 +508,13 @@ class TSIPacbioHifiMetadata(TSIBaseMetadata):
             re.compile(r"^.*TestFiles\.exe.*"),
         ],
     }
+    description = "Pacbio HiFi"
+    title_mapping = [
+        {"key": "initiative", "separator": " "},
+        {"key": "title_description", "separator": " "},
+        {"key": "field_value", "separator": " "},
+    ]
+
     tag_names = ["pacbio-hifi"]
 
     def __init__(
@@ -553,7 +581,6 @@ class TSIPacbioHifiMetadata(TSIBaseMetadata):
                     {
                         "name": name,
                         "id": name,
-                        "title": "TSI Pacbio HiFi {}".format(row.library_id),
                         "date_of_transfer": ingest_utils.get_date_isoformat(
                             self._logger, track_get("date_of_transfer")
                         ),
@@ -577,6 +604,7 @@ class TSIPacbioHifiMetadata(TSIBaseMetadata):
                     }
                 )
                 obj.update(context)
+                self._build_title_into_object(obj, row.library_id)
                 self.build_notes_into_object(obj)
                 ingest_utils.permissions_organization_member(self._logger, obj)
                 ingest_utils.apply_access_control(self._logger, self, obj)
@@ -586,6 +614,7 @@ class TSIPacbioHifiMetadata(TSIBaseMetadata):
                 packages.append(obj)
 
         return self.apply_location_generalisation(packages)
+
 
     def _get_resource_info(self, metadata_info):
         auth_user, auth_env_name = self.auth
@@ -621,7 +650,6 @@ class TSIGenomicsDDRADMetadata(TSIBaseMetadata):
     This data conforms to the BPA Genomics ddRAD workflow.
     """
 
-    organization = "threatened-species"
     ckan_data_type = "tsi-genomics-ddrad"
     omics = "genomics"
     technology = "ddrad"
@@ -726,6 +754,13 @@ class TSIGenomicsDDRADMetadata(TSIBaseMetadata):
         {"key": "scientific_name", "separator": "\n"},
         {"key": "additional_notes"},
     ]
+    title_mapping = [
+        {"key": "initiative", "separator": " "},
+        {"key": "title_description", "separator": " "},
+        {"key": "bpa_dataset_id", "separator": " "},
+        {"key": "field_value", "separator": " "},
+    ]
+    description = "Genomics ddRAD"
     tag_names = ["genomics-ddrad"]
 
     def __init__(
@@ -790,7 +825,6 @@ class TSIGenomicsDDRADMetadata(TSIBaseMetadata):
                         "name": name,
                         "id": name,
                         "bpa_dataset_id": bpa_dataset_id,
-                        "title": "TSI Genomics ddRAD %s %s" % (bpa_dataset_id, flow_id),
                         "date_of_transfer": ingest_utils.get_date_isoformat(
                             self._logger, track_get("date_of_transfer")
                         ),
@@ -816,6 +850,7 @@ class TSIGenomicsDDRADMetadata(TSIBaseMetadata):
                 obj.update(common_values(context_objs))
                 obj.update(merge_values("scientific_name", " , ", context_objs))
                 additional_notes = "ddRAD dataset not demultiplexed"
+                self._build_title_into_object(obj, flow_id)
                 self.build_notes_into_object(obj, {"additional_notes": additional_notes})
                 ingest_utils.permissions_organization_member(self._logger, obj)
                 ingest_utils.apply_access_control(self._logger, self, obj)
@@ -842,7 +877,6 @@ class TSIGenomicsDDRADMetadata(TSIBaseMetadata):
 
 
 class TSIGenomeAssemblyMetadata(TSIBaseMetadata):
-    organization = "threatened-species"
     ckan_data_type = "tsi-genome-assembly"
     technology = "genome-assembly"
     sequence_data_type = "genome-assembly"
@@ -904,6 +938,13 @@ class TSIGenomeAssemblyMetadata(TSIBaseMetadata):
         {"key": "scientific_name", "separator": ""},
         {"key": "right-paren"},
     ]
+    title_mapping = [
+        {"key": "initiative", "separator": " "},
+        {"key": "title_description", "separator": " "},
+        {"key": "bioplatforms_secondarydata_id", "separator": ""},
+    ]
+    description = "Genome Assembly"
+
     tag_names = ["tsi-genome-assembly"]
 
     def __init__(
@@ -972,9 +1013,6 @@ class TSIGenomeAssemblyMetadata(TSIBaseMetadata):
 
                 obj.update(
                     {
-                        "title": "TSI Genome Assembly {}".format(
-                            obj["bioplatforms_secondarydata_id"]
-                        ),
                         "date_of_transfer": ingest_utils.get_date_isoformat(
                             self._logger, track_get("date_of_transfer")
                         ),
@@ -999,6 +1037,7 @@ class TSIGenomeAssemblyMetadata(TSIBaseMetadata):
                         "license_id": apply_cc_by_license(),
                     }
                 )
+                self._build_title_into_object(obj, None)
                 self.build_notes_into_object(obj, {"left-paren": "(",
                                                    "right-paren": ")",
                                                    }
@@ -1024,7 +1063,6 @@ class TSIGenomeAssemblyMetadata(TSIBaseMetadata):
 
 
 class TSIHiCMetadata(TSIBaseMetadata):
-    organization = "threatened-species"
     ckan_data_type = "tsi-hi-c"
     description = "Hi-C"
     technology = "hi-c"
