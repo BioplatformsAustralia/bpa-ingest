@@ -37,6 +37,9 @@ CONSORTIUM_ORG_NAME = "omg-consortium-members"
 
 
 class OMGBaseMetadata(BaseMetadata):
+    initiative = "OMG"
+    organization = "bpa-omg"
+
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.generaliser = SensitiveSpeciesWrapper(self._logger)
@@ -44,6 +47,7 @@ class OMGBaseMetadata(BaseMetadata):
     # this method just for here for backwards compatibility
     def apply_location_generalisation(self, packages):
         return self.generaliser.apply_location_generalisation(packages)
+
     notes_mapping = [
         {"key": "genus", "separator": " "},
         {"key": "species", "separator": ", "},
@@ -51,6 +55,18 @@ class OMGBaseMetadata(BaseMetadata):
         {"key": "country", "separator": " "},
         {"key": "state_or_region"},
     ]
+    title_mapping = [
+        {"key": "initiative", "separator": " "},
+        {"key": "title_description", "separator": " "},
+        {"key": "bpa_sample_id", "separator": " "},
+        {"key": "flow_id", "separator": ""},
+    ]
+
+    def _build_title_into_object(self, obj):
+        self.build_title_into_object(obj, {"initiative": self.initiative,
+                                           "title_description": self.description}
+                                     )
+
 
 class OMG10XRawIlluminaMetadata(OMGBaseMetadata):
     """
@@ -65,7 +81,6 @@ class OMG10XRawIlluminaMetadata(OMGBaseMetadata):
     for each tar file and present the metadata for each to the user.
     """
 
-    organization = "bpa-omg"
     ckan_data_type = "omg-10x-raw-illumina"
     technology = "10x-raw-agrf"
     sequence_data_type = "illumina-10x"
@@ -129,6 +144,7 @@ class OMG10XRawIlluminaMetadata(OMGBaseMetadata):
         ],
     }
     tag_names = ["10x-raw"]
+    description = "10x Illumina Raw"
     notes_mapping = [
         {"key": "library_ids", "separator": "\n"},
         {"key": "mapped_rows"},
@@ -139,6 +155,12 @@ class OMG10XRawIlluminaMetadata(OMGBaseMetadata):
         {"key": "voucher_or_tissue_number", "separator": " "},
         {"key": "country", "separator": " "},
         {"key": "state_or_region"},
+    ]
+    title_mapping = [
+        {"key": "initiative", "separator": " "},
+        {"key": "title_description", "separator": " "},
+        {"key": "bpa_sample_ids", "separator": " "},
+        {"key": "flow_id", "separator": ""},
     ]
 
     def __init__(
@@ -202,7 +224,6 @@ class OMG10XRawIlluminaMetadata(OMGBaseMetadata):
                 "bpa_sample_ids": bpa_sample_ids,
                 "bpa_library_ids": bpa_library_ids,
                 "bpa_dataset_ids": bpa_dataset_ids,
-                "title": "OMG 10x Illumina Raw %s %s" % (bpa_sample_ids, flow_id),
                 "archive_name": fname,
                 "type": self.ckan_data_type,
                 "sequence_data_type": self.sequence_data_type,
@@ -243,6 +264,7 @@ class OMG10XRawIlluminaMetadata(OMGBaseMetadata):
             )
             mapped_rows = ". ".join(self.build_string_from_map_without_blanks(self.row_mapping, t) for t in row_metadata)
 
+            self._build_title_into_object(obj)
             self.build_notes_into_object(obj, {"library_ids": bpa_library_ids,
                                                "mapped_rows": mapped_rows})
             ingest_utils.add_spatial_extra(self._logger, obj)
@@ -278,8 +300,6 @@ class OMG10XRawMetadata(OMGBaseMetadata):
     this data conforms to the BPA 10X raw workflow. future data
     will use this ingest class.
     """
-
-    organization = "bpa-omg"
     ckan_data_type = "omg-10x-raw"
     technology = "10xraw"
     sequence_data_type = "illumina-10x"
@@ -351,6 +371,7 @@ class OMG10XRawMetadata(OMGBaseMetadata):
         ],
     }
     tag_names = ["10x-raw"]
+    description = "10x Raw"
     notes_mapping = [
         {"key": "bpa_library_id", "separator": "\n"},
         {"key": "genus", "separator": " "},
@@ -412,7 +433,6 @@ class OMG10XRawMetadata(OMGBaseMetadata):
                     "name": name,
                     "id": name,
                     "bpa_sample_id": bpa_sample_id,
-                    "title": "OMG 10x Raw %s %s" % (bpa_sample_id, flow_id),
                     "date_of_transfer": ingest_utils.get_date_isoformat(
                         self._logger, track_get("date_of_transfer")
                     ),
@@ -437,6 +457,7 @@ class OMG10XRawMetadata(OMGBaseMetadata):
             )
             self.library_to_sample[obj["bpa_library_id"]] = obj["bpa_sample_id"]
             obj.update(context)
+            self._build_title_into_object(obj)
             self.build_notes_into_object(obj)
             ingest_utils.permissions_organization_member_after_embargo(
                 self._logger,
@@ -479,7 +500,6 @@ class OMG10XRawMetadata(OMGBaseMetadata):
 
 
 class OMG10XProcessedIlluminaMetadata(OMGBaseMetadata):
-    organization = "bpa-omg"
     ckan_data_type = "omg-10x-processed-illumina"
     technology = "10xprocessed"
     sequence_data_type = "illumina-10x"
@@ -547,6 +567,7 @@ class OMG10XProcessedIlluminaMetadata(OMGBaseMetadata):
         ],
     }
     tag_names = ["10x-processed"]
+    description = "10x Illumina Processed"
     notes_mapping = [
         {"key": "bpa_library_id", "separator": "\n"},
         {"key": "genus", "separator": " "},
@@ -610,8 +631,6 @@ class OMG10XProcessedIlluminaMetadata(OMGBaseMetadata):
                         "name": name,
                         "id": name,
                         "flow_id": flow_id,
-                        "title": "OMG 10x Illumina Processed %s %s"
-                        % (bpa_sample_id, flow_id),
                         "date_of_transfer": ingest_utils.get_date_isoformat(
                             self._logger, track_get("date_of_transfer")
                         ),
@@ -636,6 +655,7 @@ class OMG10XProcessedIlluminaMetadata(OMGBaseMetadata):
                     }
                 )
                 obj.update(context)
+                self._build_title_into_object(obj)
                 self.build_notes_into_object(obj)
                 ingest_utils.permissions_organization_member_after_embargo(
                     self._logger,
@@ -666,7 +686,6 @@ class OMG10XProcessedIlluminaMetadata(OMGBaseMetadata):
 
 
 class OMGExonCaptureMetadata(OMGBaseMetadata):
-    organization = "bpa-omg"
     ckan_data_type = "omg-exon-capture"
     technology = "exoncapture"
     sequence_data_type = "illumina-exoncapture"
@@ -764,6 +783,15 @@ class OMGExonCaptureMetadata(OMGBaseMetadata):
         ],
     }
     tag_names = ["exon-capture", "raw"]
+    description = "Exon Capture Raw"
+
+    title_mapping = [
+        {"key": "initiative", "separator": " "},
+        {"key": "title_description", "separator": " "},
+        {"key": "bpa_library_id", "separator": " "},
+        {"key": "flowcell_id", "separator": " "},
+        {"key": "p7_library_index_sequence", "separator": ""},
+    ]
 
     def __init__(
         self, logger, metadata_path, contextual_metadata=None, metadata_info=None
@@ -827,22 +855,10 @@ class OMGExonCaptureMetadata(OMGBaseMetadata):
                         contextual_source.get(row.bpa_sample_id, row.bpa_library_id)
                     )
 
-                def cleanstring(s):
-                    if s is not None:
-                        return s
-                    else:
-                        return ""
-
-                index_sequence = cleanstring(obj["p7_library_index_sequence"])
-
                 obj.update(
                     {
                         "name": name,
                         "id": name,
-                        "title": (
-                            "OMG Exon Capture Raw %s %s %s"
-                            % (library_id, row.flowcell_id, index_sequence)
-                        ).rstrip(),
                         "date_of_transfer": ingest_utils.get_date_isoformat(
                             self._logger, track_get("date_of_transfer")
                         ),
@@ -866,6 +882,7 @@ class OMGExonCaptureMetadata(OMGBaseMetadata):
                     }
                 )
                 obj.update(context)
+                self._build_title_into_object(obj)
                 self.build_notes_into_object(obj)
                 ingest_utils.permissions_organization_member_after_embargo(
                     self._logger,
@@ -907,7 +924,6 @@ class OMGExonCaptureMetadata(OMGBaseMetadata):
         )
 
 class OMGWholeGenomeMetadata(OMGBaseMetadata):
-    organization = "bpa-omg"
     ckan_data_type = "omg-novaseq-whole-genome"
     technology = "novaseq-whole-genome"
     sequence_data_type = "illumina-shortread"
@@ -1009,6 +1025,15 @@ class OMGWholeGenomeMetadata(OMGBaseMetadata):
         ],
     }
     tag_names = ["whole-genome-resequence", "genomics"]
+    description = "Whole Genome"
+
+    title_mapping = [
+        {"key": "initiative", "separator": " "},
+        {"key": "title_description", "separator": " "},
+        {"key": "bpa_library_id", "separator": " "},
+        {"key": "flowcell_id", "separator": " "},
+        {"key": "p7_library_index_sequence", "separator": ""},
+    ]
 
     def __init__(
         self, logger, metadata_path, contextual_metadata=None, metadata_info=None
@@ -1072,22 +1097,11 @@ class OMGWholeGenomeMetadata(OMGBaseMetadata):
                         contextual_source.get(row.bpa_sample_id, row.bpa_library_id)
                     )
 
-                def cleanstring(s):
-                    if s is not None:
-                        return s
-                    else:
-                        return ""
-
-                index_sequence = cleanstring(obj["p7_library_index_sequence"])
 
                 obj.update(
                     {
                         "name": name,
                         "id": name,
-                        "title": (
-                            "OMG Whole Genome %s %s %s"
-                            % (library_id, row.flowcell_id, index_sequence)
-                        ).rstrip(),
                         "date_of_transfer": ingest_utils.get_date_isoformat(
                             self._logger, track_get("date_of_transfer")
                         ),
@@ -1111,6 +1125,7 @@ class OMGWholeGenomeMetadata(OMGBaseMetadata):
                     }
                 )
                 obj.update(context)
+                self._build_title_into_object(obj)
                 self.build_notes_into_object(obj)
                 ingest_utils.permissions_organization_member_after_embargo(
                     self._logger,
@@ -1151,8 +1166,8 @@ class OMGWholeGenomeMetadata(OMGBaseMetadata):
              resource["index"])
         )
 
+
 class OMGGenomicsNovaseqMetadata(OMGBaseMetadata):
-    organization = "bpa-omg"
     ckan_data_type = "omg-novaseq"
     technology = "novaseq"
     sequence_data_type = "illumina-shortread"
@@ -1227,6 +1242,15 @@ class OMGGenomicsNovaseqMetadata(OMGBaseMetadata):
         ],
     }
     tag_names = ["novaseq", "genomics", "raw"]
+    description = "Novaseq Raw"
+
+    title_mapping = [
+        {"key": "initiative", "separator": " "},
+        {"key": "title_description", "separator": " "},
+        {"key": "bpa_library_id", "separator": " "},
+        {"key": "flowcell_id", "separator": " "},
+        {"key": "library_index_sequence", "separator": ""},
+    ]
 
     def __init__(
         self, logger, metadata_path, contextual_metadata=None, metadata_info=None
@@ -1271,8 +1295,6 @@ class OMGGenomicsNovaseqMetadata(OMGBaseMetadata):
                     {
                         "name": name,
                         "id": name,
-                        "title": "OMG Novaseq Raw %s %s %s"
-                        % (library_id, row.flowcell_id, row.library_index_sequence),
                         "date_of_transfer": ingest_utils.get_date_isoformat(
                             self._logger, track_get("date_of_transfer")
                         ),
@@ -1296,6 +1318,7 @@ class OMGGenomicsNovaseqMetadata(OMGBaseMetadata):
                     }
                 )
                 obj.update(context)
+                self._build_title_into_object(obj)
                 self.build_notes_into_object(obj)
                 ingest_utils.permissions_organization_member_after_embargo(
                     self._logger,
@@ -1312,7 +1335,6 @@ class OMGGenomicsNovaseqMetadata(OMGBaseMetadata):
 
                 packages.append(obj)
         return self.apply_location_generalisation(packages)
-
 
     def _get_resources(self):
         return self._get_common_resources() + self.generate_xlsx_resources()
@@ -1331,8 +1353,8 @@ class OMGGenomicsNovaseqMetadata(OMGBaseMetadata):
              resource["index"])
         )
 
+
 class OMGGenomicsHiSeqMetadata(OMGBaseMetadata):
-    organization = "bpa-omg"
     ckan_data_type = "omg-genomics-hiseq"
     omics = "genomics"
     technology = "hiseq"
@@ -1405,6 +1427,7 @@ class OMGGenomicsHiSeqMetadata(OMGBaseMetadata):
         {"key": "state_or_region"},
     ]
     tag_names = ["genomics-hiseq"]
+    description = "Genomics HiSeq Raw"
 
     def __init__(
         self, logger, metadata_path, contextual_metadata=None, metadata_info=None
@@ -1462,8 +1485,6 @@ class OMGGenomicsHiSeqMetadata(OMGBaseMetadata):
                         "name": name,
                         "id": name,
                         "flow_id": flow_id,
-                        "title": "OMG Genomics HiSeq Raw %s %s"
-                        % (bpa_sample_id, flow_id),
                         "date_of_transfer": ingest_utils.get_date_isoformat(
                             self._logger, track_get("date_of_transfer")
                         ),
@@ -1487,6 +1508,7 @@ class OMGGenomicsHiSeqMetadata(OMGBaseMetadata):
                     }
                 )
                 obj.update(context)
+                self._build_title_into_object(obj)
                 self.build_notes_into_object(obj)
                 ingest_utils.permissions_organization_member_after_embargo(
                     self._logger,
@@ -1525,7 +1547,6 @@ class OMGGenomicsDDRADMetadata(OMGBaseMetadata):
     Issue: bpa-archive-ops#699
     """
 
-    organization = "bpa-omg"
     ckan_data_type = "omg-genomics-ddrad"
     omics = "genomics"
     technology = "ddrad"
@@ -1621,10 +1642,17 @@ class OMGGenomicsDDRADMetadata(OMGBaseMetadata):
         ],
     }
     tag_names = ["genomics-ddrad"]
+    description = "Genomics ddRAD"
     notes_mapping = [
         {"key": "genus", "separator": " "},
         {"key": "species", "separator": "\n"},
         {"key": "additional_notes"},
+    ]
+    title_mapping = [
+        {"key": "initiative", "separator": " "},
+        {"key": "title_description", "separator": " "},
+        {"key": "bpa_dataset_id", "separator": " "},
+        {"key": "generated_flow_id", "separator": ""},
     ]
 
     def __init__(
@@ -1637,14 +1665,6 @@ class OMGGenomicsDDRADMetadata(OMGBaseMetadata):
         self.track_meta = OMGTrackMetadata(logger)
         self.flow_lookup = {}
 
-    def generate_notes_field(self, row_object):
-        notes = "%s\nddRAD dataset not demultiplexed" % (
-            row_object.get(
-                "scientific_name",
-                "%s %s" % (row_object.get("genus", ""), row_object.get("species", "")),
-            ),
-        )
-        return notes
 
     def _get_packages(self):
         xlsx_re = re.compile(r"^.*_(\w+)_metadata.*\.xlsx$")
@@ -1702,7 +1722,6 @@ class OMGGenomicsDDRADMetadata(OMGBaseMetadata):
                         "name": name,
                         "id": name,
                         "bpa_dataset_id": bpa_dataset_id,
-                        "title": "OMG Genomics ddRAD %s %s" % (bpa_dataset_id, flow_id),
                         "date_of_transfer": ingest_utils.get_date_isoformat(
                             self._logger, track_get("date_of_transfer")
                         ),
@@ -1728,6 +1747,9 @@ class OMGGenomicsDDRADMetadata(OMGBaseMetadata):
                 obj.update(common_values(context_objs))
                 obj.update(merge_values("scientific_name", " , ", context_objs))
                 additional_notes = "ddRAD dataset not demultiplexed"
+                self.build_title_into_object(obj, {"initiative": self.initiative,
+                                           "title_description": self.description,
+                                           "generated_flow_id": flow_id,})
                 self.build_notes_into_object(obj, {"additional_notes": additional_notes})
                 ingest_utils.permissions_organization_member_after_embargo(
                     self._logger,
@@ -1760,7 +1782,6 @@ class OMGGenomicsDDRADMetadata(OMGBaseMetadata):
 
 
 class OMGGenomicsPacbioMetadata(OMGBaseMetadata):
-    organization = "bpa-omg"
     ckan_data_type = "omg-pacbio"
     technology = "pacbio"
     sequence_data_type = "pacbio-clr"
@@ -1832,6 +1853,13 @@ class OMGGenomicsPacbioMetadata(OMGBaseMetadata):
         ],
     }
     tag_names = ["pacbio", "genomics", "raw"]
+    description = "Pacbio Raw"
+    title_mapping = [
+        {"key": "initiative", "separator": " "},
+        {"key": "title_description", "separator": " "},
+        {"key": "bpa_library_id", "separator": " "},
+        {"key": "run_date", "separator": ""},
+    ]
 
     def __init__(
         self, logger, metadata_path, contextual_metadata=None, metadata_info=None
@@ -1888,7 +1916,6 @@ class OMGGenomicsPacbioMetadata(OMGBaseMetadata):
                 {
                     "name": name,
                     "id": name,
-                    "title": "OMG Pacbio Raw {} {}".format(library_id, obj["run_date"]),
                     "date_of_transfer": ingest_utils.get_date_isoformat(
                         self._logger, track_get("date_of_transfer")
                     ),
@@ -1912,6 +1939,7 @@ class OMGGenomicsPacbioMetadata(OMGBaseMetadata):
                 }
             )
             obj.update(context)
+            self._build_title_into_object(obj)
             self.build_notes_into_object(obj)
             ingest_utils.permissions_organization_member_after_embargo(
                 self._logger,
@@ -1946,8 +1974,8 @@ class OMGGenomicsPacbioMetadata(OMGBaseMetadata):
                    resource["run_date"],)
         )
 
+
 class OMGONTPromethionMetadata(OMGBaseMetadata):
-    organization = "bpa-omg"
     ckan_data_type = "omg-ont-promethion"
     technology = "ont-promethion"
     sequence_data_type = "ont-promethion"
@@ -2028,6 +2056,7 @@ class OMGONTPromethionMetadata(OMGBaseMetadata):
         ],
     }
     tag_names = ["ont-promethion"]
+    description = "ONT PromethION"
     notes_mapping = [
         {"key": "bpa_library_id", "separator": "\n"},
         {"key": "genus", "separator": " "},
@@ -2036,7 +2065,12 @@ class OMGONTPromethionMetadata(OMGBaseMetadata):
         {"key": "country", "separator": " "},
         {"key": "state_or_region"},
     ]
-
+    title_mapping = [
+        {"key": "initiative", "separator": " "},
+        {"key": "title_description", "separator": " "},
+        {"key": "bpa_sample_id", "separator": " "},
+        {"key": "flowcell_id", "separator": ""},
+    ]
 
     def __init__(
         self, logger, metadata_path, contextual_metadata=None, metadata_info=None
@@ -2077,9 +2111,6 @@ class OMGONTPromethionMetadata(OMGBaseMetadata):
 
                 obj.update(
                     {
-                        "title": "OMG ONT PromethION {} {}".format(
-                            obj["bpa_sample_id"], row.flowcell_id
-                        ),
                         "date_of_transfer": ingest_utils.get_date_isoformat(
                             self._logger, track_get("date_of_transfer")
                         ),
@@ -2104,6 +2135,7 @@ class OMGONTPromethionMetadata(OMGBaseMetadata):
                         "license_id": apply_cc_by_license(),
                     }
                 )
+                self._build_title_into_object(obj)
                 self.build_notes_into_object(obj)
                 ingest_utils.permissions_organization_member_after_embargo(
                     self._logger,
@@ -2132,7 +2164,6 @@ class OMGONTPromethionMetadata(OMGBaseMetadata):
 
 
 class OMGTranscriptomicsNextseq(OMGBaseMetadata):
-    organization = "bpa-omg"
     ckan_data_type = "omg-transcriptomics-nextseq"
     omics = "transcriptomics"
     technology = "nextseq"
@@ -2204,6 +2235,13 @@ class OMGTranscriptomicsNextseq(OMGBaseMetadata):
         "skip": None,
     }
     tag_names = ["transcriptomics-nextseq"]
+    description = "Transcriptomics NextSeq"
+    title_mapping = [
+        {"key": "initiative", "separator": " "},
+        {"key": "title_description", "separator": " "},
+        {"key": "bpa_library_id", "separator": " "},
+        {"key": "generated_flow_id", "separator": ""},
+    ]
 
     def __init__(
         self, logger, metadata_path, contextual_metadata=None, metadata_info=None
@@ -2258,8 +2296,6 @@ class OMGTranscriptomicsNextseq(OMGBaseMetadata):
                         "name": name,
                         "id": name,
                         "bpa_library_id": bpa_library_id,
-                        "title": "OMG Transcriptomics NextSeq %s %s"
-                        % (bpa_library_id, flow_id),
                         "date_of_transfer": ingest_utils.get_date_isoformat(
                             self._logger, track_get("date_of_transfer")
                         ),
@@ -2282,6 +2318,9 @@ class OMGTranscriptomicsNextseq(OMGBaseMetadata):
                         "license_id": apply_cc_by_license(),
                     }
                 )
+                self.build_title_into_object(obj, {"initiative": self.initiative,
+                                           "title_description": self.description,
+                                           "generated_flow_id": flow_id,})
                 self.build_notes_into_object(obj)
                 ingest_utils.permissions_organization_member_after_embargo(
                     self._logger,
@@ -2305,15 +2344,16 @@ class OMGTranscriptomicsNextseq(OMGBaseMetadata):
         return
 
     def _build_resource_linkage(self, xlsx_info, resource, file_info):
-        return ((
+        return (
                         ingest_utils.extract_ands_id(
                             self._logger, resource["bpa_library_id"]
                         ),
                         resource["flowcell_id"],
-                    ),)
+                    )
 
 
 class OMGGenomicsPacBioGenomeAssemblyMetadata(SecondaryMetadata):
+    initiative = "OMG"
     organization = "bpa-omg"
     ckan_data_type = "omg-pacbio-genome-assembly"
     technology = "pacbio-genome-assembly"
@@ -2392,9 +2432,16 @@ class OMGGenomicsPacBioGenomeAssemblyMetadata(SecondaryMetadata):
         "genomics",
         "genome assembly",
     ]
+    description = ""
     raw = {"match": [files.pacbio_secondary_raw_filename_re], "skip": []}
     notes_mapping = [
         {"key": "name"},
+    ]
+    title_mapping = [
+        {"key": "initiative", "separator": " "},
+        {"key": "title_description", "separator": " "},
+        {"key": "bpa_library_id", "separator": " "},
+        {"key": "assembly_method_version_or_date", "separator": ""},
     ]
 
     def __init__(
@@ -2406,6 +2453,12 @@ class OMGGenomicsPacBioGenomeAssemblyMetadata(SecondaryMetadata):
         self.metadata_info = metadata_info
         self.google_track_meta = OMGTrackGenomeAssemblyMetadata(logger)
         # self.create_metadata_info_for_raw_resources()
+
+    #   has to be here as SecondaryMetaData doesa not contain the method.
+    def _build_title_into_object(self, obj):
+            self.build_title_into_object(obj, {"initiative": self.initiative,
+                                               "title_description": self.description}
+                                         )
 
     def _get_packages(self):
         self._logger.info("Ingesting secondary OMG metadata from {0}".format(self.path))
@@ -2448,10 +2501,6 @@ class OMGGenomicsPacBioGenomeAssemblyMetadata(SecondaryMetadata):
                     {
                         "name": name,
                         "id": name,
-                        "title": "OMG Pacbio Genome Assembly {} {}".format(
-                            obj["bpa_library_id"],
-                            obj["assembly_method_version_or_date"],
-                        ),
                         "date_of_transfer": ingest_utils.get_date_isoformat(
                             self._logger, track_get("date_of_transfer")
                         ),
@@ -2469,6 +2518,7 @@ class OMGGenomicsPacBioGenomeAssemblyMetadata(SecondaryMetadata):
                         "license_id": apply_cc_by_license(),
                     }
                 )
+                self._build_title_into_object(obj)
                 self.build_notes_into_object(obj)
                 ingest_utils.permissions_organization_member_after_embargo(
                     self._logger,
@@ -2520,7 +2570,6 @@ class OMGGenomicsPacBioGenomeAssemblyMetadata(SecondaryMetadata):
 
 
 class OMGAnalysedDataMetadata(OMGBaseMetadata):
-    organization = "bpa-omg"
     ckan_data_type = "omg-analysed-data"
     technology = "analysed-data"
     sequence_data_type = "analysed-data"
@@ -2579,12 +2628,18 @@ class OMGAnalysedDataMetadata(OMGBaseMetadata):
         ],
     }
     tag_names = ["omg-analysed-data"]
+    description = "Analysed Data"
     notes_mapping = [
         {"key": "common_name", "separator": " "},
         {"key": "left-paren", "separator": ""},
         {"key": "scientific_name", "separator": ""},
         {"key": "right-paren", "separator": ", "},
         {"key": "dataset_context"},
+    ]
+    title_mapping = [
+        {"key": "initiative", "separator": " "},
+        {"key": "title_description", "separator": " "},
+        {"key": "bioplatforms_secondarydata_id", "separator": ""},
     ]
 
     def __init__(
@@ -2656,9 +2711,6 @@ class OMGAnalysedDataMetadata(OMGBaseMetadata):
 
                 obj.update(
                     {
-                        "title": "OMG Analysed Data {}".format(
-                            obj["bioplatforms_secondarydata_id"]
-                        ),
                         "date_of_transfer": ingest_utils.get_date_isoformat(
                             self._logger, track_get("date_of_transfer")
                         ),
@@ -2683,7 +2735,7 @@ class OMGAnalysedDataMetadata(OMGBaseMetadata):
                         "license_id": apply_cc_by_license(),
                     }
                 )
-
+                self._build_title_into_object(obj)
                 self.build_notes_into_object(obj, {"left-paren": "(",
                                                    "right-paren": ")",
                                                    }
@@ -2721,8 +2773,6 @@ class OMGGenomicsDArTMetadata(OMGBaseMetadata):
     This data conforms to the BPA Genomics DArT workflow. future data
     will use this ingest class.
     """
-
-    organization = "bpa-omg"
     ckan_data_type = "omg-genomics-dart"
     omics = "genomics"
     technology = "dart"
@@ -2817,9 +2867,15 @@ class OMGGenomicsDArTMetadata(OMGBaseMetadata):
         ],
     }
     tag_names = ["genomics-dart"]
+    description = "DArT"
     notes_mapping = [
         {"key": "organism_scientific_name", "separator": "\n"},
         {"key": "additional_notes"},
+    ]
+    title_mapping = [
+        {"key": "initiative", "separator": " "},
+        {"key": "title_description", "separator": " "},
+        {"key": "bpa_dataset_id", "separator": ""},
     ]
 
     def __init__(
@@ -2895,7 +2951,6 @@ class OMGGenomicsDArTMetadata(OMGBaseMetadata):
                 {
                     "name": name,
                     "id": name,
-                    "title": "OMG DArT %s" % (obj["bpa_dataset_id"],),
                     "date_of_transfer": ingest_utils.get_date_isoformat(
                         self._logger, track_get("date_of_transfer")
                     ),
@@ -2922,6 +2977,7 @@ class OMGGenomicsDArTMetadata(OMGBaseMetadata):
                 "scientific_name",
                 "%s %s" % (obj.get("genus", ""), obj.get("species", "")))
             additional_notes = "DArT dataset not demultiplexed"
+            self._build_title_into_object(obj)
             self.build_notes_into_object(obj, {"organism_scientific_name": organism_scientific_name,
                                                "additional_notes": additional_notes})
             ingest_utils.permissions_organization_member_after_embargo(
