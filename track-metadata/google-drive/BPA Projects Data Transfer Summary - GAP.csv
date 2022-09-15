@@ -97,4 +97,7 @@ BRF,01/08/2022,376315,383005,83730,Xanthorrhoea johnsonii,Reference Genomes - RN
 AGRF,12/08/2022,,,83694,Mirbelieae (Angio353),Phylogenomics - AATOL Stage 2 (Mirbelieae (Angio353))- 239 samples,Main dataset,Illumina Short Read,20220812_GAP_NGS_AGRF_CAGRF21088035_HKM5FDRX2,14/8/2022,15/08/2022,BPAOPS-1310,https://data.bioplatforms.com/dataset?ext_search_by=&q=ticket%3ABPAOPS-1310
 GWA,15/08/22,376415,380637,83688,Leucochrysum albicans,Reference Genomes - HiFi,Main dataset,PacBio-HiFi,20210723_GAP_GWA_GWA-AS-574_DA163390,18/08/2022,19/08/2022,BPAOPS-1311,https://data.bioplatforms.com/dataset?ext_search_by=&q=ticket%3ABPAOPS-1311
 AGRF,16/08/2022,,,83669,Samadera sp,Conservation genomics,Main dataset,ddRAD,AGRF_GAP_HGLMHDRX2_83669,16/08/2022,16/08/2022,BPAOPS-1312,https://data.bioplatforms.com/dataset?ext_search_by=&q=ticket%3ABPAOPS-1312
-AGRF,22/08/2022,,,83660,Olearia sp.,,,ddRAD,AGRF_GAP_ HGLL5DRX2_83660,13/08/2022,,BPAOPS-1316,
+AGRF,22/08/2022,,,83660,Olearia sp.,Conservation genomics,Main dataset,ddRAD,AGRF_GAP_ HGLL5DRX2_83660,13/08/2022,23/08/2022,BPAOPS-1316,https://data.bioplatforms.com/dataset?ext_search_by=&q=ticket%3ABPAOPS-1316 
+AGRF,14/09/2022,378148,383107,83733,,,,Pacbio-HiFi,2022099_GAP_CAGRF220711218_DA191744,,,BPAOPS-1320,
+AGRF,14/09/2022,378148,383106,83733,,,,Pacbio-HiFi,2022099_GAP_CAGRF220711218_DA193243,,,BPAOPS-1321,
+AGRF,14/09/2022,378148,383108,83733,,,,Pacbio-HiFi,2022099_GAP_CAGRF220711218_DA193244,,,BPAOPS-1322,

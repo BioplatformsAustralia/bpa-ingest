@@ -120,6 +120,7 @@ def test_pacbio_hifi():
         "376315_GAP_GWA_DA110323_ccs_statistics.csv",
         "376315_GAP_GWA_DA110323_final.consensusreadset.xml",
         "376317_GAP_GWA_DA110333_with_5mC.consensusreadset.xml",
+        "378148_GAP_AGRF_DA193244_final.consensusreadset.xml",
     ]
 
     for filename in filenames:

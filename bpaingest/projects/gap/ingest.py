@@ -800,7 +800,7 @@ class GAPPacbioHifiMetadata(GAPBaseMetadata):
     embargo_days = 365
     description = "PacBio HiFi"
     contextual_classes = common_context
-    metadata_patterns = [r"^.*\.md5$", r"^.*_metadata.*.*\.xlsx$"]
+    metadata_patterns = [r"^.*\.md5$", r"^.*(\.|_)metadata.*.*\.xlsx$"]
     metadata_urls = [
         "https://downloads-qcif.bioplatforms.com/bpa/plants_staging/pacbio-hifi/",
     ]
@@ -860,7 +860,7 @@ class GAPPacbioHifiMetadata(GAPBaseMetadata):
     md5 = {
         "match": [files.pacbio_hifi_filename_re, files.pacbio_hifi_metadata_sheet_re],
         "skip": [
-            re.compile(r"^.*_metadata\.xlsx$"),
+            re.compile(r"^.*(\.|_)metadata\.xlsx$"),
             re.compile(r"^.*SampleSheet.*"),
             re.compile(r"^.*TestFiles\.exe.*"),
         ],
@@ -889,7 +889,7 @@ class GAPPacbioHifiMetadata(GAPBaseMetadata):
                 "Processing GAP metadata file {0}".format(os.path.basename(fname))
             )
 
-            metadata_sheet_dict = re.match(
+            metadata_sheet_dict = re.search(
                 filename_re, os.path.basename(fname)
             ).groupdict()
             metadata_sheet_flowcell_ids = []
