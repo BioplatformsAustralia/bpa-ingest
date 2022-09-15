@@ -1855,10 +1855,10 @@ class AustralianMicrobiomeMetagenomicsNovaseqMetadata(AMDFullIngestMetadata):
 
     def _get_packages(self):
         packages = []
-        xlsx_re = re.compile(r"^.*_(\w+)_metadata.*\.xlsx$")
+        xlsx_re = re.compile(r"MGE_UNSW_([A-Z0-9]*)_.*_?metadata\.xlsx$")
 
         def get_flow_id(fname):
-            m = xlsx_re.match(fname)
+            m = xlsx_re.search(fname)
             if not m:
                 raise Exception("unable to find flowcell for filename: `%s'" % (fname))
             return m.groups()[0]
