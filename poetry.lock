@@ -174,7 +174,7 @@ testing = ["pyfakefs (==3.6.1)"]
 type = "git"
 url = "https://github.com/BioplatformsAustralia/ckanapi.git"
 reference = "streaming-uploads"
-resolved_reference = "dfa8830b42662ae2bb89bc1abb00815209f702d0"
+resolved_reference = "e5ab211f965cdc393619d9fe2ac7cb5d4166d13b"
 
 [[package]]
 name = "click"
@@ -429,7 +429,7 @@ yaml = ["PyYAML (>=5.1.0)"]
 
 [[package]]
 name = "numpy"
-version = "1.23.3"
+version = "1.23.4"
 description = "NumPy is the fundamental package for array computing with Python."
 category = "main"
 optional = false
@@ -677,7 +677,7 @@ crt = ["botocore[crt] (>=1.20.29,<2.0a.0)"]
 
 [[package]]
 name = "shapely"
-version = "1.8.4"
+version = "1.8.5"
 description = "Geometric objects, predicates, and operations"
 category = "main"
 optional = false
