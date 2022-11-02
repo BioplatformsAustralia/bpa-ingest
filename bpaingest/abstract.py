@@ -19,6 +19,19 @@ class BaseMetadata:
     resource_linkage = ("sample_id",)
     resource_info = {}
 
+    def method_exists(self, method_name):
+        if hasattr(self, method_name):  # should check if its callable too
+            return True
+        return False
+
+    def run_method_if_exists(self, method_name, arg):
+        if self.method_exists(method_name):
+            self.method_name(arg)
+            print("ran the method")
+            return True
+        print("did not run the method")
+        return False
+
     def build_notes_into_object(self, obj, additional={}):
         # obj.update({"notes": self.build_notes_without_blanks(obj, additional)})
         obj.update({"notes": self.build_string_from_map_without_blanks(self.notes_mapping, obj, additional)})
@@ -34,7 +47,9 @@ class BaseMetadata:
         return result.rstrip(', ')
 
     def build_title_into_object(self, obj, additional={}):
-        obj.update({"title": self.build_string_from_map_without_blanks(self.title_mapping, obj, additional)})
+        built_title = self.build_string_from_map_without_blanks(self.title_mapping, obj, additional)
+        if built_title:
+            obj.update({"title": built_title})
 
     def parse_spreadsheet(self, fname, metadata_info):
         kwargs = self.spreadsheet["options"]

@@ -210,6 +210,20 @@ def merge_values(key, sep, dicts):
     return r
 
 
+def migrate_field(obj, from_field, to_field):
+    # todo - check for key existence
+    old_val = obj[from_field]
+    new_val = obj[to_field]
+    del obj[from_field]
+
+    if old_val is not None and new_val is not None:
+        raise Exception(
+            "field migration clash, {}->{}".format(from_field, to_field)
+        )
+    if old_val:
+        obj[to_field] = old_val
+
+
 def apply_license(archive_ingestion_date):
     if not archive_ingestion_date:
         return "notspecified"
