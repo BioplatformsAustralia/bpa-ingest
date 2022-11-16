@@ -33,7 +33,6 @@ class BaseMetadata:
         return False
 
     def build_notes_into_object(self, obj, additional={}):
-        # obj.update({"notes": self.build_notes_without_blanks(obj, additional)})
         obj.update({"notes": self.build_string_from_map_without_blanks(self.notes_mapping, obj, additional)})
 
     def build_string_from_map_without_blanks(self, field_map, obj, additional={}):
@@ -78,6 +77,22 @@ class BaseMetadata:
         for tpl in p.no_match:
             self._logger.error("No match for filename: `%s'" % tpl)
 
+    def get_tracking_info(self, ticket, field_name=None):
+        if self.google_track_meta is None:
+            return None
+
+        if ticket is None:
+            return None
+
+        tracking_row = self.google_track_meta.get(ticket)
+        if tracking_row is None:
+            self._logger.warn("No tracking row found for {}".format(ticket))
+            return None
+
+        if field_name is None:
+            return tracking_row
+            # todo check attribute exists, throw error/log if not
+        return getattr(tracking_row, field_name)
     def _get_resource_info(self, resource_info):
     # subclasses may choose to implement this, not required tho. TSI pacbio-hifi as an example
         return

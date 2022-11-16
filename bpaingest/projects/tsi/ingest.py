@@ -42,16 +42,16 @@ class TSIBaseMetadata(BaseMetadata):
             package.update({"decimal_latitude_public": package.get("latitude")})
         return packages
 
-    def _build_title_into_object(self, obj):
-        self.build_title_into_object(obj, {"initiative": self.initiative,
-                                           "title_description": self.description, }
-                                     )
-
     def _build_title_into_object(self, obj, field_value):
-        self.build_title_into_object(obj, {"initiative": self.initiative,
+        if field_value is None:
+            self.build_title_into_object(obj, {"initiative": self.initiative,
+                                               "title_description": self.description, }
+                                         )
+        else:
+            self.build_title_into_object(obj, {"initiative": self.initiative,
                                            "title_description": self.description,
                                            "field_value": field_value}
-                                     )
+                                         )
 
     notes_mapping = [
         {"key": "genus", "separator": " "},
@@ -66,6 +66,70 @@ class TSIBaseMetadata(BaseMetadata):
         {"key": "field_value", "separator": " "},
         {"key": "flowcell_id", "separator": ""},
     ]
+
+
+    def _set_metadata_vars(self, filename):
+        self.xlsx_info = self.metadata_info[os.path.basename(filename)]
+        self.ticket = self.xlsx_info["ticket"]
+
+    def _get_common_packages(self):
+        self._logger.info("Ingesting {} metadata from {}".format(self.initiative, self.path))
+        packages = []
+        for fname in glob(self.path + "/*.xlsx"):
+            self._logger.info("Processing {} metadata file {}".format(self.initiative, os.path.basename(fname)))
+            rows = self.parse_spreadsheet(fname, self.metadata_info)
+            if self.method_exists('_set_metadata_vars'):
+                self._set_metadata_vars(fname)
+            for row in rows:
+                if not row.library_id and not row.flowcell_id:
+                    # skip empty rows  -- do we want to do this for TSI??
+                    continue
+                sample_id = row.sample_id
+                library_id = row.library_id
+                dataset_id = row.dataset_id
+                obj = row._asdict()
+                track_meta = self.get_tracking_info(row.ticket)
+                if track_meta is not None:
+                    obj.update(track_meta._asdict())
+
+                context = {}
+                for contextual_source in self.contextual_metadata:
+                    context.update(contextual_source.get(row.sample_id))
+                obj.update(context)
+                if not hasattr(row, "flowcell_id"):
+                    # name is populated by the subclass after the fact
+                    name = "No flowcell- override in sublass"
+                else:
+                    name = sample_id_to_ckan_name(
+                        "{}".format(library_id.split("/")[-1]),
+                        self.ckan_data_type,
+                        "{}".format(row.flowcell_id),
+                    )
+
+                obj.update(
+                    {
+                        "name": name,
+                        "id": name,
+                        "type": self.ckan_data_type,
+                        "sequence_data_type": self.sequence_data_type,
+                        "license_id": apply_cc_by_license(),
+                        "date_of_transfer": ingest_utils.get_date_isoformat(
+                            self._logger, self.get_tracking_info(row.ticket, "date_of_transfer")
+                        ),
+                        "date_of_transfer_to_archive": ingest_utils.get_date_isoformat(
+                            self._logger, self.get_tracking_info(row.ticket, "date_of_transfer_to_archive")
+                        ),
+                     }
+                )
+
+                self._build_title_into_object(obj, library_id)
+                self.build_notes_into_object(obj)
+                self._add_datatype_specific_info_to_package(obj, row, fname)
+                ingest_utils.permissions_organization_member(self._logger, obj)
+                ingest_utils.apply_access_control(self._logger, self, obj)
+                obj["tags"] = [{"name": "{:.100}".format(t)} for t in self.tag_names]
+                packages.append(obj)
+        return packages
 
 
 class TSIIlluminaShortreadMetadata(TSIBaseMetadata):
@@ -172,50 +236,19 @@ class TSIIlluminaShortreadMetadata(TSIBaseMetadata):
         self.contextual_metadata = contextual_metadata
         self.metadata_info = metadata_info
         self.google_track_meta = TSIGoogleTrackMetadata(logger)
-
     def _get_packages(self):
-        self._logger.info("Ingesting TSI metadata from {0}".format(self.path))
-        packages = []
-        for fname in glob(self.path + "/*.xlsx"):
-            self._logger.info("Processing TSI metadata file {0}".format(fname))
-            flow_cell_id = re.match(r"^.*_([^_]+)_metadata.*\.xlsx", fname).groups()[0]
-            rows = self.parse_spreadsheet(fname, self.metadata_info)
-            xlsx_info = self.metadata_info[os.path.basename(fname)]
-            ticket = xlsx_info["ticket"]
-            track_meta = self.google_track_meta.get(ticket)
-            for row in rows:
-                sample_id = row.sample_id
-                library_id = row.library_id
-                dataset_id = row.dataset_id
-                obj = row._asdict()
-                if track_meta is not None:
-                    obj.update(track_meta._asdict())
-                raw_library_id = library_id.split("/")[-1]
-                name = sample_id_to_ckan_name(
-                    raw_library_id, self.ckan_data_type, "{}".format(row.flowcell_id),
-                )
-                for contextual_source in self.contextual_metadata:
-                    obj.update(contextual_source.get(sample_id))
-                obj.update(
-                    {
-                        "sample_id": sample_id,
-                        "name": name,
-                        "id": name,
-                        "type": self.ckan_data_type,
-                        "sequence_data_type": self.sequence_data_type,
-                        "license_id": apply_cc_by_license(),
-                        "flow_cell_id": flow_cell_id,
-                        "data_generated": True,
-                        "library_id": raw_library_id,
-                    }
-                )
-                self._build_title_into_object(obj, library_id)
-                self.build_notes_into_object(obj)
-                ingest_utils.permissions_organization_member(self._logger, obj)
-                ingest_utils.apply_access_control(self._logger, self, obj)
-                obj["tags"] = [{"name": "{:.100}".format(t)} for t in self.tag_names]
-                packages.append(obj)
+        packages = self._get_common_packages()
         return self.apply_location_generalisation(packages)
+
+    def _add_datatype_specific_info_to_package(self, obj, row, filename):
+        flow_cell_id = re.match(r"^.*_([^_]+)_metadata.*\.xlsx", filename).groups()[0]
+
+        obj.update(
+            {   "data_generated": True,
+                "flow_cell_id": flow_cell_id,
+                "library_id": row.library_id.split("/")[-1]
+             }
+        )
 
     def _get_resources(self):
         return self._get_common_resources()
@@ -342,65 +375,13 @@ class TSIIlluminaFastqMetadata(TSIBaseMetadata):
         self.google_track_meta = TSIGoogleTrackMetadata(logger)
 
     def _get_packages(self):
-        self._logger.info("Ingesting TSI metadata from {0}".format(self.path))
-        packages = []
-        for fname in glob(self.path + "/*.xlsx"):
-            self._logger.info("Processing TSI metadata file {0}".format(fname))
-            metadata_sheet_flowcell_id = re.match(
-                r"^.*_([^_]+)_metadata.*\.xlsx", fname
-            ).groups()[0]
-            rows = self.parse_spreadsheet(fname, self.metadata_info)
-            xlsx_info = self.metadata_info[os.path.basename(fname)]
-            ticket = xlsx_info["ticket"]
-            track_meta = self.google_track_meta.get(ticket)
-            for row in rows:
-                if not row.library_id and not row.flowcell_id:
-                    # skip empty rows
-                    continue
-                obj = row._asdict()
-                if metadata_sheet_flowcell_id != row.flowcell_id:
-                    raise Exception(
-                        "The metadata row for library ID: {} has a flow cell ID of {}, which cannot be found in the metadata sheet name: {}".format(
-                            row.library_id, row.flowcell_id, fname
-                        )
-                    )
-                if track_meta is not None:
-                    track_obj = track_meta._asdict()
-                    tracking_folder_name = track_obj.get("folder_name", "")
-                    if not re.search(row.flowcell_id, tracking_folder_name):
-                        raise Exception(
-                            "The metadata row for library ID: {} has a flow cell ID of {}, which cannot be found in the tracking field value: {}".format(
-                                row.library_id, row.flowcell_id, tracking_folder_name
-                            )
-                        )
-                    obj.update(track_obj)
-                    obj["scientific_name"] = "{} {}".format(
-                        obj["genus"], obj["species"]
-                    )
-                name = sample_id_to_ckan_name(
-                    "{}".format(row.library_id.split("/")[-1]),
-                    self.ckan_data_type,
-                    "{}".format(row.flowcell_id),
-                )
-                for contextual_source in self.contextual_metadata:
-                    obj.update(contextual_source.get(row.sample_id))
-                obj.update(
-                    {
-                        "name": name,
-                        "id": name,
-                        "type": self.ckan_data_type,
-                        "sequence_data_type": self.sequence_data_type,
-                        "license_id": apply_cc_by_license(),
-                        "data_generated": True,
-                    }
-                )
-                self._build_title_into_object(obj, row.library_id)
-                self.build_notes_into_object(obj)
-                ingest_utils.permissions_organization_member(self._logger, obj)
-                ingest_utils.apply_access_control(self._logger, self, obj)
-                obj["tags"] = [{"name": "{:.100}".format(t)} for t in self.tag_names]
-                packages.append(obj)
-        return packages
+        return self._get_common_packages()
+
+    def _add_datatype_specific_info_to_package(self, obj, row, filename):
+        obj["data_generated"] = True
+        obj["scientific_name"] = "{} {}".format(
+               obj["genus"], obj["species"]
+        )
 
     def _get_resources(self):
         return self._get_common_resources()
@@ -527,94 +508,48 @@ class TSIPacbioHifiMetadata(TSIBaseMetadata):
         self.google_track_meta = TSIGoogleTrackMetadata(logger)
 
     def _get_packages(self):
-        self._logger.info("Ingesting TSI metadata from {0}".format(self.path))
-        packages = []
-
-        filename_re = files.pacbio_hifi_metadata_sheet_re
-
-        objs = []
-        for fname in glob(self.path + "/*.xlsx"):
-            self._logger.info(
-                "Processing TSI metadata file {0}".format(os.path.basename(fname))
-            )
-
-            metadata_sheet_dict = re.match(
-                filename_re, os.path.basename(fname)
-            ).groupdict()
-            metadata_sheet_flowcell_ids = []
-            for f in ["flowcell_id", "flowcell2_id"]:
-                if f in metadata_sheet_dict:
-                    metadata_sheet_flowcell_ids.append(metadata_sheet_dict[f])
-
-            rows = self.parse_spreadsheet(fname, self.metadata_info)
-            xlsx_info = self.metadata_info[os.path.basename(fname)]
-            ticket = xlsx_info["ticket"]
-            track_meta = self.google_track_meta.get(ticket)
-
-            def track_get(k):
-                if track_meta is None:
-                    return None
-                return getattr(track_meta, k)
-
-            for row in rows:
-                if not row.library_id and not row.flowcell_id:
-                    # skip empty rows
-                    continue
-                obj = row._asdict()
-                if row.flowcell_id not in metadata_sheet_flowcell_ids:
-                    raise Exception(
-                        "The metadata row for library ID: {} has a flow cell ID of {}, which cannot be found in the metadata sheet name: {}".format(
-                            row.library_id, row.flowcell_id, fname
-                        )
-                    )
-                name = sample_id_to_ckan_name(
-                    "{}".format(row.library_id.split("/")[-1]),
-                    self.ckan_data_type,
-                    "{}".format(row.flowcell_id),
-                )
-
-                context = {}
-                for contextual_source in self.contextual_metadata:
-                    context.update(contextual_source.get(row.sample_id))
-
-                obj.update(
-                    {
-                        "name": name,
-                        "id": name,
-                        "date_of_transfer": ingest_utils.get_date_isoformat(
-                            self._logger, track_get("date_of_transfer")
-                        ),
-                        "data_type": track_get("data_type"),
-                        "description": track_get("description"),
-                        "folder_name": track_get("folder_name"),
-                        "sample_submission_date": ingest_utils.get_date_isoformat(
-                            self._logger, track_get("date_of_transfer")
-                        ),
-                        "contextual_data_submission_date": None,
-                        "data_generated": ingest_utils.get_date_isoformat(
-                            self._logger, track_get("date_of_transfer_to_archive")
-                        ),
-                        "archive_ingestion_date": ingest_utils.get_date_isoformat(
-                            self._logger, track_get("date_of_transfer_to_archive")
-                        ),
-                        "dataset_url": track_get("download"),
-                        "type": self.ckan_data_type,
-                        "sequence_data_type": self.sequence_data_type,
-                        "license_id": apply_cc_by_license(),
-                    }
-                )
-                obj.update(context)
-                self._build_title_into_object(obj, row.library_id)
-                self.build_notes_into_object(obj)
-                ingest_utils.permissions_organization_member(self._logger, obj)
-                ingest_utils.apply_access_control(self._logger, self, obj)
-
-                ingest_utils.add_spatial_extra(self._logger, obj)
-                obj["tags"] = [{"name": t} for t in self.tag_names]
-                packages.append(obj)
-
+        packages = self._get_common_packages()
         return self.apply_location_generalisation(packages)
 
+    def _add_datatype_specific_info_to_package(self, obj, row, filename):
+        filename_re = files.pacbio_hifi_metadata_sheet_re
+
+        metadata_sheet_dict = re.match(
+                filename_re, os.path.basename(filename)
+            ).groupdict()
+        metadata_sheet_flowcell_ids = []
+        for f in ["flowcell_id", "flowcell2_id"]:
+            if f in metadata_sheet_dict:
+                    metadata_sheet_flowcell_ids.append(metadata_sheet_dict[f])
+
+        if row.flowcell_id not in metadata_sheet_flowcell_ids:
+            raise Exception(
+                "The metadata row for library ID: {} has a flow cell ID of {}, which cannot be found in the metadata sheet name: {}".format(
+                    row.library_id, row.flowcell_id, filename
+                )
+            )
+        obj.update(
+            {
+                 "sample_submission_date": ingest_utils.get_date_isoformat(
+                    self._logger, self.get_tracking_info(row.ticket, "date_of_transfer")
+                ),
+                "contextual_data_submission_date": None,
+                "data_generated": ingest_utils.get_date_isoformat(
+                    self._logger, self.get_tracking_info(row.ticket, "date_of_transfer_to_archive")
+                ),
+                "archive_ingestion_date": ingest_utils.get_date_isoformat(
+                    self._logger, self.get_tracking_info(row.ticket, "date_of_transfer_to_archive")
+                ),
+                 "dataset_url": self.get_tracking_info(row.ticket, "download")
+             }
+        )
+        # below fields are in the metadata, but not required in the packages schema
+        del obj["ccg_jira_ticket"]
+        del obj["date_of_transfer_to_archive"]
+        del obj["download"]
+        del obj["file_count"]
+
+        ingest_utils.add_spatial_extra(self._logger, obj)
 
     def _get_resource_info(self, metadata_info):
         auth_user, auth_env_name = self.auth
@@ -770,8 +705,9 @@ class TSIGenomicsDDRADMetadata(TSIBaseMetadata):
         self.path = Path(metadata_path)
         self.contextual_metadata = contextual_metadata
         self.metadata_info = metadata_info
-        self.track_meta = TSIGoogleTrackMetadata(logger)
+        self.google_track_meta = TSIGoogleTrackMetadata(logger)
         self.flow_lookup = {}
+
 
     def _get_packages(self):
         xlsx_re = re.compile(r"^.*_(\w+)_metadata.*\.xlsx$")
@@ -782,12 +718,8 @@ class TSIGenomicsDDRADMetadata(TSIBaseMetadata):
                 raise Exception("unable to find flowcell for filename: `%s'" % (fname))
             return m.groups()[0]
 
-        self._logger.info("Ingesting TSI metadata from {0}".format(self.path))
         packages = []
         for fname in glob(self.path + "/*.xlsx"):
-            self._logger.info(
-                "Processing TSI metadata file {0}".format(os.path.basename(fname))
-            )
             flow_id = get_flow_id(fname)
             objs = defaultdict(list)
             for row in self.parse_spreadsheet(fname, self.metadata_info):
@@ -810,12 +742,7 @@ class TSIGenomicsDDRADMetadata(TSIBaseMetadata):
                     context_objs.append(context)
 
                 obj = common_values(row_objs)
-                track_meta = self.track_meta.get(obj["ticket"])
-
-                def track_get(k):
-                    if track_meta is None:
-                        return None
-                    return getattr(track_meta, k)
+                ticket = obj["ticket"]
 
                 name = sample_id_to_ckan_name(
                     bpa_dataset_id, self.ckan_data_type, flowcell_id
@@ -826,22 +753,21 @@ class TSIGenomicsDDRADMetadata(TSIBaseMetadata):
                         "id": name,
                         "bpa_dataset_id": bpa_dataset_id,
                         "date_of_transfer": ingest_utils.get_date_isoformat(
-                            self._logger, track_get("date_of_transfer")
-                        ),
-                        "data_type": track_get("data_type"),
-                        "description": track_get("description"),
-                        "folder_name": track_get("folder_name"),
+                            self._logger, self.get_tracking_info(ticket, "date_of_transfer")),
+                        "data_type": self.get_tracking_info(ticket, "data_type"),
+                        "description": self.get_tracking_info(ticket, "description"),
+                        "folder_name": self.get_tracking_info(ticket, "folder_name"),
                         "sample_submission_date": ingest_utils.get_date_isoformat(
-                            self._logger, track_get("date_of_transfer")
+                            self._logger, self.get_tracking_info(ticket, "date_of_transfer")
                         ),
                         "contextual_data_submission_date": None,
                         "data_generated": ingest_utils.get_date_isoformat(
-                            self._logger, track_get("date_of_transfer_to_archive")
+                            self._logger, self.get_tracking_info(ticket, "date_of_transfer_to_archive")
                         ),
                         "archive_ingestion_date": ingest_utils.get_date_isoformat(
-                            self._logger, track_get("date_of_transfer_to_archive")
+                            self._logger, self.get_tracking_info(ticket, "date_of_transfer_to_archive")
                         ),
-                        "dataset_url": track_get("download"),
+                        "dataset_url": self.get_tracking_info(ticket, "download"),
                         "type": self.ckan_data_type,
                         "sequence_data_type": self.sequence_data_type,
                         "license_id": apply_cc_by_license(),
@@ -859,6 +785,24 @@ class TSIGenomicsDDRADMetadata(TSIBaseMetadata):
                 self.track_xlsx_resource(obj, fname)
                 packages.append(obj)
         return self.apply_location_generalisation(packages)
+
+    def _add_datatype_specific_info_to_package(self, obj, row, filename):
+        obj.update(
+            {
+                 "sample_submission_date": ingest_utils.get_date_isoformat(
+                    self._logger, self.get_tracking_info(row.ticket, "date_of_transfer")
+                ),
+                "contextual_data_submission_date": None,
+                "data_generated": ingest_utils.get_date_isoformat(
+                    self._logger, self.get_tracking_info(row.ticket, "date_of_transfer_to_archive")
+                ),
+                "archive_ingestion_date": ingest_utils.get_date_isoformat(
+                    self._logger, self.get_tracking_info(row.ticket, "date_of_transfer_to_archive")
+                ),
+                 "dataset_url": self.get_tracking_info(row.ticket, "download")
+             }
+        )
+        # below fields are in the metadata, but not required in the packages schema
 
     def _get_resources(self):
         return self._get_common_resources() + self.generate_xlsx_resources()
@@ -954,99 +898,72 @@ class TSIGenomeAssemblyMetadata(TSIBaseMetadata):
         self.path = Path(metadata_path)
         self.contextual_metadata = contextual_metadata
         self.metadata_info = metadata_info
-        self.track_meta = TSIGoogleTrackMetadata(logger)
+        self.google_track_meta = TSIGoogleTrackMetadata(logger)
 
     def _get_packages(self):
-        self._logger.info(
-            "Ingesting TSI Genome Assembly metadata from {0}".format(self.path)
-        )
-        packages = []
-        for fname in glob(self.path + "/*.xlsx"):
-            self._logger.info("Processing TSI metadata file {0}".format(fname))
-            rows = self.parse_spreadsheet(fname, self.metadata_info)
-
-            def track_get(k):
-                if track_meta is None:
-                    return None
-                return getattr(track_meta, k)
-
-            for row in rows:
-                track_meta = self.track_meta.get(row.ticket)
-                bioplatforms_secondarydata_id = row.bioplatforms_secondarydata_id
-                scientific_name = row.scientific_name
-                obj = row._asdict()
-                name = sample_id_to_ckan_name(
-                    bioplatforms_secondarydata_id.split("/")[-1], self.ckan_data_type
-                )
-
-                # explode sample_id, library_id
-                sample_ids = re.split(",\s*", str(row.sample_id))
-                library_ids = re.split(",\s*", str(row.library_id))
-
-                # check same length
-                if len(sample_ids) != len(library_ids):
-                    raise Exception("mismatch count of sample and library IDs")
-
-                # if single item, add bpa_sample_id and bpa_library_id to metadata
-                if len(sample_ids) == 1:
-                    obj["bpa_sample_id"] = ingest_utils.extract_ands_id(
-                        self._logger, row.sample_id
-                    )
-                    obj["bpa_library_id"] = ingest_utils.extract_ands_id(
-                        self._logger, row.library_id
-                    )
-                else:
-                    obj["bpa_sample_id"] = None
-                    obj["bpa_library_id"] = None
-
-                for contextual_source in self.contextual_metadata:
-                    context = []
-                    for i in range(0, len(sample_ids)):
-                        context.append(
-                            contextual_source.get(
-                                ingest_utils.extract_ands_id(
-                                    self._logger, sample_ids[i]
-                                ),
-                            )
-                        )
-                    obj.update(common_values(context))
-
-                obj.update(
-                    {
-                        "date_of_transfer": ingest_utils.get_date_isoformat(
-                            self._logger, track_get("date_of_transfer")
-                        ),
-                        "data_type": track_get("data_type"),
-                        "description": track_get("description"),
-                        "folder_name": track_get("folder_name"),
-                        "sample_submission_date": ingest_utils.get_date_isoformat(
-                            self._logger, track_get("date_of_transfer")
-                        ),
-                        "contextual_data_submission_date": None,
-                        "data_generated": ingest_utils.get_date_isoformat(
-                            self._logger, track_get("date_of_transfer_to_archive")
-                        ),
-                        "archive_ingestion_date": ingest_utils.get_date_isoformat(
-                            self._logger, track_get("date_of_transfer_to_archive")
-                        ),
-                        "dataset_url": track_get("download"),
-                        "name": name,
-                        "id": name,
-                        "type": self.ckan_data_type,
-                        "sequence_data_type": self.sequence_data_type,
-                        "license_id": apply_cc_by_license(),
-                    }
-                )
-                self._build_title_into_object(obj, None)
-                self.build_notes_into_object(obj, {"left-paren": "(",
-                                                   "right-paren": ")",
-                                                   }
-                                             )
-                ingest_utils.permissions_organization_member(self._logger, obj)
-                ingest_utils.apply_access_control(self._logger, self, obj)
-                obj["tags"] = [{"name": t} for t in self.tag_names]
-                packages.append(obj)
+        packages = self._get_common_packages()
         return self.apply_location_generalisation(packages)
+
+    def _add_datatype_specific_info_to_package(self, obj, row, filename):
+        bioplatforms_secondarydata_id = row.bioplatforms_secondarydata_id
+        obj["name"] = sample_id_to_ckan_name(
+            bioplatforms_secondarydata_id.split("/")[-1], self.ckan_data_type
+        )
+        obj["id"] = obj["name"]
+        # explode sample_id, library_id
+        sample_ids = re.split(",\s*", str(row.sample_id))
+        library_ids = re.split(",\s*", str(row.library_id))
+
+        # check same length
+        if len(sample_ids) != len(library_ids):
+            raise Exception("mismatch count of sample and library IDs")
+
+        # if single item, add bpa_sample_id and bpa_library_id to metadata
+        if len(sample_ids) == 1:
+            obj["bpa_sample_id"] = ingest_utils.extract_ands_id(
+                self._logger, row.sample_id
+            )
+            obj["bpa_library_id"] = ingest_utils.extract_ands_id(
+                self._logger, row.library_id
+            )
+        else:
+            obj["bpa_sample_id"] = None
+            obj["bpa_library_id"] = None
+
+        for contextual_source in self.contextual_metadata:
+            context = []
+            for i in range(0, len(sample_ids)):
+                context.append(
+                    contextual_source.get(
+                        ingest_utils.extract_ands_id(
+                            self._logger, sample_ids[i]
+                        ),
+                    )
+                )
+            obj.update(common_values(context))
+
+        obj.update(
+            {"data_generated": ingest_utils.get_date_isoformat(
+                    self._logger, self.get_tracking_info(row.ticket, "date_of_transfer_to_archive")
+             ),
+             "folder_name": self.get_tracking_info(row.ticket, "folder_name"),
+             "sample_submission_date": ingest_utils.get_date_isoformat(
+                self._logger, self.get_tracking_info(row.ticket, "date_of_transfer")
+             ),
+             "contextual_data_submission_date": None,
+             "archive_ingestion_date": ingest_utils.get_date_isoformat(
+                self._logger, self.get_tracking_info(row.ticket, "date_of_transfer_to_archive")
+             ),
+             "dataset_url": self.get_tracking_info(row.ticket, "download"),
+             }
+        )
+        self.build_notes_into_object(obj, {"left-paren": "(", "right-paren": ")"})
+        # below fields are in the metadata, but not required in the packages schema
+        del obj["ccg_jira_ticket"]
+        del obj["date_of_transfer_to_archive"]
+        del obj["download"]
+        del obj["file_count"]
+
 
     def _get_resources(self):
         return self._get_common_resources()
@@ -1168,7 +1085,7 @@ class TSIHiCMetadata(TSIBaseMetadata):
         ],
     }
     notes_mapping = [
-        {"key": "complete_library_id", "separator": "\n"},
+        {"key": "library_id", "separator": "\n"},
         {"key": "genus", "separator": " "},
         {"key": "species", "separator": ", "},
         {"key": "voucher_or_tissue_number", "separator": " "},
@@ -1187,50 +1104,16 @@ class TSIHiCMetadata(TSIBaseMetadata):
         self.google_track_meta = TSIGoogleTrackMetadata(logger)
 
     def _get_packages(self):
-        self._logger.info("Ingesting TSI metadata from {0}".format(self.path))
-        packages = []
-        for fname in glob(self.path + "/*.xlsx"):
-            self._logger.info("Processing TSI metadata file {0}".format(fname))
-            rows = self.parse_spreadsheet(fname, self.metadata_info)
-            xlsx_info = self.metadata_info[os.path.basename(fname)]
-            ticket = xlsx_info["ticket"]
-            track_meta = self.google_track_meta.get(ticket)
-            for row in rows:
-                sample_id = row.sample_id
-                library_id = row.library_id
-                dataset_id = row.dataset_id
-                obj = row._asdict()
-                if track_meta is not None:
-                    obj.update(track_meta._asdict())
-                raw_library_id = library_id.split("/")[-1]
-                raw_dataset_id = dataset_id.split("/")[-1]
-                name = sample_id_to_ckan_name(
-                    raw_library_id, self.ckan_data_type, row.flowcell_id
-                )
-                for contextual_source in self.contextual_metadata:
-                    obj.update(contextual_source.get(sample_id))
-                obj.update(
-                    {
-                        "title": "TSI Hi-C {} {}".format(
-                            obj["sample_id"], row.flowcell_id
-                        ),
-                        "sample_id": sample_id,
-                        "name": name,
-                        "id": name,
-                        "type": self.ckan_data_type,
-                        "sequence_data_type": self.sequence_data_type,
-                        "license_id": apply_cc_by_license(),
-                        "flowcell_id": row.flowcell_id,
-                        "data_generated": True,
-                        "library_id": raw_library_id,
-                    }
-                )
-                self.build_notes_into_object(obj, {"complete_library_id": library_id, })
-                ingest_utils.permissions_organization_member(self._logger, obj)
-                ingest_utils.apply_access_control(self._logger, self, obj)
-                obj["tags"] = [{"name": "{:.100}".format(t)} for t in self.tag_names]
-                packages.append(obj)
-        return packages
+        return self._get_common_packages()
+
+    def _add_datatype_specific_info_to_package(self, obj, row, filename):
+        # note the complete library id is used to generate the notes field.
+        obj.update(
+            {"library_id": row.library_id.split("/")[-1],
+             "data_generated": True
+             }
+        )
+        self._build_title_into_object(obj, obj["sample_id"]) # this overrides the one set in the base class.
 
     def _get_resources(self):
         return self._get_common_resources()
