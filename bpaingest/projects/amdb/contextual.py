@@ -1490,10 +1490,36 @@ class BASENCBIContextual(NCBISRAContextual):
 
 class AustralianMicrobiomeDatasetControlContextual(BaseDatasetControlContextual):
     metadata_urls = [
-        "https://downloads-qcif.bioplatforms.com/bpa/amd/dataset_control/2021-11-24/"
+        "https://downloads-qcif.bioplatforms.com/bpa/amd/dataset_control/2022-12-05/"
     ]
     name = "amd-dataset-contextual"
     contextual_linkage = ("sample_id",)
+    sheet_names = ["Sheet1",]
+    related_data_identifier_type = "dataset_id"
+    additional_fields = [
+        fld('dataset_id', 'bioplatforms_dataset_id'),
+        fld('bioplatforms_dataset_id', 'bioplatforms_dataset_id'),
+        fld('bioplatforms_project_code', 'bioplatforms_project_code'),
+        fld('bioplatforms_project', 'bioplatforms_project'),
+        fld('ncbi_bioproject_accession_number', 'ncbi_bioproject_accession_number'),
+        fld('ncbi_biosample_accession_number', 'ncbi_biosample_accession_number'),
+        fld('related_data_doi', 'related_data_doi', coerce=ingest_utils.get_clean_doi),
+        fld('related_data_identifier', 'related_data_identifier', coerce=ingest_utils.extract_ands_id),
+    ]
+
+    def _read_metadata(self, metadata_path):
+        metadata = super()._read_metadata(metadata_path)
+        for linkage in metadata:
+            doi = metadata[linkage].get('related_data_doi', "")
+            identifier = metadata[linkage].get('related_data_identifier', "")
+            if identifier:
+                identifier = "{}:{}".format(self.related_data_identifier_type,identifier)
+            related = metadata[linkage].get('related_data', "")
+            metadata[linkage]['related_data'] = " ".join(filter(None,(related,doi,identifier)))
+            del metadata[linkage]['related_data_doi']
+            del metadata[linkage]['related_data_identifier']
+        self._logger.warn(metadata)
+        return metadata
 
     def sample_ids(self):
         return list(self.dataset_metadata.keys())

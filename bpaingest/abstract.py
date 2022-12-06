@@ -361,6 +361,7 @@ class BaseDatasetControlContextual:
     ]
     contextual_linkage = ()
     name_mapping = {}
+    additional_fields=[]
 
     def __init__(self, logger, path):
         self._logger = logger
@@ -392,7 +393,7 @@ class BaseDatasetControlContextual:
         return value
 
     def _read_metadata(self, fname):
-
+        # Obligatory fields
         field_spec = [
             fld(
                 "access_control_date",
@@ -403,6 +404,10 @@ class BaseDatasetControlContextual:
             fld("related_data", "related_data"),
         ]
 
+        # Add any additional fields
+        field_spec.extend(self.additional_fields)
+
+        # ID fields used for linkage, add if present in linkage
         # Handle some data types using prepending bpa_ to the linkage fields
         if len(
             set(self.contextual_linkage).intersection(
@@ -410,14 +415,16 @@ class BaseDatasetControlContextual:
             )
         ):
             for field in ("bpa_sample_id", "bpa_library_id", "bpa_dataset_id"):
-                field_spec.append(
-                    fld(field, field, coerce=ingest_utils.extract_ands_id,)
-                )
+                if field in self.contextual_linkage:
+                    field_spec.append(
+                        fld(field, field, coerce=ingest_utils.extract_ands_id,)
+                    )
         else:
             for field in ("sample_id", "library_id", "dataset_id"):
-                field_spec.append(
-                    fld(field, field, coerce=ingest_utils.extract_ands_id,)
-                )
+                if field in self.contextual_linkage:
+                    field_spec.append(
+                        fld(field, field, coerce=ingest_utils.extract_ands_id,)
+                    )
 
         dataset_metadata = {}
         for sheet_name in self.sheet_names:
