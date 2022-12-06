@@ -1,6 +1,6 @@
 from io import BytesIO
 
-from .ingest_utils import get_clean_number
+from .ingest_utils import get_clean_number, get_clean_doi
 from .multihash import _generate_hashes
 from bpaingest.libs.common_resources import bsd_md5_re, linux_md5_re
 from bpaingest.util import make_logger
@@ -100,3 +100,23 @@ def test_md5lines2():
     ]
     for filename in filenames:
         assert linux_md5_re.match(filename) is not None
+
+
+def test_get_clean_doi():
+    strings = (
+        ("https://dx.doi.org/10.100/1234",None),
+        ("http://dx.doi.org/10.100/1234",None),
+        ("https://doi.org/10.100/1234",None),
+        ("http://doi.org/10.100/1234",None),
+        ("doi:10.1038/nphys1170", "doi:10.1038/nphys1170"),
+        ("doi:10.1002/0470841559.ch1", "doi:10.1002/0470841559.ch1"),
+        ("doi:10.1594/PANGAEA.726855", "doi:10.1594/PANGAEA.726855"),
+        ("doi:10.1594/GFZ.GEOFON.gfz2009kciu", "doi:10.1594/GFZ.GEOFON.gfz2009kciu"),
+        ("doi:10.1594/PANGAEA.667386", "doi:10.1594/PANGAEA.667386"),
+        ("https://doi.org/10.25953/4rpw-z", "doi:10.25953/4rpw-z"),
+        ("http://dx.doi.org/10.25953/4rpw-z", "doi:10.25953/4rpw-z"),
+    )
+    for s, f in strings:
+        assert get_clean_doi(logger, s) == f
+    assert get_clean_doi(logger, "") is ""
+    assert get_clean_doi(logger, None) is None

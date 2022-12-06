@@ -441,7 +441,7 @@ def permissions_public(logger, obj):
 
 
 def get_year(logger, s):
-    if re.search("\d{4}\.\d*", s):
+    if re.search(r"\d{4}\.\d*", s):
         # remove decimal and convert back to string
         return str(math.trunc(float(s)))
     else:
@@ -594,3 +594,29 @@ def apply_access_control(logger, metadata, obj):
 
     # We shouldn't get here
     _log_access_control_error(logger, obj)
+
+def get_clean_doi(logger, val):
+    if not val:
+        return val
+
+    try:
+        val.index("doi")
+    except ValueError:
+        logger.error("DOI not found in: {}".format(val))
+        return None
+
+    # change any weblinks back to doi:
+    regex = r"^https?:\/\/(dx\.)?doi.org\/"
+    subst = "doi:"
+
+    val = re.sub(regex, subst, val, 0)
+
+    # check if DOI looks valid
+    # regex is not exhaustive
+    # See: https://www.crossref.org/blog/dois-and-matching-regular-expressions/
+
+    if not re.match(r"^doi:10.\d{4,9}\/[-._;()\/:A-Z0-9]+$", val, re.IGNORECASE):
+        logger.error("DOI does not look valid: {}".format(val))
+        return None
+
+    return val
