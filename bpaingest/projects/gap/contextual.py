@@ -23,11 +23,14 @@ class GAPDatasetControlContextual(BaseDatasetControlContextual):
     ]
     name = "gap-dataset-contextual"
     contextual_linkage = ("library_id", "dataset_id")
+    additional_fields = [
+        fld('sample_id', 'sample_id', coerce=ingest_utils.extract_ands_id),
+    ]
 
 
 class GAPLibraryContextual:
     metadata_urls = [
-        "https://downloads-qcif.bioplatforms.com/bpa/plants_staging/metadata/2022-09-14/"
+        "https://downloads-qcif.bioplatforms.com/bpa/plants_staging/metadata/2022-11-22/"
     ]
     metadata_patterns = [re.compile(r"^.*\.xlsx$")]
     name = "gap-library-contextual"
