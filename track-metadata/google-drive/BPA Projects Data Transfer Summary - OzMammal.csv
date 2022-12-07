@@ -4,9 +4,9 @@ AGRF,29/03/2017,10X Genomics- 102.100.100/40065 ,170314_D00626_0270_BHCGFNBCXY,R
 AGRF,29/03/2017,10X Genomics- 102.100.100/40065 ,HCGFNBCXY,Illumina FASTQ,28/04/2017,1,BPAOPS-121,https://data.bioplatforms.com/dataset/bpa-omg-10x-processed-illumina-102_100_100_40065-hcgfnbcxy
 AGRF,29/03/2017,10X Genomics- 102.100.100/40065 ,HFMKJBCXY,Illumina FASTQ,28/04/2017,1,BPAOPS-122,https://data.bioplatforms.com/dataset/bpa-omg-10x-processed-illumina-102_100_100_40065-hfmkjbcxy
 BRF,05/05/2017,HiSeq 2500 100bp PE - exon capture pool 102.100.100/40067 (samples 102.100.100/40069-40124),SN877_0482_AMacDonald_JCSMR_Marsupial_gDNA_exon_capture,Illumina FASTQ,15/05/2017,113,BPAOPS-135,https://data.bioplatforms.com/organization/bpa-omg?q=%22BPAOPS-135%22&sort=score+desc%2C+metadata_modified+desc
-UNSW,29/6/17,HiSeq XTen 150bp PE 102.100.100/40066,20170629_UNSW_BPA_OMG_HGTV5ALXX,Illumina FASTQ,06/07/2017,2,BPAOPS-214,https://data.bioplatforms.com/dataset/bpa-omg-genomics-hiseq-102_100_100_40066-hgtv5alxx
-UNSW,20/7/17,HiSeq XTen 150bp PE 102.100.100/40128,20170719_UNSW_BPA_OMG_H5HHCALXX,Illumina FASTQ,06/07/2017,2,BPAOPS-213,https://data.bioplatforms.com/dataset/bpa-omg-genomics-hiseq-102_100_100_40066-hhfc5alxx
-UNSW,20/7/17,HiSeq XTen 150bp PE 102.100.100/40129,20170719_UNSW_BPA_OMG_H5HHCALXX,Illumina FASTQ,21/07/2017,8,BPAOPS-260,"https://data.bioplatforms.com/dataset/bpa-omg-genomics-hiseq-102_100_100_40129-h5hhcalxx
+UNSW,29/06/2017,HiSeq XTen 150bp PE 102.100.100/40066,20170629_UNSW_BPA_OMG_HGTV5ALXX,Illumina FASTQ,06/07/2017,2,BPAOPS-214,https://data.bioplatforms.com/dataset/bpa-omg-genomics-hiseq-102_100_100_40066-hgtv5alxx
+UNSW,20/07/2017,HiSeq XTen 150bp PE 102.100.100/40128,20170719_UNSW_BPA_OMG_H5HHCALXX,Illumina FASTQ,06/07/2017,2,BPAOPS-213,https://data.bioplatforms.com/dataset/bpa-omg-genomics-hiseq-102_100_100_40066-hhfc5alxx
+UNSW,20/07/2017,HiSeq XTen 150bp PE 102.100.100/40129,20170719_UNSW_BPA_OMG_H5HHCALXX,Illumina FASTQ,21/07/2017,8,BPAOPS-260,"https://data.bioplatforms.com/dataset/bpa-omg-genomics-hiseq-102_100_100_40129-h5hhcalxx
 https://data.bioplatforms.com/dataset/bpa-omg-genomics-hiseq-102_100_100_40129-h5hhcalxx"
 UNSW,07/08/2017,10X Genomics- 102.100.100/40066,40066_OMG_UNSW_10X_HJJCWALXX,Illumina FASTQ ,17/08/2017,4,BPAOPS-283,https://data.bioplatforms.com/dataset/bpa-omg-10x-raw-102_100_100_40066-10x_hjjcwalxx
 UNSW,08/08/2017,10X Genomics- 102.100.100/40314,40314_OMG_UNSW_10x_H7VWYCCXY,Illumina FASTQ,4/10/2017,,BPAOPS-343,https://data.bioplatforms.com/dataset/bpa-omg-10x-raw-102_100_100_40134-10x_h7vwyccxy
@@ -19,7 +19,7 @@ BRF,02/02/2018,HiSeq 2500 100bp PE - exon capture pool rodent,SN877_0538_AMacDon
 BRF,06/02/2018,HiSeq 2500 100bp PE - exon capture pool rodent,SN877_0539_AMacDonald_OzMammals_Rodents_gDNA_capture,Illumina FASTQ,06/02/2018,,BPAOPS-510,https://data.bioplatforms.com/organization/dbaf22b0-0e9b-4b14-b405-9fc4d9181975?q=BPAOPS-510&sort=score+desc%2C+metadata_modified+desc
 BRF,16/03/2018,HiSeq 2500 100bp PE - exon capture pool rodent,SN877_0547_AMacDonald_OzMammals_Rodents_gDNA_capture,Illumina FASTQ,16/03/2018,,BPAOPS-552,https://data.bioplatforms.com/dataset/ec_52590_run547_annamacdonald/resource/d9935059-df00-44f2-8c25-5d60ae3e87b1
 BRF,16/03/2018,HiSeq 2500 100bp PE - exon capture pool rodent,SN877_0548_AMacDonald_OzMammals_Rodents_gDNA_capture,Illumina FASTQ,16/03/2018,,BPAOPS-553,https://data.bioplatforms.com/dataset/ec_52591_run548_annamacdonald/resource/f572f6dd-50db-42ce-b7b4-ef01b1b4f36b
-UNSW,03/04/18,10X Genomics- 102.100.100/40254,40254_OMG_UNSW_10X_H7JL7CCXY,Illumina FASTQ,03/04/18,7,BPAOPS-567,
+UNSW,03/04/2018,10X Genomics- 102.100.100/40254,40254_OMG_UNSW_10X_H7JL7CCXY,Illumina FASTQ,03/04/2018,7,BPAOPS-567,
 BRF,26/06/2018,HiSeq 2500 100bp PE - Bat genomic DNA,SN877_0567_AMacDonald_OzMammals_bat_gDNA,Illumina FASTQ,26/06/2018,,BPAOPS-622,https://data.bioplatforms.com/dataset/0af9befb-70a8-4db7-8a47-97834be83560/resource/c4c4135a-70f1-451a-b714-70835052d4f5/download/EC_52594_run567_AMacDonald_OzMammals_bat_gDNA.tar
 BRF,04/06/2018,HiSeq 2500 100bp PE - Marsupial genomic DNA,SN877_0569_AMacDonald_OzMammals_Marsupials_gDNA_capture,Illumina FASTQ,04/06/2018,,BPAOPS-623,https://data.bioplatforms.com/dataset/c_52595_sn877_0569_amacdonald_ozmammals_marsupials_gdna_capture/resource/278503c3-4ca3-4a28-918b-5632a8781190
 BRF,15/06/2018,HiSeq 2500 100bp PE - Marsupial genomic DNA,SN877_0572_AMacDonald_OzMammals_Marsupials_gDNA_capture,Illumina FASTQ,15/06/2018,,BPAOPS-624,https://data.bioplatforms.com/dataset/ec_52596_marsupial_gdna-capture/resource/a81dce0f-0d0a-4667-abdb-bf98ddd6babf
@@ -29,18 +29,18 @@ AGRF,07/09/2018,NextSeq ddRAD- data set ID 52588,AGRF_OMG_HHYNNBGX7_52588,Illumi
 AGRF,21/11/2019,NextSeq ddRAD- data set ID 52599,AGRF_OMG_HGHL2BGX9_52599,Illumina FASTQ,14/2/2019,,BPAOPS-748,(ingested)
 BRF,19/12/2018,HiSeq 2500 100bp PE - rodent exome DNA,SN877_0615_AMacDonald_OzMammals_Rodent_gDNA_exome_capture,Illumina FASTQ,14/2/2019,,BPAOPS-783,(ingested)
 BRF,21/12/2018,HiSeq 2500 100bp PE - rodent exome DNA,SN877_0616_AMacDonald_OzMammals_Rodent_gDNA_exome_capture,Illumina FASTQ,14/2/2019,,BPAOPS-784,(ingested)
-BRF,11/1/2019,HiSeq 2500 100bp PE - rodent exome DNA,SN877_0619_AMacDonald_OzMammals_Rodent_gDNA_exome_capture,Illumina FASTQ,14/2/2019,,BPAOPS-785,(ingested)
+BRF,11/01/2019,HiSeq 2500 100bp PE - rodent exome DNA,SN877_0619_AMacDonald_OzMammals_Rodent_gDNA_exome_capture,Illumina FASTQ,14/2/2019,,BPAOPS-785,(ingested)
 BRF,14/01/2019,HiSeq 2500 100bp PE - rodent exome DNA,SN877_0621_AMacDonald_OzMammals_Rodent_gDNA_exome_capture,Illumina FASTQ,14/2/2019,,BPAOPS-786,(ingested)
 BRF,14/01/2019,HiSeq 2500 100bp PE - rodent exome DNA,SN877_0622_AMacDonald_OzMammals_Rodent_gDNA_exome_capture,Illumina FASTQ,14/2/2019,,BPAOPS-787,(ingested)
-UNSW,20/3/19,10X Genomics/NovaSeq 6000- 41196 Bilby DNA,41196_OMG_UNSW_10X_H3FFVDRXX,Illumina FASTQ,25/3/2019,,BPAOPS-797,(ingested)
+UNSW,20/03/2019,10X Genomics/NovaSeq 6000- 41196 Bilby DNA,41196_OMG_UNSW_10X_H3FFVDRXX,Illumina FASTQ,25/3/2019,,BPAOPS-797,(ingested)
 AGRF,20/03/2019,NovaSeq 6000- Whole Genome - 41193 and 41194,20190313_AGRF_BPA_OMG_HG2W3DSXX ,Illumina FASTQ,25/3/2019,,BPAOPS-815,(ingested)
 AGRF,20/03/2019,NovaSeq 6000- Whole Genome - 41193 and 41194,20190313_AGRF_BPA_OMG_HJKTTDSXX,Illumina FASTQ,25/3/2019,,BPAOPS-816,(ingested)
-UNSW,28/03/19,PacBio data- 60045 Dunnart,OMG_UNSW_PAC_20190321,PacBio subreads.bam,08/03/2019,,BPAOPS-817,(ingested)
-UNSW,09/04/19,PacBio data- 60045 Dunnart,OMG_UNSW_PAC_20190401,PacBio subreads.bam,9/4/2019,,BPAOPS-818,(ingested)
-UNSW,09/04/19,PacBio data- 60045 Dunnart,OMG_UNSW_PAC_20190405,PacBio subreads.bam,9/4/2019,,BPAOPS-819,(ingested)
-UNSW,16/04/19,PacBio data- 60045 Dunnart,OMG_UNSW_PAC_20190411,PacBio subreads.bam,16/7/2019,,BPAOPS-831,(ingested)
-UNSW,12/6/19,10X Genomics/NovaSeq 6000- Numbat DNA,52610_OMG_UNSW_10X_H7L7YDRXX,Illumina FASTQ,14/06/2019,,BPAOPS-826,(ingested)
-UNSW,14/6/19,10X Genomics/NovaSeq 6000- Leadbeateri DNA,40133_OMG_UNSW_10X_H7WTTDRXX,Illumina FASTQ,15/07/2019,,BPAOPS-829,(ingested)
+UNSW,28/03/2019,PacBio data- 60045 Dunnart,OMG_UNSW_PAC_20190321,PacBio subreads.bam,08/03/2019,,BPAOPS-817,(ingested)
+UNSW,09/04/2019,PacBio data- 60045 Dunnart,OMG_UNSW_PAC_20190401,PacBio subreads.bam,9/4/2019,,BPAOPS-818,(ingested)
+UNSW,09/04/2019,PacBio data- 60045 Dunnart,OMG_UNSW_PAC_20190405,PacBio subreads.bam,9/4/2019,,BPAOPS-819,(ingested)
+UNSW,16/04/2019,PacBio data- 60045 Dunnart,OMG_UNSW_PAC_20190411,PacBio subreads.bam,16/7/2019,,BPAOPS-831,(ingested)
+UNSW,12/06/2019,10X Genomics/NovaSeq 6000- Numbat DNA,52610_OMG_UNSW_10X_H7L7YDRXX,Illumina FASTQ,14/06/2019,,BPAOPS-826,(ingested)
+UNSW,14/06/2019,10X Genomics/NovaSeq 6000- Leadbeateri DNA,40133_OMG_UNSW_10X_H7WTTDRXX,Illumina FASTQ,15/07/2019,,BPAOPS-829,(ingested)
 BRF,14/08/2019,HiSeq 2500 100bp PE - bat exome DNA,SN877_0632_AMacDonald_OzMammals_Bat_gDNA_exome_capture,Illumina FASTQ,14/08/2019,,BPAOPS-840,(ingested)
 AGRF,28/08/2019,NextSeq ddRAD- data set ID 52611,AGRF_OMG_52611_H237FBGXC,Illumina FASTQ,29/08/2019,,BPAOPS-851,https://data.bioplatforms.com/dataset/bpa-omg-genomics-ddrad-102_100_100_52611-h237fbgxc
 ANU,28/08/2019,HiSeq 2500 100bp PE - exon capture marsupial,52583_60marsupials_fastq,Illumina FASTQ,28/08/2019,234,BPAOPS-849,(ingested)
@@ -51,7 +51,7 @@ AGRF,26/09/2019,"ONT-Promethion data- sample ID:41599, library ID:54310, data se
 AGRF,26/09/2019,"ONT-Promethion data- sample ID:41595, library ID:54312, data set ID:52614",20190919_OMG_AGRF_PAD87066,ONT fast5 and fastq,26/05/2019,,BPAOPS-860,(ingested)
 AGRF,24/10/2019,NextSeq ddRAD- data set ID 52617,AGRF_OMG_52617_H7VWWBGXC,Illumina FASTQ,24/10/2019,,BPAOPS-871,(ingested)
 AGRF,24/10/2019,NextSeq ddRAD- data set ID 52618,AGRF_OMG_H7VHWBGXC_52618,Illumina FASTQ,24/10/2019,,BPAOPS-870,(ingested)
-UNSW,25/11/19,10X Genomics/NovaSeq 6000- Dasyurus DNA,54608_OMG_UNSW_10X_HGYCLDRXX,Illumina FASTQ,25/11/19,,BPAOPS-874,(ingested)
+UNSW,25/11/2019,10X Genomics/NovaSeq 6000- Dasyurus DNA,54608_OMG_UNSW_10X_HGYCLDRXX,Illumina FASTQ,25/11/2019,,BPAOPS-874,(ingested)
 AGRF,28/01/2019,NextSet ddRAD- Data set ID 52621 (Dibbler),AGRF_OMG_H32KHBGXF_52621,Illumina FASTQ,28/01/2020,,BPAOPS-884,(ingested)
 BRF,30/03/2020,Nextseq500 150PE - exon capture marsupial,NB501086_0360_AMacDonald_OzMammals_Marsupial_gDNA_exon_capture,Illumina FASTQ,30/03/2020,,BPAOPS-893,(ingested)
 BRF,01/04/2020,Nextseq500 150PE - exon capture marsupial,NB501086_0361_AMacDonald_OzMammals_Rodent_gDNA_exon_capture,Illumina FASTQ,01/04/2020,,BPAOPS-894,(ingested)
@@ -63,7 +63,7 @@ UNSW,21/05/2020,OMG_52598_dunnart_RNA_library,20200519_UNSW_BPA_OMG_H775FAFX2,Il
 AGRF,29/05/2020,NextSeq ddRAD Mesembriomys gouldii ddRAD data set ID 52627,AGRF_OMG_HV7J3BGXF_52627,Illumina FASTQ,16/06/2020,,BPAOPS-919,
 AGRF,29/05/2020,NextSeq ddRAD Dasyurus hallucatus ddRAD data set ID 52623,AGRF_OMG_H7MH7BGXF_52623 ,Illumina FASTQ,16/06/2020,,BPAOPS-917,
 AGRF,29/05/2020,NextSeq ddRAD Dasyurus hallucatus ddRAD data set ID 52623,AGRF_OMG_HNVTHBGXF_52623,Illumina FASTQ,16/06/2020,,BPAOPS-918,
-BRF,17/09/2020,"Novaseq 6000 Marsupial gDNA capture 52629, 52630, 52633",A00548_115_AMacDonald_52629_52630_52633_Marsupial_gDNA,Illumina FASTQ,17/09/20,,BPAOPS-957,(ingested)
+BRF,17/09/2020,"Novaseq 6000 Marsupial gDNA capture 52629, 52630, 52633",A00548_115_AMacDonald_52629_52630_52633_Marsupial_gDNA,Illumina FASTQ,17/09/2020,,BPAOPS-957,(ingested)
 AGRF,18/09/2020,NovaSeq 6000 ddRAD Petrogale lateralis ddRAD data set ID 52628,AGRF_OMG_HTHTLDRXX_52628,Illumina FASTQ,18/09/2020,,BPAOPS-956,(ingested) https://data.bioplatforms.com/dataset/bpa-omg-genomics-ddrad-102_100_100_52628-hthtldrxx
 BRF,23/09/2020,Novaseq 6000 WGS Blackfooted rock wallaby 52634,A00548_114_AMacDonald_52634_Black_footed_rock_wallaby_gDNA,Illumina FASTQ,23/09/2020,,BPAOPS-958,
 AGRF,08/10/2020,NovaSeq 6000 ddRAD Isoodon auratus ddRAD data set ID 52641,AGRF_OMG_HV2LKDRXX_52641,Illumina FASTQ,08/10/2020,,BPAOPS-962,
@@ -90,7 +90,7 @@ USYD,21/7/2021,Lesser Bilbies Analysed Data,lesserbilbies,Analysed Data,21/7/202
 WEHI,30/7/2021,Marsupial Mole,frankenberg,ONT fast5 and fastq,30/7/2021,,BPAOPS-1123,
 AGRF,12/08/2021,Novaseq 6000 ddRAD Petrogale pencillata ddRAD data set ID 52653,AGRF_OMG_HJ53CDRXY_52653,Illumina FASTQ,13/08/2021,,BPAOPS-1127,
 UNSW,03/11/2021,NovaSeq 6000 Notoryctes typhlops data set ID 352336,20211015_OMG_UNSW_HM7TVDRXY,Illumina FASTQ,03/11/2021,,BPAOPS-1157,
-BRFDArT,13/5/2022,,20210504_OMG_BRFDArT_52654,DArT,13/5/2022,,BPAOPS-1248,
-BRFDArT,13/5/2022,,20210504_OMG_BRFDArT_52655,DArT,13/5/2022,,BPAOPS-1249,
-BRFDArT,13/5/2022,,20210504_OMG_BRFDArT_52656,DArT,13/5/2022,,BPAOPS-1250,
-BRFDArT,13/5/2022,,20211118_OMG_BRFDArT_351829,DArT,13/5/2022,,BPAOPS-1251,
+BRFDArT,13/5/2022,Antechinus spp.,20210504_OMG_BRFDArT_52654,DArT,13/5/2022,,BPAOPS-1248,
+BRFDArT,13/5/2022,Dasyurus maculatus,20210504_OMG_BRFDArT_52655,DArT,13/5/2022,,BPAOPS-1249,
+BRFDArT,13/5/2022,Potoroo spp.,20210504_OMG_BRFDArT_52656,DArT,13/5/2022,,BPAOPS-1250,
+BRFDArT,13/5/2022,Antechinus spp.,20211118_OMG_BRFDArT_351829,DArT,13/5/2022,,BPAOPS-1251,
