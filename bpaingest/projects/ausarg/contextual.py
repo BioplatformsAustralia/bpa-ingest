@@ -23,15 +23,19 @@ class AusargDatasetControlContextual(BaseDatasetControlContextual):
     ]
     name = "ausarg-dataset-contextual"
     contextual_linkage = ("sample_id",)
+    additional_fields = [
+        fld('library_id', 'library_id'),
+        fld('dataset_id', 'dataset_id'),
+    ]
 
 
 class AusargLibraryContextual:
     metadata_urls = [
-        "https://downloads-qcif.bioplatforms.com/bpa/ausarg_staging/metadata/2022-05-24/"
+        "https://downloads-qcif.bioplatforms.com/bpa/ausarg_staging/metadata/2022-12-06/"
     ]
     metadata_patterns = [re.compile(r"^.*\.xlsx$")]
     name = "ausarg-library-contextual"
-    sheet_names = ["Sheet1"]
+    sheet_names = ["sample_metadata"]
 
     def __init__(self, logger, path):
         self._logger = logger
