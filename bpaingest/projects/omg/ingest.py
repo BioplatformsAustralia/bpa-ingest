@@ -1365,7 +1365,7 @@ class OMGGenomicsHiSeqMetadata(OMGBaseMetadata):
     metadata_urls = [
         "https://downloads-qcif.bioplatforms.com/bpa/omg_staging/genomics/raw/",
     ]
-    metadata_url_components = ("ticket",)
+    metadata_url_components = ("facility_path","ticket",)
     resource_linkage = ("bpa_sample_id", "flowcell_id")
     spreadsheet = {
         "fields": [
@@ -1520,6 +1520,7 @@ class OMGGenomicsHiSeqMetadata(OMGBaseMetadata):
                 ingest_utils.apply_access_control(self._logger, self, obj)
                 ingest_utils.add_spatial_extra(self._logger, obj)
                 obj["tags"] = [{"name": t} for t in self.tag_names]
+                del obj["facility_path"]
                 self.track_xlsx_resource(obj, fname)
                 packages.append(obj)
         return self.apply_location_generalisation(packages)

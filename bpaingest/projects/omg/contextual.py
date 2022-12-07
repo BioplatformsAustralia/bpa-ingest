@@ -8,7 +8,7 @@ from ...abstract import BaseDatasetControlContextual
 
 class OMGSampleContextual:
     metadata_urls = [
-        "https://downloads-qcif.bioplatforms.com/bpa/omg_staging/metadata/2022-05-17/"
+        "https://downloads-qcif.bioplatforms.com/bpa/omg_staging/metadata/2022-12-02/"
     ]
     metadata_patterns = [re.compile(r"^OMG_samples_metadata.*\.xlsx$")]
     name = "omg-sample-contextual"
@@ -222,3 +222,6 @@ class OMGDatasetControlContextual(BaseDatasetControlContextual):
     ]
     name = "omg-dataset-contextual"
     contextual_linkage = ("bpa_sample_id", "bpa_library_id")
+    additional_fields = [
+        fld('bpa_dataset_id', 'bpa_dataset_id'),
+    ]
