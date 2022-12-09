@@ -319,7 +319,7 @@ class GAPONTPromethionMetadata(GAPBaseMetadata):
         "https://downloads-qcif.bioplatforms.com/bpa/plants_staging/ont-promethion/",
     ]
     metadata_url_components = ("ticket",)
-    resource_linkage = ("ticket", "sample_id", "flow_cell_id")
+    resource_linkage = ("ticket", "sample_id", "library_id", "flow_cell_id")
     spreadsheet = {
         "fields": [
             fld(
@@ -397,6 +397,7 @@ class GAPONTPromethionMetadata(GAPBaseMetadata):
                 obj.update(
                     {
                         "sample_id": sample_id,
+                        "library_id": library_id,
                         "name": name,
                         "id": name,
                         "type": self.ckan_data_type,
@@ -420,11 +421,31 @@ class GAPONTPromethionMetadata(GAPBaseMetadata):
         resource["sample_id"] = ingest_utils.extract_ands_id(
             self._logger, resource["sample_id"]
         )
+        if "library_id" in resource and resource["library_id"] is not None:
+            resource["library_id"] = ingest_utils.extract_ands_id(
+                self._logger, resource["library_id"]
+            )
 
     def _build_resource_linkage(self, xlsx_info, resource, file_info):
+        # if library_id is in file name use that, 
+        # otherwise grab from tracking sheet
+        ticket = xlsx_info["ticket"]
+        track_meta = self.google_track_meta.get(ticket)
+        track_library_id = getattr(track_meta,"library_id")
+        resource_library_id = resource.get("library_id",None)
+        if resource_library_id is not None:
+            library_id = resource_library_id
+        else:
+            library_id = track_library_id
+        library_id = ingest_utils.extract_ands_id(
+            self._logger,
+            library_id
+        )
+
         return (
-            xlsx_info["ticket"],
+            ticket,
             resource["sample_id"],
+            library_id,
             resource["flow_cell_id"],
         )
 

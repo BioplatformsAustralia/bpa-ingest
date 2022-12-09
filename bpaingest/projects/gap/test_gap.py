@@ -72,6 +72,13 @@ def test_ont_promethion_re_2():
         "378099_GAP_UNSW_PAK15599_ONTPromethION_PVXP22262_pass.fastq.gz",
         "378099_GAP_UNSW_PAK15599_ONTPromethION_PVXP22262_reads.blow5",
         "378099_GAP_UNSW_PAK15599_ONTPromethION_PVXP22262.html",
+        "376316_LibID383128_GAP_BRF_PAM33046_barcode_alignment.tsv",
+        "376316_LibID383128_GAP_BRF_PAM33046_report.html",
+        "376316_LibID383128_GAP_BRF_PAM33046_sequencing_summary.txt",
+        "376316_LibID383122_GAP_BRF_PAM80422_ONTPromethION_fast5_fail.tar",
+        "376316_LibID383122_GAP_BRF_PAM80422_ONTPromethION_fast5_pass.tar",
+        "376316_LibID383122_GAP_BRF_PAM80422_ONTPromethION_fastq_fail.tar",
+        "376316_LibID383122_GAP_BRF_PAM80422_ONTPromethION_fastq_pass.tar",
     ]
     for filename in filenames:
         assert ont_promethion_re_2.match(filename) is not None

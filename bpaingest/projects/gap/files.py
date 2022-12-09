@@ -62,14 +62,15 @@ ont_promethion_re = re.compile(ONT_PROMETHION_PATTERN, re.VERBOSE)
 
 ONT_PROMETHION_PATTERN_2 = r"""
     (?P<sample_id>\d{4,6})_
+    (LibID(?P<library_id>\d{4,6})_)?
     GAP_
     (?P<facility_id>(AGRF|BRF|UNSW))_
-    (?P<flow_cell_id>PA[DEFGK]\d{5})_
+    (?P<flow_cell_id>PA[DEFGKM]\d{5})_
     (Run(?P<run_number>\d+)_)?
-    ONTPromethION_
+    (ONTPromethION_)?
     ((?P<experiment_run_name>[A-Z]{4}\d{5})_)?
     (?P<archive_type>\w+)
-    \.(tar|fastq.gz|blow5|html)
+    \.(tar|fastq.gz|blow5|html|tsv|txt)
 """
 ont_promethion_re_2 = re.compile(ONT_PROMETHION_PATTERN_2, re.VERBOSE)
 
