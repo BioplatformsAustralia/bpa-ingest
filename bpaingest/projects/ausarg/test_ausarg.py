@@ -2,6 +2,7 @@ from bpaingest.projects.ausarg.files import (
     illumina_fastq_re,
     metadata_sheet_re,
     ont_promethion_re,
+    ont_promethion_2_re,
     pacbio_hifi_filename_re,
     pacbio_hifi_metadata_sheet_re,
     exon_filename_re,
@@ -45,6 +46,19 @@ def test_ont_promethion_re():
     ]
     for filename in filenames:
         assert ont_promethion_re.match(filename) is not None
+
+
+def test_ont_promethion_2_re():
+    filenames = [
+        "414131_AusARG_BRF_PAM11664_ONTPromethION_fast5_fail.tar",
+        "414131_AusARG_BRF_PAM11664_ONTPromethION_fast5_pass.tar",
+        "414131_AusARG_BRF_PAM11664_ONTPromethION_fastq_fail.tar",
+        "414131_AusARG_BRF_PAM11664_ONTPromethION_fastq_pass.tar",
+        "414131_AusARG_BRF_PAM11664_ONTPromethION_report.html",
+        "414131_AusARG_BRF_PAM11664_ONTPromethION_sequencing_summary.txt",
+    ]
+    for filename in filenames:
+        assert ont_promethion_2_re.match(filename) is not None
 
 
 def test_pacbio_hifi():

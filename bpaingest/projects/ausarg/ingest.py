@@ -431,7 +431,7 @@ class AusargONTPromethionMetadata(AusargBaseMetadata):
         },
     }
     md5 = {
-        "match": [files.ont_promethion_re],
+        "match": [files.ont_promethion_re, files.ont_promethion_2_re],
         "skip": [
             re.compile(r"^.*_metadata\.xlsx$"),
             re.compile(r"^.*SampleSheet.*"),

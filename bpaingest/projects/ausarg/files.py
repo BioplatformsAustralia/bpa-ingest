@@ -40,6 +40,19 @@ ONT_PROMETHION_PATTERN = r"""
 """
 ont_promethion_re = re.compile(ONT_PROMETHION_PATTERN, re.VERBOSE)
 
+ONT_PROMETHION_2_PATTERN = r"""
+    (?P<library_id>\d{4,6})_
+    AusARG_
+    (?P<facility_id>(BRF))_
+    (?P<flowcell_id>PA[M]\d{5})_
+    ONTPromethION_
+    (?P<archive_type>\w+)
+    (\.tar
+      |\.html
+      |\.txt)
+"""
+ont_promethion_2_re = re.compile(ONT_PROMETHION_2_PATTERN, re.VERBOSE)
+
 PACBIO_HIFI_PATTERN = r"""
     (?P<library_id>\d{4,6})_
     AusARG_
