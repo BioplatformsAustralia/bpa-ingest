@@ -33,20 +33,30 @@ class BaseMetadata:
         return False
 
     def build_notes_into_object(self, obj, additional={}):
-        obj.update({"notes": self.build_string_from_map_without_blanks(self.notes_mapping, obj, additional)})
+        obj.update(
+            {
+                "notes": self.build_string_from_map_without_blanks(
+                    self.notes_mapping, obj, additional
+                )
+            }
+        )
 
     def build_string_from_map_without_blanks(self, field_map, obj, additional={}):
         result = ""
         # ensure blank fields are not used
         for next_field in field_map:
-            next_value = obj.get(next_field["key"], additional.get(next_field["key"], ""))
+            next_value = obj.get(
+                next_field["key"], additional.get(next_field["key"], "")
+            )
             if next_value:
                 result += next_value + next_field.get("separator", "")
         # remove any additional trailing blanks and commas before returning
-        return result.rstrip(', ')
+        return result.rstrip(", ")
 
     def build_title_into_object(self, obj, additional={}):
-        built_title = self.build_string_from_map_without_blanks(self.title_mapping, obj, additional)
+        built_title = self.build_string_from_map_without_blanks(
+            self.title_mapping, obj, additional
+        )
         if built_title:
             obj.update({"title": built_title})
 
@@ -93,9 +103,11 @@ class BaseMetadata:
             return tracking_row
             # todo check attribute exists, throw error/log if not
         return getattr(tracking_row, field_name)
+
     def _get_resource_info(self, resource_info):
-    # subclasses may choose to implement this, not required tho. TSI pacbio-hifi as an example
+        # subclasses may choose to implement this, not required tho. TSI pacbio-hifi as an example
         return
+
     def _get_common_resources(self):
         self._logger.info("Ingesting md5 file information from {0}".format(self.path))
         resources = []
@@ -123,15 +135,18 @@ class BaseMetadata:
                 )
             )
 
-        # could add similar code to call to the generae_md5_resources, but it would
-        # need to migrate to the ambd base class, otherwise it will be in existance
-        #  for all datatypes (as it is in abstract)
-        #             from inspect import ismethod
-        #
-        #             def method_exists(instance, method):
-        #                 return hasattr(instance, method) and ismethod(getattr(instance, method))
-            if hasattr(self, 'add_md5_as_resource'):
-                if self.add_md5_as_resource is not None and self.add_md5_as_resource is True:
+            # could add similar code to call to the generate_md5_resources, but it would
+            # need to migrate to the ambd base class, otherwise it will be in existance
+            #  for all datatypes (as it is in abstract)
+            #             from inspect import ismethod
+            #
+            #             def method_exists(instance, method):
+            #                 return hasattr(instance, method) and ismethod(getattr(instance, method))
+            if hasattr(self, "add_md5_as_resource"):
+                if (
+                    self.add_md5_as_resource is not None
+                    and self.add_md5_as_resource is True
+                ):
                     if md5_file not in md5_files_added_as_resources:
                         resources.extend(self.generate_md5_resources(md5_file))
                         md5_files_added_as_resources.add(md5_file)
@@ -261,8 +276,8 @@ class BaseMetadata:
 
     def track_packages_for_md5(self, obj, ticket):
         """
-       track packages for md5s that needs to be uploaded into the packages, if metadata_info shows the ticket matches
-       """
+        track packages for md5s that needs to be uploaded into the packages, if metadata_info shows the ticket matches
+        """
         linkage = tuple([obj[t] for t in self.resource_linkage])
         for f in self.all_md5_filenames:
             if f not in self._linkage_md5:
@@ -299,8 +314,10 @@ class BaseMetadata:
             else:
                 ticket = self.metadata_info[os.path.basename(md5_file)]["ticket"]
                 self._logger.error(
-                    "Duplicate MD5 file {0} in ticket {1} may lead to duplicate resources or other issues"
-                    .format(md5_file, ticket))
+                    "Duplicate MD5 file {0} in ticket {1} may lead to duplicate resources or other issues".format(
+                        md5_file, ticket
+                    )
+                )
 
             self._logger.info("Processing md5 file {}".format(md5_file))
             for filename, md5, file_info in self.parse_md5file(md5_file):
@@ -309,8 +326,10 @@ class BaseMetadata:
                 else:
                     ticket = self.metadata_info[os.path.basename(md5_file)]["ticket"]
                     self._logger.error(
-                       "Duplicate filename {0} in md5 file {1} in ticket {2} may lead to duplicate resources"
-                       .format(filename, md5_file, ticket))
+                        "Duplicate filename {0} in md5 file {1} in ticket {2} may lead to duplicate resources".format(
+                            filename, md5_file, ticket
+                        )
+                    )
 
                 yield filename, md5, md5_file, file_info
 
@@ -361,7 +380,7 @@ class BaseDatasetControlContextual:
     ]
     contextual_linkage = ()
     name_mapping = {}
-    additional_fields=[]
+    additional_fields = []
 
     def __init__(self, logger, path):
         self._logger = logger
@@ -417,13 +436,21 @@ class BaseDatasetControlContextual:
             for field in ("bpa_sample_id", "bpa_library_id", "bpa_dataset_id"):
                 if field in self.contextual_linkage:
                     field_spec.append(
-                        fld(field, field, coerce=ingest_utils.extract_ands_id,)
+                        fld(
+                            field,
+                            field,
+                            coerce=ingest_utils.extract_ands_id,
+                        )
                     )
         else:
             for field in ("sample_id", "library_id", "dataset_id"):
                 if field in self.contextual_linkage:
                     field_spec.append(
-                        fld(field, field, coerce=ingest_utils.extract_ands_id,)
+                        fld(
+                            field,
+                            field,
+                            coerce=ingest_utils.extract_ands_id,
+                        )
                     )
 
         dataset_metadata = {}
@@ -470,4 +497,3 @@ class BaseDatasetControlContextual:
 
     def filename_metadata(self, *args, **kwargs):
         return {}
-
