@@ -3,6 +3,7 @@ from .files import (
     ont_minion_re,
     ont_promethion_re,
     ont_promethion_re_2,
+    ont_promethion_common_re,
     genomics_10x_re,
     illumina_shortread_rna_phylo_re,
     ddrad_fastq_filename_re,
@@ -55,8 +56,7 @@ def test_ont_promethion_re():
         "376315_PAH92712_GAP_BRF_ONTPromethION_report.html",
         "376315_PAH92712_GAP_BRF_ONTPromethION_sequencing_summary.txt",
         "376315_PAH92172_GAP_BRF_Run3_ONTPromethION_fastq_fail.tar",
-        "376315_PAK19021_GAP_BRF_ONTPromethION_sequencing_summary.txt"
-
+        "376315_PAK19021_GAP_BRF_ONTPromethION_sequencing_summary.txt",
     ]
     for filename in filenames:
         assert ont_promethion_re.match(filename) is not None
@@ -72,9 +72,6 @@ def test_ont_promethion_re_2():
         "378099_GAP_UNSW_PAK15599_ONTPromethION_PVXP22262_pass.fastq.gz",
         "378099_GAP_UNSW_PAK15599_ONTPromethION_PVXP22262_reads.blow5",
         "378099_GAP_UNSW_PAK15599_ONTPromethION_PVXP22262.html",
-        "376316_LibID383128_GAP_BRF_PAM33046_barcode_alignment.tsv",
-        "376316_LibID383128_GAP_BRF_PAM33046_report.html",
-        "376316_LibID383128_GAP_BRF_PAM33046_sequencing_summary.txt",
         "376316_LibID383122_GAP_BRF_PAM80422_ONTPromethION_fast5_fail.tar",
         "376316_LibID383122_GAP_BRF_PAM80422_ONTPromethION_fast5_pass.tar",
         "376316_LibID383122_GAP_BRF_PAM80422_ONTPromethION_fastq_fail.tar",
@@ -82,6 +79,16 @@ def test_ont_promethion_re_2():
     ]
     for filename in filenames:
         assert ont_promethion_re_2.match(filename) is not None
+
+
+def test_ont_promethion_common_re():
+    filenames = [
+        "376316_GAP_BRF_PAM33046_barcode_alignment.tsv",
+        "376316_GAP_BRF_PAM33046_report.html",
+        "376316_GAP_BRF_PAM33046_sequencing_summary.txt",
+    ]
+    for filename in filenames:
+        assert ont_promethion_common_re.match(filename) is not None
 
 
 def test_genomics_10x_re():
@@ -141,5 +148,3 @@ def test_pacbio_hifi_metadata_sheet():
 
     for filename in filenames:
         assert pacbio_hifi_metadata_sheet_re.match(filename) is not None
-
-

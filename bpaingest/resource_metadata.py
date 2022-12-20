@@ -31,12 +31,16 @@ def resource_metadata_from_file_no_data(linkage, filename, resource_type):
 
 def resource_metadata_from(identifier, filename, resource_type):
     return {
-        "id": md5(
-            (str(identifier) + "||" + os.path.basename(filename)).encode("utf8")
-        ).hexdigest(),
+        "id": resource_metadata_id(identifier, filename),
         "name": os.path.basename(filename),
         "resource_type": resource_type,
     }
+
+
+def resource_metadata_id(identifier, filename):
+    return md5(
+        (str(identifier) + "||" + os.path.basename(filename)).encode("utf8")
+    ).hexdigest()
 
 
 def validate_raw_resources_from_state(logger, state):

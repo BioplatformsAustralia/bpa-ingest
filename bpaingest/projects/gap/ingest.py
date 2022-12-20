@@ -168,11 +168,11 @@ class GAPIlluminaShortreadMetadata(GAPBaseMetadata):
 
     def _build_resource_linkage(self, xlsx_info, resource, file_info):
         return (
-                        xlsx_info["ticket"],
-                        resource["sample_id"],
-                        file_info.get("library_id"),
-                        resource["flow_cell_id"],
-                    )
+            xlsx_info["ticket"],
+            resource["sample_id"],
+            file_info.get("library_id"),
+            resource["flow_cell_id"],
+        )
 
 
 class GAPHiCMetadata(GAPIlluminaShortreadMetadata):
@@ -352,13 +352,21 @@ class GAPONTPromethionMetadata(GAPBaseMetadata):
         },
     }
     md5 = {
-        "match": [files.ont_promethion_re, files.ont_promethion_re_2],
+        "match": [
+            files.ont_promethion_re,
+            files.ont_promethion_re_2,
+            files.ont_promethion_common_re,
+        ],
         "skip": [
             re.compile(r"^.*_metadata.*\.xlsx$"),
             re.compile(r"^.*SampleSheet.*"),
             re.compile(r"^.*TestFiles\.exe.*"),
         ],
     }
+    common_files_match = [
+        files.ont_promethion_common_re,
+    ]
+    common_files_linkage = ("ticket", "sample_id", "flow_cell_id")
     description = "PromethION"
     tag_names = ["ont-promethion"]
 
@@ -415,7 +423,8 @@ class GAPONTPromethionMetadata(GAPBaseMetadata):
         return packages
 
     def _get_resources(self):
-        return self._get_common_resources()
+        resources = self._get_common_resources()
+        return resources + self.generate_common_files_resources(resources)
 
     def _add_datatype_specific_info_to_resource(self, resource, md5_file=None):
         resource["sample_id"] = ingest_utils.extract_ands_id(
@@ -427,25 +436,29 @@ class GAPONTPromethionMetadata(GAPBaseMetadata):
             )
 
     def _build_resource_linkage(self, xlsx_info, resource, file_info):
-        # if library_id is in file name use that, 
+        # if library_id is in file name use that,
         # otherwise grab from tracking sheet
         ticket = xlsx_info["ticket"]
         track_meta = self.google_track_meta.get(ticket)
-        track_library_id = getattr(track_meta,"library_id")
-        resource_library_id = resource.get("library_id",None)
+        track_library_id = getattr(track_meta, "library_id")
+        resource_library_id = resource.get("library_id", None)
         if resource_library_id is not None:
             library_id = resource_library_id
         else:
             library_id = track_library_id
-        library_id = ingest_utils.extract_ands_id(
-            self._logger,
-            library_id
-        )
+        library_id = ingest_utils.extract_ands_id(self._logger, library_id)
 
         return (
             ticket,
             resource["sample_id"],
             library_id,
+            resource["flow_cell_id"],
+        )
+
+    def _build_common_files_linkage(self, xlsx_info, resource, file_info):
+        return (
+            xlsx_info["ticket"],
+            resource["sample_id"],
             resource["flow_cell_id"],
         )
 

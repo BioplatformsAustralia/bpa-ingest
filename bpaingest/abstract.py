@@ -1,5 +1,6 @@
 import os
 import re
+from copy import deepcopy
 from glob import glob
 from urllib.parse import urlparse, urljoin
 
@@ -10,7 +11,7 @@ from .libs.excel_wrapper import (
     make_skip_column as skp,
 )
 from .libs.md5lines import MD5Parser
-from .resource_metadata import resource_metadata_from_file
+from .resource_metadata import resource_metadata_from_file, resource_metadata_id
 from .util import make_logger, one
 
 
@@ -18,6 +19,7 @@ class BaseMetadata:
     auth = ("bpaingest", "bpaingest")
     resource_linkage = ("sample_id",)
     resource_info = {}
+    common_files = []
 
     def method_exists(self, method_name):
         if hasattr(self, method_name):  # should check if its callable too
@@ -127,6 +129,23 @@ class BaseMetadata:
                     raw_resources_info["base_url"], os.path.basename(filename)
                 )
             self._add_datatype_specific_info_to_resource(resource, md5_file)
+            if hasattr(self, "common_files_match"):
+                if any(
+                    regex.match(os.path.basename(filename))
+                    for regex in self.common_files_match
+                ):
+                    self._logger.warn(resource)
+                    self.common_files.append(
+                        (
+                            self._build_common_files_linkage(
+                                xlsx_info, resource, file_info
+                            ),
+                            legacy_url,
+                            resource,
+                        )
+                    )
+                    self._logger.warn("Common files match {}".format(filename))
+                    continue
             resources.append(
                 (
                     self._build_resource_linkage(xlsx_info, resource, file_info),
@@ -163,6 +182,12 @@ class BaseMetadata:
         Build the resource linkage. This varies from datatype to datatype.
         """
         raise NotImplementedError("implement _build_resource_linkage()")
+
+    def _build_common_files_linkage(self, xlsx_info, resource, file_info):
+        """
+        Build the common files linkage. This varies from datatype to datatype.
+        """
+        raise NotImplementedError("implement _build_common_files_linkage()")
 
     def _get_packages(self):
         """
@@ -302,6 +327,72 @@ class BaseMetadata:
             xlsx_info = self.metadata_info[os.path.basename(fname)]
             legacy_url = urljoin(xlsx_info["base_url"], os.path.basename(fname))
             resources.append((linkage, legacy_url, resource))
+        return resources
+
+    def generate_common_files_resources(self, linked_resources):
+        resources = []
+        resource_linkages = set()
+
+        # common_files_linkage must be a subset of resource_linkage
+        # for every distinct resource_linkage in linked_resources,
+        #
+        # check common resources not empty
+        if len(self.common_files_linkage) == 0:
+            self._logger.error(
+                "no common files linkage, likely a bug in the ingest class"
+            )
+
+        # check linked_resources is not empty
+        if len(linked_resources) == 0:
+            self._logger.error(
+                "no resources to link common files to, likely a bug in the ingest class"
+            )
+
+        # check common files linkage a subset of resource linkage
+        if not set(self.common_files_linkage) <= set(self.resource_linkage):
+            self._logger.error(
+                "common files linkage not a subset, likely a bug in the ingest class"
+            )
+
+        # seen linkages empty set
+        # for each linked resources
+        for linked_resource in linked_resources:
+            linkage = linked_resource[0]
+            #   if linkage not seen
+            if linkage not in resource_linkages:
+                #      add linkage to seen
+                resource_linkages.add(linkage)
+                #      iterate over common files
+                for common_file in self.common_files:
+                    lr = dict(zip(self.resource_linkage, linked_resource[0]))
+                    cr = dict(zip(self.common_files_linkage, common_file[0]))
+                    shared_items = {
+                        k: lr[k]
+                        for k in self.common_files_linkage
+                        if k in lr and lr[k] == cr[k]
+                    }
+                    #        if linkage matches
+                    if len(shared_items) == len(self.common_files_linkage):
+                        self._logger.info(
+                            "Attaching {} with linkage {}".format(
+                                common_file[2]["name"], linkage
+                            )
+                        )
+                        #           generate linkage and resource
+                        common_resource = deepcopy(common_file[2])
+                        #           perturb id
+                        common_resource["id"] = resource_metadata_id(
+                            linkage, common_resource["name"]
+                        )
+                        # add resource
+                        resources.append(
+                            (
+                                linkage,
+                                common_file[1],
+                                common_resource,
+                            )
+                        )
+
         return resources
 
     def md5_lines(self):
