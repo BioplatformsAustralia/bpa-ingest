@@ -23,6 +23,11 @@ class TSIDatasetControlContextual(BaseDatasetControlContextual):
     ]
     name = "tsi-dataset-contextual"
     contextual_linkage = ("sample_id",)
+    additional_fields = [
+        fld('library_id', 'library_id'),
+        fld('dataset_id', 'dataset_id'),
+    ]
+
 
 
 class TSILibraryContextual:

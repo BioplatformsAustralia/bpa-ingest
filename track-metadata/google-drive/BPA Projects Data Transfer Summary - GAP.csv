@@ -1,3 +1,7 @@
+Project: Genomics for Australian Plants (GAP),,,,,,,,,,,,,
+Contact mlum@bioplatforms.com if you need assistance filling this sheet.,,,,,,,,,,,,,
+Facility to fill,Facility to fill,Facility to fill (Leave empty if data is for >1 species),Facility to fill (Leave empty if data is for >1 species),Facility to fill,Project Manager to fill (Leave empty if data is for >1 species),Project Manager to fill,Project Manager to fill,Facility to fill,Facility to fill,Data team to fill,Project Manager to fill,Data team to fill,Data team to fill
+,,,,,,,,,,,,,
 Facility,Date of transfer,bioplatforms_sample_id,bioplatforms_library_id,bioplatforms_dataset_id,scientific_name,project_aim,data_type,Description,Folder name,Date of transfer to archive,Date data published,CCG JIRA Ticket,Download
 AGRF,28/06/2019,79638,81644,83641,Acacia pycnantha,Reference Genomes,Pilot,Illumina Short Read,20190628_GAP_AGRF_HLCH5DSXX,10/07/2019,,BPAOPS-828,https://data.bioplatforms.com/dataset/bpa-gap-illumina-shortread-79638
 AGRF,22/08/2019,79638,81645,83642,Acacia pycnantha,Reference Genomes,Pilot,MinION,20190822_GAP_AGRF_FAK90583,23/08/2019,,BPAOPS-847,https://data.bioplatforms.com/dataset/bpa-gap-ont-minion-79638
@@ -106,6 +110,7 @@ AGRF,16/09/2022,378098,382898,83713,Tasmannia lanceolata,Reference Genomes - HiF
 AGRF,16/09/2022,378098,382899,83714,Tasmannia lanceolata,Reference Genomes - HiFi - flow cell 2,Main dataset,PacBio-HiFi,2022099_GAP_CAGRF220711209_DA193232,19/09/2022,20/9/22,BPAOPS-1326,https://data.bioplatforms.com/dataset?ext_search_by=&q=ticket%3ABPAOPS-1326
 AGRF,16/09/2022,378098,382900,83715,Tasmannia lanceolata,Reference Genomes - HiFi - flow cell 3,Main dataset,PacBio-HiFi,2022099_GAP_CAGRF220711209_DA193264,19/09/2022,20/9/22,BPAOPS-1327,https://data.bioplatforms.com/dataset?ext_search_by=&q=ticket%3ABPAOPS-1327
 AGRF,16/09/2022,378098,383105,83731,Tasmannia lanceolata,Reference Genomes - HiFi - flow cell 4,Main dataset,PacBio-HiFi,2022099_GAP_CAGRF220711209_DA162823,19/09/2022,20/9/22,BPAOPS-1324,https://data.bioplatforms.com/dataset?ext_search_by=&q=ticket%3ABPAOPS-1324
-BRF,02/12/2022,376316,,83748,Phebalium stellatum,Reference Genomes  ,Main dataset,PromethION - RNA - multiple samples,20221111_GAP_BRF_PAM33046,8/12/2022,,BPAOPS-1348,
-BRF,07/12/2022,376316,,83749,Phebalium stellatum,Reference Genomes  ,Main dataset,PromethION - RNA - multiple samples,20221116_GAP_BRF_PAM80422,8/12/2022,,BPAOPS-1349,
-AGRF,6/12/2022,,,83759,Olearia sp.,Conservation genomics,Main dataset,ddRAD - 2nd run,AGRF_GAP_HMYY2DRX2_83759,7/12/2022,,BPAOPS-1350,
+ML note: Everything up to this point has been added to the Aus_Genome_status - Bioplatforms Google sheet,,,,,,,,,,,,,
+BRF,02/12/2022,376316,,83748,Phebalium stellatum,Reference Genomes  ,Main dataset,PromethION - RNA - multiple samples,20221111_GAP_BRF_PAM33046,8/12/2022,,BPAOPS-1348,https://data.bioplatforms.com/dataset?ext_search_by=&q=ticket%3ABPAOPS-1348
+BRF,07/12/2022,376316,,83749,Phebalium stellatum,Reference Genomes  ,Main dataset,PromethION - RNA - multiple samples,20221116_GAP_BRF_PAM80422,8/12/2022,,BPAOPS-1349,https://data.bioplatforms.com/dataset?ext_search_by=&q=ticket%3ABPAOPS-1349
+AGRF,6/12/2022,,,83759,Olearia sp.,Conservation genomics,Main dataset,ddRAD - 2nd run,AGRF_GAP_HMYY2DRX2_83759,7/12/2022,12/12/22,BPAOPS-1350,https://data.bioplatforms.com/dataset?ext_search_by=&q=ticket%3ABPAOPS-1350

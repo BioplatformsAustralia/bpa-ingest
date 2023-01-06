@@ -129,6 +129,7 @@ def csv_to_named_tuple(
     cleanup=None,
     name_fn=None,
     dialect="excel",
+    skip = 0,
 ):
     if fname is None:
         return [], []
@@ -164,8 +165,16 @@ def csv_to_named_tuple(
         name_fn = default_name_fn
     with open(fname, mode) as fd:
         r = csv.reader(fd, dialect=dialect)
+
+        # skip non-header rows before header
+        for nhr in range(skip):
+            next(r)
+
+        # read header
         header = [name_fn(clean_name(t)) for t in next(r)] + additional_keys
         typ = namedtuple(typname, header)
+
+        # read data
         rows = []
         for row in r:
             if cleanup is not None:
