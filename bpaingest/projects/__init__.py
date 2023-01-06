@@ -95,6 +95,10 @@ from .tsi.ingest import (
 from .fungi.ingest import (
     FungiIlluminaShortreadMetadata,
  )
+
+from .plant_pathogen.ingest import (
+    PlantPathogenIlluminaShortreadMetadata,
+ )
 from ..util import make_logger
 
 
@@ -197,6 +201,9 @@ class ProjectInfo:
         ],
         "fungi": [
             FungiIlluminaShortreadMetadata,
+        ],
+        "pp": [
+            PlantPathogenIlluminaShortreadMetadata,
         ],
     }
 

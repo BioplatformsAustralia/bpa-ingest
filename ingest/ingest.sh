@@ -174,6 +174,11 @@ fungi()
   apply fungi-illumina-shortread $*
 }
 
+pp()
+{
+  apply pp-illumina-shortread $*
+}
+
 run() {
   apply $*
 }
@@ -192,6 +197,7 @@ all()
   wheat $*
   ausarg $*
   fungi $*
+  pp $*
 }
 
 action="$1"

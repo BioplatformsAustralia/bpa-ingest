@@ -120,6 +120,13 @@ ORGANIZATIONS = [
         "groups": [{"capacity": "public", "name": BPA_ORGANIZATION_ID}],
     },
     {
+        "name": "pp-consortium-members",
+        "title": "Plant Pathogen Project Members",
+        "display_name": "Plant Pathogen Project Members",
+        "image_url": "https://data.bioplatforms.com/plant_pathogen.png",
+        "groups": [{"capacity": "public", "name": 'plant-pathogen'}],
+    },
+    {
         "name": "fungi",
         "title": "Fungi Functional 'Omics",
         "display_name": "Fungi Functional 'Omics",
