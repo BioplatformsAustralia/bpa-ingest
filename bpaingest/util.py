@@ -142,13 +142,16 @@ def csv_to_named_tuple(
                 if t in string.ascii_letters or t in string.digits or t == "_"
             ]
         )
-        if s[0] in string.digits:
-            s = digit_words[s[0]] + s[1:]
-        s = s.strip("_")
-        s = re.sub(r"__+", "_", s).strip("_")
+        if len(s) > 0:
+            if s[0] in string.digits:
+                s = digit_words[s[0]] + s[1:]
+            s = s.strip("_")
+            s = re.sub(r"__+", "_", s).strip("_")
         # reserved words aren't permitted
-        if s == "class":
-            s = "class_"
+            if s == "class":
+                s = "class_"
+        else:  # we have a blank column heading
+            s = 'noHeading'
         return s
 
     def default_name_fn(s):
