@@ -115,6 +115,14 @@ def setup_sync(subparser):
     subparser.add_argument(
         "-p", "--download-path", required=False, default=None, help="CKAN base url"
     )
+    subparser.add_argument(
+        "--update-orgs",
+        action="store_const",
+        const=True,
+        default=False,
+        help="add / update organizations from google sheet data",
+    )
+
 
 
 def setup_hash(subparser):
@@ -184,6 +192,7 @@ def sync(args):
             not args.metadata_only,
             not args.skip_resource_checks,
             args.delete,
+            args.update_orgs,
             **kwargs,
         )
         print_accounts()

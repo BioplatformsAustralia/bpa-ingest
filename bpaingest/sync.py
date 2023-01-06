@@ -9,6 +9,7 @@ from .ops import (
     create_resource,
     reupload_resource,
     get_organization,
+    make_organization,
     CKANArchiveInfo,
     ApacheArchiveInfo,
 )
@@ -348,7 +349,7 @@ def sync_resources(
         write_reuploads_fn(to_reupload)
 
 def sync_metadata(
-    ckan, meta, auth, num_threads, do_uploads, do_resource_checks, do_delete, **kwargs
+    ckan, meta, auth, num_threads, do_uploads, do_resource_checks, do_delete, do_update_orgs, **kwargs
 ):
     def unique_packages():
         by_id = dict((t["id"], t) for t in packages)
@@ -362,7 +363,8 @@ def sync_metadata(
                 )
                 continue
             yield by_id[k]
-
+    if do_update_orgs and hasattr(meta, 'google_project_codes_meta'):
+        sync_child_organizations(ckan, meta.google_project_codes_meta)
     organization = get_organization(ckan, meta.organization)
     packages = meta.get_packages()
     packages = list(unique_packages())
@@ -386,3 +388,21 @@ def sync_metadata(
         do_delete,
         **kwargs,
     )
+
+
+def sync_child_organizations(ckan, project_info):
+
+    parent_org = project_info.parent_org
+    for row in project_info.project_code_rows:
+        org = {
+            "name": row.slug,
+            "title": row.short_description,
+            "display_name": row.long_description,
+            "groups": [{"capacity": "public", "name": parent_org}],
+            "extras": [{"key": "Private", "value": "True"}]
+        }
+        make_organization(ckan, org)
+
+
+
+
