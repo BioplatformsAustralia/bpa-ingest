@@ -91,6 +91,10 @@ from .tsi.ingest import (
     TSIGenomeAssemblyMetadata,
     TSIHiCMetadata,
 )
+
+from .fungi.ingest import (
+    FungiIlluminaShortreadMetadata,
+ )
 from ..util import make_logger
 
 
@@ -190,6 +194,9 @@ class ProjectInfo:
         ],
         "wheat-pathogens": [
             WheatPathogensGenomesMetadata,  # the first half of wheat pathogens
+        ],
+        "fungi": [
+            FungiIlluminaShortreadMetadata,
         ],
     }
 

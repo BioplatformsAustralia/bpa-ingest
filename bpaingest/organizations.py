@@ -119,4 +119,11 @@ ORGANIZATIONS = [
         "image_url": "https://data.bioplatforms.com/plant_pathogen.png",
         "groups": [{"capacity": "public", "name": BPA_ORGANIZATION_ID}],
     },
+    {
+        "name": "fungi",
+        "title": "Fungi Functional 'Omics",
+        "display_name": "Fungi Functional 'Omics",
+        "image_url": "https://data.bioplatforms.com/fungi.png",
+        "groups": [{"capacity": "public", "name": BPA_ORGANIZATION_ID}],
+    },
 ]

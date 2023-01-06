@@ -169,6 +169,11 @@ amd() {
   apply amd-metagenomics-analysed $*
 }
 
+fungi()
+{
+  apply fungi-illumina-shortread $*
+}
+
 run() {
   apply $*
 }
@@ -186,6 +191,7 @@ all()
   stemcell $*
   wheat $*
   ausarg $*
+  fungi $*
 }
 
 action="$1"
