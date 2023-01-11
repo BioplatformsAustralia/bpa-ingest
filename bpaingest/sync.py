@@ -397,7 +397,7 @@ def sync_child_organizations(ckan, project_info):
         org = {
             "name": row.slug,
             "title": row.short_description,
-            "display_name": row.long_description,
+            "description": row.long_description,
             "groups": [{"capacity": "public", "name": parent_org}],
             "extras": [{"key": "Private", "value": "True"}]
         }
