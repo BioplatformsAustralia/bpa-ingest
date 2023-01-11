@@ -351,6 +351,9 @@ def sync_resources(
 def sync_metadata(
     ckan, meta, auth, num_threads, do_uploads, do_resource_checks, do_delete, do_update_orgs, **kwargs
 ):
+    # command line to update orgs as dev for plant pathogens:
+    # bpa-ingest sync --skip-resource-checks --metadata-only --update-orgs --verify-ssl False -u https://localhost:8443
+    #     -k [key goes here] pp-illumina-shortread
     def unique_packages():
         by_id = dict((t["id"], t) for t in packages)
         id_count = Counter(t["id"] for t in packages)
