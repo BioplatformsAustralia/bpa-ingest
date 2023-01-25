@@ -47,43 +47,56 @@ class FungiLibraryContextual:
         if identifier in self.library_metadata:
             return self.library_metadata[identifier]
         self._logger.warning(
-            "no %s metadata available for: %s" % (type(self).__name__, repr(identifier))
+            "no %s FUNGI metadata available for: %s" % (type(self).__name__, repr(identifier))
         )
         return {}
 
     def _read_metadata(self, fname):
         field_spec = [
+            fld(
+                "bioplatforms_sample_id",
+                "bioplatforms_sample_id",
+                coerce=ingest_utils.extract_ands_id,
+            ),
+
             # sample_ID
             fld(
                 "sample_id",
-                re.compile(r"(bioplatforms_)?sample_[Ii][Dd]"),
-                coerce=ingest_utils.extract_ands_id,
+                "sample_id",
             ),
+            fld("specimen_custodian", "specimen_custodian"),
             # specimen_ID
             fld("specimen_id", re.compile(r"specimen_?[Ii][Dd]")),
             # specimen_ID_description
             fld(
                 "specimen_id_description", re.compile(r"specimen_?[Ii][Dd]_description")
             ),
-            # tissue_number
-            fld("tissue_number", "tissue_number"),
-            # institution_name
-            fld("institution_name", "institution_name"),
-            # tissue_collection
-            fld("tissue_collection", "tissue_collection"),
-            fld('tissue_collection_type', 'tissue_collection_type'),
-            # sample_custodian
             fld("sample_custodian", "sample_custodian"),
             fld('sample_type', 'sample_type'),
-            # access_rights
-            fld("access_rights", "access_rights"),
-            # tissue_type
-            fld("tissue_type", "tissue_type"),
+            # sample_ID_description
+            fld(
+                "sample_id_description", re.compile(r"sample_?[Ii][Dd]_description")
+            ),
+            fld('sample_collection_type', 'sample_collection_type'),
+            fld('tissue', 'tissue'),
             # tissue_preservation
             fld("tissue_preservation", "tissue_preservation"),
             fld('tissue_preservation_temperature', 'tissue_preservation_temperature'),
             # sample_quality
             fld("sample_quality", "sample_quality"),
+            fld('collection_permit', 'collection_permit'),
+            fld('identified_by', 'identified_by'),
+            fld('env_broad_scale', 'env_broad_scale'),
+            fld('env_local_scale', 'env_local_scale'),
+            fld('env_medium', 'env_medium'),
+            fld('altitude', 'altitude'),
+            fld('depth', 'depth', coerce=ingest_utils.get_clean_number),
+            fld('temperature', 'temperature'),
+            fld('location_info_restricted', 'location_info_restricted'),
+            fld('genotypic_sex', 'genotypic_sex'),
+            fld('phenotypic_sex', 'phenotypic_sex'),
+            fld('method_sex_determination', 'method_sex_determination'),
+            fld('sex_certainty', 'sex_certainty'),
             # taxon_id
             fld("taxon_id", re.compile(r"taxon_[Ii][Dd]")),
             # phylum
@@ -98,8 +111,7 @@ class FungiLibraryContextual:
             fld("genus", "genus"),
             # species
             fld("species", "species"),
-            # subspecies
-            fld("subspecies", "subspecies"),
+            fld("sub_species", "sub_species"),
             fld('scientific_name', 'scientific_name'),
             fld('scientific_name_note', 'scientific_name_note'),
             fld('scientific_name_authorship', 'scientific_name_authorship'),
@@ -140,14 +152,6 @@ class FungiLibraryContextual:
             fld("decimal_longitude_public", "decimal_longitude_public"),
             # coord_uncertainty_metres
             fld("coord_uncertainty_metres", "coord_uncertainty_metres", optional=True),
-            # genotypic sex
-            fld("genotypic_sex", "genotypic sex"),
-            # phenotypic sex
-            fld("phenotypic_sex", "phenotypic sex"),
-            # method of determination
-            fld("method_of_determination", "method of determination"),
-            # certainty
-            fld("certainty", "certainty"),
             # life-stage
             fld("lifestage", re.compile("life[_-]stage")),
             # birth_date
@@ -159,12 +163,6 @@ class FungiLibraryContextual:
             fld("associated_media", "associated_media"),
             # ancillary_notes
             fld("ancillary_notes", "ancillary_notes"),
-            # barcode_ID
-            fld("barcode_id", "barcode_id"),
-            # ALA_specimen_URL
-            fld("ala_specimen_url", re.compile(r"[aA][Ll][aA]_specimen_[uU][rR][lL]")),
-            # prior_genetics
-            fld("prior_genetics", "prior_genetics"),
             # taxonomic_group
             fld("taxonomic_group", "taxonomic_group"),
             # type_status
@@ -188,6 +186,7 @@ class FungiLibraryContextual:
             fld("material_conc_ng_ul", re.compile(r"[Mm]aterial_conc_ng_ul")),
         ]
 
+
         library_metadata = {}
         for sheet_name in self.sheet_names:
             wrapper = ExcelWrapper(
@@ -210,15 +209,12 @@ class FungiLibraryContextual:
 
             for row in wrapper.get_all():
                 # use sample_id as unique identifier (no library ID exists in context atm)
-                if not row.sample_id:
+                if not row.bioplatforms_sample_id:
                     continue
-                if not row.bpa_library_id and not row.bpa_sample_id and not row.bpa_library_id:
-                        # skip empty rows
-                    continue
-                if row.sample_id in library_metadata:
-                    raise Exception("duplicate sample id: {}".format(row.sample_id))
-                sample_id = ingest_utils.extract_ands_id(self._logger, row.sample_id)
-                library_metadata[sample_id] = row_meta = {}
+                if row.bioplatforms_sample_id in library_metadata:
+                    raise Exception("duplicate sample id: {}".format(row.bioplatforms_sample_id))
+                bioplatforms_sample_id = ingest_utils.extract_ands_id(self._logger, row.bioplatforms_sample_id)
+                library_metadata[bioplatforms_sample_id] = row_meta = {}
                 for field in row._fields:
                     value = getattr(row, field)
                     if field == "sample_id":
