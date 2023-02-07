@@ -248,13 +248,13 @@ class FungiIlluminaShortreadMetadata(FungiBaseMetadata):
         return self._get_common_resources()
 
     def _add_datatype_specific_info_to_resource(self, resource, md5_file=None):
-        resource["library_id"] = ingest_utils.extract_ands_id(
+        resource["bioplatforms_library_id"] = ingest_utils.extract_ands_id(
             self._logger, resource["library_id"]
         )
         return
 
     def _build_resource_linkage(self, xlsx_info, resource, file_info):
         return (
-            resource["library_id"],
+            resource["bioplatforms_library_id"],
             resource["flow_cell_id"],
         )
