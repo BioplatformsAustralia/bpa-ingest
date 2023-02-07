@@ -601,9 +601,21 @@ class TSIGenomicsDDRADMetadata(TSIBaseMetadata):
         "fields": [
             fld("genus", "genus"),
             fld("species", "species"),
-            fld("dataset_id", "dataset_id", coerce=ingest_utils.extract_ands_id),
-            fld("library_id", "library_id", coerce=ingest_utils.extract_ands_id),
-            fld("sample_id", "sample_id", coerce=ingest_utils.extract_ands_id),
+            fld(
+                "sample_id",
+                re.compile(r"(sample_id|bioplatforms_sample_id)"),
+                coerce=ingest_utils.extract_ands_id,
+            ),
+            fld(
+                "library_id",
+                re.compile(r"(library_id|bioplatforms_library_id)"),
+                coerce=ingest_utils.extract_ands_id,
+            ),
+            fld(
+                "dataset_id",
+                re.compile(r"(dataset_id|bioplatforms_dataset_id)"),
+                coerce=ingest_utils.extract_ands_id,
+            ),
             fld("facility_sample_id", "facility_sample_id"),
             fld("library_type", "library_type"),
             fld(
