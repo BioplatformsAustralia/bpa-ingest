@@ -498,6 +498,9 @@ class BaseDatasetControlContextual:
             "bpa_sample_id",
             "bpa_library_id",
             "bpa_dataset_id",
+            "bioplatforms_sample_id",
+            "bioplatforms_library_id",
+            "bioplatforms_dataset_id",
         ):
             return ingest_utils.extract_ands_id(self._logger, value)
         return value
@@ -519,12 +522,15 @@ class BaseDatasetControlContextual:
 
         # ID fields used for linkage, add if present in linkage
         # Handle some data types using prepending bpa_ to the linkage fields
+         #todo: make sure the linkage is a set at this point
         if len(
             set(self.contextual_linkage).intersection(
-                {"bpa_sample_id", "bpa_library_id", "bpa_dataset_id"},
+                {"bpa_sample_id", "bpa_library_id", "bpa_dataset_id",
+                 "bioplatforms_sample_id", "bioplatforms_library_id", "bioplatforms_dataset_id"},
             )
         ):
-            for field in ("bpa_sample_id", "bpa_library_id", "bpa_dataset_id"):
+            for field in ("bpa_sample_id", "bpa_library_id", "bpa_dataset_id",
+                          "bioplatforms_sample_id", "bioplatforms_library_id", "bioplatforms_dataset_id"):
                 if field in self.contextual_linkage:
                     field_spec.append(
                         fld(

@@ -1,5 +1,5 @@
 # VERIFY
-from bpaingest.projects.fungi.files import (
+from bpaingest.projects.plant_pathogen.files import (
     illumina_shortread_re,
  )
 
@@ -9,8 +9,7 @@ from bpaingest.projects.fungi.files import (
 
 def test_illumina_shortread():
     filenames = [
-        "355598_FUN_AGRF_H3GYVDSX2_AACTGAGC-CAATCAGG_L004_R2.fastq.gz",
-        "45_5_FUN_AGRF_HNGM7DSX5_AATTCTTGGA-AAGTTGACAA_L004_R1.fastq.gz",
+        "394529_LibID396779_PP_AGRF_KTMDN_GCCACAGG-CATGCCAT_L001_R1.fastq.gz",
     ]
     for filename in filenames:
         assert illumina_shortread_re.match(filename) is not None

@@ -19,13 +19,20 @@ def date_or_str(logger, v):
 
 class PlantPathogenDatasetControlContextual(BaseDatasetControlContextual):
     metadata_urls = [
-        "https://downloads-qcif.bioplatforms.com/bpa/pp_staging/dataset_control/2022-12-21/"
+        "https://downloads-qcif.bioplatforms.com/bpa/pp_staging/dataset_control/2023-02-09/"
     ]
     name = "pp-dataset-contextual"
-    contextual_linkage = ("bpa_sample_id", "bpa_dataset_id", "bpa_library_id",)
-    additional_fields = [
-        fld('bioplatforms_project_code', 'bioplatforms_project_code'),
+    sheet_names = [
+        "Data control",
     ]
+    contextual_linkage = ('bioplatforms_library_id',)
+    additional_fields = [
+        fld('bioplatforms_sample_id', 'bioplatforms_sample_id', coerce=ingest_utils.extract_ands_id,),
+        fld('bioplatforms_dataset_id', 'bioplatforms_dataset_id', coerce=ingest_utils.extract_ands_id,),
+        fld('bioplatforms_project_code', 'bioplatforms_project_code'),
+        fld('data_type', 'data_type'),
+    ]
+
 
 class PlantPathogenLibraryContextual:
     metadata_urls = [
@@ -52,29 +59,29 @@ class PlantPathogenLibraryContextual:
         field_spec = [
             # sample_ID
             fld(
-                "sample_id",
+                "bioplatforms_sample_id",
                 re.compile(r"(bioplatforms_)?sample_[Ii][Dd]"),
                 coerce=ingest_utils.extract_ands_id,
             ),
             fld(
-                "library_id",
+                "bioplatforms_library_id",
                 re.compile(r"(bioplatforms_)?library_[Ii][Dd]"),
                 coerce=ingest_utils.extract_ands_id,
             ),
             fld(
-                "dataset_id",
+                "bioplatforms_dataset_id",
                 re.compile(r"(bioplatforms_)?dataset_[Ii][Dd]"),
                 coerce=ingest_utils.extract_ands_id,
             ),
             fld('project_lead', 'project_lead'),
             fld('data_context', 'data_context'),
             fld('specimen_custodian', 'specimen_custodian'),
-            fld('specimen_id', 'specimen_id'),
+            fld('specimen_id', 'specimen_id',   coerce=ingest_utils.get_int),
             fld('specimen_id_description', 'specimen_id_description'),
             fld('sample_custodian', 'sample_custodian'),
             fld('sample_collection_type', 'sample_collection_type'),
             fld('sample_type', 'sample_type'),
-            fld('taxon_id', 'taxon_id'),
+            fld('taxon_id', 'taxon_id',  coerce=ingest_utils.get_int),
             fld('phylum', 'phylum'),
             fld('klass', 'class'),
             fld('order', 'order'),
@@ -148,15 +155,15 @@ class PlantPathogenLibraryContextual:
 
             for row in wrapper.get_all():
                 # use sample_id as unique identifier (no library ID exists in context atm)
-                if not row.sample_id:
+                if not row.bioplatforms_library_id:
                     continue
-                if row.sample_id in library_metadata:
-                    raise Exception("duplicate sample id: {}".format(row.sample_id))
-                sample_id = ingest_utils.extract_ands_id(self._logger, row.sample_id)
-                library_metadata[sample_id] = row_meta = {}
+                if row.bioplatforms_library_id in library_metadata:
+                    raise Exception("duplicate library id: {}".format(row.bioplatforms_library_id))
+                bioplatforms_library_id =  row.bioplatforms_library_id
+                library_metadata[row.bioplatforms_library_id] = row_meta = {}
                 for field in row._fields:
                     value = getattr(row, field)
-                    if field == "sample_id":
+                    if field == "bioplatforms_library_id":
                         continue
                     row_meta[name_mapping.get(field, field)] = value
         return library_metadata
