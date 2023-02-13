@@ -108,14 +108,22 @@ class PlantPathogenBaseMetadata(BaseMetadata):
                 self._add_datatype_specific_info_to_package(obj, row, fname)
                 self._build_title_into_object(obj)
                 self.build_notes_into_object(obj)
-                # get the organization that matches the Project Code.
+                project_slug = None
+                # get the slug for the org that matches the Project Code.
+                for trrow in self.google_project_codes_meta.project_code_rows:
+                    if (trrow.short_description == obj["bioplatforms_project_code"]):
+                        project_slug = trrow.slug
+
                 # If no org exists, fail with ah error, as teh security for PP is based around these orgs.
+                if project_slug is None:
+                    self._logger.error("No project found for {}".format(obj["bioplatforms_project_code"]))
+
                 ingest_utils.permissions_organization_member_after_embargo(
                     self._logger,
                     obj,
                     "date_of_transfer_to_archive",
                     self.embargo_days,
-                    obj["bioplatforms_project_code"],
+                    project_slug,
                 )
                 ingest_utils.apply_access_control(self._logger, self, obj)
                 obj["tags"] = [{"name": "{:.100}".format(t)} for t in self.tag_names]
