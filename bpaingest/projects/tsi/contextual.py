@@ -32,7 +32,7 @@ class TSIDatasetControlContextual(BaseDatasetControlContextual):
 
 class TSILibraryContextual:
     metadata_urls = [
-        "https://downloads-qcif.bioplatforms.com/bpa/tsi_staging/metadata/2022-07-07/"
+        "https://downloads-qcif.bioplatforms.com/bpa/tsi_staging/metadata/2023-02-14/"
     ]
     metadata_patterns = [re.compile(r"^.*\.xlsx$")]
     name = "tsi-library-contextual"
