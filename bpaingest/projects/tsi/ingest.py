@@ -690,7 +690,7 @@ class TSIGenomicsDDRADMetadata(TSIBaseMetadata):
         },
     }
     md5 = {
-        "match": [files.ddrad_fastq_filename_re, files.ddrad_metadata_sheet_re, ],
+        "match": [files.ddrad_fastq_filename_re, files.ddrad_metadata_sheet_re, files.ddrad_analysed_tar_re, ],
         "skip": [
             re.compile(r"^.*_metadata.*\.xlsx$"),
             re.compile(r"^.*TestFiles\.exe.*"),

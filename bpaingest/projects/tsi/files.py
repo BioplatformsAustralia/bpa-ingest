@@ -66,6 +66,17 @@ DDRAD_FASTQ_FILENAME_PATTERN = r"""
 """
 ddrad_fastq_filename_re = re.compile(DDRAD_FASTQ_FILENAME_PATTERN, re.VERBOSE)
 
+DDRAD_ANALYSED_TAR_PATTERN = r"""
+    (?P<bpa_dataset_id>\d{4,6})_
+    TSI_
+    AGRF_
+    (?P<facility_contract>CAGRF\d{9})_
+    (?P<flowcell_id>\w{9})_
+    analysed
+    \.tar
+"""
+ddrad_analysed_tar_re = re.compile(DDRAD_ANALYSED_TAR_PATTERN, re.VERBOSE)
+
 DDRAD_METADATA_SHEET_PATTERN = r"""
     TSI_
     NGS_
