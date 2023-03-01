@@ -177,6 +177,7 @@ fungi()
 pp()
 {
   apply pp-illumina-shortread $*
+  apply pp-pacbio-hifi $*
 }
 
 run() {

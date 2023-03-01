@@ -36,11 +36,14 @@ class PlantPathogenDatasetControlContextual(BaseDatasetControlContextual):
 
 class PlantPathogenLibraryContextual:
     metadata_urls = [
-        "https://downloads-qcif.bioplatforms.com/bpa/pp_staging/metadata/2022-12-22/"
+        "https://downloads-qcif.bioplatforms.com/bpa/pp_staging/metadata/2023-02-28/"
     ]
     metadata_patterns = [re.compile(r"^.*\.xlsx$")]
     name = "pp-library-contextual"
-    sheet_names = ["Sample metadata to be completed"]
+    sheet_names = ["Virus",
+                   "Bacteria",
+                   "Fungi"
+                   ]
 
     def __init__(self, logger, path):
         self._logger = logger
