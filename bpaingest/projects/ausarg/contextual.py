@@ -31,7 +31,7 @@ class AusargDatasetControlContextual(BaseDatasetControlContextual):
 
 class AusargLibraryContextual:
     metadata_urls = [
-        "https://downloads-qcif.bioplatforms.com/bpa/ausarg_staging/metadata/2022-12-06/"
+        "https://downloads-qcif.bioplatforms.com/bpa/ausarg_staging/metadata/2023-03-13/"
     ]
     metadata_patterns = [re.compile(r"^.*\.xlsx$")]
     name = "ausarg-library-contextual"
