@@ -1284,3 +1284,255 @@ class AusargGenomicsDArTMetadata(AusargBaseMetadata):
 
     def _build_resource_linkage(self, xlsx_info, resource, file_info):
         return ingest_utils.extract_ands_id(self._logger, resource["dataset_id"]),
+
+
+class AusargGenomicsDDRADMetadata(AusargBaseMetadata):
+    """
+    This data conforms to the BPA Genomics ddRAD workflow.
+    """
+
+    ckan_data_type = "ausarg-genomics-ddrad"
+    omics = "genomics"
+    technology = "ddrad"
+    sequence_data_type = "illumina-ddrad"
+    embargo_days = 365
+    contextual_classes = common_context
+    metadata_patterns = [r"^.*\.md5$", r"^.*_metadata.*.*\.xlsx$"]
+    metadata_urls = [
+        "https://downloads-qcif.bioplatforms.com/bpa/ausarg_staging/ddrad/",
+    ]
+    metadata_url_components = ("ticket",)
+    resource_linkage = ("bpa_dataset_id", "flowcell_id")
+    spreadsheet = {
+        "fields": [
+            fld("genus", "genus"),
+            fld("species", "species"),
+            fld(
+                "sample_id",
+                re.compile(r"(sample_id|bioplatforms_sample_id)"),
+                coerce=ingest_utils.extract_ands_id,
+            ),
+            fld(
+                "library_id",
+                re.compile(r"(library_id|bioplatforms_library_id)"),
+                coerce=ingest_utils.extract_ands_id,
+            ),
+            fld(
+                "dataset_id",
+                re.compile(r"(dataset_id|bioplatforms_dataset_id)"),
+                coerce=ingest_utils.extract_ands_id,
+            ),
+            fld("facility_sample_id", "facility_sample_id"),
+            fld("library_type", "library_type"),
+            fld(
+                "library_prep_date",
+                "library_prep_date",
+                coerce=ingest_utils.get_date_isoformat,
+            ),
+            fld("library_prepared_by", "library_prepared_by"),
+            fld("experimental_design", "experimental_design"),
+            fld("data_custodian", "data_custodian"),
+            fld("dna_treatment", "dna_treatment"),
+            fld("library_index_id", "library_index_id"),
+            fld("library_index_sequence", "library_index_seq"),
+            fld("library_oligo_sequence", "library_oligo_sequence"),
+            fld("library_pcr_reps", "library_pcr_reps", coerce=ingest_utils.get_int),
+            fld("library_pcr_cycles", "library_pcr_cycles", coerce=ingest_utils.get_int),
+            fld("library_ng_ul", "library_ng_ul"),
+            fld("library_comments", "library_comments"),
+            fld("library_location", "library_location"),
+            fld("library_status", "library_status", optional=True),
+            fld("sequencing_facility", "sequencing_facility"),
+            fld("n_libraries_pooled", "n_libraries_pooled"),
+            fld("work_order", "work_order", coerce=ingest_utils.get_int),
+            fld("sequencing_platform", "sequencing_platform"),
+            fld("flowcell_id", "flowcell_id"),
+            fld("file", "file", optional=True),
+            fld("library_pool_index_id", "library_pool_index_id", optional=True),
+            fld(
+                "library_pool_index_sequence",
+                "library_pool_index_sequence",
+                optional=True,
+            ),
+            fld(
+                "library_pool_oligo_sequence",
+                "library_pool_oligo_sequence",
+                optional=True,
+            ),
+            fld("specimen_id", re.compile(r"specimen_[Ii][Dd]")),
+            fld("tissue_number", "tissue_number"),
+            fld("data_context", "data_context"),
+            fld("library_layout", "library_layout"),
+            fld("sequencing_model", "sequencing_model"),
+            fld("library_construction_protocol", "library_construction_protocol"),
+            fld("library_strategy", "library_strategy"),
+            fld("library_selection", "library_selection"),
+            fld("library_source", "library_source"),
+            fld("insert_size_range", "insert_size_range"),
+            fld("flowcell_type", "flowcell_type"),
+            fld("cell_postion", "cell_postion"),
+            fld("movie_length", "movie_length"),
+            fld("analysis_software", "analysis_software"),
+            fld("analysis_software_version", "analysis_software_version"),
+            fld("file_name", "file_name", optional=True),
+            fld("file_type", "file_type"),
+            fld('sequencing_kit_chemistry_version', 'sequencing_kit_chemistry_version', optional=True),
+            fld('facility_project_code', 'facility_project_code', optional=True),
+            fld('library_index_id_dual', re.compile(r"(library_index_id_dual|library_dual_index_id)"), optional=True),
+            fld('library_index_seq_dual', re.compile(r"(library_index_seq_dual|library_dual_index_seq)"),
+                optional=True),
+            fld('library_oligo_sequence_dual', re.compile(r"(library_oligo_sequence_dual|library_dual_oligo_sequence)"),
+                optional=True),
+            fld('fast5_compression', 'fast5_compression', optional=True),
+            fld('model_base_caller', 'model_base_caller', optional=True),
+            fld("bait_set_name", "bait_set_name", optional=True),
+            fld("bait_set_reference", "bait_set_reference", optional=True),
+            fld("bioplatforms_project", "bioplatforms_project", optional=True),
+        ],
+        "options": {
+            "sheet_name": "Library_metadata",
+            "header_length": 1,
+            "column_name_row_index": 0,
+        },
+    }
+    md5 = {
+        "match": [files.ddrad_fastq_filename_re, files.ddrad_metadata_sheet_re, files.ddrad_analysed_tar_re, ],
+        "skip": [
+            re.compile(r"^.*_metadata.*\.xlsx$"),
+            re.compile(r"^.*TestFiles\.exe.*"),
+            re.compile(r"^.*DataValidation\.pdf.*"),
+        ],
+    }
+    notes_mapping = [
+        {"key": "scientific_name", "separator": "\n"},
+        {"key": "additional_notes"},
+    ]
+    title_mapping = [
+        {"key": "initiative", "separator": " "},
+        {"key": "title_description", "separator": " "},
+        {"key": "bpa_dataset_id", "separator": " "},
+        {"key": "field_value", "separator": " "},
+    ]
+    description = "Genomics ddRAD"
+    tag_names = ["genomics-ddrad"]
+
+    def __init__(
+            self, logger, metadata_path, contextual_metadata=None, metadata_info=None
+    ):
+        super().__init__(logger, metadata_path)
+        self.path = Path(metadata_path)
+        self.contextual_metadata = contextual_metadata
+        self.metadata_info = metadata_info
+        self.google_track_meta = AusArgGoogleTrackMetadata(logger)
+        self.flow_lookup = {}
+
+
+    def _get_packages(self):
+        xlsx_re = re.compile(r"^.*_(\w+)_metadata.*\.xlsx$")
+
+        def get_flow_id(fname):
+            m = xlsx_re.match(fname)
+            if not m:
+                raise Exception("unable to find flowcell for filename: `%s'" % (fname))
+            return m.groups()[0]
+
+        packages = []
+        for fname in glob(self.path + "/*.xlsx"):
+            flow_id = get_flow_id(fname)
+            objs = defaultdict(list)
+            for row in self.parse_spreadsheet(fname, self.metadata_info):
+                obj = row._asdict()
+                obj.pop("file")
+                if not obj["dataset_id"] or not obj["flowcell_id"]:
+                    continue
+                objs[(obj["dataset_id"], obj["flowcell_id"])].append(obj)
+
+            for (bpa_dataset_id, flowcell_id), row_objs in list(objs.items()):
+
+                if bpa_dataset_id is None or flowcell_id is None:
+                    continue
+
+                context_objs = []
+                for row in row_objs:
+                    context = {}
+                    for contextual_source in self.contextual_metadata:
+                        context.update(contextual_source.get(row.get("sample_id")))
+                    context_objs.append(context)
+
+                obj = common_values(row_objs)
+                ticket = obj["ticket"]
+
+                name = sample_id_to_ckan_name(
+                    bpa_dataset_id, self.ckan_data_type, flowcell_id
+                )
+                obj.update(
+                    {
+                        "name": name,
+                        "id": name,
+                        "bpa_dataset_id": bpa_dataset_id,
+                        "date_of_transfer": ingest_utils.get_date_isoformat(
+                            self._logger, self.get_tracking_info(ticket, "date_of_transfer")),
+                        "data_type": self.get_tracking_info(ticket, "data_type"),
+                        "description": self.get_tracking_info(ticket, "description"),
+                        "folder_name": self.get_tracking_info(ticket, "folder_name"),
+                        "sample_submission_date": ingest_utils.get_date_isoformat(
+                            self._logger, self.get_tracking_info(ticket, "date_of_transfer")
+                        ),
+                        "contextual_data_submission_date": None,
+                        "data_generated": ingest_utils.get_date_isoformat(
+                            self._logger, self.get_tracking_info(ticket, "date_of_transfer_to_archive")
+                        ),
+                        "archive_ingestion_date": ingest_utils.get_date_isoformat(
+                            self._logger, self.get_tracking_info(ticket, "date_of_transfer_to_archive")
+                        ),
+                        "dataset_url": self.get_tracking_info(ticket, "download"),
+                        "type": self.ckan_data_type,
+                        "sequence_data_type": self.sequence_data_type,
+                        "license_id": apply_cc_by_license(),
+                    }
+                )
+                obj.update(common_values(context_objs))
+                obj.update(merge_values("scientific_name", " , ", context_objs))
+                additional_notes = "ddRAD dataset not demultiplexed"
+                self._build_title_into_object(obj)
+                self.build_notes_into_object(obj, {"additional_notes": additional_notes})
+                ingest_utils.permissions_organization_member(self._logger, obj)
+                ingest_utils.apply_access_control(self._logger, self, obj)
+                ingest_utils.add_spatial_extra(self._logger, obj)
+                obj["tags"] = [{"name": t} for t in self.tag_names]
+                self.track_xlsx_resource(obj, fname)
+                packages.append(obj)
+        return packages
+
+    def _add_datatype_specific_info_to_package(self, obj, row, filename):
+        obj.update(
+            {
+                 "sample_submission_date": ingest_utils.get_date_isoformat(
+                    self._logger, self.get_tracking_info(row.ticket, "date_of_transfer")
+                ),
+                "contextual_data_submission_date": None,
+                "data_generated": ingest_utils.get_date_isoformat(
+                    self._logger, self.get_tracking_info(row.ticket, "date_of_transfer_to_archive")
+                ),
+                "archive_ingestion_date": ingest_utils.get_date_isoformat(
+                    self._logger, self.get_tracking_info(row.ticket, "date_of_transfer_to_archive")
+                ),
+                 "dataset_url": self.get_tracking_info(row.ticket, "download")
+             }
+        )
+        # below fields are in the metadata, but not required in the packages schema
+
+    def _get_resources(self):
+        return self._get_common_resources() + self.generate_xlsx_resources()
+
+    def _add_datatype_specific_info_to_resource(self, resource, md5_file=None):
+        # none for Genomics ddrad
+        return
+
+    def _build_resource_linkage(self, xlsx_info, resource, file_info):
+        return (
+            (ingest_utils.extract_ands_id(
+                self._logger, resource["bpa_dataset_id"]
+            ),
+             resource["flowcell_id"],)
+        )

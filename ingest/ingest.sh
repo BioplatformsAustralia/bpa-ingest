@@ -75,6 +75,7 @@ ausarg() {
   apply ausarg-exoncapture $*
   apply ausarg-hi-c $*
   apply ausarg-genomics-dart $*
+  apply ausarg-genomics-ddrad $*
 }
 
 marine_microbes()

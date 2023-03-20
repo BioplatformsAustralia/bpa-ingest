@@ -134,3 +134,37 @@ DART_MD5_PATTERN = r"""
     \.md5
 """
 dart_md5_filename_re = re.compile(DART_MD5_PATTERN, re.VERBOSE)
+
+DDRAD_FASTQ_FILENAME_PATTERN = r"""
+    (?P<bpa_dataset_id>\d{4,6})_
+    AusARG_
+    AGRF_
+    (?P<flowcell_id>\w{9})_
+    (?P<index>[G|A|T|C|-]*|N)_
+    (?P<lane>L\d{3})_
+    (?P<read>[R|I][1|2])\.fastq\.gz
+"""
+ddrad_fastq_filename_re = re.compile(DDRAD_FASTQ_FILENAME_PATTERN, re.VERBOSE)
+
+DDRAD_ANALYSED_TAR_PATTERN = r"""
+    (?P<bpa_dataset_id>\d{4,6})_
+    AusARG_
+    AGRF_
+    (?P<facility_contract>CAGRF\d{9})_
+    (?P<flowcell_id>\w{9})_
+    analysed
+    \.tar
+"""
+
+ddrad_analysed_tar_re = re.compile(DDRAD_ANALYSED_TAR_PATTERN, re.VERBOSE)
+
+DDRAD_METADATA_SHEET_PATTERN = r"""
+    AusARG_
+    [NGS_]
+    (?P<flowcell_id>\w{9})_
+    [library_]
+    metadata_
+    (?P<bpa_dataset_id>\d{4,6})
+    \.xlsx
+"""
+ddrad_metadata_sheet_re = re.compile(DDRAD_METADATA_SHEET_PATTERN, re.VERBOSE)

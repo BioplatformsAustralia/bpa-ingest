@@ -23,6 +23,7 @@ from .ausarg.ingest import (
     AusargExonCaptureMetadata,
     AusargHiCMetadata,
     AusargGenomicsDArTMetadata,
+    AusargGenomicsDDRADMetadata,
 )
 
 from .gbr.ingest import GbrAmpliconsMetadata, GbrPacbioMetadata
@@ -119,6 +120,7 @@ class ProjectInfo:
             AusargExonCaptureMetadata,
             AusargHiCMetadata,
             AusargGenomicsDArTMetadata,
+            AusargGenomicsDDRADMetadata,
         ],
         "base": [
             BASEAmpliconsMetadata,
