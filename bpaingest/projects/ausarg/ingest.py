@@ -63,7 +63,8 @@ class AusargBaseMetadata(BaseMetadata):
     # this method just for here for backwards compatibility
 
     def apply_location_generalisation(self, packages):
-        return self.generaliser.apply_location_generalisation(packages)
+        if packages:
+            return self.generaliser.apply_location_generalisation(packages)
 
     def get_tracking_info(self, ticket, field_name=None):
         if self.google_track_meta is None:
@@ -129,14 +130,6 @@ class AusargBaseMetadata(BaseMetadata):
                 obj["tags"] = [{"name": "{:.100}".format(t)} for t in self.tag_names]
                 packages.append(obj)
         return packages
-
-    def migrate_libray_fields(self, obj):
-        migrate_field(obj, "library_index_id", "p7_library_index_id")
-        migrate_field(obj, "library_index_seq_p7", "p7_library_index_sequence")
-        migrate_field(obj, "library_oligo_sequence_p7", "p7_library_oligo_sequence")
-        obj.pop("library_index_id", False)
-        obj.pop("library_index_seq_p7", False)
-        obj.pop("library_oligo_sequence_p7", False)
 
 
 class AusargIlluminaFastqMetadata(AusargBaseMetadata):
@@ -209,8 +202,8 @@ class AusargIlluminaFastqMetadata(AusargBaseMetadata):
             fld('i5_index_reverse_complement', 'i5 index reverse complement', optional=True),
             fld("insert_size_range", "insert_size_range"),
             fld("library_ng_ul", "library_ng_ul"),
-            fld("library_pcr_cycles", "library_pcr_cycles"),
-            fld("library_pcr_reps", "library_pcr_reps"),
+            fld("library_pcr_cycles", "library_pcr_cycles", coerce=ingest_utils.get_int),
+            fld("library_pcr_reps", "library_pcr_reps", coerce=ingest_utils.get_int),
             fld(
                 "n_libraries_pooled", "n_libraries_pooled", coerce=ingest_utils.get_int
             ),
@@ -381,8 +374,8 @@ class AusargONTPromethionMetadata(AusargBaseMetadata):
             fld('library_index_id_dual', 'library_index_id_dual', optional=True),
             fld('library_index_seq_dual', 'library_index_seq_dual', optional=True),
             fld('library_oligo_sequence_dual', 'library_oligo_sequence_dual', optional=True),
-            fld("library_pcr_reps", "library_pcr_reps", optional=True),
-            fld("library_pcr_cycles", "library_pcr_cycles", optional=True),
+            fld("library_pcr_reps", "library_pcr_reps", coerce=ingest_utils.get_int, optional=True),
+            fld("library_pcr_cycles", "library_pcr_cycles", coerce=ingest_utils.get_int, optional=True),
             fld("library_ng_ul", "library_ng_ul", optional=True),
             fld("library_comments", "library_comments"),
             fld("library_location", "library_location"),
@@ -568,8 +561,8 @@ class AusargPacbioHifiMetadata(AusargBaseMetadata):
                 "library_oligo_sequence_dual",
                 optional=True,
             ),
-            fld("library_pcr_reps", "library_pcr_reps"),
-            fld("library_pcr_cycles", "library_pcr_cycles"),
+            fld("library_pcr_reps", "library_pcr_reps", coerce=ingest_utils.get_int),
+            fld("library_pcr_cycles", "library_pcr_cycles", coerce=ingest_utils.get_int),
             fld("library_ng_ul", "library_ng_ul"),
             fld("library_comments", "library_comments"),
             fld("library_location", "library_location"),
@@ -717,7 +710,7 @@ class AusargExonCaptureMetadata(AusargBaseMetadata):
         "facility",
         "ticket",
     )
-    resource_linkage = ("library_id", "flowcell_id", "p7_library_index_sequence")
+    resource_linkage = ("library_id", "flowcell_id", "library_index_seq")
     spreadsheet = {
         "fields": [
             fld("genus", "genus", optional=True),
@@ -742,24 +735,9 @@ class AusargExonCaptureMetadata(AusargBaseMetadata):
             fld("data_custodian", "data_custodian"),
             fld("dna_treatment", "dna_treatment"),
             fld("library_index_id", "library_index_id", optional=True),
-            fld("library_index_sequence", "library_index_sequence", optional=True),
             fld("library_oligo_sequence", "library_oligo_sequence", optional=True),
-            fld("p7_library_index_id", "p7_library_index_id", optional=True),
-            fld(
-                "p7_library_index_sequence", "p7_library_index_sequence", optional=True
-            ),
-            fld(
-                "p7_library_oligo_sequence", "p7_library_oligo_sequence", optional=True
-            ),
-            fld("p5_library_index_id", "p5_library_index_id", optional=True),
-            fld(
-                "p5_library_index_sequence", "p5_library_index_sequence", optional=True
-            ),
-            fld(
-                "p5_library_oligo_sequence", "p5_library_oligo_sequence", optional=True
-            ),
-            fld("library_pcr_reps", "library_pcr_reps"),
-            fld("library_pcr_cycles", "library_pcr_cycles"),
+            fld("library_pcr_reps", "library_pcr_reps", coerce=ingest_utils.get_int),
+            fld("library_pcr_cycles", "library_pcr_cycles", coerce=ingest_utils.get_int),
             fld("library_ng_ul", "library_ng_ul"),
             fld("library_comments", "library_comments"),
             fld("library_location", "library_location"),
@@ -781,8 +759,6 @@ class AusargExonCaptureMetadata(AusargBaseMetadata):
             fld("library_strategy", "library_strategy"),
             fld("library_selection", "library_selection"),
             fld("library_source", "library_source"),
-            fld("library_index_seq_p7", "library_index_seq_p7"),
-            fld("library_oligo_sequence_p7", "library_oligo_sequence_p7"),
             fld("insert_size_range", "insert_size_range"),
             fld("flowcell_type", "flowcell_type"),
             fld("cell_postion", "cell_postion"),
@@ -791,8 +767,12 @@ class AusargExonCaptureMetadata(AusargBaseMetadata):
             fld("analysis_software", "analysis_software"),
             fld("analysis_software_version", "analysis_software_version"),
             fld("file_type", "file_type"),
-            fld("library_index_seq_p5", "library_index_seq_p5"),
-            fld("library_oligo_sequence_p5", "library_oligo_sequence_p5"),
+            fld("library_index_seq", "library_index_seq"),
+            fld("library_index_id_dual", "library_index_id_dual"),
+            fld("library_index_seq_dual", "library_index_seq_dual"),
+            fld("library_oligo_sequence_dual", "library_oligo_sequence_dual"),
+            fld("fast5_compression", "fast5_compression"),
+            fld("model_base_caller", "model_base_caller"),
         ],
         "options": {
             "sheet_name": "Library_metadata",
@@ -813,7 +793,7 @@ class AusargExonCaptureMetadata(AusargBaseMetadata):
         {"key": "title_description", "separator": " "},
         {"key": "library_id", "separator": " "},
         {"key": "flowcell_id", "separator": " "},
-        {"key": "p7_library_index_sequence", "separator": ""},
+        {"key": "library_index_seq", "separator": ""},
     ]
     description = "Exon Capture Raw"
     tag_names = ["exon-capture", "raw"]
@@ -824,9 +804,9 @@ class AusargExonCaptureMetadata(AusargBaseMetadata):
 
     def _get_packages(self):
         packages = self._get_common_packages()
-        for package in packages:
-            self.track_xlsx_resource(package, package["filename"])
-            del package["filename"]
+        # for package in packages:
+        #    self.track_xlsx_resource(package, package["filename"])
+        #    del package["filename"]
 
         return self.apply_location_generalisation(packages)
 
@@ -850,11 +830,8 @@ class AusargExonCaptureMetadata(AusargBaseMetadata):
                 "filename": filename,  # this is removed, it is only added for resrouce linkage tracking.
             }
         )
-
-        self.migrate_libray_fields(obj)
-
         linkage = self.flow_cell_index_linkage(
-            obj["flowcell_id"], obj["p7_library_index_sequence"]
+            obj["flowcell_id"], obj["library_index_seq"]
         )
 
         obj["name"] = sample_id_to_ckan_name(obj["library_id"], self.ckan_data_type, linkage)
@@ -863,7 +840,7 @@ class AusargExonCaptureMetadata(AusargBaseMetadata):
         ingest_utils.add_spatial_extra(self._logger, obj)
 
     def _get_resources(self):
-        return self._get_common_resources() + self.generate_xlsx_resources()
+        return self._get_common_resources()
 
     def _add_datatype_specific_info_to_resource(self, resource, md5_file=None):
         #    no additional fields needed, just empty return
@@ -1107,8 +1084,8 @@ class AusargGenomicsDArTMetadata(AusargBaseMetadata):
             fld("dna_treatment", "dna_treatment"),
             fld("library_index_id", "library_index_id"),
             fld("library_oligo_sequence", "library_oligo_sequence"),
-            fld("library_pcr_reps", "library_pcr_reps"),
-            fld("library_pcr_cycles", "library_pcr_cycles"),
+            fld("library_pcr_reps", "library_pcr_reps", coerce=ingest_utils.get_int),
+            fld("library_pcr_cycles", "library_pcr_cycles", coerce=ingest_utils.get_int),
             fld("library_ng_ul", "library_ng_ul"),
             fld("library_comments", "library_comments"),
             fld("library_location", "library_location"),

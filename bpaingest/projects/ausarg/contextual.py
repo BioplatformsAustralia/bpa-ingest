@@ -70,7 +70,7 @@ class AusargLibraryContextual:
             fld("tissue_type", "tissue_type"),
             fld("tissue_preservation", "tissue_preservation"),
             fld("sample_quality", "sample_quality"),
-            fld("taxon_id", re.compile(r"taxon_[Ii][Dd]")),
+            fld("taxon_id", re.compile(r"taxon_[Ii][Dd]"), coerce=ingest_utils.get_int),
             fld("phylum", "phylum"),
             fld("klass", "class"),
             fld("order", "order"),
