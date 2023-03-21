@@ -41,6 +41,7 @@ class GAPLibraryContextual:
         "Phylo AATOL - Run 2",
         "Phylo Stage 2_single bait",
         "Phylo Stage 2_2xbaits",
+        "Mini library",
         "Conservation ",
     ]
 
