@@ -84,6 +84,9 @@ class GAPIlluminaShortreadMetadata(GAPBaseMetadata):
             fld("run_format", "run format", optional=True),
             fld("analysissoftwareversion", "analysissoftwareversion"),
             fld("flow_cell_id", "flow_cell_id", optional=True),
+            fld('inline_index', 'inline index', optional=True),
+            fld('external_i5_index', 'external i5 index', optional=True),
+            fld('external_i7_index', 'external i7 index', optional=True),
         ],
         "options": {
             "sheet_name": None,
