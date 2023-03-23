@@ -47,8 +47,8 @@ class BaseMetadata:
         result = ""
         # ensure blank fields are not used
         for next_field in field_map:
-            next_value = obj.get(
-                next_field["key"], additional.get(next_field["key"], "")
+            next_value = str(obj.get(
+                next_field["key"], additional.get(next_field["key"], ""))
             )
             if next_value:
                 result += next_value + next_field.get("separator", "")
