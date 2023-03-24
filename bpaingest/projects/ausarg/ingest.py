@@ -751,7 +751,7 @@ class AusargExonCaptureMetadata(AusargBaseMetadata):
             fld("work_order", "work_order", coerce=ingest_utils.get_int),
             fld("facility_project_code", "facility_project_code"),
             fld("specimen_id", "specimen_id"),
-            fld("tissue_number", "tissue_number"),
+            fld("tissue_number", "tissue_number", optional=True),
             fld("data_context", "data_context"),
             fld("library_layout", "library_layout"),
             fld("sequencing_model", "sequencing_model"),
