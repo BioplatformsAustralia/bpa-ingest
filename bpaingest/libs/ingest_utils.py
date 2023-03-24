@@ -254,9 +254,12 @@ def get_clean_number(logger, val, default=None):
     try:
         return float(val)
     except TypeError:
-        pass
+        logger.error("Invalid number - Type error: {} ".format(str(val)))
+        return default
     except ValueError:
-        pass
+        if val != 'unknown':
+            logger.error("Invalid number - Value error: {}".format(str(val)))
+        return default
 
     matches = number_find_re.findall(str(val))
     if len(matches) == 0:
