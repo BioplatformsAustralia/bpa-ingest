@@ -804,9 +804,9 @@ class AusargExonCaptureMetadata(AusargBaseMetadata):
 
     def _get_packages(self):
         packages = self._get_common_packages()
-        # for package in packages:
+        for package in packages:
         #    self.track_xlsx_resource(package, package["filename"])
-        #    del package["filename"]
+            del package["filename"]
 
         return self.apply_location_generalisation(packages)
 
