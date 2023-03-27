@@ -824,7 +824,6 @@ class AusargExonCaptureMetadata(AusargBaseMetadata):
                     self._logger, self.get_tracking_info(row.ticket, "date_of_transfer_to_archive")
                 ),
                 "dataset_url": self.get_tracking_info(row.ticket, "download"),
-                "filename": '',
             }
         )
         linkage = self.flow_cell_index_linkage(
