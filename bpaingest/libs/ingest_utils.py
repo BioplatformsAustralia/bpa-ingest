@@ -257,7 +257,7 @@ def get_clean_number(logger, val, default=None):
         logger.error("Invalid number - Type error: {} ".format(str(val)))
         return default
     except ValueError:
-        if val != 'unknown':
+        if val not in ['unknown','N/A','',' ',]:
             logger.error("Invalid number - Value error: {}".format(str(val)))
         return default
 
