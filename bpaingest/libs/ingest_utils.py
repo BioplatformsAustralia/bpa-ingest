@@ -165,6 +165,8 @@ def extract_ands_id(logger, s, silent=False):
         s = int(s)
     if isinstance(s, int):
         s = str(s)
+    if s is None:
+        return None
     # if someone has appended extraction number, remove it
     s = s.strip()
     if s == "":
@@ -257,7 +259,7 @@ def get_clean_number(logger, val, default=None):
         logger.error("Invalid number - Type error: {} ".format(str(val)))
         return default
     except ValueError:
-        if val not in ['unknown','N/A','',' ',]:
+        if val not in ['unknown','N/A','NA','',' ',]:
             logger.error("Invalid number - Value error: {}".format(str(val)))
         return default
 
