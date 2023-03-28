@@ -79,7 +79,7 @@ class PlantPathogenLibraryContextual:
             fld('project_lead', 'project_lead'),
             fld('data_context', 'data_context'),
             fld('specimen_custodian', 'specimen_custodian'),
-            fld('specimen_id', 'specimen_id',   coerce=ingest_utils.get_int),
+            fld('specimen_id', 'specimen_id', coerce=ingest_utils.int_or_comment,),
             fld('specimen_id_description', 'specimen_id_description'),
             fld('sample_custodian', 'sample_custodian'),
             fld('sample_collection_type', 'sample_collection_type'),
