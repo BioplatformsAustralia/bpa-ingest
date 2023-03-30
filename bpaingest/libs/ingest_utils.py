@@ -581,7 +581,7 @@ def apply_access_control(logger, metadata, obj):
         if embargo_days > 1827:
             # looks too much like a year, only support up to five years
             _log_access_control_error(logger, obj)
-            logger.error("Integer Embargo is out of range")
+            logger.error("Integer Embargo - Access Control Date (days) is out of range (more than 5 years)")
             obj["access_control_date"] = ""
             return
 
