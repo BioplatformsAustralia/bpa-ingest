@@ -646,7 +646,7 @@ class TSIGenomicsDDRADMetadata(TSIBaseMetadata):
             fld("library_status", "library_status", optional=True),
             fld("sequencing_facility", "sequencing_facility"),
             fld("n_libraries_pooled", "n_libraries_pooled"),
-            fld("work_order", "work_order", coerce=ingest_utils.get_int),
+            fld("work_order", "work_order", coerce=ingest_utils.int_or_comment,),
             fld("sequencing_platform", "sequencing_platform"),
             fld("flowcell_id", "flowcell_id"),
             fld("file", "file", optional=True),
