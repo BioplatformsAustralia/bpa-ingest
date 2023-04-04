@@ -273,6 +273,8 @@ class AusargIlluminaFastqMetadata(AusargBaseMetadata):
         if tracking_row is not None:
             track_obj = tracking_row._asdict()
             obj.update(track_obj)
+            if obj["data_type"] is not None:
+                obj["sequence_data_type"] = obj["data_type"]  # force the sequense datatype to the one in the tracking spreadsheet
             # overwrite potentially incorrect values from tracking data - fail if source fields don't exist
             obj["bioplatforms_sample_id"] = obj["sample_id"]
             obj["bioplatforms_library_id"] = obj["library_id"]
