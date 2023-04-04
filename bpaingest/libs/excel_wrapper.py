@@ -74,23 +74,7 @@ class ExcelWrapper:
         self.suggest_template = suggest_template
 
         self.workbook = xlrd.open_workbook(file_name)
-
-        if sheet_name is not None:
-            if sheet_name not in self.workbook.sheet_names():
-                raise Exception(
-                    "Missing sheet named '%s' in %s" % (sheet_name, file_name)
-                )
-
-        if sheet_name is None:
-            self.sheet = self.workbook.sheet_by_index(0)
-        else:
-            self.sheet = self.workbook.sheet_by_name(sheet_name)
-
-        if self.sheet.visibility > 0:
-            raise Exception(
-                "Sheet named '%s' in %s is not visible.  Correct and re-run"
-                % (sheet_name, file_name)
-            )
+        self.sheet = self._find_sheet_in_workbook(file_name, self.workbook, sheet_name)
 
         self.missing_headers = []
         self.header, self.name_to_column_map = self.set_name_to_column_map()
@@ -114,6 +98,57 @@ class ExcelWrapper:
                 % [t for (t, c) in Counter(names).items() if c > 1]
             )
         return names
+
+    def _find_sheet_in_workbook(self, file_name, workbook, sheet_name):
+        # This method performs the following in order to find an appropriately named sheet in the given workbook:
+        # Try sheet_name supplied as parameter to this method (if it is not None).
+        # If the provided sheet name is not found, log an error and continue.
+        # Try in turn the sheet names in the possible_sheet_names list below.
+        # Select the first sheet (ie - index 0), and log teh fact we are using the first sheet, (and its name)
+
+        # this lists a number of sheet names for the code to search for in the xlsx file if a sheet with the name
+        # provided in the data class is not found. If new variants of sheet names are required, add them here.
+
+        possible_sheet_names = [
+            'Metadata',
+            'Library_Metadata',
+            'Library_metadata',
+            'Sheet1',
+        ]
+
+        sheet = None
+        if sheet_name is not None:
+            if sheet_name not in workbook.sheet_names():
+                self._logger.warn(
+                    "Missing sheet named '%s' in %s" % (sheet_name, file_name))
+            else:
+                sheet = workbook.sheet_by_name(sheet_name)
+
+        # Didn't find it with the parameter sheet name, see if its in list of possibles
+        if sheet is None:
+            for possible_sheet in possible_sheet_names:
+                if possible_sheet in workbook.sheet_names():
+                    sheet = workbook.sheet_by_name(possible_sheet)
+                    if sheet_name is not None:
+                        # log that we are using a possibly  unexpected sheet
+                        self._logger.warn(
+                            "Using the sheet named '%s' in %s, instead of %s" % (sheet.name, file_name, sheet_name))
+
+                    break
+
+        # Last resort, we haven't found a sheet by any of the possible names, so use the first sheet
+        if sheet is None:
+            sheet = workbook.sheet_by_index(0)
+            self._logger.warn(
+                "Using the FIRST sheet (named '%s') in %s" % (sheet.name, file_name))
+
+        if sheet.visibility > 0:
+            raise Exception(
+                "Sheet named '%s' in %s is not visible.  Correct and re-run"
+                % (sheet_name, file_name)
+            )
+
+        return sheet
 
     def set_name_to_column_map(self):
         """
