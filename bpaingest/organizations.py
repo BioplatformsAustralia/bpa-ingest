@@ -133,4 +133,19 @@ ORGANIZATIONS = [
         "image_url": "https://data.bioplatforms.com/fungi.png",
         "groups": [{"capacity": "public", "name": BPA_ORGANIZATION_ID}],
     },
+    {
+        "name": "arccoe",
+        "title": "ARC Centres of Excellence",
+        "display_name": "ARC Centres of Excellence",
+        "image_url": "https://data.bioplatforms.com/arccoe.png",
+        "groups": [{"capacity": "public", "name": BPA_ORGANIZATION_ID}],
+    },
+    {
+        "name": "arccoe-consortium-members",
+        "title": "ARC Centres of Excellence Project Members",
+        "display_name": "ARC Centres of Excellence Project Members",
+        "image_url": "https://data.bioplatforms.com/arccoe.png",
+        "groups": [{"capacity": "public", "name": 'arccoe'}],
+    },
+
 ]
