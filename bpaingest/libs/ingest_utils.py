@@ -260,8 +260,8 @@ def get_clean_number(logger, val, default=None):
         return default
     except ValueError:
         if val not in ['unknown','N/A','NA','',' ',]:
-            logger.error("Invalid number - Value error: {}".format(str(val)))
-        return default
+            logger.warning("Potential invalid number - Value error: {}".format(str(val)))
+        pass
 
     matches = number_find_re.findall(str(val))
     if len(matches) == 0:
