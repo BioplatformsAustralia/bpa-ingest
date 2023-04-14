@@ -134,18 +134,18 @@ ORGANIZATIONS = [
         "groups": [{"capacity": "public", "name": BPA_ORGANIZATION_ID}],
     },
     {
-        "name": "arccoe",
-        "title": "ARC Centres of Excellence",
-        "display_name": "ARC Centres of Excellence",
-        "image_url": "https://data.bioplatforms.com/arccoe.png",
+        "name": "cipps",
+        "title": "ARC for Innovations in Peptide and Protein Science (CIPPS)",
+        "display_name": "ARC Centre of Excellence for Innovations in Peptide and Protein Science (CIPPS) ",
+        "image_url": "https://data.bioplatforms.com/cipps.png",
         "groups": [{"capacity": "public", "name": BPA_ORGANIZATION_ID}],
     },
     {
-        "name": "arccoe-consortium-members",
-        "title": "ARC Centres of Excellence Project Members",
-        "display_name": "ARC Centres of Excellence Project Members",
-        "image_url": "https://data.bioplatforms.com/arccoe.png",
-        "groups": [{"capacity": "public", "name": 'arccoe'}],
+        "name": "cipps-consortium-members",
+        "title": "CIPPS Project Members",
+        "display_name": "ARC for Innovations in Peptide and Protein Science (CIPPS)  Project Members",
+        "image_url": "https://data.bioplatforms.com/cipps.png",
+        "groups": [{"capacity": "public", "name": 'cipps'}],
     },
 
 ]
