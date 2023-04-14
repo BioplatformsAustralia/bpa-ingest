@@ -1518,7 +1518,6 @@ class AustralianMicrobiomeDatasetControlContextual(BaseDatasetControlContextual)
             metadata[linkage]['related_data'] = " ".join(filter(None,(related,doi,identifier)))
             del metadata[linkage]['related_data_doi']
             del metadata[linkage]['related_data_identifier']
-        self._logger.warn(metadata)
         return metadata
 
     def sample_ids(self):
