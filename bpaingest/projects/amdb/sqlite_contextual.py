@@ -28,7 +28,7 @@ class AustralianMicrobiomeSampleContextualSQLite(AustralianMicrobiomeSampleConte
     def dataframe_to_excel_file(self, df, fname):
         writer = pandas.ExcelWriter(fname)
         df.to_excel(writer, sheet_name=self.sheet_name)
-        writer.save()
+        writer.close()
         self._logger.info("Excel file written.")
 
     # simple method to ensure have working sqlite connection
