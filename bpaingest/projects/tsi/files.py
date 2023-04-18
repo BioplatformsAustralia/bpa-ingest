@@ -59,6 +59,8 @@ pacbio_hifi_metadata_sheet_re = re.compile(
 
 DDRAD_FASTQ_FILENAME_PATTERN = r"""
     (?P<bpa_dataset_id>\d{4,6})_
+    (TSI_
+    (?P<facility_id>(BRF|UNSW|AGRF))_)?
     (?P<flowcell_id>\w{9})_
     (?P<index>[G|A|T|C|-]*|N)_
     (?P<lane>L\d{3})_

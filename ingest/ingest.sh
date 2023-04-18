@@ -180,6 +180,10 @@ pp()
   apply pp-illumina-shortread $*
   apply pp-pacbio-hifi $*
 }
+cipps()
+{
+  apply cipps-illumina-fastq $*
+}
 
 run() {
   apply $*
@@ -200,6 +204,7 @@ all()
   ausarg $*
   fungi $*
   pp $*
+  cipps $*
 }
 
 action="$1"

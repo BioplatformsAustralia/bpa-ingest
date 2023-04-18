@@ -95,6 +95,7 @@ def delete_dangling_packages(ckan, packages, cache, do_delete):
 def sync_packages(ckan, ckan_data_type, packages, org, group, do_delete):
     # FIXME: we don't check if there are any packages we should remove (unpublish)
     logger.info("syncing %d packages" % (len(packages)))
+    reporting_interval = determine_reporting_interval(len(packages))
     # we have to post the group back in package objects, send a minimal version of it
     api_group_obj = prune_dict(
         group,
@@ -105,13 +106,16 @@ def sync_packages(ckan, ckan_data_type, packages, org, group, do_delete):
     cache = build_package_cache(ckan, ckan_data_type, packages)
 
     delete_dangling_packages(ckan, packages, cache, do_delete)
-
+    synched_package_count = 0
     for package in sorted(packages, key=lambda p: p["name"]):
         obj = package.copy()
         obj["owner_org"] = org["id"]
         if api_group_obj is not None:
             obj["groups"] = [api_group_obj]
         ckan_packages.append(sync_package(ckan, obj, cache.get(obj["id"])))
+        synched_package_count += 1
+        if synched_package_count % reporting_interval == 0:
+            logger.info("synced %d of %d packages" % (synched_package_count, len(packages)))
     return ckan_packages
 
 
@@ -175,7 +179,8 @@ def sync_package_resources(
     to_delete = set(existing_resources) - set(needed_resources)
 
     to_reupload = []
-
+    created_resource_count = 0
+    uncreated_resource_count = 0
     for obj_id in to_create:
         resource_obj = needed_resources[obj_id]
         legacy_url = resource_id_legacy_url[obj_id]
@@ -186,8 +191,13 @@ def sync_package_resources(
         create_obj["url"] = legacy_url
         current_ckan_obj = create_resource(ckan, create_obj)
         if current_ckan_obj:
+            created_resource_count += 1
             logger.info("created resource: %s/%s" % (create_obj["package_id"], obj_id))
             to_reupload.append((current_ckan_obj, legacy_url))
+        else:
+            uncreated_resource_count += 1
+        #logger.info("Processing Resource creation: created %d, did not create %d of expected %d"
+        #            % (created_resource_count, uncreated_resource_count, len(to_create)))
 
     for obj_id in to_delete:
         delete_obj = existing_resources[obj_id]
@@ -199,7 +209,7 @@ def sync_package_resources(
             ckan_method(ckan, "resource", "delete")(id=obj_id)
             logger.info("deleted resource: %s/%s" % (delete_obj["package_id"], obj_id))
 
-    # patch all the resources, to ensure everything is synced on
+            # patch all the resources, to ensure everything is synced on
     # existing resources
     if to_create or to_delete:
         # if we've changed the resources attached to the package, refresh it
@@ -278,7 +288,7 @@ def sync_resources(
     **kwargs,
 ):
     logger.info("syncing %d resources" % (len(resources)))
-
+    reporting_interval = determine_reporting_interval(len(resources))
     resource_linkage_package_id = {}
     for package_obj in ckan_packages:
         linkage_tpl = tuple((package_obj[t] for t in resource_linkage_attrs),)
@@ -287,7 +297,7 @@ def sync_resources(
                 "more than one package linked for tuple {}".format(linkage_tpl)
             )
         resource_linkage_package_id[linkage_tpl] = package_obj["id"]
-
+    resources_synched = 0
     # wire the resources to their CKAN package
     resource_idx = {}
     resource_id_legacy_url = {}
@@ -306,6 +316,9 @@ def sync_resources(
         if obj["id"] in resource_id_legacy_url:
             raise Exception("duplicate resource ID: {}".format(obj["id"]))
         resource_id_legacy_url[obj["id"]] = legacy_url
+        resources_synched += 1
+        if resources_synched % reporting_interval == 0:
+            logger.info("synced %d of %d resources" % (resources_synched, len(resources)))
 
     if not do_resource_checks:
         logger.warning(
@@ -407,5 +420,16 @@ def sync_child_organizations(ckan, project_info):
         make_organization(ckan, org)
 
 
+def determine_reporting_interval(total_count):
+    # this method is used to calculate reporting of progress to a respectable level
+    # if there are fewer than 100, you can report each one. If > 100, < 1000, report every 10%
+    # if > 100, report every 1%
+    reporting_interval = 1
+    if total_count > 1000:
+        reporting_interval = int(total_count/100)
+    else:
+        if total_count > 100:
+            reporting_interval = int(total_count / 10)
+    return reporting_interval
 
 

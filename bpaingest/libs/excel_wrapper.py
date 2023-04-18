@@ -18,6 +18,7 @@ import re
 import os
 import xlrd
 import string
+import logging
 
 SkipColumn = namedtuple("SkipColumn", ["column_name", "skip_all"])
 skip_column_default = SkipColumn("column_name", False)
@@ -38,6 +39,9 @@ def make_field_definition(attribute, column_name, **kwargs):
 def make_skip_column(column_name, **kwargs):
     return skip_column_default._replace(column_name=column_name, **kwargs)
 
+class ExcelWrapperLogger(logging.LoggerAdapter):
+    def process(self, msg, kwargs):
+        return 'Field %s: %s' % (self.extra['field_name'], msg), kwargs
 
 class ExcelWrapper:
     """
@@ -453,7 +457,8 @@ class ExcelWrapper:
                     val = val.strip()
                 # apply func
                 if func is not None:
-                    val = func(self._logger, val)
+                    func_logger = ExcelWrapperLogger(self._logger, {'field_name':name})
+                    val = func(func_logger, val)
                 tpl.append(val)
             if self.additional_context:
                 tpl += list(self.additional_context.values())

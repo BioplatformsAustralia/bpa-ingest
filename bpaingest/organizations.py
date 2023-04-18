@@ -133,4 +133,19 @@ ORGANIZATIONS = [
         "image_url": "https://data.bioplatforms.com/fungi.png",
         "groups": [{"capacity": "public", "name": BPA_ORGANIZATION_ID}],
     },
+    {
+        "name": "cipps",
+        "title": "ARC for Innovations in Peptide and Protein Science (CIPPS)",
+        "display_name": "ARC Centre of Excellence for Innovations in Peptide and Protein Science (CIPPS) ",
+        "image_url": "https://data.bioplatforms.com/cipps.png",
+        "groups": [{"capacity": "public", "name": BPA_ORGANIZATION_ID}],
+    },
+    {
+        "name": "cipps-consortium-members",
+        "title": "CIPPS Project Members",
+        "display_name": "ARC for Innovations in Peptide and Protein Science (CIPPS)  Project Members",
+        "image_url": "https://data.bioplatforms.com/cipps.png",
+        "groups": [{"capacity": "public", "name": 'cipps'}],
+    },
+
 ]
