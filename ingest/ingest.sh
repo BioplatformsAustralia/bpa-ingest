@@ -113,6 +113,7 @@ tsi()
   apply tsi-illumina-fastq $*
   apply tsi-genome-assembly $*
   apply tsi-hi-c $*
+  apply tsi-genomics-dart $*
 }
 
 sepsis()
