@@ -25,10 +25,10 @@ class CIPPSDatasetControlContextual(BaseDatasetControlContextual):
     sheet_names = [
         "Data control",
     ]
-    contextual_linkage = ('bioplatforms_library_id',)
+    contextual_linkage = ('bioplatforms_sample_id',)
     additional_fields = [
-        fld('bioplatforms_sample_id', 'bioplatforms_sample_id', coerce=ingest_utils.extract_ands_id, ),
-        fld('bioplatforms_dataset_id', 'bioplatforms_dataset_id', coerce=ingest_utils.extract_ands_id, ),
+        fld('bioplatforms_library_id', 'bioplatforms_library_id', coerce=ingest_utils.extract_ands_id,),
+        fld('bioplatforms_dataset_id', 'bioplatforms_dataset_id', coerce=ingest_utils.extract_ands_id,),
         fld('bioplatforms_project_code', 'bioplatforms_project_code'),
         fld('data_type', 'data_type'),
     ]
@@ -38,7 +38,7 @@ class CIPPSLibraryContextual:
         "https://downloads-qcif.bioplatforms.com/bpa/cipps_staging/metadata/2023-04-11/"
     ]
     metadata_patterns = [re.compile(r"^.*\.xlsx$")]
-    name = "coe-library-contextual"
+    name = "cipps-library-contextual"
     sheet_names = ["Sample metadata"]
 
     def __init__(self, logger, path):

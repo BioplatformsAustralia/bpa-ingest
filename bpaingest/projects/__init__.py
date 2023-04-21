@@ -104,7 +104,7 @@ from .plant_pathogen.ingest import (
  )
 
 from .cipps.ingest import (
-    CIPPSIlluminaFastqMetadata
+    CIPPSIlluminaShortreadMetadata
  )
 from ..util import make_logger
 
@@ -216,7 +216,7 @@ class ProjectInfo:
             PlantPathogenPacbioHifiMetadata,
         ],
         "cipps": [
-            CIPPSIlluminaFastqMetadata,
+            CIPPSIlluminaShortreadMetadata,
         ],
     }
 

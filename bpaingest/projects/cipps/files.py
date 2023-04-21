@@ -5,27 +5,18 @@ import re
 logger = make_logger(__name__)
 
 ILLUMINA_SHORTREAD_PATTERN = r"""
-    (?P<library_id>\d{4,6})_
+    (?P<sample_id>\d{4,6})_
     CIPPS_
-    (?P<facility_id>(AGRF))_
+    (?P<facility_id>(AGRF|UNSW))_
     (?P<flow_cell_id>\w{9,10})_
     (?P<index>[G|A|T|C|-]*)_
+    (?P<runsamplenum>S\d*)_
     (?P<lane>L\d{3})_
-    (?P<read>[R|I][1|2])
+    (?P<read>[R|I][1|2])_
+    (?P<flowcellindex>\d{3})
     \.fastq\.gz$
 """
+
 illumina_shortread_re = re.compile(ILLUMINA_SHORTREAD_PATTERN, re.VERBOSE)
 
-ILLUMINA_FASTQ_PATTERN = r"""
-    (?P<library_id>\d{4,6})_
-    CIPPS_
-    (?P<facility_id>(UNSW|AGRF))_
-    (?P<flowcell_id>\w{9,10})_
-    (?P<index>[G|A|T|C|-]*)_
-    ((?P<runsamplenum>S\d*)_)?
-    ((?P<lane>L\d{3})_)?
-    (?P<read>[R|I][1|2])
-    (_001)?
-    \.fastq\.gz$
-"""
-illumina_fastq_re = re.compile(ILLUMINA_FASTQ_PATTERN, re.VERBOSE)
+

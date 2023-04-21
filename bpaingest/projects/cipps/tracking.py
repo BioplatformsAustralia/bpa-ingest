@@ -13,7 +13,7 @@ class CIPPSProjectsGoogleMetadata(GoogleDriveTrackMetadata):
     sheet_names = ["CIPPS Project Codes"]
     platform = "google-drive"
     parent_org = 'cipps-consortium-members'
-    skip_header_rows = 3
+    skip_header_rows = 2
 
     def __init__(self, logger):
         self._logger = logger

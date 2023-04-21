@@ -183,7 +183,7 @@ pp()
 }
 cipps()
 {
-  apply cipps-illumina-fastq $*
+  apply cipps-illumina-shortread $*
 }
 
 run() {
