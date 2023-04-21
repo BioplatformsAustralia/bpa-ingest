@@ -1502,4 +1502,9 @@ class AustralianMicrobiomeDatasetControlContextual(BaseDatasetControlContextual)
         return metadata
 
     def sample_ids(self):
-        return list(self.dataset_metadata.keys())
+        if len(self.contextual_linkage) != 1:
+            raise Exception("Linkage of unexpected length")
+
+        # return a list of the first item of the linkage
+        # This will be a BPA Sample ID
+        return list(k[0] for k in self.dataset_metadata.keys())
