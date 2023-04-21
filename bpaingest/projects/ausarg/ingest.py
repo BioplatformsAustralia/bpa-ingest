@@ -37,7 +37,7 @@ class AusargBaseMetadata(BaseMetadata):
         {"key": "state_or_region"},
     ]
 
-    # below are defined here so they can be used with self., but values set in the init method of the relevanysubclass.
+    # below are defined here so they can be used with self., but values set in the init method of the relevant subclass.
     generaliser = None
     google_track_meta = None
     path = None
@@ -243,7 +243,7 @@ class AusargIlluminaFastqMetadata(AusargBaseMetadata):
             re.compile(r"^.*TestFiles\.exe.*"),
         ],
     }
-    title_mapping = []    # this may get set at some point, but title was not set from I;;imina FastQ datatype.
+    title_mapping = []    # this may get set at some point, but title was not set from Illumina FastQ datatype.
     notes_mapping = [
         {"key": "genus", "separator": " "},
         {"key": "species", "separator": ", "},
