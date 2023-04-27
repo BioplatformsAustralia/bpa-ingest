@@ -36,7 +36,7 @@ class CIPPSBaseMetadata(BaseMetadata):
     def _build_title_into_object(self, obj):
         self.build_title_into_object(obj, {"initiative": self.initiative,
                                             "title_description": self.description,
-                                            "split_sample_id": obj.get("sample_id", "").split("/")[-1], })
+                                            "sample_id": obj.get("sample_id", ""), })
 
     notes_mapping = [
         {"key": "genus", "separator": " "},
@@ -49,7 +49,7 @@ class CIPPSBaseMetadata(BaseMetadata):
         {"key": "initiative", "separator": ", "},
         {"key": "data_context", "separator": ", "},
         {"key": "title_description", "separator": ", Sample ID "},
-        {"key": "split_sample_id", "separator": " "},
+        {"key": "sample_id", "separator": " "},
     ]
 
     def _set_metadata_vars(self, filename):
@@ -240,7 +240,8 @@ class CIPPSIlluminaShortreadMetadata(CIPPSBaseMetadata):
         flow_cell_id = re.match(r"^.*_([^_]+)_metadata.*\.xlsx", filename).groups()[0]
 
         obj.update(
-            {   "data_generated": True,
+            {   "bioplatforms_sample_id": row.sample_id,
+                "data_generated": True,
                 "flow_cell_id": flow_cell_id,
                 "library_id": row.library_id.split("/")[-1]
              }
