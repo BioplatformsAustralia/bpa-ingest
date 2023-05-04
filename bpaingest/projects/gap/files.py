@@ -23,7 +23,7 @@ ILLUMINA__RNA_AND_PHYLO_SHORTREAD_PATTERN = r"""
     (?P<sample_id>\d{4,6})_
     LibID(?P<library_id>\d{4,6})_
     (GAP_
-    (?P<facility_id>(BRF|UNSW))_)?
+    (?P<facility_id>(BRF|UNSW|AGRF))_)?
     (?P<flow_cell_id>\w{9,10})_
     (?P<index>[G|A|T|C|-]{8,12}([_-][G|A|T|C|-]{8,12})?)_
     (?P<runsamplenum>S?\d*)_?
