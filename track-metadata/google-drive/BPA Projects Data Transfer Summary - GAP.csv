@@ -114,5 +114,9 @@ ML note: Everything up to this point has been added to the Aus_Genome_status - B
 BRF,02/12/2022,376316,,83748,Phebalium stellatum,Reference Genomes  ,Main dataset,PromethION - RNA - multiple samples,20221111_GAP_BRF_PAM33046,8/12/2022,,BPAOPS-1348,https://data.bioplatforms.com/dataset?ext_search_by=&q=ticket%3ABPAOPS-1348
 BRF,07/12/2022,376316,,83749,Phebalium stellatum,Reference Genomes  ,Main dataset,PromethION - RNA - multiple samples,20221116_GAP_BRF_PAM80422,8/12/2022,,BPAOPS-1349,https://data.bioplatforms.com/dataset?ext_search_by=&q=ticket%3ABPAOPS-1349
 AGRF,6/12/2022,,,83759,Olearia sp.,Conservation genomics,Main dataset,ddRAD - 2nd run,AGRF_GAP_HMYY2DRX2_83759,7/12/2022,12/12/22,BPAOPS-1350,https://data.bioplatforms.com/dataset?ext_search_by=&q=ticket%3ABPAOPS-1350
-BRF,17/03/2023,,,134773,,Phylogenomics ,Pilot (FSP),Illumina Short Read,20230316_GAP_BRF_standard_H5TT7DRX3,20/03/2023,,BPAOPS-1364,https://data.bioplatforms.com/dataset?ext_search_by=&q=ticket%3ABPAOPS-1364
-BRF,21/3/2023,,,134772,,Phylogenomics ,Pilot (FSP),Illumina Short Read,20230316_GAP_BRF_CSIRO_mini_H5TT7DRX3,22/03/2023,,BPAOPS-1365,
+BRF,17/03/2023,,,134773,,Phylogenomics ,Pilot (FSP),Illumina Short Read,20230316_GAP_BRF_standard_H5TT7DRX3,20/03/2023,22/3/23,BPAOPS-1364,https://data.bioplatforms.com/dataset?ext_search_by=&q=ticket%3ABPAOPS-1364
+BRF,21/3/2023,,,134772,,Phylogenomics ,Pilot (FSP),Illumina Short Read,20230316_GAP_BRF_CSIRO_mini_H5TT7DRX3,22/03/2023,22/3/23,BPAOPS-1365,https://data.bioplatforms.com/dataset?ext_search_by=&q=ticket%3ABPAOPS-1365
+BRF,,378152,383112,83738,Doryanthes excelsa,Reference Genomes  ,Main dataset,PromethION,20230411_GAP_BRF_PAO30530,,,,
+BRF,04/05/2023,378152,383136,83760,Doryanthes excelsa,Reference Genomes  ,Main dataset,PromethION,20230411_GAP_BRF_PAO29088,,,,
+BRF,,378152,383137,83761,Doryanthes excelsa,Reference Genomes  ,Main dataset,PromethION,20230417_GAP_BRF_PAO35672,,,,
+AGRF,04/05/2023,376317,,83758,Eremophila drummondii,Reference Genomes  ,Main dataset,Illumina Short Read,20230504_GAP_AGRF_H3G5TDRX3,05/05/2023,,BPAOPS-1386,
