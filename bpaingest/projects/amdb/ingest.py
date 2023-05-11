@@ -2088,8 +2088,11 @@ class AustralianMicrobiomeAmpliconsMetadata(AMDFullIngestMetadata):
     metadata_urls = ["https://downloads-qcif.bioplatforms.com/bpa/amd/amplicons-miseq/"]
     metadata_url_components = ("amplicon", "ticket")
     md5 = {
-        "match": [files.amd_amplicon_filename_re],
-        "skip": [files.amd_amplicon_control_filename_re],
+        "match": [files.amd_amplicon_filename_re,
+                  files.amd_amplicon_filename_v2_re],
+        "skip": [files.amd_amplicon_control_filename_re,
+                 files.amd_amplicon_control_filename_v2_re,
+                 ],
     }
 
     def __init__(self, logger, metadata_path, **kwargs):
@@ -2232,9 +2235,12 @@ class AustralianMicrobiomeAmpliconsControlMetadata(AMDFullIngestMetadata):
     metadata_patterns = [r"^.*\.md5"]
     resource_linkage = ("amplicon", "flow_id")
     md5 = {
-        "match": [files.amd_amplicon_control_filename_re],
-        "skip": [files.amd_amplicon_filename_re],
+        "match": [files.amd_amplicon_control_filename_re,
+                 files.amd_amplicon_control_filename_v2_re,],
+        "skip": [files.amd_amplicon_filename_re,
+                 files.amd_amplicon_filename_v2_re],
     }
+
     metadata_urls = ["https://downloads-qcif.bioplatforms.com/bpa/amd/amplicons-miseq/"]
     metadata_url_components = ("amplicon", "ticket")
     add_md5_as_resource = True
