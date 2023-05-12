@@ -105,12 +105,12 @@ class AMDBaseMetadata(BaseMetadata):
         self.path = Path(metadata_path)
         if kwargs.get("schema_definitions"):
             self.schema_definitions = kwargs["schema_definitions"]
-            self.validate_schema_units()
+            self.validate_schema()
         self.linkage_xlsx = {}
 
-    def validate_schema_units(self):
+    def validate_schema(self):
         self._logger.info(
-            "validating current schema units against current schema definitions file..."
+            "Validating current schema against current schema definitions file..."
         )
         if len(self.contextual_classes) == 0:
                 self._logger.warn("No contextual data available.")
@@ -125,10 +125,13 @@ class AMDBaseMetadata(BaseMetadata):
             self._logger.info("Validating context object %s" % context_object)
             context_sheet_name = context_object.sheet_name
             schema_object = self.schema_definitions[0]
+            schema_object.validate_schema_datatypes(
+                context_object.field_specs[context_sheet_name]
+            )
             schema_object.validate_schema_units(
                 context_object.field_specs[context_sheet_name]
             )
-        self._logger.info("Validation completed.")
+        self._logger.info("Schema Validation completed.")
 
 
 class AMDFullIngestMetadata(AMDBaseMetadata):
