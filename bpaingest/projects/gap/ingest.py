@@ -131,10 +131,15 @@ class GAPIlluminaShortreadMetadata(GAPBaseMetadata):
                 library_id = row.library_id
                 dataset_id = row.dataset_id
                 obj = row._asdict()
-                if track_meta is not None:
-                    obj.update(track_meta._asdict())
                 raw_library_id = library_id.split("/")[-1]
                 raw_dataset_id = dataset_id.split("/")[-1]
+                if track_meta is not None:
+                    if track_meta.dataset_id == raw_dataset_id:
+                        obj.update(track_meta._asdict())
+                    else:
+                        self._logger.error("Mismatch between Tracking sheet dataset ID: {0} and  Metadata dataset ID: {1} in Ticket {2}"
+                                           .format(track_meta.dataset_id, raw_dataset_id, ticket))
+
                 name = sample_id_to_ckan_name(
                     raw_library_id, self.ckan_data_type, raw_dataset_id
                 )
