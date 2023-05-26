@@ -197,7 +197,7 @@ def extract_ands_id(logger, s, silent=False):
     if m:
         return BPA_PREFIX + m.groups()[0]
     if not silent:
-        logger.warning("unable to parse BPA ID: `%s'" % s)
+        logger.warning("unable to parse BPA ID: {}".format(str(s)))
     return None
 
 
@@ -222,6 +222,16 @@ def get_int(logger, val, default=None):
     except TypeError:
         return default
 
+def get_percentage(logger, val, default=None):
+
+    return_val = default
+    try:
+        return_val = get_clean_number(logger, val, default)
+        if return_val > 100 or return_val < 0:
+            logger.warning("Potential invalid number - Percentage Range error: {}".format(str(val)))
+        return return_val
+    except TypeError:
+        return default
 
 def int_or_comment(logger, val):
     # fix up '14.0' type values coming through from Excel; if not an integer,
