@@ -19,6 +19,7 @@ import os
 import xlrd
 import string
 import logging
+from openpyxl.utils.cell import get_column_letter
 
 SkipColumn = namedtuple("SkipColumn", ["column_name", "skip_all"])
 skip_column_default = SkipColumn("column_name", False)
@@ -41,7 +42,12 @@ def make_skip_column(column_name, **kwargs):
 
 class ExcelWrapperLogger(logging.LoggerAdapter):
     def process(self, msg, kwargs):
-        return 'Field %s: %s' % (self.extra['field_name'], msg), kwargs
+        return 'Field %s, Cell %s:%s in %s, %s: %s' % (self.extra['field_name'],
+                                                       self.extra['column'],
+                                                       self.extra['row'],
+                                                       self.extra['filename'],
+                                                       self.extra['sheet'],
+                                                       msg), kwargs
 
 class ExcelWrapper:
     """
@@ -436,8 +442,9 @@ class ExcelWrapper:
         if self.additional_context is not None:
             typ_attrs += list(self.additional_context.keys())
         typ = namedtuple(typname, typ_attrs)
-
+        row_num = 0
         for row in self._get_rows():
+            row_num = row_num + 1
             tpl = []
             for name in self.field_names:
                 i = self.name_to_column_map[name]
@@ -457,7 +464,12 @@ class ExcelWrapper:
                     val = val.strip()
                 # apply func
                 if func is not None:
-                    func_logger = ExcelWrapperLogger(self._logger, {'field_name':name})
+                    func_logger = ExcelWrapperLogger(self._logger, {'field_name': name,
+                                                                    'row': row_num,
+                                                                    'column': get_column_letter(i+1),  # 0 vs 1 start
+                                                                    'filename': os.path.basename(self.file_name),
+                                                                    'sheet': self.sheet.name, })
+
                     val = func(func_logger, val)
                 tpl.append(val)
             if self.additional_context:
