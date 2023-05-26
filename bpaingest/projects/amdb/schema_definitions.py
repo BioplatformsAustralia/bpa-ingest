@@ -1,7 +1,7 @@
 from glob import glob
 import pandas
 from numpy import nan
-
+import unicodedata
 from ...util import one
 
 
@@ -31,8 +31,6 @@ class AustralianMicrobiomeSchema:
             self.schema_definitions = schema_as_dataframes.to_dict(pandas_format)
         return self.schema_definitions
 
-    # basic: won't distinguish complex comparisons such as unit functions(e.g., date-time)
-    # or badly written utf8 codes in incoming sheet such as `micro` symbol'
     def validate_schema_units(self, context_field_specs):
         self._logger.info("comparing units...")
         missing_values = [None, nan]
@@ -55,10 +53,22 @@ class AustralianMicrobiomeSchema:
                 and context_definitions[c] in missing_values
             ):
                 continue
-            if schema_definitions[c] != context_definitions[c]:
-                self._logger.error(
-                    f"Units in Context column: {c} is {context_definitions[c]}, but in the schema it is: {schema_definitions[c]}"
-                )
+            if schema_definitions[c] and context_definitions[c]:
+                if make_unicode(schema_definitions[c]) != make_unicode(context_definitions[c]) and (
+                        'yyyy-mm-dd' not in schema_definitions[c] or
+                        'hh:mm:ss' not in schema_definitions[c]):
+                    self._logger.error(
+                        f"Units in Context column: {c} is {context_definitions[c]}, but in the schema it is: {schema_definitions[c]}"
+                    )
+                    context_first_char = unicodedata.name(context_definitions[c][0])
+                    schema_first_char = unicodedata.name(schema_definitions[c][0])
+                    if context_first_char != schema_first_char:
+                        self._logger.error(
+                            f"Unicode Units in Context column: {c} is {context_first_char}, but in the schema it is: {schema_first_char }"
+                        )
+
+
+
 
     def validate_schema_datatypes(self, context_field_specs):
         self._logger.info("comparing datatypes...")
@@ -67,7 +77,7 @@ class AustralianMicrobiomeSchema:
             s["Field"]: s["dType"] for s in self.get_schema_definitions()
         }
 
-        context_definitions = {c.column_name: c.coerce for c in context_field_specs}
+        context_definitions = {c.column_name: [c.coerce, c.units] for c in context_field_specs}
 
         for s in schema_definitions:
             if s not in context_definitions:
@@ -79,18 +89,30 @@ class AustralianMicrobiomeSchema:
                 self._logger.error(
                     f"validate_schema: Context Class column: {c} not found in schema class"
                 )
-            if not(
-                   ('TEXT' in schema_definitions[c] and context_definitions[c] is None)
-                   or (context_definitions[c] and
-                        ('NUMERIC' in schema_definitions[c] and 'get_clean_number' in context_definitions[c].__name__
-                        or 'TIME' in schema_definitions[c] and 'get_time' in context_definitions[c].__name__
-                        or 'DATE' in schema_definitions[c] and 'get_date_isoformat' in context_definitions[c].__name__
-                        )
-                   )
+
+            if context_definitions[c][0]:
+                context_type = context_definitions[c][0].__name__
+            else:
+                context_type = 'None'
+
+            if context_definitions[c][1]:
+                context_units = context_definitions[c][1]
+            else:
+                context_units = 'None'
+
+            if not( ('TEXT' in schema_definitions[c] and context_type == 'None')
+                    or ('TEXT PRIMARY KEY' in schema_definitions[c] and context_type == 'ands_orSAMN')
+                    or ('DATE,' in schema_definitions[c] and context_type == 'get_date_isoformat')
+                    or ('DATETIME' in schema_definitions[c] and context_type == 'get_date_isoformat_as_datetime')
+                    or ('TIME,' in schema_definitions[c] and context_type == 'get_time')
+                    or ('NUMERIC' in schema_definitions[c] and context_units != '%' and context_type == 'get_clean_number')
+                    or ('NUMERIC' in schema_definitions[c] and context_units == '%' and context_type == 'get_percentage')
                    ):
-                if context_definitions[c] is None:
-                    self._logger.error(f"validate_schema: Field: {c}, Schema type: {schema_definitions[c]}, Context Type: {context_definitions[c]}")
-                else:
-                    self._logger.error(
-                        f"validate_schema: Field: {c}, Schema type: {schema_definitions[c]}, Context Type: {context_definitions[c].__name__}")
+                self._logger.error(
+                    f"validate_schema: Field: {c}, Schema type: {schema_definitions[c]}, Context Type: {context_type}, Units: {context_units}")
+
+
+def make_unicode(value):
+    value = str(value)
+    return unicodedata.normalize("NFKC", value)
 
