@@ -98,11 +98,11 @@ class AusargLibraryContextual:
             skp("decimal_latitude_private"),
             skp("decimal_longitude_private"),
             # decimal_latitude
-            fld("decimal_latitude", "decimal_latitude_public"),
-            fld("decimal_latitude_public", "decimal_latitude_public"),
+            fld("decimal_latitude", "decimal_latitude_public", coerce=ingest_utils.get_clean_number),
+            fld("decimal_latitude_public", "decimal_latitude_public", coerce=ingest_utils.get_clean_number),
             # decimal_longitude
-            fld("decimal_longitude", "decimal_longitude_public"),
-            fld("decimal_longitude_public", "decimal_longitude_public"),
+            fld("decimal_longitude", "decimal_longitude_public", coerce=ingest_utils.get_clean_number),
+            fld("decimal_longitude_public", "decimal_longitude_public", coerce=ingest_utils.get_clean_number),
             fld("coord_uncertainty_metres", "coord_uncertainty_metres"),
             fld("genotypic_sex", "genotypic sex"),
             fld("phenotypic_sex", "phenotypic sex"),
