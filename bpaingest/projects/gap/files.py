@@ -123,6 +123,7 @@ PACBIO_HIFI_PATTERN = r"""
       |\.ccs\.bam
       |[\._]subreads\.bam
       |_HiFi_qc\.pdf
+      |-LibQC\.xlsx
       |\.xlsx
       |.*\.pdf)
 """
@@ -131,6 +132,7 @@ pacbio_hifi_filename_re = re.compile(PACBIO_HIFI_PATTERN, re.VERBOSE)
 PACBIO_HIFI_METADATA_SHEET_PATTERN = r"""
     GAP_
     (?P<facility>(GWA|AGRF))_
+    ?(?P<order>(GWA-.{6})_)
     ?(?P<flowcell_id>\w{8})
     ((_|\.)metadata\.xlsx)
 """
