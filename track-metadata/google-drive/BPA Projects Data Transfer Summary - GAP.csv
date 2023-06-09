@@ -128,13 +128,17 @@ BRF,24/05/2023,378159,383146,83770,Austrobaileya scandens,Reference Genomes  ,Ma
 BRF,24/05/2023,378159,383147,83771,Austrobaileya scandens,Reference Genomes  ,Main dataset,PromethION,20230424_GAP_BRF_PAO35656,29/05/2023,02/06/2023,BPAOPS-1398,https://data.bioplatforms.com/dataset?ext_search_by=&q=ticket%3ABPAOPS-1398
 BRF,30/05/2023,378159,383145,83769,Austrobaileya scandens,Reference Genomes  ,Main dataset,PromethION,20230424_GAP_BRF_PAO36823,01/06/2023,02/06/2023,BPAOPS-1401,https://data.bioplatforms.com/dataset/?ext_search_by=&q=ticket%3ABPAOPS-1401
 BRF,30/05/2023,378159,383150,83774,Austrobaileya scandens,Reference Genomes  ,Main dataset,PromethION,20230501_GAP_BRF_PAO30606,01/06/2023,02/06/2023,BPAOPS-1400,https://data.bioplatforms.com/dataset/?ext_search_by=&q=ticket%3ABPAOPS-1400
-GWA,02/06/2023,376415,383177,83801,Leucochrysum albicans,Reference Genomes  ,Main dataset,PacBio-HiFi,20230502_GAP_GWA_GWA-AS-799_DA256563,,,BPAOPS-1411,
-GWA,02/06/2023,378149,383109,83735,Gymnostoma australianum,Reference Genomes  ,Main dataset,PacBio-HiFi,20230420_GAP_GWA_GWA-AJ-774_DA180974,05/06/2023,,BPAOPS-1404,https://data.bioplatforms.com/dataset/?ext_search_by=&q=ticket%3ABPAOPS-1404
-GWA,02/06/2023,378150,383110,83736,Nothofagus cunninghamii,Reference Genomes  ,Main dataset,PacBio-HiFi,20230421_GAP_GWA_GWA-AJ-774_DA180979,06/06/2023,,BPAOPS-1405,https://data.bioplatforms.com/dataset/?ext_search_by=&q=ticket%3ABPAOPS-1405
-GWA,02/06/2023,378151,383111,83737,Denhamia bilocularis,Reference Genomes  ,Main dataset,PacBio-HiFi,20230424_GAP_GWA_GWA-AJ-774_DA180960,06/06/2023,,BPAOPS-1407,
-GWA,02/06/2023,378151,384040,83818,Denhamia bilocularis,Reference Genomes  ,Main dataset,PacBio-HiFi,20230501_GAP_GWA_GWA-AJ-774_DA256558,,,BPAOPS-1410,
+GWA,02/06/2023,378149,383109,83735,Gymnostoma australianum,Reference Genomes  ,Main dataset,PacBio-HiFi,20230420_GAP_GWA_GWA-AJ-774_DA180974,05/06/2023,07/06/2023,BPAOPS-1404,https://data.bioplatforms.com/dataset/?ext_search_by=&q=ticket%3ABPAOPS-1404
+GWA,02/06/2023,378150,383110,83736,Nothofagus cunninghamii,Reference Genomes  ,Main dataset,PacBio-HiFi,20230421_GAP_GWA_GWA-AJ-774_DA180979,06/06/2023,07/06/2023,BPAOPS-1405,https://data.bioplatforms.com/dataset/?ext_search_by=&q=ticket%3ABPAOPS-1405
+GWA,02/06/2023,378155,383115,83741,Elaeocarpus reticulatus,Reference Genomes  ,Main dataset,PacBio-HiFi,20230324_GAP_GWA_GWA-AJ-774_DA180954,05/06/2023,07/06/2023,BPAOPS-1402,https://data.bioplatforms.com/dataset/?ext_search_by=&q=ticket%3ABPAOPS-1402
+GWA,02/06/2023,378160,383121,83747,Berberidopsis beckleri,Reference Genomes  ,Main dataset,PacBio-HiFi,20230325_GAP_GWA_GWA-AJ-774_DA180995,05/06/2023,07/06/2023,BPAOPS-1403,https://data.bioplatforms.com/dataset/?ext_search_by=&q=ticket%3ABPAOPS-1403
+GWA,02/06/2023,378151,383111,83737,Denhamia bilocularis,Reference Genomes  ,Main dataset,PacBio-HiFi,20230424_GAP_GWA_GWA-AJ-774_DA180960,06/06/2023,,BPAOPS-1407,https://data.bioplatforms.com/dataset/?ext_search_by=&q=ticket%3ABPAOPS-1407
+GWA,02/06/2023,378151,384040,83818,Denhamia bilocularis,Reference Genomes  ,Main dataset,PacBio-HiFi,20230501_GAP_GWA_GWA-AJ-774_DA256558,09/06/2023,,BPAOPS-1410,
 GWA,02/06/2023,378153,383113,83739,Eupomatia laurina,Reference Genomes  ,Main dataset,PacBio-HiFi,20230423_GAP_GWA_GWA-AJ-774_DA180943,05/06/2023,,BPAOPS-1406,https://data.bioplatforms.com/dataset/?ext_search_by=&q=ticket%3ABPAOPS-1406
-GWA,02/06/2023,378153,384041,83819,Eupomatia laurina,Reference Genomes  ,Main dataset,PacBio-HiFi,20230429_GAP_GWA_GWA-AJ-774_DA256600,,,BPAOPS-1409,
-GWA,02/06/2023,378155,383115,83741,Elaeocarpus reticulatus,Reference Genomes  ,Main dataset,PacBio-HiFi,20230324_GAP_GWA_GWA-AJ-774_DA180954,05/06/2023,,BPAOPS-1402,https://data.bioplatforms.com/dataset/?ext_search_by=&q=ticket%3ABPAOPS-1402
-GWA,02/06/2023,378160,383121,83747,Berberidopsis beckleri,Reference Genomes  ,Main dataset,PacBio-HiFi,20230325_GAP_GWA_GWA-AJ-774_DA180995,05/06/2023,,BPAOPS-1403,https://data.bioplatforms.com/dataset/?ext_search_by=&q=ticket%3ABPAOPS-1403
-GWA,02/06/2023,378161,383168,83792,Dampiera purpurea,Reference Genomes  ,Main dataset,PacBio-HiFi,20230428_GAP_GWA_GWA-AJ-774_DA256599,,,BPAOPS-1408,
+GWA,02/06/2023,378153,384041,83819,Eupomatia laurina,Reference Genomes  ,Main dataset,PacBio-HiFi,20230429_GAP_GWA_GWA-AJ-774_DA256600,09/06/2023,,BPAOPS-1409,
+GWA,02/06/2023,378161,383168,83792,Dampiera purpurea,Reference Genomes  ,Main dataset,PacBio-HiFi,20230428_GAP_GWA_GWA-AJ-774_DA256599,09/06/2023,,BPAOPS-1408,
+GWA,02/06/2023,376415,383177,83801,Leucochrysum albicans,Reference Genomes  ,Main dataset,PacBio-HiFi,20230502_GAP_GWA_GWA-AS-799_DA256563,,,BPAOPS-1411,
+AGRF,09/06/2023,,,83809,Wurmbea,Phylogenomics - AATOL Stage 2 Angio353,Main dataset,Illumina Short Read,20230608_GAP_NGS_AGRF_CAGRF230313905_HFFG2DSX7,,,BPAOPS-1414,
+AGRF,09/06/2023,,,83810,Isopogon,Phylogenomics - AATOL Stage 2 Angio353,Main dataset,Illumina Short Read,20230608_GAP_NGS_AGRF_CAGRF230313904_HFFG2DSX7,,,BPAOPS-1413,
+AGRF,09/06/2023,,,83811,Cassia,Phylogenomics - AATOL Stage 2 Angio353,Main dataset,Illumina Short Read,20230608_GAP_NGS_AGRF_CAGRF230313906_HFFG2DSX7,,,BPAOPS-1415,
+AGRF,09/06/2023,,,83812,Gompholobium,Phylogenomics - AATOL Stage 2 Angio353,Main dataset,Illumina Short Read,20230608_GAP_NGS_AGRF_CAGRF230313907_HFFG2DSX7,,,BPAOPS-1412,
