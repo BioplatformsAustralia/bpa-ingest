@@ -44,10 +44,79 @@ class GAPBaseMetadata(BaseMetadata):
         {"key": "sample_submitter_name", "separator": ""},
     ]
 
+    def __init__(
+        self, logger, metadata_path, contextual_metadata=None, metadata_info=None
+    ):
+        super().__init__(logger, metadata_path)
+        self.path = Path(metadata_path)
+        self.contextual_metadata = contextual_metadata
+        self.metadata_info = metadata_info
+        self.google_track_meta = GAPTrackMetadata(logger)
+
     def _build_title_into_object(self, obj):
         self.build_title_into_object(obj, {"initiative": self.initiative,
                                             "title_description": self.description,
                                             "split_sample_id": obj.get("sample_id", "").split("/")[-1], })
+
+    def _get_common_packages(self):
+        self._logger.info("Ingesting {} metadata from {}".format(self.initiative, self.path))
+        packages = []
+        for fname in glob(self.path + "/*.xlsx"):
+            self._logger.info("Processing {} metadata file {}".format(self.initiative, os.path.basename(fname)))
+            rows = self.parse_spreadsheet(fname, self.metadata_info)
+            if self.method_exists('_set_metadata_vars'):
+                self._set_metadata_vars(fname)
+            xlsx_info = self.metadata_info[os.path.basename(fname)]
+            ticket = xlsx_info["ticket"]
+            track_meta = self.google_track_meta.get(ticket)
+            for row in rows:
+                if not row.library_id and not row.flowcell_id:
+                    # skip empty rows
+                    continue
+                sample_id = row.sample_id
+                library_id = row.library_id
+                dataset_id = row.dataset_id
+                raw_library_id = library_id.split("/")[-1]
+                raw_dataset_id = dataset_id.split("/")[-1]
+                obj = row._asdict()
+                if track_meta is not None:
+                    if track_meta.dataset_id == raw_dataset_id:
+                        obj.update(track_meta._asdict())
+                    else:
+                        self._logger.error("Mismatch between Tracking sheet dataset ID: {0} and  Metadata dataset ID: {1} in Ticket {2}"
+                                           .format(track_meta.dataset_id, raw_dataset_id, ticket))
+                name = sample_id_to_ckan_name(
+                        raw_library_id, self.ckan_data_type, raw_dataset_id
+                )
+                for contextual_source in self.contextual_metadata:
+                    obj.update(contextual_source.get(library_id, dataset_id))
+                obj.update(
+                    {
+                        "sample_id": sample_id,
+                        "library_id": library_id,
+                        "name": name,
+                        "id": name,
+                        "type": self.ckan_data_type,
+                        "sequence_data_type": self.sequence_data_type,
+                        "license_id": apply_cc_by_license(),
+                        "date_of_transfer": ingest_utils.get_date_isoformat(
+                            self._logger, self.get_tracking_info(row.ticket, "date_of_transfer")
+                        ),
+                        "data_generated": ingest_utils.get_date_isoformat(
+                            self._logger, self.get_tracking_info(row.ticket, "date_of_transfer_to_archive")
+                        ),
+                     }
+                )
+
+
+                self._add_datatype_specific_info_to_package(obj, row, fname)
+                self._build_title_into_object(obj)
+                self.build_notes_into_object(obj)
+                ingest_utils.permissions_organization_member(self._logger, obj)
+                ingest_utils.apply_access_control(self._logger, self, obj)
+                obj["tags"] = [{"name": t} for t in self.tag_names]
+                packages.append(obj)
+        return packages
 
 
 class GAPIlluminaShortreadMetadata(GAPBaseMetadata):
@@ -107,64 +176,17 @@ class GAPIlluminaShortreadMetadata(GAPBaseMetadata):
     description = "Illumina short read"
     tag_names = ["genomics", description.replace(" ", "-").lower()]
 
-    def __init__(
-        self, logger, metadata_path, contextual_metadata=None, metadata_info=None
-    ):
-        super().__init__(logger, metadata_path)
-        self.path = Path(metadata_path)
-        self.contextual_metadata = contextual_metadata
-        self.metadata_info = metadata_info
-        self.google_track_meta = GAPTrackMetadata(logger)
-
     def _get_packages(self):
-        self._logger.info("Ingesting GAP metadata from {0}".format(self.path))
-        packages = []
-        for fname in glob(self.path + "/*.xlsx"):
-            self._logger.info("Processing GAP metadata file {0}".format(fname))
-            flow_cell_id = re.match(r"^.*_([^_]+)_metadata.*\.xlsx", fname).groups()[0]
-            rows = self.parse_spreadsheet(fname, self.metadata_info)
-            xlsx_info = self.metadata_info[os.path.basename(fname)]
-            ticket = xlsx_info["ticket"]
-            track_meta = self.google_track_meta.get(ticket)
-            for row in rows:
-                sample_id = row.sample_id
-                library_id = row.library_id
-                dataset_id = row.dataset_id
-                obj = row._asdict()
-                raw_library_id = library_id.split("/")[-1]
-                raw_dataset_id = dataset_id.split("/")[-1]
-                if track_meta is not None:
-                    if track_meta.dataset_id == raw_dataset_id:
-                        obj.update(track_meta._asdict())
-                    else:
-                        self._logger.error("Mismatch between Tracking sheet dataset ID: {0} and  Metadata dataset ID: {1} in Ticket {2}"
-                                           .format(track_meta.dataset_id, raw_dataset_id, ticket))
+        return self._get_common_packages()
 
-                name = sample_id_to_ckan_name(
-                    raw_library_id, self.ckan_data_type, raw_dataset_id
-                )
-                for contextual_source in self.contextual_metadata:
-                    obj.update(contextual_source.get(library_id, dataset_id))
-                obj.update(
-                    {
-                        "sample_id": sample_id,
-                        "name": name,
-                        "id": name,
-                        "type": self.ckan_data_type,
-                        "sequence_data_type": self.sequence_data_type,
-                        "license_id": apply_cc_by_license(),
-                        "flow_cell_id": flow_cell_id,
-                        "data_generated": True,
-                        "library_id": raw_library_id,
-                    }
-                )
-                self._build_title_into_object(obj)
-                self.build_notes_into_object(obj)
-                ingest_utils.permissions_organization_member(self._logger, obj)
-                ingest_utils.apply_access_control(self._logger, self, obj)
-                obj["tags"] = [{"name": "{:.100}".format(t)} for t in self.tag_names]
-                packages.append(obj)
-        return packages
+    def _add_datatype_specific_info_to_package(self, obj, row, filename):
+        flow_cell_id = re.match(r"^.*_([^_]+)_metadata.*\.xlsx", filename).groups()[0]
+
+        obj.update(
+            {"flow_cell_id": flow_cell_id,
+             "library_id": row.library_id.split("/")[-1]  # because the linkages uses the raw lib id, from the file_name
+             }
+        )
 
     def _get_resources(self):
         return self._get_common_resources()
@@ -193,7 +215,6 @@ class GAPHiCMetadata(GAPIlluminaShortreadMetadata):
         "https://downloads-qcif.bioplatforms.com/bpa/plants_staging/genomics-hi-c/",
     ]
     tag_names = ["genomics", description.replace(" ", "-").lower()]
-
 
 class GAPONTMinionMetadata(GAPBaseMetadata):
     ckan_data_type = "gap-ont-minion"
@@ -249,57 +270,16 @@ class GAPONTMinionMetadata(GAPBaseMetadata):
     description = "ONT MinION"
     tag_names = ["ont-minion"]
 
-    def __init__(
-        self, logger, metadata_path, contextual_metadata=None, metadata_info=None
-    ):
-        super().__init__(logger, metadata_path)
-        self.path = Path(metadata_path)
-        self.contextual_metadata = contextual_metadata
-        self.metadata_info = metadata_info
-        self.google_track_meta = GAPTrackMetadata(logger)
-
     def _get_packages(self):
-        self._logger.info("Ingesting GAP metadata from {0}".format(self.path))
-        packages = []
-        for fname in glob(self.path + "/*.xlsx"):
-            self._logger.info("Processing GAP metadata file {0}".format(fname))
-            rows = self.parse_spreadsheet(fname, self.metadata_info)
-            xlsx_info = self.metadata_info[os.path.basename(fname)]
-            ticket = xlsx_info["ticket"]
-            track_meta = self.google_track_meta.get(ticket)
-            for row in rows:
-                sample_id = row.sample_id
-                library_id = row.library_id
-                dataset_id = row.dataset_id
-                obj = row._asdict()
-                if track_meta is not None:
-                    obj.update(track_meta._asdict())
-                raw_library_id = library_id.split("/")[-1]
-                raw_dataset_id = dataset_id.split("/")[-1]
-                name = sample_id_to_ckan_name(
-                    raw_library_id, self.ckan_data_type, raw_dataset_id
-                )
-                for contextual_source in self.contextual_metadata:
-                    obj.update(contextual_source.get(library_id, dataset_id))
-                obj.update(
-                    {
-                        "sample_id": sample_id,
-                        "name": name,
-                        "id": name,
-                        "type": self.ckan_data_type,
-                        "sequence_data_type": self.sequence_data_type,
-                        "license_id": apply_cc_by_license(),
-                        "data_generated": True,
-                    }
-                )
-                self._build_title_into_object(obj)
-                self.build_notes_into_object(obj)
-                ingest_utils.permissions_organization_member(self._logger, obj)
-                ingest_utils.apply_access_control(self._logger, self, obj)
-                obj["tags"] = [{"name": t} for t in self.tag_names]
-                packages.append(obj)
-        return packages
+        return self._get_common_packages()
 
+    def _add_datatype_specific_info_to_package(self, obj, row, filename):
+        flow_cell_id = re.match(r"^.*_([^_]+)_metadata.*\.xlsx", filename).groups()[0]
+
+        obj.update(
+            {"flow_cell_id": flow_cell_id
+             }
+        )
     def _get_resources(self):
         return self._get_common_resources()
 
@@ -378,57 +358,6 @@ class GAPONTPromethionMetadata(GAPBaseMetadata):
     description = "PromethION"
     tag_names = ["ont-promethion"]
 
-    def __init__(
-        self, logger, metadata_path, contextual_metadata=None, metadata_info=None
-    ):
-        super().__init__(logger, metadata_path)
-        self.path = Path(metadata_path)
-        self.contextual_metadata = contextual_metadata
-        self.metadata_info = metadata_info
-        self.google_track_meta = GAPTrackMetadata(logger)
-
-    def _get_packages(self):
-        self._logger.info("Ingesting GAP metadata from {0}".format(self.path))
-        packages = []
-        for fname in glob(self.path + "/*.xlsx"):
-            self._logger.info("Processing GAP metadata file {0}".format(fname))
-            rows = self.parse_spreadsheet(fname, self.metadata_info)
-            xlsx_info = self.metadata_info[os.path.basename(fname)]
-            ticket = xlsx_info["ticket"]
-            track_meta = self.google_track_meta.get(ticket)
-            for row in rows:
-                sample_id = row.sample_id
-                library_id = row.library_id
-                dataset_id = row.dataset_id
-                obj = row._asdict()
-                if track_meta is not None:
-                    obj.update(track_meta._asdict())
-                raw_library_id = library_id.split("/")[-1]
-                raw_dataset_id = dataset_id.split("/")[-1]
-                name = sample_id_to_ckan_name(
-                    raw_library_id, self.ckan_data_type, raw_dataset_id
-                )
-                for contextual_source in self.contextual_metadata:
-                    obj.update(contextual_source.get(library_id, dataset_id))
-                obj.update(
-                    {
-                        "sample_id": sample_id,
-                        "library_id": library_id,
-                        "name": name,
-                        "id": name,
-                        "type": self.ckan_data_type,
-                        "sequence_data_type": self.sequence_data_type,
-                        "license_id": apply_cc_by_license(),
-                        "data_generated": True,
-                    }
-                )
-                self._build_title_into_object(obj)
-                self.build_notes_into_object(obj)
-                ingest_utils.permissions_organization_member(self._logger, obj)
-                ingest_utils.apply_access_control(self._logger, self, obj)
-                obj["tags"] = [{"name": t} for t in self.tag_names]
-                packages.append(obj)
-        return packages
 
     def _get_resources(self):
         resources = self._get_common_resources()
@@ -463,6 +392,15 @@ class GAPONTPromethionMetadata(GAPBaseMetadata):
             resource["flow_cell_id"],
         )
 
+    def _get_packages(self):
+        return self._get_common_packages()
+
+    def _add_datatype_specific_info_to_package(self, obj, row, filename):
+
+        obj.update(
+            {"dataset_id": row.dataset_id.split("/")[-1]  # for backward consistency in refactor
+             }
+        )
     def _build_common_files_linkage(self, xlsx_info, resource, file_info):
         return (
             xlsx_info["ticket"],
@@ -513,58 +451,18 @@ class GAPGenomics10XMetadata(GAPBaseMetadata):
     description = "Genomics 10X"
     tag_names = ["genomics", "10x"]
 
-    def __init__(
-        self, logger, metadata_path, contextual_metadata=None, metadata_info=None
-    ):
-        super().__init__(logger, metadata_path)
-        self.path = Path(metadata_path)
-        self.contextual_metadata = contextual_metadata
-        self.metadata_info = metadata_info
-        self.google_track_meta = GAPTrackMetadata(logger)
-
     def _get_packages(self):
-        self._logger.info("Ingesting GAP metadata from {0}".format(self.path))
-        packages = []
-        for fname in glob(self.path + "/*.xlsx"):
-            self._logger.info("Processing GAP metadata file {0}".format(fname))
-            flow_cell_id = re.match(r"^.*_([^_]+)_metadata.xlsx", fname).groups()[0]
-            rows = self.parse_spreadsheet(fname, self.metadata_info)
-            xlsx_info = self.metadata_info[os.path.basename(fname)]
-            ticket = xlsx_info["ticket"]
-            track_meta = self.google_track_meta.get(ticket)
-            for row in rows:
-                sample_id = row.sample_id
-                library_id = row.library_id
-                dataset_id = row.dataset_id
-                obj = row._asdict()
-                if track_meta is not None:
-                    obj.update(track_meta._asdict())
-                raw_library_id = library_id.split("/")[-1]
-                raw_dataset_id = dataset_id.split("/")[-1]
-                name = sample_id_to_ckan_name(
-                    raw_library_id, self.ckan_data_type, raw_dataset_id
-                )
-                for contextual_source in self.contextual_metadata:
-                    obj.update(contextual_source.get(library_id, dataset_id))
-                obj.update(
-                    {
-                        "sample_id": sample_id,
-                        "name": name,
-                        "id": name,
-                        "type": self.ckan_data_type,
-                        "sequence_data_type": self.sequence_data_type,
-                        "license_id": apply_cc_by_license(),
-                        "flow_cell_id": flow_cell_id,
-                        "data_generated": True,
-                    }
-                )
-                self._build_title_into_object(obj)
-                self.build_notes_into_object(obj)
-                ingest_utils.permissions_organization_member(self._logger, obj)
-                ingest_utils.apply_access_control(self._logger, self, obj)
-                obj["tags"] = [{"name": t} for t in self.tag_names]
-                packages.append(obj)
-        return packages
+        return self._get_common_packages()
+
+    def _add_datatype_specific_info_to_package(self, obj, row, filename):
+        flow_cell_id = re.match(r"^.*_([^_]+)_metadata.*\.xlsx", filename).groups()[0]
+
+        obj.update(
+            {"flow_cell_id": flow_cell_id,
+             "library_id": row.library_id.split("/")[-1]
+             # because the linkages uses the raw lib id, from the file_name
+             }
+        )
 
     def _get_resources(self):
         return self._get_common_resources()
@@ -726,11 +624,7 @@ class GAPGenomicsDDRADMetadata(GAPBaseMetadata):
     def __init__(
         self, logger, metadata_path, contextual_metadata=None, metadata_info=None
     ):
-        super().__init__(logger, metadata_path)
-        self.path = Path(metadata_path)
-        self.contextual_metadata = contextual_metadata
-        self.metadata_info = metadata_info
-        self.track_meta = GAPTrackMetadata(logger)
+        super().__init__(logger, metadata_path, contextual_metadata, metadata_info)
         self.flow_lookup = {}
 
     def _get_packages(self):
@@ -773,12 +667,8 @@ class GAPGenomicsDDRADMetadata(GAPBaseMetadata):
                     context_objs.append(context)
 
                 obj = common_values(row_objs)
-                track_meta = self.track_meta.get(obj["ticket"])
-
-                def track_get(k):
-                    if track_meta is None:
-                        return None
-                    return getattr(track_meta, k)
+                ticket = obj["ticket"]
+                track_meta = self.google_track_meta.get(ticket)
 
                 name = sample_id_to_ckan_name(
                     dataset_id, self.ckan_data_type, flowcell_id
@@ -789,18 +679,18 @@ class GAPGenomicsDDRADMetadata(GAPBaseMetadata):
                         "id": name,
                         "dataset_id": dataset_id,
                         "date_of_transfer": ingest_utils.get_date_isoformat(
-                            self._logger, track_get("date_of_transfer")
+                            self._logger, track_meta.date_of_transfer
                         ),
-                        "data_type": track_get("data_type"),
-                        "description": track_get("description"),
-                        "folder_name": track_get("folder_name"),
+                        "data_type": track_meta.data_type,
+                        "description": track_meta.description,
+                        "folder_name": track_meta.folder_name,
                         "data_generated": ingest_utils.get_date_isoformat(
-                            self._logger, track_get("date_of_transfer_to_archive")
+                            self._logger, track_meta.date_of_transfer_to_archive
                         ),
                         "archive_ingestion_date": ingest_utils.get_date_isoformat(
-                            self._logger, track_get("date_of_transfer_to_archive")
+                            self._logger, track_meta.date_of_transfer_to_archive
                         ),
-                        "dataset_url": track_get("download"),
+                        "dataset_url": track_meta.download,
                         "type": self.ckan_data_type,
                         "sequence_data_type": self.sequence_data_type,
                         "license_id": apply_cc_by_license(),
@@ -910,103 +800,58 @@ class GAPPacbioHifiMetadata(GAPBaseMetadata):
     description = ""
     tag_names = ["pacbio-hifi"]
 
-    def __init__(
-        self, logger, metadata_path, contextual_metadata=None, metadata_info=None
-    ):
-        super().__init__(logger, metadata_path)
-        self.path = Path(metadata_path)
-        self.contextual_metadata = contextual_metadata
-        self.metadata_info = metadata_info
-        self.google_track_meta = GAPTrackMetadata(logger)
-
     def _get_packages(self):
-        self._logger.info("Ingesting GAP metadata from {0}".format(self.path))
-        packages = []
+        return self._get_common_packages()
 
+    def _add_datatype_specific_info_to_package(self, obj, row, filename):
         filename_re = files.pacbio_hifi_metadata_sheet_re
-
-        objs = []
-        for fname in glob(self.path + "/*.xlsx"):
-            self._logger.info(
-                "Processing GAP metadata file {0}".format(os.path.basename(fname))
-            )
-
-            metadata_sheet_dict = re.search(
-                filename_re, os.path.basename(fname)
+        metadata_sheet_dict = re.search(
+                filename_re, os.path.basename(filename)
             ).groupdict()
-            metadata_sheet_flowcell_ids = []
-            for f in ["flowcell_id", "flowcell2_id"]:
-                if f in metadata_sheet_dict:
-                    metadata_sheet_flowcell_ids.append(metadata_sheet_dict[f])
+        metadata_sheet_flowcell_ids = []
+        for f in ["flowcell_id", "flowcell2_id"]:
+            if f in metadata_sheet_dict:
+                metadata_sheet_flowcell_ids.append(metadata_sheet_dict[f])
 
-            rows = self.parse_spreadsheet(fname, self.metadata_info)
-            xlsx_info = self.metadata_info[os.path.basename(fname)]
-            ticket = xlsx_info["ticket"]
-            track_meta = self.google_track_meta.get(ticket)
-
-            def track_get(k):
-                if track_meta is None:
-                    return None
-                return getattr(track_meta, k)
-
-            for row in rows:
-                if not row.library_id and not row.flowcell_id:
-                    # skip empty rows
-                    continue
-                obj = row._asdict()
-                if row.flowcell_id not in metadata_sheet_flowcell_ids:
-                    raise Exception(
-                        "The metadata row for library ID: {} has a flow cell ID of {}, which cannot be found in the metadata sheet name: {}".format(
-                            row.library_id, row.flowcell_id, fname
-                        )
-                    )
-                name = sample_id_to_ckan_name(
-                    "{}".format(row.library_id.split("/")[-1]),
-                    self.ckan_data_type,
-                    "{}".format(row.flowcell_id),
+        if row.flowcell_id not in metadata_sheet_flowcell_ids:
+            raise Exception(
+                "The metadata row for library ID: {} has a flow cell ID of {}, which cannot be found in the metadata sheet name: {}".format(
+                    row.library_id, row.flowcell_id, filename
                 )
+            )
+        name = sample_id_to_ckan_name(
+                "{}".format(row.library_id.split("/")[-1]),
+                self.ckan_data_type,
+                "{}".format(row.flowcell_id),
+        )
+        track_meta = self.get_tracking_info(row.ticket)
 
-                context = {}
-                for contextual_source in self.contextual_metadata:
-                    context.update(contextual_source.get(row.library_id, row.dataset_id))
-
-                obj.update(
-                    {
+        obj.update(
+                    {  "id":name,
                         "name": name,
-                        "id": name,
+                       "dataset_id": row.dataset_id,
                         "date_of_transfer": ingest_utils.get_date_isoformat(
-                            self._logger, track_get("date_of_transfer")
-                        ),
-                        "data_type": track_get("data_type"),
-                        "description": track_get("description"),
-                        "folder_name": track_get("folder_name"),
+                            self._logger, track_meta.date_of_transfer),
+                        "data_type": track_meta.data_type,
+                        "description": track_meta.description,
+                        "folder_name": track_meta.folder_name,
                         "sample_submission_date": ingest_utils.get_date_isoformat(
-                            self._logger, track_get("date_of_transfer")
+                            self._logger, track_meta.date_of_transfer
                         ),
                         "contextual_data_submission_date": None,
-                        "data_generated": ingest_utils.get_date_isoformat(
-                            self._logger, track_get("date_of_transfer_to_archive")
-                        ),
                         "archive_ingestion_date": ingest_utils.get_date_isoformat(
-                            self._logger, track_get("date_of_transfer_to_archive")
+                            self._logger, track_meta.date_of_transfer_to_archive
                         ),
-                        "dataset_url": track_get("download"),
-                        "type": self.ckan_data_type,
-                        "sequence_data_type": self.sequence_data_type,
-                        "license_id": apply_cc_by_license(),
+                        "dataset_url": track_meta.download,
                     }
                 )
-                obj.update(context)
-                self.description = obj.get("description") # set the description for the title, it comes from the spreadsheet
-                self._build_title_into_object(obj)
-                self.build_notes_into_object(obj)
-                ingest_utils.permissions_organization_member(self._logger, obj)
-                ingest_utils.apply_access_control(self._logger, self, obj)
-                ingest_utils.add_spatial_extra(self._logger, obj)
-                obj["tags"] = [{"name": t} for t in self.tag_names]
-                packages.append(obj)
+        self.description = obj.get("description") # set the description for the title, it comes from the spreadsheet
 
-        return packages
+# below fields are in the metadata, but not required in the packages schema
+        del obj["ccg_jira_ticket"]
+        del obj["date_of_transfer_to_archive"]
+        del obj["download"]
+
 
     def _get_resources(self):
         return self._get_common_resources()
