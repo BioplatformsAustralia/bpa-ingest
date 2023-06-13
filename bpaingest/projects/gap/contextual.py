@@ -43,6 +43,7 @@ class GAPLibraryContextual:
         "Phylo Stage 2_2xbaits",
         "Mini library",
         "Conservation ",
+        "Conservation_bait capture",
     ]
 
     def __init__(self, logger, path):
