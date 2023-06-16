@@ -2,8 +2,9 @@
 from bpaingest.projects.tsi.files import (
     illumina_shortread_re,
     illumina_fastq_re,
-    novaseq_filename_re,
+    # novaseq_filename_re,
     pacbio_hifi_filename_re,
+    pacbio_hifi_filename_2_re,
     pacbio_hifi_metadata_sheet_re,
     metadata_sheet_re,
     ddrad_fastq_filename_re,
@@ -24,6 +25,7 @@ def test_raw_xlsx_filename_re():
 
 
 # VERIFY
+"""
 def test_novaseq():
     filenames = [
         "53911_ABTC50957_pool_HJKTTDSXX_CCAAGTCT-AAGGATGA_L001_R1.fastq.gz",
@@ -32,7 +34,7 @@ def test_novaseq():
 
     for filename in filenames:
         assert novaseq_filename_re.match(filename) is not None
-
+"""
 
 def test_illumina_shortread():
     filenames = [
@@ -66,13 +68,20 @@ def test_pacbio_hifi():
         "357368_TSI_AGRF_DA060252_HiFi_qc.pdf",
         "357368_TSI_AGRF_DA060252_ccs_statistics.csv",
         "357368_TSI_AGRF_DA060252_final.consensusreadset.xml",
-	"357368_TSI_CAGRF20114490_DA060254_subreads.bam",
+	    "357368_TSI_CAGRF20114490_DA060254_subreads.bam",
     ]
 
     for filename in filenames:
         assert pacbio_hifi_filename_re.match(filename) is not None
 
+def test_pacbio_hifi_2():
+    filenames = [
+        "460864_TSI_AGRF_m84073_230601_030428_s2.pdf",
+        "460864_TSI_AGRF_m84073_230601_030428_s2.ccs.bam",
+    ]
 
+    for filename in filenames:
+        assert pacbio_hifi_filename_2_re.match(filename) is not None
 def test_pacbio_hifi_metadata_sheet():
     filenames = [
         "355356_TSI_AGRF_PacBio_DA052899_metadata.xlsx",

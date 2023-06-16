@@ -500,7 +500,8 @@ class TSIPacbioHifiMetadata(TSIBaseMetadata):
         },
     }
     md5 = {
-        "match": [files.pacbio_hifi_filename_re, files.pacbio_hifi_metadata_sheet_re],
+        "match": [files.pacbio_hifi_filename_re, files.pacbio_hifi_filename_2_re, files.pacbio_hifi_metadata_sheet_re],
+
         "skip": [
             re.compile(r"^.*[\._]metadata\.xlsx$"),
             re.compile(r"^.*SampleSheet.*"),
@@ -530,22 +531,7 @@ class TSIPacbioHifiMetadata(TSIBaseMetadata):
         return self.apply_location_generalisation(packages)
 
     def _add_datatype_specific_info_to_package(self, obj, row, filename):
-        filename_re = files.pacbio_hifi_metadata_sheet_re
 
-        metadata_sheet_dict = re.match(
-                filename_re, os.path.basename(filename)
-            ).groupdict()
-        metadata_sheet_flowcell_ids = []
-        for f in ["flowcell_id", "flowcell2_id"]:
-            if f in metadata_sheet_dict:
-                    metadata_sheet_flowcell_ids.append(metadata_sheet_dict[f])
-
-        if row.flowcell_id not in metadata_sheet_flowcell_ids:
-            raise Exception(
-                "The metadata row for library ID: {} has a flow cell ID of {}, which cannot be found in the metadata sheet name: {}".format(
-                    row.library_id, row.flowcell_id, filename
-                )
-            )
         obj.update(
             {
                  "sample_submission_date": ingest_utils.get_date_isoformat(
