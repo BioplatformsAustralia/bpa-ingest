@@ -601,7 +601,7 @@ class AusargPacbioHifiMetadata(AusargBaseMetadata):
         },
     }
     md5 = {
-        "match": [files.pacbio_hifi_filename_re, files.pacbio_hifi_metadata_sheet_re],
+        "match": [files.pacbio_hifi_filename_re, files.pacbio_hifi_filename_2_re, files.pacbio_hifi_metadata_sheet_re],
         "skip": [
             re.compile(r"^.*[\._]metadata\.xlsx$"),
             re.compile(r"^.*SampleSheet.*"),
