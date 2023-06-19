@@ -7,10 +7,10 @@ from ...util import one
 
 class AustralianMicrobiomeSchema:
     metadata_urls = [
-        "https://github.com/AusMicrobiome/contextualdb_doc/raw/4.0.0/db_schema_definitions/db_schema_definitions.xlsx"
+        "https://github.com/AusMicrobiome/contextualdb_doc/raw/4.2.0/db_schema_definitions/db_schema_definitions.xlsx"
     ]
     name = "amd-schema_definitions"
-    sheet_name = "Schema_4.0.0"
+    sheet_name = "Schema_4.2.0"
     source_pattern = "/*.xlsx"
 
     def __init__(self, logger, path):
@@ -54,21 +54,23 @@ class AustralianMicrobiomeSchema:
             ):
                 continue
             if schema_definitions[c] and context_definitions[c]:
-                if make_unicode(schema_definitions[c]) != make_unicode(context_definitions[c]) and (
+                if make_unicode(schema_definitions[c]).rstrip() != make_unicode(context_definitions[c]).strip() and (
                         'yyyy-mm-dd' not in schema_definitions[c] or
                         'hh:mm:ss' not in schema_definitions[c]):
                     self._logger.error(
                         f"Units in Context column: {c} is {context_definitions[c]}, but in the schema it is: {schema_definitions[c]}"
                     )
                     context_first_char = unicodedata.name(context_definitions[c][0])
-                    schema_first_char = unicodedata.name(schema_definitions[c][0])
+                    schema_first_char = unicodedata.name(schema_definitions[c][0][0])
+                    context_first_hex = hex(ord(context_definitions[c][0]))
+                    schema_first_hex = hex(ord(schema_definitions[c][0]))
                     if context_first_char != schema_first_char:
                         self._logger.error(
                             f"Unicode Units in Context column: {c} is {context_first_char}, but in the schema it is: {schema_first_char }"
                         )
-
-
-
+                        self._logger.error(
+                            f"HEX Units in Context column: {c} is {context_first_hex}, in the schema it is: {schema_first_hex}"
+                        )
 
     def validate_schema_datatypes(self, context_field_specs):
         self._logger.info("comparing datatypes...")

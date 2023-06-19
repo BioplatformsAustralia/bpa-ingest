@@ -289,14 +289,92 @@ def get_date_isoformat(logger, s, silent=False):
 
 def get_date_isoformat_as_datetime(logger, s, silent=False):
     "try to parse the date, if we can, return the date as an ISO format string"
-    dt = _get_date(logger, s, silent)
+    dt = _get_date_time(logger, s, silent)
     if dt is None:
         return None
-    return dt.strftime("%Y-%m-%d_%H:%M:%S")
+    return dt.strftime("%Y-%m-%dT%H:%M:%SZ")
 
 
 def get_time(logger, s):
     return str(s)
+
+
+def _get_date_time(logger, dt, silent=False):
+    if dt is None:
+        return None
+
+    if (
+        dt == "unknown"
+        or dt == "Unknown"
+        or dt == "UnkNown"
+        or dt == "unkNown"
+        or dt == "event date not recorded"
+        or dt == "Not yet assigned"
+        or dt == "Not applicable"
+        or dt == "not applicable"
+        or dt == "no information"
+        or dt == "Not submitted"
+        or dt == "not determined"
+        or dt == "To be filled in"
+        or dt == "(null)"
+        or dt == "NA"
+        or dt == "n/a"
+        or dt == "TBA"
+    ):
+        return None
+
+    if isinstance(dt, datetime.date):
+        return dt
+
+    if not isinstance(dt, str):
+        return None
+
+    if dt.strip() == "":
+        return None
+
+    try:
+        return datetime.datetime.strptime(dt, "%Y-%m-%dT%H:%M:%SZ")
+    except ValueError:
+        pass
+    try:
+        return datetime.datetime.strptime(dt, "%y-%m-%dT%H:%M:%SZ")
+    except ValueError:
+        pass
+    try:
+        return datetime.datetime.strptime(dt, "%Y-%m-%dT%H:%MZ")
+    except ValueError:
+        pass
+    try:
+        retval = datetime.datetime.strptime(dt, "%Y-%m-%d %H:%M:%S")
+        if not silent:
+            logger.warning("DateTime {} does not have a timezone - will force to Z time.".format(retval))
+        return retval
+    except ValueError:
+        pass
+    try:
+        retval = datetime.datetime.strptime(dt, "%y-%m-%d %H:%M:%S")
+        if not silent:
+            logger.warning("DateTime {} does not have a timezone - will force to Z time.".format(retval))
+        return retval
+    except ValueError:
+        pass
+    try:
+        retval = datetime.datetime.strptime(dt, "%Y-%m-%d %H:%M")
+        if not silent:
+            logger.warning("DateTime {} does not have a timezone - will force to Z time.".format(retval))
+        return retval
+    except ValueError:
+        pass
+    try:
+        retval = datetime.datetime.strptime(dt, "%y-%m-%d %H:%M")
+        if not silent:
+            logger.warning("DateTime {} does not have a timezone - will force to Z time.".format(retval))
+        return retval
+
+    except ValueError:
+        pass
+
+    return _get_date(logger, dt, silent)
 
 
 def _get_date(logger, dt, silent=False):
