@@ -147,5 +147,32 @@ ORGANIZATIONS = [
         "image_url": "https://data.bioplatforms.com/cipps.png",
         "groups": [{"capacity": "public", "name": 'cipps'}],
     },
-
+    {
+        "name": "grassland-consortium-members",
+        "title": "Grasslands Project Members",
+        "display_name": "Australian Grasslands  Project Members",
+        "image_url": "https://data.bioplatforms.com/Australian-Grasslands.png",
+        "groups": [{"capacity": "public", "name": 'grasslands'}],
+    },
+    {
+        "name": "grassland-consortium-members",
+        "title": "Grasslands Project Members",
+        "display_name": "Australian Grasslands  Project Members",
+        "image_url": "https://data.bioplatforms.com/Australian-Grasslands.png",
+        "groups": [{"capacity": "public", "name": 'grasslands'}],
+    },
+    {
+        "name": "tsi-consortium-members",
+        "title": "Threatened Species Project Members",
+        "display_name": "Threatened Species Initiative Project Members",
+        "image_url": "https://data.bioplatforms.com/Threatened-Species-Initiative-Logo-150dpi-RGB.png",
+        "groups": [{"capacity": "public", "name": 'threatened-species'}],
+    },
+    {
+        "name": "ausarg-consortium-members",
+        "title": "Australian Amphibian and Reptile Genomics Project Members",
+        "display_name": "Australian Amphibian and Reptile Genomics Project Members",
+        "image_url": "https://data.bioplatforms.com/AusARG-Logo-RGB-150dpi-Transparent.png",
+        "groups": [{"capacity": "public", "name": 'ausarg'}],
+    },
 ]
