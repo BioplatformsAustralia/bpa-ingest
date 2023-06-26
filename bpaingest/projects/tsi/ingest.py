@@ -24,6 +24,7 @@ from ...util import (
 
 common_context = [TSILibraryContextual, TSIDatasetControlContextual]
 
+CONSORTIUM_ORG_NAME = "tsi-consortium-members"
 
 class TSIBaseMetadata(BaseMetadata):
     initiative = "TSI"
@@ -126,7 +127,13 @@ class TSIBaseMetadata(BaseMetadata):
                 self._build_title_into_object(obj, library_id)
                 self.build_notes_into_object(obj)
                 self._add_datatype_specific_info_to_package(obj, row, fname)
-                ingest_utils.permissions_organization_member(self._logger, obj)
+                ingest_utils.permissions_organization_member_after_embargo(
+                    self._logger,
+                    obj,
+                    "archive_ingestion_date",
+                    self.embargo_days,
+                    CONSORTIUM_ORG_NAME,
+                )
                 ingest_utils.apply_access_control(self._logger, self, obj)
                 obj["tags"] = [{"name": "{:.100}".format(t)} for t in self.tag_names]
                 packages.append(obj)
@@ -794,7 +801,13 @@ class TSIGenomicsDDRADMetadata(TSIBaseMetadata):
                 additional_notes = "ddRAD dataset not demultiplexed"
                 self._build_title_into_object(obj, flow_id)
                 self.build_notes_into_object(obj, {"additional_notes": additional_notes})
-                ingest_utils.permissions_organization_member(self._logger, obj)
+                ingest_utils.permissions_organization_member_after_embargo(
+                    self._logger,
+                    obj,
+                    "archive_ingestion_date",
+                    self.embargo_days,
+                    CONSORTIUM_ORG_NAME,
+                )
                 ingest_utils.apply_access_control(self._logger, self, obj)
                 ingest_utils.add_spatial_extra(self._logger, obj)
                 obj["tags"] = [{"name": t} for t in self.tag_names]
@@ -1373,7 +1386,13 @@ class TSIGenomicsDArTMetadata(TSIBaseMetadata):
             self._build_title_into_object(obj, "dataset_id")
             self.build_notes_into_object(obj, {"organism_scientific_name": organism_scientific_name,
                                                "additional_notes": additional_notes})
-            ingest_utils.permissions_organization_member(self._logger, obj)
+            ingest_utils.permissions_organization_member_after_embargo(
+                self._logger,
+                obj,
+                "archive_ingestion_date",
+                self.embargo_days,
+                CONSORTIUM_ORG_NAME,
+            )
             attach_message = (
                 "Attached metadata spreadsheets were produced when data was generated."
             )
