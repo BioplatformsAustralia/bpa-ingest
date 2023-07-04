@@ -2,8 +2,9 @@
 from bpaingest.projects.plant_pathogen.files import (
     illumina_shortread_re,
     pacbio_hifi_filename_re,
+    pacbio_hifi_filename_2_re,
     pacbio_hifi_metadata_sheet_re,
-    illumina_shortread_2_re,
+    pacbio_hifi_common_re,
  )
 
 
@@ -28,6 +29,15 @@ def test_pacbio_hifi():
     for filename in filenames:
         assert pacbio_hifi_filename_re.match(filename) is not None
 
+def test_pacbio_hifi2():
+    filenames = [
+        "394568_PP_AGRF_m84073_230616_014416_s1.ccs.bam",
+        "394568_PP_AGRF_m84073_230616_014416_s1.pdf",
+    ]
+
+    for filename in filenames:
+        assert pacbio_hifi_filename_2_re.match(filename) is not None
+
 
 def test_pacbio_hifi_metadata_sheet():
     filenames = [
@@ -35,3 +45,11 @@ def test_pacbio_hifi_metadata_sheet():
     ]
     for filename in filenames:
         assert pacbio_hifi_metadata_sheet_re.match(filename) is not None
+
+def test_pacbio_hifi_common():
+    filenames = [
+        "PP_AGRF_m84073_230616_014416_s1.pdf"
+
+    ]
+    for filename in filenames:
+        assert pacbio_hifi_common_re.match(filename) is not None

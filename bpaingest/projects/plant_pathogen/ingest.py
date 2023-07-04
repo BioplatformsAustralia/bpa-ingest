@@ -73,6 +73,22 @@ class PlantPathogenBaseMetadata(BaseMetadata):
                 track_meta = self.get_tracking_info(row.ticket)
                 if track_meta is not None:
                     obj.update(track_meta._asdict())
+                    """
+                    if track_meta.bioplatforms_dataset_id == row.bioplatforms_dataset_id and \
+                       track_meta.boplatforms_sample_id == row.bioplatforms_sample_id and \
+                       track_meta.bioplatforms_library_id == row.bioaplatforms_library_id:
+                        obj.update(track_meta._asdict())
+                    else:
+                        self._logger.error(
+                            "Mismatch between Tracking sheet dataset ID: {0} and  Metadata dataset ID: {1} or "
+                            "Tracking sheet sample ID: {2} and  Metadata sample ID: {3} or "
+                            "Tracking sheet library ID: {4} and  Metadata library ID: {5} "
+                            " in Ticket {2}".format(
+                                track_meta.bioplatforms_dataset_id, row.bioplatforms_dataset_id,
+                                track_meta.bioplatforms_sample_id, row.bioplatforms_sample_id,
+                                track_meta.bioplatforms_library_id, row.bioplatforms_library_id,
+                                self.ticket))
+                    """
                 context = {}
                 for contextual_source in self.contextual_metadata:
                     context.update(contextual_source.get(row.bioplatforms_library_id))
@@ -358,13 +374,21 @@ class PlantPathogenPacbioHifiMetadata(PlantPathogenBaseMetadata):
         },
     }
     md5 = {
-        "match": [files.pacbio_hifi_filename_re, files.pacbio_hifi_metadata_sheet_re],
+        "match": [files.pacbio_hifi_filename_2_re,
+                  files.pacbio_hifi_filename_re,
+                  files.pacbio_hifi_metadata_sheet_re,
+                  files.pacbio_hifi_common_re,
+                  ],
         "skip": [
-            re.compile(r"^.*(\.|_)metadata\.xlsx$"),
+            re.compile(r"^.*[\._]metadata\.xlsx$"),
             re.compile(r"^.*SampleSheet.*"),
             re.compile(r"^.*TestFiles\.exe.*"),
         ],
     }
+    common_files_match = [
+        files.pacbio_hifi_common_re,
+    ]
+    common_files_linkage = ("flowcell_id",)
     tag_names = ["pacbio-hifi"]
 
     def __init__(
@@ -395,14 +419,19 @@ class PlantPathogenPacbioHifiMetadata(PlantPathogenBaseMetadata):
         )
 
     def _get_resources(self):
-        return self._get_common_resources()
+        resources = self._get_common_resources()
+        return resources + self.generate_common_files_resources(resources)
 
     def _add_datatype_specific_info_to_resource(self, resource, md5_file=None):
-        resource["bioplatforms_sample_id"] = ingest_utils.extract_ands_id(
-            self._logger, resource["sample_id"]
-        )
-        return
 
+        if "sample_id" in resource.keys():
+            resource["bioplatforms_sample_id"] = ingest_utils.extract_ands_id(
+            self._logger, resource["sample_id"]
+            )
+        else:
+            resource["bioplatforms_sample_id"] = "multiple"
+            resource["sample_id"] = "all samples from ticket"
+        return
 
     def _build_resource_linkage(self, xlsx_info, resource, file_info):
         return (
@@ -410,4 +439,8 @@ class PlantPathogenPacbioHifiMetadata(PlantPathogenBaseMetadata):
                 resource["flowcell_id"],
             )
 
+    def _build_common_files_linkage(self, xlsx_info, resource, file_info):
+        return (
+            resource["flowcell_id"],
+        )
 

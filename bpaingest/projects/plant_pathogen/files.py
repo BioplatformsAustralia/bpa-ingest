@@ -35,6 +35,20 @@ PACBIO_HIFI_PATTERN = r"""
 """
 pacbio_hifi_filename_re = re.compile(PACBIO_HIFI_PATTERN, re.VERBOSE)
 
+PACBIO_HIFI_2_PATTERN = r"""
+    (?P<sample_id>\d{4,6})_
+    PP_
+    (?P<facility>AGRF)_
+    (PacBio_)?
+    (?P<flowcell_id>\w{23})
+    (_ccs_statistics\.csv
+      |_final\.consensusreadset\.xml
+      |\.ccs\.bam
+      |\.pdf
+      |\.subreads\.bam)
+"""
+pacbio_hifi_filename_2_re = re.compile(PACBIO_HIFI_2_PATTERN, re.VERBOSE)
+
 PACBIO_HIFI_METADATA_SHEET_PATTERN = r"""
     PP_
     (?P<facility>(AGRF))_
@@ -44,3 +58,10 @@ PACBIO_HIFI_METADATA_SHEET_PATTERN = r"""
 pacbio_hifi_metadata_sheet_re = re.compile(
     PACBIO_HIFI_METADATA_SHEET_PATTERN, re.VERBOSE
 )
+PACBIO_HIFI_COMMON_PATTERN = r"""
+    PP_
+    (?P<facility>AGRF)_
+    (?P<flowcell_id>\w{23})
+    (\.pdf)
+"""
+pacbio_hifi_common_re = re.compile(PACBIO_HIFI_COMMON_PATTERN, re.VERBOSE)
