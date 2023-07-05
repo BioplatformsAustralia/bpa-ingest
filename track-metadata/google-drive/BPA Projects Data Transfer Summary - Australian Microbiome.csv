@@ -195,13 +195,22 @@ Ramaciotti,9/12/2022,MiSeq data package,16S,20221209_AM_16S_UNSW_KRHP4,12/12/202
 Ramaciotti,9/12/2022,MiSeq data package,16S,20221209_AM_16S_UNSW_KT6BT,12/12/2022,,BPAOPS-1353,rerun of KRHP4
 Ramaciotti,19/12/2022,MiSeq data package,18S,20221219_AM_18S4_UNSW_KRLLN,19/12/2022,,BPAOPS-1354,
 Ramaciotti,19/12/2022,MiSeq data package,A16S,20221216_AM_A16S_UNSW_KWKCH,19/12/2022,,BPAOPS-1355,
-Ramaciotti,17/04/2023,MiSeq data package,16S,230321_AM_16S_UNSW_KYHK4,17/04/2023,,,"invalid filenmaes, resubmitted below"
-Ramaciotti,17/04/2023,MiSeq data package,16S,230324_AM_16S_UNSW_KYH6F,17/04/2023,,,"invalid filenmaes, resubmitted below"
-Ramaciotti,17/04/2023,MiSeq data package,18S,230324_AM_18S_UNSW_KY5G5,17/04/2023,,,"invalid filenmaes, resubmitted below"
-Ramaciotti,17/04/2023,MiSeq data package,A16S,230331_AM_A16_UNSW_KYH62,17/04/2023,,,"invalid filenmaes, resubmitted below"
+Ramaciotti,17/04/2023,MiSeq data package,16S,230321_AM_16S_UNSW_KYHK4,17/04/2023,,,"invalid filenames, resubmitted below"
+Ramaciotti,17/04/2023,MiSeq data package,16S,230324_AM_16S_UNSW_KYH6F,17/04/2023,,,"invalid filenames, resubmitted below"
+Ramaciotti,17/04/2023,MiSeq data package,18S,230324_AM_18S_UNSW_KY5G5,17/04/2023,,,"invalid filenames, resubmitted below"
+Ramaciotti,17/04/2023,MiSeq data package,A16S,230331_AM_A16_UNSW_KYH62,17/04/2023,,,"invalid filenames, resubmitted below"
 Ramaciotti,27/04/2023,NovaSeq data package,MGE,20230412_MGE_UNSW_H3MCKDSX7,1/5/2023,,BPAOPS-1385,
 Ramaciotti,10/05/2023,MiSeq data package,A16S,230331_AM_A16S_UNSW_KYH62,10/05/2023,,BPAOPS-1380,
 Ramaciotti,10/05/2023,MiSeq data package,16S,230324_AM_16S_UNSW_KYH6F,10/05/2023,,BPAOPS-1378,
 Ramaciotti,10/05/2023,MiSeq data package,18S,230324_AM_18S_UNSW_KY5G5,10/05/2023,,BPAOPS-1379,
 Ramaciotti,10/05/2023,MiSeq data package,16S,230321_AM_16S_UNSW_KYHK4,10/05/2023,,BPAOPS-1377,
 Ramaciotti,13/06/2023,NovaSeq data package,MGE,20230602_MGE_UNSW_HG5WTDSX7,14/06/2023,,BPAOPS-1416,
+Ramaciotti,28/06/23,MiSeq data package,16S,230609_AM_16S_UNSW_L5K2P,28/06/2023,,,"invalid filenames, resubmitted below"
+Ramaciotti,28/06/23,MiSeq data package,16S,230616_AM_16S_UNSW_L276P,28/06/2023,,,"invalid filenames, resubmitted below"
+Ramaciotti,28/06/23,MiSeq data package,16S,230616_AM_16S_UNSW_L2768,28/06/2023,,,"invalid filenames, resubmitted below"
+Ramaciotti,4/7/23,MiSeq data package,16S,230609_AM_16S_UNSW_L5K2P,05/07/2023,,BPAOPS-1423,
+Ramaciotti,04/07/2023,MiSeq data package,16S,230616_AM_16S_UNSW_L2768,05/07/2023,,BPAOPS-1425,
+Ramaciotti,04/07/2023,MiSeq data package,16S,230616_AM_16S_UNSW_L276P,05/07/2023,,BPAOPS-1424,
+Ramaciotti,04/07/2023,MiSeq data package,18S,230619_AM_18S_UNSW_L5MTF,05/07/2023,,BPAOPS-1427,
+Ramaciotti,04/07/2023,MiSeq data package,18S,230619_AM_18S_UNSW_L4YNW,05/07/2023,,BPAOPS-1428,
+Ramaciotti,04/07/2023,MiSeq data package,18S,230619_AM_18S_UNSW_L4YNN,05/07/2023,,BPAOPS-1429,
