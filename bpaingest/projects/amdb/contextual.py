@@ -44,6 +44,7 @@ class AustralianMicrobiomeSampleContextual:
             fld(
                 "collection_date",
                 "collection_date",
+                coerce=ingest_utils.get_date_isoformat_as_datetime  # Note this can be removed when ckan handles Z tz
             ),
             fld(
                 "longitude",

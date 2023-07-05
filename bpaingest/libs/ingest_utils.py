@@ -292,7 +292,8 @@ def get_date_isoformat_as_datetime(logger, s, silent=False):
     dt = _get_date_time(logger, s, silent)
     if dt is None:
         return None
-    return dt.strftime("%Y-%m-%dT%H:%M:%SZ")
+    return dt.strftime("%Y-%m-%dT%H:%M:%S")
+    # return dt.strftime("%Y-%m-%dT%H:%M:%SZ")   -- remove the Z for now as CKAN has an issue with it.. ut it back when this is fixed
 
 
 def get_time(logger, s):
