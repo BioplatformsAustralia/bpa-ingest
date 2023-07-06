@@ -2074,7 +2074,9 @@ class AustralianMicrobiomeAmpliconsMetadata(AMDFullIngestMetadata):
         "fields": [
             fld("sample_id", "sampleid", coerce=ingest_utils.extract_ands_id),
             fld("target", "target"),
-            fld("pass_fail", "p=pass / f=fail"),
+            fld("pass_fail",
+                re.compile(r".*p=pass( / |/)f=fail")),
+            # fld("pass_fail", "p=pass / f=fail"),
             fld(
                 "dilution_used", "dilution used", coerce=ingest_utils.fix_date_interval
             ),
