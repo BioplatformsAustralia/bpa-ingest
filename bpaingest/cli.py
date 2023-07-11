@@ -122,6 +122,13 @@ def setup_sync(subparser):
         default=False,
         help="add / update organizations from google sheet data",
     )
+    subparser.add_argument(
+        "--single-ticket",
+        "-s",
+        type=str,
+        default=None,
+        help="Process a single ticket only",
+    )
 
 
 
@@ -193,6 +200,7 @@ def sync(args):
             not args.skip_resource_checks,
             args.delete,
             args.update_orgs,
+            args.single_ticket,
             **kwargs,
         )
         print_accounts()

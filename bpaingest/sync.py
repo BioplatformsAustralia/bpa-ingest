@@ -92,7 +92,7 @@ def delete_dangling_packages(ckan, packages, cache, do_delete):
             logger.info("deleted package: %s/%s" % (delete_obj["id"], delete_id))
 
 
-def sync_packages(ckan, ckan_data_type, packages, org, group, do_delete):
+def sync_packages(ckan, ckan_data_type, packages, org, group, do_delete, do_single_ticket):
     # FIXME: we don't check if there are any packages we should remove (unpublish)
     logger.info("syncing %d packages" % (len(packages)))
     reporting_interval = determine_reporting_interval(len(packages))
@@ -104,18 +104,20 @@ def sync_packages(ckan, ckan_data_type, packages, org, group, do_delete):
     ckan_packages = []
 
     cache = build_package_cache(ckan, ckan_data_type, packages)
+    if do_single_ticket is None:   # no need to try to delete them
+        delete_dangling_packages(ckan, packages, cache, do_delete)
 
-    delete_dangling_packages(ckan, packages, cache, do_delete)
     synched_package_count = 0
     for package in sorted(packages, key=lambda p: p["name"]):
         obj = package.copy()
         obj["owner_org"] = org["id"]
         if api_group_obj is not None:
             obj["groups"] = [api_group_obj]
-        ckan_packages.append(sync_package(ckan, obj, cache.get(obj["id"])))
-        synched_package_count += 1
-        if synched_package_count % reporting_interval == 0:
-            logger.info("synced %d of %d packages" % (synched_package_count, len(packages)))
+        if (do_single_ticket is None or obj["ticket"] == do_single_ticket):
+            ckan_packages.append(sync_package(ckan, obj, cache.get(obj["id"])))
+            synched_package_count += 1
+            if synched_package_count % reporting_interval == 0:
+                logger.info("synced %d of %d packages" % (synched_package_count, len(packages)))
     return ckan_packages
 
 
@@ -285,9 +287,10 @@ def sync_resources(
     do_uploads,
     do_resource_checks,
     do_delete,
+    do_single_ticket,
     **kwargs,
 ):
-    logger.info("syncing %d resources" % (len(resources)))
+    logger.info("checking  %d resources for synch" % (len(resources)))
     reporting_interval = determine_reporting_interval(len(resources))
     resource_linkage_package_id = {}
     for package_obj in ckan_packages:
@@ -303,11 +306,15 @@ def sync_resources(
     resource_id_legacy_url = {}
     for resource_linkage, legacy_url, resource_obj in resources:
         package_id = resource_linkage_package_id.get(resource_linkage)
-        if package_id is None:
-            logger.critical(
-                "Unable to find package for `%s', skipping resource (%s)"
-                % (repr(resource_linkage), legacy_url)
-            )
+        if do_single_ticket is None:
+            if package_id is None:
+                logger.critical(
+                    "Unable to find package for `%s', skipping resource (%s)"
+                    % (repr(resource_linkage), legacy_url)
+                )
+        else:
+            if package_id is None:  # no package found for this resource, it does not belong to our target ticket.
+                continue
         obj = resource_obj.copy()
         obj["package_id"] = package_id
         if package_id not in resource_idx:
@@ -362,7 +369,7 @@ def sync_resources(
         write_reuploads_fn(to_reupload)
 
 def sync_metadata(
-    ckan, meta, auth, num_threads, do_uploads, do_resource_checks, do_delete, do_update_orgs, **kwargs
+    ckan, meta, auth, num_threads, do_uploads, do_resource_checks, do_delete, do_update_orgs, do_single_ticket, **kwargs
 ):
     # command line to update orgs as dev for plant pathogens:
     # bpa-ingest sync --skip-resource-checks --metadata-only --update-orgs --verify-ssl False -u https://localhost:8443
@@ -384,13 +391,21 @@ def sync_metadata(
     organization = get_organization(ckan, meta.organization)
     packages = meta.get_packages()
     packages = list(unique_packages())
+    if do_single_ticket is not None:
+        ticket_packages = []
+        for package in packages:
+            if package["ticket"] == do_single_ticket:
+                ticket_packages.append(package)
+        packages = ticket_packages
+
     resources = meta.get_resources()
+
     raw_resources_metadata = build_raw_resources_as_file(
         logger, ckan, meta, packages, resources
     )
     validate_raw_resources_file_metadata(logger, raw_resources_metadata, auth)
     ckan_packages = sync_packages(
-        ckan, meta.ckan_data_type, packages, organization, None, do_delete
+        ckan, meta.ckan_data_type, packages, organization, None, do_delete, do_single_ticket
     )
     sync_resources(
         ckan,
@@ -402,6 +417,7 @@ def sync_metadata(
         do_uploads,
         do_resource_checks,
         do_delete,
+        do_single_ticket,
         **kwargs,
     )
 
