@@ -7,6 +7,7 @@ import bitmath
 import requests
 import ckanapi
 import os
+import time
 from urllib.parse import urlparse
 from collections import defaultdict
 
@@ -82,7 +83,14 @@ def patch_if_required(
     logger.debug("start patch if required")
     patch_needed = diff_objects(patch_object, ckan_object, object_type)
     if patch_needed:
-        ckan_object = ckan_method(ckan, object_type, "patch")(**patch_object)
+        try:
+            ckan_object = ckan_method(ckan, object_type, "patch")(**patch_object)
+        except ckanapi.errors.CKANAPIError:
+            # wait 2 sec, then try again (give up if it fails a second time)
+            logger.warning("ckan patch failed, waiting 2 sec, then trying again")
+            time.sleep(2)
+            ckan_object = ckan_method(ckan, object_type, "patch")(**patch_object)
+
     logger.debug("end patch_if_required")
     return patch_needed, ckan_object
 
