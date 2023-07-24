@@ -94,6 +94,13 @@ PACBIO_HIFI_METADATA_SHEET_PATTERN = r"""
 pacbio_hifi_metadata_sheet_re = re.compile(
     PACBIO_HIFI_METADATA_SHEET_PATTERN, re.VERBOSE
 )
+PACBIO_HIFI_COMMON_PATTERN = r"""
+    AusARG_
+    (?P<facility>AGRF)_
+    (?P<flowcell_id>\w{23})
+    (\.pdf)
+"""
+pacbio_hifi_common_re = re.compile(PACBIO_HIFI_COMMON_PATTERN, re.VERBOSE)
 
 EXON_FILENAME_PATTERN = r"""
     (?P<library_id>\d{4,6})_

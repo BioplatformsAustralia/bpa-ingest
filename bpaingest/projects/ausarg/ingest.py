@@ -608,13 +608,21 @@ class AusargPacbioHifiMetadata(AusargBaseMetadata):
         },
     }
     md5 = {
-        "match": [files.pacbio_hifi_filename_re, files.pacbio_hifi_filename_2_re, files.pacbio_hifi_metadata_sheet_re],
+        "match": [files.pacbio_hifi_filename_re,
+                  files.pacbio_hifi_filename_2_re,
+                  files.pacbio_hifi_metadata_sheet_re,
+                  files.pacbio_hifi_common_re],
         "skip": [
             re.compile(r"^.*[\._]metadata\.xlsx$"),
             re.compile(r"^.*SampleSheet.*"),
             re.compile(r"^.*TestFiles\.exe.*"),
         ],
     }
+    common_files_match = [
+        files.pacbio_hifi_common_re,
+    ]
+    common_files_linkage = ("flowcell_id",)
+
     title_mapping = [
         {"key": "initiative", "separator": " "},
         {"key": "title_description", "separator": " "},
@@ -692,7 +700,8 @@ class AusargPacbioHifiMetadata(AusargBaseMetadata):
             )
 
     def _get_resources(self):
-        return self._get_common_resources()
+        resources = self._get_common_resources()
+        return resources + self.generate_common_files_resources(resources)
 
     def _add_datatype_specific_info_to_resource(self, resource, md5_file=None):
         #    no additional fields for pacbio-hifi needed, just empty return
@@ -704,6 +713,10 @@ class AusargPacbioHifiMetadata(AusargBaseMetadata):
             resource["flowcell_id"]
             )
 
+    def _build_common_files_linkage(self, xlsx_info, resource, file_info):
+        return (
+            resource["flowcell_id"],
+        )
 
 class AusargExonCaptureMetadata(AusargBaseMetadata):
     ckan_data_type = "ausarg-exon-capture"

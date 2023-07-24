@@ -6,6 +6,7 @@ from bpaingest.projects.ausarg.files import (
     pacbio_hifi_filename_re,
     pacbio_hifi_filename_2_re,
     pacbio_hifi_metadata_sheet_re,
+    pacbio_hifi_common_re,
     exon_filename_re,
     illumina_hic_re,
     dart_filename_re,
@@ -103,6 +104,15 @@ def test_pacbio_hifi_metadata_sheet():
 
     for filename in filenames:
         assert pacbio_hifi_metadata_sheet_re.match(filename) is not None
+
+
+def test_pacbio_hifi_common():
+    filenames = [
+        "AusARG_AGRF_m84073_230616_024551_s3.pdf"
+
+    ]
+    for filename in filenames:
+        assert pacbio_hifi_common_re.match(filename) is not None
 
 
 def test_exon():
