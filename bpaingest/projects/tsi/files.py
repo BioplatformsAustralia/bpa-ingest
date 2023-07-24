@@ -72,6 +72,13 @@ PACBIO_HIFI_METADATA_SHEET_PATTERN = r"""
 pacbio_hifi_metadata_sheet_re = re.compile(
     PACBIO_HIFI_METADATA_SHEET_PATTERN, re.VERBOSE
 )
+PACBIO_HIFI_COMMON_PATTERN = r"""
+    TSI_
+    (?P<facility>AGRF)_
+    (?P<flowcell_id>\w{23})
+    (\.pdf)
+"""
+pacbio_hifi_common_re = re.compile(PACBIO_HIFI_COMMON_PATTERN, re.VERBOSE)
 
 DDRAD_FASTQ_FILENAME_PATTERN = r"""
     (?P<bpa_dataset_id>\d{4,6})_
