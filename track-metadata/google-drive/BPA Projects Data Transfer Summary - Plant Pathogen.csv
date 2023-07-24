@@ -1,6 +1,6 @@
 Project: Plant Pathogen (PP),,,,,,,,,,,
 Contact mlum@bioplatforms.com if you need assistance filling this sheet.,,,,,,,,,,,
-Facility to fill,Facility to fill,Facility to fill (Leave empty if data is for >1 species),Facility to fill (Leave empty if data is for >1 species),Facility to fill,Project Manager to fill,Facility to fill,Facility to fill,Data team to fill,Project Manager to fill,Data team to fill,Data team to fill
+Facility to fill,Facility to fill,Facility to fill (Leave empty if data is for >1 sample ID),Facility to fill (Leave empty if data is for >1 library ID),Facility to fill,Project Manager to fill,Facility to fill,Facility to fill,Data team to fill,Project Manager to fill,Data team to fill,Data team to fill
 ,,,,,,,,,,,
 Facility,Date of transfer,bioplatforms_sample_id,bioplatforms_library_id,bioplatforms_dataset_id,scientific_name,Description,Folder name,Date of transfer to archive,Date data published,CCG JIRA Ticket,Download
 AGRF,01/02/2023,,,399013,Johnsongrass mosaic virus (JGMV),Illmina short read,20230201_PP_AGRF_KTMDN,01/02/2023,15/02/2023,BPAOPS-1357,https://data.bioplatforms.com/dataset?ext_search_by=&q=ticket%3ABPAOPS-1357 
@@ -8,7 +8,8 @@ AGRF,24/02/2023,394855,397105,399020,Austropuccinia psidii,PacBio-HiFi,20230223_
 AGRF,28/02/2023,,,399015,Legume viruses,Illumina short read,20230301_PP_AGRF_H3TLVDRX3,01/03/2023,03/03/2023,BPAOPS-1362,https://data.bioplatforms.com/dataset?ext_search_by=&q=ticket%3ABPAOPS-1362
 UNSW,19/05/2023,,,399016,Puccinia coronata f. sp. avenae,Illumina short read,20230511_PP_UNSW_HCF2MDRX3_Q0010509_HEN11834,22/05/2023,22/05/2023,BPAOPS-1391,https://data.bioplatforms.com/dataset?ext_search_by=&q=ticket%3ABPAOPS-1391
 UNSW,19/05/2023,394855,397106,399021,Austropuccinia psidii,Illumina short read,20230511_PP_UNSW_HCF2MDRX3_Q0010509_TOB11898,22/05/2023,22/05/2023,BPAOPS-1392,https://data.bioplatforms.com/dataset?ext_search_by=&q=ticket%3ABPAOPS-1392
-AGRF,22/06/2023,394568,397107,399022,Puccinia coronata f. sp. avenae,PacBio-HiFi,20230619_PP_AGRF_CAGRF221213146_m84073_230616_014416_s1,22/06/2023,,BPAOPS-1422,
-AGRF,22/06/2023,394569,397108,399022,Puccinia coronata f. sp. avenae,PacBio-HiFi,20230619_PP_AGRF_CAGRF221213146_m84073_230616_014416_s2,22/06/2023,,BPAOPS-1420,
-AGRF,22/06/2023,394570,397109,399022,Puccinia coronata f. sp. avenae,PacBio-HiFi,20230619_PP_AGRF_CAGRF221213146_m84073_230616_014416_s3,22/06/2023,,BPAOPS-1421,
-AGRF,28/06/2023,,,399022,Puccinia coronata f. sp. avenae,PacBio-HiFi,20230619_PP_AGRF_CAGRF221213146_m84073_230616_014416_s1,2023-06-29,,BPAOPS-1426,
+AGRF,22/06/2023,394568,397107,399022,Puccinia coronata f. sp. avenae,PacBio-HiFi,20230619_PP_AGRF_CAGRF221213146_m84073_230616_014416_s1,22/06/2023,,BPAOPS-1422,withdrawn and replaced with BPAOPS-1426
+AGRF,22/06/2023,394569,397108,399022,Puccinia coronata f. sp. avenae,PacBio-HiFi,20230619_PP_AGRF_CAGRF221213146_m84073_230616_014416_s2,22/06/2023,,BPAOPS-1420,withdrawn and replaced with BPAOPS-1426
+AGRF,22/06/2023,394570,397109,399022,Puccinia coronata f. sp. avenae,PacBio-HiFi,20230619_PP_AGRF_CAGRF221213146_m84073_230616_014416_s3,22/06/2023,,BPAOPS-1421,withdrawn and replaced with BPAOPS-1426
+AGRF,28/06/2023,,,399022,Puccinia coronata f. sp. avenae,PacBio-HiFi,20230619_PP_AGRF_CAGRF221213146_m84073_230616_014416_s1,29/06/2023,06/07/2023,BPAOPS-1426,https://data.bioplatforms.com/dataset?ext_search_by=&q=ticket%3ABPAOPS-1426
+AGRF,24/07/2023,,,399014,Potato virus Y,Illumina short read,20230724_PP_AGRF_225VVGLT3,2023-07-24,,BPAOPS-1442,
