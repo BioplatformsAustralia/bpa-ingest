@@ -30,7 +30,7 @@ class GAPDatasetControlContextual(BaseDatasetControlContextual):
 
 class GAPLibraryContextual:
     metadata_urls = [
-        "https://downloads-qcif.bioplatforms.com/bpa/plants_staging/metadata/2023-06-14/"
+        "https://downloads-qcif.bioplatforms.com/bpa/plants_staging/metadata/2023-08-02/"
     ]
     metadata_patterns = [re.compile(r"^.*\.xlsx$")]
     name = "gap-library-contextual"
