@@ -126,24 +126,29 @@ class PlantPathogenBaseMetadata(BaseMetadata):
                 self.build_notes_into_object(obj)
                 project_slug = None
                 # get the slug for the org that matches the Project Code.
-                for trrow in self.google_project_codes_meta.project_code_rows:
-                    if (trrow.short_description == obj["bioplatforms_project_code"]):
-                        project_slug = trrow.slug
+                if "bioplatforms_project_code" in obj.keys():
+                    for trrow in self.google_project_codes_meta.project_code_rows:
+                        if (trrow.short_description == obj["bioplatforms_project_code"]):
+                            project_slug = trrow.slug
 
                 # If no org exists, fail with ah error, as teh security for PP is based around these orgs.
-                if project_slug is None:
-                    self._logger.error("No project found for {}".format(obj["bioplatforms_project_code"]))
+                    if project_slug is None:
+                        self._logger.error("No project found for {}".format(obj["bioplatforms_project_code"]))
 
-                ingest_utils.permissions_organization_member_after_embargo(
-                    self._logger,
-                    obj,
-                    "date_of_transfer_to_archive",
-                    self.embargo_days,
-                    project_slug,
-                )
-                ingest_utils.apply_access_control(self._logger, self, obj)
-                obj["tags"] = [{"name": "{:.100}".format(t)} for t in self.tag_names]
-                packages.append(obj)
+                    ingest_utils.permissions_organization_member_after_embargo(
+                        self._logger,
+                        obj,
+                        "date_of_transfer_to_archive",
+                        self.embargo_days,
+                        project_slug,
+                    )
+                    ingest_utils.apply_access_control(self._logger, self, obj)
+                    obj["tags"] = [{"name": "{:.100}".format(t)} for t in self.tag_names]
+                    packages.append(obj)
+                else:
+                    self._logger.error("No project code found for ticket {}, sample {}. "
+                                       .format(obj["ticket"], obj["bioplatforms_sample_id"]))
+                    self._logger.error("Check with PM for updated dataset control spreadsheet. Sample ignored.")
         return packages
 
 
