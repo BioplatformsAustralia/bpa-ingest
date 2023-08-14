@@ -82,4 +82,6 @@ BRF,20/4/2023,Illumina-HiC,HiC,20230417_AusARG_BRF_351853_351873_351874_351875_3
 BRF,20/04/2023,Illumina-shortread,Illumina DNA,20230417_AusARG_BRF_351853_351873_351874_351875_351876_351878_HKWJJDMXY,,,,,Reference genome,27/04/2023,,BPAOPS-1383,Dataset 351878 is shortread- lprocessed to BPA as fastq,
 DA-DArT,19/5/2023,Illumina-DArT,Short reads,20230519_dart,multiple,multiple,"351834, 351840","Morelia, Liasis",Conservation Genomics,,,BPAOPS-1395,researcher informed,
 DA-DArT,22/5/2023,Illumina-DArT,Short reads,20230522_dart,multiple,multiple,"351849, 351841-351848","Moloch, Strophorus-Delma",Conservation Genomics,,,,researcher informed,"Note, I am not sure if the Moloch dataset is included"
-AGRF,13/06/2023,PacBio-HiFi,HiFi,20230612_AusARG_AGRF_CAGRF230514931_m84073_230601_040640_s4,,,,,,14/06/2023,,BPAOPS-1417,,
+AGRF,13/06/2023,PacBio-HiFi,HiFi,20230612_AusARG_AGRF_CAGRF230514931_m84073_230601_040640_s4,352848,353862,351889,Litoria serrata,Reference genome,14/06/2023,,BPAOPS-1417,,
+BRF,10/8/2023,Illumina-HiC,HiC,20230810_AusARG_BRF_351896_HKJ33DRX3,458237,456720,351896,Platyplectrum ornatum,Reference genome,14/08/2023,,BPAOPS-1458,,
+BRF,10/8/2023,Illumina-HiC,HiC,20230810_AusARG_BRF_351897_HKJ33DRX3,458238,456721,351897,Lechriodus fletcheri,Reference genome,14/08/2023,,BPAOPS-1458,,
