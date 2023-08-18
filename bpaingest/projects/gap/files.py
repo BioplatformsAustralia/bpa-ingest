@@ -65,7 +65,7 @@ ONT_PROMETHION_PATTERN_2 = r"""
     (LibID(?P<library_id>\d{4,6})_)?
     GAP_
     (?P<facility_id>(AGRF|BRF|UNSW))_
-    (?P<flow_cell_id>PA[DEFGKMO]\d{5})_
+    (?P<flow_cell_id>PA[DEFGKMOQ]\d{5})_
     (Run(?P<run_number>\d+)_)?
     ONTPromethION_
     ((?P<experiment_run_name>[A-Z]{4}\d{5})_)?
@@ -78,7 +78,7 @@ ONT_PROMETHION_COMMON_PATTERN = r"""
     (?P<sample_id>\d{4,6})_
     GAP_
     (?P<facility_id>(AGRF|BRF|UNSW))_
-    (?P<flow_cell_id>PA[DEFGKMO]\d{5})_
+    (?P<flow_cell_id>PA[DEFGKMOQ]\d{5})_
     (?!ONTPromethION_)
     (?P<archive_type>\w+)
     \.(html|tsv|txt)
