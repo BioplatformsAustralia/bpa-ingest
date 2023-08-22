@@ -36,7 +36,7 @@ class PlantPathogenDatasetControlContextual(BaseDatasetControlContextual):
 
 class PlantPathogenLibraryContextual:
     metadata_urls = [
-        "https://downloads-qcif.bioplatforms.com/bpa/pp_staging/metadata/2023-08-21/"
+        "https://downloads-qcif.bioplatforms.com/bpa/pp_staging/metadata/2023-08-22/"
     ]
     metadata_patterns = [re.compile(r"^.*\.xlsx$")]
     name = "pp-library-contextual"
