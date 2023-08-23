@@ -127,13 +127,22 @@ class TSIBaseMetadata(BaseMetadata):
                 self._build_title_into_object(obj, library_id)
                 self.build_notes_into_object(obj)
                 self._add_datatype_specific_info_to_package(obj, row, fname)
-                ingest_utils.permissions_organization_member_after_embargo(
-                    self._logger,
-                    obj,
-                    "date_of_transfer_to_archive",
-                    self.embargo_days,
-                    CONSORTIUM_ORG_NAME,
-                )
+                # This is needed until we make the dates more consistent
+                if "date_of_transfer_to_archive" in obj:
+                    ingest_utils.permissions_organization_member_after_embargo(
+                        self._logger,
+                        obj,
+                        "date_of_transfer_to_archive",
+                        self.embargo_days,
+                        CONSORTIUM_ORG_NAME,
+                    )
+                else:
+                    ingest_utils.permissions_organization_member_after_embargo(
+                        self._logger,
+                        obj,
+                        "archive_ingestion_date",
+                        self.embargo_days,
+                        CONSORTIUM_ORG_NAME,
                 ingest_utils.apply_access_control(self._logger, self, obj)
                 obj["tags"] = [{"name": "{:.100}".format(t)} for t in self.tag_names]
                 packages.append(obj)
