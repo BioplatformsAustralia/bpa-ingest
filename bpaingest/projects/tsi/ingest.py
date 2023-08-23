@@ -130,7 +130,7 @@ class TSIBaseMetadata(BaseMetadata):
                 ingest_utils.permissions_organization_member_after_embargo(
                     self._logger,
                     obj,
-                    "archive_ingestion_date",
+                    "date_of_transfer_to_archive",
                     self.embargo_days,
                     CONSORTIUM_ORG_NAME,
                 )
@@ -599,6 +599,7 @@ class TSIPacbioHifiMetadata(TSIBaseMetadata):
             (ingest_utils.extract_ands_id(self._logger, resource["library_id"]),
              resource["flowcell_id"],)
         )
+
 
     def _build_common_files_linkage(self, xlsx_info, resource, file_info):
         return (
