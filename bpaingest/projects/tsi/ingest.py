@@ -143,6 +143,7 @@ class TSIBaseMetadata(BaseMetadata):
                         "archive_ingestion_date",
                         self.embargo_days,
                         CONSORTIUM_ORG_NAME,
+                    )
                 ingest_utils.apply_access_control(self._logger, self, obj)
                 obj["tags"] = [{"name": "{:.100}".format(t)} for t in self.tag_names]
                 packages.append(obj)
