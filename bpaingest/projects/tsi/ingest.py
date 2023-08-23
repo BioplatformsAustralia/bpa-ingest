@@ -829,7 +829,7 @@ class TSIGenomicsDDRADMetadata(TSIBaseMetadata):
                 ingest_utils.permissions_organization_member_after_embargo(
                     self._logger,
                     obj,
-                    "date_of_transfer_to_archive",
+                    "archive_ingestion_date",
                     self.embargo_days,
                     CONSORTIUM_ORG_NAME,
                 )
@@ -1414,7 +1414,7 @@ class TSIGenomicsDArTMetadata(TSIBaseMetadata):
             ingest_utils.permissions_organization_member_after_embargo(
                 self._logger,
                 obj,
-                "date_of_transfer_to_archive",
+                "archive_ingestion_date",
                 self.embargo_days,
                 CONSORTIUM_ORG_NAME,
             )
