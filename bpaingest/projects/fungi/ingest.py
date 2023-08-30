@@ -23,6 +23,7 @@ from ...util import (
 )
 
 common_context = [FungiLibraryContextual, FungiDatasetControlContextual]
+CONSORTIUM_ORG_NAME = "fungi-consortium-members"
 
 
 class FungiBaseMetadata(BaseMetadata):
@@ -115,7 +116,13 @@ class FungiBaseMetadata(BaseMetadata):
                 self._build_title_into_object(obj, bioplatforms_library_id)
                 self.build_notes_into_object(obj)
                 self._add_datatype_specific_info_to_package(obj, row, fname)
-                ingest_utils.permissions_organization_member(self._logger, obj)
+                ingest_utils.permissions_organization_member_after_embargo(
+                    self._logger,
+                    obj,
+                    "date_of_transfer_to_archive",
+                    self.embargo_days,
+                    CONSORTIUM_ORG_NAME,
+                )
                 ingest_utils.apply_access_control(self._logger, self, obj)
                 obj["tags"] = [{"name": "{:.100}".format(t)} for t in self.tag_names]
                 packages.append(obj)
@@ -238,8 +245,7 @@ class FungiIlluminaShortreadMetadata(FungiBaseMetadata):
 
         flowcell_id = re.match(r"^.*_([^_]+)_metadata.*\.xlsx", filename).groups()[0]
         obj.update(
-            { "data_generated": True,
-              "flow_cell_id": flowcell_id,
+            { "flow_cell_id": flowcell_id,
               "library_id":  row.bioplatforms_library_id.split("/")[-1]
             }
         )
