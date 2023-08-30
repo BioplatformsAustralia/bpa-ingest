@@ -271,7 +271,6 @@ class PlantPathogenIlluminaShortreadMetadata(PlantPathogenBaseMetadata):
         obj.update(
             {   "bioplatforms_library_id": row.bioplatforms_library_id,
                 "library_id": row.bioplatforms_library_id.split("/")[-1],
-                "data_generated": True,
              }
         )
 
@@ -419,7 +418,6 @@ class PlantPathogenPacbioHifiMetadata(PlantPathogenBaseMetadata):
              "library_id": row.bioplatforms_library_id.split("/")[-1],
              "bioplatforms_sample_id": row.bioplatforms_sample_id,
              "sample_id": row.bioplatforms_sample_id.split("/")[-1],
-             "data_generated": True,
              }
         )
 

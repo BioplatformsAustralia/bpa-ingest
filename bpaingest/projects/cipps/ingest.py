@@ -241,7 +241,6 @@ class CIPPSIlluminaShortreadMetadata(CIPPSBaseMetadata):
 
         obj.update(
             {   "bioplatforms_sample_id": row.sample_id,
-                "data_generated": True,
                 "flow_cell_id": flow_cell_id,
                 "library_id": row.library_id.split("/")[-1]
              }
