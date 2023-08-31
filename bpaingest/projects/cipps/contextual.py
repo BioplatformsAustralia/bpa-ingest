@@ -1,4 +1,5 @@
 import re
+import os
 from glob import glob
 from ...libs import ingest_utils
 from ...libs.excel_wrapper import (
@@ -221,6 +222,10 @@ class CIPPSLibraryContextual:
                     raise Exception("duplicate sample id: {}".format(row.sample_id))
                 sample_id = ingest_utils.extract_ands_id(self._logger, row.sample_id)
                 library_metadata[sample_id] = row_meta = {}
+                library_metadata[sample_id]["metadata_revision_date"] = (
+                    ingest_utils.get_date_isoformat(self._logger, wrapper.modified))
+                library_metadata[sample_id]["metadata_revision_filename"] = (
+                    os.path.basename(fname))
                 for field in row._fields:
                     value = getattr(row, field)
                     if field == "sample_id":

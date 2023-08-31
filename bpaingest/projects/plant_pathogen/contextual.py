@@ -1,4 +1,5 @@
 import re
+import os
 from glob import glob
 from ...libs import ingest_utils
 from ...libs.excel_wrapper import (
@@ -164,6 +165,10 @@ class PlantPathogenLibraryContextual:
                     raise Exception("duplicate library id: {}".format(row.bioplatforms_library_id))
                 bioplatforms_library_id =  row.bioplatforms_library_id
                 library_metadata[row.bioplatforms_library_id] = row_meta = {}
+                library_metadata[row.bioplatforms_library_id]["metadata_revision_date"] = (
+                    ingest_utils.get_date_isoformat(self._logger, wrapper.modified))
+                library_metadata[row.bioplatforms_library_id]["metadata_revision_filename"] = (
+                    os.path.basename(fname))
                 for field in row._fields:
                     value = getattr(row, field)
                     if field == "bioplatforms_library_id":
