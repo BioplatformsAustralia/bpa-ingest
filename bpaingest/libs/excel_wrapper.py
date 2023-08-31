@@ -84,6 +84,7 @@ class ExcelWrapper:
         self.suggest_template = suggest_template
 
         self.workbook = xlrd.open_workbook(file_name)
+        self.modified = self.workbook.props["modified"]
         self.sheet = self._find_sheet_in_workbook(file_name, self.workbook, sheet_name)
 
         self.missing_headers = []
