@@ -13,6 +13,8 @@ from bpaingest.projects.tsi.files import (
     genome_assembly_filename_re,
     illumina_hic_re,
     pacbio_hifi_common_re,
+    dart_filename_re,
+    dart_xlsx_filename_re,
 )
 
 
@@ -154,3 +156,19 @@ def test_illumina_hic():
     for filename in filenames:
         assert illumina_hic_re.match(filename) is not None
 
+def test_genomics_dart():
+    filenames = [
+        "20230222_TSI_BRFDArT_HLWMLDRX2_1.tar",
+        "20230811_TSI_BRFDArT_225KMFLT3_3.tar",
+        "20230829_TSI_BRFDArT_LWJZW.tar",
+    ]
+    for filename in filenames:
+        assert dart_filename_re.match(filename) is not None
+
+def test_genomics_dart_xlsx():
+    filenames = [
+        "TSI_BRFDArT_358845_librarymetadata.xlsx",
+        "TSI_BRFDArT_358845_samplemetadata_ingest.xlsx",
+    ]
+    for filename in filenames:
+        assert dart_xlsx_filename_re.match(filename) is not None
