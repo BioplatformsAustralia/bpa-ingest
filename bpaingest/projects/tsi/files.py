@@ -104,9 +104,9 @@ ddrad_analysed_tar_re = re.compile(DDRAD_ANALYSED_TAR_PATTERN, re.VERBOSE)
 
 DDRAD_METADATA_SHEET_PATTERN = r"""
     TSI_
-    [NGS_]
+    NGS_
     (?P<flowcell_id>\w{9})_
-    [library_]
+    (library_)?
     metadata_
     (?P<bpa_dataset_id>\d{4,6})
     \.xlsx
