@@ -146,8 +146,8 @@ DART_PATTERN = r"""
     (?P<file_archive_date>\d{8})_
     TSI_
     (?P<facility_id>(BRFDArT))_
-    (?P<flowcell_id>\w{9})_
-    (?P<run>\d{1})
+    (?P<flowcell_id>\w{5,9})
+    (_(?P<run>\d{1}))?
     \.
     tar
 """
