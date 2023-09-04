@@ -1223,7 +1223,7 @@ class TSIGenomicsDArTMetadata(TSIBaseMetadata):
                 re.compile(r"dataset_[Ii][Dd]|bioplatforms_dataset_id"),
                 coerce=ingest_utils.extract_ands_id,
             ),
-            fld("work_order", "work_order", coerce=ingest_utils.get_int),
+            fld("work_order", "work_order"),
             fld("specimen_id", re.compile(r"specimen_[Ii][Dd]")),
             fld("facility_sample_id", "facility_sample_id"),
             fld("facility_project_code", "facility_project_code", optional=True),
@@ -1385,19 +1385,12 @@ class TSIGenomicsDArTMetadata(TSIBaseMetadata):
                     "date_of_transfer": ingest_utils.get_date_isoformat(
                         self._logger, self.get_tracking_info(ticket, "date_of_transfer")
                     ),
+                    "date_of_transfer_to_archive": ingest_utils.get_date_isoformat(
+                        self._logger, self.get_tracking_info(ticket, "date_of_transfer_to_archive")
+                    ),
                     "data_type": self.get_tracking_info(ticket, "data_type"),
                     "description": self.get_tracking_info(ticket, "description"),
                     "folder_name": self.get_tracking_info(ticket, "folder_name"),
-                    "sample_submission_date": ingest_utils.get_date_isoformat(
-                        self._logger, self.get_tracking_info(ticket, "date_of_transfer")
-                    ),
-                    "contextual_data_submission_date": None,
-                    "data_generated": ingest_utils.get_date_isoformat(
-                        self._logger, self.get_tracking_info(ticket, "date_of_transfer_to_archive")
-                    ),
-                    "archive_ingestion_date": ingest_utils.get_date_isoformat(
-                        self._logger, self.get_tracking_info(ticket, "date_of_transfer_to_archive")
-                    ),
                     "dataset_url": self.get_tracking_info(ticket, "download"),
                     "type": self.ckan_data_type,
                     "sequence_data_type": self.sequence_data_type,
@@ -1414,7 +1407,7 @@ class TSIGenomicsDArTMetadata(TSIBaseMetadata):
             ingest_utils.permissions_organization_member_after_embargo(
                 self._logger,
                 obj,
-                "archive_ingestion_date",
+                "date_of_transfer_to_archive",
                 self.embargo_days,
                 CONSORTIUM_ORG_NAME,
             )
