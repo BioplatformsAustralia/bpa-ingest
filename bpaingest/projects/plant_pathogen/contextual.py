@@ -20,7 +20,7 @@ def date_or_str(logger, v):
 
 class PlantPathogenDatasetControlContextual(BaseDatasetControlContextual):
     metadata_urls = [
-        "https://downloads-qcif.bioplatforms.com/bpa/pp_staging/dataset_control/2023-08-21/"
+        "https://downloads-qcif.bioplatforms.com/bpa/pp_staging/dataset_control/2023-09-04/"
     ]
     name = "pp-dataset-contextual"
     sheet_names = [
@@ -37,7 +37,7 @@ class PlantPathogenDatasetControlContextual(BaseDatasetControlContextual):
 
 class PlantPathogenLibraryContextual:
     metadata_urls = [
-        "https://downloads-qcif.bioplatforms.com/bpa/pp_staging/metadata/2023-08-22/"
+        "https://downloads-qcif.bioplatforms.com/bpa/pp_staging/metadata/2023-09-06/"
     ]
     metadata_patterns = [re.compile(r"^.*\.xlsx$")]
     name = "pp-library-contextual"
