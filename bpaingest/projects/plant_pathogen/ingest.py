@@ -134,12 +134,15 @@ class PlantPathogenBaseMetadata(BaseMetadata):
                 # If no org exists, fail with ah error, as teh security for PP is based around these orgs.
                     if project_slug is None:
                         self._logger.error("No project found for {}".format(obj["bioplatforms_project_code"]))
+                    package_embargo_days = self.embargo_days
+                    if context["access_control_date"] is not None:
+                        package_embargo_days = context["access_control_date"]
 
                     ingest_utils.permissions_organization_member_after_embargo(
                         self._logger,
                         obj,
                         "date_of_transfer_to_archive",
-                        self.embargo_days,
+                        package_embargo_days,
                         project_slug,
                     )
                     ingest_utils.apply_access_control(self._logger, self, obj)
@@ -181,7 +184,7 @@ class PlantPathogenIlluminaShortreadMetadata(PlantPathogenBaseMetadata):
                            ),
                            fld("library_construction_protocol", "library_construction_protocol"),
                            fld("run_format", "run format", optional=True),
-                           fld("work_order", "work_order"),
+                           fld("work_order", "work_order", coerce=ingest_utils.int_or_comment),
                            fld("specimen_id", re.compile(r"specimen_[Ii][Dd]"), coerce=ingest_utils.int_or_comment, optional=True),
                            fld("data_context", "data_context", optional=True),
                            fld("library_type", "library_type"),
@@ -320,7 +323,7 @@ class PlantPathogenPacbioHifiMetadata(PlantPathogenBaseMetadata):
                            ),
                            fld("library_construction_protocol", "library_construction_protocol"),
                            fld("run_format", "run format", optional=True),
-                           fld("work_order", "work_order"),
+                           fld("work_order", "work_order", coerce=ingest_utils.int_or_comment),
                            fld("specimen_id", re.compile(r"specimen_[Ii][Dd]"), coerce=ingest_utils.int_or_comment, optional=True),
                            fld("data_context", "data_context", optional=True),
                            fld("library_type", "library_type"),
