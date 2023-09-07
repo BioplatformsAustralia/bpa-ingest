@@ -594,3 +594,63 @@ class BaseDatasetControlContextual:
 
     def filename_metadata(self, *args, **kwargs):
         return {}
+
+
+class BaseLibraryContextual:
+
+    metadata_patterns = [re.compile(r"^.*\.xlsx$")]
+
+    name_mapping = {
+        "decimal_longitude": "longitude",
+        "decimal_latitude": "latitude",
+        "klass": "class",
+    }
+
+    def __init__(self, logger, path):
+        self._logger = logger
+        self._logger.info("context path is: {}".format(path))
+        self.library_metadata = self._read_metadata(one(glob(path + "/*.xlsx")))
+
+    def get(self, identifier):
+        if identifier in self.library_metadata:
+            return self.library_metadata[identifier]
+        self._logger.warning(
+            "no %s metadata available for: %s" % (type(self).__name__, repr(identifier))
+        )
+        return {}
+
+    def _read_metadata(self, fname):
+
+        library_metadata = {}
+        for sheet_name in self.sheet_names:
+            wrapper = ExcelWrapper(
+                self._logger,
+                self.field_spec,
+                fname,
+                sheet_name=sheet_name,
+                header_length=1,
+                column_name_row_index=0,
+                suggest_template=True,
+            )
+            for error in wrapper.get_errors():
+                self._logger.error(error)
+
+            for row in wrapper.get_all():
+                # need to figure out how to get this as sample id or library id
+                # get row key value
+                key_value = getattr(row, self.metadata_unique_identifier)
+                if not key_value:
+                    continue
+                if key_value in library_metadata:
+                    raise Exception("duplicate {}}: {}".format(self.metadata_unique_identifier, key_value))
+                library_metadata[key_value] = row_meta = {}
+                library_metadata[key_value]["metadata_revision_date"] = (
+                    ingest_utils.get_date_isoformat(self._logger, wrapper.modified))
+                library_metadata[key_value]["metadata_revision_filename"] = (
+                    os.path.basename(fname))
+                for field in row._fields:
+                    value = getattr(row, field)
+                    if field == self.metadata_unique_identifier:
+                        continue
+                    row_meta[self.name_mapping.get(field, field)] = value
+        return library_metadata
