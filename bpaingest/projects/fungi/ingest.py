@@ -1,7 +1,5 @@
 import os
 import re
-from collections import defaultdict
-from urllib.parse import urljoin
 
 from glob import glob
 from unipath import Path
@@ -12,8 +10,7 @@ from .tracking import FungiGoogleTrackMetadata
 from ...abstract import BaseMetadata
 from ...libs import ingest_utils
 from ...libs.excel_wrapper import make_field_definition as fld
-from ...libs.fetch_data import Fetcher, get_password
-from ...sensitive_species_wrapper import SensitiveSpeciesWrapper
+
 from ...util import (
     sample_id_to_ckan_name,
     common_values,
