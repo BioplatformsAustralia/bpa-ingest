@@ -1,25 +1,14 @@
 import os
-import re
-from collections import defaultdict
-from urllib.parse import urljoin
-
 from glob import glob
-from unipath import Path
 
-from . import files
 from .contextual import PlantProteinAtlasLibraryContextual, PlantProteinAtlasDatasetControlContextual
 from .tracking import PlantProteinAtlasGoogleTrackMetadata
 from ...abstract import BaseMetadata
 from ...libs import ingest_utils
 from ...libs.excel_wrapper import make_field_definition as fld
-from ...libs.fetch_data import Fetcher, get_password
-from ...sensitive_species_wrapper import SensitiveSpeciesWrapper
 from ...util import (
     sample_id_to_ckan_name,
-    common_values,
-    merge_values,
     apply_cc_by_license,
-    clean_tag_name,
 )
 
 common_context = [PlantProteinAtlasLibraryContextual, PlantProteinAtlasDatasetControlContextual]
@@ -56,7 +45,6 @@ class PlantProteinAtlasBaseMetadata(BaseMetadata):
         {"key": "field_value", "separator": " "},
         {"key": "flowcell_id", "separator": ""},
     ]
-
 
     def _set_metadata_vars(self, filename):
         self.xlsx_info = self.metadata_info[os.path.basename(filename)]
