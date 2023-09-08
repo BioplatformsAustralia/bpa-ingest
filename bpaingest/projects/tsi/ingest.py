@@ -1,7 +1,6 @@
 import os
 import re
 from collections import defaultdict
-from urllib.parse import urljoin
 
 from glob import glob
 from unipath import Path
@@ -25,6 +24,7 @@ from ...util import (
 common_context = [TSILibraryContextual, TSIDatasetControlContextual]
 
 CONSORTIUM_ORG_NAME = "tsi-consortium-members"
+
 
 class TSIBaseMetadata(BaseMetadata):
     initiative = "TSI"
@@ -68,7 +68,6 @@ class TSIBaseMetadata(BaseMetadata):
         {"key": "field_value", "separator": " "},
         {"key": "flowcell_id", "separator": ""},
     ]
-
 
     def _set_metadata_vars(self, filename):
         self.xlsx_info = self.metadata_info[os.path.basename(filename)]

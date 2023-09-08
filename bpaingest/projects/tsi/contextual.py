@@ -1,21 +1,11 @@
 import re
-import os
-from glob import glob
 from ...libs import ingest_utils
 from ...libs.excel_wrapper import (
-    ExcelWrapper,
     make_field_definition as fld,
     make_skip_column as skp,
 )
-from ...util import make_logger, one
 from ...abstract import BaseDatasetControlContextual
-
-
-def date_or_str(logger, v):
-    d = ingest_utils.get_date_isoformat(logger, v, silent=True)
-    if d is not None:
-        return d
-    return v
+from ...abstract import BaseLibraryContextual
 
 
 class TSIDatasetControlContextual(BaseDatasetControlContextual):
@@ -30,30 +20,13 @@ class TSIDatasetControlContextual(BaseDatasetControlContextual):
     ]
 
 
-
-class TSILibraryContextual:
+class TSILibraryContextual(BaseLibraryContextual):
     metadata_urls = [
         "https://downloads-qcif.bioplatforms.com/bpa/tsi_staging/metadata/2023-08-21/"
     ]
-    metadata_patterns = [re.compile(r"^.*\.xlsx$")]
     name = "tsi-library-contextual"
-    sheet_names = ["Sample metadata"]
-
-    def __init__(self, logger, path):
-        self._logger = logger
-        self._logger.info("context path is: {}".format(path))
-        self.library_metadata = self._read_metadata(one(glob(path + "/*.xlsx")))
-
-    def get(self, identifier):
-        if identifier in self.library_metadata:
-            return self.library_metadata[identifier]
-        self._logger.warning(
-            "no %s metadata available for: %s" % (type(self).__name__, repr(identifier))
-        )
-        return {}
-
-    def _read_metadata(self, fname):
-        field_spec = [
+    metadata_unique_identifier = "sample_id"
+    field_spec = [
             # sample_ID
             fld(
                 "sample_id",
@@ -191,41 +164,3 @@ class TSILibraryContextual:
             fld("material_conc_ng_ul", re.compile(r"[Mm]aterial_conc_ng_ul")),
         ]
 
-        library_metadata = {}
-        for sheet_name in self.sheet_names:
-            wrapper = ExcelWrapper(
-                self._logger,
-                field_spec,
-                fname,
-                sheet_name=sheet_name,
-                header_length=1,
-                column_name_row_index=0,
-                suggest_template=True,
-            )
-            for error in wrapper.get_errors():
-                self._logger.error(error)
-
-            name_mapping = {
-                "decimal_longitude": "longitude",
-                "decimal_latitude": "latitude",
-                "klass": "class",
-            }
-
-            for row in wrapper.get_all():
-                # use sample_id as unique identifier (no library ID exists in context atm)
-                if not row.sample_id:
-                    continue
-                if row.sample_id in library_metadata:
-                    raise Exception("duplicate sample id: {}".format(row.sample_id))
-                sample_id = ingest_utils.extract_ands_id(self._logger, row.sample_id)
-                library_metadata[sample_id] = row_meta = {}
-                library_metadata[sample_id]["metadata_revision_date"] = (
-                    ingest_utils.get_date_isoformat(self._logger, wrapper.modified))
-                library_metadata[sample_id]["metadata_revision_filename"] = (
-                    os.path.basename(fname))
-                for field in row._fields:
-                    value = getattr(row, field)
-                    if field == "sample_id":
-                        continue
-                    row_meta[name_mapping.get(field, field)] = value
-        return library_metadata
