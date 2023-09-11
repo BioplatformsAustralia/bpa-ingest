@@ -1,6 +1,6 @@
 Project: Plant Pathogen (PP),,,,,,,,,,,
 Contact mlum@bioplatforms.com if you need assistance filling this sheet.,,,,,,,,,,,
-Facility to fill,Facility to fill,Facility to fill (Leave empty if data is for >1 sample ID),Facility to fill (Leave empty if data is for >1 library ID),Facility to fill,Project Manager to fill,Facility to fill,Facility to fill,Data team to fill,Project Manager to fill,Data team to fill,Data team to fill
+Facility to fill,Facility to fill,Facility to fill (Leave empty if data is for >1 sample ID),Facility to fill (Leave empty if data is for >1 library ID),Facility to fill,Project Manager to fill,Facility to fill,Facility to fill,Data team to fill,Project Manager to fill,Data team to fill,Project Manager to fill
 ,,,,,,,,,,,
 Facility,Date of transfer,bioplatforms_sample_id,bioplatforms_library_id,bioplatforms_dataset_id,scientific_name,Description,Folder name,Date of transfer to archive,Date data published,CCG JIRA Ticket,Download
 AGRF,01/02/2023,,,399013,Johnsongrass mosaic virus (JGMV),Illmina short read,20230201_PP_AGRF_KTMDN,01/02/2023,15/02/2023,BPAOPS-1357,https://data.bioplatforms.com/dataset?ext_search_by=&q=ticket%3ABPAOPS-1357 
@@ -16,4 +16,6 @@ AGRF,24/07/2023,,,399014,Potato virus Y,Illumina short read,20230724_PP_AGRF_225
 AGRF,11/08/2023,,,399034,Ascochyta fabae,PacBio-HiFi,20230809_PP_AGRF_CAGRF230615295_m84073_230802_055109_s2,11/08/2023,21/08/2023,BPAOPS-1450,https://data.bioplatforms.com/dataset?ext_search_by=&q=ticket%3ABPAOPS-1450
 AGRF,11/08/2023,,,399035,Phaeosphaeria avenaria f.sp. avenaria,PacBio-HiFi,20230809_PP_AGRF_CAGRF230615296_m84073_230802_055109_s2,11/08/2023,22/08/2023,BPAOPS-1451,https://data.bioplatforms.com/dataset?ext_search_by=&q=ticket%3ABPAOPS-1451
 AGRF,11/08/2023,,,399036,Rhynchosporium commune,PacBio-HiFi,20230809_PP_AGRF_CAGRF230615297_m84073_230802_055109_s2,11/08/2023,22/08/2023,BPAOPS-1452,https://data.bioplatforms.com/dataset?ext_search_by=&q=ticket%3ABPAOPS-1452
-AGRF,05/09/2023,,,399033,Puccinia coronata f. sp. avenae,Illumina short read,20230902_PP_AGRF_22CF5KLT3,2023-09-06,,BPAOPS-1470,
+AGRF,05/09/2023,,,399033,Puccinia coronata f. sp. avenae,Illumina short read,20230902_PP_AGRF_22CF5KLT3,06/09/2023,07/09/2023,BPAOPS-1470,https://data.bioplatforms.com/dataset?ext_search_by=&q=ticket%3ABPAOPS-1470
+AGRF,11/09/2023,,,399037,,Illumina short read,20230911_PP_AGRF_CAGRF230615345_22CFFJLT3,11/09/2023,,BPAOPS-1471,
+AGRF,11/09/2023,,,399037,,Illumina short read,20230911_PP_AGRF_CAGRF230615177_22CFFJLT3,,,,
