@@ -83,7 +83,6 @@ class TSIBaseMetadata(BaseMetadata):
                 self._set_metadata_vars(fname)
             for row in rows:
                 if not row.library_id and not row.flowcell_id:
-                    # skip empty rows  -- do we want to do this for TSI??
                     continue
                 sample_id = row.sample_id
                 library_id = row.library_id
@@ -261,8 +260,7 @@ class TSIIlluminaShortreadMetadata(TSIBaseMetadata):
         flow_cell_id = re.match(r"^.*_([^_]+)_metadata.*\.xlsx", filename).groups()[0]
 
         obj.update(
-            {   "data_generated": True,
-                "flow_cell_id": flow_cell_id,
+            {   "flow_cell_id": flow_cell_id,
                 "library_id": row.library_id.split("/")[-1]
              }
         )
@@ -403,7 +401,6 @@ class TSIIlluminaFastqMetadata(TSIBaseMetadata):
         return self._get_common_packages()
 
     def _add_datatype_specific_info_to_package(self, obj, row, filename):
-        obj["data_generated"] = True
         obj["scientific_name"] = "{} {}".format(
                obj["genus"], obj["species"]
         )
@@ -558,22 +555,11 @@ class TSIPacbioHifiMetadata(TSIBaseMetadata):
 
         obj.update(
             {
-                 "sample_submission_date": ingest_utils.get_date_isoformat(
-                    self._logger, self.get_tracking_info(row.ticket, "date_of_transfer")
-                ),
-                "contextual_data_submission_date": None,
-                "data_generated": ingest_utils.get_date_isoformat(
-                    self._logger, self.get_tracking_info(row.ticket, "date_of_transfer_to_archive")
-                ),
-                "archive_ingestion_date": ingest_utils.get_date_isoformat(
-                    self._logger, self.get_tracking_info(row.ticket, "date_of_transfer_to_archive")
-                ),
                  "dataset_url": self.get_tracking_info(row.ticket, "download")
              }
         )
         # below fields are in the metadata, but not required in the packages schema
         del obj["ccg_jira_ticket"]
-        del obj["date_of_transfer_to_archive"]
         del obj["download"]
         del obj["file_count"]
 
@@ -801,19 +787,11 @@ class TSIGenomicsDDRADMetadata(TSIBaseMetadata):
                         "bpa_dataset_id": bpa_dataset_id,
                         "date_of_transfer": ingest_utils.get_date_isoformat(
                             self._logger, self.get_tracking_info(ticket, "date_of_transfer")),
+                        "date_of_transfer_to_archive": ingest_utils.get_date_isoformat(
+                            self._logger, self.get_tracking_info(ticket, "date_of_transfer_to_archive")),
                         "data_type": self.get_tracking_info(ticket, "data_type"),
                         "description": self.get_tracking_info(ticket, "description"),
                         "folder_name": self.get_tracking_info(ticket, "folder_name"),
-                        "sample_submission_date": ingest_utils.get_date_isoformat(
-                            self._logger, self.get_tracking_info(ticket, "date_of_transfer")
-                        ),
-                        "contextual_data_submission_date": None,
-                        "data_generated": ingest_utils.get_date_isoformat(
-                            self._logger, self.get_tracking_info(ticket, "date_of_transfer_to_archive")
-                        ),
-                        "archive_ingestion_date": ingest_utils.get_date_isoformat(
-                            self._logger, self.get_tracking_info(ticket, "date_of_transfer_to_archive")
-                        ),
                         "dataset_url": self.get_tracking_info(ticket, "download"),
                         "type": self.ckan_data_type,
                         "sequence_data_type": self.sequence_data_type,
@@ -828,7 +806,7 @@ class TSIGenomicsDDRADMetadata(TSIBaseMetadata):
                 ingest_utils.permissions_organization_member_after_embargo(
                     self._logger,
                     obj,
-                    "archive_ingestion_date",
+                    "date_of_transfer_to_archive",
                     self.embargo_days,
                     CONSORTIUM_ORG_NAME,
                 )
@@ -842,16 +820,6 @@ class TSIGenomicsDDRADMetadata(TSIBaseMetadata):
     def _add_datatype_specific_info_to_package(self, obj, row, filename):
         obj.update(
             {
-                 "sample_submission_date": ingest_utils.get_date_isoformat(
-                    self._logger, self.get_tracking_info(row.ticket, "date_of_transfer")
-                ),
-                "contextual_data_submission_date": None,
-                "data_generated": ingest_utils.get_date_isoformat(
-                    self._logger, self.get_tracking_info(row.ticket, "date_of_transfer_to_archive")
-                ),
-                "archive_ingestion_date": ingest_utils.get_date_isoformat(
-                    self._logger, self.get_tracking_info(row.ticket, "date_of_transfer_to_archive")
-                ),
                  "dataset_url": self.get_tracking_info(row.ticket, "download")
              }
         )
@@ -996,27 +964,16 @@ class TSIGenomeAssemblyMetadata(TSIBaseMetadata):
             obj.update(common_values(context))
 
         obj.update(
-            {"data_generated": ingest_utils.get_date_isoformat(
-                    self._logger, self.get_tracking_info(row.ticket, "date_of_transfer_to_archive")
-             ),
+            {
              "folder_name": self.get_tracking_info(row.ticket, "folder_name"),
-             "sample_submission_date": ingest_utils.get_date_isoformat(
-                self._logger, self.get_tracking_info(row.ticket, "date_of_transfer")
-             ),
-             "contextual_data_submission_date": None,
-             "archive_ingestion_date": ingest_utils.get_date_isoformat(
-                self._logger, self.get_tracking_info(row.ticket, "date_of_transfer_to_archive")
-             ),
              "dataset_url": self.get_tracking_info(row.ticket, "download"),
              }
         )
         self.build_notes_into_object(obj, {"left-paren": "(", "right-paren": ")"})
         # below fields are in the metadata, but not required in the packages schema
         del obj["ccg_jira_ticket"]
-        del obj["date_of_transfer_to_archive"]
         del obj["download"]
         del obj["file_count"]
-
 
     def _get_resources(self):
         return self._get_common_resources()
@@ -1162,8 +1119,7 @@ class TSIHiCMetadata(TSIBaseMetadata):
     def _add_datatype_specific_info_to_package(self, obj, row, filename):
         # note the complete library id is used to generate the notes field.
         obj.update(
-            {"library_id": row.library_id.split("/")[-1],
-             "data_generated": True
+            {"library_id": row.library_id.split("/")[-1]
              }
         )
         self._build_title_into_object(obj, obj["sample_id"]) # this overrides the one set in the base class.
@@ -1359,11 +1315,7 @@ class TSIGenomicsDArTMetadata(TSIBaseMetadata):
                 # Add sample contextual metadata
                 for contextual_source in self.contextual_metadata:
                     obj.update(contextual_source.get(obj.get("sample_id")))
-
-                # obj.pop("file")
-
                 row_objs.append(obj)
-                # self._logger.info(obj)
 
             combined_obj = common_values(row_objs)
             combined_obj.update(merge_values("scientific_name", " , ", row_objs))
@@ -1380,7 +1332,6 @@ class TSIGenomicsDArTMetadata(TSIBaseMetadata):
                 {
                     "name": name,
                     "id": name,
-                    # "bpa_dataset_id": bpa_dataset_id,
                     "date_of_transfer": ingest_utils.get_date_isoformat(
                         self._logger, self.get_tracking_info(ticket, "date_of_transfer")
                     ),
