@@ -18,7 +18,6 @@ from ...util import (
     sample_id_to_ckan_name,
     common_values,
     merge_values,
-    migrate_field,
     apply_cc_by_license,
 )
 
@@ -119,6 +118,9 @@ class AusargBaseMetadata(BaseMetadata):
                         "date_of_transfer": ingest_utils.get_date_isoformat(
                             self._logger, self.get_tracking_info(row.ticket, "date_of_transfer")
                         ),
+                        "date_of_transfer_to_archive": ingest_utils.get_date_isoformat(
+                            self._logger, self.get_tracking_info(row.ticket, "date_of_transfer_to_archive")
+                        ),
                      }
                 )
                 obj.update(context)
@@ -126,22 +128,14 @@ class AusargBaseMetadata(BaseMetadata):
                 self._build_title_into_object(obj)
                 if "notes" not in obj.keys():   # some classes have a special notes construction method which is run before
                     self.build_notes_into_object(obj)
-                if "date_of_transfer_to_archive" in obj:
-                    ingest_utils.permissions_organization_member_after_embargo(
+                ingest_utils.permissions_organization_member_after_embargo(
                         self._logger,
                         obj,
                         "date_of_transfer_to_archive",
                         self.embargo_days,
                         CONSORTIUM_ORG_NAME,
-                    )
-                else:
-                    ingest_utils.permissions_organization_member_after_embargo(
-                        self._logger,
-                        obj,
-                        "archive_ingestion_date",
-                        self.embargo_days,
-                        CONSORTIUM_ORG_NAME,
-                    )
+                )
+
                 ingest_utils.apply_access_control(self._logger, self, obj)
                 obj["tags"] = [{"name": "{:.100}".format(t)} for t in self.tag_names]
                 packages.append(obj)
@@ -280,11 +274,6 @@ class AusargIlluminaFastqMetadata(AusargBaseMetadata):
         return self._get_common_resources()
 
     def _add_datatype_specific_info_to_package(self, obj, row, filename):
-        obj.update(
-            {
-                "data_generated": True,
-            }
-        )
         tracking_row = self.get_tracking_info(self.ticket)
         if tracking_row is not None:
             track_obj = tracking_row._asdict()
@@ -482,16 +471,6 @@ class AusargONTPromethionMetadata(AusargBaseMetadata):
                 "data_type": self.get_tracking_info(row.ticket, "data_type"),
                 "description": self.get_tracking_info(row.ticket, "description"),
                 "folder_name": self.get_tracking_info(row.ticket, "folder_name"),
-                "sample_submission_date": ingest_utils.get_date_isoformat(
-                    self._logger, self.get_tracking_info(row.ticket, "date_of_transfer")
-                ),
-                "contextual_data_submission_date": None,
-                "data_generated": ingest_utils.get_date_isoformat(
-                    self._logger, self.get_tracking_info(row.ticket, "date_of_transfer_to_archive")
-                ),
-                "archive_ingestion_date": ingest_utils.get_date_isoformat(
-                    self._logger, self.get_tracking_info(row.ticket, "date_of_transfer_to_archive")
-                ),
                 "dataset_url": self.get_tracking_info(row.ticket, "download"),
                 "filename": filename,    # this is removed, it is only added for resource linkage tracking.
             }
@@ -675,16 +654,6 @@ class AusargPacbioHifiMetadata(AusargBaseMetadata):
              "data_type": self.get_tracking_info(row.ticket, "data_type"),
              "description": self.get_tracking_info(row.ticket, "description"),
              "folder_name": self.get_tracking_info(row.ticket, "folder_name"),
-             "sample_submission_date": ingest_utils.get_date_isoformat(
-                self._logger, self.get_tracking_info(row.ticket, "date_of_transfer")
-             ),
-             "contextual_data_submission_date": None,
-             "data_generated": ingest_utils.get_date_isoformat(
-                 self._logger, self.get_tracking_info(row.ticket, "date_of_transfer_to_archive")
-             ),
-             "archive_ingestion_date": ingest_utils.get_date_isoformat(
-                 self._logger, self.get_tracking_info(row.ticket, "date_of_transfer_to_archive")
-             ),
              "dataset_url": self.get_tracking_info(row.ticket, "download"),
              "type": self.ckan_data_type,
              "sequence_data_type": self.sequence_data_type,
@@ -844,16 +813,6 @@ class AusargExonCaptureMetadata(AusargBaseMetadata):
                 "data_type": self.get_tracking_info(row.ticket, "data_type"),
                 "description": self.get_tracking_info(row.ticket, "description"),
                 "folder_name": self.get_tracking_info(row.ticket, "folder_name"),
-                "sample_submission_date": ingest_utils.get_date_isoformat(
-                    self._logger, self.get_tracking_info(row.ticket, "date_of_transfer")
-                ),
-                "contextual_data_submission_date": None,
-                "data_generated": ingest_utils.get_date_isoformat(
-                    self._logger, self.get_tracking_info(row.ticket, "date_of_transfer_to_archive")
-                ),
-                "archive_ingestion_date": ingest_utils.get_date_isoformat(
-                    self._logger, self.get_tracking_info(row.ticket, "date_of_transfer_to_archive")
-                ),
                 "dataset_url": self.get_tracking_info(row.ticket, "download"),
             }
         )
@@ -1033,7 +992,6 @@ class AusargHiCMetadata(AusargBaseMetadata):
                 "id": name,
                 "sequence_data_type": self.sequence_data_type,
                 "flowcell_id": row.flowcell_id,
-                "data_generated": True,
                 "library_id": raw_library_id,
             }
         )
@@ -1246,19 +1204,12 @@ class AusargGenomicsDArTMetadata(AusargBaseMetadata):
                     "date_of_transfer": ingest_utils.get_date_isoformat(
                         self._logger, self.get_tracking_info(ticket, "date_of_transfer")
                     ),
+                    "date_of_transfer_to_archive": ingest_utils.get_date_isoformat(
+                        self._logger, self.get_tracking_info(ticket, "date_of_transfer_to_archive")
+                    ),
                     "data_type": self.get_tracking_info(ticket, "data_type"),
                     "description": self.get_tracking_info(ticket, "description"),
                     "folder_name": self.get_tracking_info(ticket, "folder_name"),
-                    "sample_submission_date": ingest_utils.get_date_isoformat(
-                        self._logger, self.get_tracking_info(ticket, "date_of_transfer")
-                    ),
-                    "contextual_data_submission_date": None,
-                    "data_generated": ingest_utils.get_date_isoformat(
-                        self._logger, self.get_tracking_info(ticket, "date_of_transfer_to_archive")
-                    ),
-                    "archive_ingestion_date": ingest_utils.get_date_isoformat(
-                        self._logger, self.get_tracking_info(ticket, "date_of_transfer_to_archive")
-                    ),
                     "dataset_url": self.get_tracking_info(ticket, "download"),
                     "type": self.ckan_data_type,
                     "sequence_data_type": self.sequence_data_type,
@@ -1272,22 +1223,13 @@ class AusargGenomicsDArTMetadata(AusargBaseMetadata):
             self._build_title_into_object(obj)
             self.build_notes_into_object(obj, {"organism_scientific_name": organism_scientific_name,
                                                "additional_notes": additional_notes})
-            if "date_of_transfer_to_archive" in obj:
-                ingest_utils.permissions_organization_member_after_embargo(
+            ingest_utils.permissions_organization_member_after_embargo(
                     self._logger,
                     obj,
                     "date_of_transfer_to_archive",
                     self.embargo_days,
                     CONSORTIUM_ORG_NAME,
-                )
-            else:
-                ingest_utils.permissions_organization_member_after_embargo(
-                    self._logger,
-                    obj,
-                    "archive_ingestion_date",
-                    self.embargo_days,
-                    CONSORTIUM_ORG_NAME,
-                )
+            )
 
             attach_message = (
                 "Attached metadata spreadsheets were produced when data was generated."
@@ -1515,19 +1457,11 @@ class AusargGenomicsDDRADMetadata(AusargBaseMetadata):
                         "bpa_dataset_id": bpa_dataset_id,
                         "date_of_transfer": ingest_utils.get_date_isoformat(
                             self._logger, self.get_tracking_info(ticket, "date_of_transfer")),
+                        "date_of_transfer_to_archive": ingest_utils.get_date_isoformat(
+                            self._logger, self.get_tracking_info(ticket, "date_of_transfer_to_archive")),
                         "data_type": self.get_tracking_info(ticket, "data_type"),
                         "description": self.get_tracking_info(ticket, "description"),
                         "folder_name": self.get_tracking_info(ticket, "folder_name"),
-                        "sample_submission_date": ingest_utils.get_date_isoformat(
-                            self._logger, self.get_tracking_info(ticket, "date_of_transfer")
-                        ),
-                        "contextual_data_submission_date": None,
-                        "data_generated": ingest_utils.get_date_isoformat(
-                            self._logger, self.get_tracking_info(ticket, "date_of_transfer_to_archive")
-                        ),
-                        "archive_ingestion_date": ingest_utils.get_date_isoformat(
-                            self._logger, self.get_tracking_info(ticket, "date_of_transfer_to_archive")
-                        ),
                         "dataset_url": self.get_tracking_info(ticket, "download"),
                         "type": self.ckan_data_type,
                         "sequence_data_type": self.sequence_data_type,
@@ -1542,7 +1476,7 @@ class AusargGenomicsDDRADMetadata(AusargBaseMetadata):
                 ingest_utils.permissions_organization_member_after_embargo(
                     self._logger,
                     obj,
-                    "archive_ingestion_date",
+                    "date_of_transfer_to_archive",
                     self.embargo_days,
                     CONSORTIUM_ORG_NAME,
                 )
@@ -1555,18 +1489,7 @@ class AusargGenomicsDDRADMetadata(AusargBaseMetadata):
 
     def _add_datatype_specific_info_to_package(self, obj, row, filename):
         obj.update(
-            {
-                 "sample_submission_date": ingest_utils.get_date_isoformat(
-                    self._logger, self.get_tracking_info(row.ticket, "date_of_transfer")
-                ),
-                "contextual_data_submission_date": None,
-                "data_generated": ingest_utils.get_date_isoformat(
-                    self._logger, self.get_tracking_info(row.ticket, "date_of_transfer_to_archive")
-                ),
-                "archive_ingestion_date": ingest_utils.get_date_isoformat(
-                    self._logger, self.get_tracking_info(row.ticket, "date_of_transfer_to_archive")
-                ),
-                 "dataset_url": self.get_tracking_info(row.ticket, "download")
+            {  "dataset_url": self.get_tracking_info(row.ticket, "download")
              }
         )
         # below fields are in the metadata, but not required in the packages schema
