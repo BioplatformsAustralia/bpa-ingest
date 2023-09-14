@@ -27,7 +27,7 @@ class PlantPathogenDatasetControlContextual(BaseDatasetControlContextual):
 
 class PlantPathogenLibraryContextual(BaseLibraryContextual):
     metadata_urls = [
-        "https://downloads-qcif.bioplatforms.com/bpa/pp_staging/metadata/2023-09-06/"
+        "https://downloads-qcif.bioplatforms.com/bpa/pp_staging/metadata/2023-09-14"
     ]
     name = "pp-library-contextual"
     sheet_names = ["Virus",
