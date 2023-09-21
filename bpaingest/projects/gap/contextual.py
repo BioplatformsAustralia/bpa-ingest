@@ -1,20 +1,12 @@
 import re
-from glob import glob
 from ...libs import ingest_utils
 from ...libs.excel_wrapper import (
-    ExcelWrapper,
     make_field_definition as fld,
     make_skip_column as skp,
 )
-from ...util import make_logger, one
 from ...abstract import BaseDatasetControlContextual
+from ...abstract import BaseLibraryContextual
 
-
-def date_or_str(logger, v):
-    d = ingest_utils.get_date_isoformat(logger, v, silent=True)
-    if d is not None:
-        return d
-    return v
 
 
 class GAPDatasetControlContextual(BaseDatasetControlContextual):
@@ -28,11 +20,10 @@ class GAPDatasetControlContextual(BaseDatasetControlContextual):
     ]
 
 
-class GAPLibraryContextual:
+class GAPLibraryContextual(BaseLibraryContextual):
     metadata_urls = [
         "https://downloads-qcif.bioplatforms.com/bpa/plants_staging/metadata/2023-09-14/"
     ]
-    metadata_patterns = [re.compile(r"^.*\.xlsx$")]
     name = "gap-library-contextual"
     sheet_names = [
         "Ref_genomes",
@@ -46,23 +37,7 @@ class GAPLibraryContextual:
         "Conservation_bait capture",
     ]
 
-    def __init__(self, logger, path):
-        self._logger = logger
-        self._logger.info("context path is: {}".format(path))
-        self.library_metadata = self._read_metadata(one(glob(path + "/*.xlsx")))
-
-    def get(self, library_id, dataset_id):
-        if (library_id, dataset_id) in self.library_metadata:
-            return self.library_metadata[(library_id, dataset_id)]
-        self._logger.warning(
-            "no %s metadata available for: (%s,%s)"
-            % (type(self).__name__, repr(library_id), repr(dataset_id))
-        )
-        return {}
-
-    def _read_metadata(self, fname):
-
-        field_spec = [
+    field_spec = [
             fld("data_type", "data_type"),
             fld("project_aim", "project_aim"),
             fld("sample_submitter_name", "sample_submitter_name"),
@@ -187,41 +162,32 @@ class GAPLibraryContextual:
             skp("description_googledoc_(remove before sending to gb)"),
         ]
 
-        library_metadata = {}
-        for sheet_name in self.sheet_names:
-            wrapper = ExcelWrapper(
-                self._logger,
-                field_spec,
-                fname,
-                sheet_name=sheet_name,
-                header_length=1,
-                column_name_row_index=0,
-                suggest_template=True,
-            )
-            for error in wrapper.get_errors():
-                self._logger.error(error)
+    def get(self, library_id, dataset_id):
+        if (library_id, dataset_id) in self.library_metadata:
+            return self.library_metadata[(library_id, dataset_id)]
+        self._logger.warning(
+            "no %s metadata available for: (%s,%s)"
+            % (type(self).__name__, repr(library_id), repr(dataset_id))
+        )
+        return {}
 
-            name_mapping = {
-                "decimal_longitude": "longitude",
-                "decimal_latitude": "latitude",
-                "klass": "class",
-            }
+    def process_row(self, row, library_metadata, metadata_filename, metadata_modified):
+        # this is different to the base class because there are 2 fields used as the key. (library AND dataset ids)
 
-            for row in wrapper.get_all():
-                if not row.library_id or not row.dataset_id:
-                    continue
-                if (row.library_id, row.dataset_id) in library_metadata:
-                    raise Exception(
-                        "duplicate library / dataset id: {} {}".format(
-                            row.library_id, row.dataset_id
-                        )
-                    )
-                library_id = ingest_utils.extract_ands_id(self._logger, row.library_id)
-                dataset_id = ingest_utils.extract_ands_id(self._logger, row.dataset_id)
-                library_metadata[(library_id, dataset_id)] = row_meta = {}
-                for field in row._fields:
-                    value = getattr(row, field)
-                    if field == "library_id" or field == "dataset_id":
-                        continue
-                    row_meta[name_mapping.get(field, field)] = value
+        if not row.library_id or not row.dataset_id:
+            return library_metadata
+        if (row.library_id, row.dataset_id) in library_metadata:
+            raise Exception("duplicate library / dataset id: {} {}".format(row.library_id, row.dataset_id))
+        library_id = ingest_utils.extract_ands_id(self._logger, row.library_id)
+        dataset_id = ingest_utils.extract_ands_id(self._logger, row.dataset_id)
+        library_metadata[(library_id, dataset_id)] = row_meta = {}
+        library_metadata[(library_id, dataset_id)]["metadata_revision_date"] = (
+            ingest_utils.get_date_isoformat(self._logger, metadata_modified))
+        library_metadata[(library_id, dataset_id)]["metadata_revision_filename"] = metadata_filename
+
+        for field in row._fields:
+            value = getattr(row, field)
+            if field == "library_id" or field == "dataset_id":
+                continue
+            row_meta[self.name_mapping.get(field, field)] = value
         return library_metadata

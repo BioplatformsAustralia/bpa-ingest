@@ -774,21 +774,23 @@ class BaseLibraryContextual:
                 self._logger.error(error)
 
             for row in wrapper.get_all():
-                # need to figure out how to get this as sample id or library id
-                # get row key value
-                key_value = getattr(row, self.metadata_unique_identifier)
-                if not key_value:
-                    continue
-                if key_value in library_metadata:
-                    raise Exception("duplicate {}}: {}".format(self.metadata_unique_identifier, key_value))
-                library_metadata[key_value] = row_meta = {}
-                library_metadata[key_value]["metadata_revision_date"] = (
-                    ingest_utils.get_date_isoformat(self._logger, wrapper.modified))
-                library_metadata[key_value]["metadata_revision_filename"] = (
-                    os.path.basename(fname))
-                for field in row._fields:
-                    value = getattr(row, field)
-                    if field == self.metadata_unique_identifier:
-                        continue
-                    row_meta[self.name_mapping.get(field, field)] = value
+                library_metadata = self.process_row(row, library_metadata, os.path.basename(fname), wrapper.modified)
+
+        return library_metadata
+
+    def process_row(self, row, library_metadata, metadata_filename, metadata_modified):
+        key_value = getattr(row, self.metadata_unique_identifier)
+        if not key_value:
+            return library_metadata
+        if key_value in library_metadata:
+            raise Exception("duplicate {}: {}".format(self.metadata_unique_identifier, key_value))
+        library_metadata[key_value] = row_meta = {}
+        library_metadata[key_value]["metadata_revision_date"] = (
+            ingest_utils.get_date_isoformat(self._logger, metadata_modified))
+        library_metadata[key_value]["metadata_revision_filename"] = metadata_filename
+        for field in row._fields:
+            value = getattr(row, field)
+            if field == self.metadata_unique_identifier:
+                continue
+            row_meta[self.name_mapping.get(field, field)] = value
         return library_metadata

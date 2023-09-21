@@ -102,7 +102,7 @@ class GAPBaseMetadata(BaseMetadata):
                         "date_of_transfer": ingest_utils.get_date_isoformat(
                             self._logger, self.get_tracking_info(row.ticket, "date_of_transfer")
                         ),
-                        "data_generated": ingest_utils.get_date_isoformat(
+                        "date_of_transfer_to_archive": ingest_utils.get_date_isoformat(
                             self._logger, self.get_tracking_info(row.ticket, "date_of_transfer_to_archive")
                         ),
                      }
@@ -684,10 +684,7 @@ class GAPGenomicsDDRADMetadata(GAPBaseMetadata):
                         "data_type": track_meta.data_type,
                         "description": track_meta.description,
                         "folder_name": track_meta.folder_name,
-                        "data_generated": ingest_utils.get_date_isoformat(
-                            self._logger, track_meta.date_of_transfer_to_archive
-                        ),
-                        "archive_ingestion_date": ingest_utils.get_date_isoformat(
+                        "date_of_transfer_to_archive": ingest_utils.get_date_isoformat(
                             self._logger, track_meta.date_of_transfer_to_archive
                         ),
                         "dataset_url": track_meta.download,
@@ -828,18 +825,14 @@ class GAPPacbioHifiMetadata(GAPBaseMetadata):
 
         obj.update(
                     {  "id":name,
-                        "name": name,
+                       "name": name,
                        "dataset_id": row.dataset_id,
                         "date_of_transfer": ingest_utils.get_date_isoformat(
                             self._logger, track_meta.date_of_transfer),
                         "data_type": track_meta.data_type,
                         "description": track_meta.description,
                         "folder_name": track_meta.folder_name,
-                        "sample_submission_date": ingest_utils.get_date_isoformat(
-                            self._logger, track_meta.date_of_transfer
-                        ),
-                        "contextual_data_submission_date": None,
-                        "archive_ingestion_date": ingest_utils.get_date_isoformat(
+                        "date_of_transfer_to_archive": ingest_utils.get_date_isoformat(
                             self._logger, track_meta.date_of_transfer_to_archive
                         ),
                         "dataset_url": track_meta.download,
@@ -849,7 +842,6 @@ class GAPPacbioHifiMetadata(GAPBaseMetadata):
 
 # below fields are in the metadata, but not required in the packages schema
         del obj["ccg_jira_ticket"]
-        del obj["date_of_transfer_to_archive"]
         del obj["download"]
 
 
