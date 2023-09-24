@@ -17,5 +17,9 @@ AGRF,11/08/2023,,,399034,Ascochyta fabae,PacBio-HiFi,20230809_PP_AGRF_CAGRF23061
 AGRF,11/08/2023,,,399035,Phaeosphaeria avenaria f.sp. avenaria,PacBio-HiFi,20230809_PP_AGRF_CAGRF230615296_m84073_230802_055109_s2,11/08/2023,22/08/2023,BPAOPS-1451,https://data.bioplatforms.com/dataset?ext_search_by=&q=ticket%3ABPAOPS-1451
 AGRF,11/08/2023,,,399036,Rhynchosporium commune,PacBio-HiFi,20230809_PP_AGRF_CAGRF230615297_m84073_230802_055109_s2,11/08/2023,22/08/2023,BPAOPS-1452,https://data.bioplatforms.com/dataset?ext_search_by=&q=ticket%3ABPAOPS-1452
 AGRF,05/09/2023,,,399033,Puccinia coronata f. sp. avenae,Illumina short read,20230902_PP_AGRF_22CF5KLT3,06/09/2023,07/09/2023,BPAOPS-1470,https://data.bioplatforms.com/dataset?ext_search_by=&q=ticket%3ABPAOPS-1470
-AGRF,11/09/2023,,,399037,,Illumina short read,20230911_PP_AGRF_CAGRF230615345_22CFFJLT3,11/09/2023,,BPAOPS-1471,
-AGRF,11/09/2023,,,399037,,Illumina short read,20230911_PP_AGRF_CAGRF230615177_22CFFJLT3,2023-09-12,,BPAOPS-1472,
+AGRF,11/09/2023,,,399037,Phaeosphaeria avenaria f.sp. avenaria ,Illumina short read,20230911_PP_AGRF_CAGRF230615345_22CFFJLT3,11/09/2023,12/09/2023,BPAOPS-1471,https://data.bioplatforms.com/dataset?ext_search_by=&q=ticket%3ABPAOPS-1471
+AGRF,11/09/2023,,,399032,Pyrenophora teres f. teres - no metadata,Illumina short read,20230911_PP_AGRF_CAGRF230615177_22CFFJLT3,12/09/2023,,BPAOPS-1472,https://data.bioplatforms.com/dataset?ext_search_by=&q=ticket%3ABPAOPS-1472
+AGRF,22/09/2023,,,399041,Rhizoctonia solani AG8,Illumina short read,20230922_PP_AGRF_CAGRF230715548_22CF5LLT3,22/09/2023,,BPAOPS-1483,
+AGRF,22/09/2023,,,399040,Fusarium pseudograminearum,Illumina short read,20230922_PP_AGRF_CAGRF230715549_22CF5LLT3,22/09/2023,,BPAOPS-1482,
+AGRF,22/09/2023,,,399038,Colletotrichum gloeosporioides,Illumina short read,20230922_PP_AGRF_CAGRF230715551_22CF5LLT3,2023-09-25,,BPAOPS-1485,
+AGRF,22/09/2023,,,399039,Diaporthe toxica,Illumina short read,20230922_PP_AGRF_CAGRF230715550_22CF5LLT3,2023-09-25,,BPAOPS-1484,
