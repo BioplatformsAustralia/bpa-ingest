@@ -30,11 +30,17 @@ class AusargBaseMetadata(BaseMetadata):
     organization = "ausarg"
 
     notes_mapping = [
+        {"key": "family", "separator": ", "},
         {"key": "genus", "separator": " "},
         {"key": "species", "separator": ", "},
-        {"key": "voucher_or_tissue_number", "separator": " "},
-        {"key": "country", "separator": " "},
-        {"key": "state_or_region"},
+        {"key": "specimen_id", "separator": ", "},
+        {"key": "taxonomic_group"},
+    ]
+    title_mapping = [
+        {"key": "common_name", "separator": ", "},
+        {"key": "data_context", "separator": ", "},
+        {"key": "data_type", "separator": ", "},
+        {"key": "tissue_type"},
     ]
 
     # below are defined here so they can be used with self., but values set in the init method of the relevant subclass.
@@ -253,16 +259,6 @@ class AusargIlluminaFastqMetadata(AusargBaseMetadata):
             re.compile(r"^.*TestFiles\.exe.*"),
         ],
     }
-    title_mapping = []    # this may get set at some point, but title was not set from Illumina FastQ datatype.
-    notes_mapping = [
-        {"key": "genus", "separator": " "},
-        {"key": "species", "separator": ", "},
-        {"key": "ausarg_project", "separator": ", "},
-        {"key": "sequencing_platform", "separator": " "},
-        {"key": "library_type", "separator": ", "},
-        {"key": "state_or_origin", "separator": ", "},
-        {"key": "country"},
-    ]
     tag_names = ["illumina-fastq"]
     description = "Ilumina FASTQ"
 
@@ -438,20 +434,7 @@ class AusargONTPromethionMetadata(AusargBaseMetadata):
             re.compile(r"^.*TestFiles\.exe.*"),
         ],
     }
-    notes_mapping = [
-        {"key": "library_id", "separator": "\n"},
-        {"key": "genus", "separator": " "},
-        {"key": "species", "separator": ", "},
-        {"key": "voucher_or_tissue_number", "separator": " "},
-        {"key": "country", "separator": " "},
-        {"key": "state_or_region"},
-    ]
-    title_mapping = [
-        {"key": "initiative", "separator": " "},
-        {"key": "title_description", "separator": " "},
-        {"key": "sample_id", "separator": " "},
-        {"key": "flowcell_id", "separator": ""},
-    ]
+
     description = "ONT PromethION"
     tag_names = ["ont-promethion"]
 
@@ -611,11 +594,6 @@ class AusargPacbioHifiMetadata(AusargBaseMetadata):
     ]
     common_files_linkage = ("flowcell_id",)
 
-    title_mapping = [
-        {"key": "initiative", "separator": " "},
-        {"key": "title_description", "separator": " "},
-        {"key": "library_id", "separator": ""},
-    ]
     description = "Pacbio HiFi"
     tag_names = ["pacbio-hifi"]
 
@@ -788,13 +766,7 @@ class AusargExonCaptureMetadata(AusargBaseMetadata):
             re.compile(r"^.*TestFiles\.exe.*"),
         ],
     }
-    title_mapping = [
-        {"key": "initiative", "separator": " "},
-        {"key": "title_description", "separator": " "},
-        {"key": "library_id", "separator": " "},
-        {"key": "flowcell_id", "separator": " "},
-        {"key": "library_index_seq", "separator": ""},
-    ]
+
     description = "Exon Capture Raw"
     tag_names = ["exon-capture", "raw"]
 
@@ -946,20 +918,6 @@ class AusargHiCMetadata(AusargBaseMetadata):
         ],
     }
 
-    notes_mapping = [
-        {"key": "complete_library_id", "separator": "\n"},
-        {"key": "genus", "separator": " "},
-        {"key": "species", "separator": ", "},
-        {"key": "voucher_or_tissue_number", "separator": " "},
-        {"key": "country", "separator": " "},
-        {"key": "state_or_region"},
-    ]
-    title_mapping = [
-        {"key": "initiative", "separator": " "},
-        {"key": "title_description", "separator": " "},
-        {"key": "sample_id", "separator": " "},
-        {"key": "flowcell_id", "separator": ""},
-    ]
     tag_names = ["genomics"]
 
     def _build_notes_into_object(self, obj, library_id):
@@ -1135,15 +1093,6 @@ class AusargGenomicsDArTMetadata(AusargBaseMetadata):
         ],
     }
 
-    notes_mapping = [
-        {"key": "organism_scientific_name", "separator": "\n"},
-        {"key": "additional_notes"},
-    ]
-    title_mapping = [
-        {"key": "initiative", "separator": " "},
-        {"key": "title_description", "separator": " "},
-        {"key": "dataset_id", "separator": ""},
-    ]
     description = "DArT"
     tag_names = ["genomics-dart"]
 
@@ -1388,16 +1337,7 @@ class AusargGenomicsDDRADMetadata(AusargBaseMetadata):
             re.compile(r"^.*DataValidation\.pdf.*"),
         ],
     }
-    notes_mapping = [
-        {"key": "scientific_name", "separator": "\n"},
-        {"key": "additional_notes"},
-    ]
-    title_mapping = [
-        {"key": "initiative", "separator": " "},
-        {"key": "title_description", "separator": " "},
-        {"key": "bpa_dataset_id", "separator": " "},
-        {"key": "field_value", "separator": " "},
-    ]
+
     description = "Genomics ddRAD"
     tag_names = ["genomics-ddrad"]
 
