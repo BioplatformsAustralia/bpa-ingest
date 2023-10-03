@@ -114,6 +114,10 @@ class AusargBaseMetadata(BaseMetadata):
                 context = {}
                 for contextual_source in self.contextual_metadata:
                     context.update(contextual_source.get(row.sample_id))
+                obj.update(context)
+
+                tracking_row = self.get_tracking_info(row.ticket)
+
                 obj.update(
                     {
                         "name": name,
@@ -122,14 +126,21 @@ class AusargBaseMetadata(BaseMetadata):
                         "sequence_data_type": self.sequence_data_type,
                         "license_id": apply_cc_by_license(),
                         "date_of_transfer": ingest_utils.get_date_isoformat(
-                            self._logger, self.get_tracking_info(row.ticket, "date_of_transfer")
-                        ),
+                            self._logger, tracking_row.date_of_transfer),
                         "date_of_transfer_to_archive": ingest_utils.get_date_isoformat(
-                            self._logger, self.get_tracking_info(row.ticket, "date_of_transfer_to_archive")
-                        ),
-                     }
+                            self._logger, tracking_row.date_of_transfer_to_archive),
+                        "description": tracking_row.description,
+                        "facility": tracking_row.facility,
+                        "folder_name": tracking_row.folder_name,
+                        "project_aim": tracking_row.project_aim
+                    }
                 )
-                obj.update(context)
+
+                if tracking_row.data_type is not None:
+                    # force the sequence datatype to the one in the tracking spreadsheet
+                    obj["sequence_data_type"] = tracking_row.data_type
+                    obj["data_type"] = tracking_row.data_type
+
                 self._add_datatype_specific_info_to_package(obj, row, fname)
                 self._build_title_into_object(obj)
                 if "notes" not in obj.keys():   # some classes have a special notes construction method which is run before
@@ -270,12 +281,6 @@ class AusargIlluminaFastqMetadata(AusargBaseMetadata):
         return self._get_common_resources()
 
     def _add_datatype_specific_info_to_package(self, obj, row, filename):
-        tracking_row = self.get_tracking_info(self.ticket)
-        if tracking_row is not None:
-            track_obj = tracking_row._asdict()
-            obj.update(track_obj)
-            if obj["data_type"] is not None:
-                obj["sequence_data_type"] = obj["data_type"]  # force the sequense datatype to the one in the tracking spreadsheet
             # overwrite potentially incorrect values from tracking data - fail if source fields don't exist
             obj["bioplatforms_sample_id"] = obj["sample_id"]
             obj["bioplatforms_library_id"] = obj["library_id"]
