@@ -947,7 +947,14 @@ class AusargHiCMetadata(AusargBaseMetadata):
         )
         tracking_row = self.get_tracking_info(self.ticket)
         if tracking_row is not None:
-            obj.update(tracking_row._asdict())
+            obj.update(
+                {
+                "scientific_name": tracking_row.scientific_name,
+                "bioplatforms_dataset_id": tracking_row.bioplatforms_dataset_id,
+                "bioplatforms_library_id": tracking_row.bioplatforms_library_id,
+                "bioplatforms_sample_id": tracking_row.bioplatforms_sample_id,
+                }
+            )
         obj.update(
             {
                 "sample_id": sample_id,
