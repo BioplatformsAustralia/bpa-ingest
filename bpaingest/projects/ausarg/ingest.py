@@ -34,7 +34,8 @@ class AusargBaseMetadata(BaseMetadata):
         {"key": "genus", "separator": " "},
         {"key": "species", "separator": ", "},
         {"key": "specimen_id", "separator": ", "},
-        {"key": "taxonomic_group"},
+        {"key": "taxonomic_group", "separator": ", Project Lead: "},
+        {"key": "data_custodian"},
     ]
     title_mapping = [
         {"key": "common_name", "separator": ", "},
