@@ -1,6 +1,8 @@
-Project: CIPPS,,,,,,,,,,,,,
-Contact smazard@bioplatforms.com if you need assistance filling this sheet.,,,,,,,,,,,,,
-Facility to fill,Facility to fill,Facility to fill (Leave empty if data is for >1 species),Facility to fill (Leave empty if data is for >1 species),Facility to fill,Project Manager to fill,Facility to fill,Facility to fill,Data team to fill,Project Manager to fill,Data team to fill,Data team to fill,,
-,,,,,,,,,,,,,
-Facility,Date of transfer,Data type,Description,Folder name,bioplatforms_sample_id,bioplatforms_library_id,bioplatforms_dataset_id,scientific_name,project_aim,Date of transfer to archive,File Count,CCG JIRA Ticket,Download
-Ramaciotti,18/4/2023,fastq,Illumina short read,20230406_CIPPS_UNSW_H3MCVDSX7,,,,,,19/04/2023,,BPAOPS-1381,
+Project: CIPPS,,,,,,,,,
+Contact smazard@bioplatforms.com if you need assistance filling this sheet.,,,,,,,,,
+Facility to fill,Facility to fill,Facility to fill (Leave empty if data is for >1 species),Facility to fill (Leave empty if data is for >1 species),Facility to fill,"Project Manager to fill, data control related",Data team to fill,Data team to fill,,
+,,,,,,,,,
+Facility,Date of transfer,Data type,Description,Folder name,,Date of transfer to archive,File Count,CCG JIRA Ticket,Download
+Ramaciotti,18/4/2023,illumina-transcriptomics,Illumina short read,20230406_CIPPS_UNSW_H3MCVDSX7,data control sheet updated,19/04/2023,,BPAOPS-1381,Replaced with renamed files in BPAOPS-1492
+UNSW,9/10/2023,illumina-transcriptomics,Illumina short read,20230929_CIPPS_UNSW_22C5YVLT3,https://trello.com/c/O8gsGKsQ,9/10/2023,,BPAOPS-1489,
+Ramaciotti,18/4/2023,illumina-transcriptomics,Illumina short read,20230406_CIPPS_UNSW_H3MCVDSX7,data control sheet updated,19/04/2023,,BPAOPS-1492,
