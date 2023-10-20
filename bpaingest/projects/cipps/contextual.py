@@ -10,7 +10,7 @@ from ...abstract import BaseLibraryContextual
 
 class CIPPSDatasetControlContextual(BaseDatasetControlContextual):
     metadata_urls = [
-        "https://downloads-qcif.bioplatforms.com/bpa/cipps_staging/dataset_control/2023-04-11/"
+        "https://downloads-qcif.bioplatforms.com/bpa/cipps_staging/dataset_control/2023-10-18/"
     ]
     name = "cipps-dataset-contextual"
     sheet_names = [
@@ -21,12 +21,11 @@ class CIPPSDatasetControlContextual(BaseDatasetControlContextual):
         fld('bioplatforms_library_id', 'bioplatforms_library_id', coerce=ingest_utils.extract_ands_id,),
         fld('bioplatforms_dataset_id', 'bioplatforms_dataset_id', coerce=ingest_utils.extract_ands_id,),
         fld('bioplatforms_project_code', 'bioplatforms_project_code'),
-        fld('data_type', 'data_type'),
     ]
 
 class CIPPSLibraryContextual(BaseLibraryContextual):
     metadata_urls = [
-        "https://downloads-qcif.bioplatforms.com/bpa/cipps_staging/metadata/2023-04-11/"
+        "https://downloads-qcif.bioplatforms.com/bpa/cipps_staging/metadata/2023-10-19/"
     ]
     name = "cipps-library-contextual"
     sheet_names = ["Sample metadata"]
@@ -123,13 +122,13 @@ class CIPPSLibraryContextual(BaseLibraryContextual):
         # coord_uncertainty_metres
         fld("coord_uncertainty_metres", "coord_uncertainty_metres", optional=True),
         # genotypic sex
-        fld("genotypic_sex", "genotypic sex"),
+        fld("genotypic_sex", "genotypic_sex"),
         # phenotypic sex
-        fld("phenotypic_sex", "phenotypic sex"),
-        # method of determination
-        fld("method_of_determination", "method of determination"),
-        # certainty
-        fld("certainty", "certainty"),
+        fld("phenotypic_sex", "phenotypic_sex"),
+        # method_sex_determination
+        fld('method_sex_determination', 'method_sex_determination'),
+        # sex_certainty
+        fld("sex_certainty", "sex_certainty"),
         # life-stage
         fld("lifestage", re.compile("life[_-]stage")),
         # birth_date
