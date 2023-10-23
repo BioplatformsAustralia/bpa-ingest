@@ -134,9 +134,11 @@ DART_PATTERN = r"""
     AusARG_
     (?P<facility_id>(BRFDArT))_
     (?P<flowcell_id>\w{9})
+    (_(?P<run>\d{1}))?
     \.
     tar
 """
+
 dart_filename_re = re.compile(DART_PATTERN, re.VERBOSE)
 
 DART_XLSX_PATTERN = r"""
