@@ -101,6 +101,8 @@ from .fungi.ingest import (
 from .plant_pathogen.ingest import (
     PlantPathogenIlluminaShortreadMetadata,
     PlantPathogenPacbioHifiMetadata,
+    PlantPathogenONTPromethionMetadata,
+
  )
 
 from .cipps.ingest import (
@@ -214,6 +216,7 @@ class ProjectInfo:
         "pp": [
             PlantPathogenIlluminaShortreadMetadata,
             PlantPathogenPacbioHifiMetadata,
+            PlantPathogenONTPromethionMetadata,
         ],
         "cipps": [
             CIPPSIlluminaShortreadMetadata,
