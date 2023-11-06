@@ -1,18 +1,37 @@
 # VERIFY
 from bpaingest.projects.plant_protein_atlas.files import (
-    illumina_shortread_re,
+    phenoct_xray_raw_re,
+    phenoct_xray_analysed_re,
+    hyperspect_re,
+    asd_spectro_re,
  )
 
-
-# VERIFY
-
-
-def test_illumina_shortread():
+def test_phenoct_xray_raw():
     filenames = [
-        "355598_PPA_AGRF_H3GYVDSX2_AACTGAGC-CAATCAGG_L004_R2.fastq.gz",
-        "45_5_PPA_AGRF_HNGM7DSX5_AATTCTTGGA-AAGTTGACAA_L004_R1.fastq.gz",
+        "448803_LibID450863_PPA_APPF_PhenoCT_Xray.rek",
     ]
     for filename in filenames:
-        assert illumina_shortread_re.match(filename) is not None
+        assert phenoct_xray_raw_re.match(filename) is not None
 
+def test_phenoct_xray_analysed():
+    filenames = [
+        "448802_LibID450862_PPA_APPF_PhenoCT_analysed_data_files.zip",
+    ]
+    for filename in filenames:
+        assert phenoct_xray_analysed_re.match(filename) is not None
+
+def test_hyperspect():
+    filenames = [
+        "448846_LibID451026_PPA_APPF_SPECIM_FX10_Hyperspectral.zip",
+        "448772_LibID450952_PPA_APPF_SPECIM_FX10_Hyperspectral.zip",
+    ]
+    for filename in filenames:
+        assert hyperspect_re.match(filename) is not None
+
+def test_asd_spectro():
+    filenames = [
+        "453279_PPA_APPF_ASD_FieldSpec_Spectroradiometer.xlsx",
+    ]
+    for filename in filenames:
+        assert asd_spectro_re.match(filename) is not None
 

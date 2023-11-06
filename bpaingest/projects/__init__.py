@@ -109,7 +109,12 @@ from .cipps.ingest import (
     CIPPSIlluminaShortreadMetadata
  )
 from ..util import make_logger
-
+from .plant_protein_atlas.ingest import (
+    PlantProteinAtlasPhenoCTXrayRawMetadata,
+    PlantProteinAtlasPhenoCTXrayAnalysedMetadata,
+    PlantProteinAtlasHyperspectralMetadata,
+    PlantProteinAtlasASDSpectroMetadata,
+ )
 
 class ProjectInfo:
     projects = {
@@ -221,6 +226,12 @@ class ProjectInfo:
         "cipps": [
             CIPPSIlluminaShortreadMetadata,
         ],
+        "ppa": [
+            PlantProteinAtlasPhenoCTXrayRawMetadata,
+            PlantProteinAtlasPhenoCTXrayAnalysedMetadata,
+            PlantProteinAtlasHyperspectralMetadata,
+            PlantProteinAtlasASDSpectroMetadata,
+        ],
     }
 
     def __init__(self):
@@ -240,6 +251,7 @@ class ProjectInfo:
                 )
                 class_info["project"] = project_name
                 class_info["cls"] = cls
+
                 class_info["slug"] = slug = self._make_slug(class_info)
                 # ensure that 'slug' is unique
                 assert slug not in slugs

@@ -186,6 +186,13 @@ cipps()
   apply cipps-illumina-shortread $*
 }
 
+ppa()
+{
+  apply ppa-phenoct-xray-raw $*
+  apply ppa-phenoct-xray-analysed $*
+  apply ppa-hyperspect $*
+}
+
 run() {
   apply $*
 }
@@ -206,6 +213,7 @@ all()
   fungi $*
   pp $*
   cipps $*
+  ppa $*
 }
 
 action="$1"
