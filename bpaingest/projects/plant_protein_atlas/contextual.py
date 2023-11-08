@@ -13,10 +13,10 @@ class PlantProteinAtlasDatasetControlContextual(BaseDatasetControlContextual):
         "https://downloads-qcif.bioplatforms.com/bpa/ppa_staging/dataset_control/2023-08-09/"
     ]
     name = "ppa-dataset-contextual"
-    contextual_linkage = ("sample_id",)
+    contextual_linkage = ("dataset_id",)
     additional_fields = [
         fld('library_id', 'library_id', coerce=ingest_utils.extract_ands_id,),
-        fld('dataset_id', 'dataset_id', coerce=ingest_utils.extract_ands_id,),
+        fld('sample_id', 'sample_id', coerce=ingest_utils.extract_ands_id,),
     ]
 
 
@@ -26,7 +26,7 @@ class PlantProteinAtlasLibraryContextual(BaseLibraryContextual):
     ]
     name = "ppa-library-contextual"
     metadata_unique_identifier = "bioplatforms_sample_id"
-    contextual_linkage = ("sample_id",)
+    contextual_linkage = ("bioplatforms_sample_id",)
     field_spec = [
             fld('planting_season', 'planting_season', coerce=ingest_utils.get_int),
             fld('planting_site', 'planting_site'),

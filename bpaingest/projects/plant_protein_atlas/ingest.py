@@ -4,6 +4,7 @@ from glob import glob
 from unipath import Path
 
 from .contextual import PlantProteinAtlasLibraryContextual, PlantProteinAtlasDatasetControlContextual
+from collections import defaultdict
 from .tracking import PlantProteinAtlasGoogleTrackMetadata
 from ...abstract import BaseMetadata
 from . import files
@@ -12,6 +13,7 @@ from ...libs.excel_wrapper import make_field_definition as fld
 from ...util import (
     sample_id_to_ckan_name,
     apply_cc_by_license,
+    common_values,
 )
 
 common_context = [PlantProteinAtlasLibraryContextual, PlantProteinAtlasDatasetControlContextual]
@@ -21,17 +23,18 @@ CONSORTIUM_ORG_NAME = "ppa-consortium-members"
 class PlantProteinAtlasBaseMetadata(BaseMetadata):
     initiative = "Plant Protein Atlas"
     organization = "ppa"
+    initiative_code = "PPA"
 
     notes_mapping = [
         {"key": "common_name", "separator": ", "},
         {"key": "specimen_custodian"},
     ]
     title_mapping = [
-        {"key": "initiative", "separator": ", "},
+        {"key": "initiative_code", "separator": ", "},
         {"key": "omics", "separator": ", "},
-        {"key": "data_context", "separator": ", Sample ID: "},
-        {"key": "sample_id", "separator": ", "},
-        {"key": "type", "separator": " "},
+        {"key": "data_context", "separator": ", Dataset ID: "},
+        {"key": "dataset_id", "separator": ", "},
+        {"key": "raw_or_analysed_data", "separator": " "},
 
     ]
 
@@ -43,77 +46,125 @@ class PlantProteinAtlasBaseMetadata(BaseMetadata):
 
         self.google_track_meta = PlantProteinAtlasGoogleTrackMetadata(logger)
 
-    def _get_common_packages(self):
-        self._logger.info("Ingesting {} metadata from {}".format(self.initiative, self.path))
+    def _get_packages(self):
         packages = []
-        for fname in glob(self.path + "/*.xlsx"):
 
-            self._logger.info("Processing {} metadata file {}".format(self.initiative, os.path.basename(fname)))
-            rows = self.parse_spreadsheet(fname, self.metadata_info)
-            if self.method_exists('_set_metadata_vars'):
-                self._set_metadata_vars(fname)
+        # this is a folder-oriented ingest, so we crush each xlsx down into a single row
+        filename_re = re.compile(r"^PPA.*_(\d{5,6})_librarymetadata\.xlsx")
 
-            for row in rows:
-                if not row.bioplatforms_sample_id:
-                    continue
+        objs = []
+        for fname in glob(self.path + "/*librarymetadata.xlsx"):
+            row_objs = []
+            self._logger.info("-Processing {} metadata file {}".format(self.initiative, os.path.basename(fname)))
+            file_dataset_id = filename_re.match(os.path.basename(fname)).groups()[0]
+
+            full_dataset_id = ingest_utils.extract_ands_id(
+                self._logger, file_dataset_id
+            )
+            # this is the library metadata. It contains both dataset_id and sample_id info.
+            for row in self.parse_spreadsheet(fname, self.metadata_info):
+
                 obj = row._asdict()
+                obj.update({
+                    "dataset_id": file_dataset_id,
+                })
 
-                context = {}
-                for contextual_source in self.contextual_metadata:
-                    context.update(contextual_source.get(row.bioplatforms_sample_id))
-                obj.update(context)
-
-                if not hasattr(row, "bioplatforms_sample_id"):
-                    # name is populated by the subclass after the fact
-                    name = "No sample ID - override in sublass"
-                else:
-                    sample_id = row.bioplatforms_sample_id.split("/")[-1]
-                    name = sample_id_to_ckan_name(
-                        "{}".format(sample_id),
-                        self.ckan_data_type,
+                if full_dataset_id != obj["bioplatforms_dataset_id"]:
+                    self._logger.warn(
+                        "Skipping metadata row related to unrelated dataset {0} (should be {1})".format(
+                            obj["bioplatforms_dataset_id"], full_dataset_id
+                        )
                     )
+                    continue
+                else:
+                    self._logger.info(
+                        "Found Sample Metadata for {0} ".format(
+                            obj["bioplatforms_dataset_id"], file_dataset_id
+                        )
+                    )
+                # Add data control  contextual metadata by linking with dataset id
+                for contextual_source in self.contextual_metadata:
+                    if isinstance(contextual_source, PlantProteinAtlasDatasetControlContextual):
+                        obj.update(contextual_source.get(obj.get("bioplatforms_dataset_id")))
+                    else:
+                        if isinstance(contextual_source, PlantProteinAtlasLibraryContextual):  # its the sampel metadata, match up on sample_id
+                            sample_id = obj.get("bioplatforms_sample_id")
+                            obj.update(contextual_source.get(sample_id))
 
-                obj.update(
-                    {   "initiative": "PPA",
-                        "name": name,
-                        "id": name,
-                        "sample_id": sample_id,
-                        "type": self.ckan_data_type,
-                        "sequence_data_type": self.sequence_data_type,
-                        "license_id": apply_cc_by_license(),
-                        "date_of_transfer": ingest_utils.get_date_isoformat(
-                            self._logger, self.get_tracking_info(row.ticket, "date_of_transfer")
-                        ),
-                        "date_of_transfer_to_archive": ingest_utils.get_date_isoformat(
-                            self._logger, self.get_tracking_info(row.ticket, "date_of_transfer_to_archive")
-                        ),
-                    }
-                )
+                row_objs.append(obj)
+
+            combined_obj = common_values(row_objs)
+            objs.append((fname, combined_obj))
+
+        for (fname, obj) in objs:
+            ticket = obj["ticket"]
+
+            name = sample_id_to_ckan_name(
+                file_dataset_id, self.ckan_data_type
+            )
+            tracking_info = self.get_tracking_info(ticket)
+            obj.update(
+                {
+                    "name": name,
+                    "id": name,
+                    "date_of_transfer": ingest_utils.get_date_isoformat(
+                        self._logger, tracking_info.date_of_transfer
+                    ),
+                    "date_of_transfer_to_archive": ingest_utils.get_date_isoformat(
+                        self._logger, tracking_info.date_of_transfer_to_archive
+                    ),
+                    "type": self.ckan_data_type,
+                    "sequence_data_type": self.sequence_data_type,
+                    "initiative_code": self.initiative_code,
+                    "license_id": apply_cc_by_license(),
+                    "facility": tracking_info.facility,
+                    "scientific_name": tracking_info.scientific_name,
+                    "experiment_type": tracking_info.experiment_type,
+                    "omics": tracking_info.omics,
+                    "raw_or_analysed_data": tracking_info.raw_or_analysed_data,
+                    "data_type": tracking_info.data_type,
+                    "description": tracking_info.description,
+                }
+            )
 
 
-                self._add_datatype_specific_info_to_package(obj, row, fname)
-                self.build_title_into_object(obj)
-                self.build_notes_into_object(obj)
+            package_embargo_days = self.embargo_days
+            if obj["access_control_date"] is not None:
+                package_embargo_days = obj["access_control_date"]
+            ingest_utils.permissions_organization_member_after_embargo(
+                self._logger,
+                obj,
+                "date_of_transfer_to_archive",
+                package_embargo_days,
+                CONSORTIUM_ORG_NAME,
+            )
+            ingest_utils.apply_access_control(self._logger, self, obj)
+            obj["tags"] = [{"name": "{:.100}".format(t)} for t in self.tag_names]
 
-                # get the slug for the org that matches the Project Code.
-                package_embargo_days = self.embargo_days
-                if context["access_control_date"] is not None:
-                    package_embargo_days = context["access_control_date"]
-
-                ingest_utils.permissions_organization_member_after_embargo(
-                    self._logger,
-                    obj,
-                    "date_of_transfer_to_archive",
-                    package_embargo_days,
-                    CONSORTIUM_ORG_NAME,
-                )
-                ingest_utils.apply_access_control(self._logger, self, obj)
-                obj["tags"] = [{"name": "{:.100}".format(t)} for t in self.tag_names]
-                del obj["sample_id"] # only temporary for title generation
-                packages.append(obj)
-
+            self.track_xlsx_resource(obj, fname)
+            for sample_metadata_file in glob(
+                self.path
+                + "/*_"
+                + ingest_utils.short_ands_id(self._logger, obj["bioplatforms_dataset_id"])
+                + "_samplemetadata_ingest.xlsx"
+            ):
+                self.track_xlsx_resource(obj, sample_metadata_file)
+            self.build_title_into_object(obj)
+            self.build_notes_into_object(obj)
+            del obj["dataset_id"]  # only used for populating the title
+            packages.append(obj)
         return packages
 
+    def _get_resources(self):
+        return self._get_common_resources()
+
+    def _add_datatype_specific_info_to_resource(self, resource, md5_file=None):
+        return
+
+    def _build_resource_linkage(self, xlsx_info, resource, file_info):
+        ticket = xlsx_info["ticket"]
+        dataset_id = self.get_tracking_info(ticket, "bioplatforms_dataset_id")
+        return (ticket, ingest_utils.extract_ands_id(self._logger, dataset_id), )
 
 class PlantProteinAtlasPhenoCTXrayRawMetadata(PlantProteinAtlasBaseMetadata):
     ckan_data_type = "ppa-xray-raw"
@@ -121,12 +172,13 @@ class PlantProteinAtlasPhenoCTXrayRawMetadata(PlantProteinAtlasBaseMetadata):
     sequence_data_type = "xray-raw"
     embargo_days = 365
     contextual_classes = common_context
-    metadata_patterns = [r"^.*\.md5$", r"^.*_metadata.*.*\.xlsx$"]
+    metadata_patterns = [r"^.*\.md5$", r"^.*librarymetadata.*.*\.xlsx$"]
     metadata_urls = [
         "https://downloads-qcif.bioplatforms.com/bpa/ppa_staging/xray-raw/",
     ]
     metadata_url_components = ("ticket",)
-    resource_linkage = ("ticket", "bioplatforms_sample_id")
+    resource_linkage = ("ticket", "bioplatforms_dataset_id")
+
     spreadsheet = {
         "fields": [
                 fld('bioplatforms_project', 'bioplatforms_project'),
@@ -175,32 +227,8 @@ class PlantProteinAtlasPhenoCTXrayRawMetadata(PlantProteinAtlasBaseMetadata):
             re.compile(r"^.*checksums\.(exf|md5)$"),
         ],
     }
-    # description = "Illumina Shortread" this should come from teh tracking sheet
+
     tag_names = ["phenomics", "PhenoCT-xray-raw"]
-
-    def _get_packages(self):
-        packages = self._get_common_packages()
-        return packages
-
-    def _add_datatype_specific_info_to_package(self, obj, row, filename):
-
-        obj.update({"bioplatforms_sample_id":
-                        ingest_utils.extract_ands_id(self._logger, obj["bioplatforms_sample_id"])})
-        del obj["dataset_id"]
-        del obj["library_id"]
-
-    def _get_resources(self):
-        return self._get_common_resources()
-
-    def _add_datatype_specific_info_to_resource(self, resource, md5_file=None):
-        """     resource["library_id"] = ingest_utils.extract_ands_id(
-            self._logger, resource["library_id"]
-        )
-        """
-        return
-
-    def _build_resource_linkage(self, xlsx_info, resource, file_info):
-        return (xlsx_info["ticket"],ingest_utils.extract_ands_id(self._logger, resource["sample_id"]),)
 
 
 class PlantProteinAtlasPhenoCTXrayAnalysedMetadata(PlantProteinAtlasBaseMetadata):
@@ -209,12 +237,12 @@ class PlantProteinAtlasPhenoCTXrayAnalysedMetadata(PlantProteinAtlasBaseMetadata
     sequence_data_type = "xray-analysed"
     embargo_days = 365
     contextual_classes = common_context
-    metadata_patterns = [r"^.*\.md5$", r"^.*_metadata.*.*\.xlsx$"]
+    metadata_patterns = [r"^.*\.md5$", r"^.*librarymetadata.*.*\.xlsx$"]
     metadata_urls = [
         "https://downloads-qcif.bioplatforms.com/bpa/ppa_staging/xray-analysed/",
     ]
     metadata_url_components = ("ticket",)
-    resource_linkage = ("ticket", "bioplatforms_sample_id")
+    resource_linkage = ("ticket", "bioplatforms_dataset_id")
     spreadsheet = {
         "fields": [
                 fld('bioplatforms_project', 'bioplatforms_project'),
@@ -266,43 +294,18 @@ class PlantProteinAtlasPhenoCTXrayAnalysedMetadata(PlantProteinAtlasBaseMetadata
     # description = "Illumina Shortread" this should come from teh tracking sheet
     tag_names = ["phenomics", "PhenoCT-xray-analysed"]
 
-    def _get_packages(self):
-        packages = self._get_common_packages()
-        return packages
-
-    def _add_datatype_specific_info_to_package(self, obj, row, filename):
-
-        obj.update({"bioplatforms_sample_id":
-                        ingest_utils.extract_ands_id(self._logger, obj["bioplatforms_sample_id"])})
-        del obj["dataset_id"]
-        del obj["library_id"]
-
-    def _get_resources(self):
-        return self._get_common_resources()
-
-    def _add_datatype_specific_info_to_resource(self, resource, md5_file=None):
-        """     resource["library_id"] = ingest_utils.extract_ands_id(
-            self._logger, resource["library_id"]
-        )
-        """
-        return
-
-    def _build_resource_linkage(self, xlsx_info, resource, file_info):
-        return (xlsx_info["ticket"], ingest_utils.extract_ands_id(self._logger, resource["sample_id"]),)
-
-
 class PlantProteinAtlasHyperspectralMetadata(PlantProteinAtlasBaseMetadata):
     ckan_data_type = "ppa-hyperspectral"
     technology = "hyperspectral"
     sequence_data_type = "hyperspectral"
     embargo_days = 365
     contextual_classes = common_context
-    metadata_patterns = [r"^.*\.md5$", r"^.*_metadata.*.*\.xlsx$"]
+    metadata_patterns = [r"^.*\.md5$", r"^.*librarymetadata.*.*\.xlsx$"]
     metadata_urls = [
         "https://downloads-qcif.bioplatforms.com/bpa/ppa_staging/hyperspect/",
     ]
     metadata_url_components = ("ticket",)
-    resource_linkage = ("ticket", "bioplatforms_sample_id")
+    resource_linkage = ("ticket", "bioplatforms_dataset_id")
     spreadsheet = {
         "fields": [
                 fld('bioplatforms_project', 'bioplatforms_project'),
@@ -354,30 +357,6 @@ class PlantProteinAtlasHyperspectralMetadata(PlantProteinAtlasBaseMetadata):
     # description = "Illumina Shortread" this should come from teh tracking sheet
     tag_names = ["phenomics", "Hyperspectral Raw"]
 
-    def _get_packages(self):
-        packages = self._get_common_packages()
-        return packages
-
-    def _add_datatype_specific_info_to_package(self, obj, row, filename):
-
-        obj.update({"bioplatforms_sample_id":
-                        ingest_utils.extract_ands_id(self._logger, obj["bioplatforms_sample_id"])})
-        del obj["dataset_id"]
-        del obj["library_id"]
-
-    def _get_resources(self):
-        return self._get_common_resources()
-
-    def _add_datatype_specific_info_to_resource(self, resource, md5_file=None):
-        """     resource["library_id"] = ingest_utils.extract_ands_id(
-            self._logger, resource["library_id"]
-        )
-        """
-        return
-
-    def _build_resource_linkage(self, xlsx_info, resource, file_info):
-        return (xlsx_info["ticket"], ingest_utils.extract_ands_id(self._logger, resource["sample_id"]),)
-
 
 class PlantProteinAtlasASDSpectroMetadata(PlantProteinAtlasBaseMetadata):
     ckan_data_type = "ppa-asd-spectro"
@@ -385,7 +364,7 @@ class PlantProteinAtlasASDSpectroMetadata(PlantProteinAtlasBaseMetadata):
     sequence_data_type = "asd-spectro"
     embargo_days = 365
     contextual_classes = common_context
-    metadata_patterns = [r"^.*\.md5$", r"^.*_metadata.*.*\.xlsx$"]
+    metadata_patterns = [r"^.*\.md5$", r"^.*librarymetadata.*.*\.xlsx$"]
     metadata_urls = [
         "https://downloads-qcif.bioplatforms.com/bpa/ppa_staging/asd-spectro/",
     ]
@@ -432,108 +411,6 @@ class PlantProteinAtlasASDSpectroMetadata(PlantProteinAtlasBaseMetadata):
             re.compile(r"^.*checksums\.(exf|md5)$"),
         ],
     }
-    # description = "Illumina Shortread" this should come from teh tracking sheet
+
     tag_names = ["phenomics", "ASD FieldSpec Spectroradiometer"]
 
-    title_mapping = [
-        {"key": "initiative", "separator": ", "},
-        {"key": "omics", "separator": ", "},
-        {"key": "data_context", "separator": ", Dataset ID: "},
-        {"key": "dataset_id", "separator": ", "},
-        {"key": "type", "separator": " "},
-
-    ]
-
-    def _get_packages(self):
-
-        """
-        Thios was stolen from GAP DDRAD as it uses the dataset id istead of sample id.
-
-        xlsx_re = re.compile(r"^.*_(\w+)_metadata.*\.xlsx$")
-
-        self._logger.info("Ingesting Plant Protein Atlas metadata from {0}".format(self.path))
-        packages = []
-        for fname in glob(self.path + "/*.xlsx"):
-            self._logger.info(
-                "Processing GAP metadata file {0}".format(os.path.basename(fname))
-            )
-            objs = defaultdict(list)
-            for row in self.parse_spreadsheet(fname, self.metadata_info):
-                obj = row._asdict()
-                if not obj["dataset_id"] or not obj["flowcell_id"]:
-                    continue
-                for contextual_source in self.contextual_metadata:
-                    obj.update(
-                        contextual_source.get(obj["library_id"], obj["dataset_id"])
-                    )
-                objs[(obj["dataset_id"], obj["flowcell_id"])].append(obj)
-
-            for (dataset_id), row_objs in list(objs.items()):
-
-                if dataset_id is None:
-                    continue
-
-                context_objs = []
-                for row in row_objs:
-                    context = {}
-                    for contextual_source in self.contextual_metadata:
-                        context.update(contextual_source.get(row.get("dataset_id")))
-                    context_objs.append(context)
-
-                obj = common_values(row_objs)
-                ticket = obj["ticket"]
-                track_meta = self.google_track_meta.get(ticket)
-
-                name = sample_id_to_ckan_name(
-                    dataset_id, self.ckan_data_type
-                )
-                obj.update(
-                    {
-                        "name": name,
-                        "id": name,
-                        "dataset_id": dataset_id,
-                        "date_of_transfer": ingest_utils.get_date_isoformat(
-                            self._logger, track_meta.date_of_transfer
-                        ),
-                        "data_type": track_meta.data_type,
-                        "description": track_meta.description,
-                        "folder_name": track_meta.folder_name,
-                        "date_of_transfer_to_archive": ingest_utils.get_date_isoformat(
-                            self._logger, track_meta.date_of_transfer_to_archive
-                        ),
-                        "dataset_url": track_meta.download,
-                        "type": self.ckan_data_type,
-                        "sequence_data_type": self.sequence_data_type,
-                        "license_id": apply_cc_by_license(),
-                    }
-                )
-                # obj.update(common_values(context_objs))
-                # obj.update(merge_values("scientific_name", " , ", context_objs))
-                self._build_title_into_object(obj)
-                self.build_notes_into_object(obj)
-                ingest_utils.permissions_organization_member(self._logger, obj)
-                ingest_utils.apply_access_control(self._logger, self, obj)
-                ingest_utils.add_spatial_extra(self._logger, obj)
-                obj["tags"] = [{"name": t} for t in self.tag_names]
-                self.track_xlsx_resource(obj, fname)
-                packages.append(obj)
-
-        return packages
-        """
-        return {}
-
-    def _get_resources(self):
-        return self._get_common_resources()
-
-    def _add_datatype_specific_info_to_resource(self, resource, md5_file=None):
-        """     resource["library_id"] = ingest_utils.extract_ands_id(
-            self._logger, resource["library_id"]
-        )
-        """
-        return
-
-    def _build_resource_linkage(self, xlsx_info, resource, file_info):
-        print(xlsx_info)
-        print(resource)
-        print(file_info)
-        return (xlsx_info["ticket"], ingest_utils.extract_ands_id(self._logger, resource["dataset_id"]),)
