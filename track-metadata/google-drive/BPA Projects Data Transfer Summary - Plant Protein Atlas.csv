@@ -1,0 +1,8 @@
+Project: Plant Protein Atlas (PPA),,,,,,,,,,,,,
+Contact mlum@bioplatforms.com if you need assistance filling this sheet.,,,,,,,,,,,,,
+Facility to fill,Facility to fill,Facility to fill,Project Manager to fill,Project Manager to fill,Facility to fill,Facility to fill,Facility to fill,Facility to fill,Facility to fill,Data team to fill,Project Manager to fill,Data team to fill,Project Manager to fill
+Facility,Date of transfer,bioplatforms_dataset_id,scientific_name,experiment type,omics ,raw or analysed data,data_type,Description,Folder name,Date of transfer to archive,Date data published,CCG JIRA Ticket,Download
+APPF,31/10/2023,453277,Vicia faba,Field trial ,Phenomics,Raw,phenoct-xray-raw,PhenoCT X-Ray data,20231027_APPF_453277,31/10/2023,,BPAOPS-1502,
+APPF,31/10/2023,453277,Vicia faba,Field trial ,Phenomics,Analysed ,phenoct-xray-analysed,PhenoCT X-Ray analysed data,20231027_Analysed_PPA_APPF_453277,31/10/2023,,BPAOPS-1503,
+APPF,31/10/2023,453278,Vicia faba,Field trial ,Phenomics,Raw,hyperspect,SPECIM FX10 Hypersptral data,20231027_APPF_453278,31/10/2023,,BPAOPS-1504,
+APPF,31/10/2023,453279,Vicia faba,Field trial ,Phenomics,Raw,asd-spectro,ASD FieldSpec Spectroradiometric data,20231027_APPF_453279,31/10/2023,,BPAOPS-1505,
