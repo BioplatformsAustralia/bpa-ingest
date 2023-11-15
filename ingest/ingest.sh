@@ -193,6 +193,10 @@ ppa()
   apply ppa-hyperspect $*
 }
 
+grasslands() {
+  apply grasslands-hi-c $*
+}
+
 run() {
   apply $*
 }
@@ -214,6 +218,7 @@ all()
   pp $*
   cipps $*
   ppa $*
+  grasslands $*
 }
 
 action="$1"

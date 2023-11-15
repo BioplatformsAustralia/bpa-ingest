@@ -108,12 +108,16 @@ from .plant_pathogen.ingest import (
 from .cipps.ingest import (
     CIPPSIlluminaShortreadMetadata
  )
-from ..util import make_logger
 from .plant_protein_atlas.ingest import (
     PlantProteinAtlasPhenoCTXrayRawMetadata,
     PlantProteinAtlasPhenoCTXrayAnalysedMetadata,
     PlantProteinAtlasHyperspectralMetadata,
     PlantProteinAtlasASDSpectroMetadata,
+ )
+from .grasslands.ingest import (
+    AGIlluminaShortreadMetadata,
+    AGHiCMetadata,
+
  )
 
 class ProjectInfo:
@@ -231,6 +235,10 @@ class ProjectInfo:
             PlantProteinAtlasPhenoCTXrayAnalysedMetadata,
             PlantProteinAtlasHyperspectralMetadata,
             PlantProteinAtlasASDSpectroMetadata,
+        ],
+        "grasslands": [
+            AGIlluminaShortreadMetadata,
+            AGHiCMetadata,
         ],
     }
 
