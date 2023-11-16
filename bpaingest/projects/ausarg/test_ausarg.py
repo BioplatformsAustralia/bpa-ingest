@@ -120,6 +120,7 @@ def test_exon():
         "349779_AHHVV2AFX2_TACGCCAAGT_S1_L001_R1_001.fastq.gz",
         "349779_AHHVV2AFX2_TACGCCAAGT_S1_L001_R2_001.fastq.gz",
         "349779_AHHVV2AFX2_TACGCCAAGT_S1_L002_R1_001.fastq.gz",
+        "454826_AusARG_BRF_HVL5GDRX3_TCATCAAAGG_S169_L002_R1_001.fastq.gz",
     ]
 
     for filename in filenames:

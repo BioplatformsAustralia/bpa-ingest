@@ -80,7 +80,7 @@ class AusargLibraryContextual(BaseLibraryContextual):
             # decimal_longitude
             fld("decimal_longitude", "decimal_longitude_public", coerce=ingest_utils.get_clean_number),
             fld("decimal_longitude_public", "decimal_longitude_public", coerce=ingest_utils.get_clean_number),
-            fld("coord_uncertainty_metres", "coord_uncertainty_metres"),
+            fld("coord_uncertainty_metres", "coord_uncertainty_metres", optional=True,),
             fld("genotypic_sex", "genotypic sex"),
             fld("phenotypic_sex", "phenotypic sex"),
             fld("method_of_determination", "method of determination"),
