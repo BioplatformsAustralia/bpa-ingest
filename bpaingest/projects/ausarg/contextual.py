@@ -22,7 +22,7 @@ class AusargDatasetControlContextual(BaseDatasetControlContextual):
 
 class AusargLibraryContextual(BaseLibraryContextual):
     metadata_urls = [
-        "https://downloads-qcif.bioplatforms.com/bpa/ausarg_staging/metadata/2023-10-24/"
+        "https://downloads-qcif.bioplatforms.com/bpa/ausarg_staging/metadata/2023-11-17/"
     ]
     name = "ausarg-library-contextual"
     metadata_unique_identifier = "sample_id"
