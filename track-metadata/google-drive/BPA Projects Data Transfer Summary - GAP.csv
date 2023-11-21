@@ -159,7 +159,7 @@ BRF,15/09/2023,378172,384058,83836,Gastrolobium racemosum - 1st flow cell ,Refer
 BRF,15/09/2023,378172,384061,83839,Gastrolobium racemosum - 2nd flow cell ,Reference Genomes  ,Main dataset,PromethION,20230904_GAP_BRF_PAQ20635,20/09/2023,22/09/2023,BPAOPS-1479,https://data.bioplatforms.com/dataset?ext_search_by=&q=ticket%3ABPAOPS-1479
 BRF,20/09/2023,378167,384057,83835,Quintinia fawkneri - 1st flow cell,Reference Genomes  ,Main dataset,PromethION,20230911_GAP_BRF_PAQ20169,22/09/2023,2/10/23,BPAOPS-1480,https://data.bioplatforms.com/dataset?ext_search_by=&q=ticket%3ABPAOPS-1480
 BRF,20/09/2023,378167,384060,83838,Quintinia fawkneri - 2nd flow cell,Reference Genomes  ,Main dataset,PromethION,20230912_GAP_BRF_PAQ20949,25/09/2023,2/10/23,BPAOPS-1481,https://data.bioplatforms.com/dataset/?ext_search_by=&q=ticket:BPAOPS-1481
-GWA,15/11/2023,378171,383182,83806,Dendrocnide excelsa - 1st flow cell,Reference Genomes  ,Main dataset,PacBio-HiFi,20231102_GAP_GWA_GWA-AJ-848_DA267052,,,BPAOPS-1520,
-GWA,15/11/2023,378171,384044,83822,Dendrocnide excelsa - 2nd flow cell ,Reference Genomes  ,Main dataset,PacBio-HiFi,20231103_GAP_GWA_GWA-AJ-848_DA267100,,,BPAOPS-1521,
-GWA,15/11/2023,378168,383175,83799,Roepera simile - 1st flow cell,Reference Genomes  ,Main dataset,PacBio-HiFi,20231105_GAP_GWA_GWA-AJ-851_DA267080,20/11/2023,,BPAOPS-1518,
-GWA,15/11/2023,378168,384046,83824,Roepera simile - 2nd flow cell,Reference Genomes  ,Main dataset,PacBio-HiFi,20231106_GAP_GWA_GWA-AJ-851_DA267077,20/11/2023,,BPAOPS-1519,
+GWA,15/11/2023,378168,383175,83799,Roepera simile - 1st flow cell,Reference Genomes  ,Main dataset,PacBio-HiFi,20231105_GAP_GWA_GWA-AJ-851_DA267080,20/11/2023,,BPAOPS-1518,https://data.bioplatforms.com/dataset?ext_search_by=&q=ticket%3ABPAOPS-1518
+GWA,15/11/2023,378168,384046,83824,Roepera simile - 2nd flow cell,Reference Genomes  ,Main dataset,PacBio-HiFi,20231106_GAP_GWA_GWA-AJ-851_DA267077,20/11/2023,,BPAOPS-1519,https://data.bioplatforms.com/dataset?ext_search_by=&q=ticket%3ABPAOPS-1519
+GWA,15/11/2023,378171,383182,83806,Dendrocnide excelsa - 1st flow cell,Reference Genomes  ,Main dataset,PacBio-HiFi,20231102_GAP_GWA_GWA-AJ-848_DA267052,22/11/2023,,BPAOPS-1520,
+GWA,15/11/2023,378171,384044,83822,Dendrocnide excelsa - 2nd flow cell ,Reference Genomes  ,Main dataset,PacBio-HiFi,20231103_GAP_GWA_GWA-AJ-848_DA267100,22/11/2023,,BPAOPS-1521,
