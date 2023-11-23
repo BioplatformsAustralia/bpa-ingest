@@ -218,9 +218,10 @@ class PlantProteinAtlasPhenoCTXrayRawMetadata(PlantProteinAtlasBaseMetadata):
     }
 
     md5 = {
-        "match": [files.phenoct_xray_raw_re, ],
+        "match": [files.phenoct_xray_raw_re,
+                  files.xlsx_filename_re, ],
+
         "skip": [
-            re.compile(r"^.*_metadata.*\.xlsx$"),
             re.compile(r"^.*SampleSheet.*"),
             re.compile(r"^.*TestFiles\.exe.*"),
             re.compile(r"^.*DataValidation\.pdf.*"),
@@ -264,14 +265,8 @@ class PlantProteinAtlasPhenoCTXrayAnalysedMetadata(PlantProteinAtlasBaseMetadata
                 fld('facility_project_code', 'facility_project_code'),
                 fld('facility_sample_id', 'facility_sample_id'),
                 fld('phenomics_facility', 'phenomics_facility'),
-                fld('analytical_platform', 'analytical_platform'),
-                fld('x_ray_voltage', 'x_ray_voltage'),
-                fld('x_ray_current', 'x_ray_current'),
-                fld('x_ray_scanning_time', 'x_ray_scanning_time', coerce=ingest_utils.get_time),
-                fld('x_ray_filter', 'x_ray_filter'),
-                fld('x_ray_dosage', 'x_ray_dosage'),
-                fld('x_ray_voxel_resolution', 'x_ray_voxel_resolution'),
-                fld('x_ray_exposure_time', 'x_ray_exposure time', coerce=ingest_utils.get_time),
+                fld('data_analysis_date', 'data_analysis_date' ),
+                fld('contact_person', 'contact_person'),
                 fld('file_description', 'file_description'),
             ],
             "options": {
@@ -282,9 +277,10 @@ class PlantProteinAtlasPhenoCTXrayAnalysedMetadata(PlantProteinAtlasBaseMetadata
     }
 
     md5 = {
-        "match": [files.phenoct_xray_analysed_re, ],
+        "match": [files.phenoct_xray_analysed_re,
+                  files.xlsx_filename_re,
+                  ],
         "skip": [
-            re.compile(r"^.*_metadata.*\.xlsx$"),
             re.compile(r"^.*SampleSheet.*"),
             re.compile(r"^.*TestFiles\.exe.*"),
             re.compile(r"^.*DataValidation\.pdf.*"),
@@ -328,13 +324,6 @@ class PlantProteinAtlasHyperspectralMetadata(PlantProteinAtlasBaseMetadata):
                 fld('facility_sample_id', 'facility_sample_id'),
                 fld('phenomics_facility', 'phenomics_facility'),
                 fld('analytical_platform', 'analytical_platform'),
-                fld('x_ray_voltage', 'x_ray_voltage'),
-                fld('x_ray_current', 'x_ray_current'),
-                fld('x_ray_scanning_time', 'x_ray_scanning_time', coerce=ingest_utils.get_time),
-                fld('x_ray_filter', 'x_ray_filter'),
-                fld('x_ray_dosage', 'x_ray_dosage'),
-                fld('x_ray_voxel_resolution', 'x_ray_voxel_resolution'),
-                fld('x_ray_exposure_time', 'x_ray_exposure time', coerce=ingest_utils.get_time),
                 fld('file_description', 'file_description'),
             ],
             "options": {
@@ -345,9 +334,10 @@ class PlantProteinAtlasHyperspectralMetadata(PlantProteinAtlasBaseMetadata):
     }
 
     md5 = {
-        "match": [files.hyperspect_re, ],
+        "match": [files.hyperspect_re,
+                  files.xlsx_filename_re,
+                  ],
         "skip": [
-            re.compile(r"^.*_metadata.*\.xlsx$"),
             re.compile(r"^.*SampleSheet.*"),
             re.compile(r"^.*TestFiles\.exe.*"),
             re.compile(r"^.*DataValidation\.pdf.*"),
@@ -402,9 +392,9 @@ class PlantProteinAtlasASDSpectroMetadata(PlantProteinAtlasBaseMetadata):
     }
 
     md5 = {
-        "match": [files.asd_spectro_re, ],
+        "match": [files.asd_spectro_re,
+                  files.xlsx_filename_re, ],
         "skip": [
-            re.compile(r"^.*_metadata.*\.xlsx$"),
             re.compile(r"^.*SampleSheet.*"),
             re.compile(r"^.*TestFiles\.exe.*"),
             re.compile(r"^.*DataValidation\.pdf.*"),

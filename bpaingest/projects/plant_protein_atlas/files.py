@@ -53,5 +53,14 @@ asd_spectro_re = re.compile(
     ASD_SPECTRO_PATTERN, re.VERBOSE
 )
 
+XLSX_PATTERN = r"""
+    PPA_
+    (?P<facility_id>(APPF))_
+    (Analysed_|)
+    (?P<dataset_id>\d{4,6})_
+    (librarymetadata|samplemetadata_ingest)
+    \.xlsx
+"""
 
+xlsx_filename_re = re.compile(XLSX_PATTERN, re.VERBOSE)
 

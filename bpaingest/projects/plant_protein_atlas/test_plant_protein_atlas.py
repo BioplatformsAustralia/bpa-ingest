@@ -4,6 +4,7 @@ from bpaingest.projects.plant_protein_atlas.files import (
     phenoct_xray_analysed_re,
     hyperspect_re,
     asd_spectro_re,
+    xlsx_filename_re,
  )
 
 def test_phenoct_xray_raw():
@@ -34,4 +35,15 @@ def test_asd_spectro():
     ]
     for filename in filenames:
         assert asd_spectro_re.match(filename) is not None
+
+def test_xlsx_files():
+            filenames = [
+                "PPA_APPF_453279_librarymetadata.xlsx",
+                "PPA_APPF_453278_librarymetadata.xlsx",
+                "PPA_APPF_453277_librarymetadata.xlsx",
+                # "PPA_APPF_Analysed_453277_librarymetadata.xlsx",
+            ]
+            for filename in filenames:
+                assert xlsx_filename_re.match(filename) is not None
+
 
