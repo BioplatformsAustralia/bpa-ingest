@@ -1,36 +1,37 @@
-Plant Pathogen ,,,,,,,,,,,
-Contact mlum@bioplatforms.com if you need assistance filling this sheet.,,,,,,,,,,,
-Facility to fill,Facility to fill,Facility to fill (Leave empty if data is for >1 sample ID),Facility to fill (Leave empty if data is for >1 library ID),Facility to fill,Project Manager to fill,Facility to fill,Facility to fill,Data team to fill,Project Manager to fill,Data team to fill,Project Manager to fill
-,,,,,,,,,,,
-Facility,Date of transfer,bioplatforms_sample_id,bioplatforms_library_id,bioplatforms_dataset_id,scientific_name,Description,Folder name,Date of transfer to archive,Date data published,CCG JIRA Ticket,Download
-AGRF,01/02/2023,,,399013,Johnsongrass mosaic virus (JGMV),Illmina short read,20230201_PP_AGRF_KTMDN,01/02/2023,15/02/2023,BPAOPS-1357,https://data.bioplatforms.com/dataset?ext_search_by=&q=ticket%3ABPAOPS-1357 
-AGRF,24/02/2023,394855,397105,399020,Austropuccinia psidii,PacBio-HiFi,20230223_PP_AGRF_DA218825,27/02/2023,03/03/2023,BPAOPS-1361,https://data.bioplatforms.com/dataset?ext_search_by=&q=ticket%3ABPAOPS-1361
-AGRF,28/02/2023,,,399015,Legume viruses,Illumina short read,20230301_PP_AGRF_H3TLVDRX3,01/03/2023,03/03/2023,BPAOPS-1362,https://data.bioplatforms.com/dataset?ext_search_by=&q=ticket%3ABPAOPS-1362
-UNSW,19/05/2023,,,399016,Puccinia coronata f. sp. avenae,Illumina short read,20230511_PP_UNSW_HCF2MDRX3_Q0010509_HEN11834,22/05/2023,22/05/2023,BPAOPS-1391,https://data.bioplatforms.com/dataset?ext_search_by=&q=ticket%3ABPAOPS-1391
-UNSW,19/05/2023,394855,397106,399021,Austropuccinia psidii,Illumina short read,20230511_PP_UNSW_HCF2MDRX3_Q0010509_TOB11898,22/05/2023,22/05/2023,BPAOPS-1392,https://data.bioplatforms.com/dataset?ext_search_by=&q=ticket%3ABPAOPS-1392
-AGRF,22/06/2023,394568,397107,399022,Puccinia coronata f. sp. avenae,PacBio-HiFi,20230619_PP_AGRF_CAGRF221213146_m84073_230616_014416_s1,22/06/2023,,BPAOPS-1422,withdrawn and replaced with BPAOPS-1426
-AGRF,22/06/2023,394569,397108,399022,Puccinia coronata f. sp. avenae,PacBio-HiFi,20230619_PP_AGRF_CAGRF221213146_m84073_230616_014416_s2,22/06/2023,,BPAOPS-1420,withdrawn and replaced with BPAOPS-1426
-AGRF,22/06/2023,394570,397109,399022,Puccinia coronata f. sp. avenae,PacBio-HiFi,20230619_PP_AGRF_CAGRF221213146_m84073_230616_014416_s3,22/06/2023,,BPAOPS-1421,withdrawn and replaced with BPAOPS-1426
-AGRF,28/06/2023,,,399022,Puccinia coronata f. sp. avenae,PacBio-HiFi,20230619_PP_AGRF_CAGRF221213146_m84073_230616_014416_s1,29/06/2023,06/07/2023,BPAOPS-1426,https://data.bioplatforms.com/dataset?ext_search_by=&q=ticket%3ABPAOPS-1426
-AGRF,24/07/2023,,,399014,Potato virus Y,Illumina short read,20230724_PP_AGRF_225VVGLT3,25/07/2023,25/07/2023,BPAOPS-1442,https://data.bioplatforms.com/dataset?ext_search_by=&q=ticket%3ABPAOPS-1442
-AGRF,11/08/2023,,,399034,Ascochyta fabae,PacBio-HiFi,20230809_PP_AGRF_CAGRF230615295_m84073_230802_055109_s2,11/08/2023,21/08/2023,BPAOPS-1450,https://data.bioplatforms.com/dataset?ext_search_by=&q=ticket%3ABPAOPS-1450
-AGRF,11/08/2023,,,399035,Phaeosphaeria avenaria f.sp. avenaria,PacBio-HiFi,20230809_PP_AGRF_CAGRF230615296_m84073_230802_055109_s2,11/08/2023,22/08/2023,BPAOPS-1451,https://data.bioplatforms.com/dataset?ext_search_by=&q=ticket%3ABPAOPS-1451
-AGRF,11/08/2023,,,399036,Rhynchosporium commune,PacBio-HiFi,20230809_PP_AGRF_CAGRF230615297_m84073_230802_055109_s2,11/08/2023,22/08/2023,BPAOPS-1452,https://data.bioplatforms.com/dataset?ext_search_by=&q=ticket%3ABPAOPS-1452
-AGRF,05/09/2023,,,399033,Puccinia coronata f. sp. avenae,Illumina short read,20230902_PP_AGRF_22CF5KLT3,06/09/2023,07/09/2023,BPAOPS-1470,https://data.bioplatforms.com/dataset?ext_search_by=&q=ticket%3ABPAOPS-1470
-AGRF,11/09/2023,,,399037,Phaeosphaeria avenaria f.sp. avenaria ,Illumina short read,20230911_PP_AGRF_CAGRF230615345_22CFFJLT3,11/09/2023,12/09/2023,BPAOPS-1471,https://data.bioplatforms.com/dataset?ext_search_by=&q=ticket%3ABPAOPS-1471
-AGRF,11/09/2023,,,399032,Pyrenophora teres f. teres - no metadata,Illumina short read,20230911_PP_AGRF_CAGRF230615177_22CFFJLT3,12/09/2023,,BPAOPS-1472,https://data.bioplatforms.com/dataset?ext_search_by=&q=ticket%3ABPAOPS-1472
-AGRF,22/09/2023,,,399041,Rhizoctonia solani AG8,Illumina short read,20230922_PP_AGRF_CAGRF230715548_22CF5LLT3,22/09/2023,25/09/2023,BPAOPS-1483,https://data.bioplatforms.com/dataset/?ext_search_by=&q=ticket:BPAOPS-1483
-AGRF,22/09/2023,,,399040,Fusarium pseudograminearum,Illumina short read,20230922_PP_AGRF_CAGRF230715549_22CF5LLT3,22/09/2023,25/09/2023,BPAOPS-1482,https://data.bioplatforms.com/dataset/?ext_search_by=&q=ticket:BPAOPS-1482
-AGRF,22/09/2023,,,399038,Colletotrichum gloeosporioides,Illumina short read,20230922_PP_AGRF_CAGRF230715551_22CF5LLT3,25/09/2023,25/09/2023,BPAOPS-1485,https://data.bioplatforms.com/dataset/?ext_search_by=&q=ticket:BPAOPS-1485
-AGRF,22/09/2023,,,399039,Diaporthe toxica,Illumina short read,20230922_PP_AGRF_CAGRF230715550_22CF5LLT3,25/09/2023,25/09/2023,BPAOPS-1484,https://data.bioplatforms.com/dataset/?ext_search_by=&q=ticket:BPAOPS-1484
-AGRF,19/10/2023,,,399029,Pyrenophora teres f. maculata,Illumina short read,20231019_PP_AGRF_22FFLYLT3,19/10/2023,23/10/2023,BPAOPS-1493,https://data.bioplatforms.com/dataset?ext_search_by=&q=ticket%3ABPAOPS-1493
-BRF,01/11/2023,,,399044,Puccinia striiformis f.sp. Tritici,PromethION,20231023_PP_BRF_PAQ21103 (sample ID 395601 - 395604),2023-11-02,06/11/2023,BPAOPS-1506,https://data.bioplatforms.com/dataset?ext_search_by=&q=ticket%3ABPAOPS-1506
-BRF,01/11/2023,,,399044,Puccinia striiformis f.sp. Tritici,PromethION,20231023_PP_BRF_PAQ21027 (sample ID 395605 - 395612),2023-11-02,06/11/2023,BPAOPS-1507,https://data.bioplatforms.com/dataset?ext_search_by=&q=ticket%3ABPAOPS-1507
-BRF,01/11/2023,,,399044,Puccinia striiformis f.sp. Tritici,PromethION,20231023_PP_BRF_PAQ10940 (sample ID 395613 - 395624),2023-11-02,06/11/2023,BPAOPS-1508,https://data.bioplatforms.com/dataset?ext_search_by=&q=ticket%3ABPAOPS-1508
-AGRF,13/11/2023,,,399030,,Illumina short read,20231113_PP_AGRF_CAGRF230514763_22G3MLLT3,2023-11-13,,BPAOPS-1515,
-AGRF,13/11/2023,,,399031,,Illumina short read,20231113_PP_AGRF_CAGRF230514764_22G3MLLT3,2023-11-13,,BPAOPS-1516,
-,,,,,,,,,,,
-,,,,,,,,,,,
-,,,,,,,,,,,
-,,,,,,,,,,,
-,,,,,Note for ML: Make sure Data Notification email has the right embargo period: 12 or 18 months.,,,,,,
+Plant Pathogen ,,,,,,,,,,,,
+Contact mlum@bioplatforms.com if you need assistance filling this sheet.,,,,,,,,,,,,
+Facility to fill,Facility to fill,Facility to fill (Leave empty if data is for >1 sample ID),Facility to fill (Leave empty if data is for >1 library ID),Facility to fill,Project Manager to fill,Facility to fill,Facility to fill,Data team to fill,Project Manager to fill,Data team to fill,Project Manager to fill,
+,,,,,,,,,,,,
+Facility,Date of transfer,bioplatforms_sample_id,bioplatforms_library_id,bioplatforms_dataset_id,scientific_name,Description,Folder name,Date of transfer to archive,Date data published,CCG JIRA Ticket,Download,Note
+AGRF,01/02/2023,,,399013,Johnsongrass mosaic virus (JGMV),Illmina short read,20230201_PP_AGRF_KTMDN,01/02/2023,15/02/2023,BPAOPS-1357,https://data.bioplatforms.com/dataset?ext_search_by=&q=ticket%3ABPAOPS-1357 ,
+AGRF,24/02/2023,394855,397105,399020,Austropuccinia psidii,PacBio-HiFi,20230223_PP_AGRF_DA218825,27/02/2023,03/03/2023,BPAOPS-1361,https://data.bioplatforms.com/dataset?ext_search_by=&q=ticket%3ABPAOPS-1361,
+AGRF,28/02/2023,,,399015,Legume viruses,Illumina short read,20230301_PP_AGRF_H3TLVDRX3,01/03/2023,03/03/2023,BPAOPS-1362,https://data.bioplatforms.com/dataset?ext_search_by=&q=ticket%3ABPAOPS-1362,
+UNSW,19/05/2023,,,399016,Puccinia coronata f. sp. avenae,Illumina short read,20230511_PP_UNSW_HCF2MDRX3_Q0010509_HEN11834,22/05/2023,22/05/2023,BPAOPS-1391,https://data.bioplatforms.com/dataset?ext_search_by=&q=ticket%3ABPAOPS-1391,
+UNSW,19/05/2023,394855,397106,399021,Austropuccinia psidii,Illumina short read,20230511_PP_UNSW_HCF2MDRX3_Q0010509_TOB11898,22/05/2023,22/05/2023,BPAOPS-1392,https://data.bioplatforms.com/dataset?ext_search_by=&q=ticket%3ABPAOPS-1392,
+AGRF,22/06/2023,394568,397107,399022,Puccinia coronata f. sp. avenae,PacBio-HiFi,20230619_PP_AGRF_CAGRF221213146_m84073_230616_014416_s1,22/06/2023,,BPAOPS-1422,withdrawn and replaced with BPAOPS-1426,
+AGRF,22/06/2023,394569,397108,399022,Puccinia coronata f. sp. avenae,PacBio-HiFi,20230619_PP_AGRF_CAGRF221213146_m84073_230616_014416_s2,22/06/2023,,BPAOPS-1420,withdrawn and replaced with BPAOPS-1426,
+AGRF,22/06/2023,394570,397109,399022,Puccinia coronata f. sp. avenae,PacBio-HiFi,20230619_PP_AGRF_CAGRF221213146_m84073_230616_014416_s3,22/06/2023,,BPAOPS-1421,withdrawn and replaced with BPAOPS-1426,
+AGRF,28/06/2023,,,399022,Puccinia coronata f. sp. avenae,PacBio-HiFi,20230619_PP_AGRF_CAGRF221213146_m84073_230616_014416_s1,29/06/2023,06/07/2023,BPAOPS-1426,https://data.bioplatforms.com/dataset?ext_search_by=&q=ticket%3ABPAOPS-1426,
+AGRF,24/07/2023,,,399014,Potato virus Y,Illumina short read,20230724_PP_AGRF_225VVGLT3,25/07/2023,25/07/2023,BPAOPS-1442,https://data.bioplatforms.com/dataset?ext_search_by=&q=ticket%3ABPAOPS-1442,
+AGRF,11/08/2023,,,399034,Ascochyta fabae,PacBio-HiFi,20230809_PP_AGRF_CAGRF230615295_m84073_230802_055109_s2,11/08/2023,21/08/2023,BPAOPS-1450,https://data.bioplatforms.com/dataset?ext_search_by=&q=ticket%3ABPAOPS-1450,
+AGRF,11/08/2023,,,399035,Phaeosphaeria avenaria f.sp. avenaria,PacBio-HiFi,20230809_PP_AGRF_CAGRF230615296_m84073_230802_055109_s2,11/08/2023,22/08/2023,BPAOPS-1451,https://data.bioplatforms.com/dataset?ext_search_by=&q=ticket%3ABPAOPS-1451,
+AGRF,11/08/2023,,,399036,Rhynchosporium commune,PacBio-HiFi,20230809_PP_AGRF_CAGRF230615297_m84073_230802_055109_s2,11/08/2023,22/08/2023,BPAOPS-1452,https://data.bioplatforms.com/dataset?ext_search_by=&q=ticket%3ABPAOPS-1452,
+AGRF,05/09/2023,,,399033,Puccinia coronata f. sp. avenae,Illumina short read,20230902_PP_AGRF_22CF5KLT3,06/09/2023,07/09/2023,BPAOPS-1470,https://data.bioplatforms.com/dataset?ext_search_by=&q=ticket%3ABPAOPS-1470,
+AGRF,11/09/2023,,,399037,Phaeosphaeria avenaria f.sp. avenaria ,Illumina short read,20230911_PP_AGRF_CAGRF230615345_22CFFJLT3,11/09/2023,12/09/2023,BPAOPS-1471,https://data.bioplatforms.com/dataset?ext_search_by=&q=ticket%3ABPAOPS-1471,
+AGRF,11/09/2023,,,399032,Pyrenophora teres f. teres - no metadata,Illumina short read,20230911_PP_AGRF_CAGRF230615177_22CFFJLT3,12/09/2023,,BPAOPS-1472,https://data.bioplatforms.com/dataset?ext_search_by=&q=ticket%3ABPAOPS-1472,
+AGRF,22/09/2023,,,399041,Rhizoctonia solani AG8,Illumina short read,20230922_PP_AGRF_CAGRF230715548_22CF5LLT3,22/09/2023,25/09/2023,BPAOPS-1483,https://data.bioplatforms.com/dataset/?ext_search_by=&q=ticket:BPAOPS-1483,
+AGRF,22/09/2023,,,399040,Fusarium pseudograminearum,Illumina short read,20230922_PP_AGRF_CAGRF230715549_22CF5LLT3,22/09/2023,25/09/2023,BPAOPS-1482,https://data.bioplatforms.com/dataset/?ext_search_by=&q=ticket:BPAOPS-1482,
+AGRF,22/09/2023,,,399038,Colletotrichum gloeosporioides,Illumina short read,20230922_PP_AGRF_CAGRF230715551_22CF5LLT3,25/09/2023,25/09/2023,BPAOPS-1485,https://data.bioplatforms.com/dataset/?ext_search_by=&q=ticket:BPAOPS-1485,
+AGRF,22/09/2023,,,399039,Diaporthe toxica,Illumina short read,20230922_PP_AGRF_CAGRF230715550_22CF5LLT3,25/09/2023,25/09/2023,BPAOPS-1484,https://data.bioplatforms.com/dataset/?ext_search_by=&q=ticket:BPAOPS-1484,
+AGRF,19/10/2023,,,399029,Pyrenophora teres f. maculata,Illumina short read,20231019_PP_AGRF_22FFLYLT3,19/10/2023,23/10/2023,BPAOPS-1493,https://data.bioplatforms.com/dataset?ext_search_by=&q=ticket%3ABPAOPS-1493,
+BRF,01/11/2023,,,399044,Puccinia striiformis f.sp. Tritici,PromethION,20231023_PP_BRF_PAQ21103 (sample ID 395601 - 395604),02/11/2023,06/11/2023,BPAOPS-1506,https://data.bioplatforms.com/dataset?ext_search_by=&q=ticket%3ABPAOPS-1506,
+BRF,01/11/2023,,,399044,Puccinia striiformis f.sp. Tritici,PromethION,20231023_PP_BRF_PAQ21027 (sample ID 395605 - 395612),02/11/2023,06/11/2023,BPAOPS-1507,https://data.bioplatforms.com/dataset?ext_search_by=&q=ticket%3ABPAOPS-1507,
+BRF,01/11/2023,,,399044,Puccinia striiformis f.sp. Tritici,PromethION,20231023_PP_BRF_PAQ10940 (sample ID 395613 - 395624),02/11/2023,06/11/2023,BPAOPS-1508,https://data.bioplatforms.com/dataset?ext_search_by=&q=ticket%3ABPAOPS-1508,
+AGRF,13/11/2023,,,399030,Ascochyta fabae - partial,Illumina short read,20231113_PP_AGRF_CAGRF230514763_22G3MLLT3 (Partial - 69 samples),13/11/2023,To be notified,BPAOPS-1515,https://data.bioplatforms.com/dataset?ext_search_by=&q=ticket%3ABPAOPS-1515,Data embargo extended to 13 months 
+AGRF,13/11/2023,,,399031,Ascochyta lentis - partial,Illumina short read,20231113_PP_AGRF_CAGRF230514764_22G3MLLT3 (Partial - 147 samples),13/11/2023,To be notified,BPAOPS-1516,https://data.bioplatforms.com/dataset?ext_search_by=&q=ticket%3ABPAOPS-1516,Data embargo extended to 13 months 
+AGRF,24/11/2023,,,399030,Ascochyta fabae - partial,Illumina short read,20231124_PP_AGRF_CAGRF230514763_22GJJ3LT3 (Partial - 1 samples),24/11/2023,,BPAOPS-1525,,Data embargo extended to 13 months 
+AGRF,24/11/2023,,,399031,Ascochyta lentis - partial,Illumina short read,20231124_PP_AGRF_CAGRF230514764_22GJJ3LT3 (Partial - 2 samples),24/11/2023,,BPAOPS-1526,,395150_LibID397404  failed library has definitely failed (sample didn’t meet QC from memory either) but it’s been uploaded regardless with a note in the metadata. Data embargo extended to 13 months 
+,,,,,,,,,,,,
+,,,,,,,,,,,,
+,,,,,,,,,,,,
+,,,,,Note for ML: Make sure Data Notification email has the right embargo period: 12 or 18 months.,,,,,,,
