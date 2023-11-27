@@ -3,7 +3,9 @@ from .files import (
     amd_metagenomics_novaseq_re,
     amd_metagenomics_novaseq_control_re,
     amd_amplicon_filename_re,
+    amd_amplicon_filename_v2_re,
     amd_amplicon_control_filename_re,
+    amd_amplicon_control_filename_v2_re,
     base_amplicon_control_tech_vendor_filename_re,
     base_amplicon_control_tech_vendor_flow_filename_re,
     base_amplicon_filename_flow_index_swapped_re,
@@ -156,6 +158,13 @@ def test_amd_amplicon_re():
     for filename in filenames:
         assert amd_amplicon_filename_re.match(filename) is not None
 
+def test_amd_amplicon_v2_re():
+    filenames = [
+       "138626_18S_LB4W9_GGAGCTAC-TATCCTCT_S2_L001_R2_001.fastq.gz",
+    ]
+    for filename in filenames:
+        assert amd_amplicon_filename_v2_re.match(filename) is not None
+
 
 def test_amd_amplicon_control_re():
     filenames = [
@@ -173,6 +182,12 @@ def test_amd_amplicon_control_re():
     for filename in filenames:
         assert amd_amplicon_control_filename_re.match(filename) is not None
 
+def test_amd_amplicon_control_v2_re():
+    filenames = [
+        "Zymo_DNA_Control_18S_LB4W9_CGAGGCTG-CTATTAAG_S156_L001_I1_001.fastq.gz",
+    ]
+    for filename in filenames:
+        assert amd_amplicon_control_filename_v2_re.match(filename) is not None
 
 def test_mm_transcriptome():
     filenames = [
