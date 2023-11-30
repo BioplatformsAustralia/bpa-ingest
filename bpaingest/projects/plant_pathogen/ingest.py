@@ -387,6 +387,7 @@ class PlantPathogenPacbioHifiMetadata(PlantPathogenBaseMetadata):
     common_files_match = [
         files.pacbio_hifi_common_re,
     ]
+    common_files_linkage = ("flowcell_id",)
 
 
     tag_names = ["pacbio-hifi"]
