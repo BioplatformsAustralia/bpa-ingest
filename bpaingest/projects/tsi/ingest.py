@@ -30,6 +30,21 @@ class TSIBaseMetadata(BaseMetadata):
     initiative = "TSI"
     organization = "threatened-species"
     path = None
+    notes_mapping = [
+        {"key": "family", "separator": ", "},
+        {"key": "genus", "separator": " "},
+        {"key": "species", "separator": ", "},
+        {"key": "specimen_id", "separator": ", "},
+        {"key": "taxonomic_group", "separator": ", Project Lead: "},
+        {"key": "data_custodian"},
+    ]
+    title_mapping = [
+        {"key": "common_name", "separator": ", "},
+        {"key": "data_context", "separator": ", "},
+        {"key": "data_type", "separator": ", "},
+        {"key": "tissue_type"},
+    ]
+
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
@@ -44,30 +59,6 @@ class TSIBaseMetadata(BaseMetadata):
             package.update({"decimal_latitude_public": package.get("latitude")})
         return packages
 
-    def _build_title_into_object(self, obj, field_value):
-        if field_value is None:
-            self.build_title_into_object(obj, {"initiative": self.initiative,
-                                               "title_description": self.description, }
-                                         )
-        else:
-            self.build_title_into_object(obj, {"initiative": self.initiative,
-                                           "title_description": self.description,
-                                           "field_value": field_value}
-                                         )
-
-    notes_mapping = [
-        {"key": "genus", "separator": " "},
-        {"key": "species", "separator": ", "},
-        {"key": "voucher_or_tissue_number", "separator": " "},
-        {"key": "country", "separator": " "},
-        {"key": "state_or_region"},
-    ]
-    title_mapping = [
-        {"key": "initiative", "separator": " "},
-        {"key": "title_description", "separator": " "},
-        {"key": "field_value", "separator": " "},
-        {"key": "flowcell_id", "separator": ""},
-    ]
 
     def _set_metadata_vars(self, filename):
         self.xlsx_info = self.metadata_info[os.path.basename(filename)]
@@ -122,9 +113,10 @@ class TSIBaseMetadata(BaseMetadata):
                      }
                 )
 
-                self._build_title_into_object(obj, library_id)
-                self.build_notes_into_object(obj)
+
                 self._add_datatype_specific_info_to_package(obj, row, fname)
+                self.build_title_into_object(obj)
+                self.build_notes_into_object(obj)
                 ingest_utils.permissions_organization_member_after_embargo(
                         self._logger,
                         obj,
@@ -370,12 +362,6 @@ class TSIIlluminaFastqMetadata(TSIBaseMetadata):
             re.compile(r"^.*TestFiles\.exe.*"),
         ],
     }
-    title_mapping = [
-        {"key": "initiative", "separator": " "},
-        {"key": "title_description", "separator": " "},
-        {"key": "field_value", "separator": " "},
-        {"key": "flowcell_id", "separator": ""},
-    ]
     description = "Illumina FastQ"
     tag_names = ["illumina-fastq"]
 
@@ -521,11 +507,6 @@ class TSIPacbioHifiMetadata(TSIBaseMetadata):
     common_files_linkage = ("flowcell_id",)
 
     description = "Pacbio HiFi"
-    title_mapping = [
-        {"key": "initiative", "separator": " "},
-        {"key": "title_description", "separator": " "},
-        {"key": "field_value", "separator": " "},
-    ]
 
     tag_names = ["pacbio-hifi"]
 
@@ -709,16 +690,7 @@ class TSIGenomicsDDRADMetadata(TSIBaseMetadata):
             re.compile(r"^.*DataValidation\.pdf.*"),
         ],
     }
-    notes_mapping = [
-        {"key": "scientific_name", "separator": "\n"},
-        {"key": "additional_notes"},
-    ]
-    title_mapping = [
-        {"key": "initiative", "separator": " "},
-        {"key": "title_description", "separator": " "},
-        {"key": "bpa_dataset_id", "separator": " "},
-        {"key": "field_value", "separator": " "},
-    ]
+
     description = "Genomics ddRAD"
     tag_names = ["genomics-ddrad"]
 
@@ -762,8 +734,18 @@ class TSIGenomicsDDRADMetadata(TSIBaseMetadata):
                 for row in row_objs:
                     context = {}
                     for contextual_source in self.contextual_metadata:
-                        context.update(contextual_source.get(row.get("sample_id")))
-                    context_objs.append(context)
+                        library_metadata_sample_id = row.get("sample_id")
+                        contextual_metadata = contextual_source.get(library_metadata_sample_id)
+                        # if
+                        if contextual_metadata != {}:
+                            context.update(contextual_metadata)
+                        # else:
+                            # if type(contextual_metadata).__name__ != 'my name':  # Ignore Dataset control missing, thats valid
+                                    # self._logger.warn(
+                                    # "No sample metadata found for sample id {0} in library metadata for ticket {1} with file: {2})".format(
+                                    #     row.get("sample_id"), row.get("ticket"), row.get("metadata_revision_filename"))
+                               # )
+                context_objs.append(context)
 
                 obj = common_values(row_objs)
                 ticket = obj["ticket"]
@@ -792,8 +774,8 @@ class TSIGenomicsDDRADMetadata(TSIBaseMetadata):
                 obj.update(common_values(context_objs))
                 obj.update(merge_values("scientific_name", " , ", context_objs))
                 additional_notes = "ddRAD dataset not demultiplexed"
-                self._build_title_into_object(obj, flow_id)
-                self.build_notes_into_object(obj, {"additional_notes": additional_notes})
+                self.build_title_into_object(obj)
+                self.build_notes_into_object(obj)
                 ingest_utils.permissions_organization_member_after_embargo(
                     self._logger,
                     obj,
@@ -888,17 +870,7 @@ class TSIGenomeAssemblyMetadata(TSIBaseMetadata):
         "match": [files.genome_assembly_filename_re],
         "skip": [re.compile(r"^.*\.xlsx$"), ],
     }
-    notes_mapping = [
-        {"key": "common_name", "separator": " "},
-        {"key": "left-paren", "separator": ""},
-        {"key": "scientific_name", "separator": ""},
-        {"key": "right-paren"},
-    ]
-    title_mapping = [
-        {"key": "initiative", "separator": " "},
-        {"key": "title_description", "separator": " "},
-        {"key": "bioplatforms_secondarydata_id", "separator": ""},
-    ]
+
     description = "Genome Assembly"
 
     tag_names = ["tsi-genome-assembly"]
@@ -960,7 +932,6 @@ class TSIGenomeAssemblyMetadata(TSIBaseMetadata):
              "dataset_url": self.get_tracking_info(row.ticket, "download"),
              }
         )
-        self.build_notes_into_object(obj, {"left-paren": "(", "right-paren": ")"})
         # below fields are in the metadata, but not required in the packages schema
         del obj["ccg_jira_ticket"]
         del obj["download"]
@@ -1113,7 +1084,6 @@ class TSIHiCMetadata(TSIBaseMetadata):
             {"library_id": row.library_id.split("/")[-1]
              }
         )
-        self._build_title_into_object(obj, obj["sample_id"]) # this overrides the one set in the base class.
 
     def _get_resources(self):
         return self._get_common_resources()
@@ -1254,15 +1224,6 @@ class TSIGenomicsDArTMetadata(TSIBaseMetadata):
         ],
     }
 
-    notes_mapping = [
-        {"key": "organism_scientific_name", "separator": "\n"},
-        {"key": "additional_notes"},
-    ]
-    title_mapping = [
-        {"key": "initiative", "separator": " "},
-        {"key": "title_description", "separator": " "},
-        {"key": "dataset_id", "separator": ""},
-    ]
     description = "DArT"
     tag_names = ["genomics-dart"]
 
@@ -1305,7 +1266,17 @@ class TSIGenomicsDArTMetadata(TSIBaseMetadata):
 
                 # Add sample contextual metadata
                 for contextual_source in self.contextual_metadata:
-                    obj.update(contextual_source.get(obj.get("sample_id")))
+                    library_metadata_sample_id = obj.get("sample_id")
+                    contextual_metadata = contextual_source.get(library_metadata_sample_id)
+                    # if
+                    if contextual_metadata != {}:
+                        obj.update(contextual_metadata)
+                    else:
+                        if type(contextual_metadata).__name__ != 'my name': # Ignore Dataset control missing, thats valid
+                            self._logger.warn(
+                               "No sample metadata found for sample id {0} in library metadata for ticket {1})".format(
+                                    obj["sample_id"], obj["ticket"])
+                            )
                 row_objs.append(obj)
 
             combined_obj = common_values(row_objs)
@@ -1342,9 +1313,8 @@ class TSIGenomicsDArTMetadata(TSIBaseMetadata):
                 "scientific_name",
                 "%s %s" % (obj.get("genus", ""), obj.get("species", "")))
             additional_notes = "DArT dataset not demultiplexed"
-            self._build_title_into_object(obj, "dataset_id")
-            self.build_notes_into_object(obj, {"organism_scientific_name": organism_scientific_name,
-                                               "additional_notes": additional_notes})
+            self.build_title_into_object(obj)
+            self.build_notes_into_object(obj)
             ingest_utils.permissions_organization_member_after_embargo(
                 self._logger,
                 obj,
