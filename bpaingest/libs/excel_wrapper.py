@@ -84,7 +84,13 @@ class ExcelWrapper:
         self.suggest_template = suggest_template
 
         self.workbook = xlrd.open_workbook(file_name)
-        self.modified = self.workbook.props["modified"]
+        self.modified = None
+        if hasattr(self.workbook.props, "modified"):
+            self.modified = self.workbook.props["modified"]
+        else:
+            self._logger.warn(
+                "xlsx file named '%s' does not have a modified date, may be very old" % file_name)
+
         self.sheet = self._find_sheet_in_workbook(file_name, self.workbook, sheet_name)
 
         self.missing_headers = []
