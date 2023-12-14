@@ -27,7 +27,7 @@ import os
 import re
 
 common_skip = [
-    re.compile(r"^._metadata\.xlsx$"),
+    re.compile(r"^.*_metadata\.xlsx$"),
     re.compile(r"^.*_Report\.pdf"),
 ]
 
@@ -951,7 +951,9 @@ class StemcellsProteomicsAnalysedMetadata(BaseMetadata):
             fld("translation", "translation (3 frame or 6 frame)"),
             fld("proteome_size", "proteome size"),
         ],
-        "options": {"header_length": 8, "column_name_row_index": 7,},
+        "options": {"sheet_name": "Samples for proteomics",
+                    "header_length": 8,
+                    "column_name_row_index": 7 },
     }
     md5 = {
         "match": [
