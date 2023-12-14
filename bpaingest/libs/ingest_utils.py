@@ -321,6 +321,7 @@ def _get_date_time(logger, dt, silent=False):
         or dt == "NA"
         or dt == "n/a"
         or dt == "TBA"
+        or dt == "No record"
     ):
         return None
 
@@ -416,6 +417,7 @@ def _get_date(logger, dt, silent=False):
         or dt == "NA"
         or dt == "n/a"
         or dt == "TBA"
+        or dt == "No record"
     ):
         return None
 
