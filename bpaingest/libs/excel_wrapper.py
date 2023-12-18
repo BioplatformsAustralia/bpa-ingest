@@ -85,9 +85,10 @@ class ExcelWrapper:
 
         self.workbook = xlrd.open_workbook(file_name)
         self.modified = None
-        if hasattr(self.workbook.props, "modified"):
+        try:
             self.modified = self.workbook.props["modified"]
-        else:
+
+        except:
             self._logger.warn(
                 "xlsx file named '%s' does not have a modified date, may be very old" % file_name)
 
