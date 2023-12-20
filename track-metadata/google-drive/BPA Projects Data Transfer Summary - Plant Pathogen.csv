@@ -31,11 +31,11 @@ AGRF,13/11/2023,,,399030,Ascochyta fabae,Illumina short read,20231113_PP_AGRF_CA
 AGRF,24/11/2023,,,399030,Ascochyta fabae,Illumina short read,20231124_PP_AGRF_CAGRF230514763_22GJJ3LT3 (Partial - 1 samples),24/11/2023,24/11/2023,BPAOPS-1525,https://data.bioplatforms.com/dataset?ext_search_by=&q=ticket%3ABPAOPS-1525,Data embargo extended to 13 months 
 AGRF,13/11/2023,,,399031,Ascochyta lentis  ,Illumina short read,20231113_PP_AGRF_CAGRF230514764_22G3MLLT3 (Partial - 147 samples),13/11/2023,24/11/2023,BPAOPS-1516,https://data.bioplatforms.com/dataset?ext_search_by=&q=ticket%3ABPAOPS-1516,Data embargo extended to 13 months 
 AGRF,24/11/2023,,,399031,Ascochyta lentis  ,Illumina short read,20231124_PP_AGRF_CAGRF230514764_22GJJ3LT3 (Partial - 2 samples),24/11/2023,24/11/2023,BPAOPS-1526,https://data.bioplatforms.com/dataset?ext_search_by=&q=ticket%3ABPAOPS-1526,395150_LibID397404  failed library has definitely failed (sample didn’t meet QC from memory either) but it’s been uploaded regardless with a note in the metadata. Data embargo extended to 13 months 
-AGRF,30/11/2023,,,399026,"Pectobacterium, Dickeya_NSWDPI",PacBio-HiFi,20231129_PP_AGRF_CAGRF230313993_m84073_231123_073845_s4,,30/11/2023,BPAOPS-1528,,
-AGRF,30/11/2023,,,399027,"Pectobacterium, Dickeya_NRETAS",PacBio-HiFi,20231129_PP_AGRF_CAGRF230314005_m84073_231123_073845_s4,,30/11/2023,BPAOPS-1529,,
-AGRF,30/11/2023,,,399028,Pseudomonas_NSW DPI,PacBio-HiFi,20231129_PP_AGRF_CAGRF230314006_m84073_231123_073845_s4,,30/11/2023,BPAOPS-1530,,
-,,,,,,,,,,,,
-,,,,,,,,,,,,
+AGRF,30/11/2023,,,399026,"Pectobacterium, Dickeya_NSWDPI",PacBio-HiFi,20231129_PP_AGRF_CAGRF230313993_m84073_231123_073845_s4,01/12/2023,30/11/2023,BPAOPS-1528,https://data.bioplatforms.com/dataset?ext_search_by=&q=ticket%3ABPAOPS-1528,
+AGRF,30/11/2023,,,399027,"Pectobacterium, Dickeya_NRETAS",PacBio-HiFi,20231129_PP_AGRF_CAGRF230314005_m84073_231123_073845_s4,01/12/2023,30/11/2023,BPAOPS-1529,https://data.bioplatforms.com/dataset?ext_search_by=&q=ticket%3ABPAOPS-1529 ,
+AGRF,30/11/2023,,,399028,Pseudomonas_NSW DPI,PacBio-HiFi,20231129_PP_AGRF_CAGRF230314006_m84073_231123_073845_s4,01/12/2023,30/11/2023,BPAOPS-1530,https://data.bioplatforms.com/dataset?ext_search_by=&q=ticket%3ABPAOPS-1530,
+AGRF,19/12/2023,,,399023,Ralstonia,PacBio-HiFi,20231218_PP_AGRF_CAGRF230313883_m84073_231212_121631_s4,,,BPAOPS-1539,,
+,,,,,,,,20/12/2023,,,,
 ,,,,,,,,,,,,
 ,,,,,,,,,,,,
 ,,,,,,,,,,,,
