@@ -6,3 +6,6 @@ Facility,Date of transfer,Data type,Description,Folder name,,Date of transfer to
 Ramaciotti,18/4/2023,illumina-transcriptomics,Illumina short read,20230406_CIPPS_UNSW_H3MCVDSX7,data control sheet updated,19/04/2023,,BPAOPS-1381,Replaced with renamed files in BPAOPS-1492
 UNSW,9/10/2023,illumina-transcriptomics,Illumina short read,20230929_CIPPS_UNSW_22C5YVLT3,https://trello.com/c/O8gsGKsQ,9/10/2023,,BPAOPS-1489,
 Ramaciotti,18/4/2023,illumina-transcriptomics,Illumina short read,20230406_CIPPS_UNSW_H3MCVDSX7,data control sheet updated,19/04/2023,,BPAOPS-1492,
+AGRF,18/12/2023,PacBio-HiFi,HiFi,20231218_CIPPS_AGRF_CAGRF23101336_m84073_231129_043559_s4,,19/12/2023,,BPAOPS-1535,
+AGRF,18/12/2023,PacBio-HiFi,HiFi,20231218_CIPPS_AGRF_CAGRF23101336_m84073_231212_081819_s2,,19/12/2023,,BPAOPS-1536,
+AGRF,18/12/2023,PacBio-HiFi,HiFi,20231218_CIPPS_AGRF_CAGRF23101336_m84073_231212_101727_s3,,19/12/2023,,BPAOPS-1537,
