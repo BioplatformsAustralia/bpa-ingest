@@ -106,7 +106,8 @@ from .plant_pathogen.ingest import (
  )
 
 from .cipps.ingest import (
-    CIPPSIlluminaShortreadMetadata
+    CIPPSIlluminaShortreadMetadata,
+    CIPPSPacbioHifiMetadata
  )
 from .plant_protein_atlas.ingest import (
     PlantProteinAtlasPhenoCTXrayRawMetadata,
@@ -229,6 +230,7 @@ class ProjectInfo:
         ],
         "cipps": [
             CIPPSIlluminaShortreadMetadata,
+            CIPPSPacbioHifiMetadata,
         ],
         "ppa": [
             PlantProteinAtlasPhenoCTXrayRawMetadata,

@@ -10,7 +10,7 @@ from ...abstract import BaseLibraryContextual
 
 class CIPPSDatasetControlContextual(BaseDatasetControlContextual):
     metadata_urls = [
-        "https://downloads-qcif.bioplatforms.com/bpa/cipps_staging/dataset_control/2023-10-18/"
+        "https://downloads-qcif.bioplatforms.com/bpa/cipps_staging/dataset_control/2023-12-19/"
     ]
     name = "cipps-dataset-contextual"
     sheet_names = [
@@ -25,7 +25,7 @@ class CIPPSDatasetControlContextual(BaseDatasetControlContextual):
 
 class CIPPSLibraryContextual(BaseLibraryContextual):
     metadata_urls = [
-        "https://downloads-qcif.bioplatforms.com/bpa/cipps_staging/metadata/2023-10-19/"
+        "https://downloads-qcif.bioplatforms.com/bpa/cipps_staging/metadata/2023-12-19/"
     ]
     name = "cipps-library-contextual"
     sheet_names = ["Sample metadata"]
