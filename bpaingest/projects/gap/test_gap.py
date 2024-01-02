@@ -9,7 +9,10 @@ from .files import (
     ddrad_fastq_filename_re,
     ddrad_metadata_sheet_re,
     pacbio_hifi_filename_re,
+    pacbio_hifi_filename_revio_re,
+    pacbio_hifi_revio_pdf_re,
     pacbio_hifi_metadata_sheet_re,
+    pacbio_hifi_revio_metadata_sheet_re,
 )
 
 
@@ -140,6 +143,24 @@ def test_pacbio_hifi():
     for filename in filenames:
         assert pacbio_hifi_filename_re.match(filename) is not None
 
+def test_pacbio_hifi_revio():
+    filenames = [
+        "378163_GAP_BRF_m84118_231115_072325_s4.hifi_reads.default.bam",
+        # "GAP_BRF_m84118_231115_072325_s4.pdf"
+    ]
+
+    for filename in filenames:
+        assert pacbio_hifi_filename_revio_re.match(filename) is not None
+
+
+def test_pacbio_hifi_revio_pdf():
+    filenames = [
+        "GAP_BRF_m84118_231115_072325_s4.pdf"
+    ]
+
+    for filename in filenames:
+        assert pacbio_hifi_revio_pdf_re.match(filename) is not None
+
 
 def test_pacbio_hifi_metadata_sheet():
     filenames = [
@@ -149,3 +170,13 @@ def test_pacbio_hifi_metadata_sheet():
 
     for filename in filenames:
         assert pacbio_hifi_metadata_sheet_re.match(filename) is not None
+
+
+def test_pacbio_hifi_revio_metadata_sheet():
+    filenames = [
+        "GAP_BRF_m84118_231208_055821_s1_metadata.xlsx",
+    ]
+
+    for filename in filenames:
+        assert pacbio_hifi_revio_metadata_sheet_re.match(filename) is not None
+

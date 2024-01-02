@@ -787,13 +787,21 @@ class GAPPacbioHifiMetadata(GAPBaseMetadata):
         },
     }
     md5 = {
-        "match": [files.pacbio_hifi_filename_re, files.pacbio_hifi_metadata_sheet_re],
+        "match": [files.pacbio_hifi_filename_re,
+                  files.pacbio_hifi_filename_revio_re,
+                  files.pacbio_hifi_revio_pdf_re,
+                  files.pacbio_hifi_metadata_sheet_re,
+                  files.pacbio_hifi_revio_metadata_sheet_re],
         "skip": [
             re.compile(r"^.*(\.|_)metadata\.xlsx$"),
             re.compile(r"^.*SampleSheet.*"),
             re.compile(r"^.*TestFiles\.exe.*"),
         ],
     }
+    common_files_match = [
+        files.pacbio_hifi_revio_pdf_re,
+    ]
+    common_files_linkage = ("flowcell_id",)
     description = ""
     tag_names = ["pacbio-hifi"]
 
@@ -802,9 +810,15 @@ class GAPPacbioHifiMetadata(GAPBaseMetadata):
 
     def _add_datatype_specific_info_to_package(self, obj, row, filename):
         filename_re = files.pacbio_hifi_metadata_sheet_re
-        metadata_sheet_dict = re.search(
+        revio_xls_filename_re = files.pacbio_hifi_revio_metadata_sheet_re
+        metadata_sheet = re.search(
                 filename_re, os.path.basename(filename)
-            ).groupdict()
+            )
+        if metadata_sheet is None:
+            metadata_sheet = re.search(
+                revio_xls_filename_re, os.path.basename(filename)
+            )
+        metadata_sheet_dict = metadata_sheet.groupdict()
         metadata_sheet_flowcell_ids = []
         for f in ["flowcell_id", "flowcell2_id"]:
             if f in metadata_sheet_dict:
@@ -846,13 +860,16 @@ class GAPPacbioHifiMetadata(GAPBaseMetadata):
 
 
     def _get_resources(self):
-        return self._get_common_resources()
+        resources = self._get_common_resources()
+        return resources + self.generate_common_files_resources(resources)
 
     def _add_datatype_specific_info_to_resource(self, resource, md5_file=None):
 
-        resource["sample_id"] = ingest_utils.extract_ands_id(
-            self._logger, resource["sample_id"]
-        )
+        if "sample_id" in resource:
+            resource["sample_id"] = ingest_utils.extract_ands_id(
+                self._logger, resource["sample_id"]
+            )
+
 
     def _build_resource_linkage(self, xlsx_info, resource, file_info):
         return (
@@ -861,4 +878,8 @@ class GAPPacbioHifiMetadata(GAPBaseMetadata):
                 resource["flowcell_id"],
             )
 
+    def _build_common_files_linkage(self, xlsx_info, resource, file_info):
+        return (
+            resource["flowcell_id"],
+        )
 
