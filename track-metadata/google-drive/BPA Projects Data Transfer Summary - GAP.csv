@@ -163,5 +163,15 @@ GWA,15/11/2023,378168,383175,83799,Roepera simile - 1st flow cell,Reference Geno
 GWA,15/11/2023,378168,384046,83824,Roepera simile - 2nd flow cell,Reference Genomes  ,Main dataset,PacBio-HiFi,20231106_GAP_GWA_GWA-AJ-851_DA267077,20/11/2023,22/11/2023,BPAOPS-1519,https://data.bioplatforms.com/dataset?ext_search_by=&q=ticket%3ABPAOPS-1519
 GWA,15/11/2023,378171,383182,83806,Dendrocnide excelsa - 1st flow cell,Reference Genomes  ,Main dataset,PacBio-HiFi,20231102_GAP_GWA_GWA-AJ-848_DA267052,22/11/2023,23/11/2023,BPAOPS-1520,https://data.bioplatforms.com/dataset?ext_search_by=&q=ticket%3ABPAOPS-1520
 GWA,15/11/2023,378171,384044,83822,Dendrocnide excelsa - 2nd flow cell ,Reference Genomes  ,Main dataset,PacBio-HiFi,20231103_GAP_GWA_GWA-AJ-848_DA267100,22/11/2023,23/11/2023,BPAOPS-1521,https://data.bioplatforms.com/dataset?ext_search_by=&q=ticket%3ABPAOPS-1521
-BRF,01/12/2023,378177,384038,83816,Callicoma serratifolia  ,Reference Genomes  ,Main dataset,PromethION,20231106_GAP_BRF_PAQ20771,4/12/2023,,BPAOPS-1531,
-BRF,01/12/2023,378178,384039,83817,Eucryphia lucida ,Reference Genomes  ,Main dataset,PromethION,20231106_GAP_BRF_PAQ21073,4/12/2023,,BPAOPS-1532,
+BRF,01/12/2023,378177,384038,83816,Callicoma serratifolia  ,Reference Genomes  ,Main dataset,PromethION,20231106_GAP_BRF_PAQ20771,4/12/2023,12/12/2003,BPAOPS-1531,https://data.bioplatforms.com/dataset?ext_search_by=&q=ticket%3ABPAOPS-1531
+BRF,01/12/2023,378178,384039,83817,Eucryphia lucida ,Reference Genomes  ,Main dataset,PromethION,20231106_GAP_BRF_PAQ21073,4/12/2023,12/12/2003,BPAOPS-1532,https://data.bioplatforms.com/dataset?ext_search_by=&q=ticket%3ABPAOPS-1532
+BRF,20/12/2023,378163,383170,83794,Bellendena montana,Reference Genomes  ,Main dataset,PacBio-HiFi,20231115_GAP_BRF_m84118_231115_072325_s4,22/12/2023,,BPAOPS-1542,
+BRF,20/12/2023,378163,384067,83845,Bellendena montana,Reference Genomes  ,Main dataset,PacBio-HiFi,20231208_GAP_BRF_m84118_231208_055821_s1,22/12/2023,,BPAOPS-1545,
+BRF,20/12/2023,378180,384063,83841,Pelargonium australe,Reference Genomes  ,Main dataset,PacBio-HiFi,20231208_GAP_BRF_m84118_231208_075745_s2,22/12/2023,,BPAOPS-1546,
+BRF,20/12/2023,378159,384064,83842,Austrobaileya scandens,Reference Genomes  ,Main dataset,PacBio-HiFi,20231128_GAP_BRF_m84118_231128_095446_s2,22/12/2023,,BPAOPS-1541,
+BRF,20/12/2023,378159,384068,83846,Austrobaileya scandens,Reference Genomes  ,Main dataset,PacBio-HiFi,20231130_GAP_BRF_m84118_231130_022504_s4,22/12/2023,,BPAOPS-1544,
+BRF,20/12/2023,378152,384065,83843,Doryanthes excelsa,Reference Genomes  ,Main dataset,PacBio-HiFi,20231128_GAP_BRF_m84118_231128_102552_s3,22/12/2023,,BPAOPS-1543,
+,,,,,,,,,,,,,
+,,,,,,,,,,,,,
+,,,,,,,,,,,,,
+,,,Note to ML: Move Austrobaileya scandens and Doryanthes excelsa rows up post notification to be under the ONT data so all the datasets are together.,,,,,,,,,,
