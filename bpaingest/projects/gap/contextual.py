@@ -22,7 +22,7 @@ class GAPDatasetControlContextual(BaseDatasetControlContextual):
 
 class GAPLibraryContextual(BaseLibraryContextual):
     metadata_urls = [
-        "https://downloads-qcif.bioplatforms.com/bpa/plants_staging/metadata/2023-12-08/"
+        "https://downloads-qcif.bioplatforms.com/bpa/plants_staging/metadata/2023-12-21/"
     ]
     name = "gap-library-contextual"
     sheet_names = [
