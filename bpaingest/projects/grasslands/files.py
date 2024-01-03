@@ -37,4 +37,33 @@ illumina_shortread_rna_phylo_re = re.compile(
     ILLUMINA__RNA_AND_PHYLO_SHORTREAD_PATTERN, re.VERBOSE
 )
 
+PACBIO_HIFI_REVIO_PATTERN = r"""
+    (?P<sample_id>\d{4,6})_
+    AG_
+    (?P<facility>AGRF|BRF)_
+    (PacBio_)?
+    (?P<flowcell_id>\w{23})
+    (\.hifi_reads\.default\.bam
+      |\.hifi_reads\.bam)
+"""
+pacbio_hifi_filename_revio_re = re.compile(PACBIO_HIFI_REVIO_PATTERN, re.VERBOSE)
 
+PACBIO_HIFI_REVIO_PDF_PATTERN = r"""
+    AG_
+    (?P<facility>AGRF|BRF)_
+    (PacBio_)?
+    (?P<flowcell_id>\w{23})
+    (\.pdf)
+"""
+pacbio_hifi_revio_pdf_re = re.compile(PACBIO_HIFI_REVIO_PDF_PATTERN, re.VERBOSE)
+
+
+PACBIO_HIFI_REVIO_METADATA_SHEET_PATTERN = r"""
+    AG_
+    (?P<facility>(AGRF|BRF))_
+    ?(?P<flowcell_id>\w{23})
+    ((_|\.)metadata\.xlsx)
+"""
+
+pacbio_hifi_revio_metadata_sheet_re = re.compile(
+    PACBIO_HIFI_REVIO_METADATA_SHEET_PATTERN, re.VERBOSE)

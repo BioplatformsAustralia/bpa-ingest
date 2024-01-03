@@ -118,6 +118,7 @@ from .plant_protein_atlas.ingest import (
 from .grasslands.ingest import (
     AGIlluminaShortreadMetadata,
     AGHiCMetadata,
+    AGPacbioHifiMetadata,
 
  )
 
@@ -241,6 +242,7 @@ class ProjectInfo:
         "grasslands": [
             AGIlluminaShortreadMetadata,
             AGHiCMetadata,
+            AGPacbioHifiMetadata,
         ],
     }
 

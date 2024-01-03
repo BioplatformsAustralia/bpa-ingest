@@ -196,6 +196,7 @@ ppa()
 
 grasslands() {
   apply grasslands-hi-c $*
+  apply grasslands-pacbio-hifi $*
 }
 
 run() {
