@@ -30,31 +30,20 @@ class FungiBaseMetadata(BaseMetadata):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
 
-    def _build_title_into_object(self, obj, field_value):
-        if field_value is None:
-            self.build_title_into_object(obj, {"initiative": self.initiative,
-                                               "title_description": self.description, }
-                                         )
-        else:
-            self.build_title_into_object(obj, {"initiative": self.initiative,
-                                           "title_description": self.description,
-                                           "field_value": field_value}
-                                         )
-
     notes_mapping = [
+        {"key": "family", "separator": ", "},
         {"key": "genus", "separator": " "},
         {"key": "species", "separator": ", "},
-        {"key": "voucher_or_tissue_number", "separator": " "},
-        {"key": "country", "separator": " "},
-        {"key": "state_or_region"},
+        {"key": "sample_id", "separator": ", "},
+        {"key": "taxonomic_group", "separator": ", Project Lead: "},
+        {"key": "project_lead"},
     ]
     title_mapping = [
-        {"key": "initiative", "separator": " "},
-        {"key": "title_description", "separator": " "},
-        {"key": "field_value", "separator": " "},
-        {"key": "flowcell_id", "separator": ""},
+        {"key": "common_name", "separator": ", "},
+        {"key": "data_context", "separator": ", "},
+        {"key": "library_type", "separator": ", "},
+        {"key": "tissue"},
     ]
-
 
     def _set_metadata_vars(self, filename):
         self.xlsx_info = self.metadata_info[os.path.basename(filename)]
@@ -110,7 +99,7 @@ class FungiBaseMetadata(BaseMetadata):
                      }
                 )
 
-                self._build_title_into_object(obj, bioplatforms_library_id)
+                self.build_title_into_object(obj)
                 self.build_notes_into_object(obj)
                 self._add_datatype_specific_info_to_package(obj, row, fname)
                 ingest_utils.permissions_organization_member_after_embargo(
