@@ -11,12 +11,15 @@ from ...abstract import BaseLibraryContextual
 
 class AGDatasetControlContextual(BaseDatasetControlContextual):
     metadata_urls = [
-        "https://downloads-qcif.bioplatforms.com/bpa/grasslands/dataset_control/2023-11-13/"
+        "https://downloads-qcif.bioplatforms.com/bpa/grasslands/dataset_control/2024-01-04/"
     ]
     name = "ag-dataset-contextual"
     contextual_linkage = ("library_id", "dataset_id")
     additional_fields = [
         fld('sample_id', 'sample_id', coerce=ingest_utils.extract_ands_id),
+    ]
+    sheet_names = [
+        "Data control",
     ]
 
 
