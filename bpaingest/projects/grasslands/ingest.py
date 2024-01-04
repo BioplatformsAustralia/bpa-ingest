@@ -23,12 +23,13 @@ from .contextual import AGLibraryContextual,AGDatasetControlContextual
 from .tracking import AGTrackMetadata
 
 common_context = [AGLibraryContextual, AGDatasetControlContextual]
-
+CONSORTIUM_ORG_NAME = "grassland-consortium-members"
 
 class AGBaseMetadata(BaseMetadata):
     organization = "grasslands"
     initiative = "AG"
     initiative_prefix = "Grasslands"
+    embargo_days = 365
 
 
     title_mapping = [
@@ -115,7 +116,16 @@ class AGBaseMetadata(BaseMetadata):
                 self._add_datatype_specific_info_to_package(obj, row, fname)
                 self._build_title_into_object(obj)
                 self.build_notes_into_object(obj)
-                ingest_utils.permissions_organization_member(self._logger, obj)
+                package_embargo_days = self.embargo_days
+                if obj["access_control_date"] is not None:
+                    package_embargo_days = obj["access_control_date"]
+                ingest_utils.permissions_organization_member_after_embargo(
+                    self._logger,
+                    obj,
+                    "date_of_transfer_to_archive",
+                    package_embargo_days,
+                    CONSORTIUM_ORG_NAME,
+                )
                 ingest_utils.apply_access_control(self._logger, self, obj)
                 obj["tags"] = [{"name": t} for t in self.tag_names]
                 packages.append(obj)
@@ -126,7 +136,6 @@ class AGIlluminaShortreadMetadata(AGBaseMetadata):
     ckan_data_type = "grasslands-illumina-shortread"
     technology = "illumina-shortread"
     sequence_data_type = "illumina-shortread"
-    embargo_days = 365
     contextual_classes = common_context
     metadata_patterns = [r"^.*\.md5$", r"^.*_metadata.*.*\.xlsx$"]
     metadata_urls = [
@@ -248,7 +257,6 @@ class AGHiCMetadata(AGIlluminaShortreadMetadata):
     description = "Hi-C"
     technology = "hi-c"
     sequence_data_type = "illumina-hic"
-    embargo_days = 365
     metadata_urls = [
         "https://downloads-qcif.bioplatforms.com/bpa/grasslands/genomics-hi-c/",
     ]
@@ -258,7 +266,6 @@ class AGPacbioHifiMetadata(AGBaseMetadata):
     ckan_data_type = "grasslands-pacbio-hifi"
     technology = "pacbio-hifi"
     sequence_data_type = "pacbio-hifi"
-    embargo_days = 365
     description = "PacBio HiFi"
     contextual_classes = common_context
     metadata_patterns = [r"^.*\.md5$", r"^.*(\.|_)metadata.*.*\.xlsx$"]
