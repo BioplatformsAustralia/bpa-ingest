@@ -166,6 +166,7 @@ def test_pacbio_hifi_metadata_sheet():
     filenames = [
         "GAP_GWA_DA110323_metadata.xlsx",
         "GAP_GWA_GWA-AJ-774_DA180954_metadata.xlsx",
+        "GAP_GWA_GWA-AJ-1000_DA242112_metadata.xlsx",
     ]
 
     for filename in filenames:

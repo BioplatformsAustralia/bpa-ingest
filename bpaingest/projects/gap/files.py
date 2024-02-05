@@ -152,7 +152,7 @@ pacbio_hifi_revio_pdf_re = re.compile(PACBIO_HIFI_REVIO_PDF_PATTERN, re.VERBOSE)
 PACBIO_HIFI_METADATA_SHEET_PATTERN = r"""
     GAP_
     (?P<facility>(GWA|AGRF))_
-    ?(?P<order>(GWA-.{6})_)
+    ?(?P<order>(GWA-.{6,7})_)
     ?(?P<flowcell_id>\w{8})
     ((_|\.)metadata\.xlsx)
 """
