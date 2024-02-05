@@ -3,13 +3,13 @@ import os
 import re
 from collections import defaultdict, Counter
 
-from .metadata import DownloadMetadata
-from .projects import ProjectInfo
-from .resource_metadata import (
+from bpaingest.metadata import DownloadMetadata
+from bpaingest.projects import ProjectInfo
+from bpaingest.resource_metadata import (
     build_raw_resources_from_state_as_file,
     validate_raw_resources_from_state,
 )
-from .util import make_logger, make_ckan_api
+from bpaingest.util import make_logger, make_ckan_api
 
 
 def unique_packages(logger, packages):

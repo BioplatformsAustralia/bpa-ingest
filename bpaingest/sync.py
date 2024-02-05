@@ -2,7 +2,7 @@ import os
 import pickle
 import re
 
-from .ops import (
+from bpaingest.ops import (
     ckan_method,
     patch_if_required,
     check_resource,
@@ -13,16 +13,16 @@ from .ops import (
     CKANArchiveInfo,
     ApacheArchiveInfo,
 )
-from .pkgcache import build_package_cache
+from bpaingest.pkgcache import build_package_cache
 import ckanapi
 
-from .resource_metadata import (
+from bpaingest.resource_metadata import (
     build_raw_resources_as_file,
     validate_raw_resources_file_metadata,
 )
-from .util import make_logger
-from .util import prune_dict
-from .libs.multihash import S3_HASH_FIELDS
+from bpaingest.util import make_logger
+from bpaingest.util import prune_dict
+from bpaingest.libs.multihash import S3_HASH_FIELDS
 from collections import Counter
 
 logger = make_logger(__name__)
