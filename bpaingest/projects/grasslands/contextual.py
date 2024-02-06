@@ -11,7 +11,7 @@ from ...abstract import BaseLibraryContextual
 
 class AGDatasetControlContextual(BaseDatasetControlContextual):
     metadata_urls = [
-        "https://downloads-qcif.bioplatforms.com/bpa/grasslands/dataset_control/2024-01-04/"
+        "https://downloads-qcif.bioplatforms.com/bpa/grasslands/dataset_control/2024-02-06/"
     ]
     name = "ag-dataset-contextual"
     contextual_linkage = ("library_id", "dataset_id")
@@ -25,11 +25,13 @@ class AGDatasetControlContextual(BaseDatasetControlContextual):
 
 class AGLibraryContextual(BaseLibraryContextual):
     metadata_urls = [
-        "https://downloads-qcif.bioplatforms.com/bpa/grasslands/metadata/2023-12-21/"
+        "https://downloads-qcif.bioplatforms.com/bpa/grasslands/metadata/2024-02-05/"
     ]
     name = "ag-library-contextual"
     sheet_names = [
         "Ref genomes",
+        "RNAseq",
+        "ddRAD",
     ]
 
     field_spec = [
