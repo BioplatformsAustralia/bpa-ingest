@@ -818,45 +818,50 @@ class GAPPacbioHifiMetadata(GAPBaseMetadata):
             metadata_sheet = re.search(
                 revio_xls_filename_re, os.path.basename(filename)
             )
-        metadata_sheet_dict = metadata_sheet.groupdict()
-        metadata_sheet_flowcell_ids = []
-        for f in ["flowcell_id", "flowcell2_id"]:
-            if f in metadata_sheet_dict:
-                metadata_sheet_flowcell_ids.append(metadata_sheet_dict[f])
 
-        if row.flowcell_id not in metadata_sheet_flowcell_ids:
-            raise Exception(
-                "The metadata row for library ID: {} has a flow cell ID of {}, which cannot be found in the metadata sheet name: {}".format(
-                    row.library_id, row.flowcell_id, filename
+        if metadata_sheet is not None:
+            metadata_sheet_dict = metadata_sheet.groupdict()
+            metadata_sheet_flowcell_ids = []
+            for f in ["flowcell_id", "flowcell2_id"]:
+                if f in metadata_sheet_dict:
+                    metadata_sheet_flowcell_ids.append(metadata_sheet_dict[f])
+
+            if row.flowcell_id not in metadata_sheet_flowcell_ids:
+                raise Exception(
+                    "The metadata row for library ID: {} has a flow cell ID of {}, which cannot be found in the metadata sheet name: {}".format(
+                        row.library_id, row.flowcell_id, filename
+                    )
                 )
+            name = sample_id_to_ckan_name(
+                    "{}".format(row.library_id.split("/")[-1]),
+                    self.ckan_data_type,
+                    "{}".format(row.flowcell_id),
             )
-        name = sample_id_to_ckan_name(
-                "{}".format(row.library_id.split("/")[-1]),
-                self.ckan_data_type,
-                "{}".format(row.flowcell_id),
-        )
-        track_meta = self.get_tracking_info(row.ticket)
+            track_meta = self.get_tracking_info(row.ticket)
 
-        obj.update(
-                    {  "id":name,
-                       "name": name,
-                       "dataset_id": row.dataset_id,
-                        "date_of_transfer": ingest_utils.get_date_isoformat(
-                            self._logger, track_meta.date_of_transfer),
-                        "data_type": track_meta.data_type,
-                        "description": track_meta.description,
-                        "folder_name": track_meta.folder_name,
-                        "date_of_transfer_to_archive": ingest_utils.get_date_isoformat(
-                            self._logger, track_meta.date_of_transfer_to_archive
-                        ),
-                        "dataset_url": track_meta.download,
-                    }
-                )
-        self.description = obj.get("description") # set the description for the title, it comes from the spreadsheet
+            obj.update(
+                        {  "id":name,
+                           "name": name,
+                           "dataset_id": row.dataset_id,
+                            "date_of_transfer": ingest_utils.get_date_isoformat(
+                                self._logger, track_meta.date_of_transfer),
+                            "data_type": track_meta.data_type,
+                            "description": track_meta.description,
+                            "folder_name": track_meta.folder_name,
+                            "date_of_transfer_to_archive": ingest_utils.get_date_isoformat(
+                                self._logger, track_meta.date_of_transfer_to_archive
+                            ),
+                            "dataset_url": track_meta.download,
+                        }
+                    )
+            self.description = obj.get("description") # set the description for the title, it comes from the spreadsheet
 
-# below fields are in the metadata, but not required in the packages schema
-        del obj["ccg_jira_ticket"]
-        del obj["download"]
+        # below fields are in the metadata, but not required in the packages schema
+            del obj["ccg_jira_ticket"]
+            del obj["download"]
+
+        else:
+             self._logger.error("Metadata Sheet {0} cannot be parsed wih RegExp".format(filename))
 
 
     def _get_resources(self):
