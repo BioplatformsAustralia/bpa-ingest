@@ -3,9 +3,7 @@ Contact mlum@bioplatforms.com if you need assistance filling this sheet.,,,,,,,,
 Facility to fill,Facility to fill,Facility to fill (Leave empty if data is for >1 species),Facility to fill (Leave empty if data is for >1 species),Facility to fill,Project Manager to fill (Leave empty if data is for >1 species),Project Manager to fill,Project Manager to fill,Facility to fill,Facility to fill,Data team to fill,Project Manager to fill,Data team to fill,Data team to fill
 ,,,,,,,,,,,,,
 Facility,Date of transfer,bioplatforms_sample_id,bioplatforms_library_id,bioplatforms_dataset_id,scientific_name,project_aim,data_type,Description,Folder name,Date of transfer to archive,Date data published,CCG JIRA Ticket,Download
-BRF,10/11/2023,369564,371565,373565,Themeda triandra,Reference genome,Main dataset,Hi-C,20231109_AG_BRF_HMMYTDRX3,14/11/2023,,BPAOPS-1514,https://data.bioplatforms.com/dataset?ext_search_by=&q=ticket%3ABPAOPS-1514
-BRF,20/12/2023,369564,371564,373564,Themeda triandra,Reference genome,Main dataset,PacBio-HiFi,20231208_AG_BRF_m84118_231208_115614_s4,22/12/2023,,BPAOPS-1547,
-,,,,,,,,,,,,,
-,,,,,,,,,,,,,
-,,,,,,,,,,,,,
-,,,,,Notification to be sent - extend emabrgo period for Themeda genome,,,,,,,,
+BRF,10/11/2023,369564,371565,373565,Themeda triandra,Reference genome,Main dataset,Hi-C,20231109_AG_BRF_HMMYTDRX3,14/11/2023,04/01/2024,BPAOPS-1514,https://data.bioplatforms.com/dataset?ext_search_by=&q=ticket%3ABPAOPS-1514
+BRF,20/12/2023,369564,371564,373564,Themeda triandra,Reference genome,Main dataset,PacBio-HiFi,20231208_AG_BRF_m84118_231208_115614_s4,22/12/2023,04/01/2024,BPAOPS-1547,https://data.bioplatforms.com/dataset?ext_search_by=&q=ticket%3ABPAOPS-1547
+ML note: Everything up to this point has been added to the Aus_Genome_status - Bioplatforms Google sheet,,,,,,,,,,,,,
+RAMAC,02/02/2024,,,373569,Themeda triandra,Transcriptomics-RNASeq (ILMN total RNA (TruSeq)),Main dataset,Illumina Short Read,20240129_AG_UNSW_22HYWKLT3,06/02/2024,,BPAOPS-1555,
