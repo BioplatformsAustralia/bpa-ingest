@@ -93,5 +93,6 @@ AGRF,01/12/2023,PacBio-HiFi,HiFi,20231129_AusARG_AGRF_CAGRF230414583_m84073_2311
 AGRF,18/12/2023,Illumina-shortread,Short reads,20231218_AusARG_AGRF_CAGRF23091299_22GYHHLT3,458248 - 458250,456737 - 456739,351898,Common eastern froglet (Crinia signifera),Reference genome,18/12/2023,,BPAOPS-1534,,
 BRF,19/12/2023,Illumina-HiC,HiC,20231215_AusARG_BRF_222VJYLT4,multiple (11x),multiple (11x),multiple (11x),"Common eastern froglet (Crinia signifera), Eungella Leaf-tailed Gecko (Phyllurus nephtys), Southern ornate nursery frog (Cophixalus australis), Gehyra sp. x8",Reference genome,22/12/2023,,BPAOPS-1538,,
 BRF,20/12/2023,Illumina-shortread,Short reads,20231219_AusARG_BRF_351863_HWLHCDRX3,multiple,multiple,351863,Sphenomorphin (skinks),Phylogenomics,20/12/2023,,BPAOPS-1540,,
-AGRF,16/01/2024,Illumina-shortread,Short reads,20240116_AusARG_AGRF_CAGRF23091299_22H37WLT3,,,,,,16/01/2024,,BPAOPS-1550,,
-AGRF,16/01/2024,PacBio-HiFi,HiFi,20240115_AusARG_AGRF_CAGRF23091299_m84073_240109_065332_s1,,,,,,16/01/2024,,BPAOPS-1552,,
+AGRF,16/01/2024,Illumina-transcriptomics,RNA-seq,20240116_AusARG_AGRF_CAGRF23091299_22H37WLT3,458252-458257,456741-456746,351900,Common eastern froglet (Crinia signifera),Reference genome,16/01/2024,,BPAOPS-1550,,
+AGRF,16/01/2024,PacBio-HiFi,HiFi,20240115_AusARG_AGRF_CAGRF23091299_m84073_240109_065332_s1,458251,456740,351899,Common eastern froglet (Crinia signifera),Reference genome,16/01/2024,,BPAOPS-1552,,
+BRF,24/01/2024,Illumina-shortread,Short reads,20240124_AusARG_BRF_351835_HWWNTDRX3,,,,,,08/02/2024,,BPAOPS-1556,,
