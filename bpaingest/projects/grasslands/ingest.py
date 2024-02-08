@@ -117,7 +117,7 @@ class AGBaseMetadata(BaseMetadata):
                 self._build_title_into_object(obj)
                 self.build_notes_into_object(obj)
                 package_embargo_days = self.embargo_days
-                if obj["access_control_date"] is not None:
+                if hasattr(obj, "access_control_date") and obj["access_control_date"] is not None:
                     package_embargo_days = obj["access_control_date"]
                 ingest_utils.permissions_organization_member_after_embargo(
                     self._logger,
