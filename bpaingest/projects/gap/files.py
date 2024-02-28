@@ -136,6 +136,7 @@ PACBIO_HIFI_REVIO_PATTERN = r"""
     (PacBio_)?
     (?P<flowcell_id>\w{23})
     (\.hifi_reads\.default\.bam
+      |\.hifi_reads\.bc\d{4}\.bam
       |\.hifi_reads\.bam)
 """
 pacbio_hifi_filename_revio_re = re.compile(PACBIO_HIFI_REVIO_PATTERN, re.VERBOSE)

@@ -146,6 +146,7 @@ def test_pacbio_hifi():
 def test_pacbio_hifi_revio():
     filenames = [
         "378163_GAP_BRF_m84118_231115_072325_s4.hifi_reads.default.bam",
+        "378163_GAP_BRF_m84118_231115_072325_s4.hifi_reads.bc2345.bam",
         # "GAP_BRF_m84118_231115_072325_s4.pdf"
     ]
 
