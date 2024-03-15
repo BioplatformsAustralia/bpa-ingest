@@ -10,7 +10,7 @@ from ...abstract import BaseLibraryContextual
 
 class TSIDatasetControlContextual(BaseDatasetControlContextual):
     metadata_urls = [
-        "https://downloads-qcif.bioplatforms.com/bpa/tsi_staging/dataset_control/2021-11-24/"
+        "https://downloads-qcif.bioplatforms.com/bpa/tsi_staging/dataset_control/2024-03-14/"
     ]
     name = "tsi-dataset-contextual"
     contextual_linkage = ("sample_id",)
