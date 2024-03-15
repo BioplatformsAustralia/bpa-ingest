@@ -14,9 +14,13 @@ class TSIDatasetControlContextual(BaseDatasetControlContextual):
     ]
     name = "tsi-dataset-contextual"
     contextual_linkage = ("sample_id",)
+    """ library and dataset fields are skipped as they are blank for TSI.
+    Because the linkage is sample id, if there are multiple dataset/libraries for the one sample, the dataset and
+    library ids must be blank (to avoid duplicates), but we don't want to overwrite the ids in the ckan object.
+    """
     additional_fields = [
-        fld('library_id', 'library_id'),
-        fld('dataset_id', 'dataset_id'),
+        skp('library_id'),
+        skp('dataset_id')
     ]
 
 
