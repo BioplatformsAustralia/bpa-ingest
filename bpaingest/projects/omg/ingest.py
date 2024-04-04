@@ -123,7 +123,7 @@ class OMG10XRawIlluminaMetadata(OMGBaseMetadata):
             fld(
                 "n_libraries_pooled", "n_libraries_pooled", coerce=ingest_utils.get_int
             ),
-            fld("bpa_work_order", "bpa_work_order", coerce=ingest_utils.get_int),
+            fld("bpa_work_order", "bpa_work_order", coerce=ingest_utils.int_or_comment),
             fld("sequencing_platform", "sequencing_platform"),
             fld("sequence_length", "sequence_length"),
             fld("flowcell_id", "flowcell_id"),
@@ -346,7 +346,7 @@ class OMG10XRawMetadata(OMGBaseMetadata):
             fld(
                 "n_libraries_pooled", "n_libraries_pooled", coerce=ingest_utils.get_int
             ),
-            fld("bpa_work_order", "bpa_work_order", coerce=ingest_utils.get_int),
+            fld("bpa_work_order", "bpa_work_order", coerce=ingest_utils.int_or_comment),
             fld("sequencing_platform", "sequencing_platform"),
             fld("sequence_length", "sequence_length"),
             fld("flowcell_id", "flowcell_id"),
@@ -542,7 +542,7 @@ class OMG10XProcessedIlluminaMetadata(OMGBaseMetadata):
             fld(
                 "n_libraries_pooled", "n_libraries_pooled", coerce=ingest_utils.get_int
             ),
-            fld("bpa_work_order", "bpa_work_order", coerce=ingest_utils.get_int),
+            fld("bpa_work_order", "bpa_work_order", coerce=ingest_utils.int_or_comment),
             fld("sequencing_platform", "sequencing_platform"),
             fld("sequence_length", "sequence_length"),
             fld("flowcell_id", "flowcell_id"),
@@ -760,7 +760,7 @@ class OMGExonCaptureMetadata(OMGBaseMetadata):
             fld(
                 "n_libraries_pooled", "n_libraries_pooled", coerce=ingest_utils.get_int
             ),
-            fld("bpa_work_order", "bpa_work_order", coerce=ingest_utils.get_int),
+            fld("bpa_work_order", "bpa_work_order", coerce=ingest_utils.int_or_comment),
             fld("sequencing_platform", "sequencing_platform"),
             fld("sequence_length", "sequence_length"),
             fld("flowcell_id", "flowcell_id"),
@@ -997,7 +997,7 @@ class OMGWholeGenomeMetadata(OMGBaseMetadata):
             fld(
                 "n_libraries_pooled", "n_libraries_pooled", coerce=ingest_utils.get_int
             ),
-            fld("bpa_work_order", "bpa_work_order", coerce=ingest_utils.get_int),
+            fld("bpa_work_order", "bpa_work_order", coerce=ingest_utils.int_or_comment),
             fld("sequencing_platform", "sequencing_platform"),
             fld("sequence_length", "sequence_length"),
             fld("flowcell_id", "flowcell_id"),
@@ -1217,7 +1217,7 @@ class OMGGenomicsNovaseqMetadata(OMGBaseMetadata):
             fld(
                 "n_libraries_pooled", "n_libraries_pooled", coerce=ingest_utils.get_int
             ),
-            fld("bpa_work_order", "bpa_work_order", coerce=ingest_utils.get_int),
+            fld("bpa_work_order", "bpa_work_order", coerce=ingest_utils.int_or_comment),
             fld("sequencing_platform", "sequencing_platform"),
             fld("sequence_length", "sequence_length"),
             fld("flowcell_id", "flowcell_id"),
@@ -1398,7 +1398,7 @@ class OMGGenomicsHiSeqMetadata(OMGBaseMetadata):
             fld(
                 "n_libraries_pooled", "n_libraries_pooled", coerce=ingest_utils.get_int
             ),
-            fld("bpa_work_order", "bpa_work_order", coerce=ingest_utils.get_int),
+            fld("bpa_work_order", "bpa_work_order", coerce=ingest_utils.int_or_comment),
             fld("sequencing_platform", "sequencing_platform"),
             fld("sequence_length", "sequence_length"),
             fld("flowcell_id", "flowcell_id"),
@@ -1600,7 +1600,7 @@ class OMGGenomicsDDRADMetadata(OMGBaseMetadata):
             fld(
                 "n_libraries_pooled", "n_libraries_pooled", coerce=ingest_utils.get_int
             ),
-            fld("bpa_work_order", "bpa_work_order", coerce=ingest_utils.get_int),
+            fld("bpa_work_order", "bpa_work_order", coerce=ingest_utils.int_or_comment),
             fld("sequencing_platform", "sequencing_platform"),
             fld("sequence_length", "sequence_length"),
             fld("flowcell_id", "flowcell_id"),
@@ -1832,7 +1832,7 @@ class OMGGenomicsPacbioMetadata(OMGBaseMetadata):
             fld(
                 "n_libraries_pooled", "n_libraries_pooled", coerce=ingest_utils.get_int
             ),
-            fld("bpa_work_order", "bpa_work_order", coerce=ingest_utils.get_int),
+            fld("bpa_work_order", "bpa_work_order", coerce=ingest_utils.int_or_comment),
             fld("sequencing_platform", "sequencing_platform"),
             fld("sequence_length", "sequence_length"),
             fld("flowcell_id", "flowcell_id"),
@@ -2029,7 +2029,7 @@ class OMGONTPromethionMetadata(OMGBaseMetadata):
                 optional=True,
                 coerce=ingest_utils.get_int,
             ),
-            fld("bpa_work_order", "bpa_work_order", coerce=ingest_utils.get_int),
+            fld("bpa_work_order", "bpa_work_order", coerce=ingest_utils.int_or_comment),
             fld("sequencing_platform", "sequencing_platform"),
             fld("sequence_length", "sequence_length", optional=True),
             fld("flowcell_id", "flowcell_id"),
@@ -2218,7 +2218,7 @@ class OMGTranscriptomicsNextseq(OMGBaseMetadata):
             fld(
                 "n_libraries_pooled", "n_libraries_pooled", coerce=ingest_utils.get_int
             ),
-            fld("bpa_work_order", "bpa_work_order", coerce=ingest_utils.get_int),
+            fld("bpa_work_order", "bpa_work_order", coerce=ingest_utils.int_or_comment),
             fld("sequencing_platform", "sequencing_platform"),
             fld("sequence_length", "sequence_length"),
             fld("flowcell_id", "flowcell_id"),
@@ -2828,7 +2828,7 @@ class OMGGenomicsDArTMetadata(OMGBaseMetadata):
             fld(
                 "n_libraries_pooled", "n_libraries_pooled", coerce=ingest_utils.get_int
             ),
-            fld("bpa_work_order", "bpa_work_order", coerce=ingest_utils.get_int),
+            fld("bpa_work_order", "bpa_work_order", coerce=ingest_utils.int_or_comment),
             fld("sequencing_platform", "sequencing_platform"),
             fld("sequence_length", "sequence_length"),
             fld("flowcell_id", "flowcell_id"),
