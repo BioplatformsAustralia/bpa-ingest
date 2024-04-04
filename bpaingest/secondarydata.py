@@ -13,7 +13,20 @@ from bpaingest.resource_metadata import (
 
 class SecondaryMetadata(BaseMetadata):
     _raw_resources_file_basename = "raw_resources.json"
-
+    title_mapping = [
+        {"key": "common_name", "separator": ", "},
+        {"key": "data_context", "separator": ", "},
+        {"key": "data_type", "separator": ", "},
+        {"key": "tissue_type"},
+    ]
+    notes_mapping = [
+        {"key": "family", "separator": ", "},
+        {"key": "genus", "separator": " "},
+        {"key": "species", "separator": ", "},
+        {"key": "specimen_id", "separator": ", "},
+        {"key": "taxonomic_group", "separator": ", Project Lead: "},
+        {"key": "data_custodian"},
+    ]
     def parse_raw_list(self, lname):
         p = RawParser(lname, self.raw["match"], self.raw["skip"])
         for tpl in p.matches:
