@@ -224,4 +224,12 @@ ORGANIZATIONS = [
         "image_url": "https://data.bioplatforms.com/fungi.png",
         "groups": [{"capacity": "public", "name": 'fungi'}],
     },
+    {
+        "name": "platypus-bio-collaboration-members",
+        "title": "Platypus Bio Collaboration Members",
+        "display_name": "Platypus Bio Collaboration Members",
+        "image_url": "https://data.bioplatforms.com/platypus_bio_logo.png",
+        "groups": [{"capacity": "public", "name": 'australian-microbiome'}],
+    },
 ]
+
