@@ -217,4 +217,11 @@ ORGANIZATIONS = [
         "image_url": "https://data.bioplatforms.com/avian.png",
         "groups": [{"capacity": "public", "name": 'aus-avian'}],
     },
+    {
+        "name": "fungi-consortium-members",
+        "title": "Fungi Functional 'Omics Project Members",
+        "display_name": "Fungi Functional 'Omics Project Members",
+        "image_url": "https://data.bioplatforms.com/fungi.png",
+        "groups": [{"capacity": "public", "name": 'fungi'}],
+    },
 ]
