@@ -218,6 +218,20 @@ ORGANIZATIONS = [
         "groups": [{"capacity": "public", "name": 'aus-avian'}],
     },
     {
+        "name": "bpa-ipm",
+        "title": "Integrated Pest Management 'Omics",
+        "display_name": "Integrated Pest Management 'Omics Initiative (IPM 'Omics)",
+        "image_url": "https://data.bioplatforms.com/ipm.png",
+        "groups": [{"capacity": "public", "name": BPA_ORGANIZATION_ID}],
+    },
+    {
+        "name": "bpa-ipm-consortium-members",
+        "title": "IPM 'Omics Project Members",
+        "display_name": "IPM 'Omics Project Members",
+        "image_url": "https://data.bioplatforms.com/ipm.png",
+        "groups": [{"capacity": "public", "name": 'bpa-ipm'}],
+    },
+    {
         "name": "fungi-consortium-members",
         "title": "Fungi Functional 'Omics Project Members",
         "display_name": "Fungi Functional 'Omics Project Members",
