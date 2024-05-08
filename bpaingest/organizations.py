@@ -239,11 +239,18 @@ ORGANIZATIONS = [
         "groups": [{"capacity": "public", "name": 'fungi'}],
     },
     {
+        "name": "bpa-collaborations",
+        "title": "BPA Collaborations",
+        "display_name": "Bioplatforms Australia Collaborations",
+        "image_url": "https://data.bioplatforms.com/bpalogo.png",
+        "groups": [{"capacity": "public", "name": BPA_ORGANIZATION_ID}],
+    },
+    {
         "name": "platypus-bio-collaboration-members",
         "title": "Platypus Bio Collaboration Members",
         "display_name": "Platypus Bio Collaboration Members",
         "image_url": "https://data.bioplatforms.com/platypus_bio_logo.png",
-        "groups": [{"capacity": "public", "name": 'australian-microbiome'}],
+        "groups": [{"capacity": "public", "name": 'bpa-collaborations'}],
     },
 ]
 
