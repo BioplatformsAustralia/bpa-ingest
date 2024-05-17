@@ -237,7 +237,7 @@ Ramaciotti,23/10/2023,MiSeq data package,16S,231013_AM_A16_UNSW_L9765.tar,23/10/
 Ramaciotti,23/10/2023,MiSeq data package,16S,231006_AM_16S_UNSW_LBFRY.tar,23/10/2023,,BPAOPS-1500,
 Ramaciotti,16/11/2023,NovaSeq data package,MGE,20230913_MGE_AM_UNSW_HJJGYDSX7,16/11/2023,,BPAOPS-1522,
 Ramaciotti,23/11/2023,MiSeq data package,18S,231110_AM_18S_UNSW_LB4W9,23/11/2023,,BPAOPS-1523,
-Ramaciotti,23/02/2024,MiSeq data package,16S,240216_AM_16S_UNSW_LHMB7,26/02/2024,,BPAOPS-1558,"Incorrect Indexing, withdrawn, replaced with BPAOPS-"
+Ramaciotti,23/02/2024,MiSeq data package,16S,240216_AM_16S_UNSW_LHMB7,26/02/2024,,BPAOPS-1558,"Incorrect Indexing, withdrawn, replaced with BPAOPS-1590"
 Ramaciotti,23/02/2024,MiSeq data package,16S,240216_AM_16S_UNSW_LHMB9,26/02/2024,,BPAOPS-1559,"misidentified sample(s) , withdrawn, replaced below. (BPAOPS-1569)"
 Ramaciotti,01/03/2024,MiSeq data package,A16S,240223_AM_A16_UNSW_LFR5G,05/03/2024,,BPAOPS-1562,"Incorrect Indexing, withdrawn, replaced with BPAOPS-1588"
 Ramaciotti,13/03/2024,MiSeq data package,18S,240219_AM_18S_UNSW_LHPV7,14/03/2024,,BPAOPS-1563,"incorrect controls, withdrawn, replaced below (BPAOPS-1572)"
@@ -248,4 +248,4 @@ AGRF,29/04/2024,NovaSeq data package,MGE,240429_AM_MGE_AGRF_22KM7FLT3,,,,"This d
 Ramaciotti,15/05/2024,MiSeq data package,18S,240219_AM_18S_UNSW_LHPV7,16/05/2024,,BPAOPS-1587,Replaces BPAOPS-1572
 Ramaciotti,15/05/2024,MiSeq data package,A16S,240223_AM_A16_UNSW_LFR5G,16/05/2024,,BPAOPS-1588,Replaces BPAOPS-1562
 Ramaciotti,15/05/2024,MiSeq data package,16S,240216_AM_16S_UNSW_LHMB9,16/05/2024,,BPAOPS-1589,Replaces BPAOPS-1569
-Ramaciotti,15/05/2024,MiSeq data package,16S,240216_AM_16S_UNSW_LHMB7,,,BPAOPS-1590,Replaces BPAOPS-1558
+Ramaciotti,15/05/2024,MiSeq data package,16S,240216_AM_16S_UNSW_LHMB7,17/05/2024,,BPAOPS-1590,Replaces BPAOPS-1558
