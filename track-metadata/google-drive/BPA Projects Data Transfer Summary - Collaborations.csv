@@ -1,0 +1,4 @@
+Sequencing facility,Date of transfer,Description,Data type,Note,Folder name,Date of transfer to archive,CCG JIRA Ticket,Collaboration Partner
+AGRF,29/04/2024,NovaSeq X data package,illumina-shortread,Illumina NovaSeq on 2 soil samples,240429_AM_MGE_AGRF_22KM7FLT3,05/05/2024,BPAOPS-1577,Platypus Bio
+AGRF,08/05/2024,Promethion data packaged,ont-promethion,ONT PromethION on 1 soil sample,20240507_AM_ONT_AGRF_PAW45919,14/05/2024,BPAOPS-1580,Platypus Bio
+AGRF,08/05/2024,Promethion data packaged,ont-promethion,ONT PromethION on 1 soil sample,20240507_AM_ONT_AGRF_PAW47248,14/05/2024,BPAOPS-1581,Platypus Bio
