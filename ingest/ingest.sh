@@ -199,6 +199,12 @@ grasslands() {
   apply grasslands-pacbio-hifi $*
 }
 
+collabs()
+{
+  apply collabs-platypus-metagenomics-novaseq $*
+
+}
+
 run() {
   apply $*
 }
@@ -221,6 +227,7 @@ all()
   cipps $*
   ppa $*
   grasslands $*
+  collabs $*
 }
 
 action="$1"

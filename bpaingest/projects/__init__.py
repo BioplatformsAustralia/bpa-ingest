@@ -119,7 +119,10 @@ from .grasslands.ingest import (
     AGIlluminaShortreadMetadata,
     AGHiCMetadata,
     AGPacbioHifiMetadata,
-
+ )
+from .collaborations.ingest import (
+    CollaborationsMetagenomicsNovaseqMetadata,
+    CollaborationsONTPromethionMetadata,
  )
 
 class ProjectInfo:
@@ -244,6 +247,12 @@ class ProjectInfo:
             AGHiCMetadata,
             AGPacbioHifiMetadata,
         ],
+        "collaborations": [
+            CollaborationsMetagenomicsNovaseqMetadata,
+            CollaborationsONTPromethionMetadata,
+        ],
+
+
     }
 
     def __init__(self):
