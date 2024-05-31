@@ -133,6 +133,7 @@ DART_PATTERN = r"""
     (?P<file_archive_date>\d{8})_
     AusARG_
     (?P<facility_id>(BRFDArT))_
+    ((?P<dataset_id>\d{4,6})_)?
     (?P<flowcell_id>\w{9})
     (_(?P<run>\d{1}))?
     \.

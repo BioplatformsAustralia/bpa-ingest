@@ -145,6 +145,7 @@ def test_dart_filename_re():
         "20210504_AusARG_BRFDArT_HGKTCDRXY.tar",
         "20210504_AusARG_BRFDArT_CD58NANXX.tar",
         "20210504_AusARG_BRFDArT_CD9F8ANXX.tar",
+        "20210504_AusARG_BRFDArT_351793_HGKTCDRXY.tar",
     ]
     for filename in filenames:
         assert dart_filename_re.match(filename) is not None
