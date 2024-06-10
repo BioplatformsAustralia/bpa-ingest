@@ -16,7 +16,8 @@ ILLUMINA_SHORTREAD_PATTERN = r"""(?P<sample_id>\d{4,6})_
     (?P<lane>L\d{3})_
     (?P<read>[R|I][1|2])
     (_001|)
-    \.fastq\.gz$
+    (\.fastq)?
+    \.gz$
 """
 illumina_shortread_re = re.compile(ILLUMINA_SHORTREAD_PATTERN, re.VERBOSE)
 
