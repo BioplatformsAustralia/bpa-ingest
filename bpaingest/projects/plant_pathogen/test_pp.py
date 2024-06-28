@@ -71,6 +71,7 @@ def test_ont_promethion_common():
         "PP_BRF_PAQ21103_ONTPromethION_barcode_alignment.tsv"
         "PP_BRF_PAQ21103_ONTPromethION_report.html",
         "PP_BRF_PAQ21103_ONTPromethION_sequencing_summary.txt",
+        "PP_BRF_PAW33991_ONTPromethION_pod5.tar",
     ]
     for filename in filenames:
         assert ont_promethion_common_re.match(filename) is not None
