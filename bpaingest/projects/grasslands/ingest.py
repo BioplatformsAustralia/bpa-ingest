@@ -273,7 +273,7 @@ class AGPacbioHifiMetadata(AGBaseMetadata):
         "https://downloads-qcif.bioplatforms.com/bpa/grasslands/pacbio-hifi/",
     ]
     metadata_url_components = ("ticket",)
-    resource_linkage = ("ticket", "sample_id", "flowcell_id")
+    resource_linkage = ("ticket", "sample_id", "library_id", "flowcell_id")
     spreadsheet = {
         "fields": [
             fld('bioplatforms_project', 'bioplatforms_project'),
@@ -415,12 +415,17 @@ class AGPacbioHifiMetadata(AGBaseMetadata):
             resource["sample_id"] = ingest_utils.extract_ands_id(
                 self._logger, resource["sample_id"]
             )
+        if "library_id" in resource:
+                resource["library_id"] = ingest_utils.extract_ands_id(
+                    self._logger, resource["library_id"]
+                )
 
 
     def _build_resource_linkage(self, xlsx_info, resource, file_info):
         return (
                 xlsx_info["ticket"],
                 resource["sample_id"],
+                resource["library_id"],
                 resource["flowcell_id"],
             )
 
