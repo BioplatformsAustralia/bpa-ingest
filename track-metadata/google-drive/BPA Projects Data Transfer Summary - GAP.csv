@@ -155,13 +155,14 @@ GWA,11/08/2023,378166,383173,83797,Lepidosperma gladiatum,Reference Genomes  ,Ma
 GWA,11/08/2023,378173,383184,83808,Flindersia xanthoxyla,Reference Genomes  ,Main dataset,PacBio-HiFi,20230801_GAP_GWA_GWA-AJ-852_DA266019,,17/08/2023,21/06/2023,BPAOPS-1456,https://data.bioplatforms.com/dataset?ext_search_by=&q=ticket%3ABPAOPS-1456
 BRF,17/08/2023,378154,384050,83828,Isopogon anethifolius - 1st flow cell,Reference Genomes  ,Main dataset,PromethION,20230724_GAP_BRF_PAQ20026,,18/08/2023,21/06/2023,BPAOPS-1460,https://data.bioplatforms.com/dataset?ext_search_by=&q=ticket%3ABPAOPS-1460
 BRF,17/08/2023,378154,384051,83829,Isopogon anethifolius - 2nd flow cell,Reference Genomes  ,Main dataset,PromethION,20230727_GAP_BRF_PAQ20854,,18/08/2023,21/06/2023,BPAOPS-1461,https://data.bioplatforms.com/dataset?ext_search_by=&q=ticket%3ABPAOPS-1461
-BRF,13/09/2023,378164,384056,83834,Archirhodomyrtus beckleri - 1st flow cell,Reference Genomes  ,Main dataset,PromethION,20230904_GAP_BRF_PAQ09226 ,,18/09/2023,20/09/2023,BPAOPS-1473,https://data.bioplatforms.com/dataset?ext_search_by=&q=ticket%3ABPAOPS-1473
-BRF,13/09/2023,378164,384059,83837,Archirhodomyrtus beckleri - 2nd flow cell,Reference Genomes  ,Main dataset,PromethION,20230906_GAP_BRF_PAQ20161,,18/09/2023,20/09/2023,BPAOPS-1474,https://data.bioplatforms.com/dataset?ext_search_by=&q=ticket%3ABPAOPS-1474
+BRF,13/09/2023,378164,384056,83834,Archirhodomyrtus beckleri - 1st flow cell ONT,Reference Genomes  ,Main dataset,PromethION,20230904_GAP_BRF_PAQ09226 ,,18/09/2023,20/09/2023,BPAOPS-1473,https://data.bioplatforms.com/dataset?ext_search_by=&q=ticket%3ABPAOPS-1473
+BRF,13/09/2023,378164,384059,83837,Archirhodomyrtus beckleri - 2nd flow cell ONT,Reference Genomes  ,Main dataset,PromethION,20230906_GAP_BRF_PAQ20161,,18/09/2023,20/09/2023,BPAOPS-1474,https://data.bioplatforms.com/dataset?ext_search_by=&q=ticket%3ABPAOPS-1474
+BRF,09/05/2024,378164,384071,83849,Archirhodomyrtus beckleri - 3rd flow cell PacBio ANU,Reference Genomes  ,Main dataset,PacBio-HiFi,20240506_GAP_BRF_m84118_240506_022436_s1,,10/5/24,10/05/2024,BPAOPS-1585,https://data.bioplatforms.com/dataset?ext_search_by=&q=ticket%3ABPAOPS-1585
 BRF,15/09/2023,378172,384058,83836,Gastrolobium racemosum - 1st flow cell ,Reference Genomes  ,Main dataset,PromethION,20230829_GAP_BRF_PAQ20631,,20/09/2023,22/09/2023,BPAOPS-1478,https://data.bioplatforms.com/dataset?ext_search_by=&q=ticket%3ABPAOPS-1478
 BRF,15/09/2023,378172,384061,83839,Gastrolobium racemosum - 2nd flow cell ,Reference Genomes  ,Main dataset,PromethION,20230904_GAP_BRF_PAQ20635,,20/09/2023,22/09/2023,BPAOPS-1479,https://data.bioplatforms.com/dataset?ext_search_by=&q=ticket%3ABPAOPS-1479
-BRF,20/09/2023,378167,384057,83835,Quintinia fawkneri - 1st flow cell,Reference Genomes  ,Main dataset,PromethION,20230911_GAP_BRF_PAQ20169,,22/09/2023,2/10/23,BPAOPS-1480,https://data.bioplatforms.com/dataset?ext_search_by=&q=ticket%3ABPAOPS-1480
-BRF,20/09/2023,378167,384060,83838,Quintinia fawkneri - 2nd flow cell,Reference Genomes  ,Main dataset,PromethION,20230912_GAP_BRF_PAQ20949,,25/09/2023,2/10/23,BPAOPS-1481,https://data.bioplatforms.com/dataset/?ext_search_by=&q=ticket:BPAOPS-1481
-BRF,07/05/2024,378167,384070,83848,Quintinia fawkneri - 3rd flow cell,Reference Genomes  ,Main dataset,PacBio-HiFi,20240425_GAP_BRF_m84118_240425_093211_s3,,08/05/2024,07/05/2024,BPAOPS-1579,https://data.bioplatforms.com/dataset?ext_search_by=&q=ticket%3ABPAOPS-1579
+BRF,20/09/2023,378167,384057,83835,Quintinia fawkneri - 1st flow cell ONT,Reference Genomes  ,Main dataset,PromethION,20230911_GAP_BRF_PAQ20169,,22/09/2023,2/10/23,BPAOPS-1480,https://data.bioplatforms.com/dataset?ext_search_by=&q=ticket%3ABPAOPS-1480
+BRF,20/09/2023,378167,384060,83838,Quintinia fawkneri - 2nd flow cell ONT,Reference Genomes  ,Main dataset,PromethION,20230912_GAP_BRF_PAQ20949,,25/09/2023,2/10/23,BPAOPS-1481,https://data.bioplatforms.com/dataset/?ext_search_by=&q=ticket:BPAOPS-1481
+BRF,07/05/2024,378167,384070,83848,Quintinia fawkneri - 3rd flow cell PacBio ANU,Reference Genomes  ,Main dataset,PacBio-HiFi,20240425_GAP_BRF_m84118_240425_093211_s3,,08/05/2024,07/05/2024,BPAOPS-1579,https://data.bioplatforms.com/dataset?ext_search_by=&q=ticket%3ABPAOPS-1579
 GWA,15/11/2023,378168,383175,83799,Roepera simile - 1st flow cell,Reference Genomes  ,Main dataset,PacBio-HiFi,20231105_GAP_GWA_GWA-AJ-851_DA267080,,20/11/2023,22/11/2023,BPAOPS-1518,https://data.bioplatforms.com/dataset?ext_search_by=&q=ticket%3ABPAOPS-1518
 GWA,15/11/2023,378168,384046,83824,Roepera simile - 2nd flow cell,Reference Genomes  ,Main dataset,PacBio-HiFi,20231106_GAP_GWA_GWA-AJ-851_DA267077,,20/11/2023,22/11/2023,BPAOPS-1519,https://data.bioplatforms.com/dataset?ext_search_by=&q=ticket%3ABPAOPS-1519
 GWA,15/11/2023,378171,383182,83806,Dendrocnide excelsa - 1st flow cell - GWA,Reference Genomes  ,Main dataset,PacBio-HiFi,20231102_GAP_GWA_GWA-AJ-848_DA267052,,22/11/2023,23/11/2023,BPAOPS-1520,https://data.bioplatforms.com/dataset?ext_search_by=&q=ticket%3ABPAOPS-1520
@@ -175,5 +176,12 @@ BRF,28/02/2024,378163,384069,83847,Bellendena montana - 3rd flow cell - ANU,Refe
 BRF,20/12/2023,378180,384063,83841,Pelargonium australe,Reference Genomes  ,Main dataset,PacBio-HiFi,20231208_GAP_BRF_m84118_231208_075745_s2,,22/12/2023,03/01/2024,BPAOPS-1546,https://data.bioplatforms.com/dataset?ext_search_by=&q=ticket%3ABPAOPS-1546
 GWA,30/1/2024,378165,383172,83796,Pultenaea daphnoides,Reference Genomes  ,Main dataset,PacBio-HiFi,20240118_GAP_GWA_GWA-AJ-1000_DA242112,,2/2/2024,06/02/2024,BPAOPS-1554,https://data.bioplatforms.com/dataset?ext_search_by=&q=ticket%3ABPAOPS-1554
 GWA,7/2/2024,378176,384037,83815,Hedycarya angustifolia,Reference Genomes  ,Main dataset,PacBio-HiFi,20240117_GAP_GWA_GWA-AJ-999_DA242132,,9/2/2024,13/02/2024,BPAOPS-1557,https://data.bioplatforms.com/dataset?ext_search_by=&q=ticket%3ABPAOPS-1557
-BRF,09/05/2024,378164,384071,83849,Archirhodomyrtus beckleri - 3rd flow cell,Reference Genomes  ,Main dataset,PacBio-HiFi,20240506_GAP_BRF_m84118_240506_022436_s1,,10/5/24,10/05/2024,BPAOPS-1585,https://data.bioplatforms.com/dataset?ext_search_by=&q=ticket%3ABPAOPS-1585
+BRF,11/07/2024,378163,384073,83851,,,,PacBio-HiFi,20240705_GAP_BRF_m84118_240705_072240_s4,,11/07/2024,,BPAOPS-1613,
+,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,
 ML note: Everything up to this point has been added to the Aus_Genome_status - Bioplatforms Google sheet,,,,,,,,,,,,,,
