@@ -2445,6 +2445,7 @@ class OMGGenomicsPacBioGenomeAssemblyMetadata(SecondaryMetadata):
             resource = file_info.copy()
             resource["md5"] = resource["id"] = md5
             resource["name"] = filename
+            resource["resource_path"] = ""
             resource["resource_type"] = self.ckan_data_type
             library_id = ingest_utils.extract_ands_id(
                 self._logger, resource["bpa_library_id"]

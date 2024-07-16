@@ -245,6 +245,7 @@ class SepsisGenomicsMiseqMetadata(BaseSepsisMetadata):
             resource["seq_size"] = file_info.get("size")
             resource["md5"] = resource["id"] = md5
             resource["name"] = filename
+            resource["resource_path"] = ""
             resource["resource_type"] = self.ckan_data_type
             sample_id = ingest_utils.extract_ands_id(
                 self._logger, file_info.get("id")
@@ -375,6 +376,7 @@ class SepsisGenomicsPacbioMetadata(BaseSepsisMetadata):
             )
             resource["md5"] = resource["id"] = md5
             resource["name"] = filename
+            resource["resource_path"] = ""
             resource["resource_type"] = self.ckan_data_type
             sample_id = ingest_utils.extract_ands_id(
                 self._logger, file_info.get("id")
@@ -541,6 +543,7 @@ class SepsisTranscriptomicsHiseqMetadata(BaseSepsisMetadata):
             resource["seq_size"] = file_info.get("size")
             resource["md5"] = resource["id"] = md5
             resource["name"] = filename
+            resource["resource_path"] = ""
             resource["resource_type"] = self.ckan_data_type
             sample_id = ingest_utils.extract_ands_id(
                 self._logger, file_info.get("id")
@@ -671,6 +674,7 @@ class SepsisMetabolomicsGCMSMetadata(BaseSepsisMetadata):
             )
             resource["md5"] = resource["id"] = md5
             resource["name"] = filename
+            resource["resource_path"] = ""
             resource["resource_type"] = self.ckan_data_type
             sample_id = ingest_utils.extract_ands_id(
                 self._logger, file_info.get("id")
@@ -806,6 +810,7 @@ class SepsisMetabolomicsLCMSMetadata(BaseSepsisMetadata):
             )
             resource["md5"] = resource["id"] = md5
             resource["name"] = filename
+            resource["resource_path"] = ""
             resource["resource_type"] = self.ckan_data_type
             sample_id = ingest_utils.extract_ands_id(
                 self._logger, file_info.get("id")
@@ -958,6 +963,7 @@ class SepsisProteomicsMS1QuantificationMetadata(BaseSepsisMetadata):
             )
             resource["md5"] = resource["id"] = md5
             resource["name"] = filename
+            resource["resource_path"] = ""
             resource["resource_type"] = self.ckan_data_type
             sample_id = ingest_utils.extract_ands_id(
                 self._logger, file_info.get("id")
@@ -1172,6 +1178,7 @@ class SepsisProteomicsSwathMSBaseSepsisMetadata(BaseSepsisMetadata):
             package_name = file_meta.pop("package_name", None)
             resource.update(file_meta)
             resource["name"] = filename
+            resource["resource_path"] = ""
             if data_type == "1d":
                 package_id = ingest_utils.extract_ands_id(
                     self._logger, file_info.get("id")

@@ -119,6 +119,7 @@ class BaseMetadata:
             resource = file_info.copy()
             resource["md5"] = resource["id"] = md5
             resource["name"] = os.path.basename(filename)
+            resource["resource_path"] = os.path.dirname(filename)
             resource["resource_type"] = self.ckan_data_type
             xlsx_info = self.metadata_info[os.path.basename(md5_file)]
             legacy_url = urljoin(xlsx_info["base_url"], filename)

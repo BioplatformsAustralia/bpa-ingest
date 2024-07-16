@@ -1945,6 +1945,7 @@ class AustralianMicrobiomeMetagenomicsNovaseqMetadata(AMDFullIngestMetadata):
                 resource = file_info.copy()
                 resource["md5"] = resource["id"] = md5
                 resource["name"] = os.path.basename(filename)
+                resource["resource_path"] = os.path.dirname(filename)
                 resource["resource_type"] = self.ckan_data_type
                 for contextual_source in self.contextual_metadata:
                     resource.update(contextual_source.filename_metadata(filename))
