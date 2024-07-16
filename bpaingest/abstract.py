@@ -121,6 +121,12 @@ class BaseMetadata:
             resource["name"] = os.path.basename(filename)
             resource["resource_path"] = os.path.dirname(filename)
             resource["resource_type"] = self.ckan_data_type
+            # these are set to False by default
+            # methods to a) determine if they should be set to True and
+            #            b) set other values within the resource (eg adjusted id, file location etc) as required
+            # are still to be developed.
+            resource['shared_file'] = False
+            resource['optional_file'] = False
             xlsx_info = self.metadata_info[os.path.basename(md5_file)]
             legacy_url = urljoin(xlsx_info["base_url"], filename)
             raw_resources_info = self.resource_info.get(os.path.basename(filename), "")
