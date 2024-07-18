@@ -47,8 +47,8 @@ class BaseMetadata:
         result = ""
         # ensure blank fields are not used
         for next_field in field_map:
-            next_value = str(obj.get(
-                next_field["key"], additional.get(next_field["key"], ""))
+            next_value = str(
+                obj.get(next_field["key"], additional.get(next_field["key"], ""))
             )
             if next_value:
                 result += next_value + next_field.get("separator", "")
@@ -125,8 +125,8 @@ class BaseMetadata:
             # methods to a) determine if they should be set to True and
             #            b) set other values within the resource (eg adjusted id, file location etc) as required
             # are still to be developed.
-            resource['shared_file'] = False
-            resource['optional_file'] = False
+            resource["shared_file"] = False
+            resource["optional_file"] = False
             xlsx_info = self.metadata_info[os.path.basename(md5_file)]
             legacy_url = urljoin(xlsx_info["base_url"], filename)
             raw_resources_info = self.resource_info.get(os.path.basename(filename), "")
@@ -530,15 +530,27 @@ class BaseDatasetControlContextual:
 
         # ID fields used for linkage, add if present in linkage
         # Handle some data types using prepending bpa_ to the linkage fields
-         #todo: make sure the linkage is a set at this point
+        # todo: make sure the linkage is a set at this point
         if len(
             set(self.contextual_linkage).intersection(
-                {"bpa_sample_id", "bpa_library_id", "bpa_dataset_id",
-                 "bioplatforms_sample_id", "bioplatforms_library_id", "bioplatforms_dataset_id"},
+                {
+                    "bpa_sample_id",
+                    "bpa_library_id",
+                    "bpa_dataset_id",
+                    "bioplatforms_sample_id",
+                    "bioplatforms_library_id",
+                    "bioplatforms_dataset_id",
+                },
             )
         ):
-            for field in ("bpa_sample_id", "bpa_library_id", "bpa_dataset_id",
-                          "bioplatforms_sample_id", "bioplatforms_library_id", "bioplatforms_dataset_id"):
+            for field in (
+                "bpa_sample_id",
+                "bpa_library_id",
+                "bpa_dataset_id",
+                "bioplatforms_sample_id",
+                "bioplatforms_library_id",
+                "bioplatforms_dataset_id",
+            ):
                 if field in self.contextual_linkage:
                     field_spec.append(
                         fld(
@@ -618,139 +630,133 @@ class BaseLibraryContextual:
     metadata_unique_identifier = "bioplatforms_sample_id"
 
     field_spec = [
-            fld(
-                "bioplatforms_sample_id",
-                "bioplatforms_sample_id",
-                coerce=ingest_utils.extract_ands_id,
-            ),
-
-            # sample_ID
-            fld(
-                "sample_id",
-                "sample_id",
-            ),
-            fld("specimen_custodian", "specimen_custodian"),
-            # specimen_ID
-            fld("specimen_id", re.compile(r"specimen_?[Ii][Dd]")),
-            # specimen_ID_description
-            fld(
-                "specimen_id_description", re.compile(r"specimen_?[Ii][Dd]_description")
-            ),
-            fld("sample_custodian", "sample_custodian"),
-            fld('sample_type', 'sample_type'),
-            # sample_ID_description
-            fld(
-                "sample_id_description", re.compile(r"sample_?[Ii][Dd]_description")
-            ),
-            fld('sample_collection_type', 'sample_collection_type'),
-            fld('tissue', 'tissue'),
-            # tissue_preservation
-            fld("tissue_preservation", "tissue_preservation"),
-            fld('tissue_preservation_temperature', 'tissue_preservation_temperature'),
-            # sample_quality
-            fld("sample_quality", "sample_quality"),
-            fld('collection_permit', 'collection_permit'),
-            fld('identified_by', 'identified_by'),
-            fld('env_broad_scale', 'env_broad_scale'),
-            fld('env_local_scale', 'env_local_scale'),
-            fld('env_medium', 'env_medium'),
-            fld('altitude', 'altitude'),
-            fld('depth', 'depth', coerce=ingest_utils.get_clean_number),
-            fld('temperature', 'temperature'),
-            fld('location_info_restricted', 'location_info_restricted'),
-            fld('genotypic_sex', 'genotypic_sex'),
-            fld('phenotypic_sex', 'phenotypic_sex'),
-            fld('method_sex_determination', 'method_sex_determination'),
-            fld('sex_certainty', 'sex_certainty'),
-            # taxon_id
-            fld("taxon_id", re.compile(r"taxon_[Ii][Dd]")),
-            # phylum
-            fld("phylum", "phylum"),
-            # class
-            fld("klass", "class"),
-            # order
-            fld("order", "order"),
-            # family
-            fld("family", "family"),
-            # genus
-            fld("genus", "genus"),
-            # species
-            fld("species", "species"),
-            fld("sub_species", "sub_species"),
-            fld('scientific_name', 'scientific_name'),
-            fld('scientific_name_note', 'scientific_name_note'),
-            fld('scientific_name_authorship', 'scientific_name_authorship'),
-            # common_name
-            fld("common_name", "common_name"),
-            # collection_date
-            fld(
-                "collection_date",
-                "collection_date",
-                coerce=ingest_utils.get_date_isoformat,
-            ),
-            # collector
-            fld("collector", "collector"),
-            # collection_method
-            fld("collection_method", "collection_method"),
-            # collector_sample_ID
-            fld("collector_sample_id", re.compile(r"collector_sample_[Ii][Dd]")),
-            # wild_captive
-            fld("wild_captive", "wild_captive"),
-            # source_population
-            fld("source_population", "source_population"),
-            # country
-            fld("country", "country"),
-            # state_or_region
-            fld("state_or_region", "state_or_region"),
-            # location_text
-            fld("location_text", "location_text"),
-            # habitat
-            fld("habitat", "habitat"),
-            # skip the private lat/long as this will contain data not to be shared
-            skp("decimal_latitude_private"),
-            skp("decimal_longitude_private"),
-            # decimal_latitude
-            fld("decimal_latitude", "decimal_latitude_public"),
-            fld("decimal_latitude_public", "decimal_latitude_public"),
-            # decimal_longitude
-            fld("decimal_longitude", "decimal_longitude_public"),
-            fld("decimal_longitude_public", "decimal_longitude_public"),
-            # coord_uncertainty_metres
-            fld("coord_uncertainty_metres", "coord_uncertainty_metres", optional=True),
-            # life-stage
-            fld("lifestage", re.compile("life[_-]stage")),
-            # birth_date
-            fld("birth_date", "birth_date", coerce=ingest_utils.get_date_isoformat),
-            # death_date
-            fld("death_date", "death_date", coerce=ingest_utils.get_date_isoformat),
-            fld('health_state', 'health_state'),
-            # associated_media
-            fld("associated_media", "associated_media"),
-            # ancillary_notes
-            fld("ancillary_notes", "ancillary_notes"),
-            # taxonomic_group
-            fld("taxonomic_group", "taxonomic_group"),
-            # type_status
-            fld("type_status", "type_status"),
-            # material_extraction_type
-            fld("material_extraction_type", re.compile(r"[Mm]aterial_extraction_type")),
-            # material_extraction_date
-            fld(
-                "material_extraction_date",
-                re.compile(r"[Mm]aterial_extraction_date"),
-                coerce=ingest_utils.get_date_isoformat,
-            ),
-            # material_extracted_by
-            fld("material_extracted_by", re.compile(r"[Mm]aterial_extracted_by")),
-            # material_extraction_method
-            fld(
-                "material_extraction_method",
-                re.compile(r"[Mm]aterial_extraction_method"),
-            ),
-            # material_conc_ng_ul
-            fld("material_conc_ng_ul", re.compile(r"[Mm]aterial_conc_ng_ul")),
-        ]
-
+        fld(
+            "bioplatforms_sample_id",
+            "bioplatforms_sample_id",
+            coerce=ingest_utils.extract_ands_id,
+        ),
+        # sample_ID
+        fld(
+            "sample_id",
+            "sample_id",
+        ),
+        fld("specimen_custodian", "specimen_custodian"),
+        # specimen_ID
+        fld("specimen_id", re.compile(r"specimen_?[Ii][Dd]")),
+        # specimen_ID_description
+        fld("specimen_id_description", re.compile(r"specimen_?[Ii][Dd]_description")),
+        fld("sample_custodian", "sample_custodian"),
+        fld("sample_type", "sample_type"),
+        # sample_ID_description
+        fld("sample_id_description", re.compile(r"sample_?[Ii][Dd]_description")),
+        fld("sample_collection_type", "sample_collection_type"),
+        fld("tissue", "tissue"),
+        # tissue_preservation
+        fld("tissue_preservation", "tissue_preservation"),
+        fld("tissue_preservation_temperature", "tissue_preservation_temperature"),
+        # sample_quality
+        fld("sample_quality", "sample_quality"),
+        fld("collection_permit", "collection_permit"),
+        fld("identified_by", "identified_by"),
+        fld("env_broad_scale", "env_broad_scale"),
+        fld("env_local_scale", "env_local_scale"),
+        fld("env_medium", "env_medium"),
+        fld("altitude", "altitude"),
+        fld("depth", "depth", coerce=ingest_utils.get_clean_number),
+        fld("temperature", "temperature"),
+        fld("location_info_restricted", "location_info_restricted"),
+        fld("genotypic_sex", "genotypic_sex"),
+        fld("phenotypic_sex", "phenotypic_sex"),
+        fld("method_sex_determination", "method_sex_determination"),
+        fld("sex_certainty", "sex_certainty"),
+        # taxon_id
+        fld("taxon_id", re.compile(r"taxon_[Ii][Dd]")),
+        # phylum
+        fld("phylum", "phylum"),
+        # class
+        fld("klass", "class"),
+        # order
+        fld("order", "order"),
+        # family
+        fld("family", "family"),
+        # genus
+        fld("genus", "genus"),
+        # species
+        fld("species", "species"),
+        fld("sub_species", "sub_species"),
+        fld("scientific_name", "scientific_name"),
+        fld("scientific_name_note", "scientific_name_note"),
+        fld("scientific_name_authorship", "scientific_name_authorship"),
+        # common_name
+        fld("common_name", "common_name"),
+        # collection_date
+        fld(
+            "collection_date",
+            "collection_date",
+            coerce=ingest_utils.get_date_isoformat,
+        ),
+        # collector
+        fld("collector", "collector"),
+        # collection_method
+        fld("collection_method", "collection_method"),
+        # collector_sample_ID
+        fld("collector_sample_id", re.compile(r"collector_sample_[Ii][Dd]")),
+        # wild_captive
+        fld("wild_captive", "wild_captive"),
+        # source_population
+        fld("source_population", "source_population"),
+        # country
+        fld("country", "country"),
+        # state_or_region
+        fld("state_or_region", "state_or_region"),
+        # location_text
+        fld("location_text", "location_text"),
+        # habitat
+        fld("habitat", "habitat"),
+        # skip the private lat/long as this will contain data not to be shared
+        skp("decimal_latitude_private"),
+        skp("decimal_longitude_private"),
+        # decimal_latitude
+        fld("decimal_latitude", "decimal_latitude_public"),
+        fld("decimal_latitude_public", "decimal_latitude_public"),
+        # decimal_longitude
+        fld("decimal_longitude", "decimal_longitude_public"),
+        fld("decimal_longitude_public", "decimal_longitude_public"),
+        # coord_uncertainty_metres
+        fld("coord_uncertainty_metres", "coord_uncertainty_metres", optional=True),
+        # life-stage
+        fld("lifestage", re.compile("life[_-]stage")),
+        # birth_date
+        fld("birth_date", "birth_date", coerce=ingest_utils.get_date_isoformat),
+        # death_date
+        fld("death_date", "death_date", coerce=ingest_utils.get_date_isoformat),
+        fld("health_state", "health_state"),
+        # associated_media
+        fld("associated_media", "associated_media"),
+        # ancillary_notes
+        fld("ancillary_notes", "ancillary_notes"),
+        # taxonomic_group
+        fld("taxonomic_group", "taxonomic_group"),
+        # type_status
+        fld("type_status", "type_status"),
+        # material_extraction_type
+        fld("material_extraction_type", re.compile(r"[Mm]aterial_extraction_type")),
+        # material_extraction_date
+        fld(
+            "material_extraction_date",
+            re.compile(r"[Mm]aterial_extraction_date"),
+            coerce=ingest_utils.get_date_isoformat,
+        ),
+        # material_extracted_by
+        fld("material_extracted_by", re.compile(r"[Mm]aterial_extracted_by")),
+        # material_extraction_method
+        fld(
+            "material_extraction_method",
+            re.compile(r"[Mm]aterial_extraction_method"),
+        ),
+        # material_conc_ng_ul
+        fld("material_conc_ng_ul", re.compile(r"[Mm]aterial_conc_ng_ul")),
+    ]
 
     def __init__(self, logger, path):
         self._logger = logger
@@ -782,7 +788,9 @@ class BaseLibraryContextual:
                 self._logger.error(error)
 
             for row in wrapper.get_all():
-                library_metadata = self.process_row(row, library_metadata, os.path.basename(fname), wrapper.modified)
+                library_metadata = self.process_row(
+                    row, library_metadata, os.path.basename(fname), wrapper.modified
+                )
 
         return library_metadata
 
@@ -791,10 +799,13 @@ class BaseLibraryContextual:
         if not key_value:
             return library_metadata
         if key_value in library_metadata:
-            raise Exception("duplicate {}: {}".format(self.metadata_unique_identifier, key_value))
+            raise Exception(
+                "duplicate {}: {}".format(self.metadata_unique_identifier, key_value)
+            )
         library_metadata[key_value] = row_meta = {}
-        library_metadata[key_value]["metadata_revision_date"] = (
-            ingest_utils.get_date_isoformat(self._logger, metadata_modified))
+        library_metadata[key_value][
+            "metadata_revision_date"
+        ] = ingest_utils.get_date_isoformat(self._logger, metadata_modified)
         library_metadata[key_value]["metadata_revision_filename"] = metadata_filename
         for field in row._fields:
             value = getattr(row, field)
