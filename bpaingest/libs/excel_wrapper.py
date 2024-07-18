@@ -169,7 +169,17 @@ class ExcelWrapper:
                     if sheet_name is not None:
                         # log that we are using a possibly  unexpected sheet
                         self._logger.warn(
-                            "Using the sheet named '%s' in %s, instead of %s" % (sheet.name, file_name, sheet_name))
+                            "Using the sheet named '%s' in %s, instead of %s"
+                            % (sheet.name, file_name, sheet_name)
+                        )
+                        self._logger.warn(
+                            "Available sheets are '%s"
+                            % (
+                                str(
+                                    workbook.sheet_names(),
+                                )
+                            )
+                        )
 
                     break
 
@@ -177,7 +187,16 @@ class ExcelWrapper:
         if sheet is None:
             sheet = workbook.sheet_by_index(0)
             self._logger.warn(
-                "Using the FIRST sheet (named '%s') in %s" % (sheet.name, file_name))
+                "Using the FIRST sheet (named '%s') in %s" % (sheet.name, file_name)
+            )
+            self._logger.warn(
+                "Available sheets are '%s"
+                % (
+                    str(
+                        workbook.sheet_names(),
+                    )
+                )
+            )
 
         if sheet.visibility > 0:
             raise Exception(
