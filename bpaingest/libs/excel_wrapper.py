@@ -40,14 +40,22 @@ def make_field_definition(attribute, column_name, **kwargs):
 def make_skip_column(column_name, **kwargs):
     return skip_column_default._replace(column_name=column_name, **kwargs)
 
+
 class ExcelWrapperLogger(logging.LoggerAdapter):
     def process(self, msg, kwargs):
-        return 'Field %s, Cell %s:%s in %s, %s: %s' % (self.extra['field_name'],
-                                                       self.extra['column'],
-                                                       self.extra['row'],
-                                                       self.extra['filename'],
-                                                       self.extra['sheet'],
-                                                       msg), kwargs
+        return (
+            "Field %s, Cell %s:%s in %s, %s: %s"
+            % (
+                self.extra["field_name"],
+                self.extra["column"],
+                self.extra["row"],
+                self.extra["filename"],
+                self.extra["sheet"],
+                msg,
+            ),
+            kwargs,
+        )
+
 
 class ExcelWrapper:
     """
@@ -90,7 +98,9 @@ class ExcelWrapper:
 
         except:
             self._logger.warn(
-                "xlsx file named '%s' does not have a modified date, may be very old" % file_name)
+                "xlsx file named '%s' does not have a modified date, may be very old"
+                % file_name
+            )
 
         self.sheet = self._find_sheet_in_workbook(file_name, self.workbook, sheet_name)
 
@@ -128,17 +138,26 @@ class ExcelWrapper:
         # provided in the data class is not found. If new variants of sheet names are required, add them here.
 
         possible_sheet_names = [
-            'Metadata',
-            'Library_Metadata',
-            'Library_metadata',
-            'Sheet1',
+            "Metadata",
+            "Library_Metadata",
+            "Library_metadata",
+            "Sheet1",
         ]
 
         sheet = None
         if sheet_name is not None:
             if sheet_name not in workbook.sheet_names():
                 self._logger.warn(
-                    "Missing sheet named '%s' in %s" % (sheet_name, file_name))
+                    "Missing sheet named '%s' in %s" % (sheet_name, file_name)
+                )
+                self._logger.warn(
+                    "Available sheets are '%s"
+                    % (
+                        str(
+                            workbook.sheet_names(),
+                        )
+                    )
+                )
             else:
                 sheet = workbook.sheet_by_name(sheet_name)
 
@@ -312,7 +331,12 @@ class ExcelWrapper:
                 return "klass"
             return s
 
-        parens = OrderedDict([("]", "["), (")", "("),])
+        parens = OrderedDict(
+            [
+                ("]", "["),
+                (")", "("),
+            ]
+        )
         exclude_units = ("yyyy-mm-dd", "hh:mm")
 
         def guess_units(s):
@@ -472,11 +496,16 @@ class ExcelWrapper:
                     val = val.strip()
                 # apply func
                 if func is not None:
-                    func_logger = ExcelWrapperLogger(self._logger, {'field_name': name,
-                                                                    'row': row_num,
-                                                                    'column': get_column_letter(i+1),  # 0 vs 1 start
-                                                                    'filename': os.path.basename(self.file_name),
-                                                                    'sheet': self.sheet.name, })
+                    func_logger = ExcelWrapperLogger(
+                        self._logger,
+                        {
+                            "field_name": name,
+                            "row": row_num,
+                            "column": get_column_letter(i + 1),  # 0 vs 1 start
+                            "filename": os.path.basename(self.file_name),
+                            "sheet": self.sheet.name,
+                        },
+                    )
 
                     val = func(func_logger, val)
                 tpl.append(val)
