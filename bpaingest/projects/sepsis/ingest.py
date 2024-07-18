@@ -152,7 +152,10 @@ class SepsisGenomicsMiseqMetadata(BaseSepsisMetadata):
             fld("sequencer", "Sequencer"),
             fld("analysis_software_version", "AnalysisSoftwareVersion"),
         ],
-        "options": {"header_length": 2, "column_name_row_index": 1,},
+        "options": {
+            "header_length": 2,
+            "column_name_row_index": 1,
+        },
     }
     md5 = {
         "match": [files.miseq_filename_re],
@@ -230,7 +233,7 @@ class SepsisGenomicsMiseqMetadata(BaseSepsisMetadata):
         resources = []
         for filename, md5, md5_file, file_info in self.md5_lines():
             resource = dict(
-               (t, file_info.get(t))
+                (t, file_info.get(t))
                 for t in (
                     "index",
                     "lane",
@@ -247,9 +250,7 @@ class SepsisGenomicsMiseqMetadata(BaseSepsisMetadata):
             resource["name"] = filename
             resource["resource_path"] = ""
             resource["resource_type"] = self.ckan_data_type
-            sample_id = ingest_utils.extract_ands_id(
-                self._logger, file_info.get("id")
-            )
+            sample_id = ingest_utils.extract_ands_id(self._logger, file_info.get("id"))
             xlsx_info = self.metadata_info[os.path.basename(md5_file)]
             legacy_url = urljoin(xlsx_info["base_url"], filename)
             resources.append(((sample_id,), legacy_url, resource))
@@ -283,7 +284,10 @@ class SepsisGenomicsPacbioMetadata(BaseSepsisMetadata):
             fld("cell_position", ("Cell Postion", "Cell Position")),
             fld("rs_version", "RS Version"),
         ],
-        "options": {"header_length": 2, "column_name_row_index": 1,},
+        "options": {
+            "header_length": 2,
+            "column_name_row_index": 1,
+        },
     }
     md5 = {
         "match": [files.pacbio_filename_re],
@@ -378,9 +382,7 @@ class SepsisGenomicsPacbioMetadata(BaseSepsisMetadata):
             resource["name"] = filename
             resource["resource_path"] = ""
             resource["resource_type"] = self.ckan_data_type
-            sample_id = ingest_utils.extract_ands_id(
-                self._logger, file_info.get("id")
-            )
+            sample_id = ingest_utils.extract_ands_id(self._logger, file_info.get("id"))
             xlsx_info = self.metadata_info[os.path.basename(md5_file)]
             legacy_url = urljoin(xlsx_info["base_url"], filename)
             resources.append(((sample_id,), legacy_url, resource))
@@ -417,7 +419,10 @@ class SepsisTranscriptomicsHiseqMetadata(BaseSepsisMetadata):
             fld("casava_version", "CASAVA version"),
             fld("additional_notes", "additional notes", optional=True),
         ],
-        "options": {"header_length": 2, "column_name_row_index": 1,},
+        "options": {
+            "header_length": 2,
+            "column_name_row_index": 1,
+        },
     }
     md5 = {"match": [files.hiseq_filename_re], "skip": None}
 
@@ -545,9 +550,7 @@ class SepsisTranscriptomicsHiseqMetadata(BaseSepsisMetadata):
             resource["name"] = filename
             resource["resource_path"] = ""
             resource["resource_type"] = self.ckan_data_type
-            sample_id = ingest_utils.extract_ands_id(
-                self._logger, file_info.get("id")
-            )
+            sample_id = ingest_utils.extract_ands_id(self._logger, file_info.get("id"))
             xlsx_info = self.metadata_info[os.path.basename(md5_file)]
             legacy_url = urljoin(xlsx_info["base_url"], filename)
             resources.append(((sample_id,), legacy_url, resource))
@@ -583,7 +586,10 @@ class SepsisMetabolomicsGCMSMetadata(BaseSepsisMetadata):
             fld("acquisition_mode", "acquisition mode"),
             fld("raw_file_name", "raw file name"),
         ],
-        "options": {"header_length": 1, "column_name_row_index": 1,},
+        "options": {
+            "header_length": 1,
+            "column_name_row_index": 1,
+        },
     }
     md5 = {
         "match": [files.metabolomics_lcms_gcms_filename_re],
@@ -669,16 +675,14 @@ class SepsisMetabolomicsGCMSMetadata(BaseSepsisMetadata):
         resources = []
         for filename, md5, md5_file, file_info in self.md5_lines():
             resource = dict(
-                    (t, file_info.get(t))
-                    for t in ("vendor", "platform", "mastr_ms_id", "machine_data")
+                (t, file_info.get(t))
+                for t in ("vendor", "platform", "mastr_ms_id", "machine_data")
             )
             resource["md5"] = resource["id"] = md5
             resource["name"] = filename
             resource["resource_path"] = ""
             resource["resource_type"] = self.ckan_data_type
-            sample_id = ingest_utils.extract_ands_id(
-                self._logger, file_info.get("id")
-            )
+            sample_id = ingest_utils.extract_ands_id(self._logger, file_info.get("id"))
             xlsx_info = self.metadata_info[os.path.basename(md5_file)]
             legacy_url = urljoin(xlsx_info["base_url"], filename)
             resources.append(((sample_id,), legacy_url, resource))
@@ -714,7 +718,10 @@ class SepsisMetabolomicsLCMSMetadata(BaseSepsisMetadata):
             fld("acquisition_mode", "Acquisition Mode"),
             fld("raw_file_name", "Raw file name"),
         ],
-        "options": {"header_length": 1, "column_name_row_index": 1,},
+        "options": {
+            "header_length": 1,
+            "column_name_row_index": 1,
+        },
     }
     md5 = {
         "match": [files.metabolomics_lcms_gcms_filename_re],
@@ -805,16 +812,14 @@ class SepsisMetabolomicsLCMSMetadata(BaseSepsisMetadata):
         resources = []
         for filename, md5, md5_file, file_info in self.md5_lines():
             resource = dict(
-                 (t, file_info.get(t))
+                (t, file_info.get(t))
                 for t in ("vendor", "platform", "mastr_ms_id", "machine_data")
             )
             resource["md5"] = resource["id"] = md5
             resource["name"] = filename
             resource["resource_path"] = ""
             resource["resource_type"] = self.ckan_data_type
-            sample_id = ingest_utils.extract_ands_id(
-                self._logger, file_info.get("id")
-            )
+            sample_id = ingest_utils.extract_ands_id(self._logger, file_info.get("id"))
             xlsx_info = self.metadata_info[os.path.basename(md5_file)]
             legacy_url = urljoin(xlsx_info["base_url"], filename)
             resources.append(((sample_id,), legacy_url, resource))
@@ -867,7 +872,10 @@ class SepsisProteomicsMS1QuantificationMetadata(BaseSepsisMetadata):
             fld("acquisition_mode_fragmentation", "acquisition mode / fragmentation"),
             fld("raw_file_name", "raw file name"),
         ],
-        "options": {"header_length": 1, "column_name_row_index": 1,},
+        "options": {
+            "header_length": 1,
+            "column_name_row_index": 1,
+        },
     }
     md5 = {
         "match": [files.proteomics_ms1quantification_filename_re],
@@ -958,16 +966,12 @@ class SepsisProteomicsMS1QuantificationMetadata(BaseSepsisMetadata):
         )
         resources = []
         for filename, md5, md5_file, file_info in self.md5_lines():
-            resource = dict(
-                (t, file_info.get(t)) for t in ("vendor", "machine_data")
-            )
+            resource = dict((t, file_info.get(t)) for t in ("vendor", "machine_data"))
             resource["md5"] = resource["id"] = md5
             resource["name"] = filename
             resource["resource_path"] = ""
             resource["resource_type"] = self.ckan_data_type
-            sample_id = ingest_utils.extract_ands_id(
-                self._logger, file_info.get("id")
-            )
+            sample_id = ingest_utils.extract_ands_id(self._logger, file_info.get("id"))
             xlsx_info = self.metadata_info[os.path.basename(md5_file)]
             legacy_url = urljoin(xlsx_info["base_url"], filename)
             resources.append(((sample_id,), legacy_url, resource))
@@ -1008,7 +1012,10 @@ class SepsisProteomicsSwathMSBaseSepsisMetadata(BaseSepsisMetadata):
             fld("acquisition_mode_fragmentation", "Acquisition Mode / fragmentation"),
             fld("raw_file_name", "Raw file name"),
         ],
-        "options": {"header_length": 1, "column_name_row_index": 1,},
+        "options": {
+            "header_length": 1,
+            "column_name_row_index": 1,
+        },
     }
 
     def __init__(
@@ -1120,12 +1127,16 @@ class SepsisProteomicsSwathMSBaseSepsisMetadata(BaseSepsisMetadata):
             pool = ""
             if data_type == "1d":
                 obj.update(
-                    {"sample_id": printable_sample_id,}
+                    {
+                        "sample_id": printable_sample_id,
+                    }
                 )
             if data_type == "2d":
                 pool = "Pool "
                 obj.update(
-                    {"pool_sample_ids": printable_sample_id,}
+                    {
+                        "pool_sample_ids": printable_sample_id,
+                    }
                 )
             # package won't get replicate number if datatype is 2d, because it's getting common values. see code above.
             if "replicate" in obj:
@@ -1165,9 +1176,7 @@ class SepsisProteomicsSwathMSBaseSepsisMetadata(BaseSepsisMetadata):
         resources = []
 
         for filename, md5, md5_file, file_info in self.md5_lines():
-            resource = dict(
-                (t, file_info.get(t)) for t in ("vendor", "machine_data")
-            )
+            resource = dict((t, file_info.get(t)) for t in ("vendor", "machine_data"))
             if filename not in self.file_data:
                 self._logger.warning("no submission metadata for `%s'" % (filename))
             file_meta = self.file_data.get(filename, {})
@@ -1238,7 +1247,10 @@ class SepsisProteomicsSwathMSCombinedSampleMetadata(BaseSepsisMetadata):
             fld("acquisition_mode_fragmentation", "acquisition mode / fragmentation"),
             fld("raw_file_name", "raw file name"),
         ],
-        "options": {"header_length": 2, "column_name_row_index": 1,},
+        "options": {
+            "header_length": 2,
+            "column_name_row_index": 1,
+        },
     }
     md5 = {
         "match": [re.compile(r"^.*$")],
@@ -1336,9 +1348,7 @@ class SepsisProteomicsSwathMSCombinedSampleMetadata(BaseSepsisMetadata):
             resource["md5"] = resource["id"] = md5
             resource["name"] = filename
             xlsx_info = self.metadata_info[os.path.basename(md5_file)]
-            folder_name = self.google_track_meta.get(
-                xlsx_info["ticket"]
-            ).folder_name
+            folder_name = self.google_track_meta.get(xlsx_info["ticket"]).folder_name
             legacy_url = urljoin(xlsx_info["base_url"], filename)
             resources.append(((folder_name,), legacy_url, resource))
         return resources
@@ -1384,7 +1394,10 @@ class SepsisProteomics2DLibraryMetadata(BaseSepsisMetadata):
             fld("acquisition_mode_fragmentation", "acquisition mode / fragmentation"),
             fld("raw_file_name", "raw file name"),
         ],
-        "options": {"header_length": 2, "column_name_row_index": 1,},
+        "options": {
+            "header_length": 2,
+            "column_name_row_index": 1,
+        },
     }
     md5 = {
         "match": [files.proteomics_2dlibrary_filename_re],
@@ -1482,9 +1495,7 @@ class SepsisProteomics2DLibraryMetadata(BaseSepsisMetadata):
             resource["name"] = filename
             resource.update(file_info)
             xlsx_info = self.metadata_info[os.path.basename(md5_file)]
-            folder_name = self.google_track_meta.get(
-                xlsx_info["ticket"]
-            ).folder_name
+            folder_name = self.google_track_meta.get(xlsx_info["ticket"]).folder_name
             legacy_url = urljoin(xlsx_info["base_url"], filename)
             resources.append(((folder_name,), legacy_url, resource))
         return resources
@@ -1637,7 +1648,10 @@ class SepsisProteomicsAnalysedMetadata(BaseSepsisAnalysedMetadata):
             fld("translation", "translation (3 frame or 6 frame)"),
             fld("proteome_size", "proteome size"),
         ],
-        "options": {"header_length": 8, "column_name_row_index": 7,},
+        "options": {
+            "header_length": 8,
+            "column_name_row_index": 7,
+        },
     }
     md5 = {
         "match": [re.compile(r"^.*$")],
@@ -1718,7 +1732,9 @@ class SepsisProteomicsAnalysedMetadata(BaseSepsisAnalysedMetadata):
                 set([t.analytical_platform for t in rows if t.analytical_platform])
             )
             obj.update(
-                {"analytical_platform": ", ".join(analytical_platform),}
+                {
+                    "analytical_platform": ", ".join(analytical_platform),
+                }
             )
             tag_names.extend([",".join(analytical_platform)])
             obj["tags"] = [{"name": expanded_tag_name(t)} for t in tag_names]
@@ -1753,9 +1769,7 @@ class SepsisProteomicsAnalysedMetadata(BaseSepsisAnalysedMetadata):
             resource["md5"] = resource["id"] = md5
             resource["name"] = filename
             xlsx_info = self.metadata_info[os.path.basename(md5_file)]
-            folder_name = self.google_track_meta.get(
-                xlsx_info["ticket"]
-            ).folder_name
+            folder_name = self.google_track_meta.get(xlsx_info["ticket"]).folder_name
             legacy_url = urljoin(xlsx_info["base_url"], filename)
             resources.append(((folder_name,), legacy_url, resource))
         return resources
@@ -1813,7 +1827,10 @@ class SepsisTranscriptomicsAnalysedMetadata(BaseSepsisAnalysedMetadata):
             ),
             fld("approach_used", "approach used", optional=True),
         ],
-        "options": {"header_length": 8, "column_name_row_index": 7,},
+        "options": {
+            "header_length": 8,
+            "column_name_row_index": 7,
+        },
     }
     md5 = {
         "match": [re.compile(r"^.*$")],
@@ -1970,7 +1987,10 @@ class SepsisMetabolomicsAnalysedMetadata(BaseSepsisAnalysedMetadata):
             fld("data_type", "data type"),
             fld("approach_used", "approach used", optional=True),
         ],
-        "options": {"header_length": 8, "column_name_row_index": 7,},
+        "options": {
+            "header_length": 8,
+            "column_name_row_index": 7,
+        },
     }
     md5 = {
         "match": [re.compile(r"^.*$")],
@@ -2081,9 +2101,7 @@ class SepsisMetabolomicsAnalysedMetadata(BaseSepsisAnalysedMetadata):
             resource["md5"] = resource["id"] = md5
             resource["name"] = filename
             xlsx_info = self.metadata_info[os.path.basename(md5_file)]
-            folder_name = self.google_track_meta.get(
-                xlsx_info["ticket"]
-            ).folder_name
+            folder_name = self.google_track_meta.get(xlsx_info["ticket"]).folder_name
             legacy_url = urljoin(xlsx_info["base_url"], filename)
             resources.append(((folder_name,), legacy_url, resource))
         return resources
@@ -2137,7 +2155,10 @@ class SepsisGenomicsAnalysedMetadata(BaseSepsisAnalysedMetadata):
                 "folder for each sample (individual files are listed on the next sheet)",
             ),
         ],
-        "options": {"header_length": 8, "column_name_row_index": 7,},
+        "options": {
+            "header_length": 8,
+            "column_name_row_index": 7,
+        },
     }
     md5 = {
         "match": [re.compile(r"^.*$")],
@@ -2249,9 +2270,7 @@ class SepsisGenomicsAnalysedMetadata(BaseSepsisAnalysedMetadata):
             resource["md5"] = resource["id"] = md5
             resource["name"] = filename
             xlsx_info = self.metadata_info[os.path.basename(md5_file)]
-            folder_name = self.google_track_meta.get(
-                xlsx_info["ticket"]
-            ).folder_name
+            folder_name = self.google_track_meta.get(xlsx_info["ticket"]).folder_name
             legacy_url = urljoin(xlsx_info["base_url"], filename)
             resources.append(((folder_name,), legacy_url, resource))
         return resources
@@ -2298,7 +2317,10 @@ class SepsisProteomicsProteinDatabaseMetadata(BaseSepsisAnalysedMetadata):
             fld("translation", "translation (3 frame or 6 frame)"),
             fld("proteome_size", "proteome size"),
         ],
-        "options": {"header_length": 8, "column_name_row_index": 7,},
+        "options": {
+            "header_length": 8,
+            "column_name_row_index": 7,
+        },
     }
     md5 = {
         "match": [re.compile(r"^.*$")],
@@ -2410,9 +2432,7 @@ class SepsisProteomicsProteinDatabaseMetadata(BaseSepsisAnalysedMetadata):
             resource["md5"] = resource["id"] = md5
             resource["name"] = filename
             xlsx_info = self.metadata_info[os.path.basename(md5_file)]
-            folder_name = self.google_track_meta.get(
-                xlsx_info["ticket"]
-            ).folder_name
+            folder_name = self.google_track_meta.get(xlsx_info["ticket"]).folder_name
             legacy_url = urljoin(xlsx_info["base_url"], filename)
             resources.append(((folder_name,), legacy_url, resource))
         return resources
