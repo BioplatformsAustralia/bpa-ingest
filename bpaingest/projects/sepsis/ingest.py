@@ -1013,6 +1013,7 @@ class SepsisProteomicsSwathMSBaseSepsisMetadata(BaseSepsisMetadata):
             fld("raw_file_name", "Raw file name"),
         ],
         "options": {
+            "sheet_name": " Metadata sheet (raw data)",
             "header_length": 1,
             "column_name_row_index": 1,
         },
