@@ -144,11 +144,14 @@ class BaseMetadata:
                     self._logger.warn(resource)
                     self.common_files.append(
                         (
-                            self._build_common_files_linkage(
-                                xlsx_info, resource, file_info
+                            self.ckan_data_type,
+                            (
+                                self._build_common_files_linkage(
+                                    xlsx_info, resource, file_info
+                                ),
+                                legacy_url,
+                                resource,
                             ),
-                            legacy_url,
-                            resource,
                         )
                     )
                     self._logger.warn("Common files match {}".format(filename))
@@ -371,7 +374,9 @@ class BaseMetadata:
                 #      add linkage to seen
                 resource_linkages.add(linkage)
                 #      iterate over common files
-                for common_file in self.common_files:
+                for (data_type, common_file) in self.common_files:
+                    if data_type is not self.ckan_data_type:
+                        continue
                     lr = dict(zip(self.resource_linkage, linked_resource[0]))
                     cr = dict(zip(self.common_files_linkage, common_file[0]))
                     shared_items = {
