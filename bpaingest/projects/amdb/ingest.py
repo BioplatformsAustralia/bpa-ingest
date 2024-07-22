@@ -953,7 +953,7 @@ class BASESiteImagesMetadata(AMDFullIngestMetadata):
 
     def _get_resources(self):
         self._logger.info(
-            "Ingesting Sepsis md5 file information from {0}".format(self.path)
+            "Ingesting BASE Site Images md5 file information from {0}".format(self.path)
         )
         resources = []
         for id_tpl in sorted(self.id_to_resources):
@@ -963,6 +963,7 @@ class BASESiteImagesMetadata(AMDFullIngestMetadata):
             resource["md5"] = resource["id"] = info["md5"]
             filename = info["filename"]
             resource["name"] = filename
+            resource["resource_path"] = os.path.dirname(filename)
             legacy_url = urljoin(info["base_url"], filename)
             resources.append(((site_ids,), legacy_url, resource))
 
@@ -1947,6 +1948,12 @@ class AustralianMicrobiomeMetagenomicsNovaseqMetadata(AMDFullIngestMetadata):
                 resource["name"] = os.path.basename(filename)
                 resource["resource_path"] = os.path.dirname(filename)
                 resource["resource_type"] = self.ckan_data_type
+                # these are set to False by default
+                # methods to a) determine if they should be set to True and
+                #            b) set other values within the resource (eg adjusted id, file location etc) as required
+                # are still to be developed.
+                resource["shared_file"] = False
+                resource["optional_file"] = False
                 for contextual_source in self.contextual_metadata:
                     resource.update(contextual_source.filename_metadata(filename))
                 sample_id = ingest_utils.extract_ands_id(
@@ -2055,7 +2062,14 @@ class AustralianMicrobiomeMetagenomicsNovaseqControlMetadata(AMDFullIngestMetada
                 resource = file_info.copy()
                 resource["md5"] = resource["id"] = md5
                 resource["name"] = os.path.basename(filename)
+                resource["resource_path"] = os.path.dirname(filename)
                 resource["resource_type"] = self.ckan_data_type
+                # these are set to False by default
+                # methods to a) determine if they should be set to True and
+                #            b) set other values within the resource (eg adjusted id, file location etc) as required
+                # are still to be developed.
+                resource["shared_file"] = False
+                resource["optional_file"] = False
                 legacy_url = urljoin(xlsx_info["base_url"], filename)
                 resources.append(((resource["flowcell"],), legacy_url, resource))
             resources.extend(self.generate_md5_resources(md5_file))
@@ -2211,7 +2225,14 @@ class AustralianMicrobiomeAmpliconsMetadata(AMDFullIngestMetadata):
                 resource = file_info.copy()
                 resource["md5"] = resource["id"] = md5
                 resource["name"] = filename
+                resource["resource_path"] = os.path.dirname(filename)
                 resource["resource_type"] = self.ckan_data_type
+                # these are set to False by default
+                # methods to a) determine if they should be set to True and
+                #            b) set other values within the resource (eg adjusted id, file location etc) as required
+                # are still to be developed.
+                resource["shared_file"] = False
+                resource["optional_file"] = False
                 for contextual_source in self.contextual_metadata:
                     resource.update(contextual_source.filename_metadata(filename))
                 sample_id = ingest_utils.extract_ands_id(
@@ -2331,7 +2352,14 @@ class AustralianMicrobiomeAmpliconsControlMetadata(AMDFullIngestMetadata):
                 resource = file_info.copy()
                 resource["md5"] = resource["id"] = md5
                 resource["name"] = filename
+                resource["resource_path"] = os.path.dirname(filename)
                 resource["resource_type"] = self.ckan_data_type
+                # these are set to False by default
+                # methods to a) determine if they should be set to True and
+                #            b) set other values within the resource (eg adjusted id, file location etc) as required
+                # are still to be developed.
+                resource["shared_file"] = False
+                resource["optional_file"] = False
                 resource["amplicon"] = amplicon
                 legacy_url = urljoin(xlsx_info["base_url"], filename)
                 resources.append(
