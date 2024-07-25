@@ -13,13 +13,27 @@ from .libs.excel_wrapper import (
 from .libs.md5lines import MD5Parser
 from .resource_metadata import resource_metadata_from_file, resource_metadata_id
 from .util import make_logger, one
-
+import re
 
 class BaseMetadata:
     auth = ("bpaingest", "bpaingest")
     resource_linkage = ("sample_id",)
     resource_info = {}
     common_files = []
+
+    """
+    The following regexp is used to mark certain resources as optional, so they don't get
+    automatically included in the bulk download.
+    Files ending in _pod5.tar, and subreads.bam may be very large, and are not required by
+    most researchers. Sample filenames that are optional include:
+       PP_BRF_PAW59370_ONTPromethION_pod5.tar
+       357464_TSI_AGRF_DA061164.subreads.bam
+       57368_TSI_CAGRF20114490_DA060254_subreads.bam
+    """
+
+    OPTIONAL_PATTERN = r"""
+    (.*pod5\.tar$|.*subreads\.bam$)
+            """
 
     def method_exists(self, method_name):
         if hasattr(self, method_name):  # should check if its callable too
@@ -127,6 +141,11 @@ class BaseMetadata:
             # are still to be developed.
             resource["shared_file"] = False
             resource["optional_file"] = False
+            optional_re = re.compile(self.OPTIONAL_PATTERN, re.VERBOSE)
+            if optional_re.match(os.path.basename(filename)):
+                resource["optional_file"] = True
+                self._logger.warn("Optional files match {}".format(filename))
+
             xlsx_info = self.metadata_info[os.path.basename(md5_file)]
             legacy_url = urljoin(xlsx_info["base_url"], filename)
             raw_resources_info = self.resource_info.get(os.path.basename(filename), "")
