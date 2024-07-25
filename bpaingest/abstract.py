@@ -160,7 +160,7 @@ class BaseMetadata:
                     regex.match(os.path.basename(filename))
                     for regex in self.common_files_match
                 ):
-                    self._logger.warn(resource)
+                    resource["shared_file"] = True
                     self.common_files.append(
                         (
                             self.ckan_data_type,
