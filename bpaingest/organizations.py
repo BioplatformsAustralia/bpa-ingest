@@ -252,5 +252,19 @@ ORGANIZATIONS = [
         "image_url": "https://data.bioplatforms.com/platypus_bio_logo.png",
         "groups": [{"capacity": "public", "name": 'bpa-collaborations'}],
     },
+    {
+        "name": "bpa-sample-data",
+        "title": "BPA Sample Data",
+        "display_name": "Bioplatforms Australia Sample Data",
+        "image_url": "https://data.bioplatforms.com/bpalogo.png",
+        "groups": [{"capacity": "public", "name": BPA_ORGANIZATION_ID}],
+    },
+    {
+        "name": "bpa-sample-data-consortium-members",
+        "title": "BPA Sample Data Consortium Members",
+        "display_name": "BPA Sample Data Consortium Members",
+        "image_url": "https://data.bioplatforms.com/bpalogo.png",
+        "groups": [{"capacity": "public", "name": 'bpa-sample-data'}],
+    },
 ]
 

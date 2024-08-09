@@ -124,6 +124,9 @@ from .collaborations.ingest import (
     CollaborationsMetagenomicsNovaseqMetadata,
     CollaborationsONTPromethionMetadata,
  )
+from .bpa_sample_data.ingest import (
+    BSDSampleImagesMetadata,
+ )
 
 class ProjectInfo:
     projects = {
@@ -251,7 +254,9 @@ class ProjectInfo:
             CollaborationsMetagenomicsNovaseqMetadata,
             CollaborationsONTPromethionMetadata,
         ],
-
+        "bsd": [
+            BSDSampleImagesMetadata,
+        ],
 
     }
 

@@ -204,6 +204,12 @@ collabs()
   apply collabs-platypus-metagenomics-novaseq $*
 
 }
+bsd()
+{
+    apply bsd-site-images $*
+    # apply bsd-ont-promethion $*
+    # apply bsd-pacio-hifi $*
+}
 
 run() {
   apply $*
@@ -228,6 +234,7 @@ all()
   ppa $*
   grasslands $*
   collabs $*
+  bsd $*
 }
 
 action="$1"
