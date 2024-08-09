@@ -332,6 +332,7 @@ def download_legacy_file(legacy_url, auth):
             "Not enough free space to download to %s from archive" % (tempdir,)
         )
         logger.error("Have %d free but needed %d" % (free_space, resolved_size))
+        return None, None
 
     else:
         logger.info(
