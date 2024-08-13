@@ -58,6 +58,28 @@ def get_or_create_package(ckan, obj):
     return ckan_obj
 
 
+def get_or_create_resource(ckan, obj):
+    try:
+        ckan_obj = ckan_method(ckan, "resource", "show")(id=obj["id"])
+
+    except ckanapi.errors.NotFound:
+        ckan_obj = ckan_method(ckan, "resource", "create")(**obj)
+        logger.info("created resource object: %s" % (ckan_obj["id"]))
+    return ckan_obj
+
+
+def get_uploaded_resource_from_ckan(ckan, obj):
+    #  this will return None if the resource is NOT uploaded to S3.
+    try:
+        resource_from_ckan = ckan_method(ckan, "resource", "show")(id=obj["id"])
+    except ckanapi.errors.NotFound:
+        return None
+    if "url_type" not in resource_from_ckan or resource_from_ckan["url_type"] != 'upload':
+        # it doesn't have an uploaded file we want to track, return None
+        return None
+    return resource_from_ckan
+
+
 def sync_package(ckan, obj, cached_obj):
     if cached_obj is None:
         ckan_obj = get_or_create_package(ckan, obj)
@@ -233,24 +255,14 @@ def sync_package_resources(
     return to_reupload
 
 
-def reupload_resources(ckan, to_reupload, auth, write_reuploads_fn, write_reuploads_interval):
-    total_reuploads = len(to_reupload)
-    logger.info("%d objects to be re-uploaded" % (total_reuploads))
-    #TODO: there is no bucket for anything other than prod - however it's unclear whether this breaks in non-prod environments
-    ## Test this by setting it to None or '' any that way we don't accidentally send data to a bucket that is inadvertently created in S3
-    destination = None
-    if re.search("^https://data.bioplatforms.com", getattr(ckan, "address", "")):
-        destination = "bpa-ckan-prod/prodenv"
-        logger.info("Resources will be reuploaded under: {}".format(destination))
-    else: logger.warn("Resources have no bucket to send to. Address was: {}".format(getattr(ckan, "address", "")))
-    # copy list and loop that, so can remove safely from original during loop
-    for indx, (reupload_obj, legacy_url) in enumerate(to_reupload[:]):
+def reupload_resources(ckan, to_reupload, shared_resources, auth, write_reuploads_fn, write_reuploads_interval):
+    def do_actual_upload(ckan, reupload_obj, legacy_url, destination, auth):
+
         try:
             reupload_resource(ckan, reupload_obj, legacy_url, destination, auth)
         except Exception as e:
             logger.error(e)
             logger.info("Resource failed to upload. Continuing...")
-            continue
         else:
             to_reupload.remove((reupload_obj, legacy_url))
             logger.info(
@@ -265,6 +277,51 @@ def reupload_resources(ckan, to_reupload, auth, write_reuploads_fn, write_reuplo
             if write_reuploads_fn and remaining_reuploads_count % int(write_reuploads_interval) == 0:
                 logger.info(f"Reached write reuploads interval: {write_reuploads_interval}")
                 write_reuploads_fn(to_reupload)
+
+    total_reuploads = len(to_reupload)
+    logger.info("%d objects to be re-uploaded" % (total_reuploads))
+    #TODO: there is no bucket for anything other than prod OR STAGING - however it's unclear whether this breaks in non-prod environments
+    ## Test this by setting it to None or '' any that way we don't accidentally send data to a bucket that is inadvertently created in S3
+    destination = None
+    if re.search("^https://data.bioplatforms.com", getattr(ckan, "address", "")):
+        destination = "bpa-ckan-prod/prodenv"
+        logger.info("Resources will be reuploaded under: {}".format(destination))
+    elif re.search("^https://staging.bioplatforms.com", getattr(ckan, "address", "")):
+         destination = "bpa-ckan-staging/stagingenv"
+         logger.info("Resources will be reuploaded under: {}".format(destination))
+    else:
+        logger.warn("Resources have no bucket to send to. Address was: {}".format(getattr(ckan, "address", "")))
+    # copy list and loop that, so can remove safely from original during loop
+    for indx, (reupload_obj, legacy_url) in enumerate(to_reupload[:]):
+        # first determine if this is a shared file.
+        # if it is, has it already been uploaded?
+        # if NOT, go off and upload it, and capture the necessary fields to reuse in our shared files list.
+        # if so, don't upload it again, but we do need to update the url, size etc from uploaded version of the resource
+        # if its NOT a share resource, just upload as normal.
+        if reupload_obj["shared_file"]:
+            shared_linkage = reupload_obj["md5"] + "/" + reupload_obj["name"]
+            if shared_linkage not in shared_resources:
+                logger.error("No shared resource on file for {}, resource {},  not uploading".format(shared_linkage, reupload_obj))
+                continue
+            uploaded_shared_resource = shared_resources[shared_linkage][0].get("uploaded_resource")
+            if uploaded_shared_resource is None:
+                # do the upload, and add the updated resource to the shared_resources object
+                do_actual_upload(ckan, reupload_obj, legacy_url, destination, auth)
+                ckan_updated_resource = get_or_create_resource(ckan, reupload_obj)
+                shared_resources[shared_linkage][0] = {"uploaded_resource": ckan_updated_resource}
+            else:
+                # just update the resource with the metadata from the matching shared_resource.
+                reupload_obj["url"] = uploaded_shared_resource["url"]
+                reupload_obj["size"] = uploaded_shared_resource["size"]
+                reupload_obj["url_type"] = ''  # explicitly NOT upload
+                ckan_method(ckan, "resource", "update")(**reupload_obj)
+                to_reupload.remove((reupload_obj, legacy_url))
+                logger.info(
+                    f"Shared resource not re-uploaded. Removed {reupload_obj} at {legacy_url} from reupload list..."
+                )
+
+        else:  # it's not a shared file, upload regardless.
+            do_actual_upload(ckan, reupload_obj, legacy_url, destination, auth)
 
 
 def write_reuploads(**kwargs):
@@ -304,6 +361,7 @@ def sync_resources(
     # wire the resources to their CKAN package
     resource_idx = {}
     resource_id_legacy_url = {}
+    shared_resources = {}
     for resource_linkage, legacy_url, resource_obj in resources:
         package_id = resource_linkage_package_id.get(resource_linkage)
         if do_single_ticket is None:
@@ -323,6 +381,19 @@ def sync_resources(
         if obj["id"] in resource_id_legacy_url:
             raise Exception("duplicate resource ID: {}".format(obj["id"]))
         resource_id_legacy_url[obj["id"]] = legacy_url
+        # if this is a shared resource, and not already on the list of shared resources, add it in.
+        # shared resource should be unique by md5 and filename, so use that as a key.
+        if obj["shared_file"]:
+            shared_linkage = obj["md5"] + "/" + obj["name"]
+            # if we haven't seen this linkage before, see if there is already a resource uploaded in CKAN
+            if shared_linkage not in shared_resources:  # we haven't seen this shared file before
+                shared_resources.setdefault(shared_linkage, []).append(
+                    {"uploaded_resource": get_uploaded_resource_from_ckan(ckan, obj)})
+            else:
+                if shared_resources[shared_linkage][0].get("uploaded_resource") is None:
+                    shared_resources[shared_linkage][0] = \
+                        {"uploaded_resource": get_uploaded_resource_from_ckan(ckan, obj)}
+
         resources_synched += 1
         if resources_synched % reporting_interval == 0:
             logger.info("synced %d of %d resources" % (resources_synched, len(resources)))
@@ -362,7 +433,7 @@ def sync_resources(
 
     write_reuploads_fn = write_reuploads(**kwargs)
     if do_uploads:
-        reupload_resources(ckan, to_reupload, auth, write_reuploads_fn, kwargs.get("write_reuploads_interval"))
+        reupload_resources(ckan, to_reupload, shared_resources, auth, write_reuploads_fn, kwargs.get("write_reuploads_interval"))
 
     logger.info(f"Post resource upload, resources remaining: {len(to_reupload)}")
     if write_reuploads_fn:
