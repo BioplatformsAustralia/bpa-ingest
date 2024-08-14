@@ -383,7 +383,7 @@ def sync_resources(
         resource_id_legacy_url[obj["id"]] = legacy_url
         # if this is a shared resource, and not already on the list of shared resources, add it in.
         # shared resource should be unique by md5 and filename, so use that as a key.
-        if obj["shared_file"]:
+        if 'shared_file' in obj and obj["shared_file"]:
             shared_linkage = obj["md5"] + "/" + obj["name"]
             # if we haven't seen this linkage before, see if there is already a resource uploaded in CKAN
             if shared_linkage not in shared_resources:  # we haven't seen this shared file before
