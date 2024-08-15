@@ -298,7 +298,7 @@ def reupload_resources(ckan, to_reupload, shared_resources, auth, write_reupload
         # if NOT, go off and upload it, and capture the necessary fields to reuse in our shared files list.
         # if so, don't upload it again, but we do need to update the url, size etc from uploaded version of the resource
         # if its NOT a share resource, just upload as normal.
-        if reupload_obj["shared_file"]:
+        if 'shared_file' in reupload_obj and reupload_obj["shared_file"]:
             shared_linkage = reupload_obj["md5"] + "/" + reupload_obj["name"]
             if shared_linkage not in shared_resources:
                 logger.error("No shared resource on file for {}, resource {},  not uploading".format(shared_linkage, reupload_obj))
