@@ -2432,36 +2432,22 @@ class OMGGenomicsPacBioGenomeAssemblyMetadata(SecondaryMetadata):
         return packages
 
     def _get_resources(self):
-        """
-        Note: This get_resources has not been refactored as the original code
-        is broken. This datatype has not been used, and needs to be revisited
-        before being used for ingests in the future. BCG 18/08/2022
-        """
-        self._logger.info(
-            "Ingesting OMG md5 file information from {0}".format(self.path)
-        )
-        resources = []
-        for filename, md5, md5_file, file_info in self.md5_lines():
-            resource = file_info.copy()
-            resource["md5"] = resource["id"] = md5
-            resource["name"] = filename
-            resource["resource_path"] = ""
-            resource["resource_type"] = self.ckan_data_type
-            library_id = ingest_utils.extract_ands_id(
-                self._logger, resource["bpa_library_id"]
-            )
-            xlsx_info = self.metadata_info[os.path.basename(md5_file)]
-            legacy_url = urljoin(xlsx_info["base_url"], filename)
-            resources.append(
-                (
-                    (ingest_utils.extract_ands_id(self._logger, library_id),),
-                    legacy_url,
-                    resource,
-                )
-            )
         return (
-            resources + self.generate_xlsx_resources() + self.generate_raw_resources()
+            self._get_common_resources() + self.generate_xlsx_resources() + self.generate_raw_resources()
         )
+
+    def _build_resource_linkage(self, xlsx_info, resource, file_info):
+        library_id = ingest_utils.extract_ands_id(
+            self._logger, resource["bpa_library_id"]
+        )
+
+        return (
+                (ingest_utils.extract_ands_id(self._logger, library_id),)
+        )
+
+    def _add_datatype_specific_info_to_resource(self, resource, md5_file=None):
+        # no additional fields for OMG Pacbio Genome Assembly Metadata
+        return
 
 
 class OMGAnalysedDataMetadata(OMGBaseMetadata):
