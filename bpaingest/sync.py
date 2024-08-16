@@ -304,7 +304,7 @@ def reupload_resources(ckan, to_reupload, shared_resources, auth, write_reupload
                 logger.error("No shared resource on file for {}, resource {},  not uploading".format(shared_linkage, reupload_obj))
                 continue
             uploaded_shared_resource = shared_resources[shared_linkage][0].get("uploaded_resource")
-            if uploaded_shared_resource is None:
+            if uploaded_shared_resource is None or 'size' not in uploaded_shared_resource:
                 # do the upload, and add the updated resource to the shared_resources object
                 do_actual_upload(ckan, reupload_obj, legacy_url, destination, auth)
                 ckan_updated_resource = get_or_create_resource(ckan, reupload_obj)
