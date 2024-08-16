@@ -301,13 +301,28 @@ def check_resource(
     logger.debug("end check_resource `%s' " % current_url)
     return None
 
+def download_legacy_local_file(legacy_url):
+    logger.info("Checking local file `%s' for upload" % (legacy_url,))
+    # Need to parse URL
+    # Need to check directory is readable
+    # Need to check file is readable and regular
+    # Create place to copy them to
+    # Make a copy
+    raise Exception(
+        "Cannot download local file. URL reference must be via http or https"
+    )
+    # FIXME Valid values for tempdir and path
+    # Path needs to be not None
+    # Path and Tempdir need to be copies, as elsewhere they get removed
+    #    os.unlink(path)
+    #    os.rmdir(tempdir)
+
+    return None, None
 
 def download_legacy_file(legacy_url, auth):
     logger.debug("start download_legacy_file `%s' " % legacy_url)
     if legacy_url and legacy_url.startswith("file:///"):
-        raise Exception(
-            "Cannot download local file. URL reference must be via http or https"
-        )
+        return download_legacy_local_file(legacy_url)
     basename = legacy_url.rsplit("/", 1)[-1]
     tempdir = tempfile.mkdtemp(prefix="bpaingest-data-")
     path = os.path.join(tempdir, basename)
