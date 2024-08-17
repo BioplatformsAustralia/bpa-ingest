@@ -9,6 +9,7 @@ import ckanapi
 import os
 import time
 from urllib.parse import urlparse
+from urllib.request import url2pathname
 from collections import defaultdict
 
 from .libs.ingest_utils import ApiFqBuilder
@@ -303,21 +304,30 @@ def check_resource(
 
 def download_legacy_local_file(legacy_url):
     logger.info("Checking local file `%s' for upload" % (legacy_url,))
-    # Need to parse URL
+
+    p = urlparse(legacy_url)
+    file_path = url2pathname(p.path)
+    logger.info("Local file URL resolved to '%s'" % (file_path,))
+
     # Need to check directory is readable
     # Need to check file is readable and regular
-    # Create place to copy them to
-    # Make a copy
-    raise Exception(
-        "Cannot download local file. URL reference must be via http or https"
-    )
-    # FIXME Valid values for tempdir and path
-    # Path needs to be not None
-    # Path and Tempdir need to be copies, as elsewhere they get removed
-    #    os.unlink(path)
-    #    os.rmdir(tempdir)
 
-    return None, None
+    if not os.path.isfile(file_path) and not os.access(file_path, os.R_OK):
+       logger.warning("File '%s' doesn't exist or isn't readable" % (file_path,))
+       return None, None
+
+    # Create place to copy them to
+    basename = file_path.rsplit(os.path.sep, 1)[-1]
+    tempdir = tempfile.mkdtemp(prefix="bpaingest-data-local-")
+    dest_path = os.path.join(tempdir, basename)
+
+    # Make a copy
+    # Returned Path and Tempdir need to be copies, as elsewhere they get removed
+    shutil.copy2(file_path, temp_dir)
+
+    logger.debug("end download_legacy_local_file `%s' " % legacy_url)
+    return tempdir, dest_path
+
 
 def download_legacy_file(legacy_url, auth):
     logger.debug("start download_legacy_file `%s' " % legacy_url)
