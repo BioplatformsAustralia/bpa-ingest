@@ -323,7 +323,7 @@ def download_legacy_local_file(legacy_url):
 
     # Make a copy
     # Returned Path and Tempdir need to be copies, as elsewhere they get removed
-    shutil.copy2(file_path, temp_dir)
+    shutil.copy2(file_path, tempdir)
 
     logger.debug("end download_legacy_local_file `%s' " % legacy_url)
     return tempdir, dest_path
