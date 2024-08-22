@@ -107,9 +107,18 @@ def build_raw_resources_as_file(logger, ckan, meta, packages, resources):
                 raise Exception(
                     "A raw resource path has been created, but there are no raw resources to append."
                 )
-            for next_raw_id, next_raw_value in next_raw_resources_data.items():
-                fetched_descriptors = ckan_get_from_dict(logger, ckan, next_raw_value)
-                next_raw_value.update(fetched_descriptors)
+            # Just catch the error here
+            # Log warning to run with variables api / key against CKAN
+            # This is poor design as it cause dumpstate to interrogate CKAN
+            # This should have used a linkage to pull it from the metadata calculated by bpa-ingest
+            try:
+                for next_raw_id, next_raw_value in next_raw_resources_data.items():
+                    fetched_descriptors = ckan_get_from_dict(logger, ckan, next_raw_value)
+                    next_raw_value.update(fetched_descriptors)
+            except Exception as e:
+                logger.error(e)
+                logger.error("Unable to fetch data from CKAN, run with CKAN URL and API key")
+                logger.error("This error is expected on dumpstate, but not on sync")
             with open(raw_resources_path, "w") as raw_resources_file:
                 json.dump(
                     next_raw_resources_data,

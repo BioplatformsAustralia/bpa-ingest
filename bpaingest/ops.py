@@ -502,5 +502,6 @@ def ckan_get_from_dict(logger, ckan, dict):
             )
     except Exception as e:
         logger.error(e)
-    finally:
-        return ckan_result
+        raise Exception(f"Error calling CKAN server")
+
+    return ckan_result
