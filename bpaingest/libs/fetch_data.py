@@ -7,7 +7,6 @@ import os
 import re
 import requests
 from bs4 import BeautifulSoup
-from distutils.dir_util import mkpath
 from urllib.parse import urljoin
 
 import requests.packages.urllib3
@@ -65,7 +64,7 @@ class Fetcher:
 
     def _ensure_target_folder_exists(self):
         if not os.path.exists(self.target_folder):
-            mkpath(self.target_folder)
+            os.makedirs(self.target_folder, exist_ok=True)
 
     def _fetch(self, session, base_url, name):
         self._logger.info("Fetching {} from {}".format(name, base_url))
