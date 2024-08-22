@@ -47,6 +47,9 @@ def str2bool(v):
 
 
 def setup_ckan(subparser, required=True):
+    # Possible future enhancement would be to grab these from environment variables
+    # See approach in
+    #   https://gist.github.com/bebosudo/8352d6ba4c8911528f085890becc01c4
     subparser.add_argument("-k", "--api-key", required=required, help="CKAN API Key")
     subparser.add_argument("-u", "--ckan-url", required=required, help="CKAN base url")
     subparser.add_argument(
