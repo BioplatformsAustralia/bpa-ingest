@@ -46,12 +46,12 @@ def str2bool(v):
         raise argparse.ArgumentTypeError("Boolean value expected.")
 
 
-def setup_ckan(subparser):
-    subparser.add_argument("-k", "--api-key", required=True, help="CKAN API Key")
-    subparser.add_argument("-u", "--ckan-url", required=True, help="CKAN base url")
+def setup_ckan(subparser, required=True):
+    subparser.add_argument("-k", "--api-key", required=required, help="CKAN API Key")
+    subparser.add_argument("-u", "--ckan-url", required=required, help="CKAN base url")
     subparser.add_argument(
         "--verify-ssl",
-        required=False,
+        required=required,
         type=str2bool,
         default=True,
         help="CKAN base url",
@@ -156,15 +156,7 @@ def setup_dump(subparser):
     subparser.add_argument(
         "--validate-schema", help="validate schema if applicable"
     )
-    subparser.add_argument("-k", "--api-key", required=False, help="CKAN API Key")
-    subparser.add_argument("-u", "--ckan-url", required=False, help="CKAN base url")
-    subparser.add_argument(
-        "--verify-ssl",
-        required=False,
-        type=str2bool,
-        default=True,
-        help="CKAN base url",
-    )
+    setup_ckan(subparser, required=False)
 
 
 def setup_makeschema(subparser):
