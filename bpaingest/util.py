@@ -97,6 +97,23 @@ def make_logger(name, level=logging.INFO):
     return logger
 
 
+# Decorator to put around functions whilst debugging
+def logger_wrap(func):
+    def wrap(*args, **kwargs):
+        # Log the function name and arguments
+        logger.warn(f"Calling {func.__name__} with args: {args}, kwargs: {kwargs}")
+
+        # Call the original function
+        result = func(*args, **kwargs)
+
+        # Log the return value
+        logger.warn(f"{func.__name__} returned: {result}")
+
+        # Return the result
+        return result
+    return wrap
+
+
 def make_ckan_api(args):
     ckan = ckanapi.RemoteCKAN(
         args.ckan_url, apikey=args.api_key, verify_ssl=args.verify_ssl
@@ -269,3 +286,6 @@ def get_md5_legacy_url(meta):
         if key.endswith(".md5")
     ][0]
     return first_md5_baseurl
+
+
+logger = make_logger(__name__)
