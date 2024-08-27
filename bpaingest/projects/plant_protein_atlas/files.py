@@ -55,10 +55,10 @@ asd_spectro_re = re.compile(
 
 XLSX_PATTERN = r"""
     PPA_
-    (?P<facility_id>(APPF))_
+    (?P<facility_id>(APPF|LTU))_
     (Analysed_|)
     (?P<dataset_id>\d{4,6})_
-    (librarymetadata|samplemetadata_ingest)
+    (librarymetadata|samplemetadata_ingest|metadata)
     \.xlsx
 """
 

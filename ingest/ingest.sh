@@ -192,6 +192,7 @@ ppa()
   apply ppa-phenoct-xray-raw $*
   apply ppa-phenoct-xray-analysed $*
   apply ppa-hyperspect $*
+  apply ppa-nutritional-analysed $*
 }
 
 grasslands() {
