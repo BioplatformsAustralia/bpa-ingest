@@ -16,7 +16,7 @@ sample_extraction_id_re = re.compile(r"^\d{4,6}_\d")
 
 
 def fix_pcr(logger, pcr):
-    """ Check pcr value """
+    """Check pcr value"""
     val = pcr.strip()
     # header in the spreadsheet
     if val == "i.e. P or F":
@@ -222,16 +222,19 @@ def get_int(logger, val, default=None):
     except TypeError:
         return default
 
-def get_percentage(logger, val, default=None):
 
+def get_percentage(logger, val, default=None):
     return_val = default
     try:
         return_val = get_clean_number(logger, val, default)
         if return_val > 100 or return_val < 0:
-            logger.warning("Potential invalid number - Percentage Range error: {}".format(str(val)))
+            logger.warning(
+                "Potential invalid number - Percentage Range error: {}".format(str(val))
+            )
         return return_val
     except TypeError:
         return default
+
 
 def int_or_comment(logger, val):
     # fix up '14.0' type values coming through from Excel; if not an integer,
@@ -269,8 +272,16 @@ def get_clean_number(logger, val, default=None):
         logger.error("Invalid number - Type error: {} ".format(str(val)))
         return default
     except ValueError:
-        if val not in ['unknown','N/A','NA','',' ',]:
-            logger.warning("Potential invalid number - Value error: {}".format(str(val)))
+        if val not in [
+            "unknown",
+            "N/A",
+            "NA",
+            "",
+            " ",
+        ]:
+            logger.warning(
+                "Potential invalid number - Value error: {}".format(str(val))
+            )
         pass
 
     matches = number_find_re.findall(str(val))
@@ -349,28 +360,44 @@ def _get_date_time(logger, dt, silent=False):
     try:
         retval = datetime.datetime.strptime(dt, "%Y-%m-%d %H:%M:%S")
         if not silent:
-            logger.warning("DateTime {} does not have a timezone - will force to Z time.".format(retval))
+            logger.warning(
+                "DateTime {} does not have a timezone - will force to Z time.".format(
+                    retval
+                )
+            )
         return retval
     except ValueError:
         pass
     try:
         retval = datetime.datetime.strptime(dt, "%y-%m-%d %H:%M:%S")
         if not silent:
-            logger.warning("DateTime {} does not have a timezone - will force to Z time.".format(retval))
+            logger.warning(
+                "DateTime {} does not have a timezone - will force to Z time.".format(
+                    retval
+                )
+            )
         return retval
     except ValueError:
         pass
     try:
         retval = datetime.datetime.strptime(dt, "%Y-%m-%d %H:%M")
         if not silent:
-            logger.warning("DateTime {} does not have a timezone - will force to Z time.".format(retval))
+            logger.warning(
+                "DateTime {} does not have a timezone - will force to Z time.".format(
+                    retval
+                )
+            )
         return retval
     except ValueError:
         pass
     try:
         retval = datetime.datetime.strptime(dt, "%y-%m-%d %H:%M")
         if not silent:
-            logger.warning("DateTime {} does not have a timezone - will force to Z time.".format(retval))
+            logger.warning(
+                "DateTime {} does not have a timezone - will force to Z time.".format(
+                    retval
+                )
+            )
         return retval
 
     except ValueError:
@@ -382,18 +409,18 @@ def _get_date_time(logger, dt, silent=False):
 def _get_date(logger, dt, silent=False):
     """
     Convert `dt` into a datetime.date, returning `dt` if it is already an
-    instance of datetime.date. 
-    
+    instance of datetime.date.
+
     The following date formats are supported:
        YYYY-mm-dd
-       dd/mm/YYYY 
+       dd/mm/YYYY
        dd-mm-YYYY
        dd.mm.YYYY
        dd.mm.YY
 
        YYYY-mm (convert to first date of month)
        mm/YYYY (convert to first date of month)
-    
+
     If conversion fails, returns None.
     """
 
@@ -585,7 +612,9 @@ def apply_access_control(logger, metadata, obj):
         frame = callerframerecord[0]
         info = inspect.getframeinfo(frame)
         logger.error(
-            "Missing access control field - {}:{}".format((info.filename.split(os.path.sep))[-1], info.lineno)
+            "Missing access control field - {}:{}".format(
+                (info.filename.split(os.path.sep))[-1], info.lineno
+            )
         )
 
         obj["access_control_mode"] = "closed"
@@ -597,9 +626,7 @@ def apply_access_control(logger, metadata, obj):
         ).rstrip()
 
     # date of transfer is needed for calculations
-    if (
-	"date_of_transfer" not in obj
-    ):
+    if "date_of_transfer" not in obj:
         _log_access_control_error(logger, obj)
         return
 
@@ -608,9 +635,9 @@ def apply_access_control(logger, metadata, obj):
         or "access_control_date" not in obj
         or "access_control_reason" not in obj
     ):
-        obj.setdefault("access_control_mode","closed")
-        obj.setdefault("access_control_date","")
-        obj.setdefault("access_control_reason","")
+        obj.setdefault("access_control_mode", "closed")
+        obj.setdefault("access_control_date", "")
+        obj.setdefault("access_control_reason", "")
 
     if obj["access_control_mode"] in (None, ""):
         _log_access_control_error(logger, obj)
@@ -631,10 +658,13 @@ def apply_access_control(logger, metadata, obj):
         return
 
     # if date field is empty
-    access_date = obj.get("access_control_date","")
+    access_date = obj.get("access_control_date", "")
     if not access_date or not access_date.strip():
         # if default defined and no reason given, use default
-        if getattr(metadata, "embargo_days", None) and not obj["access_control_reason"].strip():
+        if (
+            getattr(metadata, "embargo_days", None)
+            and not obj["access_control_reason"].strip()
+        ):
             # date becomes date of transfer plus default embargo period
             embargo_days = int(getattr(metadata, "embargo_days"))
             obj["access_control_mode"] = "date"
@@ -672,7 +702,9 @@ def apply_access_control(logger, metadata, obj):
         if embargo_days > 1827:
             # looks too much like a year, only support up to five years
             _log_access_control_error(logger, obj)
-            logger.error("Integer Embargo - Access Control Date (days) is out of range (more than 5 years)")
+            logger.error(
+                "Integer Embargo - Access Control Date (days) is out of range (more than 5 years)"
+            )
             obj["access_control_date"] = ""
             return
 
@@ -691,6 +723,7 @@ def apply_access_control(logger, metadata, obj):
 
     # We shouldn't get here
     _log_access_control_error(logger, obj)
+
 
 def get_clean_doi(logger, val):
     if not val:

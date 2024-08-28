@@ -113,13 +113,13 @@ class AMDBaseMetadata(BaseMetadata):
             "Validating current schema against current schema definitions file..."
         )
         if len(self.contextual_classes) == 0:
-                self._logger.warn("No contextual data available.")
-                self._logger.info("Validation terminated.")
-                return
+            self._logger.warn("No contextual data available.")
+            self._logger.info("Validation terminated.")
+            return
         if len(self.schema_definitions) != 1:
             raise Exception("Can only compare 1 schema definitions file")
         for context_object in self.contextual_classes:
-            if not hasattr(context_object, 'sheet_name'):
+            if not hasattr(context_object, "sheet_name"):
                 self._logger.warn("Skipping context object %s" % context_object)
                 continue
             self._logger.info("Validating context object %s" % context_object)
@@ -288,7 +288,10 @@ class BASEAmpliconsMetadata(AMDFullIngestMetadata):
             fld("comments2", re.compile(r"comments2"), optional=True),
             fld("comments3", re.compile(r"comments3"), optional=True),
         ],
-        "options": {"header_length": 2, "column_name_row_index": 1,},
+        "options": {
+            "header_length": 2,
+            "column_name_row_index": 1,
+        },
     }
     md5 = {
         "match": files.base_amplicon_regexps,
@@ -433,19 +436,22 @@ class BASEAmpliconsMetadata(AMDFullIngestMetadata):
         self._current_md5 = md5_file
 
     def _build_resource_linkage(self, xlsx_info, resource, file_info):
-        use_index_linkage = os.path.basename(self._current_md5) in self.index_linkage_md5s
-        sample_id = ingest_utils.extract_ands_id(
-            self._logger, file_info.get("id")
+        use_index_linkage = (
+            os.path.basename(self._current_md5) in self.index_linkage_md5s
         )
+        sample_id = ingest_utils.extract_ands_id(self._logger, file_info.get("id"))
         sample_extraction_id = (
-                sample_id.split("/")[-1] + "_" + file_info.get("extraction")
+            sample_id.split("/")[-1] + "_" + file_info.get("extraction")
         )
 
-        return (sample_extraction_id,
-                resource["amplicon"],
-                build_base_amplicon_linkage(
-                    use_index_linkage, resource["flow_id"], resource["index"]
-                ))
+        return (
+            sample_extraction_id,
+            resource["amplicon"],
+            build_base_amplicon_linkage(
+                use_index_linkage, resource["flow_id"], resource["index"]
+            ),
+        )
+
 
 class BASEAmpliconsControlMetadata(AMDFullIngestMetadata):
     organization = "australian-microbiome"
@@ -558,9 +564,7 @@ class BASEAmpliconsControlMetadata(AMDFullIngestMetadata):
         return
 
     def _build_resource_linkage(self, xlsx_info, resource, file_info):
-        return (
-            (resource["amplicon"], resource["flow_id"])
-        )
+        return (resource["amplicon"], resource["flow_id"])
 
 
 class BASEMetagenomicsMetadata(AMDFullIngestMetadata):
@@ -612,7 +616,10 @@ class BASEMetagenomicsMetadata(AMDFullIngestMetadata):
             fld("run_flow_cell_id", "run #:flow cell id", optional=True),
             fld("lane_number", "lane number", optional=True),
         ],
-        "options": {"header_length": 2, "column_name_row_index": 1,},
+        "options": {
+            "header_length": 2,
+            "column_name_row_index": 1,
+        },
     }
     md5 = {
         "match": files.base_metagenomics_regexps,
@@ -804,9 +811,7 @@ class BASEMetagenomicsMetadata(AMDFullIngestMetadata):
             for row in uniq_rows:
                 track_meta = self.track_meta.get(row.ticket)
                 if not track_meta:
-                    self._logger.error(
-                        "No tracking metadata for: {}".format(xlsx_info)
-                    )
+                    self._logger.error("No tracking metadata for: {}".format(xlsx_info))
                 # pilot data has the flow cell in the spreadsheet; in the main dataset
                 # there is one flow-cell per spreadsheet, so it's in the spreadsheet
                 # filename
@@ -849,15 +854,11 @@ class BASEMetagenomicsMetadata(AMDFullIngestMetadata):
         return
 
     def _build_resource_linkage(self, xlsx_info, resource, file_info):
-        sample_id = ingest_utils.extract_ands_id(
-            self._logger, file_info.get("id")
-        )
+        sample_id = ingest_utils.extract_ands_id(self._logger, file_info.get("id"))
         sample_extraction_id = (
-                sample_id.split("/")[-1] + "_" + file_info.get("extraction")
+            sample_id.split("/")[-1] + "_" + file_info.get("extraction")
         )
-        return (
-            (sample_extraction_id, resource["flow_id"])
-        )
+        return (sample_extraction_id, resource["flow_id"])
 
 
 class BASESiteImagesMetadata(AMDFullIngestMetadata):
@@ -1079,7 +1080,10 @@ class MarineMicrobesAmpliconsMetadata(AMDFullIngestMetadata):
             fld("pass_fail_100", "neat PCR, P=pass, F=fail", optional=True),
             fld("index", "index", optional=True),
         ],
-        "options": {"header_length": 2, "column_name_row_index": 1,},
+        "options": {
+            "header_length": 2,
+            "column_name_row_index": 1,
+        },
     }
     technology = "amplicons"
     index_linkage_spreadsheets = (
@@ -1250,13 +1254,14 @@ class MarineMicrobesAmpliconsMetadata(AMDFullIngestMetadata):
         self._current_md5 = md5_file
 
     def _build_resource_linkage(self, xlsx_info, resource, file_info):
-        use_index_linkage = os.path.basename(self._current_md5) in self.index_linkage_md5s
-        sample_id = ingest_utils.extract_ands_id(
-            self._logger, file_info.get("id")
+        use_index_linkage = (
+            os.path.basename(self._current_md5) in self.index_linkage_md5s
         )
+        sample_id = ingest_utils.extract_ands_id(self._logger, file_info.get("id"))
 
         return sample_id, build_mm_amplicon_linkage(
-                    use_index_linkage, resource["flow_id"], resource["index"])
+            use_index_linkage, resource["flow_id"], resource["index"]
+        )
 
 
 class MarineMicrobesAmpliconsControlMetadata(AMDFullIngestMetadata):
@@ -1400,7 +1405,10 @@ class MarineMicrobesMetagenomicsMetadata(BaseMarineMicrobesMetadata):
             ),
             fld("comments", "comments", optional=True),
         ],
-        "options": {"header_length": 2, "column_name_row_index": 1,},
+        "options": {
+            "header_length": 2,
+            "column_name_row_index": 1,
+        },
     }
     md5 = {
         "match": [
@@ -1506,9 +1514,8 @@ class MarineMicrobesMetagenomicsMetadata(BaseMarineMicrobesMetadata):
         self._current_md5 = md5_file
 
     def _build_resource_linkage(self, xlsx_info, resource, file_info):
-        sample_id = ingest_utils.extract_ands_id(
-            self._logger, file_info.get("id"))
-        return sample_id,
+        sample_id = ingest_utils.extract_ands_id(self._logger, file_info.get("id"))
+        return (sample_id,)
 
 
 class MarineMicrobesMetatranscriptomeMetadata(BaseMarineMicrobesMetadata):
@@ -1540,7 +1547,10 @@ class MarineMicrobesMetatranscriptomeMetadata(BaseMarineMicrobesMetadata):
                 ("casava version", "bcl2fastq2", re.compile(r"^software[ &]+version$")),
             ),
         ],
-        "options": {"header_length": 2, "column_name_row_index": 1,},
+        "options": {
+            "header_length": 2,
+            "column_name_row_index": 1,
+        },
     }
     md5 = {
         "match": [
@@ -1651,12 +1661,12 @@ class MarineMicrobesMetatranscriptomeMetadata(BaseMarineMicrobesMetadata):
         self._current_md5 = md5_file
 
     def _build_resource_linkage(self, xlsx_info, resource, file_info):
-        sample_id = ingest_utils.extract_ands_id(
-            self._logger, file_info.get("id"))
+        sample_id = ingest_utils.extract_ands_id(self._logger, file_info.get("id"))
         return (sample_id,)
 
+
 class AustralianMicrobiomeMetagenomicsAnalysedMetadata(AMDFullIngestMetadata):
-    #organization = "australian-microbiome"
+    # organization = "australian-microbiome"
     # NOTE: change this back to make proof of concept widely available
     organization = "am-csiro-team"
     ckan_data_type = "amdb-metagenomics-analysed"
@@ -1669,7 +1679,7 @@ class AustralianMicrobiomeMetagenomicsAnalysedMetadata(AMDFullIngestMetadata):
     metadata_urls = [
         "https://downloads-qcif.bioplatforms.com/bpa/amd/metagenomics-analysed/"
     ]
-    metadata_url_components = ("ticket","folder")
+    metadata_url_components = ("ticket", "folder")
     resource_linkage = ("sample_id",)
     spreadsheet = {
         "fields": [
@@ -1678,32 +1688,41 @@ class AustralianMicrobiomeMetagenomicsAnalysedMetadata(AMDFullIngestMetadata):
                 re.compile(r"sample_?[Ii][Dd]"),
                 coerce=ingest_utils.extract_ands_id,
             ),
-            fld('sample_id_description', 'sample_id_description'),
+            fld("sample_id_description", "sample_id_description"),
             fld(
                 "dataset_id",
                 re.compile(r"dataset_?[Ii][Dd]"),
                 coerce=ingest_utils.extract_ands_id,
             ),
-            fld('dataset_id_description', 'dataset_id_description'),
-            fld('bioplatforms_project', 'bioplatforms_project'),
-            fld('data_custodian', 'data_custodian'),
-            fld('data_context', 'data_context'),
-            fld('analysis_name', 'analysis_name'),
-            fld('analysis_date', 'analysis_date', coerce=ingest_utils.get_date_isoformat),
-            fld('sequencing_technology', 'sequencing_technology'),
-            fld('analysis_method', 'analysis_method'),
-            fld('analysis_method_version', 'analysis_method_version'),
-            fld('version_method_version_link', 'version_method_version_link'),
-            fld('analysis_qc', 'analysis_qc'),
-            fld('computational_infrastructure', 'computational_infrastructure'),
-            fld('system_used', 'system_used'),
-            fld('analysis_description', 'analysis_description'),
+            fld("dataset_id_description", "dataset_id_description"),
+            fld("bioplatforms_project", "bioplatforms_project"),
+            fld("data_custodian", "data_custodian"),
+            fld("data_context", "data_context"),
+            fld("analysis_name", "analysis_name"),
+            fld(
+                "analysis_date", "analysis_date", coerce=ingest_utils.get_date_isoformat
+            ),
+            fld("sequencing_technology", "sequencing_technology"),
+            fld("analysis_method", "analysis_method"),
+            fld("analysis_method_version", "analysis_method_version"),
+            fld("version_method_version_link", "version_method_version_link"),
+            fld("analysis_qc", "analysis_qc"),
+            fld("computational_infrastructure", "computational_infrastructure"),
+            fld("system_used", "system_used"),
+            fld("analysis_description", "analysis_description"),
         ],
-        "options": {"header_length": 1, "column_name_row_index": 0,},
+        "options": {
+            "header_length": 1,
+            "column_name_row_index": 0,
+        },
     }
     md5 = {
-        "match": [files.amd_metagenomics_analysed_re,],
-        "skip": [re.compile(r"^.*\.xlsx$"),],
+        "match": [
+            files.amd_metagenomics_analysed_re,
+        ],
+        "skip": [
+            re.compile(r"^.*\.xlsx$"),
+        ],
     }
 
     def __init__(self, logger, metadata_path, **kwargs):
@@ -1764,13 +1783,13 @@ class AustralianMicrobiomeMetagenomicsAnalysedMetadata(AMDFullIngestMetadata):
                     }
                 )
                 # NOTE: change this back to make proof of concept widely available
-                #ingest_utils.permissions_organization_member_after_embargo(
+                # ingest_utils.permissions_organization_member_after_embargo(
                 #    self._logger,
                 #    obj,
                 #    "archive_ingestion_date",
                 #    self.embargo_days,
                 #    CONSORTIUM_ORG_NAME,
-                #)
+                # )
                 ingest_utils.permissions_organization_member(self._logger, obj)
                 for contextual_source in self.contextual_metadata:
                     obj.update(contextual_source.get(sample_id))
@@ -1785,21 +1804,18 @@ class AustralianMicrobiomeMetagenomicsAnalysedMetadata(AMDFullIngestMetadata):
                 packages.append(obj)
         return packages
 
-
     def _get_resources(self):
         resources = self._get_common_resources()
         return resources
 
     def _add_datatype_specific_info_to_resource(self, resource, md5_file=None):
-        resource[
-            "sample_id"
-        ] = ingest_utils.extract_ands_id(
+        resource["sample_id"] = ingest_utils.extract_ands_id(
             self._logger, resource["sample_id"]
         )
         return
 
     def _build_resource_linkage(self, xlsx_info, resource, file_info):
-        return resource["sample_id"],
+        return (resource["sample_id"],)
 
 
 class AustralianMicrobiomeMetagenomicsNovaseqMetadata(AMDFullIngestMetadata):
@@ -1844,11 +1860,18 @@ class AustralianMicrobiomeMetagenomicsNovaseqMetadata(AMDFullIngestMetadata):
             fld("absorbance_260_280_ratio", "260_280_ratio", optional=True),
             fld("absorbance_260_230_ratio", "260_230_ratio", optional=True),
         ],
-        "options": {"header_length": 1, "column_name_row_index": 0,},
+        "options": {
+            "header_length": 1,
+            "column_name_row_index": 0,
+        },
     }
     md5 = {
-        "match": [files.amd_metagenomics_novaseq_re,],
-        "skip": [files.amd_metagenomics_novaseq_control_re,],
+        "match": [
+            files.amd_metagenomics_novaseq_re,
+        ],
+        "skip": [
+            files.amd_metagenomics_novaseq_control_re,
+        ],
     }
     add_md5_as_resource = True
 
@@ -2089,8 +2112,7 @@ class AustralianMicrobiomeAmpliconsMetadata(AMDFullIngestMetadata):
         "fields": [
             fld("sample_id", "sampleid", coerce=ingest_utils.extract_ands_id),
             fld("target", "target"),
-            fld("pass_fail",
-                re.compile(r".*p=pass( / |/)f=fail")),
+            fld("pass_fail", re.compile(r".*p=pass( / |/)f=fail")),
             # fld("pass_fail", "p=pass / f=fail"),
             fld(
                 "dilution_used", "dilution used", coerce=ingest_utils.fix_date_interval
@@ -2102,17 +2124,20 @@ class AustralianMicrobiomeAmpliconsMetadata(AMDFullIngestMetadata):
             fld("index", "index"),
             fld("pcr_plate_name", "pcr plate name", optional=True),
         ],
-        "options": {"header_length": 1, "column_name_row_index": 0,},
+        "options": {
+            "header_length": 1,
+            "column_name_row_index": 0,
+        },
     }
     technology = "amplicons"
     metadata_urls = ["https://downloads-qcif.bioplatforms.com/bpa/amd/amplicons-miseq/"]
     metadata_url_components = ("amplicon", "ticket")
     md5 = {
-        "match": [files.amd_amplicon_filename_re,
-                  files.amd_amplicon_filename_v2_re],
-        "skip": [files.amd_amplicon_control_filename_re,
-                 files.amd_amplicon_control_filename_v2_re,
-                 ],
+        "match": [files.amd_amplicon_filename_re, files.amd_amplicon_filename_v2_re],
+        "skip": [
+            files.amd_amplicon_control_filename_re,
+            files.amd_amplicon_control_filename_v2_re,
+        ],
     }
 
     def __init__(self, logger, metadata_path, **kwargs):
@@ -2242,7 +2267,11 @@ class AustralianMicrobiomeAmpliconsMetadata(AMDFullIngestMetadata):
                 legacy_url = urljoin(xlsx_info["base_url"], filename)
                 resources.append(
                     (
-                        (sample_id, resource["flow_id"], resource["index"],),
+                        (
+                            sample_id,
+                            resource["flow_id"],
+                            resource["index"],
+                        ),
                         legacy_url,
                         resource,
                     )
@@ -2262,10 +2291,11 @@ class AustralianMicrobiomeAmpliconsControlMetadata(AMDFullIngestMetadata):
     metadata_patterns = [r"^.*\.md5"]
     resource_linkage = ("amplicon", "flow_id")
     md5 = {
-        "match": [files.amd_amplicon_control_filename_re,
-                 files.amd_amplicon_control_filename_v2_re,],
-        "skip": [files.amd_amplicon_filename_re,
-                 files.amd_amplicon_filename_v2_re],
+        "match": [
+            files.amd_amplicon_control_filename_re,
+            files.amd_amplicon_control_filename_v2_re,
+        ],
+        "skip": [files.amd_amplicon_filename_re, files.amd_amplicon_filename_v2_re],
     }
 
     metadata_urls = ["https://downloads-qcif.bioplatforms.com/bpa/amd/amplicons-miseq/"]

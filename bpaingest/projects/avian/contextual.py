@@ -13,8 +13,8 @@ class AvianDatasetControlContextual(BaseDatasetControlContextual):
     name = "avian-dataset-contextual"
     contextual_linkage = ("sample_id",)
     additional_fields = [
-        fld('library_id', 'library_id'),
-        fld('dataset_id', 'dataset_id'),
+        fld("library_id", "library_id"),
+        fld("dataset_id", "dataset_id"),
     ]
 
 
@@ -23,4 +23,3 @@ class AvianLibraryContextual(BaseLibraryContextual):
         "https://downloads-qcif.bioplatforms.com/bpa/avian_staging/metadata/2023-08-09/"
     ]
     name = "avian-library-contextual"
-

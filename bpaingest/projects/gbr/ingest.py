@@ -62,7 +62,10 @@ class GbrPacbioMetadata(BaseMetadata):
             fld("casava_version", "CASAVA version", optional=True),
             fld("data_processing_version", "data processing version", optional=True),
         ],
-        "options": {"header_length": 3, "column_name_row_index": 1,},
+        "options": {
+            "header_length": 3,
+            "column_name_row_index": 1,
+        },
     }
     md5 = {
         "match": [files.pacbio_filename_re, files.pacbio_filename2_re],
@@ -180,10 +183,16 @@ class GbrAmpliconsMetadata(BaseMetadata):
             fld("reads", "# of reads", coerce=ingest_utils.get_int),
             fld("name", "Sample name on sample sheet"),
             fld("analysis_software_version", "AnalysisSoftwareVersion"),
-            fld("comments", "Comments",),
+            fld(
+                "comments",
+                "Comments",
+            ),
             fld("data_processing_version", "data processing version", optional=True),
         ],
-        "options": {"header_length": 3, "column_name_row_index": 1,},
+        "options": {
+            "header_length": 3,
+            "column_name_row_index": 1,
+        },
     }
     md5 = {
         "match": [files.amplicon_filename_re],

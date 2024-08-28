@@ -94,7 +94,6 @@ def test_pacbio_hifi_2():
         assert pacbio_hifi_filename_2_re.match(filename) is not None
 
 
-
 def test_pacbio_hifi_metadata_sheet():
     filenames = [
         "355356_AusARG_AGRF_PacBio_DA052899_metadata.xlsx",
@@ -107,10 +106,7 @@ def test_pacbio_hifi_metadata_sheet():
 
 
 def test_pacbio_hifi_common():
-    filenames = [
-        "AusARG_AGRF_m84073_230616_024551_s3.pdf"
-
-    ]
+    filenames = ["AusARG_AGRF_m84073_230616_024551_s3.pdf"]
     for filename in filenames:
         assert pacbio_hifi_common_re.match(filename) is not None
 

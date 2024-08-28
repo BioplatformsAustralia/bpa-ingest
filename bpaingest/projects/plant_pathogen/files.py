@@ -5,7 +5,6 @@ import re
 logger = make_logger(__name__)
 
 
-
 ILLUMINA_SHORTREAD_PATTERN = r"""(?P<sample_id>\d{4,6})_
     LibID(?P<library_id>\d{4,6})_
     (PP_

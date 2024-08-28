@@ -1,7 +1,7 @@
 # VERIFY
 from bpaingest.projects.bpa_sample_data.files import (
-    #ont_promethion_re,
-    #ont_promethion_common_re,
+    # ont_promethion_re,
+    # ont_promethion_common_re,
     bsd_site_image_filename_re,
     bsd_site_pdf_filename_re,
     illumina_shortread_re,
@@ -9,19 +9,19 @@ from bpaingest.projects.bpa_sample_data.files import (
     pacbio_hifi_filename_2_re,
     pacbio_hifi_metadata_sheet_re,
     pacbio_hifi_common_re,
-
 )
 
+
 def test_bsd_site_image():
-    filenames = ["468315_BSD_BPA_QUOKKA_image.jpg",
-                 "468315_BSD_BPA_QUOKKA_image.png"]
+    filenames = ["468315_BSD_BPA_QUOKKA_image.jpg", "468315_BSD_BPA_QUOKKA_image.png"]
     for filename in filenames:
         assert bsd_site_image_filename_re.match(filename) is not None
 
+
 def test_bsd_site_pdf():
-            filenames = ["BSD_BPA_QUOKKA_map.pdf"]
-            for filename in filenames:
-                assert bsd_site_pdf_filename_re.match(filename) is not None
+    filenames = ["BSD_BPA_QUOKKA_map.pdf"]
+    for filename in filenames:
+        assert bsd_site_pdf_filename_re.match(filename) is not None
 
 
 """
@@ -99,4 +99,3 @@ def test_ont_promethion_common():
     for filename in filenames:
         assert ont_promethion_common_re.match(filename) is not None
 """
-

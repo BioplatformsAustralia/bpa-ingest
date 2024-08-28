@@ -158,9 +158,10 @@ def test_amd_amplicon_re():
     for filename in filenames:
         assert amd_amplicon_filename_re.match(filename) is not None
 
+
 def test_amd_amplicon_v2_re():
     filenames = [
-       "138626_18S_LB4W9_GGAGCTAC-TATCCTCT_S2_L001_R2_001.fastq.gz",
+        "138626_18S_LB4W9_GGAGCTAC-TATCCTCT_S2_L001_R2_001.fastq.gz",
     ]
     for filename in filenames:
         assert amd_amplicon_filename_v2_re.match(filename) is not None
@@ -182,12 +183,14 @@ def test_amd_amplicon_control_re():
     for filename in filenames:
         assert amd_amplicon_control_filename_re.match(filename) is not None
 
+
 def test_amd_amplicon_control_v2_re():
     filenames = [
         "Zymo_DNA_Control_18S_LB4W9_CGAGGCTG-CTATTAAG_S156_L001_I1_001.fastq.gz",
     ]
     for filename in filenames:
         assert amd_amplicon_control_filename_v2_re.match(filename) is not None
+
 
 def test_mm_transcriptome():
     filenames = [

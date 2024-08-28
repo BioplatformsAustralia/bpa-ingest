@@ -3,8 +3,12 @@ import logging
 import sys
 import os
 
-from .util import make_registration_decorator, make_ckan_api, make_reuploads_cache_path, \
-    validate_write_reuploads_interval
+from .util import (
+    make_registration_decorator,
+    make_ckan_api,
+    make_reuploads_cache_path,
+    validate_write_reuploads_interval,
+)
 from .sync import sync_metadata
 from .schema import generate_schemas
 from .ops import print_accounts, make_organization
@@ -134,7 +138,6 @@ def setup_sync(subparser):
     )
 
 
-
 def setup_hash(subparser):
     setup_ckan(subparser)
     subparser.add_argument(
@@ -156,17 +159,13 @@ def setup_dump(subparser):
     subparser.add_argument(
         "--sql-context", help="generate excel file from sql db if available"
     )
-    subparser.add_argument(
-        "--validate-schema", help="validate schema if applicable"
-    )
+    subparser.add_argument("--validate-schema", help="validate schema if applicable")
     setup_ckan(subparser, required=False)
 
 
 def setup_makeschema(subparser):
     subparser.add_argument("--dump-re", help="restrict dump by slug", default="")
-    subparser.add_argument(
-        "--validate-schema", help="validate schema if applicable"
-    )
+    subparser.add_argument("--validate-schema", help="validate schema if applicable")
 
 
 @register_command
@@ -179,7 +178,7 @@ def sync(args):
         "write_reuploads": args.write_reuploads,
         "read_reuploads": args.read_reuploads,
         "reuploads_path": make_reuploads_cache_path(logger, args),
-        "write_reuploads_interval": validate_write_reuploads_interval(logger, args)
+        "write_reuploads_interval": validate_write_reuploads_interval(logger, args),
     }
     with DownloadMetadata(
         logger,

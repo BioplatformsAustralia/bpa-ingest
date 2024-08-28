@@ -45,7 +45,6 @@ class TSIBaseMetadata(BaseMetadata):
         {"key": "tissue_type"},
     ]
 
-
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
 
@@ -59,18 +58,23 @@ class TSIBaseMetadata(BaseMetadata):
             package.update({"decimal_latitude_public": package.get("latitude")})
         return packages
 
-
     def _set_metadata_vars(self, filename):
         self.xlsx_info = self.metadata_info[os.path.basename(filename)]
         self.ticket = self.xlsx_info["ticket"]
 
     def _get_common_packages(self):
-        self._logger.info("Ingesting {} metadata from {}".format(self.initiative, self.path))
+        self._logger.info(
+            "Ingesting {} metadata from {}".format(self.initiative, self.path)
+        )
         packages = []
         for fname in glob(self.path + "/*.xlsx"):
-            self._logger.info("Processing {} metadata file {}".format(self.initiative, os.path.basename(fname)))
+            self._logger.info(
+                "Processing {} metadata file {}".format(
+                    self.initiative, os.path.basename(fname)
+                )
+            )
             rows = self.parse_spreadsheet(fname, self.metadata_info)
-            if self.method_exists('_set_metadata_vars'):
+            if self.method_exists("_set_metadata_vars"):
                 self._set_metadata_vars(fname)
             for row in rows:
                 if not row.library_id and not row.flowcell_id:
@@ -105,24 +109,27 @@ class TSIBaseMetadata(BaseMetadata):
                         "sequence_data_type": self.sequence_data_type,
                         "license_id": apply_cc_by_license(),
                         "date_of_transfer": ingest_utils.get_date_isoformat(
-                            self._logger, self.get_tracking_info(row.ticket, "date_of_transfer")
+                            self._logger,
+                            self.get_tracking_info(row.ticket, "date_of_transfer"),
                         ),
                         "date_of_transfer_to_archive": ingest_utils.get_date_isoformat(
-                            self._logger, self.get_tracking_info(row.ticket, "date_of_transfer_to_archive")
+                            self._logger,
+                            self.get_tracking_info(
+                                row.ticket, "date_of_transfer_to_archive"
+                            ),
                         ),
-                     }
+                    }
                 )
-
 
                 self._add_datatype_specific_info_to_package(obj, row, fname)
                 self.build_title_into_object(obj)
                 self.build_notes_into_object(obj)
                 ingest_utils.permissions_organization_member_after_embargo(
-                        self._logger,
-                        obj,
-                        "date_of_transfer_to_archive",
-                        self.embargo_days,
-                        CONSORTIUM_ORG_NAME,
+                    self._logger,
+                    obj,
+                    "date_of_transfer_to_archive",
+                    self.embargo_days,
+                    CONSORTIUM_ORG_NAME,
                 )
 
                 ingest_utils.apply_access_control(self._logger, self, obj)
@@ -206,7 +213,11 @@ class TSIIlluminaShortreadMetadata(TSIBaseMetadata):
             fld("experimental_design", "experimental_design"),
             fld("sequencing_platform", "sequencing_platform"),
             fld("facility_project_code", "facility_project_code", optional=True),
-            fld('sequencing_kit_chemistry_version', 'sequencing_kit_chemistry_version', optional=True),
+            fld(
+                "sequencing_kit_chemistry_version",
+                "sequencing_kit_chemistry_version",
+                optional=True,
+            ),
         ],
         "options": {
             "sheet_name": "Library metadata",
@@ -215,7 +226,9 @@ class TSIIlluminaShortreadMetadata(TSIBaseMetadata):
         },
     }
     md5 = {
-        "match": [files.illumina_shortread_re, ],
+        "match": [
+            files.illumina_shortread_re,
+        ],
         "skip": [
             re.compile(r"^.*_metadata.*\.xlsx$"),
             re.compile(r"^.*SampleSheet.*"),
@@ -228,13 +241,14 @@ class TSIIlluminaShortreadMetadata(TSIBaseMetadata):
     tag_names = ["genomics", "illumina-short-read"]
 
     def __init__(
-            self, logger, metadata_path, contextual_metadata=None, metadata_info=None
+        self, logger, metadata_path, contextual_metadata=None, metadata_info=None
     ):
         super().__init__(logger, metadata_path)
         self.path = Path(metadata_path)
         self.contextual_metadata = contextual_metadata
         self.metadata_info = metadata_info
         self.google_track_meta = TSIGoogleTrackMetadata(logger)
+
     def _get_packages(self):
         packages = self._get_common_packages()
         return self.apply_location_generalisation(packages)
@@ -243,9 +257,7 @@ class TSIIlluminaShortreadMetadata(TSIBaseMetadata):
         flow_cell_id = re.match(r"^.*_([^_]+)_metadata.*\.xlsx", filename).groups()[0]
 
         obj.update(
-            {   "flow_cell_id": flow_cell_id,
-                "library_id": row.library_id.split("/")[-1]
-             }
+            {"flow_cell_id": flow_cell_id, "library_id": row.library_id.split("/")[-1]}
         )
 
     def _get_resources(self):
@@ -338,15 +350,23 @@ class TSIIlluminaFastqMetadata(TSIBaseMetadata):
             fld("sequencing_model", "sequencing_model"),
             fld("data_context", "data_context"),
             fld("facility_project_code", "facility_project_code", optional=True),
-            fld('sequencing_kit_chemistry_version', 'sequencing_kit_chemistry_version', optional=True),
-            fld('bioplatforms_project', 'bioplatforms_project', optional=True),
-            fld('bait_set_name', 'bait_set_name', optional=True),
-            fld('bait_set_reference', 'bait_set_reference', optional=True),
-            fld('library_index_id_dual', 'library_index_id_dual', optional=True),
-            fld('library_index_seq_dual', 'library_index_seq_dual', optional=True),
-            fld('library_oligo_sequence_dual', 'library_oligo_sequence_dual', optional=True),
-            fld('fast5_compression', 'fast5_compression', optional=True),
-            fld('model_base_caller', 'model_base_caller', optional=True),
+            fld(
+                "sequencing_kit_chemistry_version",
+                "sequencing_kit_chemistry_version",
+                optional=True,
+            ),
+            fld("bioplatforms_project", "bioplatforms_project", optional=True),
+            fld("bait_set_name", "bait_set_name", optional=True),
+            fld("bait_set_reference", "bait_set_reference", optional=True),
+            fld("library_index_id_dual", "library_index_id_dual", optional=True),
+            fld("library_index_seq_dual", "library_index_seq_dual", optional=True),
+            fld(
+                "library_oligo_sequence_dual",
+                "library_oligo_sequence_dual",
+                optional=True,
+            ),
+            fld("fast5_compression", "fast5_compression", optional=True),
+            fld("model_base_caller", "model_base_caller", optional=True),
         ],
         "options": {
             "sheet_name": "Library metadata",
@@ -366,7 +386,7 @@ class TSIIlluminaFastqMetadata(TSIBaseMetadata):
     tag_names = ["illumina-fastq"]
 
     def __init__(
-            self, logger, metadata_path, contextual_metadata=None, metadata_info=None
+        self, logger, metadata_path, contextual_metadata=None, metadata_info=None
     ):
         super().__init__(logger, metadata_path)
         self.path = Path(metadata_path)
@@ -378,9 +398,7 @@ class TSIIlluminaFastqMetadata(TSIBaseMetadata):
         return self._get_common_packages()
 
     def _add_datatype_specific_info_to_package(self, obj, row, filename):
-        obj["scientific_name"] = "{} {}".format(
-               obj["genus"], obj["species"]
-        )
+        obj["scientific_name"] = "{} {}".format(obj["genus"], obj["species"])
 
     def _get_resources(self):
         return self._get_common_resources()
@@ -420,7 +438,6 @@ class TSIPacbioHifiMetadata(TSIBaseMetadata):
             fld(
                 "sample_id",
                 re.compile(r"sample_[Ii][Dd]|bioplatforms_sample_id"),
-
                 coerce=ingest_utils.extract_ands_id,
             ),
             fld(
@@ -472,16 +489,24 @@ class TSIPacbioHifiMetadata(TSIBaseMetadata):
             fld("n_libraries_pooled", "n_libraries_pooled"),
             fld("sequencing_platform", "sequencing_platform"),
             fld("flowcell_id", "flowcell_id"),
-            fld('sequencing_kit_chemistry_version', 'sequencing_kit_chemistry_version', optional=True),
-            fld('facility_project_code', 'facility_project_code', optional=True),
-            fld('bioplatforms_project', 'bioplatforms_project', optional=True),
-            fld('bait_set_name', 'bait_set_name', optional=True),
-            fld('bait_set_reference', 'bait_set_reference', optional=True),
-            fld('library_index_id_dual', 'library_index_id_dual', optional=True),
-            fld('library_index_seq_dual', 'library_index_seq_dual', optional=True),
-            fld('library_oligo_sequence_dual', 'library_oligo_sequence_dual', optional=True),
-            fld('fast5_compression', 'fast5_compression', optional=True),
-            fld('model_base_caller', 'model_base_caller', optional=True),
+            fld(
+                "sequencing_kit_chemistry_version",
+                "sequencing_kit_chemistry_version",
+                optional=True,
+            ),
+            fld("facility_project_code", "facility_project_code", optional=True),
+            fld("bioplatforms_project", "bioplatforms_project", optional=True),
+            fld("bait_set_name", "bait_set_name", optional=True),
+            fld("bait_set_reference", "bait_set_reference", optional=True),
+            fld("library_index_id_dual", "library_index_id_dual", optional=True),
+            fld("library_index_seq_dual", "library_index_seq_dual", optional=True),
+            fld(
+                "library_oligo_sequence_dual",
+                "library_oligo_sequence_dual",
+                optional=True,
+            ),
+            fld("fast5_compression", "fast5_compression", optional=True),
+            fld("model_base_caller", "model_base_caller", optional=True),
         ],
         "options": {
             "sheet_name": "Library metadata",
@@ -490,11 +515,12 @@ class TSIPacbioHifiMetadata(TSIBaseMetadata):
         },
     }
     md5 = {
-        "match": [files.pacbio_hifi_filename_re,
-                  files.pacbio_hifi_filename_2_re,
-                  files.pacbio_hifi_metadata_sheet_re,
-                  files.pacbio_hifi_common_re],
-
+        "match": [
+            files.pacbio_hifi_filename_re,
+            files.pacbio_hifi_filename_2_re,
+            files.pacbio_hifi_metadata_sheet_re,
+            files.pacbio_hifi_common_re,
+        ],
         "skip": [
             re.compile(r"^.*[\._]metadata\.xlsx$"),
             re.compile(r"^.*SampleSheet.*"),
@@ -511,7 +537,7 @@ class TSIPacbioHifiMetadata(TSIBaseMetadata):
     tag_names = ["pacbio-hifi"]
 
     def __init__(
-            self, logger, metadata_path, contextual_metadata=None, metadata_info=None
+        self, logger, metadata_path, contextual_metadata=None, metadata_info=None
     ):
         super().__init__(logger, metadata_path)
         self.path = Path(metadata_path)
@@ -524,12 +550,7 @@ class TSIPacbioHifiMetadata(TSIBaseMetadata):
         return self.apply_location_generalisation(packages)
 
     def _add_datatype_specific_info_to_package(self, obj, row, filename):
-
-        obj.update(
-            {
-                 "dataset_url": self.get_tracking_info(row.ticket, "download")
-             }
-        )
+        obj.update({"dataset_url": self.get_tracking_info(row.ticket, "download")})
         # below fields are in the metadata, but not required in the packages schema
         del obj["ccg_jira_ticket"]
         del obj["download"]
@@ -546,7 +567,9 @@ class TSIPacbioHifiMetadata(TSIBaseMetadata):
             self._logger.info("fetching resource metadata: %s" % (self.metadata_urls))
             fetcher = Fetcher(self._logger, self.path, metadata_url, ri_auth)
             fetcher.fetch_metadata_from_folder(
-                [files.pacbio_hifi_filename_re, ],
+                [
+                    files.pacbio_hifi_filename_re,
+                ],
                 metadata_info,
                 getattr(self, "metadata_url_components", []),
                 download=False,
@@ -556,22 +579,19 @@ class TSIPacbioHifiMetadata(TSIBaseMetadata):
         resources = self._get_common_resources()
         return resources + self.generate_common_files_resources(resources)
 
-
     def _add_datatype_specific_info_to_resource(self, resource, md5_file=None):
         # none for PACbio-hifi
         return
 
     def _build_resource_linkage(self, xlsx_info, resource, file_info):
         return (
-            (ingest_utils.extract_ands_id(self._logger, resource["library_id"]),
-             resource["flowcell_id"],)
-        )
-
-
-    def _build_common_files_linkage(self, xlsx_info, resource, file_info):
-        return (
+            ingest_utils.extract_ands_id(self._logger, resource["library_id"]),
             resource["flowcell_id"],
         )
+
+    def _build_common_files_linkage(self, xlsx_info, resource, file_info):
+        return (resource["flowcell_id"],)
+
 
 class TSIGenomicsDDRADMetadata(TSIBaseMetadata):
     """
@@ -631,7 +651,11 @@ class TSIGenomicsDDRADMetadata(TSIBaseMetadata):
             fld("library_status", "library_status", optional=True),
             fld("sequencing_facility", "sequencing_facility"),
             fld("n_libraries_pooled", "n_libraries_pooled"),
-            fld("work_order", "work_order", coerce=ingest_utils.int_or_comment,),
+            fld(
+                "work_order",
+                "work_order",
+                coerce=ingest_utils.int_or_comment,
+            ),
             fld("sequencing_platform", "sequencing_platform"),
             fld("flowcell_id", "flowcell_id"),
             fld("file", "file", optional=True),
@@ -663,15 +687,31 @@ class TSIGenomicsDDRADMetadata(TSIBaseMetadata):
             fld("analysis_software_version", "analysis_software_version"),
             fld("file_name", "file_name", optional=True),
             fld("file_type", "file_type"),
-            fld('sequencing_kit_chemistry_version', 'sequencing_kit_chemistry_version', optional=True),
-            fld('facility_project_code', 'facility_project_code', optional=True),
-            fld('library_index_id_dual', re.compile(r"(library_index_id_dual|library_dual_index_id)"), optional=True),
-            fld('library_index_seq_dual', re.compile(r"(library_index_seq_dual|library_dual_index_seq)"),
-                optional=True),
-            fld('library_oligo_sequence_dual', re.compile(r"(library_oligo_sequence_dual|library_dual_oligo_sequence)"),
-                optional=True),
-            fld('fast5_compression', 'fast5_compression', optional=True),
-            fld('model_base_caller', 'model_base_caller', optional=True),
+            fld(
+                "sequencing_kit_chemistry_version",
+                "sequencing_kit_chemistry_version",
+                optional=True,
+            ),
+            fld("facility_project_code", "facility_project_code", optional=True),
+            fld(
+                "library_index_id_dual",
+                re.compile(r"(library_index_id_dual|library_dual_index_id)"),
+                optional=True,
+            ),
+            fld(
+                "library_index_seq_dual",
+                re.compile(r"(library_index_seq_dual|library_dual_index_seq)"),
+                optional=True,
+            ),
+            fld(
+                "library_oligo_sequence_dual",
+                re.compile(
+                    r"(library_oligo_sequence_dual|library_dual_oligo_sequence)"
+                ),
+                optional=True,
+            ),
+            fld("fast5_compression", "fast5_compression", optional=True),
+            fld("model_base_caller", "model_base_caller", optional=True),
             fld("bait_set_name", "bait_set_name", optional=True),
             fld("bait_set_reference", "bait_set_reference", optional=True),
             fld("bioplatforms_project", "bioplatforms_project", optional=True),
@@ -683,7 +723,11 @@ class TSIGenomicsDDRADMetadata(TSIBaseMetadata):
         },
     }
     md5 = {
-        "match": [files.ddrad_fastq_filename_re, files.ddrad_metadata_sheet_re, files.ddrad_analysed_tar_re, ],
+        "match": [
+            files.ddrad_fastq_filename_re,
+            files.ddrad_metadata_sheet_re,
+            files.ddrad_analysed_tar_re,
+        ],
         "skip": [
             re.compile(r"^.*_metadata.*\.xlsx$"),
             re.compile(r"^.*TestFiles\.exe.*"),
@@ -695,7 +739,7 @@ class TSIGenomicsDDRADMetadata(TSIBaseMetadata):
     tag_names = ["genomics-ddrad"]
 
     def __init__(
-            self, logger, metadata_path, contextual_metadata=None, metadata_info=None
+        self, logger, metadata_path, contextual_metadata=None, metadata_info=None
     ):
         super().__init__(logger, metadata_path)
         self.path = Path(metadata_path)
@@ -703,7 +747,6 @@ class TSIGenomicsDDRADMetadata(TSIBaseMetadata):
         self.metadata_info = metadata_info
         self.google_track_meta = TSIGoogleTrackMetadata(logger)
         self.flow_lookup = {}
-
 
     def _get_packages(self):
         xlsx_re = re.compile(r"^.*_(\w+)_metadata.*\.xlsx$")
@@ -726,7 +769,6 @@ class TSIGenomicsDDRADMetadata(TSIBaseMetadata):
                 objs[(obj["dataset_id"], obj["flowcell_id"])].append(obj)
 
             for (bpa_dataset_id, flowcell_id), row_objs in list(objs.items()):
-
                 if bpa_dataset_id is None or flowcell_id is None:
                     continue
 
@@ -735,16 +777,18 @@ class TSIGenomicsDDRADMetadata(TSIBaseMetadata):
                     context = {}
                     for contextual_source in self.contextual_metadata:
                         library_metadata_sample_id = row.get("sample_id")
-                        contextual_metadata = contextual_source.get(library_metadata_sample_id)
+                        contextual_metadata = contextual_source.get(
+                            library_metadata_sample_id
+                        )
                         # if
                         if contextual_metadata != {}:
                             context.update(contextual_metadata)
                         # else:
-                            # if type(contextual_metadata).__name__ != 'my name':  # Ignore Dataset control missing, thats valid
-                                    # self._logger.warn(
-                                    # "No sample metadata found for sample id {0} in library metadata for ticket {1} with file: {2})".format(
-                                    #     row.get("sample_id"), row.get("ticket"), row.get("metadata_revision_filename"))
-                               # )
+                        # if type(contextual_metadata).__name__ != 'my name':  # Ignore Dataset control missing, thats valid
+                        # self._logger.warn(
+                        # "No sample metadata found for sample id {0} in library metadata for ticket {1} with file: {2})".format(
+                        #     row.get("sample_id"), row.get("ticket"), row.get("metadata_revision_filename"))
+                        # )
                 context_objs.append(context)
 
                 obj = common_values(row_objs)
@@ -759,9 +803,15 @@ class TSIGenomicsDDRADMetadata(TSIBaseMetadata):
                         "id": name,
                         "bpa_dataset_id": bpa_dataset_id,
                         "date_of_transfer": ingest_utils.get_date_isoformat(
-                            self._logger, self.get_tracking_info(ticket, "date_of_transfer")),
+                            self._logger,
+                            self.get_tracking_info(ticket, "date_of_transfer"),
+                        ),
                         "date_of_transfer_to_archive": ingest_utils.get_date_isoformat(
-                            self._logger, self.get_tracking_info(ticket, "date_of_transfer_to_archive")),
+                            self._logger,
+                            self.get_tracking_info(
+                                ticket, "date_of_transfer_to_archive"
+                            ),
+                        ),
                         "data_type": self.get_tracking_info(ticket, "data_type"),
                         "description": self.get_tracking_info(ticket, "description"),
                         "folder_name": self.get_tracking_info(ticket, "folder_name"),
@@ -791,11 +841,7 @@ class TSIGenomicsDDRADMetadata(TSIBaseMetadata):
         return self.apply_location_generalisation(packages)
 
     def _add_datatype_specific_info_to_package(self, obj, row, filename):
-        obj.update(
-            {
-                 "dataset_url": self.get_tracking_info(row.ticket, "download")
-             }
-        )
+        obj.update({"dataset_url": self.get_tracking_info(row.ticket, "download")})
         # below fields are in the metadata, but not required in the packages schema
 
     def _get_resources(self):
@@ -807,10 +853,8 @@ class TSIGenomicsDDRADMetadata(TSIBaseMetadata):
 
     def _build_resource_linkage(self, xlsx_info, resource, file_info):
         return (
-            (ingest_utils.extract_ands_id(
-                self._logger, resource["bpa_dataset_id"]
-            ),
-             resource["flowcell_id"],)
+            ingest_utils.extract_ands_id(self._logger, resource["bpa_dataset_id"]),
+            resource["flowcell_id"],
         )
 
 
@@ -833,8 +877,16 @@ class TSIGenomeAssemblyMetadata(TSIBaseMetadata):
                 "bioplatforms_secondarydata_id",
                 coerce=ingest_utils.extract_ands_id,
             ),
-            fld("sample_id", "bioplatforms_sample_id", coerce=ingest_utils.int_or_comment),
-            fld("library_id", "bioplatforms_library_id", coerce=ingest_utils.int_or_comment),
+            fld(
+                "sample_id",
+                "bioplatforms_sample_id",
+                coerce=ingest_utils.int_or_comment,
+            ),
+            fld(
+                "library_id",
+                "bioplatforms_library_id",
+                coerce=ingest_utils.int_or_comment,
+            ),
             fld("dataset_id", "bioplatforms_dataset_id", coerce=ingest_utils.get_int),
             fld("bioplatforms_project", "bioplatforms_project"),
             fld("contact_person", "contact_person"),
@@ -845,20 +897,22 @@ class TSIGenomeAssemblyMetadata(TSIBaseMetadata):
             fld("computational_infrastructure", "computational_infrastructure"),
             fld("system_used", "system_used"),
             fld("analysis_description", "analysis_description"),
-            fld('assembly_date', 'assembly_date', coerce=ingest_utils.get_date_isoformat),
-            fld('reference_genome', 'reference_genome'),
-            fld('assembly_method', 'assembly_method'),
-            fld('assembly_method_version', 'assembly_method_version'),
-            fld('hybrid', 'hybrid'),
-            fld('hybrid_details', 'hybrid_details'),
-            fld('polishing_scaffolding_method', 'polishing_scaffolding_method'),
-            fld('polishing_scaffolding_data', 'polishing_scaffolding_data'),
-            fld('n_scaffolds', 'n_scaffolds'),
-            fld('n50', 'n50'),
-            fld('min_gap_length_bp', 'min_gap_length_bp'),
-            fld('genome_size', 'genome_size'),
-            fld('completion_score', 'completion_score'),
-            fld('completion_score_method', 'completion_score_method')
+            fld(
+                "assembly_date", "assembly_date", coerce=ingest_utils.get_date_isoformat
+            ),
+            fld("reference_genome", "reference_genome"),
+            fld("assembly_method", "assembly_method"),
+            fld("assembly_method_version", "assembly_method_version"),
+            fld("hybrid", "hybrid"),
+            fld("hybrid_details", "hybrid_details"),
+            fld("polishing_scaffolding_method", "polishing_scaffolding_method"),
+            fld("polishing_scaffolding_data", "polishing_scaffolding_data"),
+            fld("n_scaffolds", "n_scaffolds"),
+            fld("n50", "n50"),
+            fld("min_gap_length_bp", "min_gap_length_bp"),
+            fld("genome_size", "genome_size"),
+            fld("completion_score", "completion_score"),
+            fld("completion_score_method", "completion_score_method"),
         ],
         "options": {
             "sheet_name": "Metadata",
@@ -868,7 +922,9 @@ class TSIGenomeAssemblyMetadata(TSIBaseMetadata):
     }
     md5 = {
         "match": [files.genome_assembly_filename_re],
-        "skip": [re.compile(r"^.*\.xlsx$"), ],
+        "skip": [
+            re.compile(r"^.*\.xlsx$"),
+        ],
     }
 
     description = "Genome Assembly"
@@ -876,7 +932,7 @@ class TSIGenomeAssemblyMetadata(TSIBaseMetadata):
     tag_names = ["tsi-genome-assembly"]
 
     def __init__(
-            self, logger, metadata_path, contextual_metadata=None, metadata_info=None
+        self, logger, metadata_path, contextual_metadata=None, metadata_info=None
     ):
         super().__init__(logger, metadata_path)
         self.path = Path(metadata_path)
@@ -919,18 +975,16 @@ class TSIGenomeAssemblyMetadata(TSIBaseMetadata):
             for i in range(0, len(sample_ids)):
                 context.append(
                     contextual_source.get(
-                        ingest_utils.extract_ands_id(
-                            self._logger, sample_ids[i]
-                        ),
+                        ingest_utils.extract_ands_id(self._logger, sample_ids[i]),
                     )
                 )
             obj.update(common_values(context))
 
         obj.update(
             {
-             "folder_name": self.get_tracking_info(row.ticket, "folder_name"),
-             "dataset_url": self.get_tracking_info(row.ticket, "download"),
-             }
+                "folder_name": self.get_tracking_info(row.ticket, "folder_name"),
+                "dataset_url": self.get_tracking_info(row.ticket, "download"),
+            }
         )
         # below fields are in the metadata, but not required in the packages schema
         del obj["ccg_jira_ticket"]
@@ -947,8 +1001,7 @@ class TSIGenomeAssemblyMetadata(TSIBaseMetadata):
         return
 
     def _build_resource_linkage(self, xlsx_info, resource, file_info):
-        return (resource["bioplatforms_secondarydata_id"],
-                )
+        return (resource["bioplatforms_secondarydata_id"],)
 
 
 class TSIHiCMetadata(TSIBaseMetadata):
@@ -1067,7 +1120,7 @@ class TSIHiCMetadata(TSIBaseMetadata):
     tag_names = ["genomics"]
 
     def __init__(
-            self, logger, metadata_path, contextual_metadata=None, metadata_info=None
+        self, logger, metadata_path, contextual_metadata=None, metadata_info=None
     ):
         super().__init__(logger, metadata_path)
         self.path = Path(metadata_path)
@@ -1080,10 +1133,7 @@ class TSIHiCMetadata(TSIBaseMetadata):
 
     def _add_datatype_specific_info_to_package(self, obj, row, filename):
         # note the complete library id is used to generate the notes field.
-        obj.update(
-            {"library_id": row.library_id.split("/")[-1]
-             }
-        )
+        obj.update({"library_id": row.library_id.split("/")[-1]})
 
     def _get_resources(self):
         return self._get_common_resources()
@@ -1095,10 +1145,13 @@ class TSIHiCMetadata(TSIBaseMetadata):
         return
 
     def _build_resource_linkage(self, xlsx_info, resource, file_info):
-        return (xlsx_info["ticket"],
-                file_info.get("library_id"),
-                resource["flowcell_id"],
-                )
+        return (
+            xlsx_info["ticket"],
+            file_info.get("library_id"),
+            resource["flowcell_id"],
+        )
+
+
 class TSIGenomicsDArTMetadata(TSIBaseMetadata):
     """
     This data conforms to the BPA Genomics DArT workflow. future data
@@ -1156,7 +1209,9 @@ class TSIGenomicsDArTMetadata(TSIBaseMetadata):
             fld("library_index_id", "library_index_id"),
             fld("library_oligo_sequence", "library_oligo_sequence"),
             fld("library_pcr_reps", "library_pcr_reps", coerce=ingest_utils.get_int),
-            fld("library_pcr_cycles", "library_pcr_cycles", coerce=ingest_utils.get_int),
+            fld(
+                "library_pcr_cycles", "library_pcr_cycles", coerce=ingest_utils.get_int
+            ),
             fld("library_ng_ul", "library_ng_ul"),
             fld("library_comments", "library_comments"),
             fld("library_location", "library_location"),
@@ -1201,9 +1256,9 @@ class TSIGenomicsDArTMetadata(TSIBaseMetadata):
             fld("movie_length", "movie_length"),
             fld("file_type", "file_type"),
             fld("flowcell_type", "flowcell_type"),
-            fld('bioplatforms_project', 'bioplatforms_project', optional=True),
-            fld('bait_set_name', 'bait_set_name', optional=True),
-            fld('bait_set_reference', 'bait_set_reference', optional=True),
+            fld("bioplatforms_project", "bioplatforms_project", optional=True),
+            fld("bait_set_name", "bait_set_name", optional=True),
+            fld("bait_set_reference", "bait_set_reference", optional=True),
         ],
         "options": {
             "sheet_name": "Library metadata",
@@ -1228,15 +1283,18 @@ class TSIGenomicsDArTMetadata(TSIBaseMetadata):
     tag_names = ["genomics-dart"]
 
     def __init__(
-            self, logger, metadata_path, contextual_metadata=None, metadata_info=None
+        self, logger, metadata_path, contextual_metadata=None, metadata_info=None
     ):
         super().__init__(logger, metadata_path)
         self.path = Path(metadata_path)
         self.contextual_metadata = contextual_metadata
         self.metadata_info = metadata_info
         self.google_track_meta = TSIGoogleTrackMetadata(logger)
+
     def _get_packages(self):
-        self._logger.info("Ingesting {} metadata from {}".format(self.initiative, self.path))
+        self._logger.info(
+            "Ingesting {} metadata from {}".format(self.initiative, self.path)
+        )
         packages = []
 
         # this is a folder-oriented ingest, so we crush each xlsx down into a single row
@@ -1246,7 +1304,11 @@ class TSIGenomicsDArTMetadata(TSIBaseMetadata):
         flattened_objs = defaultdict(list)
         for fname in glob(self.path + "/*librarymetadata.xlsx"):
             row_objs = []
-            self._logger.info("Processing {} metadata file {}".format(self.initiative, os.path.basename(fname)))
+            self._logger.info(
+                "Processing {} metadata file {}".format(
+                    self.initiative, os.path.basename(fname)
+                )
+            )
             file_dataset_id = ingest_utils.extract_ands_id(
                 self._logger, filename_re.match(os.path.basename(fname)).groups()[0]
             )
@@ -1267,15 +1329,20 @@ class TSIGenomicsDArTMetadata(TSIBaseMetadata):
                 # Add sample contextual metadata
                 for contextual_source in self.contextual_metadata:
                     library_metadata_sample_id = obj.get("sample_id")
-                    contextual_metadata = contextual_source.get(library_metadata_sample_id)
+                    contextual_metadata = contextual_source.get(
+                        library_metadata_sample_id
+                    )
                     # if
                     if contextual_metadata != {}:
                         obj.update(contextual_metadata)
                     else:
-                        if type(contextual_metadata).__name__ != 'my name': # Ignore Dataset control missing, thats valid
+                        if (
+                            type(contextual_metadata).__name__ != "my name"
+                        ):  # Ignore Dataset control missing, thats valid
                             self._logger.warn(
-                               "No sample metadata found for sample id {0} in library metadata for ticket {1})".format(
-                                    obj["sample_id"], obj["ticket"])
+                                "No sample metadata found for sample id {0} in library metadata for ticket {1})".format(
+                                    obj["sample_id"], obj["ticket"]
+                                )
                             )
                 row_objs.append(obj)
 
@@ -1284,11 +1351,11 @@ class TSIGenomicsDArTMetadata(TSIBaseMetadata):
 
             objs.append((fname, combined_obj))
 
-        for (fname, obj) in objs:
+        for fname, obj in objs:
             ticket = obj["ticket"]
 
             name = sample_id_to_ckan_name(
-                obj["dataset_id"], self.ckan_data_type,ticket
+                obj["dataset_id"], self.ckan_data_type, ticket
             )
             obj.update(
                 {
@@ -1298,7 +1365,8 @@ class TSIGenomicsDArTMetadata(TSIBaseMetadata):
                         self._logger, self.get_tracking_info(ticket, "date_of_transfer")
                     ),
                     "date_of_transfer_to_archive": ingest_utils.get_date_isoformat(
-                        self._logger, self.get_tracking_info(ticket, "date_of_transfer_to_archive")
+                        self._logger,
+                        self.get_tracking_info(ticket, "date_of_transfer_to_archive"),
                     ),
                     "data_type": self.get_tracking_info(ticket, "data_type"),
                     "description": self.get_tracking_info(ticket, "description"),
@@ -1311,7 +1379,8 @@ class TSIGenomicsDArTMetadata(TSIBaseMetadata):
             )
             organism_scientific_name = obj.get(
                 "scientific_name",
-                "%s %s" % (obj.get("genus", ""), obj.get("species", "")))
+                "%s %s" % (obj.get("genus", ""), obj.get("species", "")),
+            )
             additional_notes = "DArT dataset not demultiplexed"
             self.build_title_into_object(obj)
             self.build_notes_into_object(obj)
@@ -1359,4 +1428,4 @@ class TSIGenomicsDArTMetadata(TSIBaseMetadata):
         resource["dataset_id"] = __dataset_id_from_md5_file(md5_file)
 
     def _build_resource_linkage(self, xlsx_info, resource, file_info):
-        return ingest_utils.extract_ands_id(self._logger, resource["dataset_id"]),
+        return (ingest_utils.extract_ands_id(self._logger, resource["dataset_id"]),)

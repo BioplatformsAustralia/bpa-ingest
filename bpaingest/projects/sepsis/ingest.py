@@ -895,7 +895,7 @@ class SepsisProteomicsMS1QuantificationMetadata(BaseSepsisMetadata):
             fld(
                 "sample_on_column",
                 "sample on column (µg)",
-                units=u"\u00B5" + "g",
+                units="\u00B5" + "g",
                 coerce=ingest_utils.get_clean_number,
             ),
             fld("mass_spectrometer", "mass spectrometer"),
@@ -1041,7 +1041,7 @@ class SepsisProteomicsSwathMSBaseSepsisMetadata(BaseSepsisMetadata):
             fld(
                 "sample_on_column",
                 "sample on column (µg)",
-                units=u"\u00B5" + "g",
+                units="\u00B5" + "g",
                 coerce=ingest_utils.get_clean_number,
             ),
             fld("mass_spectrometer", "Mass Spectrometer"),
@@ -1277,7 +1277,7 @@ class SepsisProteomicsSwathMSCombinedSampleMetadata(BaseSepsisMetadata):
             fld(
                 "sample_on_column",
                 "sample on column (µg)",
-                units=u"\u00B5" + "g",
+                units="\u00B5" + "g",
                 coerce=ingest_utils.get_clean_number,
             ),
             fld("mass_spectrometer", "mass spectrometer"),
@@ -1424,7 +1424,7 @@ class SepsisProteomics2DLibraryMetadata(BaseSepsisMetadata):
             fld(
                 "sample_on_column",
                 "sample on column (µg)",
-                units=u"\u00B5" + "g",
+                units="\u00B5" + "g",
                 coerce=ingest_utils.get_clean_number,
             ),
             fld("mass_spectrometer", "mass spectrometer"),

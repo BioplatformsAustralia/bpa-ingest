@@ -143,6 +143,7 @@ def test_pacbio_hifi():
     for filename in filenames:
         assert pacbio_hifi_filename_re.match(filename) is not None
 
+
 def test_pacbio_hifi_revio():
     filenames = [
         "378163_GAP_BRF_m84118_231115_072325_s4.hifi_reads.default.bam",
@@ -155,9 +156,7 @@ def test_pacbio_hifi_revio():
 
 
 def test_pacbio_hifi_revio_pdf():
-    filenames = [
-        "GAP_BRF_m84118_231115_072325_s4.pdf"
-    ]
+    filenames = ["GAP_BRF_m84118_231115_072325_s4.pdf"]
 
     for filename in filenames:
         assert pacbio_hifi_revio_pdf_re.match(filename) is not None
@@ -181,4 +180,3 @@ def test_pacbio_hifi_revio_metadata_sheet():
 
     for filename in filenames:
         assert pacbio_hifi_revio_metadata_sheet_re.match(filename) is not None
-

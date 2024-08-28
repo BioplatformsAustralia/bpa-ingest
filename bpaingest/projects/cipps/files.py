@@ -30,6 +30,3 @@ PACBIO_HIFI_PATTERN = r"""
       |\.ccs\.bam)
 """
 pacbio_hifi_filename_re = re.compile(PACBIO_HIFI_PATTERN, re.VERBOSE)
-
-
-

@@ -110,7 +110,7 @@ def cultivars_parse_md5_file(md5_file):
             self._read = int(val[1:])
 
         def __parse_line(self):
-            """ unpack the md5 line """
+            """unpack the md5 line"""
             self.md5, self.filename = self._line.split()
 
             filename_parts = self.filename.split(".")[0].split("_")

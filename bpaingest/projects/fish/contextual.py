@@ -6,7 +6,6 @@ from ...abstract import BaseDatasetControlContextual
 from ...abstract import BaseLibraryContextual
 
 
-
 class FishDatasetControlContextual(BaseDatasetControlContextual):
     metadata_urls = [
         "https://downloads-qcif.bioplatforms.com/bpa/fish_staging/dataset_control/2023-08-09/"
@@ -14,8 +13,8 @@ class FishDatasetControlContextual(BaseDatasetControlContextual):
     name = "fish-dataset-contextual"
     contextual_linkage = ("sample_id",)
     additional_fields = [
-        fld('library_id', 'library_id'),
-        fld('dataset_id', 'dataset_id'),
+        fld("library_id", "library_id"),
+        fld("dataset_id", "dataset_id"),
     ]
 
 
@@ -24,5 +23,3 @@ class FishLibraryContextual(BaseLibraryContextual):
         "https://downloads-qcif.bioplatforms.com/bpa/fish_staging/metadata/2023-08-09/"
     ]
     name = "fish-library-contextual"
-
-

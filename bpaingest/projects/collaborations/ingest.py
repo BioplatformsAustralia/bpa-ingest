@@ -5,7 +5,10 @@ from glob import glob
 from unipath import Path
 
 from . import files
-from .contextual import CollaborationsLibraryContextual, CollaborationsDatasetControlContextual
+from .contextual import (
+    CollaborationsLibraryContextual,
+    CollaborationsDatasetControlContextual,
+)
 from .tracking import CollaborationsGoogleTrackMetadata
 from .tracking import CollaborationsProjectsGoogleMetadata
 from ...abstract import BaseMetadata
@@ -17,7 +20,10 @@ from ...util import (
     apply_cc_by_license,
 )
 
-common_context = [CollaborationsLibraryContextual, CollaborationsDatasetControlContextual]
+common_context = [
+    CollaborationsLibraryContextual,
+    CollaborationsDatasetControlContextual,
+]
 
 
 class CollaborationsBaseMetadata(BaseMetadata):
@@ -45,12 +51,18 @@ class CollaborationsBaseMetadata(BaseMetadata):
         self.ticket = self.xlsx_info["ticket"]
 
     def _get_common_packages(self):
-        self._logger.info("Ingesting {} metadata from {}".format(self.initiative, self.path))
+        self._logger.info(
+            "Ingesting {} metadata from {}".format(self.initiative, self.path)
+        )
         packages = []
         for fname in glob(self.path + "/*.xlsx"):
-            self._logger.info("Processing {} metadata file {}".format(self.initiative, os.path.basename(fname)))
+            self._logger.info(
+                "Processing {} metadata file {}".format(
+                    self.initiative, os.path.basename(fname)
+                )
+            )
             rows = self.parse_spreadsheet(fname, self.metadata_info)
-            if self.method_exists('_set_metadata_vars'):
+            if self.method_exists("_set_metadata_vars"):
                 self._set_metadata_vars(fname)
             for row in rows:
                 if not row.bioplatforms_sample_id:
@@ -68,8 +80,7 @@ class CollaborationsBaseMetadata(BaseMetadata):
                     name = "No Library ID - override in sublass"
                 else:
                     name = sample_id_to_ckan_name(
-                        "{}".format(library_id),
-                        self.ckan_data_type
+                        "{}".format(library_id), self.ckan_data_type
                     )
 
                 obj.update(
@@ -78,15 +89,21 @@ class CollaborationsBaseMetadata(BaseMetadata):
                         "id": name,
                         "type": self.ckan_data_type,
                         "library_id": library_id,
-                        "sequence_data_type": self.get_tracking_info(row.ticket, "data_type"),
+                        "sequence_data_type": self.get_tracking_info(
+                            row.ticket, "data_type"
+                        ),
                         "license_id": apply_cc_by_license(),
                         "date_of_transfer": ingest_utils.get_date_isoformat(
-                            self._logger, self.get_tracking_info(row.ticket, "date_of_transfer")
+                            self._logger,
+                            self.get_tracking_info(row.ticket, "date_of_transfer"),
                         ),
                         "date_of_transfer_to_archive": ingest_utils.get_date_isoformat(
-                            self._logger, self.get_tracking_info(row.ticket, "date_of_transfer_to_archive")
+                            self._logger,
+                            self.get_tracking_info(
+                                row.ticket, "date_of_transfer_to_archive"
+                            ),
                         ),
-                     }
+                    }
                 )
                 self._add_datatype_specific_info_to_package(obj, row, fname)
                 self.build_title_into_object(obj)
@@ -94,22 +111,29 @@ class CollaborationsBaseMetadata(BaseMetadata):
                 project_slug = None
                 project_code = None
                 # get the slug for the org that matches the Project Code.
-                if 'bioplatforms_project_code' in list(obj.keys()):
-                    project_code = obj.get('bioplatforms_project_code', None)
+                if "bioplatforms_project_code" in list(obj.keys()):
+                    project_code = obj.get("bioplatforms_project_code", None)
                 if project_code is None:
                     self._logger.error(
-                        "No project code found for {} in Dataset Control.".format(obj["bioplatforms_sample_id"]))
+                        "No project code found for {} in Dataset Control.".format(
+                            obj["bioplatforms_sample_id"]
+                        )
+                    )
                 else:
                     for trrow in self.google_project_codes_meta.project_code_rows:
-                        if (trrow.short_description == project_code):
+                        if trrow.short_description == project_code:
                             project_slug = trrow.slug
 
                 # If no org exists, fail with ah error, as teh security is based around these orgs.
                 if project_slug is None:
-                    self._logger.error("No project found for {} in project_codes tracking sheet".format(project_code))
+                    self._logger.error(
+                        "No project found for {} in project_codes tracking sheet".format(
+                            project_code
+                        )
+                    )
                 else:
                     ingest_utils.permissions_organization_member_after_embargo(
-                         self._logger,
+                        self._logger,
                         obj,
                         "date_of_transfer_to_archive",
                         self.embargo_days,
@@ -122,7 +146,6 @@ class CollaborationsBaseMetadata(BaseMetadata):
 
 
 class CollaborationsMetagenomicsNovaseqMetadata(CollaborationsBaseMetadata):
-
     ckan_data_type = "collaborations-metagenomics-novaseq"
     omics = "metagenomics"
     technology = "novaseq"
@@ -175,11 +198,25 @@ class CollaborationsMetagenomicsNovaseqMetadata(CollaborationsBaseMetadata):
             fld("library_index_id", "library_index_id", optional=True),
             fld("library_index_sequence", "library_index_seq", optional=True),
             fld("library_oligo_sequence", "library_oligo_sequence", optional=True),
-            fld('library_index_id_dual', 'library_index_id_dual', optional=True),
-            fld('library_index_seq_dual', 'library_index_seq_dual', optional=True),
-            fld('library_oligo_sequence_dual', 'library_oligo_sequence_dual', optional=True),
-            fld("library_pcr_reps", "library_pcr_reps", coerce=ingest_utils.get_int, optional=True),
-            fld("library_pcr_cycles", "library_pcr_cycles", coerce=ingest_utils.get_int, optional=True),
+            fld("library_index_id_dual", "library_index_id_dual", optional=True),
+            fld("library_index_seq_dual", "library_index_seq_dual", optional=True),
+            fld(
+                "library_oligo_sequence_dual",
+                "library_oligo_sequence_dual",
+                optional=True,
+            ),
+            fld(
+                "library_pcr_reps",
+                "library_pcr_reps",
+                coerce=ingest_utils.get_int,
+                optional=True,
+            ),
+            fld(
+                "library_pcr_cycles",
+                "library_pcr_cycles",
+                coerce=ingest_utils.get_int,
+                optional=True,
+            ),
             fld("library_ng_ul", "library_ng_ul", optional=True),
             fld("library_comments", "library_comments"),
             fld("library_location", "library_location"),
@@ -220,10 +257,14 @@ class CollaborationsMetagenomicsNovaseqMetadata(CollaborationsBaseMetadata):
             fld("file_type", "file_type", optional=True),
             fld("fast5_compression", "fast5_compression", optional=True),
             fld("model_base_caller", "model_base_caller", optional=True),
-            fld('bait_set_name', 'bait_set_name', optional=True),
-            fld('bait_set_reference', 'bait_set_reference', optional=True),
-            fld('number_of_raw_reads', 'number_of_raw_reads', coerce=ingest_utils.get_int, optional=True),
-
+            fld("bait_set_name", "bait_set_name", optional=True),
+            fld("bait_set_reference", "bait_set_reference", optional=True),
+            fld(
+                "number_of_raw_reads",
+                "number_of_raw_reads",
+                coerce=ingest_utils.get_int,
+                optional=True,
+            ),
         ],
         "options": {
             "sheet_name": "Library metadata",
@@ -232,7 +273,9 @@ class CollaborationsMetagenomicsNovaseqMetadata(CollaborationsBaseMetadata):
         },
     }
     md5 = {
-        "match": [files.metagenomics_novaseq_re, ],
+        "match": [
+            files.metagenomics_novaseq_re,
+        ],
         "skip": [
             re.compile(r"^.*_metadata.*\.xlsx$"),
             re.compile(r"^.*SampleSheet.*"),
@@ -243,7 +286,6 @@ class CollaborationsMetagenomicsNovaseqMetadata(CollaborationsBaseMetadata):
     }
     description = "Metagenomics"
     tag_names = ["genomics", "illumina-short-read"]
-
 
     def __init__(
         self, logger, metadata_path, contextual_metadata=None, metadata_info=None
@@ -258,9 +300,7 @@ class CollaborationsMetagenomicsNovaseqMetadata(CollaborationsBaseMetadata):
     def _get_packages(self):
         return self._get_common_packages()
 
-
     def _add_datatype_specific_info_to_package(self, obj, row, filename):
-
         return
         #    obj.update(
         #        {"sample_id": row.bioplatforms_sample_id.split("/")[-1],}
@@ -276,7 +316,8 @@ class CollaborationsMetagenomicsNovaseqMetadata(CollaborationsBaseMetadata):
 
     def _build_resource_linkage(self, xlsx_info, resource, file_info):
         return (
-            resource["library_id"], resource["flowcell_id"],
+            resource["library_id"],
+            resource["flowcell_id"],
         )
 
 
@@ -332,11 +373,25 @@ class CollaborationsONTPromethionMetadata(CollaborationsBaseMetadata):
             fld("library_index_id", "library_index_id", optional=True),
             fld("library_index_sequence", "library_index_seq", optional=True),
             fld("library_oligo_sequence", "library_oligo_sequence", optional=True),
-            fld('library_index_id_dual', 'library_index_id_dual', optional=True),
-            fld('library_index_seq_dual', 'library_index_seq_dual', optional=True),
-            fld('library_oligo_sequence_dual', 'library_oligo_sequence_dual', optional=True),
-            fld("library_pcr_reps", "library_pcr_reps", coerce=ingest_utils.get_int, optional=True),
-            fld("library_pcr_cycles", "library_pcr_cycles", coerce=ingest_utils.get_int, optional=True),
+            fld("library_index_id_dual", "library_index_id_dual", optional=True),
+            fld("library_index_seq_dual", "library_index_seq_dual", optional=True),
+            fld(
+                "library_oligo_sequence_dual",
+                "library_oligo_sequence_dual",
+                optional=True,
+            ),
+            fld(
+                "library_pcr_reps",
+                "library_pcr_reps",
+                coerce=ingest_utils.get_int,
+                optional=True,
+            ),
+            fld(
+                "library_pcr_cycles",
+                "library_pcr_cycles",
+                coerce=ingest_utils.get_int,
+                optional=True,
+            ),
             fld("library_ng_ul", "library_ng_ul", optional=True),
             fld("library_comments", "library_comments"),
             fld("library_location", "library_location"),
@@ -377,12 +432,15 @@ class CollaborationsONTPromethionMetadata(CollaborationsBaseMetadata):
             fld("file_type", "file_type", optional=True),
             fld("fast5_compression", "fast5_compression", optional=True),
             fld("model_base_caller", "model_base_caller", optional=True),
-            fld('bait_set_name', 'bait_set_name', optional=True),
-            fld('bait_set_reference', 'bait_set_reference', optional=True),
-            fld('number_of_raw_reads', 'number_of_raw_reads', coerce=ingest_utils.get_int, optional=True),
-
+            fld("bait_set_name", "bait_set_name", optional=True),
+            fld("bait_set_reference", "bait_set_reference", optional=True),
+            fld(
+                "number_of_raw_reads",
+                "number_of_raw_reads",
+                coerce=ingest_utils.get_int,
+                optional=True,
+            ),
         ],
-
         "options": {
             "sheet_name": "Sequencing metadata",
             "header_length": 1,
@@ -403,9 +461,8 @@ class CollaborationsONTPromethionMetadata(CollaborationsBaseMetadata):
     description = "PromethION"
     tag_names = ["ont-promethion"]
 
-
     def __init__(
-            self, logger, metadata_path, contextual_metadata=None, metadata_info=None
+        self, logger, metadata_path, contextual_metadata=None, metadata_info=None
     ):
         super().__init__(logger, metadata_path)
         self.path = Path(metadata_path)
@@ -436,9 +493,9 @@ class CollaborationsONTPromethionMetadata(CollaborationsBaseMetadata):
 
     def _add_datatype_specific_info_to_package(self, obj, row, filename):
         obj.update(
-            {"bioplatforms_library_id": row.bioplatforms_library_id,
-             "library_id": row.bioplatforms_library_id.split("/")[-1],
-             "sample_id": row.bioplatforms_sample_id.split("/")[-1],
-             }
+            {
+                "bioplatforms_library_id": row.bioplatforms_library_id,
+                "library_id": row.bioplatforms_library_id.split("/")[-1],
+                "sample_id": row.bioplatforms_sample_id.split("/")[-1],
+            }
         )
-

@@ -54,17 +54,28 @@ class GAPBaseMetadata(BaseMetadata):
         self.google_track_meta = GAPTrackMetadata(logger)
 
     def _build_title_into_object(self, obj):
-        self.build_title_into_object(obj, {"initiative": self.initiative,
-                                            "title_description": self.description,
-                                            "split_sample_id": obj.get("sample_id", "").split("/")[-1], })
+        self.build_title_into_object(
+            obj,
+            {
+                "initiative": self.initiative,
+                "title_description": self.description,
+                "split_sample_id": obj.get("sample_id", "").split("/")[-1],
+            },
+        )
 
     def _get_common_packages(self):
-        self._logger.info("Ingesting {} metadata from {}".format(self.initiative, self.path))
+        self._logger.info(
+            "Ingesting {} metadata from {}".format(self.initiative, self.path)
+        )
         packages = []
         for fname in glob(self.path + "/*.xlsx"):
-            self._logger.info("Processing {} metadata file {}".format(self.initiative, os.path.basename(fname)))
+            self._logger.info(
+                "Processing {} metadata file {}".format(
+                    self.initiative, os.path.basename(fname)
+                )
+            )
             rows = self.parse_spreadsheet(fname, self.metadata_info)
-            if self.method_exists('_set_metadata_vars'):
+            if self.method_exists("_set_metadata_vars"):
                 self._set_metadata_vars(fname)
             xlsx_info = self.metadata_info[os.path.basename(fname)]
             ticket = xlsx_info["ticket"]
@@ -83,10 +94,13 @@ class GAPBaseMetadata(BaseMetadata):
                     if track_meta.dataset_id == raw_dataset_id:
                         obj.update(track_meta._asdict())
                     else:
-                        self._logger.error("Mismatch between Tracking sheet dataset ID: {0} and  Metadata dataset ID: {1} in Ticket {2}"
-                                           .format(track_meta.dataset_id, raw_dataset_id, ticket))
+                        self._logger.error(
+                            "Mismatch between Tracking sheet dataset ID: {0} and  Metadata dataset ID: {1} in Ticket {2}".format(
+                                track_meta.dataset_id, raw_dataset_id, ticket
+                            )
+                        )
                 name = sample_id_to_ckan_name(
-                        raw_library_id, self.ckan_data_type, raw_dataset_id
+                    raw_library_id, self.ckan_data_type, raw_dataset_id
                 )
                 for contextual_source in self.contextual_metadata:
                     obj.update(contextual_source.get(library_id, dataset_id))
@@ -100,14 +114,17 @@ class GAPBaseMetadata(BaseMetadata):
                         "sequence_data_type": self.sequence_data_type,
                         "license_id": apply_cc_by_license(),
                         "date_of_transfer": ingest_utils.get_date_isoformat(
-                            self._logger, self.get_tracking_info(row.ticket, "date_of_transfer")
+                            self._logger,
+                            self.get_tracking_info(row.ticket, "date_of_transfer"),
                         ),
                         "date_of_transfer_to_archive": ingest_utils.get_date_isoformat(
-                            self._logger, self.get_tracking_info(row.ticket, "date_of_transfer_to_archive")
+                            self._logger,
+                            self.get_tracking_info(
+                                row.ticket, "date_of_transfer_to_archive"
+                            ),
                         ),
-                     }
+                    }
                 )
-
 
                 self._add_datatype_specific_info_to_package(obj, row, fname)
                 self._build_title_into_object(obj)
@@ -153,9 +170,9 @@ class GAPIlluminaShortreadMetadata(GAPBaseMetadata):
             fld("run_format", "run format", optional=True),
             fld("analysissoftwareversion", "analysissoftwareversion"),
             fld("flow_cell_id", "flow_cell_id", optional=True),
-            fld('inline_index', 'inline index', optional=True),
-            fld('external_i5_index', 'external i5 index', optional=True),
-            fld('external_i7_index', 'external i7 index', optional=True),
+            fld("inline_index", "inline index", optional=True),
+            fld("external_i5_index", "external i5 index", optional=True),
+            fld("external_i7_index", "external i7 index", optional=True),
         ],
         "options": {
             "sheet_name": None,
@@ -183,9 +200,12 @@ class GAPIlluminaShortreadMetadata(GAPBaseMetadata):
         flow_cell_id = re.match(r"^.*_([^_]+)_metadata.*\.xlsx", filename).groups()[0]
 
         obj.update(
-            {"flow_cell_id": flow_cell_id,
-             "library_id": row.library_id.split("/")[-1]  # because the linkages uses the raw lib id, from the file_name
-             }
+            {
+                "flow_cell_id": flow_cell_id,
+                "library_id": row.library_id.split("/")[
+                    -1
+                ],  # because the linkages uses the raw lib id, from the file_name
+            }
         )
 
     def _get_resources(self):
@@ -215,6 +235,7 @@ class GAPHiCMetadata(GAPIlluminaShortreadMetadata):
         "https://downloads-qcif.bioplatforms.com/bpa/plants_staging/genomics-hi-c/",
     ]
     tag_names = ["genomics", description.replace(" ", "-").lower()]
+
 
 class GAPONTMinionMetadata(GAPBaseMetadata):
     ckan_data_type = "gap-ont-minion"
@@ -276,10 +297,8 @@ class GAPONTMinionMetadata(GAPBaseMetadata):
     def _add_datatype_specific_info_to_package(self, obj, row, filename):
         flow_cell_id = re.match(r"^.*_([^_]+)_metadata.*\.xlsx", filename).groups()[0]
 
-        obj.update(
-            {"flow_cell_id": flow_cell_id
-             }
-        )
+        obj.update({"flow_cell_id": flow_cell_id})
+
     def _get_resources(self):
         return self._get_common_resources()
 
@@ -358,7 +377,6 @@ class GAPONTPromethionMetadata(GAPBaseMetadata):
     description = "PromethION"
     tag_names = ["ont-promethion"]
 
-
     def _get_resources(self):
         resources = self._get_common_resources()
         return resources + self.generate_common_files_resources(resources)
@@ -396,11 +414,14 @@ class GAPONTPromethionMetadata(GAPBaseMetadata):
         return self._get_common_packages()
 
     def _add_datatype_specific_info_to_package(self, obj, row, filename):
-
         obj.update(
-            {"dataset_id": row.dataset_id.split("/")[-1]  # for backward consistency in refactor
-             }
+            {
+                "dataset_id": row.dataset_id.split("/")[
+                    -1
+                ]  # for backward consistency in refactor
+            }
         )
+
     def _build_common_files_linkage(self, xlsx_info, resource, file_info):
         return (
             xlsx_info["ticket"],
@@ -441,7 +462,9 @@ class GAPGenomics10XMetadata(GAPBaseMetadata):
         },
     }
     md5 = {
-        "match": [files.genomics_10x_re,],
+        "match": [
+            files.genomics_10x_re,
+        ],
         "skip": [
             re.compile(r"^.*_metadata\.xlsx$"),
             re.compile(r"^.*SampleSheet.*"),
@@ -458,10 +481,11 @@ class GAPGenomics10XMetadata(GAPBaseMetadata):
         flow_cell_id = re.match(r"^.*_([^_]+)_metadata.*\.xlsx", filename).groups()[0]
 
         obj.update(
-            {"flow_cell_id": flow_cell_id,
-             "library_id": row.library_id.split("/")[-1]
-             # because the linkages uses the raw lib id, from the file_name
-             }
+            {
+                "flow_cell_id": flow_cell_id,
+                "library_id": row.library_id.split("/")[-1]
+                # because the linkages uses the raw lib id, from the file_name
+            }
         )
 
     def _get_resources(self):
@@ -473,9 +497,7 @@ class GAPGenomics10XMetadata(GAPBaseMetadata):
         )
 
     def _build_resource_linkage(self, xlsx_info, resource, file_info):
-        return (
-            xlsx_info["ticket"],
-        )
+        return (xlsx_info["ticket"],)
 
 
 class GAPGenomicsDDRADMetadata(GAPBaseMetadata):
@@ -575,7 +597,9 @@ class GAPGenomicsDDRADMetadata(GAPBaseMetadata):
         },
     }
     md5 = {
-        "match": [files.ddrad_fastq_filename_re,],
+        "match": [
+            files.ddrad_fastq_filename_re,
+        ],
         "skip": [
             files.ddrad_metadata_sheet_re,
             re.compile(r"^.*_metadata\.xlsx$"),
@@ -606,12 +630,15 @@ class GAPGenomicsDDRADMetadata(GAPBaseMetadata):
     ]
 
     def _build_title_into_object(self, obj):
-        self.build_title_into_object(obj, {"initiative": self.initiative,
-                                            "title_description": self.description,
-                                            "dataset_label": "Dataset ID",
-                                            "split_dataset_id": obj.get("dataset_id", "").split("/")[-1], })
-
-
+        self.build_title_into_object(
+            obj,
+            {
+                "initiative": self.initiative,
+                "title_description": self.description,
+                "dataset_label": "Dataset ID",
+                "split_dataset_id": obj.get("dataset_id", "").split("/")[-1],
+            },
+        )
 
     """
     def build_title_into_object(self, obj):
@@ -621,6 +648,7 @@ class GAPGenomicsDDRADMetadata(GAPBaseMetadata):
             obj.get("dataset_id", "").split("/")[-1],
         )
     """
+
     def __init__(
         self, logger, metadata_path, contextual_metadata=None, metadata_info=None
     ):
@@ -655,7 +683,6 @@ class GAPGenomicsDDRADMetadata(GAPBaseMetadata):
                 objs[(obj["dataset_id"], obj["flowcell_id"])].append(obj)
 
             for (dataset_id, flowcell_id), row_objs in list(objs.items()):
-
                 if dataset_id is None or flowcell_id is None:
                     continue
 
@@ -663,7 +690,11 @@ class GAPGenomicsDDRADMetadata(GAPBaseMetadata):
                 for row in row_objs:
                     context = {}
                     for contextual_source in self.contextual_metadata:
-                        context.update(contextual_source.get(row.get("library_id"),row.get("dataset_id")))
+                        context.update(
+                            contextual_source.get(
+                                row.get("library_id"), row.get("dataset_id")
+                            )
+                        )
                     context_objs.append(context)
 
                 obj = common_values(row_objs)
@@ -713,13 +744,10 @@ class GAPGenomicsDDRADMetadata(GAPBaseMetadata):
         return
 
     def _build_resource_linkage(self, xlsx_info, resource, file_info):
-        return(
-                    ingest_utils.extract_ands_id(
-                        self._logger, resource["dataset_id"]
-                    ),
-                    resource["flowcell_id"],
-
-            )
+        return (
+            ingest_utils.extract_ands_id(self._logger, resource["dataset_id"]),
+            resource["flowcell_id"],
+        )
 
 
 class GAPPacbioHifiMetadata(GAPBaseMetadata):
@@ -752,33 +780,41 @@ class GAPPacbioHifiMetadata(GAPBaseMetadata):
                 "dataset_id",
                 coerce=ingest_utils.extract_ands_id,
             ),
-            fld('library_type', 'library_type'),
-            fld('library_layout', 'library_layout'),
-            fld('facility_sample_id', 'facility_sample_id'),
-            fld('sequencing_facility', 'sequencing_facility'),
-            fld('sequencing_platform', 'sequencing_platform'),
-            fld('sequencing_model', 'sequencing_model'),
-            fld('library_construction_protocol', 'library_construction_protocol'),
-            fld('library_strategy', 'library_strategy'),
-            fld('library_selection', 'library_selection'),
-            fld('library_source', 'library_source'),
-            fld('library_prep_date', 'library_prep_date', coerce=ingest_utils.get_date_isoformat),
-            fld('library_prepared_by', 'library_prepared_by'),
-            fld('library_location', 'library_location'),
-            fld('library_status', 'library_status'),
-            fld('library_comments', 'library_comments'),
-            fld('dna_treatment', 'dna_treatment'),
-            fld('insert_size_range', 'insert_size_range'),
-            fld('library_ng_ul', 'library_ng_ul'),
-            fld('library_pcr_cycles', 'library_pcr_cycles', coerce=ingest_utils.get_int),
-            fld('library_pcr_reps', 'library_pcr_reps', coerce=ingest_utils.get_int),
-            fld('n_libraries_pooled', 'n_libraries_pooled', coerce=ingest_utils.get_int),
-            fld('flowcell_type', 'flowcell_type'),
-            fld('flowcell_id', 'flowcell_id'),
-            fld('cell_postion', 'cell_postion'),
-            fld('movie_length', 'movie_length'),
-            fld('analysis_software', 'analysis_software'),
-            fld('analysis_software_version', 'analysis_software_version'),
+            fld("library_type", "library_type"),
+            fld("library_layout", "library_layout"),
+            fld("facility_sample_id", "facility_sample_id"),
+            fld("sequencing_facility", "sequencing_facility"),
+            fld("sequencing_platform", "sequencing_platform"),
+            fld("sequencing_model", "sequencing_model"),
+            fld("library_construction_protocol", "library_construction_protocol"),
+            fld("library_strategy", "library_strategy"),
+            fld("library_selection", "library_selection"),
+            fld("library_source", "library_source"),
+            fld(
+                "library_prep_date",
+                "library_prep_date",
+                coerce=ingest_utils.get_date_isoformat,
+            ),
+            fld("library_prepared_by", "library_prepared_by"),
+            fld("library_location", "library_location"),
+            fld("library_status", "library_status"),
+            fld("library_comments", "library_comments"),
+            fld("dna_treatment", "dna_treatment"),
+            fld("insert_size_range", "insert_size_range"),
+            fld("library_ng_ul", "library_ng_ul"),
+            fld(
+                "library_pcr_cycles", "library_pcr_cycles", coerce=ingest_utils.get_int
+            ),
+            fld("library_pcr_reps", "library_pcr_reps", coerce=ingest_utils.get_int),
+            fld(
+                "n_libraries_pooled", "n_libraries_pooled", coerce=ingest_utils.get_int
+            ),
+            fld("flowcell_type", "flowcell_type"),
+            fld("flowcell_id", "flowcell_id"),
+            fld("cell_postion", "cell_postion"),
+            fld("movie_length", "movie_length"),
+            fld("analysis_software", "analysis_software"),
+            fld("analysis_software_version", "analysis_software_version"),
         ],
         "options": {
             "sheet_name": "Sequencing metadata",
@@ -787,11 +823,13 @@ class GAPPacbioHifiMetadata(GAPBaseMetadata):
         },
     }
     md5 = {
-        "match": [files.pacbio_hifi_filename_re,
-                  files.pacbio_hifi_filename_revio_re,
-                  files.pacbio_hifi_revio_pdf_re,
-                  files.pacbio_hifi_metadata_sheet_re,
-                  files.pacbio_hifi_revio_metadata_sheet_re],
+        "match": [
+            files.pacbio_hifi_filename_re,
+            files.pacbio_hifi_filename_revio_re,
+            files.pacbio_hifi_revio_pdf_re,
+            files.pacbio_hifi_metadata_sheet_re,
+            files.pacbio_hifi_revio_metadata_sheet_re,
+        ],
         "skip": [
             re.compile(r"^.*(\.|_)metadata\.xlsx$"),
             re.compile(r"^.*SampleSheet.*"),
@@ -811,9 +849,7 @@ class GAPPacbioHifiMetadata(GAPBaseMetadata):
     def _add_datatype_specific_info_to_package(self, obj, row, filename):
         filename_re = files.pacbio_hifi_metadata_sheet_re
         revio_xls_filename_re = files.pacbio_hifi_revio_metadata_sheet_re
-        metadata_sheet = re.search(
-                filename_re, os.path.basename(filename)
-            )
+        metadata_sheet = re.search(filename_re, os.path.basename(filename))
         if metadata_sheet is None:
             metadata_sheet = re.search(
                 revio_xls_filename_re, os.path.basename(filename)
@@ -833,58 +869,58 @@ class GAPPacbioHifiMetadata(GAPBaseMetadata):
                     )
                 )
             name = sample_id_to_ckan_name(
-                    "{}".format(row.library_id.split("/")[-1]),
-                    self.ckan_data_type,
-                    "{}".format(row.flowcell_id),
+                "{}".format(row.library_id.split("/")[-1]),
+                self.ckan_data_type,
+                "{}".format(row.flowcell_id),
             )
             track_meta = self.get_tracking_info(row.ticket)
 
             obj.update(
-                        {  "id":name,
-                           "name": name,
-                           "dataset_id": row.dataset_id,
-                            "date_of_transfer": ingest_utils.get_date_isoformat(
-                                self._logger, track_meta.date_of_transfer),
-                            "data_type": track_meta.data_type,
-                            "description": track_meta.description,
-                            "folder_name": track_meta.folder_name,
-                            "date_of_transfer_to_archive": ingest_utils.get_date_isoformat(
-                                self._logger, track_meta.date_of_transfer_to_archive
-                            ),
-                            "dataset_url": track_meta.download,
-                        }
-                    )
-            self.description = obj.get("description") # set the description for the title, it comes from the spreadsheet
+                {
+                    "id": name,
+                    "name": name,
+                    "dataset_id": row.dataset_id,
+                    "date_of_transfer": ingest_utils.get_date_isoformat(
+                        self._logger, track_meta.date_of_transfer
+                    ),
+                    "data_type": track_meta.data_type,
+                    "description": track_meta.description,
+                    "folder_name": track_meta.folder_name,
+                    "date_of_transfer_to_archive": ingest_utils.get_date_isoformat(
+                        self._logger, track_meta.date_of_transfer_to_archive
+                    ),
+                    "dataset_url": track_meta.download,
+                }
+            )
+            self.description = obj.get(
+                "description"
+            )  # set the description for the title, it comes from the spreadsheet
 
-        # below fields are in the metadata, but not required in the packages schema
+            # below fields are in the metadata, but not required in the packages schema
             del obj["ccg_jira_ticket"]
             del obj["download"]
 
         else:
-             self._logger.error("Metadata Sheet {0} cannot be parsed wih RegExp".format(filename))
-
+            self._logger.error(
+                "Metadata Sheet {0} cannot be parsed wih RegExp".format(filename)
+            )
 
     def _get_resources(self):
         resources = self._get_common_resources()
         return resources + self.generate_common_files_resources(resources)
 
     def _add_datatype_specific_info_to_resource(self, resource, md5_file=None):
-
         if "sample_id" in resource:
             resource["sample_id"] = ingest_utils.extract_ands_id(
                 self._logger, resource["sample_id"]
             )
 
-
     def _build_resource_linkage(self, xlsx_info, resource, file_info):
         return (
-                xlsx_info["ticket"],
-                resource["sample_id"],
-                resource["flowcell_id"],
-            )
-
-    def _build_common_files_linkage(self, xlsx_info, resource, file_info):
-        return (
+            xlsx_info["ticket"],
+            resource["sample_id"],
             resource["flowcell_id"],
         )
 
+    def _build_common_files_linkage(self, xlsx_info, resource, file_info):
+        return (resource["flowcell_id"],)

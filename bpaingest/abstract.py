@@ -15,6 +15,7 @@ from .resource_metadata import resource_metadata_from_file, resource_metadata_id
 from .util import make_logger, one
 import re
 
+
 class BaseMetadata:
     auth = ("bpaingest", "bpaingest")
     resource_linkage = ("sample_id",)
@@ -393,7 +394,7 @@ class BaseMetadata:
                 #      add linkage to seen
                 resource_linkages.add(linkage)
                 #      iterate over common files
-                for (data_type, common_file) in self.common_files:
+                for data_type, common_file in self.common_files:
                     if data_type is not self.ckan_data_type:
                         continue
                     lr = dict(zip(self.resource_linkage, linked_resource[0]))
@@ -641,7 +642,6 @@ class BaseDatasetControlContextual:
 
 
 class BaseLibraryContextual:
-
     metadata_patterns = [re.compile(r"^.*\.xlsx$")]
 
     sheet_names = ["Sample metadata"]
@@ -796,7 +796,6 @@ class BaseLibraryContextual:
         return {}
 
     def _read_metadata(self, fname):
-
         library_metadata = {}
         for sheet_name in self.sheet_names:
             wrapper = ExcelWrapper(

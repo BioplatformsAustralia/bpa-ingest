@@ -223,5 +223,5 @@ class OMGDatasetControlContextual(BaseDatasetControlContextual):
     name = "omg-dataset-contextual"
     contextual_linkage = ("bpa_sample_id", "bpa_library_id")
     additional_fields = [
-        fld('bpa_dataset_id', 'bpa_dataset_id'),
+        fld("bpa_dataset_id", "bpa_dataset_id"),
     ]

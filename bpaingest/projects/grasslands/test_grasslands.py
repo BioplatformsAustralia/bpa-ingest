@@ -3,9 +3,7 @@ from .files import (
     pacbio_hifi_filename_revio_re,
     pacbio_hifi_revio_pdf_re,
     pacbio_hifi_revio_metadata_sheet_re,
-
 )
-
 
 
 def test_illumina_rna_and_phylo_shortread():
@@ -35,7 +33,6 @@ def test_pacbio_hifi_revio_pdf():
         assert pacbio_hifi_revio_pdf_re.match(filename) is not None
 
 
-
 def test_pacbio_hifi_revio_metadata_sheet():
     filenames = [
         "AG_BRF_m84118_231208_115614_s4_metadata.xlsx",
@@ -44,4 +41,3 @@ def test_pacbio_hifi_revio_metadata_sheet():
 
     for filename in filenames:
         assert pacbio_hifi_revio_metadata_sheet_re.match(filename) is not None
-

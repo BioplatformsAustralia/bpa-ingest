@@ -74,7 +74,10 @@ def get_uploaded_resource_from_ckan(ckan, obj):
         resource_from_ckan = ckan_method(ckan, "resource", "show")(id=obj["id"])
     except ckanapi.errors.NotFound:
         return None
-    if "url_type" not in resource_from_ckan or resource_from_ckan["url_type"] != 'upload':
+    if (
+        "url_type" not in resource_from_ckan
+        or resource_from_ckan["url_type"] != "upload"
+    ):
         # it doesn't have an uploaded file we want to track, return None
         return None
     return resource_from_ckan
@@ -114,7 +117,9 @@ def delete_dangling_packages(ckan, packages, cache, do_delete):
             logger.info("deleted package: %s/%s" % (delete_obj["id"], delete_id))
 
 
-def sync_packages(ckan, ckan_data_type, packages, org, group, do_delete, do_single_ticket):
+def sync_packages(
+    ckan, ckan_data_type, packages, org, group, do_delete, do_single_ticket
+):
     # FIXME: we don't check if there are any packages we should remove (unpublish)
     logger.info("syncing %d packages" % (len(packages)))
     reporting_interval = determine_reporting_interval(len(packages))
@@ -126,7 +131,7 @@ def sync_packages(ckan, ckan_data_type, packages, org, group, do_delete, do_sing
     ckan_packages = []
 
     cache = build_package_cache(ckan, ckan_data_type, packages)
-    if do_single_ticket is None:   # no need to try to delete them
+    if do_single_ticket is None:  # no need to try to delete them
         delete_dangling_packages(ckan, packages, cache, do_delete)
 
     synched_package_count = 0
@@ -135,11 +140,13 @@ def sync_packages(ckan, ckan_data_type, packages, org, group, do_delete, do_sing
         obj["owner_org"] = org["id"]
         if api_group_obj is not None:
             obj["groups"] = [api_group_obj]
-        if (do_single_ticket is None or obj["ticket"] == do_single_ticket):
+        if do_single_ticket is None or obj["ticket"] == do_single_ticket:
             ckan_packages.append(sync_package(ckan, obj, cache.get(obj["id"])))
             synched_package_count += 1
             if synched_package_count % reporting_interval == 0:
-                logger.info("synced %d of %d packages" % (synched_package_count, len(packages)))
+                logger.info(
+                    "synced %d of %d packages" % (synched_package_count, len(packages))
+                )
     return ckan_packages
 
 
@@ -220,7 +227,7 @@ def sync_package_resources(
             to_reupload.append((current_ckan_obj, legacy_url))
         else:
             uncreated_resource_count += 1
-        #logger.info("Processing Resource creation: created %d, did not create %d of expected %d"
+        # logger.info("Processing Resource creation: created %d, did not create %d of expected %d"
         #            % (created_resource_count, uncreated_resource_count, len(to_create)))
 
     for obj_id in to_delete:
@@ -255,9 +262,15 @@ def sync_package_resources(
     return to_reupload
 
 
-def reupload_resources(ckan, to_reupload, shared_resources, auth, write_reuploads_fn, write_reuploads_interval):
+def reupload_resources(
+    ckan,
+    to_reupload,
+    shared_resources,
+    auth,
+    write_reuploads_fn,
+    write_reuploads_interval,
+):
     def do_actual_upload(ckan, reupload_obj, legacy_url, destination, auth):
-
         try:
             reupload_resource(ckan, reupload_obj, legacy_url, destination, auth)
         except Exception as e:
@@ -274,23 +287,32 @@ def reupload_resources(ckan, to_reupload, shared_resources, auth, write_reupload
                 f"Resource Upload progress: {remaining_reuploads_count} out of {total_reuploads} to do."
             )
             # Only write to disk when interval counter reached
-            if write_reuploads_fn and remaining_reuploads_count % int(write_reuploads_interval) == 0:
-                logger.info(f"Reached write reuploads interval: {write_reuploads_interval}")
+            if (
+                write_reuploads_fn
+                and remaining_reuploads_count % int(write_reuploads_interval) == 0
+            ):
+                logger.info(
+                    f"Reached write reuploads interval: {write_reuploads_interval}"
+                )
                 write_reuploads_fn(to_reupload)
 
     total_reuploads = len(to_reupload)
     logger.info("%d objects to be re-uploaded" % (total_reuploads))
-    #TODO: there is no bucket for anything other than prod OR STAGING - however it's unclear whether this breaks in non-prod environments
+    # TODO: there is no bucket for anything other than prod OR STAGING - however it's unclear whether this breaks in non-prod environments
     ## Test this by setting it to None or '' any that way we don't accidentally send data to a bucket that is inadvertently created in S3
     destination = None
     if re.search("^https://data.bioplatforms.com", getattr(ckan, "address", "")):
         destination = "bpa-ckan-prod/prodenv"
         logger.info("Resources will be reuploaded under: {}".format(destination))
     elif re.search("^https://staging.bioplatforms.com", getattr(ckan, "address", "")):
-         destination = "bpa-ckan-staging/stagingenv"
-         logger.info("Resources will be reuploaded under: {}".format(destination))
+        destination = "bpa-ckan-staging/stagingenv"
+        logger.info("Resources will be reuploaded under: {}".format(destination))
     else:
-        logger.warn("Resources have no bucket to send to. Address was: {}".format(getattr(ckan, "address", "")))
+        logger.warn(
+            "Resources have no bucket to send to. Address was: {}".format(
+                getattr(ckan, "address", "")
+            )
+        )
     # copy list and loop that, so can remove safely from original during loop
     for indx, (reupload_obj, legacy_url) in enumerate(to_reupload[:]):
         # first determine if this is a shared file.
@@ -298,22 +320,33 @@ def reupload_resources(ckan, to_reupload, shared_resources, auth, write_reupload
         # if NOT, go off and upload it, and capture the necessary fields to reuse in our shared files list.
         # if so, don't upload it again, but we do need to update the url, size etc from uploaded version of the resource
         # if its NOT a share resource, just upload as normal.
-        if 'shared_file' in reupload_obj and reupload_obj["shared_file"]:
+        if "shared_file" in reupload_obj and reupload_obj["shared_file"]:
             shared_linkage = reupload_obj["md5"] + "/" + reupload_obj["name"]
             if shared_linkage not in shared_resources:
-                logger.error("No shared resource on file for {}, resource {},  not uploading".format(shared_linkage, reupload_obj))
+                logger.error(
+                    "No shared resource on file for {}, resource {},  not uploading".format(
+                        shared_linkage, reupload_obj
+                    )
+                )
                 continue
-            uploaded_shared_resource = shared_resources[shared_linkage][0].get("uploaded_resource")
-            if uploaded_shared_resource is None or 'size' not in uploaded_shared_resource:
+            uploaded_shared_resource = shared_resources[shared_linkage][0].get(
+                "uploaded_resource"
+            )
+            if (
+                uploaded_shared_resource is None
+                or "size" not in uploaded_shared_resource
+            ):
                 # do the upload, and add the updated resource to the shared_resources object
                 do_actual_upload(ckan, reupload_obj, legacy_url, destination, auth)
                 ckan_updated_resource = get_or_create_resource(ckan, reupload_obj)
-                shared_resources[shared_linkage][0] = {"uploaded_resource": ckan_updated_resource}
+                shared_resources[shared_linkage][0] = {
+                    "uploaded_resource": ckan_updated_resource
+                }
             else:
                 # just update the resource with the metadata from the matching shared_resource.
                 reupload_obj["url"] = uploaded_shared_resource["url"]
                 reupload_obj["size"] = uploaded_shared_resource["size"]
-                reupload_obj["url_type"] = ''  # explicitly NOT upload
+                reupload_obj["url_type"] = ""  # explicitly NOT upload
                 ckan_method(ckan, "resource", "update")(**reupload_obj)
                 to_reupload.remove((reupload_obj, legacy_url))
                 logger.info(
@@ -326,13 +359,16 @@ def reupload_resources(ckan, to_reupload, shared_resources, auth, write_reupload
 
 def write_reuploads(**kwargs):
     if kwargs["write_reuploads"] and kwargs["reuploads_path"]:
+
         def dump_reload(to_reupload):
             with open(kwargs["reuploads_path"], "wb") as writer:
                 pickle.dump(to_reupload, writer)
             logger.info(f"Reuploads disk cache write completed.")
+
         return dump_reload
     else:
         logger.info("Reuploads write disabled.")
+
 
 def sync_resources(
     ckan,
@@ -351,7 +387,9 @@ def sync_resources(
     reporting_interval = determine_reporting_interval(len(resources))
     resource_linkage_package_id = {}
     for package_obj in ckan_packages:
-        linkage_tpl = tuple((package_obj[t] for t in resource_linkage_attrs),)
+        linkage_tpl = tuple(
+            (package_obj[t] for t in resource_linkage_attrs),
+        )
         if linkage_tpl in resource_linkage_package_id:
             raise Exception(
                 "more than one package linked for tuple {}".format(linkage_tpl)
@@ -371,7 +409,9 @@ def sync_resources(
                     % (repr(resource_linkage), legacy_url)
                 )
         else:
-            if package_id is None:  # no package found for this resource, it does not belong to our target ticket.
+            if (
+                package_id is None
+            ):  # no package found for this resource, it does not belong to our target ticket.
                 continue
         obj = resource_obj.copy()
         obj["package_id"] = package_id
@@ -383,20 +423,26 @@ def sync_resources(
         resource_id_legacy_url[obj["id"]] = legacy_url
         # if this is a shared resource, and not already on the list of shared resources, add it in.
         # shared resource should be unique by md5 and filename, so use that as a key.
-        if 'shared_file' in obj and obj["shared_file"]:
+        if "shared_file" in obj and obj["shared_file"]:
             shared_linkage = obj["md5"] + "/" + obj["name"]
             # if we haven't seen this linkage before, see if there is already a resource uploaded in CKAN
-            if shared_linkage not in shared_resources:  # we haven't seen this shared file before
+            if (
+                shared_linkage not in shared_resources
+            ):  # we haven't seen this shared file before
                 shared_resources.setdefault(shared_linkage, []).append(
-                    {"uploaded_resource": get_uploaded_resource_from_ckan(ckan, obj)})
+                    {"uploaded_resource": get_uploaded_resource_from_ckan(ckan, obj)}
+                )
             else:
                 if shared_resources[shared_linkage][0].get("uploaded_resource") is None:
-                    shared_resources[shared_linkage][0] = \
-                        {"uploaded_resource": get_uploaded_resource_from_ckan(ckan, obj)}
+                    shared_resources[shared_linkage][0] = {
+                        "uploaded_resource": get_uploaded_resource_from_ckan(ckan, obj)
+                    }
 
         resources_synched += 1
         if resources_synched % reporting_interval == 0:
-            logger.info("synced %d of %d resources" % (resources_synched, len(resources)))
+            logger.info(
+                "synced %d of %d resources" % (resources_synched, len(resources))
+            )
 
     if not do_resource_checks:
         logger.warning(
@@ -433,14 +479,31 @@ def sync_resources(
 
     write_reuploads_fn = write_reuploads(**kwargs)
     if do_uploads:
-        reupload_resources(ckan, to_reupload, shared_resources, auth, write_reuploads_fn, kwargs.get("write_reuploads_interval"))
+        reupload_resources(
+            ckan,
+            to_reupload,
+            shared_resources,
+            auth,
+            write_reuploads_fn,
+            kwargs.get("write_reuploads_interval"),
+        )
 
     logger.info(f"Post resource upload, resources remaining: {len(to_reupload)}")
     if write_reuploads_fn:
         write_reuploads_fn(to_reupload)
 
+
 def sync_metadata(
-    ckan, meta, auth, num_threads, do_uploads, do_resource_checks, do_delete, do_update_orgs, do_single_ticket, **kwargs
+    ckan,
+    meta,
+    auth,
+    num_threads,
+    do_uploads,
+    do_resource_checks,
+    do_delete,
+    do_update_orgs,
+    do_single_ticket,
+    **kwargs,
 ):
     # command line to update orgs as dev for plant pathogens:
     # bpa-ingest sync --skip-resource-checks --metadata-only --update-orgs --verify-ssl False -u https://localhost:8443
@@ -457,7 +520,8 @@ def sync_metadata(
                 )
                 continue
             yield by_id[k]
-    if do_update_orgs and hasattr(meta, 'google_project_codes_meta'):
+
+    if do_update_orgs and hasattr(meta, "google_project_codes_meta"):
         sync_child_organizations(ckan, meta.google_project_codes_meta)
     organization = get_organization(ckan, meta.organization)
     packages = meta.get_packages()
@@ -476,7 +540,13 @@ def sync_metadata(
     )
     validate_raw_resources_file_metadata(logger, raw_resources_metadata, auth)
     ckan_packages = sync_packages(
-        ckan, meta.ckan_data_type, packages, organization, None, do_delete, do_single_ticket
+        ckan,
+        meta.ckan_data_type,
+        packages,
+        organization,
+        None,
+        do_delete,
+        do_single_ticket,
     )
     sync_resources(
         ckan,
@@ -494,7 +564,6 @@ def sync_metadata(
 
 
 def sync_child_organizations(ckan, project_info):
-
     parent_org = project_info.parent_org
     for row in project_info.project_code_rows:
         org = {
@@ -502,7 +571,7 @@ def sync_child_organizations(ckan, project_info):
             "title": row.short_description,
             "description": row.long_description,
             "groups": [{"capacity": "public", "name": parent_org}],
-            "extras": [{"key": "Private", "value": "True"}]
+            "extras": [{"key": "Private", "value": "True"}],
         }
         make_organization(ckan, org)
 
@@ -513,10 +582,8 @@ def determine_reporting_interval(total_count):
     # if > 100, report every 1%
     reporting_interval = 1
     if total_count > 1000:
-        reporting_interval = int(total_count/100)
+        reporting_interval = int(total_count / 100)
     else:
         if total_count > 100:
             reporting_interval = int(total_count / 10)
     return reporting_interval
-
-

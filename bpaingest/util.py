@@ -27,6 +27,7 @@ def sample_id_to_ckan_name(sample_id, suborg=None, postfix=None):
     # CKAN insists upon lowercase
     return r.lower()
 
+
 def validate_write_reuploads_interval(logger, args):
     if not args.write_reuploads_interval:
         return None
@@ -34,7 +35,9 @@ def validate_write_reuploads_interval(logger, args):
         raise Exception(
             f"To use cache reuploads write interval, the interval must be an integer and cache write reuploads must be enabled."
         )
-    logger.info(f"Activated write reuploads interval of {args.write_reuploads_interval}")
+    logger.info(
+        f"Activated write reuploads interval of {args.write_reuploads_interval}"
+    )
     return args.write_reuploads_interval
 
 
@@ -111,6 +114,7 @@ def logger_wrap(func):
 
         # Return the result
         return result
+
     return wrap
 
 
@@ -146,7 +150,7 @@ def csv_to_named_tuple(
     cleanup=None,
     name_fn=None,
     dialect="excel",
-    skip = 0,
+    skip=0,
 ):
     if fname is None:
         return [], []
@@ -165,11 +169,11 @@ def csv_to_named_tuple(
                 s = digit_words[s[0]] + s[1:]
             s = s.strip("_")
             s = re.sub(r"__+", "_", s).strip("_")
-        # reserved words aren't permitted
+            # reserved words aren't permitted
             if s == "class":
                 s = "class_"
         else:  # we have a blank column heading
-            s = 'noHeading'
+            s = "noHeading"
         return s
 
     def default_name_fn(s):
@@ -234,7 +238,7 @@ def merge_values(key, sep, dicts):
         all_keys = all_keys.union(set(d.keys()))
     r = {}
     if key in all_keys:
-        vals = set(filter(None,[d.get(key) for d in dicts]))
+        vals = set(filter(None, [d.get(key) for d in dicts]))
         r[key] = sep.join(sorted(list(vals)))
     return r
 
@@ -246,9 +250,7 @@ def migrate_field(obj, from_field, to_field):
     del obj[from_field]
 
     if old_val is not None and new_val is not None:
-        raise Exception(
-            "field migration clash, {}->{}".format(from_field, to_field)
-        )
+        raise Exception("field migration clash, {}->{}".format(from_field, to_field))
     if old_val:
         obj[to_field] = old_val
 

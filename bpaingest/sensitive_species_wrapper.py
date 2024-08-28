@@ -27,19 +27,19 @@ class SensitiveSpeciesWrapper:
             if keyname in package:
                 return package.get(keyname)
 
-            warnValue = package.get('sample_id')
+            warnValue = package.get("sample_id")
             if warnValue is None:
-                warnValue = package.get('bpa_sample_id')
+                warnValue = package.get("bpa_sample_id")
             if warnValue is None:
-                 warnValue = package.get('dataset_id')
+                warnValue = package.get("dataset_id")
             if warnValue is None:
-                warnValue = package.get('bpa_dataset_id')
+                warnValue = package.get("bpa_dataset_id")
             if warnValue is None:
-                warnValue = package.get('libary_id')
+                warnValue = package.get("libary_id")
             if warnValue is None:
-                warnValue = package.get('bpa_library_id')
+                warnValue = package.get("bpa_library_id")
             if warnValue is None:
-                warnValue = package.get('ticket')
+                warnValue = package.get("ticket")
             if warnValue is None:
                 warnValue = package
 
@@ -50,26 +50,25 @@ class SensitiveSpeciesWrapper:
     def species_name(self, package):
         if package.get("genus", "") and package.get("species", ""):
             return "{} {}".format(package.get("genus", ""), package.get("species", ""))
-        warnValue = package.get('sample_id')
+        warnValue = package.get("sample_id")
         if warnValue is None:
-            warnValue = package.get('bpa_sample_id')
+            warnValue = package.get("bpa_sample_id")
         if warnValue is None:
-             warnValue = package.get('dataset_id')
+            warnValue = package.get("dataset_id")
         if warnValue is None:
-            warnValue = package.get('bpa_dataset_id')
+            warnValue = package.get("bpa_dataset_id")
         if warnValue is None:
-            warnValue = package.get('libary_id')
+            warnValue = package.get("libary_id")
         if warnValue is None:
-            warnValue = package.get('bpa_library_id')
+            warnValue = package.get("bpa_library_id")
         if warnValue is None:
-            warnValue = package.get('ticket')
+            warnValue = package.get("ticket")
         if warnValue is None:
             warnValue = package
 
         warningWords = f"Unable to find species in {warnValue}"
 
         self._logger.warn(warningWords)
-
 
     def apply_location_generalisation(self, packages):
         "Apply location generalisation for sensitive species found from ALA"

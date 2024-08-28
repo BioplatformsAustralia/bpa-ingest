@@ -23,7 +23,7 @@ class DownloadException(Exception):
 
 
 def get_password(project_name=None):
-    """Get downloads password for legacy auth username from environment """
+    """Get downloads password for legacy auth username from environment"""
 
     def complain_and_quit():
         raise MissingCredentialsException(
@@ -51,7 +51,7 @@ def get_env_username(username_variable="BPAINGEST_DOWNLOADS_USERNAME"):
 
 
 class Fetcher:
-    """ facilitates fetching data from webserver """
+    """facilitates fetching data from webserver"""
 
     recurse_re = re.compile(r"^[A-Za-z0-9_-]+/")
 

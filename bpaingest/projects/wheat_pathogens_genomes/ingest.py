@@ -157,7 +157,6 @@ class WheatPathogensGenomesMetadata(BaseMetadata):
                     "file_size": row.file_size,
                     "resource_type": self.ckan_data_type,
                     "resource_path": "",
-
                 }
                 resource["md5"] = resource["id"] = row.md5_checksum
                 legacy_url = urljoin(

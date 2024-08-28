@@ -25,6 +25,7 @@ common_context = [AusargLibraryContextual, AusargDatasetControlContextual]
 
 CONSORTIUM_ORG_NAME = "ausarg-consortium-members"
 
+
 class AusargBaseMetadata(BaseMetadata):
     initiative = "AusARG"
     organization = "ausarg"
@@ -54,10 +55,11 @@ class AusargBaseMetadata(BaseMetadata):
     linkage_xlsx = {}
     xlsx_info = None
     ticket = None
-    flow_lookup = {} # only used in dart
+    flow_lookup = {}  # only used in dart
 
-    def __init__(self, logger, metadata_path, contextual_metadata=None, metadata_info=None):
-
+    def __init__(
+        self, logger, metadata_path, contextual_metadata=None, metadata_info=None
+    ):
         super().__init__(logger, metadata_path)
         self.generaliser = SensitiveSpeciesWrapper(
             self._logger, package_id_keyname="dataset_id"
@@ -84,23 +86,30 @@ class AusargBaseMetadata(BaseMetadata):
         if tracking_row is None:
             self._logger.warn("No tracking row found for {}".format(ticket))
             return None
-        
+
         if field_name is None:
             return tracking_row
-# todo check attribute exists, throw error/log if not
+        # todo check attribute exists, throw error/log if not
         return getattr(tracking_row, field_name)
 
     def _build_title_into_object(self, obj):
-        self.build_title_into_object(obj, {"initiative": self.initiative,
-                                           "title_description": self.description})
+        self.build_title_into_object(
+            obj, {"initiative": self.initiative, "title_description": self.description}
+        )
 
     def _get_common_packages(self):
-        self._logger.info("Ingesting {} metadata from {}".format(self.initiative, self.path))
+        self._logger.info(
+            "Ingesting {} metadata from {}".format(self.initiative, self.path)
+        )
         packages = []
         for fname in glob(self.path + "/*.xlsx"):
-            self._logger.info("Processing {} metadata file {}".format(self.initiative, os.path.basename(fname)))
+            self._logger.info(
+                "Processing {} metadata file {}".format(
+                    self.initiative, os.path.basename(fname)
+                )
+            )
             rows = self.parse_spreadsheet(fname, self.metadata_info)
-            if self.method_exists('_set_metadata_vars'):
+            if self.method_exists("_set_metadata_vars"):
                 self._set_metadata_vars(fname)
             for row in rows:
                 if not row.library_id and not row.flowcell_id:
@@ -127,13 +136,15 @@ class AusargBaseMetadata(BaseMetadata):
                         "sequence_data_type": self.sequence_data_type,
                         "license_id": apply_cc_by_license(),
                         "date_of_transfer": ingest_utils.get_date_isoformat(
-                            self._logger, tracking_row.date_of_transfer),
+                            self._logger, tracking_row.date_of_transfer
+                        ),
                         "date_of_transfer_to_archive": ingest_utils.get_date_isoformat(
-                            self._logger, tracking_row.date_of_transfer_to_archive),
+                            self._logger, tracking_row.date_of_transfer_to_archive
+                        ),
                         "description": tracking_row.description,
                         "facility": tracking_row.facility,
                         "folder_name": tracking_row.folder_name,
-                        "project_aim": tracking_row.project_aim
+                        "project_aim": tracking_row.project_aim,
                     }
                 )
 
@@ -144,14 +155,16 @@ class AusargBaseMetadata(BaseMetadata):
 
                 self._add_datatype_specific_info_to_package(obj, row, fname)
                 self._build_title_into_object(obj)
-                if "notes" not in obj.keys():   # some classes have a special notes construction method which is run before
+                if (
+                    "notes" not in obj.keys()
+                ):  # some classes have a special notes construction method which is run before
                     self.build_notes_into_object(obj)
                 ingest_utils.permissions_organization_member_after_embargo(
-                        self._logger,
-                        obj,
-                        "date_of_transfer_to_archive",
-                        self.embargo_days,
-                        CONSORTIUM_ORG_NAME,
+                    self._logger,
+                    obj,
+                    "date_of_transfer_to_archive",
+                    self.embargo_days,
+                    CONSORTIUM_ORG_NAME,
                 )
 
                 ingest_utils.apply_access_control(self._logger, self, obj)
@@ -227,10 +240,16 @@ class AusargIlluminaFastqMetadata(AusargBaseMetadata):
                 "library_oligo_sequence_dual",
                 optional=True,
             ),
-            fld('i5_index_reverse_complement', 'i5 index reverse complement', optional=True),
+            fld(
+                "i5_index_reverse_complement",
+                "i5 index reverse complement",
+                optional=True,
+            ),
             fld("insert_size_range", "insert_size_range"),
             fld("library_ng_ul", "library_ng_ul"),
-            fld("library_pcr_cycles", "library_pcr_cycles", coerce=ingest_utils.get_int),
+            fld(
+                "library_pcr_cycles", "library_pcr_cycles", coerce=ingest_utils.get_int
+            ),
             fld("library_pcr_reps", "library_pcr_reps", coerce=ingest_utils.get_int),
             fld(
                 "n_libraries_pooled", "n_libraries_pooled", coerce=ingest_utils.get_int
@@ -274,7 +293,6 @@ class AusargIlluminaFastqMetadata(AusargBaseMetadata):
     tag_names = ["illumina-fastq"]
     description = "Ilumina FASTQ"
 
-
     def _get_packages(self):
         return self._get_common_packages()
 
@@ -282,19 +300,17 @@ class AusargIlluminaFastqMetadata(AusargBaseMetadata):
         return self._get_common_resources()
 
     def _add_datatype_specific_info_to_package(self, obj, row, filename):
-            # overwrite potentially incorrect values from tracking data - fail if source fields don't exist
-            obj["bioplatforms_sample_id"] = obj["sample_id"]
-            obj["bioplatforms_library_id"] = obj["library_id"]
-            obj["bioplatforms_dataset_id"] = obj["dataset_id"]
-            obj["scientific_name"] = "{} {}".format(
-                obj["genus"], obj["species"]
-            )
+        # overwrite potentially incorrect values from tracking data - fail if source fields don't exist
+        obj["bioplatforms_sample_id"] = obj["sample_id"]
+        obj["bioplatforms_library_id"] = obj["library_id"]
+        obj["bioplatforms_dataset_id"] = obj["dataset_id"]
+        obj["scientific_name"] = "{} {}".format(obj["genus"], obj["species"])
 
     def _set_metadata_vars(self, filename):
         self.xlsx_info = self.metadata_info[os.path.basename(filename)]
         self.ticket = self.xlsx_info["ticket"]
 
-    def _validate_row_and_metadata(self, fname, ticket, row ):
+    def _validate_row_and_metadata(self, fname, ticket, row):
         metadata_sheet_flowcell_id = re.match(
             r"^.*_([^_]+)_metadata.*\.xlsx", fname
         ).groups()[0]
@@ -319,9 +335,9 @@ class AusargIlluminaFastqMetadata(AusargBaseMetadata):
 
     def _build_resource_linkage(self, xlsx_info, resource, file_info):
         return (
-                        resource["library_id"],
-                        resource["flowcell_id"],
-                    )
+            resource["library_id"],
+            resource["flowcell_id"],
+        )
 
 
 class AusargONTPromethionMetadata(AusargBaseMetadata):
@@ -380,11 +396,25 @@ class AusargONTPromethionMetadata(AusargBaseMetadata):
             fld("library_index_id", "library_index_id", optional=True),
             fld("library_index_sequence", "library_index_seq", optional=True),
             fld("library_oligo_sequence", "library_oligo_sequence", optional=True),
-            fld('library_index_id_dual', 'library_index_id_dual', optional=True),
-            fld('library_index_seq_dual', 'library_index_seq_dual', optional=True),
-            fld('library_oligo_sequence_dual', 'library_oligo_sequence_dual', optional=True),
-            fld("library_pcr_reps", "library_pcr_reps", coerce=ingest_utils.get_int, optional=True),
-            fld("library_pcr_cycles", "library_pcr_cycles", coerce=ingest_utils.get_int, optional=True),
+            fld("library_index_id_dual", "library_index_id_dual", optional=True),
+            fld("library_index_seq_dual", "library_index_seq_dual", optional=True),
+            fld(
+                "library_oligo_sequence_dual",
+                "library_oligo_sequence_dual",
+                optional=True,
+            ),
+            fld(
+                "library_pcr_reps",
+                "library_pcr_reps",
+                coerce=ingest_utils.get_int,
+                optional=True,
+            ),
+            fld(
+                "library_pcr_cycles",
+                "library_pcr_cycles",
+                coerce=ingest_utils.get_int,
+                optional=True,
+            ),
             fld("library_ng_ul", "library_ng_ul", optional=True),
             fld("library_comments", "library_comments"),
             fld("library_location", "library_location"),
@@ -452,16 +482,14 @@ class AusargONTPromethionMetadata(AusargBaseMetadata):
 
         return self.apply_location_generalisation(packages)
 
-
     def _add_datatype_specific_info_to_package(self, obj, row, filename):
         obj.update(
             {
-
                 "data_type": self.get_tracking_info(row.ticket, "data_type"),
                 "description": self.get_tracking_info(row.ticket, "description"),
                 "folder_name": self.get_tracking_info(row.ticket, "folder_name"),
                 "dataset_url": self.get_tracking_info(row.ticket, "download"),
-                "filename": filename,    # this is removed, it is only added for resource linkage tracking.
+                "filename": filename,  # this is removed, it is only added for resource linkage tracking.
             }
         )
 
@@ -475,9 +503,9 @@ class AusargONTPromethionMetadata(AusargBaseMetadata):
 
     def _build_resource_linkage(self, xlsx_info, resource, file_info):
         return (
-                        resource["library_id"],
-                        resource["flowcell_id"],
-                    )
+            resource["library_id"],
+            resource["flowcell_id"],
+        )
 
 
 class AusargPacbioHifiMetadata(AusargBaseMetadata):
@@ -548,7 +576,9 @@ class AusargPacbioHifiMetadata(AusargBaseMetadata):
                 optional=True,
             ),
             fld("library_pcr_reps", "library_pcr_reps", coerce=ingest_utils.get_int),
-            fld("library_pcr_cycles", "library_pcr_cycles", coerce=ingest_utils.get_int),
+            fld(
+                "library_pcr_cycles", "library_pcr_cycles", coerce=ingest_utils.get_int
+            ),
             fld("library_ng_ul", "library_ng_ul"),
             fld("library_comments", "library_comments"),
             fld("library_location", "library_location"),
@@ -585,10 +615,12 @@ class AusargPacbioHifiMetadata(AusargBaseMetadata):
         },
     }
     md5 = {
-        "match": [files.pacbio_hifi_filename_re,
-                  files.pacbio_hifi_filename_2_re,
-                  files.pacbio_hifi_metadata_sheet_re,
-                  files.pacbio_hifi_common_re],
+        "match": [
+            files.pacbio_hifi_filename_re,
+            files.pacbio_hifi_filename_2_re,
+            files.pacbio_hifi_metadata_sheet_re,
+            files.pacbio_hifi_common_re,
+        ],
         "skip": [
             re.compile(r"^.*[\._]metadata\.xlsx$"),
             re.compile(r"^.*SampleSheet.*"),
@@ -608,12 +640,9 @@ class AusargPacbioHifiMetadata(AusargBaseMetadata):
         return self.apply_location_generalisation(packages)
 
     def _validate_row_and_metadata(self, fname, ticket, row):
-
         filename_re = files.pacbio_hifi_metadata_sheet_re
 
-        metadata_sheet_dict = re.match(
-                filename_re, os.path.basename(fname)
-            ).groupdict()
+        metadata_sheet_dict = re.match(filename_re, os.path.basename(fname)).groupdict()
         metadata_sheet_flowcell_ids = []
         for f in ["flowcell_id", "flowcell2_id"]:
             if f in metadata_sheet_dict:
@@ -633,15 +662,16 @@ class AusargPacbioHifiMetadata(AusargBaseMetadata):
             "{}".format(row.flowcell_id),
         )
         obj.update(
-            {"name": name,
-             "id": name,
-             "data_type": self.get_tracking_info(row.ticket, "data_type"),
-             "description": self.get_tracking_info(row.ticket, "description"),
-             "folder_name": self.get_tracking_info(row.ticket, "folder_name"),
-             "dataset_url": self.get_tracking_info(row.ticket, "download"),
-             "type": self.ckan_data_type,
-             "sequence_data_type": self.sequence_data_type,
-             }
+            {
+                "name": name,
+                "id": name,
+                "data_type": self.get_tracking_info(row.ticket, "data_type"),
+                "description": self.get_tracking_info(row.ticket, "description"),
+                "folder_name": self.get_tracking_info(row.ticket, "folder_name"),
+                "dataset_url": self.get_tracking_info(row.ticket, "download"),
+                "type": self.ckan_data_type,
+                "sequence_data_type": self.sequence_data_type,
+            }
         )
 
         ingest_utils.add_spatial_extra(self._logger, obj)
@@ -655,7 +685,9 @@ class AusargPacbioHifiMetadata(AusargBaseMetadata):
             self._logger.info("fetching resource metadata: %s" % (self.metadata_urls))
             fetcher = Fetcher(self._logger, self.path, metadata_url, ri_auth)
             fetcher.fetch_metadata_from_folder(
-                [files.pacbio_hifi_filename_re, ],
+                [
+                    files.pacbio_hifi_filename_re,
+                ],
                 metadata_info,
                 getattr(self, "metadata_url_components", []),
                 download=False,
@@ -672,13 +704,12 @@ class AusargPacbioHifiMetadata(AusargBaseMetadata):
     def _build_resource_linkage(self, xlsx_info, resource, file_info):
         return (
             ingest_utils.extract_ands_id(self._logger, resource["library_id"]),
-            resource["flowcell_id"]
-            )
-
-    def _build_common_files_linkage(self, xlsx_info, resource, file_info):
-        return (
             resource["flowcell_id"],
         )
+
+    def _build_common_files_linkage(self, xlsx_info, resource, file_info):
+        return (resource["flowcell_id"],)
+
 
 class AusargExonCaptureMetadata(AusargBaseMetadata):
     ckan_data_type = "ausarg-exon-capture"
@@ -721,7 +752,9 @@ class AusargExonCaptureMetadata(AusargBaseMetadata):
             fld("library_index_id", "library_index_id", optional=True),
             fld("library_oligo_sequence", "library_oligo_sequence", optional=True),
             fld("library_pcr_reps", "library_pcr_reps", coerce=ingest_utils.get_int),
-            fld("library_pcr_cycles", "library_pcr_cycles", coerce=ingest_utils.get_int),
+            fld(
+                "library_pcr_cycles", "library_pcr_cycles", coerce=ingest_utils.get_int
+            ),
             fld("library_ng_ul", "library_ng_ul"),
             fld("library_comments", "library_comments"),
             fld("library_location", "library_location"),
@@ -798,7 +831,9 @@ class AusargExonCaptureMetadata(AusargBaseMetadata):
             obj["flowcell_id"], obj["library_index_seq"]
         )
 
-        obj["name"] = sample_id_to_ckan_name(obj["library_id"], self.ckan_data_type, linkage)
+        obj["name"] = sample_id_to_ckan_name(
+            obj["library_id"], self.ckan_data_type, linkage
+        )
         obj["id"] = obj["name"]
 
         ingest_utils.add_spatial_extra(self._logger, obj)
@@ -814,7 +849,7 @@ class AusargExonCaptureMetadata(AusargBaseMetadata):
         return (
             ingest_utils.extract_ands_id(self._logger, resource["library_id"]),
             resource["flowcell_id"],
-            resource["index"]
+            resource["index"],
         )
 
 
@@ -927,10 +962,14 @@ class AusargHiCMetadata(AusargBaseMetadata):
     tag_names = ["genomics"]
 
     def _build_notes_into_object(self, obj, library_id):
-        self.build_notes_into_object(obj, {"initiative": self.initiative,
-                                           "title_description": self.description,
-                                           "complete_library_id": library_id, }
-                                     )
+        self.build_notes_into_object(
+            obj,
+            {
+                "initiative": self.initiative,
+                "title_description": self.description,
+                "complete_library_id": library_id,
+            },
+        )
 
     def _get_packages(self):
         return self._get_common_packages()
@@ -944,16 +983,16 @@ class AusargHiCMetadata(AusargBaseMetadata):
         library_id = row.library_id
         raw_library_id = library_id.split("/")[-1]
         name = sample_id_to_ckan_name(
-           raw_library_id, self.ckan_data_type, row.flowcell_id
+            raw_library_id, self.ckan_data_type, row.flowcell_id
         )
         tracking_row = self.get_tracking_info(self.ticket)
         if tracking_row is not None:
             obj.update(
                 {
-                "scientific_name": tracking_row.scientific_name,
-                "bioplatforms_dataset_id": tracking_row.bioplatforms_dataset_id,
-                "bioplatforms_library_id": tracking_row.bioplatforms_library_id,
-                "bioplatforms_sample_id": tracking_row.bioplatforms_sample_id,
+                    "scientific_name": tracking_row.scientific_name,
+                    "bioplatforms_dataset_id": tracking_row.bioplatforms_dataset_id,
+                    "bioplatforms_library_id": tracking_row.bioplatforms_library_id,
+                    "bioplatforms_sample_id": tracking_row.bioplatforms_sample_id,
                 }
             )
         obj.update(
@@ -977,11 +1016,11 @@ class AusargHiCMetadata(AusargBaseMetadata):
         )
 
     def _build_resource_linkage(self, xlsx_info, resource, file_info):
-        return(
-                        xlsx_info["ticket"],
-                        file_info.get("library_id"),
-                        resource["flowcell_id"],
-            )
+        return (
+            xlsx_info["ticket"],
+            file_info.get("library_id"),
+            resource["flowcell_id"],
+        )
 
 
 class AusargGenomicsDArTMetadata(AusargBaseMetadata):
@@ -1041,7 +1080,9 @@ class AusargGenomicsDArTMetadata(AusargBaseMetadata):
             fld("library_index_id", "library_index_id"),
             fld("library_oligo_sequence", "library_oligo_sequence"),
             fld("library_pcr_reps", "library_pcr_reps", coerce=ingest_utils.get_int),
-            fld("library_pcr_cycles", "library_pcr_cycles", coerce=ingest_utils.get_int),
+            fld(
+                "library_pcr_cycles", "library_pcr_cycles", coerce=ingest_utils.get_int
+            ),
             fld("library_ng_ul", "library_ng_ul"),
             fld("library_comments", "library_comments"),
             fld("library_location", "library_location"),
@@ -1110,7 +1151,9 @@ class AusargGenomicsDArTMetadata(AusargBaseMetadata):
     tag_names = ["genomics-dart"]
 
     def _get_packages(self):
-        self._logger.info("Ingesting {} metadata from {}".format(self.initiative, self.path))
+        self._logger.info(
+            "Ingesting {} metadata from {}".format(self.initiative, self.path)
+        )
         packages = []
 
         # this is a folder-oriented ingest, so we crush each xlsx down into a single row
@@ -1120,7 +1163,11 @@ class AusargGenomicsDArTMetadata(AusargBaseMetadata):
         flattened_objs = defaultdict(list)
         for fname in glob(self.path + "/*librarymetadata.xlsx"):
             row_objs = []
-            self._logger.info("Processing {} metadata file {}".format(self.initiative, os.path.basename(fname)))
+            self._logger.info(
+                "Processing {} metadata file {}".format(
+                    self.initiative, os.path.basename(fname)
+                )
+            )
             file_dataset_id = ingest_utils.extract_ands_id(
                 self._logger, filename_re.match(os.path.basename(fname)).groups()[0]
             )
@@ -1152,11 +1199,11 @@ class AusargGenomicsDArTMetadata(AusargBaseMetadata):
 
             objs.append((fname, combined_obj))
 
-        for (fname, obj) in objs:
+        for fname, obj in objs:
             ticket = obj["ticket"]
 
             name = sample_id_to_ckan_name(
-                obj["dataset_id"], self.ckan_data_type,ticket
+                obj["dataset_id"], self.ckan_data_type, ticket
             )
             obj.update(
                 {
@@ -1167,7 +1214,8 @@ class AusargGenomicsDArTMetadata(AusargBaseMetadata):
                         self._logger, self.get_tracking_info(ticket, "date_of_transfer")
                     ),
                     "date_of_transfer_to_archive": ingest_utils.get_date_isoformat(
-                        self._logger, self.get_tracking_info(ticket, "date_of_transfer_to_archive")
+                        self._logger,
+                        self.get_tracking_info(ticket, "date_of_transfer_to_archive"),
                     ),
                     "data_type": self.get_tracking_info(ticket, "data_type"),
                     "description": self.get_tracking_info(ticket, "description"),
@@ -1180,17 +1228,23 @@ class AusargGenomicsDArTMetadata(AusargBaseMetadata):
             )
             organism_scientific_name = obj.get(
                 "scientific_name",
-                "%s %s" % (obj.get("genus", ""), obj.get("species", "")))
+                "%s %s" % (obj.get("genus", ""), obj.get("species", "")),
+            )
             additional_notes = "DArT dataset not demultiplexed"
             self._build_title_into_object(obj)
-            self.build_notes_into_object(obj, {"organism_scientific_name": organism_scientific_name,
-                                               "additional_notes": additional_notes})
+            self.build_notes_into_object(
+                obj,
+                {
+                    "organism_scientific_name": organism_scientific_name,
+                    "additional_notes": additional_notes,
+                },
+            )
             ingest_utils.permissions_organization_member_after_embargo(
-                    self._logger,
-                    obj,
-                    "date_of_transfer_to_archive",
-                    self.embargo_days,
-                    CONSORTIUM_ORG_NAME,
+                self._logger,
+                obj,
+                "date_of_transfer_to_archive",
+                self.embargo_days,
+                CONSORTIUM_ORG_NAME,
             )
 
             attach_message = (
@@ -1230,7 +1284,7 @@ class AusargGenomicsDArTMetadata(AusargBaseMetadata):
         resource["dataset_id"] = __dataset_id_from_md5_file(md5_file)
 
     def _build_resource_linkage(self, xlsx_info, resource, file_info):
-        return ingest_utils.extract_ands_id(self._logger, resource["dataset_id"]),
+        return (ingest_utils.extract_ands_id(self._logger, resource["dataset_id"]),)
 
 
 class AusargGenomicsDDRADMetadata(AusargBaseMetadata):
@@ -1284,7 +1338,9 @@ class AusargGenomicsDDRADMetadata(AusargBaseMetadata):
             fld("library_index_sequence", "library_index_seq"),
             fld("library_oligo_sequence", "library_oligo_sequence"),
             fld("library_pcr_reps", "library_pcr_reps", coerce=ingest_utils.get_int),
-            fld("library_pcr_cycles", "library_pcr_cycles", coerce=ingest_utils.get_int),
+            fld(
+                "library_pcr_cycles", "library_pcr_cycles", coerce=ingest_utils.get_int
+            ),
             fld("library_ng_ul", "library_ng_ul"),
             fld("library_comments", "library_comments"),
             fld("library_location", "library_location"),
@@ -1323,15 +1379,31 @@ class AusargGenomicsDDRADMetadata(AusargBaseMetadata):
             fld("analysis_software_version", "analysis_software_version"),
             fld("file_name", "file_name", optional=True),
             fld("file_type", "file_type"),
-            fld('sequencing_kit_chemistry_version', 'sequencing_kit_chemistry_version', optional=True),
-            fld('facility_project_code', 'facility_project_code', optional=True),
-            fld('library_index_id_dual', re.compile(r"(library_index_id_dual|library_dual_index_id)"), optional=True),
-            fld('library_index_seq_dual', re.compile(r"(library_index_seq_dual|library_dual_index_seq)"),
-                optional=True),
-            fld('library_oligo_sequence_dual', re.compile(r"(library_oligo_sequence_dual|library_dual_oligo_sequence)"),
-                optional=True),
-            fld('fast5_compression', 'fast5_compression', optional=True),
-            fld('model_base_caller', 'model_base_caller', optional=True),
+            fld(
+                "sequencing_kit_chemistry_version",
+                "sequencing_kit_chemistry_version",
+                optional=True,
+            ),
+            fld("facility_project_code", "facility_project_code", optional=True),
+            fld(
+                "library_index_id_dual",
+                re.compile(r"(library_index_id_dual|library_dual_index_id)"),
+                optional=True,
+            ),
+            fld(
+                "library_index_seq_dual",
+                re.compile(r"(library_index_seq_dual|library_dual_index_seq)"),
+                optional=True,
+            ),
+            fld(
+                "library_oligo_sequence_dual",
+                re.compile(
+                    r"(library_oligo_sequence_dual|library_dual_oligo_sequence)"
+                ),
+                optional=True,
+            ),
+            fld("fast5_compression", "fast5_compression", optional=True),
+            fld("model_base_caller", "model_base_caller", optional=True),
             fld("bait_set_name", "bait_set_name", optional=True),
             fld("bait_set_reference", "bait_set_reference", optional=True),
             fld("bioplatforms_project", "bioplatforms_project", optional=True),
@@ -1343,7 +1415,11 @@ class AusargGenomicsDDRADMetadata(AusargBaseMetadata):
         },
     }
     md5 = {
-        "match": [files.ddrad_fastq_filename_re, files.ddrad_metadata_sheet_re, files.ddrad_analysed_tar_re, ],
+        "match": [
+            files.ddrad_fastq_filename_re,
+            files.ddrad_metadata_sheet_re,
+            files.ddrad_analysed_tar_re,
+        ],
         "skip": [
             re.compile(r"^.*_metadata.*\.xlsx$"),
             re.compile(r"^.*TestFiles\.exe.*"),
@@ -1355,7 +1431,7 @@ class AusargGenomicsDDRADMetadata(AusargBaseMetadata):
     tag_names = ["genomics-ddrad"]
 
     def __init__(
-            self, logger, metadata_path, contextual_metadata=None, metadata_info=None
+        self, logger, metadata_path, contextual_metadata=None, metadata_info=None
     ):
         super().__init__(logger, metadata_path)
         self.path = Path(metadata_path)
@@ -1363,7 +1439,6 @@ class AusargGenomicsDDRADMetadata(AusargBaseMetadata):
         self.metadata_info = metadata_info
         self.google_track_meta = AusArgGoogleTrackMetadata(logger)
         self.flow_lookup = {}
-
 
     def _get_packages(self):
         xlsx_re = re.compile(r"^.*_(\w+)_metadata.*\.xlsx$")
@@ -1386,7 +1461,6 @@ class AusargGenomicsDDRADMetadata(AusargBaseMetadata):
                 objs[(obj["dataset_id"], obj["flowcell_id"])].append(obj)
 
             for (bpa_dataset_id, flowcell_id), row_objs in list(objs.items()):
-
                 if bpa_dataset_id is None or flowcell_id is None:
                     continue
 
@@ -1409,9 +1483,15 @@ class AusargGenomicsDDRADMetadata(AusargBaseMetadata):
                         "id": name,
                         "bpa_dataset_id": bpa_dataset_id,
                         "date_of_transfer": ingest_utils.get_date_isoformat(
-                            self._logger, self.get_tracking_info(ticket, "date_of_transfer")),
+                            self._logger,
+                            self.get_tracking_info(ticket, "date_of_transfer"),
+                        ),
                         "date_of_transfer_to_archive": ingest_utils.get_date_isoformat(
-                            self._logger, self.get_tracking_info(ticket, "date_of_transfer_to_archive")),
+                            self._logger,
+                            self.get_tracking_info(
+                                ticket, "date_of_transfer_to_archive"
+                            ),
+                        ),
                         "data_type": self.get_tracking_info(ticket, "data_type"),
                         "description": self.get_tracking_info(ticket, "description"),
                         "folder_name": self.get_tracking_info(ticket, "folder_name"),
@@ -1425,7 +1505,9 @@ class AusargGenomicsDDRADMetadata(AusargBaseMetadata):
                 obj.update(merge_values("scientific_name", " , ", context_objs))
                 additional_notes = "ddRAD dataset not demultiplexed"
                 self._build_title_into_object(obj)
-                self.build_notes_into_object(obj, {"additional_notes": additional_notes})
+                self.build_notes_into_object(
+                    obj, {"additional_notes": additional_notes}
+                )
                 ingest_utils.permissions_organization_member_after_embargo(
                     self._logger,
                     obj,
@@ -1441,10 +1523,7 @@ class AusargGenomicsDDRADMetadata(AusargBaseMetadata):
         return packages
 
     def _add_datatype_specific_info_to_package(self, obj, row, filename):
-        obj.update(
-            {  "dataset_url": self.get_tracking_info(row.ticket, "download")
-             }
-        )
+        obj.update({"dataset_url": self.get_tracking_info(row.ticket, "download")})
         # below fields are in the metadata, but not required in the packages schema
 
     def _get_resources(self):
@@ -1456,8 +1535,6 @@ class AusargGenomicsDDRADMetadata(AusargBaseMetadata):
 
     def _build_resource_linkage(self, xlsx_info, resource, file_info):
         return (
-            (ingest_utils.extract_ands_id(
-                self._logger, resource["bpa_dataset_id"]
-            ),
-             resource["flowcell_id"],)
+            ingest_utils.extract_ands_id(self._logger, resource["bpa_dataset_id"]),
+            resource["flowcell_id"],
         )

@@ -3,7 +3,10 @@ import re
 from glob import glob
 from unipath import Path
 
-from .contextual import PlantProteinAtlasLibraryContextual, PlantProteinAtlasDatasetControlContextual
+from .contextual import (
+    PlantProteinAtlasLibraryContextual,
+    PlantProteinAtlasDatasetControlContextual,
+)
 from collections import defaultdict
 from .tracking import PlantProteinAtlasGoogleTrackMetadata
 from ...abstract import BaseMetadata
@@ -18,7 +21,10 @@ from ...util import (
     common_values,
 )
 
-common_context = [PlantProteinAtlasLibraryContextual, PlantProteinAtlasDatasetControlContextual]
+common_context = [
+    PlantProteinAtlasLibraryContextual,
+    PlantProteinAtlasDatasetControlContextual,
+]
 CONSORTIUM_ORG_NAME = "ppa-consortium-members"
 
 
@@ -37,10 +43,11 @@ class PlantProteinAtlasBaseMetadata(BaseMetadata):
         {"key": "data_context", "separator": ", Dataset ID: "},
         {"key": "dataset_id", "separator": ", "},
         {"key": "raw_or_analysed_data", "separator": " "},
-
     ]
 
-    def __init__(self, logger, metadata_path, contextual_metadata=None, metadata_info=None):
+    def __init__(
+        self, logger, metadata_path, contextual_metadata=None, metadata_info=None
+    ):
         super().__init__(logger, metadata_path)
         self.path = Path(metadata_path)
         self.contextual_metadata = contextual_metadata
@@ -57,7 +64,11 @@ class PlantProteinAtlasBaseMetadata(BaseMetadata):
         objs = []
         for fname in glob(self.path + "/*librarymetadata.xlsx"):
             row_objs = []
-            self._logger.info("-Processing {} metadata file {}".format(self.initiative, os.path.basename(fname)))
+            self._logger.info(
+                "-Processing {} metadata file {}".format(
+                    self.initiative, os.path.basename(fname)
+                )
+            )
             file_dataset_id = filename_re.match(os.path.basename(fname)).groups()[0]
 
             full_dataset_id = ingest_utils.extract_ands_id(
@@ -65,11 +76,12 @@ class PlantProteinAtlasBaseMetadata(BaseMetadata):
             )
             # this is the library metadata. It contains both dataset_id and sample_id info.
             for row in self.parse_spreadsheet(fname, self.metadata_info):
-
                 obj = row._asdict()
-                obj.update({
-                    "dataset_id": file_dataset_id,
-                })
+                obj.update(
+                    {
+                        "dataset_id": file_dataset_id,
+                    }
+                )
 
                 if full_dataset_id != obj["bioplatforms_dataset_id"]:
                     self._logger.warn(
@@ -86,10 +98,16 @@ class PlantProteinAtlasBaseMetadata(BaseMetadata):
                     )
                 # Add data control  contextual metadata by linking with dataset id
                 for contextual_source in self.contextual_metadata:
-                    if isinstance(contextual_source, PlantProteinAtlasDatasetControlContextual):
-                        obj.update(contextual_source.get(obj.get("bioplatforms_dataset_id")))
+                    if isinstance(
+                        contextual_source, PlantProteinAtlasDatasetControlContextual
+                    ):
+                        obj.update(
+                            contextual_source.get(obj.get("bioplatforms_dataset_id"))
+                        )
                     else:
-                        if isinstance(contextual_source, PlantProteinAtlasLibraryContextual):  # its the sampel metadata, match up on sample_id
+                        if isinstance(
+                            contextual_source, PlantProteinAtlasLibraryContextual
+                        ):  # its the sampel metadata, match up on sample_id
                             sample_id = obj.get("bioplatforms_sample_id")
                             obj.update(contextual_source.get(sample_id))
 
@@ -98,12 +116,10 @@ class PlantProteinAtlasBaseMetadata(BaseMetadata):
             combined_obj = common_values(row_objs)
             objs.append((fname, combined_obj))
 
-        for (fname, obj) in objs:
+        for fname, obj in objs:
             ticket = obj["ticket"]
 
-            name = sample_id_to_ckan_name(
-                file_dataset_id, self.ckan_data_type
-            )
+            name = sample_id_to_ckan_name(file_dataset_id, self.ckan_data_type)
             tracking_info = self.get_tracking_info(ticket)
             obj.update(
                 {
@@ -129,7 +145,6 @@ class PlantProteinAtlasBaseMetadata(BaseMetadata):
                 }
             )
 
-
             package_embargo_days = self.embargo_days
             if obj["access_control_date"] is not None:
                 package_embargo_days = obj["access_control_date"]
@@ -147,7 +162,9 @@ class PlantProteinAtlasBaseMetadata(BaseMetadata):
             for sample_metadata_file in glob(
                 self.path
                 + "/*_"
-                + ingest_utils.short_ands_id(self._logger, obj["bioplatforms_dataset_id"])
+                + ingest_utils.short_ands_id(
+                    self._logger, obj["bioplatforms_dataset_id"]
+                )
                 + "_samplemetadata_ingest.xlsx"
             ):
                 self.track_xlsx_resource(obj, sample_metadata_file)
@@ -166,7 +183,11 @@ class PlantProteinAtlasBaseMetadata(BaseMetadata):
     def _build_resource_linkage(self, xlsx_info, resource, file_info):
         ticket = xlsx_info["ticket"]
         dataset_id = self.get_tracking_info(ticket, "bioplatforms_dataset_id")
-        return (ticket, ingest_utils.extract_ands_id(self._logger, dataset_id), )
+        return (
+            ticket,
+            ingest_utils.extract_ands_id(self._logger, dataset_id),
+        )
+
 
 class PlantProteinAtlasPhenoCTXrayRawMetadata(PlantProteinAtlasBaseMetadata):
     ckan_data_type = "ppa-xray-raw"
@@ -183,36 +204,56 @@ class PlantProteinAtlasPhenoCTXrayRawMetadata(PlantProteinAtlasBaseMetadata):
 
     spreadsheet = {
         "fields": [
-                fld('bioplatforms_project', 'bioplatforms_project'),
-                fld('bioplatforms_sample_id', 'bioplatforms_sample_id', coerce=ingest_utils.extract_ands_id,),
-                fld('bioplatforms_library_id', 'bioplatforms_library_id', coerce=ingest_utils.extract_ands_id,),
-                fld('bioplatforms_dataset_id', 'bioplatforms_dataset_id', coerce=ingest_utils.extract_ands_id,),
-                fld('planting_season', 'planting_season'),
-                fld('planting_site', 'planting_site'),
-                fld('planting_code', 'planting_code'),
-                fld('planting_block', 'planting_block'),
-                fld('planting_row', 'planting_row'),
-                fld('planting_bay', 'planting_bay'),
-                fld('variety_commercial', 'variety_commercial'),
-                fld('variety_name', 'variety_name'),
-                fld('plant_replicate', 'plant_replicate'),
-                fld('data_type', 'data_type'),
-                fld('omics', 'omics'),
-                fld('data_context', 'data_context'),
-                fld('facility_project_code', 'facility_project_code'),
-                fld('facility_sample_id', 'facility_sample_id'),
-                fld('phenomics_facility', 'phenomics_facility'),
-                fld('analytical_platform', 'analytical_platform'),
-                fld('x_ray_voltage', 'x_ray_voltage'),
-                fld('x_ray_current', 'x_ray_current'),
-                fld('x_ray_scanning_time', 'x_ray_scanning_time', coerce=ingest_utils.get_time),
-                fld('x_ray_filter', 'x_ray_filter'),
-                fld('x_ray_dosage', 'x_ray_dosage'),
-                fld('x_ray_voxel_resolution', 'x_ray_voxel_resolution'),
-                fld('x_ray_exposure_time', 'x_ray_exposure time', coerce=ingest_utils.get_time),
-                fld('file_description', 'file_description'),
-            ],
-            "options": {
+            fld("bioplatforms_project", "bioplatforms_project"),
+            fld(
+                "bioplatforms_sample_id",
+                "bioplatforms_sample_id",
+                coerce=ingest_utils.extract_ands_id,
+            ),
+            fld(
+                "bioplatforms_library_id",
+                "bioplatforms_library_id",
+                coerce=ingest_utils.extract_ands_id,
+            ),
+            fld(
+                "bioplatforms_dataset_id",
+                "bioplatforms_dataset_id",
+                coerce=ingest_utils.extract_ands_id,
+            ),
+            fld("planting_season", "planting_season"),
+            fld("planting_site", "planting_site"),
+            fld("planting_code", "planting_code"),
+            fld("planting_block", "planting_block"),
+            fld("planting_row", "planting_row"),
+            fld("planting_bay", "planting_bay"),
+            fld("variety_commercial", "variety_commercial"),
+            fld("variety_name", "variety_name"),
+            fld("plant_replicate", "plant_replicate"),
+            fld("data_type", "data_type"),
+            fld("omics", "omics"),
+            fld("data_context", "data_context"),
+            fld("facility_project_code", "facility_project_code"),
+            fld("facility_sample_id", "facility_sample_id"),
+            fld("phenomics_facility", "phenomics_facility"),
+            fld("analytical_platform", "analytical_platform"),
+            fld("x_ray_voltage", "x_ray_voltage"),
+            fld("x_ray_current", "x_ray_current"),
+            fld(
+                "x_ray_scanning_time",
+                "x_ray_scanning_time",
+                coerce=ingest_utils.get_time,
+            ),
+            fld("x_ray_filter", "x_ray_filter"),
+            fld("x_ray_dosage", "x_ray_dosage"),
+            fld("x_ray_voxel_resolution", "x_ray_voxel_resolution"),
+            fld(
+                "x_ray_exposure_time",
+                "x_ray_exposure time",
+                coerce=ingest_utils.get_time,
+            ),
+            fld("file_description", "file_description"),
+        ],
+        "options": {
             "sheet_name": "1. APPF_PhenoCT Xray_raw",
             "header_length": 1,
             "column_name_row_index": 0,
@@ -220,9 +261,10 @@ class PlantProteinAtlasPhenoCTXrayRawMetadata(PlantProteinAtlasBaseMetadata):
     }
 
     md5 = {
-        "match": [files.phenoct_xray_raw_re,
-                  files.xlsx_filename_re, ],
-
+        "match": [
+            files.phenoct_xray_raw_re,
+            files.xlsx_filename_re,
+        ],
         "skip": [
             re.compile(r"^.*SampleSheet.*"),
             re.compile(r"^.*TestFiles\.exe.*"),
@@ -248,30 +290,42 @@ class PlantProteinAtlasPhenoCTXrayAnalysedMetadata(PlantProteinAtlasBaseMetadata
     resource_linkage = ("ticket", "bioplatforms_dataset_id")
     spreadsheet = {
         "fields": [
-                fld('bioplatforms_project', 'bioplatforms_project'),
-                fld('bioplatforms_sample_id', 'bioplatforms_sample_id', coerce=ingest_utils.extract_ands_id,),
-                fld('bioplatforms_library_id', 'bioplatforms_library_id', coerce=ingest_utils.extract_ands_id,),
-                fld('bioplatforms_dataset_id', 'bioplatforms_dataset_id', coerce=ingest_utils.extract_ands_id,),
-                fld('planting_season', 'planting_season'),
-                fld('planting_site', 'planting_site'),
-                fld('planting_code', 'planting_code'),
-                fld('planting_block', 'planting_block'),
-                fld('planting_row', 'planting_row'),
-                fld('planting_bay', 'planting_bay'),
-                fld('variety_commercial', 'variety_commercial'),
-                fld('variety_name', 'variety_name'),
-                fld('plant_replicate', 'plant_replicate'),
-                fld('data_type', 'data_type'),
-                fld('omics', 'omics'),
-                fld('data_context', 'data_context'),
-                fld('facility_project_code', 'facility_project_code'),
-                fld('facility_sample_id', 'facility_sample_id'),
-                fld('phenomics_facility', 'phenomics_facility'),
-                fld('data_analysis_date', 'data_analysis_date' ),
-                fld('contact_person', 'contact_person'),
-                fld('file_description', 'file_description'),
-            ],
-            "options": {
+            fld("bioplatforms_project", "bioplatforms_project"),
+            fld(
+                "bioplatforms_sample_id",
+                "bioplatforms_sample_id",
+                coerce=ingest_utils.extract_ands_id,
+            ),
+            fld(
+                "bioplatforms_library_id",
+                "bioplatforms_library_id",
+                coerce=ingest_utils.extract_ands_id,
+            ),
+            fld(
+                "bioplatforms_dataset_id",
+                "bioplatforms_dataset_id",
+                coerce=ingest_utils.extract_ands_id,
+            ),
+            fld("planting_season", "planting_season"),
+            fld("planting_site", "planting_site"),
+            fld("planting_code", "planting_code"),
+            fld("planting_block", "planting_block"),
+            fld("planting_row", "planting_row"),
+            fld("planting_bay", "planting_bay"),
+            fld("variety_commercial", "variety_commercial"),
+            fld("variety_name", "variety_name"),
+            fld("plant_replicate", "plant_replicate"),
+            fld("data_type", "data_type"),
+            fld("omics", "omics"),
+            fld("data_context", "data_context"),
+            fld("facility_project_code", "facility_project_code"),
+            fld("facility_sample_id", "facility_sample_id"),
+            fld("phenomics_facility", "phenomics_facility"),
+            fld("data_analysis_date", "data_analysis_date"),
+            fld("contact_person", "contact_person"),
+            fld("file_description", "file_description"),
+        ],
+        "options": {
             "sheet_name": "1. APPF_PhenoCT Xray_analysed",
             "header_length": 1,
             "column_name_row_index": 0,
@@ -279,9 +333,10 @@ class PlantProteinAtlasPhenoCTXrayAnalysedMetadata(PlantProteinAtlasBaseMetadata
     }
 
     md5 = {
-        "match": [files.phenoct_xray_analysed_re,
-                  files.xlsx_filename_re,
-                  ],
+        "match": [
+            files.phenoct_xray_analysed_re,
+            files.xlsx_filename_re,
+        ],
         "skip": [
             re.compile(r"^.*SampleSheet.*"),
             re.compile(r"^.*TestFiles\.exe.*"),
@@ -291,6 +346,7 @@ class PlantProteinAtlasPhenoCTXrayAnalysedMetadata(PlantProteinAtlasBaseMetadata
     }
     # description = "Illumina Shortread" this should come from teh tracking sheet
     tag_names = ["phenomics", "PhenoCT-xray-analysed"]
+
 
 class PlantProteinAtlasHyperspectralMetadata(PlantProteinAtlasBaseMetadata):
     ckan_data_type = "ppa-hyperspectral"
@@ -306,29 +362,41 @@ class PlantProteinAtlasHyperspectralMetadata(PlantProteinAtlasBaseMetadata):
     resource_linkage = ("ticket", "bioplatforms_dataset_id")
     spreadsheet = {
         "fields": [
-                fld('bioplatforms_project', 'bioplatforms_project'),
-                fld('bioplatforms_sample_id', 'bioplatforms_sample_id', coerce=ingest_utils.extract_ands_id,),
-                fld('bioplatforms_library_id', 'bioplatforms_library_id', coerce=ingest_utils.extract_ands_id,),
-                fld('bioplatforms_dataset_id', 'bioplatforms_dataset_id', coerce=ingest_utils.extract_ands_id,),
-                fld('planting_season', 'planting_season'),
-                fld('planting_site', 'planting_site'),
-                fld('planting_code', 'planting_code'),
-                fld('planting_block', 'planting_block'),
-                fld('planting_row', 'planting_row'),
-                fld('planting_bay', 'planting_bay'),
-                fld('variety_commercial', 'variety_commercial'),
-                fld('variety_name', 'variety_name'),
-                fld('plant_replicate', 'plant_replicate'),
-                fld('data_type', 'data_type'),
-                fld('omics', 'omics'),
-                fld('data_context', 'data_context'),
-                fld('facility_project_code', 'facility_project_code'),
-                fld('facility_sample_id', 'facility_sample_id'),
-                fld('phenomics_facility', 'phenomics_facility'),
-                fld('analytical_platform', 'analytical_platform'),
-                fld('file_description', 'file_description'),
-            ],
-            "options": {
+            fld("bioplatforms_project", "bioplatforms_project"),
+            fld(
+                "bioplatforms_sample_id",
+                "bioplatforms_sample_id",
+                coerce=ingest_utils.extract_ands_id,
+            ),
+            fld(
+                "bioplatforms_library_id",
+                "bioplatforms_library_id",
+                coerce=ingest_utils.extract_ands_id,
+            ),
+            fld(
+                "bioplatforms_dataset_id",
+                "bioplatforms_dataset_id",
+                coerce=ingest_utils.extract_ands_id,
+            ),
+            fld("planting_season", "planting_season"),
+            fld("planting_site", "planting_site"),
+            fld("planting_code", "planting_code"),
+            fld("planting_block", "planting_block"),
+            fld("planting_row", "planting_row"),
+            fld("planting_bay", "planting_bay"),
+            fld("variety_commercial", "variety_commercial"),
+            fld("variety_name", "variety_name"),
+            fld("plant_replicate", "plant_replicate"),
+            fld("data_type", "data_type"),
+            fld("omics", "omics"),
+            fld("data_context", "data_context"),
+            fld("facility_project_code", "facility_project_code"),
+            fld("facility_sample_id", "facility_sample_id"),
+            fld("phenomics_facility", "phenomics_facility"),
+            fld("analytical_platform", "analytical_platform"),
+            fld("file_description", "file_description"),
+        ],
+        "options": {
             "sheet_name": "2. APPF_Hyperspectral_raw",
             "header_length": 1,
             "column_name_row_index": 0,
@@ -336,9 +404,10 @@ class PlantProteinAtlasHyperspectralMetadata(PlantProteinAtlasBaseMetadata):
     }
 
     md5 = {
-        "match": [files.hyperspect_re,
-                  files.xlsx_filename_re,
-                  ],
+        "match": [
+            files.hyperspect_re,
+            files.xlsx_filename_re,
+        ],
         "skip": [
             re.compile(r"^.*SampleSheet.*"),
             re.compile(r"^.*TestFiles\.exe.*"),
@@ -364,29 +433,40 @@ class PlantProteinAtlasASDSpectroMetadata(PlantProteinAtlasBaseMetadata):
     resource_linkage = ("ticket", "bioplatforms_dataset_id")
     spreadsheet = {
         "fields": [
-                fld('bioplatforms_project', 'bioplatforms_project'),
-                fld('bioplatforms_sample_id', 'bioplatforms_sample_id', coerce=ingest_utils.extract_ands_id,),
-                fld('bioplatforms_library_id', 'bioplatforms_library_id', coerce=ingest_utils.extract_ands_id,),
-                fld('bioplatforms_dataset_id', 'bioplatforms_dataset_id', coerce=ingest_utils.extract_ands_id,),
-                fld('planting_season', 'planting_season'),
-                fld('planting_site', 'planting_site'),
-                fld('planting_code', 'planting_code'),
-                fld('planting_block', 'planting_block'),
-                fld('planting_row', 'planting_row'),
-                fld('planting_bay', 'planting_bay'),
-                fld('variety_commercial', 'variety_commercial'),
-                fld('variety_name', 'variety_name'),
-                fld('plant_replicate', 'plant_replicate'),
-                fld('data_type', 'data_type'),
-                fld('omics', 'omics'),
-                fld('data_context', 'data_context'),
-                fld('facility_project_code', 'facility_project_code'),
-                fld('facility_sample_id', 'facility_sample_id'),
-                fld('phenomics_facility', 'phenomics_facility'),
-                fld('analytical_platform', 'analytical_platform'),
-            ],
-
-            "options": {
+            fld("bioplatforms_project", "bioplatforms_project"),
+            fld(
+                "bioplatforms_sample_id",
+                "bioplatforms_sample_id",
+                coerce=ingest_utils.extract_ands_id,
+            ),
+            fld(
+                "bioplatforms_library_id",
+                "bioplatforms_library_id",
+                coerce=ingest_utils.extract_ands_id,
+            ),
+            fld(
+                "bioplatforms_dataset_id",
+                "bioplatforms_dataset_id",
+                coerce=ingest_utils.extract_ands_id,
+            ),
+            fld("planting_season", "planting_season"),
+            fld("planting_site", "planting_site"),
+            fld("planting_code", "planting_code"),
+            fld("planting_block", "planting_block"),
+            fld("planting_row", "planting_row"),
+            fld("planting_bay", "planting_bay"),
+            fld("variety_commercial", "variety_commercial"),
+            fld("variety_name", "variety_name"),
+            fld("plant_replicate", "plant_replicate"),
+            fld("data_type", "data_type"),
+            fld("omics", "omics"),
+            fld("data_context", "data_context"),
+            fld("facility_project_code", "facility_project_code"),
+            fld("facility_sample_id", "facility_sample_id"),
+            fld("phenomics_facility", "phenomics_facility"),
+            fld("analytical_platform", "analytical_platform"),
+        ],
+        "options": {
             "sheet_name": "3. APPF_ASD FieldSpec_raw",
             "header_length": 1,
             "column_name_row_index": 0,
@@ -394,8 +474,10 @@ class PlantProteinAtlasASDSpectroMetadata(PlantProteinAtlasBaseMetadata):
     }
 
     md5 = {
-        "match": [files.asd_spectro_re,
-                  files.xlsx_filename_re, ],
+        "match": [
+            files.asd_spectro_re,
+            files.xlsx_filename_re,
+        ],
         "skip": [
             re.compile(r"^.*SampleSheet.*"),
             re.compile(r"^.*TestFiles\.exe.*"),
@@ -405,6 +487,7 @@ class PlantProteinAtlasASDSpectroMetadata(PlantProteinAtlasBaseMetadata):
     }
 
     tag_names = ["phenomics", "ASD FieldSpec Spectroradiometer"]
+
 
 class PlantProteinAtlasNutritionalMetadata(PlantProteinAtlasBaseMetadata):
     ckan_data_type = "ppa-nutritional-analysed"
@@ -420,96 +503,116 @@ class PlantProteinAtlasNutritionalMetadata(PlantProteinAtlasBaseMetadata):
     resource_linkage = ("ticket", "bioplatforms_dataset_id")
     spreadsheet = {
         "fields": [
-            fld('bioplatforms_project', 'bioplatforms_project'),
-            fld('bioplatforms_sample_id', 'bioplatforms_sample_id', coerce=ingest_utils.extract_ands_id,),
-            fld('bioplatforms_library_id', 'bioplatforms_library_id', coerce=ingest_utils.extract_ands_id,),
-            fld('bioplatforms_dataset_id', 'bioplatforms_dataset_id', coerce=ingest_utils.extract_ands_id,),
-            fld('planting_season', 'planting_season'),
-            fld('planting_site', 'planting_site'),
-            fld('planting_code', 'planting_code'),
-            fld('planting_block', 'planting_block'),
-            fld('planting_row', 'planting_row'),
-            fld('planting_bay', 'planting_bay'),
-            fld('variety_commercial', 'variety_commercial'),
-            fld('variety_name', 'variety_name'),
-            fld('plant_replicate', 'plant_replicate'),
-            fld('data_type', 'data_type'),
-            fld('omics', 'omics'),
-            fld('data_context', 'data_context'),
-            fld('facility_project_code', 'facility_project_code'),
-            fld('facility_sample_id', 'facility_sample_id'),
-            fld('facility', 'facility'),
-            fld('contact_person', 'contact_person'),
-            fld('data_analysis_date', 'data_analysis_date', coerce=ingest_utils.get_date_isoformat),
-            fld('file_description', 'file_description'),
+            fld("bioplatforms_project", "bioplatforms_project"),
+            fld(
+                "bioplatforms_sample_id",
+                "bioplatforms_sample_id",
+                coerce=ingest_utils.extract_ands_id,
+            ),
+            fld(
+                "bioplatforms_library_id",
+                "bioplatforms_library_id",
+                coerce=ingest_utils.extract_ands_id,
+            ),
+            fld(
+                "bioplatforms_dataset_id",
+                "bioplatforms_dataset_id",
+                coerce=ingest_utils.extract_ands_id,
+            ),
+            fld("planting_season", "planting_season"),
+            fld("planting_site", "planting_site"),
+            fld("planting_code", "planting_code"),
+            fld("planting_block", "planting_block"),
+            fld("planting_row", "planting_row"),
+            fld("planting_bay", "planting_bay"),
+            fld("variety_commercial", "variety_commercial"),
+            fld("variety_name", "variety_name"),
+            fld("plant_replicate", "plant_replicate"),
+            fld("data_type", "data_type"),
+            fld("omics", "omics"),
+            fld("data_context", "data_context"),
+            fld("facility_project_code", "facility_project_code"),
+            fld("facility_sample_id", "facility_sample_id"),
+            fld("facility", "facility"),
+            fld("contact_person", "contact_person"),
+            fld(
+                "data_analysis_date",
+                "data_analysis_date",
+                coerce=ingest_utils.get_date_isoformat,
+            ),
+            fld("file_description", "file_description"),
             #  from here down should be ignored, as they are the actual data
-            skp('total_carbohydrate_(%)'),
-            skp('average_carbohydrate_(%)'),
-            skp('sd_carbohydrate_(%)'),
-            skp('total_digestible_starch_(%)',),
-            skp('average_total_digestible_starch_(%)'),
-            skp('sd_total_digestible_starch_(%)',),
-            skp('resistant_starch_(%)'),
-            skp('average_resistant_starch_(%)'),
-            skp('sd_resistant_starch_(%)'),
-            skp('total_starch_(%)'),
-            skp( 'average_total_starch_(%)'),
-            skp( 'sd_total_starch_(%)'),
-            skp('potassium (k)_mg/g dry weight'),
-            skp('average_potassium (k)_mg/g dry weight'),
-            skp('sd_potassium (k)_mg/g dry weight'),
-            skp('phosphorus (p)_mg/g dry weight'),
-            skp('average_phosphorus (p)_mg/g dry weight'),
-            skp('sd_phosphorus (p)_mg/g dry weight'),
-            skp('sulphur (s)_mg/g dry weight'),
-            skp('average_sulphur (s)_mg/g dry weight'),
-            skp('sd_sulphur (s)_mg/g dry weight'),
-            skp('calcium (ca)_mg/g dry weight'),
-            skp('average_calcium (ca)_mg/g dry weight'),
-            skp('sd_calcium (ca)_mg/g dry weight'),
-            skp('magnesium (mg)_mg/g dry weight'),
-            skp('average_magnesium (mg)_mg/g dry weight'),
-            skp('sd_magnesium (mg)_mg/g dry weight'),
-            skp('sodium (na)_mg/g dry weight'),
-            skp('average_sodium (na)_mg/g dry weight'),
-            skp('sd_sodium (na)_mg/g dry weight'),
-            skp('iron (fe)_µg/g dry weight',),
-            skp('average_iron (fe)_µg/g dry weight'),
-            skp('sd_iron (fe)_µg/g dry weight'),
-            skp('zinc (zn)_µg/g dry weight'),
-            skp('average_zinc (zn)_µg/g dry weight'),
-            skp('sd_zinc (zn)_µg/g dry weight'),
-            skp('copper (cu)_µg/g dry weight'),
-            skp('average_copper (cu)_µg/g dry weight'),
-            skp('sd_copper (cu)_µg/g dry weight'),
-            skp('manganese (mn)_µg/g dry weight'),
-            skp('average_manganese (mn)_µg/g dry weight'),
-            skp('sd_manganese (mn)_µg/g dry weight'),
-            skp('boron (b)_µg/g dry weight'),
-            skp('average_boron (b)_µg/g dry weight'),
-            skp('sd_boron (b)_µg/g dry weight'),
-            skp('molybdenum (mo)_µg/g dry weight'),
-            skp('average_molybdenum (mo)_µg/g dry weight'),
-            skp('sd_molybdenum (mo)_µg/g dry weight'),
-            skp('ash_(%)'),
-            skp('average_ash_(%)'),
-            skp('sd_ash_(%)'),
-            skp('free sugars_(%)'),
-            skp('average_free sugars_(%)'),
-            skp('sd_free sugars_(%)'),
-            skp('insoluble_dietary_fiber_(%)'),
-            skp('average_insoluble_dietary_fiber_(%)'),
-            skp('sd_insoluble_dietary_fiber_(%)'),
-            skp('soluble_dietary_fiber_(%)'),
-            skp('average_soluble_dietary_fiber_(%)'),
-            skp('sd_soluble_dietary_fiber_(%)'),
-            skp('total_dietary_fiber_(%)'),
-            skp('average_total_dietary_fiber_(%)'),
-            skp('sd_total_dietary_fiber_(%)'),
-
+            skp("total_carbohydrate_(%)"),
+            skp("average_carbohydrate_(%)"),
+            skp("sd_carbohydrate_(%)"),
+            skp(
+                "total_digestible_starch_(%)",
+            ),
+            skp("average_total_digestible_starch_(%)"),
+            skp(
+                "sd_total_digestible_starch_(%)",
+            ),
+            skp("resistant_starch_(%)"),
+            skp("average_resistant_starch_(%)"),
+            skp("sd_resistant_starch_(%)"),
+            skp("total_starch_(%)"),
+            skp("average_total_starch_(%)"),
+            skp("sd_total_starch_(%)"),
+            skp("potassium (k)_mg/g dry weight"),
+            skp("average_potassium (k)_mg/g dry weight"),
+            skp("sd_potassium (k)_mg/g dry weight"),
+            skp("phosphorus (p)_mg/g dry weight"),
+            skp("average_phosphorus (p)_mg/g dry weight"),
+            skp("sd_phosphorus (p)_mg/g dry weight"),
+            skp("sulphur (s)_mg/g dry weight"),
+            skp("average_sulphur (s)_mg/g dry weight"),
+            skp("sd_sulphur (s)_mg/g dry weight"),
+            skp("calcium (ca)_mg/g dry weight"),
+            skp("average_calcium (ca)_mg/g dry weight"),
+            skp("sd_calcium (ca)_mg/g dry weight"),
+            skp("magnesium (mg)_mg/g dry weight"),
+            skp("average_magnesium (mg)_mg/g dry weight"),
+            skp("sd_magnesium (mg)_mg/g dry weight"),
+            skp("sodium (na)_mg/g dry weight"),
+            skp("average_sodium (na)_mg/g dry weight"),
+            skp("sd_sodium (na)_mg/g dry weight"),
+            skp(
+                "iron (fe)_µg/g dry weight",
+            ),
+            skp("average_iron (fe)_µg/g dry weight"),
+            skp("sd_iron (fe)_µg/g dry weight"),
+            skp("zinc (zn)_µg/g dry weight"),
+            skp("average_zinc (zn)_µg/g dry weight"),
+            skp("sd_zinc (zn)_µg/g dry weight"),
+            skp("copper (cu)_µg/g dry weight"),
+            skp("average_copper (cu)_µg/g dry weight"),
+            skp("sd_copper (cu)_µg/g dry weight"),
+            skp("manganese (mn)_µg/g dry weight"),
+            skp("average_manganese (mn)_µg/g dry weight"),
+            skp("sd_manganese (mn)_µg/g dry weight"),
+            skp("boron (b)_µg/g dry weight"),
+            skp("average_boron (b)_µg/g dry weight"),
+            skp("sd_boron (b)_µg/g dry weight"),
+            skp("molybdenum (mo)_µg/g dry weight"),
+            skp("average_molybdenum (mo)_µg/g dry weight"),
+            skp("sd_molybdenum (mo)_µg/g dry weight"),
+            skp("ash_(%)"),
+            skp("average_ash_(%)"),
+            skp("sd_ash_(%)"),
+            skp("free sugars_(%)"),
+            skp("average_free sugars_(%)"),
+            skp("sd_free sugars_(%)"),
+            skp("insoluble_dietary_fiber_(%)"),
+            skp("average_insoluble_dietary_fiber_(%)"),
+            skp("sd_insoluble_dietary_fiber_(%)"),
+            skp("soluble_dietary_fiber_(%)"),
+            skp("average_soluble_dietary_fiber_(%)"),
+            skp("sd_soluble_dietary_fiber_(%)"),
+            skp("total_dietary_fiber_(%)"),
+            skp("average_total_dietary_fiber_(%)"),
+            skp("sd_total_dietary_fiber_(%)"),
         ],
-
-            "options": {
+        "options": {
             "sheet_name": "Library metadata",
             "header_length": 1,
             "column_name_row_index": 0,
@@ -517,7 +620,9 @@ class PlantProteinAtlasNutritionalMetadata(PlantProteinAtlasBaseMetadata):
     }
 
     md5 = {
-        "match": [files.xlsx_filename_re, ],
+        "match": [
+            files.xlsx_filename_re,
+        ],
         "skip": [
             re.compile(r"^.*SampleSheet.*"),
             re.compile(r"^.*TestFiles\.exe.*"),
@@ -527,6 +632,7 @@ class PlantProteinAtlasNutritionalMetadata(PlantProteinAtlasBaseMetadata):
     }
 
     tag_names = ["phenomics", "Nutritional Analysis"]
+
     def _get_packages(self):
         packages = []
 
@@ -536,18 +642,23 @@ class PlantProteinAtlasNutritionalMetadata(PlantProteinAtlasBaseMetadata):
         objs = []
         for fname in glob(self.path + "/*metadata.xlsx"):
             row_objs = []
-            self._logger.info("-Processing {} metadata file {}".format(self.initiative, os.path.basename(fname)))
+            self._logger.info(
+                "-Processing {} metadata file {}".format(
+                    self.initiative, os.path.basename(fname)
+                )
+            )
             file_dataset_id = filename_re.match(os.path.basename(fname)).groups()[0]
             full_dataset_id = ingest_utils.extract_ands_id(
                 self._logger, file_dataset_id
             )
             # this is the library metadata. It contains both dataset_id and sample_id info.
             for row in self.parse_spreadsheet(fname, self.metadata_info):
-
                 obj = row._asdict()
-                obj.update({
-                    "dataset_id": file_dataset_id,
-                })
+                obj.update(
+                    {
+                        "dataset_id": file_dataset_id,
+                    }
+                )
 
                 if full_dataset_id != obj["bioplatforms_dataset_id"]:
                     self._logger.warn(
@@ -564,10 +675,16 @@ class PlantProteinAtlasNutritionalMetadata(PlantProteinAtlasBaseMetadata):
                     )
                 # Add data control  contextual metadata by linking with dataset id
                 for contextual_source in self.contextual_metadata:
-                    if isinstance(contextual_source, PlantProteinAtlasDatasetControlContextual):
-                        obj.update(contextual_source.get(obj.get("bioplatforms_dataset_id")))
+                    if isinstance(
+                        contextual_source, PlantProteinAtlasDatasetControlContextual
+                    ):
+                        obj.update(
+                            contextual_source.get(obj.get("bioplatforms_dataset_id"))
+                        )
                     else:
-                        if isinstance(contextual_source, PlantProteinAtlasLibraryContextual):  # its the sampel metadata, match up on sample_id
+                        if isinstance(
+                            contextual_source, PlantProteinAtlasLibraryContextual
+                        ):  # its the sampel metadata, match up on sample_id
                             sample_id = obj.get("bioplatforms_sample_id")
                             obj.update(contextual_source.get(sample_id))
 
@@ -576,12 +693,10 @@ class PlantProteinAtlasNutritionalMetadata(PlantProteinAtlasBaseMetadata):
             combined_obj = common_values(row_objs)
             objs.append((fname, combined_obj))
 
-        for (fname, obj) in objs:
+        for fname, obj in objs:
             ticket = obj["ticket"]
 
-            name = sample_id_to_ckan_name(
-                obj.get("dataset_id"), self.ckan_data_type
-            )
+            name = sample_id_to_ckan_name(obj.get("dataset_id"), self.ckan_data_type)
             tracking_info = self.get_tracking_info(ticket)
             obj.update(
                 {
@@ -607,7 +722,6 @@ class PlantProteinAtlasNutritionalMetadata(PlantProteinAtlasBaseMetadata):
                 }
             )
 
-
             package_embargo_days = self.embargo_days
             if obj["access_control_date"] is not None:
                 package_embargo_days = obj["access_control_date"]
@@ -625,7 +739,9 @@ class PlantProteinAtlasNutritionalMetadata(PlantProteinAtlasBaseMetadata):
             for sample_metadata_file in glob(
                 self.path
                 + "/*_"
-                + ingest_utils.short_ands_id(self._logger, obj["bioplatforms_dataset_id"])
+                + ingest_utils.short_ands_id(
+                    self._logger, obj["bioplatforms_dataset_id"]
+                )
                 + "_samplemetadata_ingest.xlsx"
             ):
                 self.track_xlsx_resource(obj, sample_metadata_file)

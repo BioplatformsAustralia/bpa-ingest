@@ -96,38 +96,39 @@ from .tsi.ingest import (
 
 from .fungi.ingest import (
     FungiIlluminaShortreadMetadata,
- )
+)
 
 from .plant_pathogen.ingest import (
     PlantPathogenIlluminaShortreadMetadata,
     PlantPathogenPacbioHifiMetadata,
     PlantPathogenONTPromethionMetadata,
+)
 
- )
+from .cipps.ingest import CIPPSIlluminaShortreadMetadata, CIPPSPacbioHifiMetadata
 
-from .cipps.ingest import (
-    CIPPSIlluminaShortreadMetadata,
-    CIPPSPacbioHifiMetadata
- )
 from .plant_protein_atlas.ingest import (
     PlantProteinAtlasPhenoCTXrayRawMetadata,
     PlantProteinAtlasPhenoCTXrayAnalysedMetadata,
     PlantProteinAtlasHyperspectralMetadata,
     PlantProteinAtlasASDSpectroMetadata,
     PlantProteinAtlasNutritionalMetadata,
- )
+)
+
 from .grasslands.ingest import (
     AGIlluminaShortreadMetadata,
     AGHiCMetadata,
     AGPacbioHifiMetadata,
- )
+)
+
 from .collaborations.ingest import (
     CollaborationsMetagenomicsNovaseqMetadata,
     CollaborationsONTPromethionMetadata,
- )
+)
+
 from .bpa_sample_data.ingest import (
     BSDSampleImagesMetadata,
- )
+)
+
 
 class ProjectInfo:
     projects = {
@@ -259,7 +260,6 @@ class ProjectInfo:
         "bsd": [
             BSDSampleImagesMetadata,
         ],
-
     }
 
     def __init__(self):

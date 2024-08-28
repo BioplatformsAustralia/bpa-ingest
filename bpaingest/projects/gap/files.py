@@ -158,7 +158,8 @@ PACBIO_HIFI_METADATA_SHEET_PATTERN = r"""
     ((_|\.)metadata\.xlsx)
 """
 pacbio_hifi_metadata_sheet_re = re.compile(
-    PACBIO_HIFI_METADATA_SHEET_PATTERN, re.VERBOSE)
+    PACBIO_HIFI_METADATA_SHEET_PATTERN, re.VERBOSE
+)
 
 PACBIO_HIFI_REVIO_METADATA_SHEET_PATTERN = r"""
     GAP_
@@ -168,6 +169,5 @@ PACBIO_HIFI_REVIO_METADATA_SHEET_PATTERN = r"""
 """
 
 pacbio_hifi_revio_metadata_sheet_re = re.compile(
-    PACBIO_HIFI_REVIO_METADATA_SHEET_PATTERN, re.VERBOSE)
-
-
+    PACBIO_HIFI_REVIO_METADATA_SHEET_PATTERN, re.VERBOSE
+)

@@ -29,9 +29,3 @@ ONT_PROMETHION_PATTERN = r"""
     \.(tar|fastq.gz|blow5|html|txt|csv|tsv|json|md)
 """
 ont_promethion_re = re.compile(ONT_PROMETHION_PATTERN, re.VERBOSE)
-
-
-
-
-
-

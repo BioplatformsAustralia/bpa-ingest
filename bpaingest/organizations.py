@@ -124,7 +124,7 @@ ORGANIZATIONS = [
         "title": "Plant Pathogen Project Members",
         "display_name": "Plant Pathogen Project Members",
         "image_url": "https://data.bioplatforms.com/plant_pathogen.png",
-        "groups": [{"capacity": "public", "name": 'plant-pathogen'}],
+        "groups": [{"capacity": "public", "name": "plant-pathogen"}],
     },
     {
         "name": "fungi",
@@ -145,35 +145,35 @@ ORGANIZATIONS = [
         "title": "CIPPS Project Members",
         "display_name": "ARC for Innovations in Peptide and Protein Science (CIPPS)  Project Members",
         "image_url": "https://data.bioplatforms.com/cipps.png",
-        "groups": [{"capacity": "public", "name": 'cipps'}],
+        "groups": [{"capacity": "public", "name": "cipps"}],
     },
     {
         "name": "grassland-consortium-members",
         "title": "Grasslands Project Members",
         "display_name": "Australian Grasslands  Project Members",
         "image_url": "https://data.bioplatforms.com/Australian-Grasslands.png",
-        "groups": [{"capacity": "public", "name": 'grasslands'}],
+        "groups": [{"capacity": "public", "name": "grasslands"}],
     },
     {
         "name": "grassland-consortium-members",
         "title": "Grasslands Project Members",
         "display_name": "Australian Grasslands  Project Members",
         "image_url": "https://data.bioplatforms.com/Australian-Grasslands.png",
-        "groups": [{"capacity": "public", "name": 'grasslands'}],
+        "groups": [{"capacity": "public", "name": "grasslands"}],
     },
     {
         "name": "tsi-consortium-members",
         "title": "Threatened Species Project Members",
         "display_name": "Threatened Species Initiative Project Members",
         "image_url": "https://data.bioplatforms.com/Threatened-Species-Initiative-Logo-150dpi-RGB.png",
-        "groups": [{"capacity": "public", "name": 'threatened-species'}],
+        "groups": [{"capacity": "public", "name": "threatened-species"}],
     },
     {
         "name": "ausarg-consortium-members",
         "title": "Australian Amphibian and Reptile Genomics Project Members",
         "display_name": "Australian Amphibian and Reptile Genomics Project Members",
         "image_url": "https://data.bioplatforms.com/AusARG-Logo-RGB-150dpi-Transparent.png",
-        "groups": [{"capacity": "public", "name": 'ausarg'}],
+        "groups": [{"capacity": "public", "name": "ausarg"}],
     },
     {
         "name": "ppa",
@@ -187,7 +187,7 @@ ORGANIZATIONS = [
         "title": "Plant Protein Atlas Project Members",
         "display_name": "Plant Protein Atlas Project Members",
         "image_url": "https://data.bioplatforms.com/ppa.png",
-        "groups": [{"capacity": "public", "name": 'ppa'}],
+        "groups": [{"capacity": "public", "name": "ppa"}],
     },
     {
         "name": "aus-fish",
@@ -201,7 +201,7 @@ ORGANIZATIONS = [
         "title": "Australian Fish Genomics Project Members",
         "display_name": "Australian Fish Genomics Project Members",
         "image_url": "https://data.bioplatforms.com/fish.png",
-        "groups": [{"capacity": "public", "name": 'aus-fish'}],
+        "groups": [{"capacity": "public", "name": "aus-fish"}],
     },
     {
         "name": "aus-avian",
@@ -215,7 +215,7 @@ ORGANIZATIONS = [
         "title": "Australian Avian Genomics Project Members",
         "display_name": "Australian Avian Genomics Project Members",
         "image_url": "https://data.bioplatforms.com/avian.png",
-        "groups": [{"capacity": "public", "name": 'aus-avian'}],
+        "groups": [{"capacity": "public", "name": "aus-avian"}],
     },
     {
         "name": "bpa-ipm",
@@ -229,14 +229,14 @@ ORGANIZATIONS = [
         "title": "IPM 'Omics Project Members",
         "display_name": "IPM 'Omics Project Members",
         "image_url": "https://data.bioplatforms.com/ipm.png",
-        "groups": [{"capacity": "public", "name": 'bpa-ipm'}],
+        "groups": [{"capacity": "public", "name": "bpa-ipm"}],
     },
     {
         "name": "fungi-consortium-members",
         "title": "Fungi Functional 'Omics Project Members",
         "display_name": "Fungi Functional 'Omics Project Members",
         "image_url": "https://data.bioplatforms.com/fungi.png",
-        "groups": [{"capacity": "public", "name": 'fungi'}],
+        "groups": [{"capacity": "public", "name": "fungi"}],
     },
     {
         "name": "bpa-collaborations",
@@ -250,7 +250,7 @@ ORGANIZATIONS = [
         "title": "Platypus Bio Collaboration Members",
         "display_name": "Platypus Bio Collaboration Members",
         "image_url": "https://data.bioplatforms.com/platypus_bio_logo.png",
-        "groups": [{"capacity": "public", "name": 'bpa-collaborations'}],
+        "groups": [{"capacity": "public", "name": "bpa-collaborations"}],
     },
     {
         "name": "bpa-sample-data",
@@ -264,7 +264,6 @@ ORGANIZATIONS = [
         "title": "BPA Sample Data Consortium Members",
         "display_name": "BPA Sample Data Consortium Members",
         "image_url": "https://data.bioplatforms.com/bpalogo.png",
-        "groups": [{"capacity": "public", "name": 'bpa-sample-data'}],
+        "groups": [{"capacity": "public", "name": "bpa-sample-data"}],
     },
 ]
-

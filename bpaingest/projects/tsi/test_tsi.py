@@ -39,6 +39,7 @@ def test_novaseq():
         assert novaseq_filename_re.match(filename) is not None
 """
 
+
 def test_illumina_shortread():
     filenames = [
         "355598_TSI_AGRF_H3GYVDSX2_AACTGAGC-CAATCAGG_L004_R2.fastq.gz",
@@ -52,7 +53,7 @@ def test_fastq_filename_re():
         "355638_TSI_UNSW_H2KN2DRXY_CTCGCTTCGG-TTGACTAGTA_S26_L001_R1_001.fastq.gz",
         "355638_TSI_UNSW_H2KN2DRXY_CTCGCTTCGG-TTGACTAGTA_S26_L001_R2_001.fastq.gz",
         "355638_TSI_UNSW_H2KN2DRXY_CTCGCTTCGG-TTGACTAGTA_S26_L002_R1_001.fastq.gz",
-	"355719_TSI_UNSW_HG2H3DSX2_CTCCACTAAT-AACAAGTACA_S5_L001_R2_001.fastq.gz",
+        "355719_TSI_UNSW_HG2H3DSX2_CTCCACTAAT-AACAAGTACA_S5_L001_R2_001.fastq.gz",
         "357733_TSI_AGRF_HFVFMDRXY_TTGTATCAGG-TGGCCTCTGT_L001_R1.fastq.gz",
     ]
     for filename in filenames:
@@ -71,11 +72,12 @@ def test_pacbio_hifi():
         "357368_TSI_AGRF_DA060252_HiFi_qc.pdf",
         "357368_TSI_AGRF_DA060252_ccs_statistics.csv",
         "357368_TSI_AGRF_DA060252_final.consensusreadset.xml",
-	    "357368_TSI_CAGRF20114490_DA060254_subreads.bam",
+        "357368_TSI_CAGRF20114490_DA060254_subreads.bam",
     ]
 
     for filename in filenames:
         assert pacbio_hifi_filename_re.match(filename) is not None
+
 
 def test_pacbio_hifi_2():
     filenames = [
@@ -85,11 +87,13 @@ def test_pacbio_hifi_2():
 
     for filename in filenames:
         assert pacbio_hifi_filename_2_re.match(filename) is not None
+
+
 def test_pacbio_hifi_metadata_sheet():
     filenames = [
         "355356_TSI_AGRF_PacBio_DA052899_metadata.xlsx",
         "357368_TSI_AGRF_DA060252_metadata.xlsx",
-	"357368_TSI_CAGRF20114490_DA060254_metadata.xlsx",
+        "357368_TSI_CAGRF20114490_DA060254_metadata.xlsx",
     ]
 
     for filename in filenames:
@@ -97,12 +101,10 @@ def test_pacbio_hifi_metadata_sheet():
 
 
 def test_pacbio_hifi_common():
-    filenames = [
-        "TSI_AGRF_m84073_230616_024551_s3.pdf"
-
-    ]
+    filenames = ["TSI_AGRF_m84073_230616_024551_s3.pdf"]
     for filename in filenames:
         assert pacbio_hifi_common_re.match(filename) is not None
+
 
 def test_tsi_ddrad_fastq():
     filenames = [
@@ -126,6 +128,7 @@ def test_tsi_ddrad_metadata_sheet():
     for filename in filenames:
         assert ddrad_metadata_sheet_re.match(filename) is not None
 
+
 def test_tsi_ddrad_analysed_tar():
     filenames = [
         "358804_TSI_AGRF_CAGRF220811739_HVLNTDRX2_analysed.tar",
@@ -133,6 +136,7 @@ def test_tsi_ddrad_analysed_tar():
 
     for filename in filenames:
         assert ddrad_analysed_tar_re.match(filename) is not None
+
 
 def test_genome_assembly_filename_re():
     filenames = [
@@ -156,6 +160,7 @@ def test_illumina_hic():
     for filename in filenames:
         assert illumina_hic_re.match(filename) is not None
 
+
 def test_genomics_dart():
     filenames = [
         "20230222_TSI_BRFDArT_HLWMLDRX2_1.tar",
@@ -164,6 +169,7 @@ def test_genomics_dart():
     ]
     for filename in filenames:
         assert dart_filename_re.match(filename) is not None
+
 
 def test_genomics_dart_xlsx():
     filenames = [

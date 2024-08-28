@@ -16,12 +16,21 @@ class CIPPSDatasetControlContextual(BaseDatasetControlContextual):
     sheet_names = [
         "Data control",
     ]
-    contextual_linkage = ('bioplatforms_sample_id',)
+    contextual_linkage = ("bioplatforms_sample_id",)
     additional_fields = [
-        fld('bioplatforms_library_id', 'bioplatforms_library_id', coerce=ingest_utils.extract_ands_id,),
-        fld('bioplatforms_dataset_id', 'bioplatforms_dataset_id', coerce=ingest_utils.extract_ands_id,),
-        fld('bioplatforms_project_code', 'bioplatforms_project_code'),
+        fld(
+            "bioplatforms_library_id",
+            "bioplatforms_library_id",
+            coerce=ingest_utils.extract_ands_id,
+        ),
+        fld(
+            "bioplatforms_dataset_id",
+            "bioplatforms_dataset_id",
+            coerce=ingest_utils.extract_ands_id,
+        ),
+        fld("bioplatforms_project_code", "bioplatforms_project_code"),
     ]
+
 
 class CIPPSLibraryContextual(BaseLibraryContextual):
     metadata_urls = [
@@ -41,9 +50,7 @@ class CIPPSLibraryContextual(BaseLibraryContextual):
         # specimen_ID
         fld("specimen_id", re.compile(r"specimen_?[Ii][Dd]")),
         # specimen_ID_description
-        fld(
-            "specimen_id_description", re.compile(r"specimen_?[Ii][Dd]_description")
-        ),
+        fld("specimen_id_description", re.compile(r"specimen_?[Ii][Dd]_description")),
         # tissue_number
         fld("tissue_number", "tissue_number"),
         ## FIX
@@ -52,17 +59,17 @@ class CIPPSLibraryContextual(BaseLibraryContextual):
         fld("institution_name", "institution_name"),
         # tissue_collection
         fld("tissue_collection", "tissue_collection"),
-        fld('tissue_collection_type', 'tissue_collection_type'),
+        fld("tissue_collection_type", "tissue_collection_type"),
         # sample_custodian
         fld("sample_custodian", "sample_custodian"),
-        fld('sample_type', 'sample_type'),
+        fld("sample_type", "sample_type"),
         # access_rights
         fld("access_rights", "access_rights"),
         # tissue_type
         fld("tissue_type", "tissue_type"),
         # tissue_preservation
         fld("tissue_preservation", "tissue_preservation"),
-        fld('tissue_preservation_temperature', 'tissue_preservation_temperature'),
+        fld("tissue_preservation_temperature", "tissue_preservation_temperature"),
         # sample_quality
         fld("sample_quality", "sample_quality"),
         # taxon_id
@@ -81,9 +88,9 @@ class CIPPSLibraryContextual(BaseLibraryContextual):
         fld("species", "species"),
         # subspecies
         fld("subspecies", "subspecies"),
-        fld('scientific_name', 'scientific_name'),
-        fld('scientific_name_note', 'scientific_name_note'),
-        fld('scientific_name_authorship', 'scientific_name_authorship'),
+        fld("scientific_name", "scientific_name"),
+        fld("scientific_name_note", "scientific_name_note"),
+        fld("scientific_name_authorship", "scientific_name_authorship"),
         # common_name
         fld("common_name", "common_name"),
         # collection_date
@@ -126,7 +133,7 @@ class CIPPSLibraryContextual(BaseLibraryContextual):
         # phenotypic sex
         fld("phenotypic_sex", "phenotypic_sex"),
         # method_sex_determination
-        fld('method_sex_determination', 'method_sex_determination'),
+        fld("method_sex_determination", "method_sex_determination"),
         # sex_certainty
         fld("sex_certainty", "sex_certainty"),
         # life-stage
@@ -135,7 +142,7 @@ class CIPPSLibraryContextual(BaseLibraryContextual):
         fld("birth_date", "birth_date", coerce=ingest_utils.get_date_isoformat),
         # death_date
         fld("death_date", "death_date", coerce=ingest_utils.get_date_isoformat),
-        fld('health_state', 'health_state'),
+        fld("health_state", "health_state"),
         # associated_media
         fld("associated_media", "associated_media"),
         # ancillary_notes
@@ -168,4 +175,3 @@ class CIPPSLibraryContextual(BaseLibraryContextual):
         # material_conc_ng_ul
         fld("material_conc_ng_ul", re.compile(r"[Mm]aterial_conc_ng_ul")),
     ]
-

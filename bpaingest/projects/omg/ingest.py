@@ -247,10 +247,12 @@ class OMG10XRawIlluminaMetadata(OMGBaseMetadata):
                         self._logger, track_get("date_of_transfer_to_archive")
                     ),
                     "dataset_url": track_get("download"),
-                 }
+                }
             )
-            mapped_rows = ". ".join(self.build_string_from_map_without_blanks(self.row_mapping, t) for t in row_metadata)
-
+            mapped_rows = ". ".join(
+                self.build_string_from_map_without_blanks(self.row_mapping, t)
+                for t in row_metadata
+            )
 
             ingest_utils.add_spatial_extra(self._logger, obj)
             ingest_utils.permissions_organization_member_after_embargo(
@@ -277,9 +279,7 @@ class OMG10XRawIlluminaMetadata(OMGBaseMetadata):
         del resource["basename"]
 
     def _build_resource_linkage(self, xlsx_info, resource, file_info):
-        return (
-            (resource["name"],)  # this is the archive name
-                )
+        return (resource["name"],)  # this is the archive name
 
 
 class OMG10XRawMetadata(OMGBaseMetadata):
@@ -287,6 +287,7 @@ class OMG10XRawMetadata(OMGBaseMetadata):
     this data conforms to the BPA 10X raw workflow. future data
     will use this ingest class.
     """
+
     ckan_data_type = "omg-10x-raw"
     technology = "10xraw"
     sequence_data_type = "illumina-10x"
@@ -470,12 +471,9 @@ class OMG10XRawMetadata(OMGBaseMetadata):
 
         if bpa_sample_id.split("/", 1)[1].startswith("5"):
             # actually a library ID, map back
-            bpa_sample_id = self.library_to_sample[
-                bpa_sample_id
-            ]
+            bpa_sample_id = self.library_to_sample[bpa_sample_id]
             resource["bpa_sample_id"] = bpa_sample_id
-        return (bpa_sample_id,
-                flow_id)
+        return (bpa_sample_id, flow_id)
 
 
 class OMG10XProcessedIlluminaMetadata(OMGBaseMetadata):
@@ -652,8 +650,7 @@ class OMG10XProcessedIlluminaMetadata(OMGBaseMetadata):
 
     def _build_resource_linkage(self, xlsx_info, resource, file_info):
         bpa_sample_id, flow_id = self.file_package[resource["name"]]
-        return (bpa_sample_id,
-                flow_id)
+        return (bpa_sample_id, flow_id)
 
 
 class OMGExonCaptureMetadata(OMGBaseMetadata):
@@ -878,13 +875,11 @@ class OMGExonCaptureMetadata(OMGBaseMetadata):
 
     def _build_resource_linkage(self, xlsx_info, resource, file_info):
         library_id = ingest_utils.extract_ands_id(
-            self._logger, resource["bpa_library_id"])
-
-        return(
-            (library_id,
-               resource["flow_cell_id"],
-               resource["index"])
+            self._logger, resource["bpa_library_id"]
         )
+
+        return (library_id, resource["flow_cell_id"], resource["index"])
+
 
 class OMGWholeGenomeMetadata(OMGBaseMetadata):
     ckan_data_type = "omg-novaseq-whole-genome"
@@ -1052,7 +1047,6 @@ class OMGWholeGenomeMetadata(OMGBaseMetadata):
                         contextual_source.get(row.bpa_sample_id, row.bpa_library_id)
                     )
 
-
                 obj.update(
                     {
                         "name": name,
@@ -1113,13 +1107,10 @@ class OMGWholeGenomeMetadata(OMGBaseMetadata):
 
     def _build_resource_linkage(self, xlsx_info, resource, file_info):
         library_id = ingest_utils.extract_ands_id(
-            self._logger, resource["bpa_library_id"])
-
-        return (
-            (library_id,
-             resource["flow_cell_id"],
-             resource["index"])
+            self._logger, resource["bpa_library_id"]
         )
+
+        return (library_id, resource["flow_cell_id"], resource["index"])
 
 
 class OMGGenomicsNovaseqMetadata(OMGBaseMetadata):
@@ -1292,13 +1283,10 @@ class OMGGenomicsNovaseqMetadata(OMGBaseMetadata):
 
     def _build_resource_linkage(self, xlsx_info, resource, file_info):
         library_id = ingest_utils.extract_ands_id(
-            self._logger, resource["bpa_library_id"])
-
-        return (
-            (library_id,
-             resource["flow_cell_id"],
-             resource["index"])
+            self._logger, resource["bpa_library_id"]
         )
+
+        return (library_id, resource["flow_cell_id"], resource["index"])
 
 
 class OMGGenomicsHiSeqMetadata(OMGBaseMetadata):
@@ -1312,7 +1300,10 @@ class OMGGenomicsHiSeqMetadata(OMGBaseMetadata):
     metadata_urls = [
         "https://downloads-qcif.bioplatforms.com/bpa/omg_staging/genomics/raw/",
     ]
-    metadata_url_components = ("facility_path","ticket",)
+    metadata_url_components = (
+        "facility_path",
+        "ticket",
+    )
     resource_linkage = ("bpa_sample_id", "flowcell_id")
     spreadsheet = {
         "fields": [
@@ -1474,10 +1465,8 @@ class OMGGenomicsHiSeqMetadata(OMGBaseMetadata):
 
     def _build_resource_linkage(self, xlsx_info, resource, file_info):
         return (
-            (ingest_utils.extract_ands_id(
-                            self._logger, resource["bpa_sample_id"]
-                        ),
-             resource["flow_cell_id"])
+            ingest_utils.extract_ands_id(self._logger, resource["bpa_sample_id"]),
+            resource["flow_cell_id"],
         )
 
 
@@ -1595,7 +1584,6 @@ class OMGGenomicsDDRADMetadata(OMGBaseMetadata):
         self.track_meta = OMGTrackMetadata(logger)
         self.flow_lookup = {}
 
-
     def _get_packages(self):
         xlsx_re = re.compile(r"^.*_(\w+)_metadata.*\.xlsx$")
 
@@ -1621,7 +1609,6 @@ class OMGGenomicsDDRADMetadata(OMGBaseMetadata):
                 objs[(obj["bpa_dataset_id"], obj["flowcell_id"])].append(obj)
 
             for (bpa_dataset_id, flowcell_id), row_objs in list(objs.items()):
-
                 if bpa_dataset_id is None or flowcell_id is None:
                     continue
 
@@ -1678,7 +1665,9 @@ class OMGGenomicsDDRADMetadata(OMGBaseMetadata):
                 obj.update(merge_values("scientific_name", " , ", context_objs))
                 additional_notes = "ddRAD dataset not demultiplexed"
                 self.build_title_into_object(obj)
-                self.build_notes_into_object(obj, {"additional_notes": additional_notes})
+                self.build_notes_into_object(
+                    obj, {"additional_notes": additional_notes}
+                )
                 ingest_utils.permissions_organization_member_after_embargo(
                     self._logger,
                     obj,
@@ -1702,10 +1691,8 @@ class OMGGenomicsDDRADMetadata(OMGBaseMetadata):
 
     def _build_resource_linkage(self, xlsx_info, resource, file_info):
         return (
-            (ingest_utils.extract_ands_id(
-                            self._logger, resource["bpa_dataset_id"]
-                        ),
-             resource["flowcell_id"])
+            ingest_utils.extract_ands_id(self._logger, resource["bpa_dataset_id"]),
+            resource["flowcell_id"],
         )
 
 
@@ -1812,7 +1799,7 @@ class OMGGenomicsPacbioMetadata(OMGBaseMetadata):
             fname_obj["run_date"] = xlsx_date
             objs.append((fname, fname_obj))
 
-        for (fname, obj) in objs:
+        for fname, obj in objs:
             track_meta = self.track_meta.get(obj["ticket"])
 
             def track_get(k):
@@ -1892,8 +1879,8 @@ class OMGGenomicsPacbioMetadata(OMGBaseMetadata):
         )
 
         return (
-                (  ingest_utils.extract_ands_id(self._logger, library_id),
-                   resource["run_date"],)
+            ingest_utils.extract_ands_id(self._logger, library_id),
+            resource["run_date"],
         )
 
 
@@ -2068,7 +2055,10 @@ class OMGONTPromethionMetadata(OMGBaseMetadata):
         return
 
     def _build_resource_linkage(self, xlsx_info, resource, file_info):
-        return resource["bpa_library_id"], resource["flowcell_id"],
+        return (
+            resource["bpa_library_id"],
+            resource["flowcell_id"],
+        )
 
 
 class OMGTranscriptomicsNextseq(OMGBaseMetadata):
@@ -2178,7 +2168,6 @@ class OMGTranscriptomicsNextseq(OMGBaseMetadata):
                 objs[(obj["bpa_library_id"], obj["flowcell_id"])].append(obj)
 
             for (bpa_library_id, flowcell_id), row_objs in list(objs.items()):
-
                 if bpa_library_id is None:
                     continue
 
@@ -2245,11 +2234,9 @@ class OMGTranscriptomicsNextseq(OMGBaseMetadata):
 
     def _build_resource_linkage(self, xlsx_info, resource, file_info):
         return (
-                        ingest_utils.extract_ands_id(
-                            self._logger, resource["bpa_library_id"]
-                        ),
-                        resource["flowcell_id"],
-                    )
+            ingest_utils.extract_ands_id(self._logger, resource["bpa_library_id"]),
+            resource["flowcell_id"],
+        )
 
 
 class OMGGenomicsPacBioGenomeAssemblyMetadata(SecondaryMetadata):
@@ -2350,9 +2337,9 @@ class OMGGenomicsPacBioGenomeAssemblyMetadata(SecondaryMetadata):
 
     #   has to be here as SecondaryMetaData doesa not contain the method.
     def _build_title_into_object(self, obj):
-            self.build_title_into_object(obj, {"initiative": self.initiative,
-                                               "title_description": self.description}
-                                         )
+        self.build_title_into_object(
+            obj, {"initiative": self.initiative, "title_description": self.description}
+        )
 
     def _get_packages(self):
         self._logger.info("Ingesting secondary OMG metadata from {0}".format(self.path))
@@ -2433,7 +2420,9 @@ class OMGGenomicsPacBioGenomeAssemblyMetadata(SecondaryMetadata):
 
     def _get_resources(self):
         return (
-            self._get_common_resources() + self.generate_xlsx_resources() + self.generate_raw_resources()
+            self._get_common_resources()
+            + self.generate_xlsx_resources()
+            + self.generate_raw_resources()
         )
 
     def _build_resource_linkage(self, xlsx_info, resource, file_info):
@@ -2441,9 +2430,7 @@ class OMGGenomicsPacBioGenomeAssemblyMetadata(SecondaryMetadata):
             self._logger, resource["bpa_library_id"]
         )
 
-        return (
-                (ingest_utils.extract_ands_id(self._logger, library_id),)
-        )
+        return (ingest_utils.extract_ands_id(self._logger, library_id),)
 
     def _add_datatype_specific_info_to_resource(self, resource, md5_file=None):
         # no additional fields for OMG Pacbio Genome Assembly Metadata
@@ -2622,16 +2609,13 @@ class OMGAnalysedDataMetadata(OMGBaseMetadata):
         return self._get_common_resources()
 
     def _add_datatype_specific_info_to_resource(self, resource, md5_file=None):
-        resource["bioplatforms_secondarydata_id"
-        ] = ingest_utils.extract_ands_id(
+        resource["bioplatforms_secondarydata_id"] = ingest_utils.extract_ands_id(
             self._logger, resource["bioplatforms_secondarydata_id"]
         )
         return
 
     def _build_resource_linkage(self, xlsx_info, resource, file_info):
-
-        return (resource["bioplatforms_secondarydata_id"],
-         )
+        return (resource["bioplatforms_secondarydata_id"],)
 
 
 class OMGGenomicsDArTMetadata(OMGBaseMetadata):
@@ -2639,6 +2623,7 @@ class OMGGenomicsDArTMetadata(OMGBaseMetadata):
     This data conforms to the BPA Genomics DArT workflow. future data
     will use this ingest class.
     """
+
     ckan_data_type = "omg-genomics-dart"
     omics = "genomics"
     technology = "dart"
@@ -2792,7 +2777,7 @@ class OMGGenomicsDArTMetadata(OMGBaseMetadata):
 
             objs.append((fname, combined_obj))
 
-        for (fname, obj) in objs:
+        for fname, obj in objs:
             track_meta = self.track_meta.get(obj["ticket"])
 
             def track_get(k):
@@ -2832,7 +2817,8 @@ class OMGGenomicsDArTMetadata(OMGBaseMetadata):
             )
             organism_scientific_name = obj.get(
                 "scientific_name",
-                "%s %s" % (obj.get("genus", ""), obj.get("species", "")))
+                "%s %s" % (obj.get("genus", ""), obj.get("species", "")),
+            )
             additional_notes = "DArT dataset not demultiplexed"
             self.build_title_into_object(obj)
             self.build_notes_into_object(obj)
@@ -2882,11 +2868,4 @@ class OMGGenomicsDArTMetadata(OMGBaseMetadata):
         return
 
     def _build_resource_linkage(self, xlsx_info, resource, file_info):
-
-        return (
-                   (ingest_utils.extract_ands_id(
-                    self._logger, resource["bpa_dataset_id"]
-                        ),
-                   )
-
-         )
+        return (ingest_utils.extract_ands_id(self._logger, resource["bpa_dataset_id"]),)

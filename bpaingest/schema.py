@@ -183,7 +183,10 @@ def _write_schemas(
             if k in skip_resource_fields:
                 continue
             schema["resource_fields"].append(
-                {"field_name": k, "label": mapping.get(k, k),}
+                {
+                    "field_name": k,
+                    "label": mapping.get(k, k),
+                }
             )
         schema["dataset_type"] = data_type
         outf = "./tmp/{}.json".format(data_type.replace("-", "_"))

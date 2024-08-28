@@ -13,8 +13,8 @@ class FungiDatasetControlContextual(BaseDatasetControlContextual):
     name = "fungi-dataset-contextual"
     contextual_linkage = ("sample_id",)
     additional_fields = [
-        fld('library_id', 'library_id'),
-        fld('dataset_id', 'dataset_id'),
+        fld("library_id", "library_id"),
+        fld("dataset_id", "dataset_id"),
     ]
 
 
@@ -23,4 +23,3 @@ class FungiLibraryContextual(BaseLibraryContextual):
         "https://downloads-qcif.bioplatforms.com/bpa/fungi_staging/metadata/2024-01-03/"
     ]
     name = "fungi-library-contextual"
-

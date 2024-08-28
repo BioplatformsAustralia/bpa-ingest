@@ -104,10 +104,10 @@ def test_md5lines2():
 
 def test_get_clean_doi():
     strings = (
-        ("https://dx.doi.org/10.100/1234",None),
-        ("http://dx.doi.org/10.100/1234",None),
-        ("https://doi.org/10.100/1234",None),
-        ("http://doi.org/10.100/1234",None),
+        ("https://dx.doi.org/10.100/1234", None),
+        ("http://dx.doi.org/10.100/1234", None),
+        ("https://doi.org/10.100/1234", None),
+        ("http://doi.org/10.100/1234", None),
         ("doi:10.1038/nphys1170", "doi:10.1038/nphys1170"),
         ("doi:10.1002/0470841559.ch1", "doi:10.1002/0470841559.ch1"),
         ("doi:10.1594/PANGAEA.726855", "doi:10.1594/PANGAEA.726855"),

@@ -4,7 +4,12 @@ from collections import defaultdict
 from hashlib import md5 as md5hash
 
 from ...libs import ingest_utils
-from ...util import sample_id_to_ckan_name, common_values, apply_cc_by_license, clean_tag_name
+from ...util import (
+    sample_id_to_ckan_name,
+    common_values,
+    apply_cc_by_license,
+    clean_tag_name,
+)
 from ...abstract import BaseMetadata
 from ...libs.excel_wrapper import (
     ExcelWrapper,
@@ -61,7 +66,10 @@ class StemcellsTranscriptomeMetadata(BaseMetadata):
             fld("sequencer", "Sequencer"),
             fld("analysis_software_version", "CASAVA version"),
         ],
-        "options": {"header_length": 2, "column_name_row_index": 1,},
+        "options": {
+            "header_length": 2,
+            "column_name_row_index": 1,
+        },
     }
     md5 = {"match": [files.transcriptome_filename_re], "skip": common_skip}
 
@@ -147,9 +155,7 @@ class StemcellsTranscriptomeMetadata(BaseMetadata):
             resource = file_info.copy()
             resource["md5"] = resource["id"] = md5
             resource["name"] = filename
-            sample_id = ingest_utils.extract_ands_id(
-                   self._logger, file_info.get("id")
-                )
+            sample_id = ingest_utils.extract_ands_id(self._logger, file_info.get("id"))
             xlsx_info = self.metadata_info[os.path.basename(md5_file)]
             legacy_url = urljoin(xlsx_info["base_url"], filename)
             resources.append(((sample_id,), legacy_url, resource))
@@ -181,7 +187,10 @@ class StemcellsSmallRNAMetadata(BaseMetadata):
             fld("sequencer", "Sequencer"),
             fld("analysis_software_version", "CASAVA version"),
         ],
-        "options": {"header_length": 2, "column_name_row_index": 1,},
+        "options": {
+            "header_length": 2,
+            "column_name_row_index": 1,
+        },
     }
     md5 = {"match": [files.smallrna_filename_re], "skip": common_skip}
 
@@ -270,9 +279,7 @@ class StemcellsSmallRNAMetadata(BaseMetadata):
             resource = file_info.copy()
             resource["md5"] = resource["id"] = md5
             resource["name"] = filename
-            sample_id = ingest_utils.extract_ands_id(
-                self._logger, file_info.get("id")
-            )
+            sample_id = ingest_utils.extract_ands_id(self._logger, file_info.get("id"))
             xlsx_info = self.metadata_info[os.path.basename(md5_file)]
             legacy_url = urljoin(xlsx_info["base_url"], filename)
             resources.append(((sample_id,), legacy_url, resource))
@@ -308,7 +315,10 @@ class StemcellsSingleCellRNASeqMetadata(BaseMetadata):
             fld("bcl_to_fastq_generation", "Bcl to Fastq generation", optional=True),
             fld("casava_version", "casava version", optional=True),
         ],
-        "options": {"header_length": 2, "column_name_row_index": 1,},
+        "options": {
+            "header_length": 2,
+            "column_name_row_index": 1,
+        },
     }
     md5 = {
         "match": [
@@ -482,7 +492,10 @@ class StemcellsMetabolomicsMetadata(BaseMetadata):
             ),
             skp("sample name **"),
         ],
-        "options": {"header_length": 2, "column_name_row_index": 1,},
+        "options": {
+            "header_length": 2,
+            "column_name_row_index": 1,
+        },
     }
     md5 = {"match": [files.metabolomics_filename_re], "skip": common_skip}
 
@@ -581,9 +594,7 @@ class StemcellsMetabolomicsMetadata(BaseMetadata):
             resource["analytical_platform"] = fix_analytical_platform(
                 self._logger, resource["analytical_platform"]
             )
-            sample_id = ingest_utils.extract_ands_id(
-                self._logger, file_info.get("id")
-            )
+            sample_id = ingest_utils.extract_ands_id(self._logger, file_info.get("id"))
             xlsx_info = self.metadata_info[os.path.basename(md5_file)]
             legacy_url = urljoin(xlsx_info["base_url"], filename)
             resources.append(
@@ -781,9 +792,7 @@ class StemcellsProteomicsMetadata(StemcellsProteomicsBaseMetadata):
                 "database_size",
             ):
                 resource[k] = getattr(resource_meta, k)
-            sample_id = ingest_utils.extract_ands_id(
-                self._logger, file_info.get("id")
-            )
+            sample_id = ingest_utils.extract_ands_id(self._logger, file_info.get("id"))
             xlsx_info = self.metadata_info[os.path.basename(md5_file)]
             legacy_url = urljoin(xlsx_info["base_url"], filename)
             resources.append(((sample_id,), legacy_url, resource))
@@ -951,9 +960,11 @@ class StemcellsProteomicsAnalysedMetadata(BaseMetadata):
             fld("translation", "translation (3 frame or 6 frame)"),
             fld("proteome_size", "proteome size"),
         ],
-        "options": {"sheet_name": "Samples for proteomics",
-                    "header_length": 8,
-                    "column_name_row_index": 7 },
+        "options": {
+            "sheet_name": "Samples for proteomics",
+            "header_length": 8,
+            "column_name_row_index": 7,
+        },
     }
     md5 = {
         "match": [
@@ -1102,9 +1113,17 @@ class StemcellsMetabolomicsAnalysedMetadata(BaseMetadata):
             fld("additional_comments", "additional comments"),
             skp(re.compile(r"^x{4,6}$"), skip_all=True),
         ],
-        "options": {"header_length": 8, "column_name_row_index": 7,},
+        "options": {
+            "header_length": 8,
+            "column_name_row_index": 7,
+        },
     }
-    md5 = {"match": [re.compile(r"^.*$"),], "skip": common_skip}
+    md5 = {
+        "match": [
+            re.compile(r"^.*$"),
+        ],
+        "skip": common_skip,
+    }
 
     def __init__(
         self, logger, metadata_path, contextual_metadata=None, metadata_info=None
@@ -1183,9 +1202,7 @@ class StemcellsMetabolomicsAnalysedMetadata(BaseMetadata):
             id_attributes = self.ckan_data_type + xlsx_info["base_url"] + md5
             if filename and filename.endswith(".png"):
                 id_attributes += filename
-            resource["id"] = (
-                "u-" + md5hash((id_attributes).encode("utf8")).hexdigest()
-            )
+            resource["id"] = "u-" + md5hash((id_attributes).encode("utf8")).hexdigest()
             resource["name"] = filename
             ticket_name = xlsx_info["ticket"]
             tracking_ticket_folder = self.track_meta.get(ticket_name)
@@ -1198,9 +1215,7 @@ class StemcellsMetabolomicsAnalysedMetadata(BaseMetadata):
             else:
                 if ticket_name == next:
                     self._logger.debug(
-                        "Tracking ticket folder is: {0}".format(
-                            tracking_ticket_folder
-                        )
+                        "Tracking ticket folder is: {0}".format(tracking_ticket_folder)
                     )
             folder_name = (
                 tracking_ticket_folder.folder_name if tracking_ticket_folder else ""
@@ -1253,9 +1268,17 @@ class StemcellsTranscriptomeAnalysedMetadata(BaseMetadata):
             fld("folder_name", "file name of analysed data (folder or zip file)"),
             skp(re.compile(r"relevant heading\??$"), skip_all=True),
         ],
-        "options": {"header_length": 9, "column_name_row_index": 8,},
+        "options": {
+            "header_length": 9,
+            "column_name_row_index": 8,
+        },
     }
-    md5 = {"match": [re.compile(r"^.*$"),], "skip": common_skip}
+    md5 = {
+        "match": [
+            re.compile(r"^.*$"),
+        ],
+        "skip": common_skip,
+    }
 
     def __init__(
         self, logger, metadata_path, contextual_metadata=None, metadata_info=None
@@ -1334,9 +1357,7 @@ class StemcellsTranscriptomeAnalysedMetadata(BaseMetadata):
             resource["id"] = (
                 "u-"
                 + md5hash(
-                    (self.ckan_data_type + xlsx_info["base_url"] + md5).encode(
-                        "utf8"
-                    )
+                    (self.ckan_data_type + xlsx_info["base_url"] + md5).encode("utf8")
                 ).hexdigest()
             )
             resource["name"] = filename

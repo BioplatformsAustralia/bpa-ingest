@@ -54,9 +54,12 @@ class AustralianMicrobiomeSchema:
             ):
                 continue
             if schema_definitions[c] and context_definitions[c]:
-                if make_unicode(schema_definitions[c]).rstrip() != make_unicode(context_definitions[c]).strip() and (
-                        'yyyy-mm-dd' not in schema_definitions[c] or
-                        'hh:mm:ss' not in schema_definitions[c]):
+                if make_unicode(schema_definitions[c]).rstrip() != make_unicode(
+                    context_definitions[c]
+                ).strip() and (
+                    "yyyy-mm-dd" not in schema_definitions[c]
+                    or "hh:mm:ss" not in schema_definitions[c]
+                ):
                     self._logger.error(
                         f"Units in Context column: {c} is {context_definitions[c]}, but in the schema it is: {schema_definitions[c]}"
                     )
@@ -79,7 +82,9 @@ class AustralianMicrobiomeSchema:
             s["Field"]: s["dType"] for s in self.get_schema_definitions()
         }
 
-        context_definitions = {c.column_name: [c.coerce, c.units] for c in context_field_specs}
+        context_definitions = {
+            c.column_name: [c.coerce, c.units] for c in context_field_specs
+        }
 
         for s in schema_definitions:
             if s not in context_definitions:
@@ -95,26 +100,44 @@ class AustralianMicrobiomeSchema:
             if context_definitions[c][0]:
                 context_type = context_definitions[c][0].__name__
             else:
-                context_type = 'None'
+                context_type = "None"
 
             if context_definitions[c][1]:
                 context_units = context_definitions[c][1]
             else:
-                context_units = 'None'
+                context_units = "None"
 
-            if not( ('TEXT' in schema_definitions[c] and context_type == 'None')
-                    or ('TEXT PRIMARY KEY' in schema_definitions[c] and context_type == 'ands_orSAMN')
-                    or ('DATE,' in schema_definitions[c] and context_type == 'get_date_isoformat')
-                    or ('DATETIME' in schema_definitions[c] and context_type == 'get_date_isoformat_as_datetime')
-                    or ('TIME,' in schema_definitions[c] and context_type == 'get_time')
-                    or ('NUMERIC' in schema_definitions[c] and context_units != '%' and context_type == 'get_clean_number')
-                    or ('NUMERIC' in schema_definitions[c] and context_units == '%' and context_type == 'get_percentage')
-                   ):
+            if not (
+                ("TEXT" in schema_definitions[c] and context_type == "None")
+                or (
+                    "TEXT PRIMARY KEY" in schema_definitions[c]
+                    and context_type == "ands_orSAMN"
+                )
+                or (
+                    "DATE," in schema_definitions[c]
+                    and context_type == "get_date_isoformat"
+                )
+                or (
+                    "DATETIME" in schema_definitions[c]
+                    and context_type == "get_date_isoformat_as_datetime"
+                )
+                or ("TIME," in schema_definitions[c] and context_type == "get_time")
+                or (
+                    "NUMERIC" in schema_definitions[c]
+                    and context_units != "%"
+                    and context_type == "get_clean_number"
+                )
+                or (
+                    "NUMERIC" in schema_definitions[c]
+                    and context_units == "%"
+                    and context_type == "get_percentage"
+                )
+            ):
                 self._logger.error(
-                    f"validate_schema: Field: {c}, Schema type: {schema_definitions[c]}, Context Type: {context_type}, Units: {context_units}")
+                    f"validate_schema: Field: {c}, Schema type: {schema_definitions[c]}, Context Type: {context_type}, Units: {context_units}"
+                )
 
 
 def make_unicode(value):
     value = str(value)
     return unicodedata.normalize("NFKC", value)
-

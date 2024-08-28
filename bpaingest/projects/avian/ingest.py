@@ -29,14 +29,22 @@ class AvianBaseMetadata(BaseMetadata):
 
     def _build_title_into_object(self, obj, field_value):
         if field_value is None:
-            self.build_title_into_object(obj, {"initiative": self.initiative,
-                                               "title_description": self.description, }
-                                         )
+            self.build_title_into_object(
+                obj,
+                {
+                    "initiative": self.initiative,
+                    "title_description": self.description,
+                },
+            )
         else:
-            self.build_title_into_object(obj, {"initiative": self.initiative,
-                                           "title_description": self.description,
-                                           "field_value": field_value}
-                                         )
+            self.build_title_into_object(
+                obj,
+                {
+                    "initiative": self.initiative,
+                    "title_description": self.description,
+                    "field_value": field_value,
+                },
+            )
 
     notes_mapping = [
         {"key": "genus", "separator": " "},
@@ -52,18 +60,23 @@ class AvianBaseMetadata(BaseMetadata):
         {"key": "flowcell_id", "separator": ""},
     ]
 
-
     def _set_metadata_vars(self, filename):
         self.xlsx_info = self.metadata_info[os.path.basename(filename)]
         self.ticket = self.xlsx_info["ticket"]
 
     def _get_common_packages(self):
-        self._logger.info("Ingesting {} metadata from {}".format(self.initiative, self.path))
+        self._logger.info(
+            "Ingesting {} metadata from {}".format(self.initiative, self.path)
+        )
         packages = []
         for fname in glob(self.path + "/*.xlsx"):
-            self._logger.info("Processing {} metadata file {}".format(self.initiative, os.path.basename(fname)))
+            self._logger.info(
+                "Processing {} metadata file {}".format(
+                    self.initiative, os.path.basename(fname)
+                )
+            )
             rows = self.parse_spreadsheet(fname, self.metadata_info)
-            if self.method_exists('_set_metadata_vars'):
+            if self.method_exists("_set_metadata_vars"):
                 self._set_metadata_vars(fname)
             for row in rows:
                 if not row.bioplatforms_sample_id and not row.flowcell_id:
@@ -99,12 +112,16 @@ class AvianBaseMetadata(BaseMetadata):
                         "sequence_data_type": self.sequence_data_type,
                         "license_id": apply_cc_by_license(),
                         "date_of_transfer": ingest_utils.get_date_isoformat(
-                            self._logger, self.get_tracking_info(row.ticket, "date_of_transfer")
+                            self._logger,
+                            self.get_tracking_info(row.ticket, "date_of_transfer"),
                         ),
                         "date_of_transfer_to_archive": ingest_utils.get_date_isoformat(
-                            self._logger, self.get_tracking_info(row.ticket, "date_of_transfer_to_archive")
+                            self._logger,
+                            self.get_tracking_info(
+                                row.ticket, "date_of_transfer_to_archive"
+                            ),
                         ),
-                     }
+                    }
                 )
 
                 self._build_title_into_object(obj, bioplatforms_library_id)
@@ -115,6 +132,7 @@ class AvianBaseMetadata(BaseMetadata):
                 obj["tags"] = [{"name": "{:.100}".format(t)} for t in self.tag_names]
                 packages.append(obj)
         return packages
+
 
 """
 class FungiIlluminaShortreadMetadata(FungiBaseMetadata):

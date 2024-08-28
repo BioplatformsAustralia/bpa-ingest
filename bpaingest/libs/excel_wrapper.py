@@ -419,7 +419,7 @@ class ExcelWrapper:
         )
 
     def set_name_to_func_map(self):
-        """ Map the spec fields to their corresponding functions """
+        """Map the spec fields to their corresponding functions"""
 
         return dict(
             (t.attribute, t.coerce)
@@ -440,7 +440,7 @@ class ExcelWrapper:
             return s
 
     def _get_rows(self):
-        """ Yields sequence of cells """
+        """Yields sequence of cells"""
 
         merge_redirect = {}
         for crange in self.sheet.merged_cells:
@@ -465,7 +465,7 @@ class ExcelWrapper:
             yield merged_row
 
     def get_date_time(self, i, cell):
-        """ the cell contains a float and pious hope, get a date, if you dare. """
+        """the cell contains a float and pious hope, get a date, if you dare."""
 
         val = cell.value
         try:

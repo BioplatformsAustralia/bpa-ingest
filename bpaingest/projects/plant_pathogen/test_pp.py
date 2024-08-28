@@ -7,7 +7,7 @@ from bpaingest.projects.plant_pathogen.files import (
     pacbio_hifi_common_re,
     ont_promethion_re,
     ont_promethion_common_re,
- )
+)
 
 
 # VERIFY
@@ -20,6 +20,7 @@ def test_illumina_shortread():
     for filename in filenames:
         assert illumina_shortread_re.match(filename) is not None
 
+
 def test_pacbio_hifi():
     filenames = [
         "394855_PP_AGRF_DA218825.subreads.bam",
@@ -30,6 +31,7 @@ def test_pacbio_hifi():
 
     for filename in filenames:
         assert pacbio_hifi_filename_re.match(filename) is not None
+
 
 def test_pacbio_hifi2():
     filenames = [
@@ -48,23 +50,23 @@ def test_pacbio_hifi_metadata_sheet():
     for filename in filenames:
         assert pacbio_hifi_metadata_sheet_re.match(filename) is not None
 
-def test_pacbio_hifi_common():
-    filenames = [
-        "PP_AGRF_m84073_230616_014416_s1.pdf"
 
-    ]
+def test_pacbio_hifi_common():
+    filenames = ["PP_AGRF_m84073_230616_014416_s1.pdf"]
     for filename in filenames:
         assert pacbio_hifi_common_re.match(filename) is not None
+
 
 def test_ont_promethion():
     filenames = [
         "395601_LibID397855_PP_BRF_PAQ21103_ONTPromethION_fastq_fail.tar",
         "395601_LibID397855_PP_BRF_PAQ21103_ONTPromethION_fastq_pass.tar",
         "395601_LibID397855_PP_BRF_PAQ21103_ONTPromethION_pod5_fail.tar",
-        "395602_LibID397856_PP_BRF_PAQ21103_ONTPromethION_fastq_pass.tar"
+        "395602_LibID397856_PP_BRF_PAQ21103_ONTPromethION_fastq_pass.tar",
     ]
     for filename in filenames:
         assert ont_promethion_re.match(filename) is not None
+
 
 def test_ont_promethion_common():
     filenames = [
@@ -75,4 +77,3 @@ def test_ont_promethion_common():
     ]
     for filename in filenames:
         assert ont_promethion_common_re.match(filename) is not None
-
