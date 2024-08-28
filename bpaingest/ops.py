@@ -244,6 +244,17 @@ class ApacheArchiveInfo(BaseArchiveInfo):
         return self._size_cache[url]
 
 
+def get_legacy_size(apache_archive_info, legacy_url):
+    if legacy_url and legacy_url.startswith("file:///"):
+        logger.info("Determining local file `%s' size for upload" % (legacy_url,))
+        p = urlparse(legacy_url)
+        file_path = url2pathname(p.path)
+        logger.info("Local file URL resolved to '%s'" % (file_path,))
+        return os.path.getsize(file_path)
+
+    return apache_archive_info.get_size(legacy_url)
+
+
 def check_resource(
     ckan_archive_info,
     apache_archive_info,
@@ -265,7 +276,7 @@ def check_resource(
         return "not-on-ckan"
 
     # determine the size of the original file in the legacy archive
-    legacy_size = apache_archive_info.get_size(legacy_url)
+    legacy_size = get_legacy_size(apache_archive_info, legacy_url)
     if legacy_size is None:
         logger.error("error getting legacy size of: %s" % (legacy_url))
         return "error-getting-size-legacy"
