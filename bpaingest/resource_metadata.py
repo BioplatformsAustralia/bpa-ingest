@@ -56,9 +56,8 @@ def validate_raw_resources_file_metadata(logger, raw_resources_metadata, auth):
         legacy_url = next["metadata"][1]
         if re.search(r"^file.*", legacy_url, re.VERBOSE):
             logger.info(
-                f"Validation of generated raw resources aborted as remote URL is a local file. {base_validation_action_message}"
+                f"Validation of generated raw resources against a local file."
             )
-            return
         logger.info(
             f"Checking MD5 on raw resources file, {next['path']}  against remote URL: {next['metadata'][1]}"
         )
