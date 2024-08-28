@@ -183,7 +183,6 @@ class CKANArchiveInfo(BaseArchiveInfo):
             return None
         logger.debug("start get_size_and_etag `%s' " % url)
         if url not in self._size_cache:
-
             # a URL on S3 with auth token
             resolved = self.resolve_url(url)
             if resolved is None:
@@ -211,7 +210,7 @@ class ApacheArchiveInfo(BaseArchiveInfo):
 
     def head(self, url):
         # Force requested item to be sent as-is
-        headers={'Accept-Encoding': None}
+        headers = {"Accept-Encoding": None}
         return self.session.head(url, auth=self.auth, headers=headers)
 
     def resolve_url(self, url):
@@ -313,6 +312,7 @@ def check_resource(
     logger.debug("end check_resource `%s' " % current_url)
     return None
 
+
 def download_legacy_local_file(legacy_url):
     logger.info("Checking local file `%s' for upload" % (legacy_url,))
 
@@ -324,8 +324,8 @@ def download_legacy_local_file(legacy_url):
     # Need to check file is readable and regular
 
     if not os.path.isfile(file_path) and not os.access(file_path, os.R_OK):
-       logger.warning("File '%s' doesn't exist or isn't readable" % (file_path,))
-       return None, None
+        logger.warning("File '%s' doesn't exist or isn't readable" % (file_path,))
+        return None, None
 
     # Create place to copy them to
     basename = file_path.rsplit(os.path.sep, 1)[-1]
