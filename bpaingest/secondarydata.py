@@ -10,7 +10,18 @@ from bpaingest.resource_metadata import (
     resource_metadata_from_file,
 )
 
+from bpaingest.util import make_logger
+from bpaingest.util import logger_wrap as logwrap
 
+logger = make_logger(__name__)
+
+# This file is only used by the OMG Secondary Data datatype for PacBio
+#
+# This method of dealing with dealing with analysed data is specific to that
+# datatype and was not developed further
+
+
+# Only used by omg-pacbio-genome-assembly
 class SecondaryMetadata(BaseMetadata):
     _raw_resources_file_basename = "raw_resources.json"
     title_mapping = [
@@ -27,6 +38,7 @@ class SecondaryMetadata(BaseMetadata):
         {"key": "taxonomic_group", "separator": ", Project Lead: "},
         {"key": "data_custodian"},
     ]
+
     def parse_raw_list(self, lname):
         p = RawParser(lname, self.raw["match"], self.raw["skip"])
         for tpl in p.matches:
@@ -40,9 +52,13 @@ class SecondaryMetadata(BaseMetadata):
     def _get_packages(self):
         raise NotImplementedError("implement _get_packages()")
 
+    # called first
     def _update_raw_resources(self):
         self._logger.info("Calculating raw resources...")
+        # iterates over package metadata
         for obj in self._packages:
+            # grabs the raw resources field from the secondary metadata xlsx
+            # list of bam files used to create secondary resource
             raw_resources = from_comma_or_space_separated_to_list(
                 self._logger, obj["raw_resources"]
             )

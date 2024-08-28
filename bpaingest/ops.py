@@ -9,6 +9,7 @@ import ckanapi
 import os
 import time
 from urllib.parse import urlparse
+from urllib.request import url2pathname
 from collections import defaultdict
 
 from .libs.ingest_utils import ApiFqBuilder
@@ -182,7 +183,6 @@ class CKANArchiveInfo(BaseArchiveInfo):
             return None
         logger.debug("start get_size_and_etag `%s' " % url)
         if url not in self._size_cache:
-
             # a URL on S3 with auth token
             resolved = self.resolve_url(url)
             if resolved is None:
@@ -210,7 +210,7 @@ class ApacheArchiveInfo(BaseArchiveInfo):
 
     def head(self, url):
         # Force requested item to be sent as-is
-        headers={'Accept-Encoding': None}
+        headers = {"Accept-Encoding": None}
         return self.session.head(url, auth=self.auth, headers=headers)
 
     def resolve_url(self, url):
@@ -243,6 +243,17 @@ class ApacheArchiveInfo(BaseArchiveInfo):
         return self._size_cache[url]
 
 
+def get_legacy_size(apache_archive_info, legacy_url):
+    if legacy_url and legacy_url.startswith("file:///"):
+        logger.info("Determining local file `%s' size for upload" % (legacy_url,))
+        p = urlparse(legacy_url)
+        file_path = url2pathname(p.path)
+        logger.info("Local file URL resolved to '%s'" % (file_path,))
+        return os.path.getsize(file_path)
+
+    return apache_archive_info.get_size(legacy_url)
+
+
 def check_resource(
     ckan_archive_info,
     apache_archive_info,
@@ -264,7 +275,7 @@ def check_resource(
         return "not-on-ckan"
 
     # determine the size of the original file in the legacy archive
-    legacy_size = apache_archive_info.get_size(legacy_url)
+    legacy_size = get_legacy_size(apache_archive_info, legacy_url)
     if legacy_size is None:
         logger.error("error getting legacy size of: %s" % (legacy_url))
         return "error-getting-size-legacy"
@@ -302,12 +313,37 @@ def check_resource(
     return None
 
 
+def download_legacy_local_file(legacy_url):
+    logger.info("Checking local file `%s' for upload" % (legacy_url,))
+
+    p = urlparse(legacy_url)
+    file_path = url2pathname(p.path)
+    logger.info("Local file URL resolved to '%s'" % (file_path,))
+
+    # Need to check directory is readable
+    # Need to check file is readable and regular
+
+    if not os.path.isfile(file_path) and not os.access(file_path, os.R_OK):
+        logger.warning("File '%s' doesn't exist or isn't readable" % (file_path,))
+        return None, None
+
+    # Create place to copy them to
+    basename = file_path.rsplit(os.path.sep, 1)[-1]
+    tempdir = tempfile.mkdtemp(prefix="bpaingest-data-local-")
+    dest_path = os.path.join(tempdir, basename)
+
+    # Make a copy
+    # Returned Path and Tempdir need to be copies, as elsewhere they get removed
+    shutil.copy2(file_path, tempdir)
+
+    logger.debug("end download_legacy_local_file `%s' " % legacy_url)
+    return tempdir, dest_path
+
+
 def download_legacy_file(legacy_url, auth):
     logger.debug("start download_legacy_file `%s' " % legacy_url)
     if legacy_url and legacy_url.startswith("file:///"):
-        raise Exception(
-            "Cannot download local file. URL reference must be via http or https"
-        )
+        return download_legacy_local_file(legacy_url)
     basename = legacy_url.rsplit("/", 1)[-1]
     tempdir = tempfile.mkdtemp(prefix="bpaingest-data-")
     path = os.path.join(tempdir, basename)
@@ -477,5 +513,6 @@ def ckan_get_from_dict(logger, ckan, dict):
             )
     except Exception as e:
         logger.error(e)
-    finally:
-        return ckan_result
+        raise Exception(f"Error calling CKAN server")
+
+    return ckan_result
