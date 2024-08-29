@@ -32,6 +32,7 @@ class PlantProteinAtlasBaseMetadata(BaseMetadata):
     initiative = "Plant Protein Atlas"
     organization = "ppa"
     initiative_code = "PPA"
+    embargo_days = 365
 
     notes_mapping = [
         {"key": "common_name", "separator": ", "},
@@ -723,7 +724,7 @@ class PlantProteinAtlasNutritionalMetadata(PlantProteinAtlasBaseMetadata):
             )
 
             package_embargo_days = self.embargo_days
-            if obj["access_control_date"] is not None:
+            if hasattr(obj, "access_control_date") and obj["access_control_date"] is not None:
                 package_embargo_days = obj["access_control_date"]
             ingest_utils.permissions_organization_member_after_embargo(
                 self._logger,

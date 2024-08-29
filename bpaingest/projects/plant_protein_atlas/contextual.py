@@ -9,7 +9,7 @@ from ...abstract import BaseLibraryContextual
 
 class PlantProteinAtlasDatasetControlContextual(BaseDatasetControlContextual):
     metadata_urls = [
-        "https://downloads-qcif.bioplatforms.com/bpa/ppa_staging/dataset_control/2024-08-27/"
+        "https://downloads-qcif.bioplatforms.com/bpa/ppa_staging/dataset_control/2023-08-09/"
     ]
     name = "ppa-dataset-contextual"
     contextual_linkage = ("dataset_id",)
