@@ -471,6 +471,7 @@ class BaseMetadata:
             resource = resource_metadata_from_file(
                 linkage, md5_file, self.ckan_data_type
             )
+            resource["shared_file"] = True  # all md5s are shared.
             legacy_url = urljoin(file_info["base_url"], md5_basename)
             resources.append((linkage, legacy_url, resource))
         return resources
