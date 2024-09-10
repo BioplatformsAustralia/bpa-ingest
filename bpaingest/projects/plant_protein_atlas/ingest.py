@@ -60,17 +60,17 @@ class PlantProteinAtlasBaseMetadata(BaseMetadata):
         packages = []
 
         # this is a folder-oriented ingest, so we crush each xlsx down into a single row
-        filename_re = re.compile(r"^PPA.*_(\d{5,6})_librarymetadata\.xlsx")
+        filename_re = re.compile(r"^(Analysed_PPA|PPA)_.*_(\d{5,6})_(library|)metadata\.xlsx")
 
         objs = []
-        for fname in glob(self.path + "/*librarymetadata.xlsx"):
+        for fname in glob(self.path + "/*metadata.xlsx"):
             row_objs = []
             self._logger.info(
                 "-Processing {} metadata file {}".format(
                     self.initiative, os.path.basename(fname)
                 )
             )
-            file_dataset_id = filename_re.match(os.path.basename(fname)).groups()[0]
+            file_dataset_id = filename_re.match(os.path.basename(fname)).groups()[1]
 
             full_dataset_id = ingest_utils.extract_ands_id(
                 self._logger, file_dataset_id
@@ -147,7 +147,7 @@ class PlantProteinAtlasBaseMetadata(BaseMetadata):
             )
 
             package_embargo_days = self.embargo_days
-            if obj["access_control_date"] is not None:
+            if hasattr(obj, "access_control_date") and obj["access_control_date"] is not None:
                 package_embargo_days = obj["access_control_date"]
             ingest_utils.permissions_organization_member_after_embargo(
                 self._logger,
@@ -751,3 +751,171 @@ class PlantProteinAtlasNutritionalMetadata(PlantProteinAtlasBaseMetadata):
             del obj["dataset_id"]  # only used for populating the title
             packages.append(obj)
         return packages
+
+
+class PlantProteinAtlasMetabolomicsMetadata(PlantProteinAtlasBaseMetadata):
+    ckan_data_type = "ppa-metabolomics"
+    technology = "metabolomics"
+    sequence_data_type = "metabolomics"
+    embargo_days = 365
+    contextual_classes = common_context
+    metadata_patterns = [r"^.*\.md5$", r"^.*metadata\.xlsx$"]
+    metadata_urls = [
+        "https://downloads-qcif.bioplatforms.com/bpa/ppa_staging/metabolomics/",
+    ]
+    metadata_url_components = ("ticket",)
+    resource_linkage = ("ticket", "bioplatforms_dataset_id")
+    spreadsheet = {
+        "fields": [
+            fld("bioplatforms_project", "bioplatforms_project"),
+            fld(
+                "bioplatforms_sample_id",
+                "bioplatforms_sample_id",
+                coerce=ingest_utils.extract_ands_id,
+            ),
+            fld(
+                "bioplatforms_library_id",
+                "bioplatforms_library_id",
+                coerce=ingest_utils.extract_ands_id,
+            ),
+            fld(
+                "bioplatforms_dataset_id",
+                "bioplatforms_dataset_id",
+                coerce=ingest_utils.extract_ands_id,
+            ),
+            fld("planting_season", "planting_season"),
+            fld("planting_site", "planting_site"),
+            fld("planting_code", "planting_code"),
+            fld("planting_block", "planting_block"),
+            fld("planting_row", "planting_row"),
+            fld("planting_bay", "planting_bay"),
+            fld("variety_commercial", "variety_commercial"),
+            fld("variety_name", "variety_name"),
+            fld("plant_replicate", "plant_replicate"),
+            fld("data_type", "data_type"),
+            fld("omics", "omics"),
+            fld("data_context", "data_context"),
+            fld("facility_project_code", "facility_project_code"),
+            fld("facility_sample_id", "facility_sample_id"),
+            fld('metabolomics_facility', 'metabolomics_facility'),
+            fld('analytical_platform', 'analytical_platform'),
+            fld('sample_fractionation_extraction_solvent', 'sample_fractionation_/_extraction_solvent'),
+            fld('mobile_phase_composition', 'mobile_phase_composition'),
+            fld('lc_column_type', 'lc_column_type'),
+            fld('gradient_time', 'gradient_time_(min)_/_flow'),
+            fld('mass_spectrometer', 'mass_spectrometer'),
+            fld('acquisition_mode', 'acquisition_mode'),
+            fld('activation_type', 'activation_type'),
+            fld('analysis_type', 'analysis_type'),
+            fld('nmr_probe_type', 'nmr_probe type'),
+            fld('nmr_nucleus', 'nmr_nucleus'),
+            fld('nmr_pulse_sequence', 'nmr_pulse sequence'),
+            fld('file_description', 'file_description'),
+        ],
+        "options": {
+            "sheet_name": "Library metadata",
+            "header_length": 1,
+            "column_name_row_index": 0,
+        },
+    }
+
+    md5 = {
+        "match": [
+            files.metabolomics_sample_filename_re,
+            files.metabolomics_pooled_filename_re,
+            files.xlsx_filename_re,
+        ],
+        "skip": [
+            re.compile(r"^.*SampleSheet.*"),
+            re.compile(r"^.*TestFiles\.exe.*"),
+            re.compile(r"^.*DataValidation\.pdf.*"),
+            re.compile(r"^.*checksums\.(exf|md5)$"),
+        ],
+    }
+
+    tag_names = ["metabolomics", ]
+
+
+class PlantProteinAtlasMetabolomicsAnalysedMetadata(PlantProteinAtlasBaseMetadata):
+        ckan_data_type = "ppa-metabolomics-analysed"
+        technology = "metabolomics-analysed"
+        sequence_data_type = "metabolomics-analsyed"
+        embargo_days = 365
+        contextual_classes = common_context
+        metadata_patterns = [r"^.*\.md5$", r"^.*metadata\.xlsx$"]
+        metadata_urls = [
+            "https://downloads-qcif.bioplatforms.com/bpa/ppa_staging/metabolomics-analysed/",
+        ]
+        metadata_url_components = ("ticket",)
+        resource_linkage = ("ticket", "bioplatforms_dataset_id")
+        spreadsheet = {
+            "fields": [
+                fld("bioplatforms_project", "bioplatforms_project"),
+                fld(
+                    "bioplatforms_sample_id",
+                    "bioplatforms_sample_id",
+                    coerce=ingest_utils.extract_ands_id,
+                ),
+                fld(
+                    "bioplatforms_library_id",
+                    "bioplatforms_library_id",
+                    coerce=ingest_utils.extract_ands_id,
+                ),
+                fld(
+                    "bioplatforms_dataset_id",
+                    "bioplatforms_dataset_id",
+                    coerce=ingest_utils.extract_ands_id,
+                ),
+                fld("planting_season", "planting_season"),
+                fld("planting_site", "planting_site"),
+                fld("planting_code", "planting_code"),
+                fld("planting_block", "planting_block"),
+                fld("planting_row", "planting_row"),
+                fld("planting_bay", "planting_bay"),
+                fld("variety_commercial", "variety_commercial"),
+                fld("variety_name", "variety_name"),
+                fld("plant_replicate", "plant_replicate"),
+                fld("data_type", "data_type"),
+                fld("omics", "omics"),
+                fld("data_context", "data_context"),
+                fld("facility_project_code", "facility_project_code"),
+                fld("facility_sample_id", "facility_sample_id"),
+                fld('metabolomics_facility', 'metabolomics_facility'),
+                fld('analytical_platform', 'analytical_platform'),
+                fld('sample_fractionation_extraction_solvent', 'sample_fractionation_/_extraction_solvent'),
+                fld('mobile_phase_composition', 'mobile_phase_composition'),
+                fld('lc_column_type', 'lc_column_type'),
+                fld('gradient_time', 'gradient_time_(min)_/_flow'),
+                fld('mass_spectrometer', 'mass_spectrometer'),
+                fld('acquisition_mode', 'acquisition_mode'),
+                fld('activation_type', 'activation_type'),
+                fld('analysis_type', 'analysis_type'),
+                fld('nmr_probe_type', 'nmr_probe type'),
+                fld('nmr_nucleus', 'nmr_nucleus'),
+                fld('nmr_pulse_sequence', 'nmr_pulse sequence'),
+                fld('file_description', 'file_description'),
+            ],
+            "options": {
+                "sheet_name": "Library metadata",
+                "header_length": 1,
+                "column_name_row_index": 0,
+            },
+        }
+
+        md5 = {
+            "match": [
+                files.metabolomics_analysed_filename_re,
+                files.analysed_xlsx_filename_re,
+            ],
+            "skip": [
+                re.compile(r"^.*SampleSheet.*"),
+                re.compile(r"^.*TestFiles\.exe.*"),
+                re.compile(r"^.*DataValidation\.pdf.*"),
+                re.compile(r"^.*checksums\.(exf|md5)$"),
+            ],
+        }
+
+        tag_names = ["metabolomics",
+                     "metabolomics-analysed",
+                     ]
+

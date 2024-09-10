@@ -5,6 +5,7 @@ from bpaingest.projects.plant_protein_atlas.files import (
     hyperspect_re,
     asd_spectro_re,
     xlsx_filename_re,
+    metabolomics_pooled_filename_re,
 )
 
 
@@ -50,3 +51,11 @@ def test_xlsx_files():
     ]
     for filename in filenames:
         assert xlsx_filename_re.match(filename) is not None
+
+def test_metabolomics_pooled_files():
+    filenames = [
+                "453268_PPA_MA_AWRI_LCMS_nonpolar_metabolite_profiling_negative_R1_Nura.raw",
+                "453268_PPA_MA_AWRI_LCMS_nonpolar_metabolite_profiling_negative_R1_PBA_Amberley.raw",
+    ]
+    for filename in filenames:
+        assert metabolomics_pooled_filename_re.match(filename) is not None
