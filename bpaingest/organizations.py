@@ -266,4 +266,18 @@ ORGANIZATIONS = [
         "image_url": "https://data.bioplatforms.com/bpalogo.png",
         "groups": [{"capacity": "public", "name": "bpa-sample-data"}],
     },
+    {
+        "name": "bpa-bioinformatics-workshop",
+        "title": "2024 Fungi Bioinformatics Workshop",
+        "display_name": "2024 Fungi Bioinformatics Workshop",
+        "image_url": "https://data.bioplatforms.com/bpalogo.png",
+        "groups": [{"capacity": "public", "name": BPA_ORGANIZATION_ID}],
+    },
+    {
+        "name": "bpa-bioinformatics-workshop-consortium-members",
+        "title": "Bioinformatics Workshop Consortium Members",
+        "display_name": "Bioinformatics Workshop Consortium Members",
+        "image_url": "https://data.bioplatforms.com/bpalogo.png",
+        "groups": [{"capacity": "public", "name": "bpa-bioinformatics-workshop"}],
+    },
 ]
