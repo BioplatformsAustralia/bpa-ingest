@@ -298,6 +298,9 @@ class BaseMetadata:
                 "MD5",
                 "BLOW5",
                 "REK",
+                "RAW",
+                "WIFF2",
+                "DATA",
             ):
                 resource_obj["format"] = extension
 
