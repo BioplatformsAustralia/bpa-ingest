@@ -193,6 +193,10 @@ ppa()
   apply ppa-phenoct-xray-analysed $*
   apply ppa-hyperspect $*
   apply ppa-nutritional-analysed $*
+  apply ppa-metabolomics $*
+  apply ppa-metabolomics-analysed $*
+  apply ppa-proteomics $*
+  apply ppa-proteomics-analysed $*
 }
 
 grasslands() {

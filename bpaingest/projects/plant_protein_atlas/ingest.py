@@ -119,8 +119,8 @@ class PlantProteinAtlasBaseMetadata(BaseMetadata):
 
         for fname, obj in objs:
             ticket = obj["ticket"]
-
-            name = sample_id_to_ckan_name(file_dataset_id, self.ckan_data_type)
+            dataset = obj["dataset_id"]
+            name = sample_id_to_ckan_name(dataset, self.ckan_data_type)
             tracking_info = self.get_tracking_info(ticket)
             obj.update(
                 {
@@ -839,7 +839,7 @@ class PlantProteinAtlasMetabolomicsMetadata(PlantProteinAtlasBaseMetadata):
 class PlantProteinAtlasMetabolomicsAnalysedMetadata(PlantProteinAtlasBaseMetadata):
         ckan_data_type = "ppa-metabolomics-analysed"
         technology = "metabolomics-analysed"
-        sequence_data_type = "metabolomics-analsyed"
+        sequence_data_type = "metabolomics-analysed"
         embargo_days = 365
         contextual_classes = common_context
         metadata_patterns = [r"^.*\.md5$", r"^.*metadata\.xlsx$"]
@@ -919,3 +919,172 @@ class PlantProteinAtlasMetabolomicsAnalysedMetadata(PlantProteinAtlasBaseMetadat
                      "metabolomics-analysed",
                      ]
 
+class PlantProteinAtlasProteomicsMetadata(PlantProteinAtlasBaseMetadata):
+    ckan_data_type = "ppa-proteomics"
+    technology = "proteomics"
+    sequence_data_type = "proteomics"
+    embargo_days = 365
+    contextual_classes = common_context
+    metadata_patterns = [r"^.*\.md5$", r"^.*metadata\.xlsx$"]
+    metadata_urls = [
+        "https://downloads-qcif.bioplatforms.com/bpa/ppa_staging/proteomics-raw/",
+    ]
+    metadata_url_components = ("ticket",)
+    resource_linkage = ("ticket", "bioplatforms_dataset_id")
+    spreadsheet = {
+        "fields": [
+            fld("bioplatforms_project", "bioplatforms_project"),
+            fld(
+                "bioplatforms_sample_id",
+                "bioplatforms_sample_id",
+                coerce=ingest_utils.extract_ands_id,
+            ),
+            fld(
+                "bioplatforms_library_id",
+                "bioplatforms_library_id",
+                coerce=ingest_utils.extract_ands_id,
+            ),
+            fld(
+                "bioplatforms_dataset_id",
+                "bioplatforms_dataset_id",
+                coerce=ingest_utils.extract_ands_id,
+            ),
+            fld("planting_season", "planting_season"),
+            fld("planting_site", "planting_site"),
+            fld("planting_code", "planting_code"),
+            fld("planting_block", "planting_block"),
+            fld("planting_row", "planting_row"),
+            fld("planting_bay", "planting_bay"),
+            fld("variety_commercial", "variety_commercial"),
+            fld("variety_name", "variety_name"),
+            fld("plant_replicate", "plant_replicate"),
+            fld("data_type", "data_type"),
+            fld("omics", "omics"),
+            fld("data_context", "data_context"),
+            fld("facility_project_code", "facility_project_code"),
+            fld("facility_sample_id", "facility_sample_id"),
+            fld('proteomics_facility', 'proteomics_facility'),
+            fld('analytical_platform', 'analytical_platform'),
+            fld('sample_fractionation', 'sample_fractionation_(none/number)'),
+            fld('lc_column_type', 'lc/column type'),
+            fld('gradient_time', 'gradient_time_(min)/%_acn_(start-finish_main_gradient)/flow'),
+            fld('sample_on_column', 'sample_on_column_(µg)'),
+            fld('mass_spectrometer', 'mass_spectrometer'),
+            fld('acquisition_mode_fragmentation', 'acquisition_mode/fragmentation'),
+            fld('file_description', 'file_description'),
+        ],
+        "options": {
+            "sheet_name": "Library metadata",
+            "header_length": 1,
+            "column_name_row_index": 0,
+        },
+    }
+
+    md5 = {
+        "match": [
+            files.proteomics_sample_filename_re,
+            files.xlsx_filename_re,
+        ],
+        "skip": [
+            re.compile(r"^.*SampleSheet.*"),
+            re.compile(r"^.*TestFiles\.exe.*"),
+            re.compile(r"^.*DataValidation\.pdf.*"),
+            re.compile(r"^.*checksums\.(exf|md5)$"),
+        ],
+    }
+
+    tag_names = ["proteomics", ]
+
+
+class PlantProteinAtlasProteomicsAnalysedMetadata(PlantProteinAtlasBaseMetadata):
+        ckan_data_type = "ppa-proteomics-analysed"
+        technology = "proteomics-analysed"
+        sequence_data_type = "proteomics-analysed"
+        embargo_days = 365
+        contextual_classes = common_context
+        metadata_patterns = [r"^.*\.md5$", r"^.*metadata\.xlsx$"]
+        metadata_urls = [
+            "https://downloads-qcif.bioplatforms.com/bpa/ppa_staging/proteomics-analysed/",
+        ]
+        metadata_url_components = ("ticket",)
+        resource_linkage = ("ticket", "bioplatforms_dataset_id")
+        spreadsheet = {
+            "fields": [
+                fld("bioplatforms_project", "bioplatforms_project"),
+                fld(
+                    "bioplatforms_sample_id",
+                    "bioplatforms_sample_id",
+                    coerce=ingest_utils.extract_ands_id,
+                ),
+                fld(
+                    "bioplatforms_library_id",
+                    "bioplatforms_library_id",
+                    coerce=ingest_utils.extract_ands_id,
+                ),
+                fld(
+                    "bioplatforms_dataset_id",
+                    "bioplatforms_dataset_id",
+                    coerce=ingest_utils.extract_ands_id,
+                ),
+                fld("planting_season", "planting_season"),
+                fld("planting_site", "planting_site"),
+                fld("planting_code", "planting_code"),
+                fld("planting_block", "planting_block"),
+                fld("planting_row", "planting_row"),
+                fld("planting_bay", "planting_bay"),
+                fld("variety_commercial", "variety_commercial"),
+                fld("variety_name", "variety_name"),
+                fld("plant_replicate", "plant_replicate"),
+                fld("data_type", "data_type"),
+                fld("omics", "omics"),
+                fld("data_context", "data_context"),
+                fld("facility_project_code", "facility_project_code"),
+                fld("facility_sample_id", "facility_sample_id"),
+                fld('proteomics_facility', 'proteomics_facility'),
+                fld('contact_person', 'contact_person'),
+                fld('data_analysis_date', 'data_analysis_date', coerce=ingest_utils.get_date_isoformat),
+                fld('file_description', 'file_description'),
+                skp('tryptophan_content_(g/100g_dry_weight)'),
+                skp('trypsin_inhibitors_quantification (trypsin inhibiting units (tiu)/ mg)'),
+                skp('alanine_content_(g/100g_dry_weight)'),
+                skp('arginine_content_(g/100g_dry_weight)'),
+                skp('aspartic_acid_content_(g/100g_dry_weight)'),
+                skp('glutamic_acid_content_(g/100g_dry_weight)'),
+                skp('glycine_content_(g/100g_dry_weight)'),
+                skp('histidine_content_(g/100g_dry_weight)'),
+                skp('lysine_content_(g/100g_dry_weight)'),
+                skp('phenylalanine_content_(g/100g_dry_weight)'),
+                skp('proline_content_(g/100g_dry_weight)',),
+                skp('serine_content_(g/100g_dry_weight)'),
+                skp('threonine_content_(g/100g_dry_weight)'),
+                skp('tyrosine_content_(g/100g_dry_weight)'),
+                skp('valine_content_(g/100g_dry_weight)'),
+                skp('isoleucine_content_(g/100g_dry_weight)'),
+                skp('isoleucine_content_(g / 100g_dry_weight)'),
+                skp('leucine_content_(g/100g_dry_weight)'),
+                skp('cysteine_content_(g/100g_dry_weight)'),
+                skp('methionine_content_(g/100g_dry_weight)'),
+            ],
+            "options": {
+                "sheet_name": "Library metadata",
+                "header_length": 1,
+                "column_name_row_index": 0,
+            },
+        }
+
+        md5 = {
+            "match": [
+                files.proteomics_analysed_filename_re,
+                files.analysed_xlsx_filename_re,
+            ],
+            "skip": [
+                re.compile(r"^.*SampleSheet.*"),
+                re.compile(r"^.*TestFiles\.exe.*"),
+                re.compile(r"^.*DataValidation\.pdf.*"),
+                re.compile(r"^.*checksums\.(exf|md5)$"),
+            ],
+        }
+
+        tag_names = ["proteomics",
+                     "proteomics-analysed",
+                     ]

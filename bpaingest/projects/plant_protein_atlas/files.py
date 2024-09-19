@@ -47,7 +47,7 @@ asd_spectro_re = re.compile(ASD_SPECTRO_PATTERN, re.VERBOSE)
 
 XLSX_PATTERN = r"""
     PPA_
-    (?P<facility_id>(APPF|LTU|MA_AWRI))_
+    (?P<facility_id>(APPF|LTU|MA_AWRI|UNISA))_
     (Analysed_|)
     (?P<dataset_id>\d{4,6})_
     (librarymetadata|samplemetadata_ingest|metadata)
@@ -85,12 +85,33 @@ METABOLOMICS_ANALYSED_PATTERN = r"""
     (_LCMS_nonpolar_metabolite_profiling_negative|)
     \.(pdf|xlsx)
 """
-
 metabolomics_analysed_filename_re = re.compile(METABOLOMICS_ANALYSED_PATTERN, re.VERBOSE)
+
+PROTEOMICS_SAMPLE_RAW_PATTERN = r"""
+    (?P<sample_id>\d{4,6})_
+    LibID(?P<library_id>\d{4,6})_
+    (PPA_
+    (?P<facility_id>(UniSA)))?
+    (_LCMS_DIA|)
+    \.(timeseries\.data|wiff|wiff2|wiff\.scan)$
+"""
+proteomics_sample_filename_re = re.compile(PROTEOMICS_SAMPLE_RAW_PATTERN, re.VERBOSE )
+
+PROTEOMICS_ANALYSED_PATTERN = r"""
+    (Analysed_)
+    (?P<dataset_id>\d{4,6})_
+    (PPA_
+    (?P<facility_id>(UNISA)))?
+    (_LCMS_|_)?
+    (DIA_report|DIA|amino_acid_tryptophan_report|amino_acid_standard_report|amino_acid_cysteine_methionine_report|trypsin_inhibitors_quantitation_report)
+    \.(pdf|xlsx)
+"""
+
+proteomics_analysed_filename_re = re.compile(PROTEOMICS_ANALYSED_PATTERN, re.VERBOSE)
 
 ANALYSED_XLSX_PATTERN = r"""
     Analysed_PPA_
-    (?P<facility_id>(APPF|LTU|MA_AWRI))_
+    (?P<facility_id>(APPF|LTU|MA_AWRI|UNISA))_
     (?P<dataset_id>\d{4,6})_
     (metadata)
     \.xlsx
