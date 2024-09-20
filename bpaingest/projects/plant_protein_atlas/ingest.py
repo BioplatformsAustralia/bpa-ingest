@@ -1064,6 +1064,11 @@ class PlantProteinAtlasProteomicsAnalysedMetadata(PlantProteinAtlasBaseMetadata)
                 skp('leucine_content_(g/100g_dry_weight)'),
                 skp('cysteine_content_(g/100g_dry_weight)'),
                 skp('methionine_content_(g/100g_dry_weight)'),
+                skp('database_generation_date (yyyy-mm-dd)'),
+                skp('file_name_of_the_database_that_is_generated'),
+                skp('decription_of_how_the_database_is_generated'),
+                skp('proteome_size'),
+
             ],
             "options": {
                 "sheet_name": "Library metadata",
@@ -1075,6 +1080,7 @@ class PlantProteinAtlasProteomicsAnalysedMetadata(PlantProteinAtlasBaseMetadata)
         md5 = {
             "match": [
                 files.proteomics_analysed_filename_re,
+                files.proteomics_analysed_database_pattern_re,
                 files.analysed_xlsx_filename_re,
             ],
             "skip": [
