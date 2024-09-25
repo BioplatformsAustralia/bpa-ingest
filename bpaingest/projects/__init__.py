@@ -133,6 +133,10 @@ from .bpa_sample_data.ingest import (
     BSDSampleImagesMetadata,
 )
 
+from .workshop.ingest import (
+    WorkshopPlantPathogenPacbioHifiMetadata,
+    WorkshopFungiIlluminaShortreadMetadata,
+)
 
 class ProjectInfo:
     projects = {
@@ -267,6 +271,10 @@ class ProjectInfo:
         ],
         "bsd": [
             BSDSampleImagesMetadata,
+        ],
+        "workshop": [
+            WorkshopPlantPathogenPacbioHifiMetadata,
+            WorkshopFungiIlluminaShortreadMetadata,
         ],
     }
 
