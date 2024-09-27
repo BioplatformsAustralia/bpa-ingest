@@ -8,6 +8,8 @@ from . import files
 from .contextual import (
     WorkshopPlantPathogenLibraryContextual,
     WorkshopPlantPathogenDatasetControlContextual,
+    WorkshopFungiLibraryContextual,
+    WorkshopFungiDatasetControlContextual,
 )
 from .tracking import WorkshopPlantPathogenGoogleTrackMetadata
 from .tracking import WorkshopFungiGoogleTrackMetadata
@@ -18,14 +20,25 @@ from ...libs.excel_wrapper import make_field_definition as fld
 from ...util import (
     sample_id_to_ckan_name,
     apply_cc_by_license,
+    common_values,
+    merge_values,
+    clean_tag_name,
 )
 from ...resource_metadata import resource_metadata_from_file, resource_metadata_id
 
 
-common_context = [WorkshopPlantPathogenLibraryContextual, WorkshopPlantPathogenDatasetControlContextual]
+pp_common_context = [
+    WorkshopPlantPathogenLibraryContextual,
+    WorkshopPlantPathogenDatasetControlContextual,
+]
+fungi_common_context = [
+    WorkshopFungiLibraryContextual,
+    WorkshopFungiDatasetControlContextual,
+]
 
 CONSORTIUM_ORG_NAME = "bpa-bioinformatics-workshop-consortium-members"
-VALID_TICKETS = ['BPAOPS-1356','BPAOPS-1452']
+VALID_TICKETS = ["BPAOPS-1356", "BPAOPS-1452"]
+
 
 def valid_tickets_in_resource_tuple(vttuple):
     (linkage, url, obj) = vttuple
@@ -36,13 +49,16 @@ def valid_tickets_in_resource_tuple(vttuple):
 
     return False
 
+
 def valid_tickets(vtdict):
-    return vtdict['ticket'] in VALID_TICKETS
+    return vtdict["ticket"] in VALID_TICKETS
+
 
 def perturb_id(pituple):
-    (linkage,url,obj) = pituple
-    obj['id'] = resource_metadata_id(obj['resource_type'], obj['name'])
+    (linkage, url, obj) = pituple
+    obj["id"] = resource_metadata_id(obj["resource_type"], obj["name"])
     return (linkage, url, obj)
+
 
 class WorkshopPlantPathogenBaseMetadata(BaseMetadata):
     initiative = "Workshop Plant Pathogen"
@@ -150,7 +166,7 @@ class WorkshopPlantPathogenBaseMetadata(BaseMetadata):
 
                 self._add_datatype_specific_info_to_package(obj, row, fname)
                 self._build_title_into_object(obj)
-                obj.update({"title": "(Workshop) %s" % (obj['title'],)})
+                obj.update({"title": "(Workshop) %s" % (obj["title"],)})
                 self.build_notes_into_object(obj)
                 # replace access control from PP with simpler version
                 package_embargo_days = self.embargo_days
@@ -165,9 +181,7 @@ class WorkshopPlantPathogenBaseMetadata(BaseMetadata):
                     CONSORTIUM_ORG_NAME,
                 )
                 ingest_utils.apply_access_control(self._logger, self, obj)
-                obj["tags"] = [
-                    {"name": "{:.100}".format(t)} for t in self.tag_names
-                ]
+                obj["tags"] = [{"name": "{:.100}".format(t)} for t in self.tag_names]
                 packages.append(obj)
         return packages
 
@@ -178,7 +192,7 @@ class WorkshopPlantPathogenPacbioHifiMetadata(WorkshopPlantPathogenBaseMetadata)
     sequence_data_type = "pacbio-hifi"
     embargo_days = 365
     description = "PacBio HiFi"
-    contextual_classes = common_context
+    contextual_classes = pp_common_context
     metadata_patterns = [r"^.*\.md5$", r"^.*(\.|_)metadata.*.*\.xlsx$"]
     metadata_urls = [
         "https://downloads-qcif.bioplatforms.com/bpa/pp_staging/pacbio-hifi/",
@@ -306,7 +320,9 @@ class WorkshopPlantPathogenPacbioHifiMetadata(WorkshopPlantPathogenBaseMetadata)
         self.contextual_metadata = contextual_metadata
         self.metadata_info = metadata_info
         self.google_track_meta = WorkshopPlantPathogenGoogleTrackMetadata(logger)
-        self.google_project_codes_meta = WorkshopPlantPathogenProjectsGoogleMetadata(logger)
+        self.google_project_codes_meta = WorkshopPlantPathogenProjectsGoogleMetadata(
+            logger
+        )
 
     def _get_packages(self):
         packages = self._get_common_packages()
@@ -326,7 +342,9 @@ class WorkshopPlantPathogenPacbioHifiMetadata(WorkshopPlantPathogenBaseMetadata)
     def _get_resources(self):
         resources = self._get_common_resources()
         resources = list(filter(lambda x: perturb_id(x), resources))
-        resources = list(filter(lambda x: valid_tickets_in_resource_tuple(x), resources))
+        resources = list(
+            filter(lambda x: valid_tickets_in_resource_tuple(x), resources)
+        )
         return resources + self.generate_common_files_resources(resources)
 
     def _add_datatype_specific_info_to_resource(self, resource, md5_file=None):
@@ -436,7 +454,7 @@ class WorkshopFungiBaseMetadata(BaseMetadata):
                 )
 
                 self.build_title_into_object(obj)
-                obj.update({"title": "(Workshop) %s" % (obj['title'],)})
+                obj.update({"title": "(Workshop) %s" % (obj["title"],)})
                 self.build_notes_into_object(obj)
                 self._add_datatype_specific_info_to_package(obj, row, fname)
                 ingest_utils.permissions_organization_member_after_embargo(
@@ -457,7 +475,7 @@ class WorkshopFungiIlluminaShortreadMetadata(WorkshopFungiBaseMetadata):
     technology = "illumina-shortread"
     sequence_data_type = "illumina-shortread"
     embargo_days = 365
-    contextual_classes = common_context
+    contextual_classes = fungi_common_context
     metadata_patterns = [r"^.*\.md5$", r"^.*_metadata.*.*\.xlsx$"]
     metadata_urls = [
         "https://downloads-qcif.bioplatforms.com/bpa/fungi_staging/illumina-shortread/",
@@ -587,7 +605,9 @@ class WorkshopFungiIlluminaShortreadMetadata(WorkshopFungiBaseMetadata):
     def _get_resources(self):
         resources = self._get_common_resources()
         resources = list(filter(lambda x: perturb_id(x), resources))
-        resources = list(filter(lambda x: valid_tickets_in_resource_tuple(x), resources))
+        resources = list(
+            filter(lambda x: valid_tickets_in_resource_tuple(x), resources)
+        )
         return resources
 
     def _add_datatype_specific_info_to_resource(self, resource, md5_file=None):
