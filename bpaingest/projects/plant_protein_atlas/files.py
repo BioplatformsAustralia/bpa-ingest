@@ -92,8 +92,8 @@ PROTEOMICS_SAMPLE_RAW_PATTERN = r"""
     LibID(?P<library_id>\d{4,6})_
     (PPA_
     (?P<facility_id>(UniSA)))?
-    (_LCMS_DIA|)
-    \.(timeseries\.data|wiff|wiff2|wiff\.scan)$
+    (_LCMS_DIA|_LCMS_DDA)
+    \.(timeseries\.data|wiff|wiff2|wiff\.scan|raw)$
 """
 proteomics_sample_filename_re = re.compile(PROTEOMICS_SAMPLE_RAW_PATTERN, re.VERBOSE )
 
