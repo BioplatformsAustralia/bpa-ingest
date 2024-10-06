@@ -130,6 +130,9 @@ class ExcelWrapper:
     def _find_sheet_in_workbook(self, file_name, workbook, sheet_name):
         # This method performs the following in order to find an appropriately named sheet in the given workbook:
         # Try sheet_name supplied as parameter to this method (if it is not None).
+
+        # sheet_name can be either a single string or a list of strings
+
         # If the provided sheet name is not found, log an error and continue.
         # Try in turn the sheet names in the possible_sheet_names list below.
         # Select the first sheet (ie - index 0), and log teh fact we are using the first sheet, (and its name)
@@ -146,20 +149,44 @@ class ExcelWrapper:
 
         sheet = None
         if sheet_name is not None:
-            if sheet_name not in workbook.sheet_names():
-                self._logger.warn(
-                    "Missing sheet named '%s' in %s" % (sheet_name, file_name)
-                )
-                self._logger.warn(
-                    "Available sheets are '%s"
-                    % (
-                        str(
-                            workbook.sheet_names(),
+            if isinstance(sheet_name, str):
+                if sheet_name not in workbook.sheet_names():
+                    self._logger.warn(
+                        "Missing sheet named '%s' in %s" % (sheet_name, file_name)
+                    )
+                    self._logger.warn(
+                        "Available sheets are '%s"
+                        % (
+                            str(
+                                workbook.sheet_names(),
+                            )
                         )
                     )
-                )
+                else:
+                    sheet = workbook.sheet_by_name(sheet_name)
+            elif all(isinstance(candidate, str) for candidate in sheet_name):
+                notfound = []
+                for candidate in sheet_name:
+                    if candidate not in workbook.sheet_names():
+                        notfound.append(candidate)
+                    else:
+                        sheet = workbook.sheet_by_name(candidate)
+                        break
+                if sheet is None:
+                    for candidate in notfound:
+                        self._logger.warn(
+                            "Missing sheet named '%s' in %s" % (candidate, file_name)
+                        )
+                    self._logger.warn(
+                        "Available sheets are '%s"
+                        % (
+                            str(
+                                workbook.sheet_names(),
+                            )
+                        )
+                    )
             else:
-                sheet = workbook.sheet_by_name(sheet_name)
+                raise TypeError
 
         # Didn't find it with the parameter sheet name, see if its in list of possibles
         if sheet is None:
