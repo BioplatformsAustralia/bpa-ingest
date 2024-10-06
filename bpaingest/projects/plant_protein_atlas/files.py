@@ -103,7 +103,7 @@ PROTEOMICS_ANALYSED_PATTERN = r"""
     (PPA_
     (?P<facility_id>(UNISA)))?
     (_LCMS_|_)?
-    (DIA_report|DIA|amino_acid_tryptophan_report|amino_acid_standard_report|amino_acid_cysteine_methionine_report|trypsin_inhibitors_quantitation_report)
+    (DIA_report|DIA|DDA_report|DDA|amino_acid_tryptophan_report|amino_acid_standard_report|amino_acid_cysteine_methionine_report|trypsin_inhibitors_quantitation_report)
     \.(pdf|xlsx)
 """
 proteomics_analysed_filename_re = re.compile(PROTEOMICS_ANALYSED_PATTERN, re.VERBOSE)
