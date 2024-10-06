@@ -213,7 +213,10 @@ class FungiIlluminaShortreadMetadata(FungiBaseMetadata):
             fld("model_base_caller", "model_base_caller"),
         ],
         "options": {
-            "sheet_name": "libmetadata",
+            "sheet_name": [
+                "libmetadata",
+                "library_genomics",
+            ],
             "header_length": 1,
             "column_name_row_index": 0,
         },
