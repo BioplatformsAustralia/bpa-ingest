@@ -108,17 +108,6 @@ PROTEOMICS_ANALYSED_PATTERN = r"""
 """
 proteomics_analysed_filename_re = re.compile(PROTEOMICS_ANALYSED_PATTERN, re.VERBOSE)
 
-PROTEOMICS_ANALYSED_DATABASE_PATTERN = r"""
-    (?P<sample_id>\d{4,6})_
-    LibID(?P<library_id>\d{4,6})_
-    (proteome_database_\d{8}_)
-    (PPA_
-    (?P<facility_id>(UniSA|CSIRO)))?
-    \.(fasta)$
-"""
-proteomics_analysed_database_pattern_re = re.compile(PROTEOMICS_ANALYSED_DATABASE_PATTERN, re.VERBOSE )
-
-
 ANALYSED_XLSX_PATTERN = r"""
     Analysed_PPA_
     (?P<facility_id>(APPF|LTU|MA_AWRI|UNISA|CSIRO))_
@@ -128,3 +117,25 @@ ANALYSED_XLSX_PATTERN = r"""
 """
 
 analysed_xlsx_filename_re = re.compile(ANALYSED_XLSX_PATTERN, re.VERBOSE)
+
+
+PROTEOME_DATABASE_PATTERN = r"""
+    (?P<sample_id>\d{4,6})_
+    LibID(?P<library_id>\d{4,6})_
+    (proteome_database_\d{8}_)
+    (PPA_
+    (?P<facility_id>(UniSA|CSIRO)))?
+    \.(fasta)$
+"""
+proteome_database_pattern_re = re.compile(PROTEOME_DATABASE_PATTERN, re.VERBOSE )
+
+
+PROTEOME_XLSX_PATTERN = r"""
+    Analysed_PPA_
+    (?P<facility_id>(APPF|LTU|MA_AWRI|UNISA|CSIRO))_
+    (?P<dataset_id>\d{4,6})_
+    (metadata)
+    \.xlsx
+"""
+
+proteome_xlsx_filename_re = re.compile(PROTEOME_XLSX_PATTERN, re.VERBOSE)

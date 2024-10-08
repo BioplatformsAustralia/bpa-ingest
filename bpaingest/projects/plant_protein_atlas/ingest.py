@@ -1080,7 +1080,6 @@ class PlantProteinAtlasProteomicsAnalysedMetadata(PlantProteinAtlasBaseMetadata)
         md5 = {
             "match": [
                 files.proteomics_analysed_filename_re,
-                files.proteomics_analysed_database_pattern_re,
                 files.analysed_xlsx_filename_re,
             ],
             "skip": [
@@ -1093,4 +1092,77 @@ class PlantProteinAtlasProteomicsAnalysedMetadata(PlantProteinAtlasBaseMetadata)
 
         tag_names = ["proteomics",
                      "proteomics-analysed",
+                     ]
+
+
+class PlantProteinAtlasProteomicsDatabaseMetadata(PlantProteinAtlasBaseMetadata):
+        ckan_data_type = "ppa-proteomics-database"
+        technology = "proteomics-database"
+        sequence_data_type = "proteomics-database"
+        embargo_days = 365
+        contextual_classes = common_context
+        metadata_patterns = [r"^.*\.md5$", r"^.*metadata\.xlsx$"]
+        metadata_urls = [
+            "https://downloads-qcif.bioplatforms.com/bpa/ppa_staging/proteomics-database/",
+        ]
+        metadata_url_components = ("ticket",)
+        resource_linkage = ("ticket", "bioplatforms_dataset_id")
+        spreadsheet = {
+            "fields": [
+                fld("bioplatforms_project", "bioplatforms_project"),
+                fld(
+                    "bioplatforms_sample_id",
+                    "bioplatforms_sample_id",
+                    coerce=ingest_utils.extract_ands_id,
+                ),
+                fld(
+                    "bioplatforms_library_id",
+                    "bioplatforms_library_id",
+                    coerce=ingest_utils.extract_ands_id,
+                ),
+                fld(
+                    "bioplatforms_dataset_id",
+                    "bioplatforms_dataset_id",
+                    coerce=ingest_utils.extract_ands_id,
+                ),
+                fld('scientific_name', 'scientific_name'),
+                fld('scientific_name_authorship', 'scientific_name_authorship'),
+                fld('scientific_name_note', 'scientific_name_note'),
+                fld('common_name', 'common_name'),
+                fld('taxonomic_group', 'taxonomic_group'),
+                fld('genotype', 'genotype'),
+                fld('data_type', 'data_type'),
+                fld('omics', 'omics'),
+                fld('data_context', 'data_context'),
+                fld('facility_project_code', 'facility_project_code'),
+                fld('facility_sample_id', 'facility_sample_id'),
+                fld('proteomics_facility', 'proteomics_facility'),
+                fld('contact_person', 'contact_person'),
+                fld('file_description', 'file_description'),
+                fld('database_generation_date', 'database_generation_date (yyyy-mm-dd)', coerce=ingest_utils.get_date_isoformat),
+                skp('file_name_of_the_database_that_is_generated'),
+                fld('decription_of_how_the_database_is_generated', 'decription_of_how_the_database_is_generated'),
+                fld('proteome_size', 'proteome_size', coerce=ingest_utils.get_int),
+            ],
+            "options": {
+                "sheet_name": "Library metadata",
+                "header_length": 1,
+                "column_name_row_index": 0,
+            },
+        }
+
+        md5 = {
+            "match": [
+                files.proteome_database_pattern_re,
+                files.proteome_xlsx_filename_re,
+            ],
+            "skip": [
+                re.compile(r"^.*SampleSheet.*"),
+                re.compile(r"^.*TestFiles\.exe.*"),
+                re.compile(r"^.*DataValidation\.pdf.*"),
+                re.compile(r"^.*checksums\.(exf|md5)$"),
+            ],
+        }
+
+        tag_names = ["proteome-database",
                      ]

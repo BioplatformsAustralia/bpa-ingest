@@ -116,6 +116,7 @@ from .plant_protein_atlas.ingest import (
     PlantProteinAtlasMetabolomicsAnalysedMetadata,
     PlantProteinAtlasProteomicsMetadata,
     PlantProteinAtlasProteomicsAnalysedMetadata,
+    PlantProteinAtlasProteomicsDatabaseMetadata,
 )
 
 from .grasslands.ingest import (
@@ -259,6 +260,7 @@ class ProjectInfo:
             PlantProteinAtlasMetabolomicsAnalysedMetadata,
             PlantProteinAtlasProteomicsMetadata,
             PlantProteinAtlasProteomicsAnalysedMetadata,
+            PlantProteinAtlasProteomicsDatabaseMetadata,
         ],
         "grasslands": [
             AGIlluminaShortreadMetadata,
