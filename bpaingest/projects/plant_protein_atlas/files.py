@@ -61,7 +61,7 @@ METABOLOMICS_SAMPLE_RAW_PATTERN = r"""
     LibID(?P<library_id>\d{4,6})_
     (PPA_
     (?P<facility_id>(MA_AWRI)))?
-    (_LCMS_nonpolar_metabolite_profiling_negative|)
+    (_LCMS_nonpolar_metabolite_profiling_negative|_LCMS_polar_metabolite_profiling_positive|)
     \.raw$
 """
 metabolomics_sample_filename_re = re.compile(METABOLOMICS_SAMPLE_RAW_PATTERN, re.VERBOSE )
@@ -70,7 +70,7 @@ METABOLOMICS_POOLED_RAW_PATTERN = r"""
 (?P<dataset_id>\d{4,6})
 _PPA_
 (?P<facility_id>(APPF|MA_AWRI)?)
-_LCMS_nonpolar_metabolite_profiling_negative_
+(_LCMS_nonpolar_metabolite_profiling_negative_|_LCMS_polar_metabolite_profiling_positive_)
 (?P<run>[R|I][1|2])
 (_)
 (?P<variety>\w+)\.raw$
@@ -82,7 +82,7 @@ METABOLOMICS_ANALYSED_PATTERN = r"""
     (?P<dataset_id>\d{4,6})_
     (PPA_
     (?P<facility_id>(MA_AWRI)))?
-    (_LCMS_nonpolar_metabolite_profiling_negative|)
+    (_LCMS_nonpolar_metabolite_profiling_negative|_LCMS_polar_metabolite_profiling_positive|)
     \.(pdf|xlsx)
 """
 metabolomics_analysed_filename_re = re.compile(METABOLOMICS_ANALYSED_PATTERN, re.VERBOSE)
