@@ -1961,35 +1961,20 @@ class AustralianMicrobiomeMetagenomicsNovaseqMetadata(AMDFullIngestMetadata):
         return packages
 
     def _get_resources(self):
-        self._logger.info(
-            "Ingesting AM MGE md5 file information from {0}".format(self.path)
-        )
-        resources = []
-        for md5_file in glob(self.path + "/*.md5"):
-            self._logger.info("Processing md5 file {0}".format(md5_file))
-            for filename, md5, file_info in self.parse_md5file(md5_file):
-                resource = file_info.copy()
-                resource["md5"] = resource["id"] = md5
-                resource["name"] = os.path.basename(filename)
-                resource["resource_path"] = os.path.dirname(filename)
-                resource["resource_type"] = self.ckan_data_type
-                # these are set to False by default
-                # methods to a) determine if they should be set to True and
-                #            b) set other values within the resource (eg adjusted id, file location etc) as required
-                # are still to be developed.
-                resource["shared_file"] = False
-                resource["optional_file"] = False
-                for contextual_source in self.contextual_metadata:
-                    resource.update(contextual_source.filename_metadata(filename))
-                sample_id = ingest_utils.extract_ands_id(
-                    self._logger, file_info.get("id")
-                )
-                xlsx_info = self.metadata_info[os.path.basename(md5_file)]
-                legacy_url = urljoin(xlsx_info["base_url"], filename)
-                flowcell = file_info.get("flowcell")
-                resources.append(((sample_id, flowcell), legacy_url, resource))
-            resources.extend(self.generate_md5_resources(md5_file))
+        resources = self._get_common_resources()
         return resources
+
+    def _add_datatype_specific_info_to_resource(self, resource, md5_file=None):
+        for contextual_source in self.contextual_metadata:
+            resource.update(contextual_source.filename_metadata(resource["name"]))
+        self._current_md5 = md5_file
+
+    def _build_resource_linkage(self, xlsx_info, resource, file_info):
+        sample_id = ingest_utils.extract_ands_id(
+            self._logger, file_info.get("id")
+        )
+        flowcell_id = file_info.get("flowcell")
+        return (sample_id, flowcell_id,)
 
 
 class AustralianMicrobiomeMetagenomicsNovaseqControlMetadata(AMDFullIngestMetadata):
@@ -2010,7 +1995,7 @@ class AustralianMicrobiomeMetagenomicsNovaseqControlMetadata(AMDFullIngestMetada
         "https://downloads-qcif.bioplatforms.com/bpa/amd/metagenomics-novaseq/"
     ]
     metadata_url_components = ("facility_code", "ticket")
-
+    add_md5_as_resource = True
     def __init__(self, logger, metadata_path, **kwargs):
         super().__init__(logger, metadata_path, **kwargs)
         self.google_track_meta = AustralianMicrobiomeGoogleTrackMetadata(logger)
@@ -2077,28 +2062,17 @@ class AustralianMicrobiomeMetagenomicsNovaseqControlMetadata(AMDFullIngestMetada
             packages.append(obj)
         return packages
 
+
     def _get_resources(self):
-        resources = []
-        self._logger.info("Ingesting MD5 file information from {0}".format(self.path))
-        for md5_file in glob(self.path + "/*.md5"):
-            self._logger.info("Processing md5 file {}".format(md5_file))
-            for filename, md5, file_info in self.parse_md5file(md5_file):
-                xlsx_info = self.metadata_info[os.path.basename(md5_file)]
-                resource = file_info.copy()
-                resource["md5"] = resource["id"] = md5
-                resource["name"] = os.path.basename(filename)
-                resource["resource_path"] = os.path.dirname(filename)
-                resource["resource_type"] = self.ckan_data_type
-                # these are set to False by default
-                # methods to a) determine if they should be set to True and
-                #            b) set other values within the resource (eg adjusted id, file location etc) as required
-                # are still to be developed.
-                resource["shared_file"] = False
-                resource["optional_file"] = False
-                legacy_url = urljoin(xlsx_info["base_url"], filename)
-                resources.append(((resource["flowcell"],), legacy_url, resource))
-            resources.extend(self.generate_md5_resources(md5_file))
+        resources = self._get_common_resources()
         return resources
+
+    def _add_datatype_specific_info_to_resource(self, resource, md5_file=None):
+        #  nothing for controls
+        self._current_md5 = md5_file
+
+    def _build_resource_linkage(self, xlsx_info, resource, file_info):
+        return (resource["flowcell"],)
 
 
 class AustralianMicrobiomeAmpliconsMetadata(AMDFullIngestMetadata):
