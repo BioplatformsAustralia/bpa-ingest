@@ -965,6 +965,8 @@ class BASESiteImagesMetadata(AMDFullIngestMetadata):
             filename = info["filename"]
             resource["name"] = filename
             resource["resource_path"] = os.path.dirname(filename)
+            resource["shared_file"] = False
+            resource["optional_file"] = False
             legacy_url = urljoin(info["base_url"], filename)
             resources.append(((site_ids,), legacy_url, resource))
 
