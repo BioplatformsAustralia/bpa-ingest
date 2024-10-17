@@ -297,7 +297,10 @@ def reupload_resources(
                 write_reuploads_fn(to_reupload)
 
     total_reuploads = len(to_reupload)
-    logger.info("%d objects to be re-uploaded" % (total_reuploads))
+    logger.info("The following files are ready to be re-uploaded:")
+    for reupload_obj in to_reupload:
+       logger.info(reupload_obj[0]["url"])
+    logger.info("Total of %d objects to be re-uploaded" % (total_reuploads))
     # TODO: there is no bucket for anything other than prod OR STAGING - however it's unclear whether this breaks in non-prod environments
     ## Test this by setting it to None or '' any that way we don't accidentally send data to a bucket that is inadvertently created in S3
     destination = None
