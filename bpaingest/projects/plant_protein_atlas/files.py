@@ -82,7 +82,7 @@ METABOLOMICS_ANALYSED_PATTERN = r"""
     (?P<dataset_id>\d{4,6})_
     (PPA_
     (?P<facility_id>(MA_AWRI)))?
-    (_LCMS_nonpolar_metabolite_profiling_negative|_LCMS_polar_metabolite_profiling_positive|)
+    (_LCMS_nonpolar_metabolite_profiling_negative|_LCMS_polar_metabolite_profiling_positive|_phenolic_quantitation_report|)
     \.(pdf|xlsx)
 """
 metabolomics_analysed_filename_re = re.compile(METABOLOMICS_ANALYSED_PATTERN, re.VERBOSE)
