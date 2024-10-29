@@ -124,6 +124,7 @@ from .grasslands.ingest import (
     AGIlluminaShortreadMetadata,
     AGHiCMetadata,
     AGPacbioHifiMetadata,
+    AGGenomicsDDRADMetadata,
 )
 
 from .collaborations.ingest import (
@@ -268,6 +269,7 @@ class ProjectInfo:
             AGIlluminaShortreadMetadata,
             AGHiCMetadata,
             AGPacbioHifiMetadata,
+            AGGenomicsDDRADMetadata,
         ],
         "collaborations": [
             CollaborationsMetagenomicsNovaseqMetadata,
