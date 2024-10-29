@@ -7,11 +7,11 @@ logger = make_logger(__name__)
 ILLUMINA_SHORTREAD_PATTERN = r"""
     (?P<library_id>\d{4,6})_
     FUN_
-    (?P<facility_id>(AGRF|UNSW))_
+    (?P<facility_id>(AGRF|UNSW|BRF))_
     (?P<flow_cell_id>\w{9,10})_
     (?P<index>[G|A|T|C|-]*)_
-    (?P<runsamplenum>S?\d*)_?
-    (?P<lane>L\d{3})_
+    ((?P<runsamplenum>S\d*)_)?
+    ((?P<lane>L\d{3})_)?
     (?P<read>[R|I][1|2])
     (_001|)
     \.fastq\.gz$
@@ -21,7 +21,7 @@ illumina_shortread_re = re.compile(ILLUMINA_SHORTREAD_PATTERN, re.VERBOSE)
 ILLUMINA_FASTQ_PATTERN = r"""
     (?P<library_id>\d{4,6})_
     FUN_
-    (?P<facility_id>(UNSW|AGRF))_
+    (?P<facility_id>(UNSW|AGRF|BRF))_
     (?P<flowcell_id>\w{9,10})_
     (?P<index>[G|A|T|C|-]*)_
     ((?P<runsamplenum>S\d*)_)?
@@ -107,3 +107,26 @@ ILLUMINA_HIC_PATTERN = r"""
     \.fastq\.gz$
 """
 illumina_hic_re = re.compile(ILLUMINA_HIC_PATTERN, re.VERBOSE)
+
+ONT_PROMETHION_PATTERN = r"""
+    (?P<library_id>\d{4,6})_
+    FUN_
+    (?P<facility_id>(BRF))_
+    (?P<flow_cell_id>PA[W]\d{5})_
+    ONTPromethION_
+    (?P<archive_type>\w+)
+    (\.tar
+      |\.html
+      |\.txt)
+"""
+ont_promethion_re = re.compile(ONT_PROMETHION_PATTERN, re.VERBOSE)
+
+ONT_PROMETHION_COMMON_PATTERN = r"""
+    FUN_
+    (?P<facility_id>(AGRF|BRF|UNSW))_
+    (?P<flow_cell_id>PA[DEFGKMOQW]\d{5})_
+    (ONTPromethION_)
+    (?P<archive_type>\w+)
+    \.(html|tsv|txt|tar)
+"""
+ont_promethion_common_re = re.compile(ONT_PROMETHION_COMMON_PATTERN, re.VERBOSE)
