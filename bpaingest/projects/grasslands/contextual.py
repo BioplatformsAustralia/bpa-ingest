@@ -142,10 +142,12 @@ class AGLibraryContextual(BaseLibraryContextual):
             "sample_material_preparation_date",
             coerce=ingest_utils.get_date_isoformat,
         ),
+        fld("notes", "notes", optional=True),
         #
         skp("decimal_latitude (will not be made public)"),
         skp("decimal_longitude (will not be made public)"),
         skp("description_googledoc_(remove before sending to gb)"),
+        skp("tech - remove before sending to qcif"),
     ]
 
     def get(self, library_id, dataset_id):

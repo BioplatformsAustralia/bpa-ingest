@@ -502,6 +502,7 @@ class AGGenomicsDDRADMetadata(AGBaseMetadata):
     ]
     metadata_url_components = ("ticket",)
     resource_linkage = ("bpa_dataset_id", "flowcell_id")
+
     spreadsheet = {
         "fields": [
             #    coerce=ingest_utils.int_or_comment,
@@ -572,6 +573,24 @@ class AGGenomicsDDRADMetadata(AGBaseMetadata):
 
     description = "Genomics ddRAD"
     tag_names = ["genomics-ddrad"]
+
+    title_mapping = [
+        {"key": "initiative_prefix", "separator": " "},
+        {"key": "description", "separator": ", "},
+        {"key": "project_aim", "separator": ", Dataset ID "},
+        {"key": "split_dataset_id", "separator": ""},
+    ]
+
+    def _build_title_into_object(self, obj):
+        self.build_title_into_object(
+            obj,
+            {
+                "initiative_prefix": self.initiative_prefix,
+                "description": self.description,
+                "project_aim": obj.get("project_aim,", "").split("/")[-1],
+                "split_dataset_id": obj.get("bpa_dataset_id", "").split("/")[-1],
+            },
+        )
 
     def __init__(
         self, logger, metadata_path, contextual_metadata=None, metadata_info=None
@@ -651,7 +670,7 @@ class AGGenomicsDDRADMetadata(AGBaseMetadata):
                 obj.update(common_values(context_objs))
                 obj.update(merge_values("scientific_name", " , ", context_objs))
                 additional_notes = "ddRAD dataset not demultiplexed"
-                self.build_title_into_object(obj)
+                self._build_title_into_object(obj)
                 self.build_notes_into_object(obj)
                 ingest_utils.permissions_organization_member_after_embargo(
                     self._logger,
