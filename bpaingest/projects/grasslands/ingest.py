@@ -610,7 +610,7 @@ class AGGenomicsDDRADMetadata(AGBaseMetadata):
                 for row in row_objs:
                     context = {}
                     for contextual_source in self.contextual_metadata:
-                        library_metadata_library_id = row.get("bioplatforms_libray_id")
+                        library_metadata_library_id = row.get("bioplatforms_library_id")
                         library_metadata_dataset_id = row.get("bioplatforms_dataset_id")
                         contextual_metadata = contextual_source.get(
                             library_metadata_library_id, library_metadata_dataset_id)
