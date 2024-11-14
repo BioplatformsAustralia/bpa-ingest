@@ -13,6 +13,7 @@ from urllib.request import url2pathname
 from collections import defaultdict
 
 from .libs.ingest_utils import ApiFqBuilder
+from .libs.bpa_constants import AUDIT_VERIFIED
 from .libs.s3 import update_tags
 from .util import make_logger
 
@@ -448,13 +449,13 @@ def reupload_resource(ckan, ckan_obj, legacy_url, parent_destination, auth=None)
         else:
             logger.error("upload failed: status {}".format(status))
 
-        # tag resource in S3 to permit lifecycle rules
-        logger.info("tagging resource : %s" % (s3_destination))
         # tag resource in S3:
         # - permit lifecycle rules
+        # - storage audit
 
         tags = {
             'source': 'bpaingest',
+            'audit': AUDIT_VERIFIED,
         }
 
         logger.info("tagging resource : %s (%s)" % (s3_destination, tags))
