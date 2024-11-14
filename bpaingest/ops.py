@@ -13,6 +13,7 @@ from urllib.request import url2pathname
 from collections import defaultdict
 
 from .libs.ingest_utils import ApiFqBuilder
+from .libs.s3 import update_tags
 from .util import make_logger
 
 logger = make_logger(__name__)
@@ -449,27 +450,23 @@ def reupload_resource(ckan, ckan_obj, legacy_url, parent_destination, auth=None)
 
         # tag resource in S3 to permit lifecycle rules
         logger.info("tagging resource : %s" % (s3_destination))
+        # tag resource in S3:
+        # - permit lifecycle rules
+
+        tags = {
+            'source': 'bpaingest',
+        }
+
+        logger.info("tagging resource : %s (%s)" % (s3_destination, tags))
         bucket = parent_destination.split("/")[0]
         key = "{}/resources/{}/{}".format(
             parent_destination.split("/", 1)[1], ckan_obj["id"], filename
         )
 
-        tagging = '{"TagSet": [{ "Key": "source", "Value": "bpaingest" }]}'
+        status = update_tags(bucket, key, tags)
 
-        s3cmd_args = [
-            "aws",
-            "s3api",
-            "put-object-tagging",
-            "--bucket",
-            bucket,
-            "--key",
-            key,
-            "--tagging",
-            tagging,
-        ]
-        status = subprocess.call(s3cmd_args)
-        if status != 0:
-            logger.error("tagging failed: status {}".format(status))
+        # FIXME Fix handling of status response
+        logger.warn(status)
 
     finally:
         os.unlink(path)
