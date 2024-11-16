@@ -23,6 +23,8 @@ from bpaingest.resource_metadata import (
 from bpaingest.util import make_logger
 from bpaingest.util import prune_dict
 from bpaingest.libs.multihash import S3_HASH_FIELDS
+from bpaingest.libs.bpa_constants import AUDIT_DELETED
+from bpaingest.libs.s3 import merge_and_update_tags
 from collections import Counter
 
 logger = make_logger(__name__)
@@ -101,6 +103,42 @@ def sync_package(ckan, obj, cached_obj):
     return ckan_obj
 
 
+def tag_deleted_resource(ckan, delete_id, resource_obj):
+    # Update s3tags for 'audit' to be AUDIT_DELETED
+    s3_tags = {
+        'audit': AUDIT_DELETED,
+    }
+
+    filename = resource_obj["name"]
+    destination = determine_destination(ckan)
+    bucket = destination.split("/")[0]
+    key = "{}/resources/{}/{}".format(
+            destination.split("/", 1)[1], resource_obj["id"], filename
+    )
+
+    logger.info("Tagging deleted resource object: %s" % (key,))
+
+    merge_and_update_tags(bucket, key, s3_tags)
+
+
+def delete_resource(ckan, delete_id, resource_obj):
+    tag_deleted_resource(ckan, delete_id, resource_obj)
+
+    ckan_method(ckan, "resource", "delete")(id=obj_id)
+
+
+def delete_package(ckan, delete_id, package_obj):
+    # delete_id and package_obj["id"] should be same / equivalent
+
+    # iterate through packages resources and tag in s3 as deleted
+    for resource in package_obj["resources"]:
+        resource_obj =  get_uploaded_resource_from_ckan(ckan, resource)
+        if resource_obj:
+            tag_deleted_resource(ckan, resource["id"], resource_obj)
+
+    ckan_method(ckan, "package", "delete")(id=delete_id)
+
+
 def delete_dangling_packages(ckan, packages, cache, do_delete):
     extant_ids = set(cache.keys())
     continuing_ids = set(t["id"] for t in packages)
@@ -113,7 +151,7 @@ def delete_dangling_packages(ckan, packages, cache, do_delete):
             % (delete_obj["id"], delete_id, do_delete)
         )
         if do_delete:
-            ckan_method(ckan, "package", "delete")(id=delete_id)
+            delete_package(ckan, delete_id, delete_obj)
             logger.info("deleted package: %s/%s" % (delete_obj["id"], delete_id))
 
 
@@ -237,10 +275,10 @@ def sync_package_resources(
             % (delete_obj["package_id"], obj_id, do_delete)
         )
         if do_delete:
-            ckan_method(ckan, "resource", "delete")(id=obj_id)
+            delete_resource(ckan, obj_id, delete_obj)
             logger.info("deleted resource: %s/%s" % (delete_obj["package_id"], obj_id))
 
-            # patch all the resources, to ensure everything is synced on
+    # patch all the resources, to ensure everything is synced on
     # existing resources
     if to_create or to_delete:
         # if we've changed the resources attached to the package, refresh it
@@ -260,6 +298,27 @@ def sync_package_resources(
             logger.info("patched resource: %s" % (obj_id))
 
     return to_reupload
+
+
+def determine_destination(ckan):
+    # TODO: there is no bucket for anything other than prod OR STAGING - however it's unclear whether this breaks in non-prod environments
+    ## Test this by setting it to None or '' any that way we don't accidentally send data to a bucket that is inadvertently created in S3
+    destination = None
+
+    if re.search("^https://data.bioplatforms.com", getattr(ckan, "address", "")):
+        destination = "bpa-ckan-prod/prodenv"
+        logger.info("Resources will be reuploaded under: {}".format(destination))
+    elif re.search("^https://staging.bioplatforms.com", getattr(ckan, "address", "")):
+        destination = "bpa-ckan-staging/stagingenv"
+        logger.info("Resources will be reuploaded under: {}".format(destination))
+    else:
+        logger.warn(
+            "Resources have no bucket to send to. Address was: {}".format(
+                getattr(ckan, "address", "")
+            )
+        )
+
+    return destination
 
 
 def reupload_resources(
@@ -301,21 +360,8 @@ def reupload_resources(
     for reupload_obj in to_reupload:
        logger.info(reupload_obj[0]["url"])
     logger.info("Total of %d objects to be re-uploaded" % (total_reuploads))
-    # TODO: there is no bucket for anything other than prod OR STAGING - however it's unclear whether this breaks in non-prod environments
-    ## Test this by setting it to None or '' any that way we don't accidentally send data to a bucket that is inadvertently created in S3
-    destination = None
-    if re.search("^https://data.bioplatforms.com", getattr(ckan, "address", "")):
-        destination = "bpa-ckan-prod/prodenv"
-        logger.info("Resources will be reuploaded under: {}".format(destination))
-    elif re.search("^https://staging.bioplatforms.com", getattr(ckan, "address", "")):
-        destination = "bpa-ckan-staging/stagingenv"
-        logger.info("Resources will be reuploaded under: {}".format(destination))
-    else:
-        logger.warn(
-            "Resources have no bucket to send to. Address was: {}".format(
-                getattr(ckan, "address", "")
-            )
-        )
+    destination = determine_destination(ckan)
+
     # copy list and loop that, so can remove safely from original during loop
     for indx, (reupload_obj, legacy_url) in enumerate(to_reupload[:]):
         # first determine if this is a shared file.

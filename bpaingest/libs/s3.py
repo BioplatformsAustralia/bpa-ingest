@@ -34,3 +34,8 @@ def update_tags(bucket, key, new_tag_dict):
               Tagging={'TagSet': tags}
         )
     return response
+
+def merge_and_update_tags(bucket, key, update_tag_dict):
+    revised_tag_dict = get_tag_dict(bucket,key).copy()
+    revised_tag_dict.update(update_tag_dict)
+    return update_tags(bucket, key, revised_tag_dict)
