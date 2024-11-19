@@ -448,14 +448,19 @@ def reupload_resource(ckan, ckan_obj, legacy_url, parent_destination, auth=None)
             )
         else:
             logger.error("upload failed: status {}".format(status))
+            logger.error("Skipping applying audit tag to {}".format(s3_destination))
+            raise Exception("Upload failed to S3")
+
+        # if resource_patch throws an exception, we shouldn't get to
+        # tagging the s3 resource
 
         # tag resource in S3:
         # - permit lifecycle rules
         # - storage audit
 
         tags = {
-            'source': 'bpaingest',
-            'audit': AUDIT_VERIFIED,
+            "source": "bpaingest",
+            "audit": AUDIT_VERIFIED,
         }
 
         logger.info("tagging resource : %s (%s)" % (s3_destination, tags))
@@ -468,6 +473,11 @@ def reupload_resource(ckan, ckan_obj, legacy_url, parent_destination, auth=None)
 
         # FIXME Fix handling of status response
         logger.warn(status)
+        # if status != 0:
+        #    logger.error("tagging failed: status {}".format(status))
+
+    except:
+        logger.error("Issue with uploading `%s' " % legacy_url)
 
     finally:
         os.unlink(path)
