@@ -120,6 +120,13 @@ def setup_sync(subparser):
         help="read reuploads from disk",
     )
     subparser.add_argument(
+        "--audit",
+        action="store_const",
+        const=True,
+        default=False,
+        help="verify and update audit tags on known resources",
+    )
+    subparser.add_argument(
         "-p", "--download-path", required=False, default=None, help="CKAN base url"
     )
     subparser.add_argument(
@@ -195,6 +202,7 @@ def sync(args):
             args.delete,
             args.update_orgs,
             args.single_ticket,
+            args.audit,
             **kwargs,
         )
         print_accounts()

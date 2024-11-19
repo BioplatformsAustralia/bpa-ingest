@@ -23,7 +23,7 @@ from bpaingest.resource_metadata import (
 from bpaingest.util import make_logger
 from bpaingest.util import prune_dict
 from bpaingest.libs.multihash import S3_HASH_FIELDS
-from bpaingest.libs.bpa_constants import AUDIT_DELETED
+from bpaingest.libs.bpa_constants import AUDIT_DELETED, AUDIT_VERIFIED
 from bpaingest.libs.s3 import merge_and_update_tags
 from collections import Counter
 
@@ -103,22 +103,40 @@ def sync_package(ckan, obj, cached_obj):
     return ckan_obj
 
 
-def tag_deleted_resource(ckan, delete_id, resource_obj):
+def audit_resource(audit_tag, description, ckan, delete_id, resource_obj):
     # Update s3tags for 'audit' to be AUDIT_DELETED
     s3_tags = {
-        'audit': AUDIT_DELETED,
+        "audit": audit_tag,
     }
 
     filename = resource_obj["name"]
     destination = determine_destination(ckan)
     bucket = destination.split("/")[0]
     key = "{}/resources/{}/{}".format(
-            destination.split("/", 1)[1], resource_obj["id"], filename
+        destination.split("/", 1)[1], resource_obj["id"], filename
     )
 
-    logger.info("Tagging deleted resource object: %s" % (key,))
+    logger.info(
+        "Tagging %s resource object: %s"
+        % (
+            description,
+            key,
+        )
+    )
 
     merge_and_update_tags(bucket, key, s3_tags)
+
+
+def tag_verified_resource(ckan, verified_id, resource_obj):
+    audit_tag = AUDIT_VERFIFIED
+    description = "verified"
+    audit_resource(audit_tag, ckan, verfied_id, resource_obj)
+
+
+def tag_deleted_resource(ckan, delete_id, resource_obj):
+    audit_tag = AUDIT_DELETED
+    description = "deleted"
+    audit_resource(audit_tag, ckan, delete_id, resource_obj)
 
 
 def delete_resource(ckan, delete_id, resource_obj):
@@ -131,7 +149,7 @@ def delete_package(ckan, delete_id, package_obj):
 
     # iterate through packages resources and tag in s3 as deleted
     for resource in package_obj["resources"]:
-        resource_obj =  get_uploaded_resource_from_ckan(ckan, resource)
+        resource_obj = get_uploaded_resource_from_ckan(ckan, resource)
         if resource_obj:
             tag_deleted_resource(ckan, resource["id"], resource_obj)
 
@@ -155,7 +173,7 @@ def delete_dangling_packages(ckan, packages, cache, do_delete):
 
 
 def sync_packages(
-    ckan, ckan_data_type, packages, org, group, do_delete, do_single_ticket
+    ckan, ckan_data_type, packages, org, group, do_delete, do_single_ticket, do_audit
 ):
     # FIXME: we don't check if there are any packages we should remove (unpublish)
     logger.info("syncing %d packages" % (len(packages)))
@@ -220,6 +238,13 @@ def check_resources(ckan, current_resources, resource_id_legacy_url, auth, num_t
     return to_reupload
 
 
+def audit_resources(ckan, current_resources):
+    logger.info("%d resources to be audited" % (len(current_resources)))
+    for current_ckan_obj in current_resources:
+        obj_id = current_ckan_obj["id"]
+        tag_verified_resource(ckan, obj_id, current_ckan_obj)
+
+
 def check_package_resources(ckan, ckan_packages, resource_id_legacy_url, auth):
     all_resources = []
     for package_obj in sorted(ckan_packages, key=lambda p: p["name"]):
@@ -227,6 +252,15 @@ def check_package_resources(ckan, ckan_packages, resource_id_legacy_url, auth):
         all_resources += current_resources
 
     return check_resources(ckan, all_resources, resource_id_legacy_url, auth, 8)
+
+
+def audit_package_resources(ckan, ckan_packages):
+    all_resources = []
+    for package_obj in sorted(ckan_packages, key=lambda p: p["name"]):
+        current_resources = package_obj["resources"]
+        all_resources += current_resources
+
+    return audit_resources(ckan, all_resources)
 
 
 def sync_package_resources(
@@ -357,7 +391,7 @@ def reupload_resources(
     total_reuploads = len(to_reupload)
     logger.info("The following files are ready to be re-uploaded:")
     for reupload_obj in to_reupload:
-       logger.info(reupload_obj[0]["url"])
+        logger.info(reupload_obj[0]["url"])
     logger.info("Total of %d objects to be re-uploaded" % (total_reuploads))
     destination = determine_destination(ckan)
 
@@ -429,6 +463,7 @@ def sync_resources(
     do_resource_checks,
     do_delete,
     do_single_ticket,
+    do_audit,
     **kwargs,
 ):
     logger.info("checking  %d resources for synch" % (len(resources)))
@@ -493,6 +528,10 @@ def sync_resources(
                 "synced %d of %d resources" % (resources_synched, len(resources))
             )
 
+    if do_audit:
+        logger.info("auditing all exising resources attached to packages")
+        audit_package_resources(ckan, ckan_packages)
+
     if not do_resource_checks:
         logger.warning(
             "resource checks disabled: resource integrity will not be confirmed"
@@ -552,6 +591,7 @@ def sync_metadata(
     do_delete,
     do_update_orgs,
     do_single_ticket,
+    do_audit,
     **kwargs,
 ):
     # command line to update orgs as dev for plant pathogens:
@@ -596,6 +636,7 @@ def sync_metadata(
         None,
         do_delete,
         do_single_ticket,
+        do_audit,
     )
     sync_resources(
         ckan,
@@ -608,6 +649,7 @@ def sync_metadata(
         do_resource_checks,
         do_delete,
         do_single_ticket,
+        do_audit,
         **kwargs,
     )
 
