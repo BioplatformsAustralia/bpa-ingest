@@ -456,6 +456,7 @@ def sync_resources(
                     "Unable to find package for `%s', skipping resource (%s)"
                     % (repr(resource_linkage), legacy_url)
                 )
+                continue
         else:
             if (
                 package_id is None
