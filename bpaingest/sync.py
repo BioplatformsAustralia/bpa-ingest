@@ -123,8 +123,7 @@ def tag_deleted_resource(ckan, delete_id, resource_obj):
 
 def delete_resource(ckan, delete_id, resource_obj):
     tag_deleted_resource(ckan, delete_id, resource_obj)
-
-    ckan_method(ckan, "resource", "delete")(id=obj_id)
+    ckan_method(ckan, "resource", "delete")(id=delete_id)
 
 
 def delete_package(ckan, delete_id, package_obj):
