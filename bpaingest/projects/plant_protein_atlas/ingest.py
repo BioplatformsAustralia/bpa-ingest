@@ -897,6 +897,7 @@ class PlantProteinAtlasMetabolomicsAnalysedMetadata(PlantProteinAtlasBaseMetadat
                 fld('data_analysis_date', 'data_analysis_date', coerce=ingest_utils.date_or_int_or_comment, optional=True),
                 fld('file_description', 'file_description'),
                 skp('total_phenolic_content (concentration mg of gallic acid/100 mg of faba bean)'),
+                skp('total_phenolic_content (concentration mg of gallic acid/100 g of faba bean)'),
                 skp('total_saponin_content (concentration espressed as milligram equivalent of  oelanoic acid/ gram of faba bean poweder)'),
                 skp('total_lipid_content (milligram of crude fats per gram of milled faba beans) mg/g')
          ],
