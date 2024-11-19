@@ -1,6 +1,11 @@
 #!/usr/bin/env python3
 
 import boto3
+import copy
+from deepdiff import DeepDiff
+from bpaingest.util import make_logger
+
+logger = make_logger(__name__)
 
 s3 = boto3.client("s3")
 
@@ -34,6 +39,18 @@ def update_tags(bucket, key, new_tag_dict):
 
 
 def merge_and_update_tags(bucket, key, update_tag_dict):
-    revised_tag_dict = get_tag_dict(bucket,key).copy()
+    revised_tag_dict = get_tag_dict(bucket, key).copy()
+    orig_tag_dict = copy.deepcopy(revised_tag_dict)
+
     revised_tag_dict.update(update_tag_dict)
+
+    logger.info(
+        "tag changes for %s: %s"
+        % (
+            key,
+            str(
+                DeepDiff(orig_tag_dict, revised_tag_dict, verbose_level=2),
+            ),
+        )
+    )
     return update_tags(bucket, key, revised_tag_dict)
