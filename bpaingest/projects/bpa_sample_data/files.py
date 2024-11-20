@@ -95,6 +95,7 @@ bsd_site_image_filename_re = re.compile(
     BSD_
     (?P<facility_id>(BPA))_
     (?P<flowcell_id>\w{6,10})_
+    (\w{5,10}_|)
     image.(jpg|png)
 """,
     re.VERBOSE,

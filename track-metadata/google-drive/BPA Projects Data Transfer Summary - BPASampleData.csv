@@ -6,3 +6,4 @@ Sequencing facility,Date of transfer,Folder name,Data type,Description,Date of t
 BPA,05/05/2024,20240805_BPA_Images_QUOKKA,Sample Images,Images for Test Uploading,06/08/2024,BPAOPS-1637,
 BPA,,20240703_BPA_facilityId_MOCKFLOW2,PacBio-HiFi,Small Test PACBIO ,,,
 BPA,,20240710_BPA_Facility_MOCKFLOW3,Illumina FASTQ,Small Test Illumina,,,
+BPA,20/11/2024,20241120_BPA_Images_MG,Sample Images,"Images for Test Uploading, testing S3 tagging",20/11/2024,BPAOPS-1723,
