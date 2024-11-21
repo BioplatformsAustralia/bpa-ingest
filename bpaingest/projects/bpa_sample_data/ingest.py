@@ -35,7 +35,7 @@ class BSDBaseMetadata(BaseMetadata):
         {"key": "species", "separator": ", "},
         {"key": "specimen_id", "separator": ", "},
         {"key": "taxonomic_group", "separator": ", Project Lead: "},
-        {"key": "data_custodian"},
+        {"key": "project_lead"},
     ]
     title_mapping = [
         {"key": "common_name", "separator": ", "},
