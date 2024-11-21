@@ -13,6 +13,8 @@ from urllib.request import url2pathname
 from collections import defaultdict
 
 from .libs.ingest_utils import ApiFqBuilder
+from .libs.bpa_constants import AUDIT_VERIFIED
+from .libs.s3 import update_tags
 from .util import make_logger
 
 logger = make_logger(__name__)
@@ -446,30 +448,36 @@ def reupload_resource(ckan, ckan_obj, legacy_url, parent_destination, auth=None)
             )
         else:
             logger.error("upload failed: status {}".format(status))
+            logger.error("Skipping applying audit tag to {}".format(s3_destination))
+            raise Exception("Upload failed to S3")
 
-        # tag resource in S3 to permit lifecycle rules
-        logger.info("tagging resource : %s" % (s3_destination))
+        # if resource_patch throws an exception, we shouldn't get to
+        # tagging the s3 resource
+
+        # tag resource in S3:
+        # - permit lifecycle rules
+        # - storage audit
+
+        tags = {
+            "source": "bpaingest",
+            "audit": AUDIT_VERIFIED,
+        }
+
+        logger.info("tagging resource : %s (%s)" % (s3_destination, tags))
         bucket = parent_destination.split("/")[0]
         key = "{}/resources/{}/{}".format(
             parent_destination.split("/", 1)[1], ckan_obj["id"], filename
         )
 
-        tagging = '{"TagSet": [{ "Key": "source", "Value": "bpaingest" }]}'
+        status = update_tags(bucket, key, tags)
 
-        s3cmd_args = [
-            "aws",
-            "s3api",
-            "put-object-tagging",
-            "--bucket",
-            bucket,
-            "--key",
-            key,
-            "--tagging",
-            tagging,
-        ]
-        status = subprocess.call(s3cmd_args)
-        if status != 0:
-            logger.error("tagging failed: status {}".format(status))
+        # FIXME Fix handling of status response
+        logger.warn(status)
+        # if status != 0:
+        #    logger.error("tagging failed: status {}".format(status))
+
+    except:
+        logger.error("Issue with uploading `%s' " % legacy_url)
 
     finally:
         os.unlink(path)

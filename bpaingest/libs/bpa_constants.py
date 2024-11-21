@@ -1,1 +1,4 @@
 BPA_PREFIX = "102.100.100/"
+
+AUDIT_VERIFIED = 'verified-20241001'
+AUDIT_DELETED = 'bpaingest-deleted-20241001'
