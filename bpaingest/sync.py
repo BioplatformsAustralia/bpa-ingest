@@ -128,15 +128,15 @@ def audit_resource(audit_tag, description, ckan, delete_id, resource_obj):
 
 
 def tag_verified_resource(ckan, verified_id, resource_obj):
-    audit_tag = AUDIT_VERFIFIED
+    audit_tag = AUDIT_VERIFIED
     description = "verified"
-    audit_resource(audit_tag, ckan, verfied_id, resource_obj)
+    audit_resource(audit_tag, description, ckan, verified_id, resource_obj)
 
 
 def tag_deleted_resource(ckan, delete_id, resource_obj):
     audit_tag = AUDIT_DELETED
     description = "deleted"
-    audit_resource(audit_tag, ckan, delete_id, resource_obj)
+    audit_resource(audit_tag, description, ckan, delete_id, resource_obj)
 
 
 def delete_resource(ckan, delete_id, resource_obj):
