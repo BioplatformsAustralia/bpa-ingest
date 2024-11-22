@@ -15,6 +15,7 @@ from bpaingest.ops import (
 )
 from bpaingest.pkgcache import build_package_cache
 import ckanapi
+import botocore
 
 from bpaingest.resource_metadata import (
     build_raw_resources_as_file,
@@ -124,7 +125,14 @@ def audit_resource(audit_tag, description, ckan, delete_id, resource_obj):
         )
     )
 
-    merge_and_update_tags(bucket, key, s3_tags)
+    try:
+        merge_and_update_tags(bucket, key, s3_tags)
+    except botocore.errorfactory.NoSuchKey:
+        logger.critical(
+            "Unable to object with key `%s', for resource object (%s)"
+            % (key, repr(resource_obj))
+        )
+        raise Exception("Unable to tag S3 Resource due to error")
 
 
 def tag_verified_resource(ckan, verified_id, resource_obj):
