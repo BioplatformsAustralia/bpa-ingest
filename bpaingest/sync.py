@@ -105,6 +105,20 @@ def sync_package(ckan, obj, cached_obj):
 
 
 def audit_resource(audit_tag, description, ckan, delete_id, resource_obj):
+    # Filter out shared resources and resources hosted elsewhere
+    # Simple check to see if resource_id is in URL
+    id = resource_obj.get("id", "")
+    url = resource_obj.get("url", "")
+    if id not in url:
+        logger.info(
+            "Skipping auditing shared/remote resource %s at %s"
+            % (
+                id,
+                url,
+            )
+        )
+        return
+
     # Update s3tags for 'audit' to be AUDIT_DELETED
     s3_tags = {
         "audit": audit_tag,
