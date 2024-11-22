@@ -32,7 +32,7 @@ class NCBISRAContextual:
     def _read_2016_accessions(self):
         accessions = {}
         for fname in glob(os.path.join(self._path, "*Biosample_accessions.csv")):
-            _, rows = csv_to_named_tuple("BioSample", fname, mode="rU")
+            _, rows = csv_to_named_tuple("BioSample", fname, mode="rt")
             accessions.update(
                 {
                     ingest_utils.extract_ands_id(
@@ -52,7 +52,7 @@ class NCBISRAContextual:
         accessions = {}
         for fname in sample_objects:
             _, rows = csv_to_named_tuple(
-                "SRARow", fname, mode="rU", dialect="excel-tab"
+                "SRARow", fname, mode="rt", dialect="excel-tab"
             )
             accessions.update(
                 {
@@ -81,7 +81,7 @@ class NCBISRAContextual:
         files = set()
         for fname in templates:
             _, rows = csv_to_named_tuple(
-                "SRARow", fname, mode="rU", dialect="excel-tab"
+                "SRARow", fname, mode="rt", dialect="excel-tab"
             )
             files.update(yank_filenames(rows))
         return files
@@ -89,7 +89,7 @@ class NCBISRAContextual:
     def _read_2016_submitted(self):
         filenames = set()
         for fname in glob(os.path.join(self._path, "*files_submitted*.csv")):
-            _, upload_rows = csv_to_named_tuple("BioProject", fname, mode="rU")
+            _, upload_rows = csv_to_named_tuple("BioProject", fname, mode="rt")
             filenames.update({t.filename for t in upload_rows})
         return filenames
 
