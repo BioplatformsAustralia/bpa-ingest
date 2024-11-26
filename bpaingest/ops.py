@@ -168,7 +168,7 @@ class CKANArchiveInfo(BaseArchiveInfo):
             logger.error(
                 "Unexpected status (%s) for URL %s" % (response.status_code, url)
             )
-        assert response.status_code == 302
+            return None
         return response.headers["location"]
 
     def ckan_address(self):
@@ -283,7 +283,10 @@ def check_resource(
         return "error-getting-size-legacy"
 
     # single call to s3 from this function to speed up checks
-    current_size, current_etag = ckan_archive_info.get_size_and_etag(current_url)
+    try:
+        current_size, current_etag = ckan_archive_info.get_size_and_etag(current_url)
+    except TypeError:
+        current_size = None
 
     # determine the URL of the proxied s3 resource, and then its size
     if current_size is None:
