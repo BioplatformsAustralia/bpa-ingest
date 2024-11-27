@@ -2,7 +2,6 @@ import json
 import os
 import re
 from collections import defaultdict
-from urllib.parse import urljoin
 
 from glob import glob
 from unipath import Path
