@@ -7,7 +7,7 @@ from unipath import Path
 from glob import glob
 from ...util import apply_cc_by_license, sample_id_to_ckan_name
 from ...libs import ingest_utils
-from urllib.parse import urljoin
+from urllib.parse import urljoin, quote
 from ...abstract import BaseMetadata
 
 
@@ -132,7 +132,7 @@ class GbrPacbioMetadata(BaseMetadata):
                 self._logger, file_info["sample_id"]
             )
             xlsx_info = self.metadata_info[os.path.basename(md5_file)]
-            legacy_url = urljoin(xlsx_info["base_url"], filename)
+            legacy_url = urljoin(xlsx_info["base_url"], quote(filename))
             pacbio_linkage = make_pacbio_linkage(
                 file_info["flow_cell_id"], file_info["run_number"]
             )
@@ -263,7 +263,7 @@ class GbrAmpliconsMetadata(BaseMetadata):
                 self._logger, file_info["sample_id"]
             )
             xlsx_info = self.metadata_info[os.path.basename(md5_file)]
-            legacy_url = urljoin(xlsx_info["base_url"], filename)
+            legacy_url = urljoin(xlsx_info["base_url"], quote(filename))
             resources.append(
                 (
                     (sample_id, file_info["amplicon"], file_info["index"]),

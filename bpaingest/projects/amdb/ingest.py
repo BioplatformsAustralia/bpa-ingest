@@ -1,7 +1,7 @@
 import os
 import re
 from glob import glob
-from urllib.parse import urljoin
+from urllib.parse import urljoin, quote
 
 from unipath import Path
 
@@ -967,7 +967,7 @@ class BASESiteImagesMetadata(AMDFullIngestMetadata):
             resource["resource_path"] = os.path.dirname(filename)
             resource["shared_file"] = False
             resource["optional_file"] = False
-            legacy_url = urljoin(info["base_url"], filename)
+            legacy_url = urljoin(info["base_url"], quote(filename))
             resources.append(((site_ids,), legacy_url, resource))
 
         for md5_file in glob(self.path + "/*.md5"):

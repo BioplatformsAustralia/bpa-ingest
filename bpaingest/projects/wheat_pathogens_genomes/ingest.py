@@ -2,7 +2,7 @@ import os
 import re
 
 from unipath import Path
-from urllib.parse import urljoin
+from urllib.parse import urljoin, quote
 from collections import defaultdict
 from glob import glob
 from ...libs.excel_wrapper import make_field_definition as fld
@@ -160,7 +160,7 @@ class WheatPathogensGenomesMetadata(BaseMetadata):
                 }
                 resource["md5"] = resource["id"] = row.md5_checksum
                 legacy_url = urljoin(
-                    xlsx_info["base_url"], "../../all/" + resource["name"]
+                    xlsx_info["base_url"], "../../all/" + quote(resource["name"])
                 )
                 resources.append(((sample_id,), legacy_url, resource))
         return resources

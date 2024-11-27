@@ -2,7 +2,7 @@
 
 from unipath import Path
 from collections import defaultdict
-from urllib.parse import urljoin
+from urllib.parse import urljoin, quote
 from hashlib import md5 as md5hash
 from .strains import get_taxon_strain, map_taxon_strain, map_taxon_strain_rows
 from ...libs import ingest_utils
@@ -258,7 +258,7 @@ class SepsisGenomicsMiseqMetadata(BaseSepsisMetadata):
             resource["optional_file"] = False
             sample_id = ingest_utils.extract_ands_id(self._logger, file_info.get("id"))
             xlsx_info = self.metadata_info[os.path.basename(md5_file)]
-            legacy_url = urljoin(xlsx_info["base_url"], filename)
+            legacy_url = urljoin(xlsx_info["base_url"], quote(filename))
             resources.append(((sample_id,), legacy_url, resource))
         return resources
 
@@ -396,7 +396,7 @@ class SepsisGenomicsPacbioMetadata(BaseSepsisMetadata):
             resource["optional_file"] = False
             sample_id = ingest_utils.extract_ands_id(self._logger, file_info.get("id"))
             xlsx_info = self.metadata_info[os.path.basename(md5_file)]
-            legacy_url = urljoin(xlsx_info["base_url"], filename)
+            legacy_url = urljoin(xlsx_info["base_url"], quote(filename))
             resources.append(((sample_id,), legacy_url, resource))
         return resources
 
@@ -570,7 +570,7 @@ class SepsisTranscriptomicsHiseqMetadata(BaseSepsisMetadata):
             resource["optional_file"] = False
             sample_id = ingest_utils.extract_ands_id(self._logger, file_info.get("id"))
             xlsx_info = self.metadata_info[os.path.basename(md5_file)]
-            legacy_url = urljoin(xlsx_info["base_url"], filename)
+            legacy_url = urljoin(xlsx_info["base_url"], quote(filename))
             resources.append(((sample_id,), legacy_url, resource))
         return resources
 
@@ -708,7 +708,7 @@ class SepsisMetabolomicsGCMSMetadata(BaseSepsisMetadata):
             resource["optional_file"] = False
             sample_id = ingest_utils.extract_ands_id(self._logger, file_info.get("id"))
             xlsx_info = self.metadata_info[os.path.basename(md5_file)]
-            legacy_url = urljoin(xlsx_info["base_url"], filename)
+            legacy_url = urljoin(xlsx_info["base_url"], quote(filename))
             resources.append(((sample_id,), legacy_url, resource))
         return resources
 
@@ -851,7 +851,7 @@ class SepsisMetabolomicsLCMSMetadata(BaseSepsisMetadata):
             resource["optional_file"] = False
             sample_id = ingest_utils.extract_ands_id(self._logger, file_info.get("id"))
             xlsx_info = self.metadata_info[os.path.basename(md5_file)]
-            legacy_url = urljoin(xlsx_info["base_url"], filename)
+            legacy_url = urljoin(xlsx_info["base_url"], quote(filename))
             resources.append(((sample_id,), legacy_url, resource))
         return resources
 
@@ -1009,7 +1009,7 @@ class SepsisProteomicsMS1QuantificationMetadata(BaseSepsisMetadata):
             resource["optional_file"] = False
             sample_id = ingest_utils.extract_ands_id(self._logger, file_info.get("id"))
             xlsx_info = self.metadata_info[os.path.basename(md5_file)]
-            legacy_url = urljoin(xlsx_info["base_url"], filename)
+            legacy_url = urljoin(xlsx_info["base_url"], quote(filename))
             resources.append(((sample_id,), legacy_url, resource))
         return resources
 
@@ -1233,7 +1233,7 @@ class SepsisProteomicsSwathMSBaseSepsisMetadata(BaseSepsisMetadata):
                 package_id = package_name
 
             xlsx_info = self.metadata_info[os.path.basename(md5_file)]
-            legacy_url = urljoin(xlsx_info["base_url"], filename)
+            legacy_url = urljoin(xlsx_info["base_url"], quote(filename))
             resources.append(((package_id,), legacy_url, resource))
         return resources
 
@@ -1386,7 +1386,7 @@ class SepsisProteomicsSwathMSCombinedSampleMetadata(BaseSepsisMetadata):
             resource["name"] = filename
             xlsx_info = self.metadata_info[os.path.basename(md5_file)]
             folder_name = self.google_track_meta.get(xlsx_info["ticket"]).folder_name
-            legacy_url = urljoin(xlsx_info["base_url"], filename)
+            legacy_url = urljoin(xlsx_info["base_url"], quote(filename))
             resources.append(((folder_name,), legacy_url, resource))
         return resources
 
@@ -1533,7 +1533,7 @@ class SepsisProteomics2DLibraryMetadata(BaseSepsisMetadata):
             resource.update(file_info)
             xlsx_info = self.metadata_info[os.path.basename(md5_file)]
             folder_name = self.google_track_meta.get(xlsx_info["ticket"]).folder_name
-            legacy_url = urljoin(xlsx_info["base_url"], filename)
+            legacy_url = urljoin(xlsx_info["base_url"], quote(filename))
             resources.append(((folder_name,), legacy_url, resource))
         return resources
 
@@ -1807,7 +1807,7 @@ class SepsisProteomicsAnalysedMetadata(BaseSepsisAnalysedMetadata):
             resource["name"] = filename
             xlsx_info = self.metadata_info[os.path.basename(md5_file)]
             folder_name = self.google_track_meta.get(xlsx_info["ticket"]).folder_name
-            legacy_url = urljoin(xlsx_info["base_url"], filename)
+            legacy_url = urljoin(xlsx_info["base_url"], quote(filename))
             resources.append(((folder_name,), legacy_url, resource))
         return resources
 
@@ -1977,7 +1977,7 @@ class SepsisTranscriptomicsAnalysedMetadata(BaseSepsisAnalysedMetadata):
             resource["name"] = filename
             xlsx_info = self.metadata_info[os.path.basename(md5_file)]
             ticket = xlsx_info["ticket"]
-            legacy_url = urljoin(xlsx_info["base_url"], filename)
+            legacy_url = urljoin(xlsx_info["base_url"], quote(filename))
             resources.append(((ticket,), legacy_url, resource))
         return resources
 
@@ -2139,7 +2139,7 @@ class SepsisMetabolomicsAnalysedMetadata(BaseSepsisAnalysedMetadata):
             resource["name"] = filename
             xlsx_info = self.metadata_info[os.path.basename(md5_file)]
             folder_name = self.google_track_meta.get(xlsx_info["ticket"]).folder_name
-            legacy_url = urljoin(xlsx_info["base_url"], filename)
+            legacy_url = urljoin(xlsx_info["base_url"], quote(filename))
             resources.append(((folder_name,), legacy_url, resource))
         return resources
 
@@ -2308,7 +2308,7 @@ class SepsisGenomicsAnalysedMetadata(BaseSepsisAnalysedMetadata):
             resource["name"] = filename
             xlsx_info = self.metadata_info[os.path.basename(md5_file)]
             folder_name = self.google_track_meta.get(xlsx_info["ticket"]).folder_name
-            legacy_url = urljoin(xlsx_info["base_url"], filename)
+            legacy_url = urljoin(xlsx_info["base_url"], quote(filename))
             resources.append(((folder_name,), legacy_url, resource))
         return resources
 
@@ -2470,6 +2470,6 @@ class SepsisProteomicsProteinDatabaseMetadata(BaseSepsisAnalysedMetadata):
             resource["name"] = filename
             xlsx_info = self.metadata_info[os.path.basename(md5_file)]
             folder_name = self.google_track_meta.get(xlsx_info["ticket"]).folder_name
-            legacy_url = urljoin(xlsx_info["base_url"], filename)
+            legacy_url = urljoin(xlsx_info["base_url"], quote(filename))
             resources.append(((folder_name,), legacy_url, resource))
         return resources

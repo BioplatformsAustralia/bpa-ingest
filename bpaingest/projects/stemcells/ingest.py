@@ -1,5 +1,8 @@
 from unipath import Path
-from urllib.parse import urljoin
+from urllib.parse import (
+    urljoin,
+    quote,
+)
 from collections import defaultdict
 from hashlib import md5 as md5hash
 
@@ -157,7 +160,7 @@ class StemcellsTranscriptomeMetadata(BaseMetadata):
             resource["name"] = filename
             sample_id = ingest_utils.extract_ands_id(self._logger, file_info.get("id"))
             xlsx_info = self.metadata_info[os.path.basename(md5_file)]
-            legacy_url = urljoin(xlsx_info["base_url"], filename)
+            legacy_url = urljoin(xlsx_info["base_url"], quote(filename))
             resources.append(((sample_id,), legacy_url, resource))
         return resources
 
@@ -281,7 +284,7 @@ class StemcellsSmallRNAMetadata(BaseMetadata):
             resource["name"] = filename
             sample_id = ingest_utils.extract_ands_id(self._logger, file_info.get("id"))
             xlsx_info = self.metadata_info[os.path.basename(md5_file)]
-            legacy_url = urljoin(xlsx_info["base_url"], filename)
+            legacy_url = urljoin(xlsx_info["base_url"], quote(filename))
             resources.append(((sample_id,), legacy_url, resource))
         return resources
 
@@ -443,7 +446,7 @@ class StemcellsSingleCellRNASeqMetadata(BaseMetadata):
                     len(self.resource_linkage),
                 )
             xlsx_info = self.metadata_info[os.path.basename(md5_file)]
-            legacy_url = urljoin(xlsx_info["base_url"], filename)
+            legacy_url = urljoin(xlsx_info["base_url"], quote(filename))
             resources.append((linked_resources, legacy_url, resource))
         return resources
 
@@ -596,7 +599,7 @@ class StemcellsMetabolomicsMetadata(BaseMetadata):
             )
             sample_id = ingest_utils.extract_ands_id(self._logger, file_info.get("id"))
             xlsx_info = self.metadata_info[os.path.basename(md5_file)]
-            legacy_url = urljoin(xlsx_info["base_url"], filename)
+            legacy_url = urljoin(xlsx_info["base_url"], quote(filename))
             resources.append(
                 ((sample_id, resource["analytical_platform"]), legacy_url, resource)
             )
@@ -794,7 +797,7 @@ class StemcellsProteomicsMetadata(StemcellsProteomicsBaseMetadata):
                 resource[k] = getattr(resource_meta, k)
             sample_id = ingest_utils.extract_ands_id(self._logger, file_info.get("id"))
             xlsx_info = self.metadata_info[os.path.basename(md5_file)]
-            legacy_url = urljoin(xlsx_info["base_url"], filename)
+            legacy_url = urljoin(xlsx_info["base_url"], quote(filename))
             resources.append(((sample_id,), legacy_url, resource))
         return resources
 
@@ -898,7 +901,7 @@ class StemcellsProteomicsPoolMetadata(StemcellsProteomicsBaseMetadata):
                 resource[k] = getattr(resource_meta, k)
             pool_id = file_info["pool_id"]
             xlsx_info = self.metadata_info[os.path.basename(md5_file)]
-            legacy_url = urljoin(xlsx_info["base_url"], filename)
+            legacy_url = urljoin(xlsx_info["base_url"], quote(filename))
             resources.append(((pool_id,), legacy_url, resource))
         return resources
 
@@ -1066,7 +1069,7 @@ class StemcellsProteomicsAnalysedMetadata(BaseMetadata):
                 ).hexdigest()
             )
             resource["name"] = filename
-            legacy_url = urljoin(xlsx_info["base_url"], filename)
+            legacy_url = urljoin(xlsx_info["base_url"], quote(filename))
             resources.append(((xlsx_info["ticket"],), legacy_url, resource))
         return resources
 
@@ -1220,7 +1223,7 @@ class StemcellsMetabolomicsAnalysedMetadata(BaseMetadata):
             folder_name = (
                 tracking_ticket_folder.folder_name if tracking_ticket_folder else ""
             )
-            legacy_url = urljoin(xlsx_info["base_url"], filename)
+            legacy_url = urljoin(xlsx_info["base_url"], quote(filename))
             resources.append(((folder_name,), legacy_url, resource))
         return resources
 
@@ -1362,6 +1365,6 @@ class StemcellsTranscriptomeAnalysedMetadata(BaseMetadata):
             )
             resource["name"] = filename
             folder_name = self.track_meta.get(xlsx_info["ticket"]).folder_name
-            legacy_url = urljoin(xlsx_info["base_url"], filename)
+            legacy_url = urljoin(xlsx_info["base_url"], quote(filename))
             resources.append(((folder_name,), legacy_url, resource))
         return resources

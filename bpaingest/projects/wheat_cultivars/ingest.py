@@ -1,7 +1,7 @@
 import os
 from unipath import Path
 from glob import glob
-from urllib.parse import urljoin
+from urllib.parse import urljoin, quote
 
 from ...libs.excel_wrapper import make_field_definition as fld
 from ...libs import ingest_utils
@@ -124,6 +124,6 @@ class WheatCultivarsMetadata(BaseMetadata):
                     self._logger, file_info["sample_id"]
                 )
                 xlsx_info = self.metadata_info[os.path.basename(md5_file)]
-                legacy_url = urljoin(xlsx_info["base_url"], "../all/" + filename)
+                legacy_url = urljoin(xlsx_info["base_url"], "../all/" + quote(filename))
                 resources.append(((sample_id,), legacy_url, resource))
         return resources

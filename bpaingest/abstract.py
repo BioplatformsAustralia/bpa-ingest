@@ -2,7 +2,7 @@ import os
 import re
 from copy import deepcopy
 from glob import glob
-from urllib.parse import urlparse, urljoin
+from urllib.parse import urlparse, urljoin, quote
 
 from .libs import ingest_utils
 from .libs.excel_wrapper import (
@@ -148,12 +148,12 @@ class BaseMetadata:
                 self._logger.warn("Optional files match {}".format(filename))
 
             xlsx_info = self.metadata_info[os.path.basename(md5_file)]
-            legacy_url = urljoin(xlsx_info["base_url"], filename)
+            legacy_url = urljoin(xlsx_info["base_url"], quote(filename))
             raw_resources_info = self.resource_info.get(os.path.basename(filename), "")
             # if download_info exists for raw_resources, then use remote URL
             if raw_resources_info:
                 legacy_url = urljoin(
-                    raw_resources_info["base_url"], os.path.basename(filename)
+                    raw_resources_info["base_url"], quote(os.path.basename(filename))
                 )
             self._add_datatype_specific_info_to_resource(resource, md5_file)
             if hasattr(self, "common_files_match"):
@@ -359,7 +359,7 @@ class BaseMetadata:
             fname = self._linkage_xlsx_file[key]
             resource = resource_metadata_from_file(linkage, fname, self.ckan_data_type)
             xlsx_info = self.metadata_info[os.path.basename(fname)]
-            legacy_url = urljoin(xlsx_info["base_url"], os.path.basename(fname))
+            legacy_url = urljoin(xlsx_info["base_url"], quote(os.path.basename(fname)))
             resources.append((linkage, legacy_url, resource))
         return resources
 
@@ -475,7 +475,7 @@ class BaseMetadata:
                 linkage, md5_file, self.ckan_data_type
             )
             resource["shared_file"] = True  # all md5s are shared.
-            legacy_url = urljoin(file_info["base_url"], md5_basename)
+            legacy_url = urljoin(file_info["base_url"], quote(md5_basename))
             resources.append((linkage, legacy_url, resource))
         return resources
 

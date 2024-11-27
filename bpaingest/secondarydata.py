@@ -1,6 +1,6 @@
 import os
 import pathlib
-from urllib.parse import urljoin
+from urllib.parse import urljoin, quote
 
 from bpaingest.abstract import BaseMetadata
 from bpaingest.libs.ingest_utils import from_comma_or_space_separated_to_list
@@ -120,7 +120,7 @@ class SecondaryMetadata(BaseMetadata):
                     linkage, fname, self.ckan_data_type
                 )
                 legacy_url = urljoin(
-                    raw_resources_info["base_url"], os.path.basename(fname)
+                    raw_resources_info["base_url"], quote(os.path.basename(fname))
                 )
             else:
                 # otherwise if no download_info, then use local URL and gather all metadata except md5
