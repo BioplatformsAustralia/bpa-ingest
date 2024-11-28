@@ -141,11 +141,12 @@ def audit_resource(audit_tag, description, ckan, delete_id, resource_obj):
 
     try:
         merge_and_update_tags(bucket, key, s3_tags)
-    except botocore.errorfactory.NoSuchKey:
-        logger.critical(
-            "Unable to object with key `%s', for resource object (%s)"
-            % (key, repr(resource_obj))
-        )
+    except botocore.exceptions.ClientError as ex:
+        if ex.response["Error"]["Code"] == "NoSuchKey":
+            logger.error(
+                "Unable to tag non-existent object with key `%s', for resource object (%s)"
+                % (key, repr(resource_obj))
+            )
         raise Exception("Unable to tag S3 Resource due to error")
 
 
@@ -160,11 +161,8 @@ def tag_deleted_resource(ckan, delete_id, resource_obj):
     description = "deleted"
     try:
         audit_resource(audit_tag, description, ckan, delete_id, resource_obj)
-    except botocore.errorfactory.NoSuchKey:
-        logger.warn(
-            "Unable to tag deleted s3 object with key `%s', for resource object (%s)"
-            % (delete_id, repr(resource_obj))
-        )
+    except:
+        logger.warn("Unable to tag deleted s3 object with key `%s'" % (delete_id,))
 
 
 def delete_resource(ckan, delete_id, resource_obj):
