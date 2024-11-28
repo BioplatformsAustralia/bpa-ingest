@@ -158,7 +158,13 @@ def tag_verified_resource(ckan, verified_id, resource_obj):
 def tag_deleted_resource(ckan, delete_id, resource_obj):
     audit_tag = AUDIT_DELETED
     description = "deleted"
-    audit_resource(audit_tag, description, ckan, delete_id, resource_obj)
+    try:
+        audit_resource(audit_tag, description, ckan, delete_id, resource_obj)
+    except botocore.errorfactory.NoSuchKey:
+        logger.warn(
+            "Unable to tag deleted s3 object with key `%s', for resource object (%s)"
+            % (delete_id, repr(resource_obj))
+        )
 
 
 def delete_resource(ckan, delete_id, resource_obj):
