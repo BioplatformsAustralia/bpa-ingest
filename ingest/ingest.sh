@@ -173,13 +173,16 @@ amd() {
 fungi()
 {
   apply fungi-illumina-shortread $*
+  apply fungi-ont-promethion $*
 }
 
 pp()
 {
   apply pp-illumina-shortread $*
   apply pp-pacbio-hifi $*
+  apply pp-ont-promethion $*
 }
+
 cipps()
 {
   apply cipps-illumina-shortread $*
@@ -188,24 +191,30 @@ cipps()
 
 ppa()
 {
-  apply ppa-phenoct-xray-raw $*
+  apply ppa-phenoct-xray $*
   apply ppa-phenoct-xray-analysed $*
-  apply ppa-hyperspect $*
+  apply ppa-hyperspectral $*
+  apply ppa-asd-spectro $*
   apply ppa-nutritional-analysed $*
   apply ppa-metabolomics $*
   apply ppa-metabolomics-analysed $*
   apply ppa-proteomics $*
   apply ppa-proteomics-analysed $*
+  apply ppa-proteomics-database $*
+  apply ppa-nutritional-analysis $*
 }
 
 grasslands() {
   apply grasslands-hi-c $*
   apply grasslands-pacbio-hifi $*
+  apply grasslands-genomics-ddrad $*
+  apply grasslands-illumina-shortread $*
 }
 
-collabs()
+collaborations()
 {
-  apply collabs-platypus-metagenomics-novaseq $*
+  apply collaborations-metagenomics-novaseq $*
+  apply collaborations-ont-promethion $*
 
 }
 
