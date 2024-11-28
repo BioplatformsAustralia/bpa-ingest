@@ -1063,8 +1063,7 @@ class StemcellsProteomicsAnalysedMetadata(BaseMetadata):
             xlsx_info = self.metadata_info[os.path.basename(md5_file)]
             # analysed data has duplicate PNG images in it -- we need to keep the ID unique
             resource["id"] = (
-                "u-"
-                + md5hash(
+                md5hash(
                     (self.ckan_data_type + xlsx_info["ticket"] + md5).encode("utf8")
                 ).hexdigest()
             )
@@ -1205,7 +1204,7 @@ class StemcellsMetabolomicsAnalysedMetadata(BaseMetadata):
             id_attributes = self.ckan_data_type + xlsx_info["base_url"] + md5
             if filename and filename.endswith(".png"):
                 id_attributes += filename
-            resource["id"] = "u-" + md5hash((id_attributes).encode("utf8")).hexdigest()
+            resource["id"] = md5hash((id_attributes).encode("utf8")).hexdigest()
             resource["name"] = filename
             ticket_name = xlsx_info["ticket"]
             tracking_ticket_folder = self.track_meta.get(ticket_name)
@@ -1358,8 +1357,7 @@ class StemcellsTranscriptomeAnalysedMetadata(BaseMetadata):
             xlsx_info = self.metadata_info[os.path.basename(md5_file)]
             # analysed data has duplicate PNG images in it - we need to keep the id unique
             resource["id"] = (
-                "u-"
-                + md5hash(
+                md5hash(
                     (self.ckan_data_type + xlsx_info["base_url"] + md5).encode("utf8")
                 ).hexdigest()
             )
