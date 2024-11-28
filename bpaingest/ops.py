@@ -8,7 +8,7 @@ import requests
 import ckanapi
 import os
 import time
-from urllib.parse import urlparse
+from urllib.parse import urlparse, unquote
 from urllib.request import url2pathname
 from collections import defaultdict
 
@@ -349,7 +349,7 @@ def download_legacy_file(legacy_url, auth):
     logger.debug("start download_legacy_file `%s' " % legacy_url)
     if legacy_url and legacy_url.startswith("file:///"):
         return download_legacy_local_file(legacy_url)
-    basename = legacy_url.rsplit("/", 1)[-1]
+    basename = unquote(legacy_url.rsplit("/", 1)[-1])
     tempdir = tempfile.mkdtemp(prefix="bpaingest-data-")
     path = os.path.join(tempdir, basename)
     archive_info = ApacheArchiveInfo(auth)
