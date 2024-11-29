@@ -1062,11 +1062,9 @@ class StemcellsProteomicsAnalysedMetadata(BaseMetadata):
             resource["md5"] = md5
             xlsx_info = self.metadata_info[os.path.basename(md5_file)]
             # analysed data has duplicate PNG images in it -- we need to keep the ID unique
-            resource["id"] = (
-                md5hash(
-                    (self.ckan_data_type + xlsx_info["ticket"] + md5).encode("utf8")
-                ).hexdigest()
-            )
+            resource["id"] = md5hash(
+                (self.ckan_data_type + xlsx_info["ticket"] + md5).encode("utf8")
+            ).hexdigest()
             resource["name"] = filename
             legacy_url = urljoin(xlsx_info["base_url"], quote(filename))
             resources.append(((xlsx_info["ticket"],), legacy_url, resource))
@@ -1356,11 +1354,9 @@ class StemcellsTranscriptomeAnalysedMetadata(BaseMetadata):
             resource["md5"] = md5
             xlsx_info = self.metadata_info[os.path.basename(md5_file)]
             # analysed data has duplicate PNG images in it - we need to keep the id unique
-            resource["id"] = (
-                md5hash(
-                    (self.ckan_data_type + xlsx_info["base_url"] + md5).encode("utf8")
-                ).hexdigest()
-            )
+            resource["id"] = md5hash(
+                (self.ckan_data_type + xlsx_info["base_url"] + md5).encode("utf8")
+            ).hexdigest()
             resource["name"] = filename
             folder_name = self.track_meta.get(xlsx_info["ticket"]).folder_name
             legacy_url = urljoin(xlsx_info["base_url"], quote(filename))
