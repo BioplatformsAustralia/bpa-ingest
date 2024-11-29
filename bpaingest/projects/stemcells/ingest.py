@@ -701,7 +701,11 @@ class StemcellsProteomicsMetadata(StemcellsProteomicsBaseMetadata):
     embargo_days = 365
     md5 = {
         "match": [files.proteomics_filename_re, files.proteomics_filename2_re],
-        "skip": common_skip,
+        "skip": [
+            common_skip,
+            files.proteomics_pool_filename_re,
+            files.proteomics_pool_filename2_re,
+        ],
     }
 
     def __init__(
@@ -808,7 +812,14 @@ class StemcellsProteomicsPoolMetadata(StemcellsProteomicsBaseMetadata):
     embargo_days = 365
     resource_linkage = ("pool_id",)
     pool = True
-    md5 = {"match": [files.proteomics_pool_filename_re], "skip": common_skip}
+    md5 = {
+        "match": [files.proteomics_pool_filename_re],
+        "skip": [
+            common_skip,
+            files.proteomics_filename_re,
+            files.proteomics_filename2_re,
+        ],
+    }
 
     def __init__(
         self, logger, metadata_path, contextual_metadata=None, metadata_info=None
@@ -828,7 +839,7 @@ class StemcellsProteomicsPoolMetadata(StemcellsProteomicsBaseMetadata):
         # this is harmless as they have to precisly match, and sample_id is the primary key
         #
         # we also have rows relating to pooled data, and non-pooled data (this class
-        # considers only non-pooled data)
+        # considers only pooled data)
         all_rows = self.read_all_rows("2d")
         pool_id_ticket_facility = dict(
             (t.pool_id, (t.ticket, t.facility_code)) for t in all_rows if t.pool_id
@@ -974,6 +985,7 @@ class StemcellsProteomicsAnalysedMetadata(BaseMetadata):
             files.proteomics_analysed_filename_re,
             files.xlsx_filename_re,
             files.pdf_filename_re,
+            files.docx_filename_re,
         ],
         "skip": common_skip,
     }
