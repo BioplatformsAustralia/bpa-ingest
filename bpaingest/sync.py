@@ -26,6 +26,7 @@ from bpaingest.util import prune_dict
 from bpaingest.libs.multihash import S3_HASH_FIELDS
 from bpaingest.libs.bpa_constants import AUDIT_DELETED, AUDIT_VERIFIED
 from bpaingest.libs.s3 import merge_and_update_tags
+from bpaingest.libs.munge import munge_filename
 from collections import Counter
 
 logger = make_logger(__name__)
@@ -124,7 +125,7 @@ def audit_resource(audit_tag, description, ckan, delete_id, resource_obj):
         "audit": audit_tag,
     }
 
-    filename = resource_obj["name"]
+    filename = munge_filename(resource_obj["name"])
     destination = determine_destination(ckan)
     bucket = destination.split("/")[0]
     key = "{}/resources/{}/{}".format(
