@@ -899,8 +899,16 @@ class PlantProteinAtlasMetabolomicsAnalysedMetadata(PlantProteinAtlasBaseMetadat
                 skp('total_phenolic_content (concentration mg of gallic acid/100 mg of faba bean)'),
                 skp('total_phenolic_content (concentration mg of gallic acid/100 g of faba bean)'),
                 skp('total_saponin_content (concentration espressed as milligram equivalent of  oelanoic acid/ gram of faba bean poweder)'),
-                skp('total_lipid_content (milligram of crude fats per gram of milled faba beans) mg/g')
-         ],
+                skp('total_lipid_content (milligram of crude fats per gram of milled faba beans) mg/g'),
+                # the following columns have multi-line labels in the metadata sheet, and are all skipped/ignored
+                # as this is actual data rather than metadata.
+                skp(re.compile(r"aflatoxin_b1_*", re.MULTILINE)),
+                skp(re.compile(r"aflatoxin_b2_*", re.MULTILINE)),
+                skp(re.compile(r"aflatoxin_g1_*", re.MULTILINE)),
+                skp(re.compile(r"aflatoxin_g2_*", re.MULTILINE)),
+                skp(re.compile(r"total_aflatoxins_*", re.MULTILINE)),
+                skp(re.compile(r"ochratoxin_a_*", re.MULTILINE)),
+        ],
             "options": {
                 "sheet_name": "Library metadata",
                 "header_length": 1,
