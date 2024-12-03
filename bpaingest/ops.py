@@ -15,7 +15,7 @@ from collections import defaultdict
 from .libs.ingest_utils import ApiFqBuilder
 from .libs.bpa_constants import AUDIT_VERIFIED
 from .libs.s3 import update_tags
-from .libs.munge import munge_filename
+from .libs.munge import munge_filename_legacy
 from .util import make_logger
 
 logger = make_logger(__name__)
@@ -427,7 +427,7 @@ def reupload_resource(ckan, ckan_obj, legacy_url, parent_destination, auth=None)
         return
     try:
         logger.info("re-uploading from tempfile: %s" % (path))
-        filename = munge_filename(path.split("/")[-1])
+        filename = munge_filename_legacy(path.split("/")[-1])
         s3_destination = "s3://{}/resources/{}/{}".format(
             parent_destination, ckan_obj["id"], filename
         )
