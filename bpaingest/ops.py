@@ -427,7 +427,8 @@ def reupload_resource(ckan, ckan_obj, legacy_url, parent_destination, auth=None)
         return
     try:
         logger.info("re-uploading from tempfile: %s" % (path))
-        filename = munge_filename_legacy(path.split("/")[-1])
+        #filename = munge_filename_legacy(path.split("/")[-1])
+        filename = path.split("/")[-1]
         s3_destination = "s3://{}/resources/{}/{}".format(
             parent_destination, ckan_obj["id"], filename
         )

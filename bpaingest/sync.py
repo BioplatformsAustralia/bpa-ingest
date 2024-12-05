@@ -125,7 +125,8 @@ def audit_resource(audit_tag, description, ckan, delete_id, resource_obj):
         "audit": audit_tag,
     }
 
-    filename = munge_filename_legacy(resource_obj["name"])
+    #filename = munge_filename_legacy(resource_obj["name"])
+    filename = resource_obj["name"]
     destination = determine_destination(ckan)
     bucket = destination.split("/")[0]
     key = "{}/resources/{}/{}".format(
