@@ -15,7 +15,7 @@ from collections import defaultdict
 from .libs.ingest_utils import ApiFqBuilder
 from .libs.bpa_constants import AUDIT_VERIFIED
 from .libs.s3 import update_tags
-from .libs.munge import munge_filename_legacy
+from .libs.munge import bpa_munge_filename
 from .util import make_logger
 
 logger = make_logger(__name__)
@@ -283,6 +283,13 @@ def check_resource(
         logger.error("error getting legacy size of: %s" % (legacy_url))
         return "error-getting-size-legacy"
 
+    # check if current URL aligns with resource on legacy
+    legacy_filename_cleaned = bpa_munge_filename(legacy_url.split("/")[-1])
+    current_filename = current_url.split("/")[-1]
+
+    if current_filename != legacy_filename_cleaned:
+        return "filename-change-reupload-needed"
+
     # single call to s3 from this function to speed up checks
     try:
         current_size, current_etag = ckan_archive_info.get_size_and_etag(current_url)
@@ -427,8 +434,8 @@ def reupload_resource(ckan, ckan_obj, legacy_url, parent_destination, auth=None)
         return
     try:
         logger.info("re-uploading from tempfile: %s" % (path))
-        #filename = munge_filename_legacy(path.split("/")[-1])
-        filename = path.split("/")[-1]
+        # Always store in S3 with a clean filename
+        filename = bpa_munge_filename(path.split("/")[-1])
         s3_destination = "s3://{}/resources/{}/{}".format(
             parent_destination, ckan_obj["id"], filename
         )

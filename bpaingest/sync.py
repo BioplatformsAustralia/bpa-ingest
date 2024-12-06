@@ -125,7 +125,8 @@ def audit_resource(audit_tag, description, ckan, delete_id, resource_obj):
         "audit": audit_tag,
     }
 
-    #filename = munge_filename_legacy(resource_obj["name"])
+    # This filename should always be stored as a clean
+    # filename in S3
     filename = resource_obj["name"]
     destination = determine_destination(ckan)
     bucket = destination.split("/")[0]
@@ -155,7 +156,10 @@ def audit_resource(audit_tag, description, ckan, delete_id, resource_obj):
 def tag_verified_resource(ckan, verified_id, resource_obj):
     audit_tag = AUDIT_VERIFIED
     description = "verified"
-    audit_resource(audit_tag, description, ckan, verified_id, resource_obj)
+    try:
+        audit_resource(audit_tag, description, ckan, verified_id, resource_obj)
+    except:
+        logger.warn("Unable to add verified tag to s3 object with key `%s' - likely filename change or missing" % (verified_id,))
 
 
 def tag_deleted_resource(ckan, delete_id, resource_obj):
