@@ -19,6 +19,7 @@ from ...util import (
     sample_id_to_ckan_name,
     common_values,
     one,
+    clean_filename,
 )
 from .contextual import (
     AustralianMicrobiomeSampleContextual,
@@ -963,7 +964,7 @@ class BASESiteImagesMetadata(AMDFullIngestMetadata):
             resource = {}
             resource["md5"] = resource["id"] = info["md5"]
             filename = info["filename"]
-            resource["name"] = filename
+            resource["name"] = clean_filename(filename)
             resource["resource_path"] = os.path.dirname(filename)
             resource["shared_file"] = False
             resource["optional_file"] = False

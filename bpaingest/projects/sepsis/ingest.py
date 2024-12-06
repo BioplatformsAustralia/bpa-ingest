@@ -12,6 +12,7 @@ from ...util import (
     common_values,
     clean_tag_name,
     apply_cc_by_license,
+    clean_filename,
 )
 from ...abstract import BaseMetadata
 from ...libs.excel_wrapper import make_field_definition as fld
@@ -247,7 +248,7 @@ class SepsisGenomicsMiseqMetadata(BaseSepsisMetadata):
             )
             resource["seq_size"] = file_info.get("size")
             resource["md5"] = resource["id"] = md5
-            resource["name"] = filename
+            resource["name"] = clean_filename(filename)
             resource["resource_path"] = ""
             resource["resource_type"] = self.ckan_data_type
             # these are set to False by default
@@ -385,7 +386,7 @@ class SepsisGenomicsPacbioMetadata(BaseSepsisMetadata):
                 for t in ("run_id", "vendor", "data_type", "machine_data")
             )
             resource["md5"] = resource["id"] = md5
-            resource["name"] = filename
+            resource["name"] = clean_filename(filename)
             resource["resource_path"] = ""
             resource["resource_type"] = self.ckan_data_type
             # these are set to False by default
@@ -559,7 +560,7 @@ class SepsisTranscriptomicsHiseqMetadata(BaseSepsisMetadata):
             )
             resource["seq_size"] = file_info.get("size")
             resource["md5"] = resource["id"] = md5
-            resource["name"] = filename
+            resource["name"] = clean_filename(filename)
             resource["resource_path"] = ""
             resource["resource_type"] = self.ckan_data_type
             # these are set to False by default
@@ -697,7 +698,7 @@ class SepsisMetabolomicsGCMSMetadata(BaseSepsisMetadata):
                 for t in ("vendor", "platform", "mastr_ms_id", "machine_data")
             )
             resource["md5"] = resource["id"] = md5
-            resource["name"] = filename
+            resource["name"] = clean_filename(filename)
             resource["resource_path"] = ""
             resource["resource_type"] = self.ckan_data_type
             # these are set to False by default
@@ -840,7 +841,7 @@ class SepsisMetabolomicsLCMSMetadata(BaseSepsisMetadata):
                 for t in ("vendor", "platform", "mastr_ms_id", "machine_data")
             )
             resource["md5"] = resource["id"] = md5
-            resource["name"] = filename
+            resource["name"] = clean_filename(filename)
             resource["resource_path"] = ""
             resource["resource_type"] = self.ckan_data_type
             # these are set to False by default
@@ -998,7 +999,7 @@ class SepsisProteomicsMS1QuantificationMetadata(BaseSepsisMetadata):
         for filename, md5, md5_file, file_info in self.md5_lines():
             resource = dict((t, file_info.get(t)) for t in ("vendor", "machine_data"))
             resource["md5"] = resource["id"] = md5
-            resource["name"] = filename
+            resource["name"] = clean_filename(filename)
             resource["resource_path"] = ""
             resource["resource_type"] = self.ckan_data_type
             # these are set to False by default
@@ -1223,7 +1224,7 @@ class SepsisProteomicsSwathMSBaseSepsisMetadata(BaseSepsisMetadata):
             resource["resource_type"] = data_type
             package_name = file_meta.pop("package_name", None)
             resource.update(file_meta)
-            resource["name"] = filename
+            resource["name"] = clean_filename(filename)
             resource["resource_path"] = ""
             if data_type == "1d":
                 package_id = ingest_utils.extract_ands_id(
@@ -1383,7 +1384,7 @@ class SepsisProteomicsSwathMSCombinedSampleMetadata(BaseSepsisMetadata):
         for filename, md5, md5_file, file_info in self.md5_lines():
             resource = {}
             resource["md5"] = resource["id"] = md5
-            resource["name"] = filename
+            resource["name"] = clean_filename(filename)
             xlsx_info = self.metadata_info[os.path.basename(md5_file)]
             folder_name = self.google_track_meta.get(xlsx_info["ticket"]).folder_name
             legacy_url = urljoin(xlsx_info["base_url"], quote(filename))
@@ -1529,7 +1530,7 @@ class SepsisProteomics2DLibraryMetadata(BaseSepsisMetadata):
         for filename, md5, md5_file, file_info in self.md5_lines():
             resource = {}
             resource["md5"] = resource["id"] = md5
-            resource["name"] = filename
+            resource["name"] = clean_filename(filename)
             resource.update(file_info)
             xlsx_info = self.metadata_info[os.path.basename(md5_file)]
             folder_name = self.google_track_meta.get(xlsx_info["ticket"]).folder_name
@@ -1804,7 +1805,7 @@ class SepsisProteomicsAnalysedMetadata(BaseSepsisAnalysedMetadata):
         for filename, md5, md5_file, file_info in self.md5_lines():
             resource = {}
             resource["md5"] = resource["id"] = md5
-            resource["name"] = filename
+            resource["name"] = clean_filename(filename)
             xlsx_info = self.metadata_info[os.path.basename(md5_file)]
             folder_name = self.google_track_meta.get(xlsx_info["ticket"]).folder_name
             legacy_url = urljoin(xlsx_info["base_url"], quote(filename))
@@ -1974,7 +1975,7 @@ class SepsisTranscriptomicsAnalysedMetadata(BaseSepsisAnalysedMetadata):
         for filename, md5, md5_file, file_info in self.md5_lines():
             resource = {}
             resource["md5"] = resource["id"] = md5
-            resource["name"] = filename
+            resource["name"] = clean_filename(filename)
             xlsx_info = self.metadata_info[os.path.basename(md5_file)]
             ticket = xlsx_info["ticket"]
             legacy_url = urljoin(xlsx_info["base_url"], quote(filename))
@@ -2136,7 +2137,7 @@ class SepsisMetabolomicsAnalysedMetadata(BaseSepsisAnalysedMetadata):
         for filename, md5, md5_file, file_info in self.md5_lines():
             resource = {}
             resource["md5"] = resource["id"] = md5
-            resource["name"] = filename
+            resource["name"] = clean_filename(filename)
             xlsx_info = self.metadata_info[os.path.basename(md5_file)]
             folder_name = self.google_track_meta.get(xlsx_info["ticket"]).folder_name
             legacy_url = urljoin(xlsx_info["base_url"], quote(filename))
@@ -2305,7 +2306,7 @@ class SepsisGenomicsAnalysedMetadata(BaseSepsisAnalysedMetadata):
         for filename, md5, md5_file, file_info in self.md5_lines():
             resource = {}
             resource["md5"] = resource["id"] = md5
-            resource["name"] = filename
+            resource["name"] = clean_filename(filename)
             xlsx_info = self.metadata_info[os.path.basename(md5_file)]
             folder_name = self.google_track_meta.get(xlsx_info["ticket"]).folder_name
             legacy_url = urljoin(xlsx_info["base_url"], quote(filename))
@@ -2467,7 +2468,7 @@ class SepsisProteomicsProteinDatabaseMetadata(BaseSepsisAnalysedMetadata):
                 extra_data.pop("file_name")
                 resource.update(extra_data)
             resource["md5"] = resource["id"] = md5
-            resource["name"] = filename
+            resource["name"] = clean_filename(filename)
             xlsx_info = self.metadata_info[os.path.basename(md5_file)]
             folder_name = self.google_track_meta.get(xlsx_info["ticket"]).folder_name
             legacy_url = urljoin(xlsx_info["base_url"], quote(filename))

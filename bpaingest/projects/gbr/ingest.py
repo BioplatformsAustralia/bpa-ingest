@@ -5,7 +5,7 @@ from . import files
 from ...libs.excel_wrapper import make_field_definition as fld
 from unipath import Path
 from glob import glob
-from ...util import apply_cc_by_license, sample_id_to_ckan_name
+from ...util import apply_cc_by_license, sample_id_to_ckan_name, clean_filename
 from ...libs import ingest_utils
 from urllib.parse import urljoin, quote
 from ...abstract import BaseMetadata
@@ -127,7 +127,7 @@ class GbrPacbioMetadata(BaseMetadata):
         for filename, md5, md5_file, file_info in self.md5_lines():
             resource = file_info.copy()
             resource["md5"] = resource["id"] = md5
-            resource["name"] = filename
+            resource["name"] = clean_filename(filename)
             sample_id = ingest_utils.extract_ands_id(
                 self._logger, file_info["sample_id"]
             )
@@ -258,7 +258,7 @@ class GbrAmpliconsMetadata(BaseMetadata):
         for filename, md5, md5_file, file_info in self.md5_lines():
             resource = file_info.copy()
             resource["md5"] = resource["id"] = md5
-            resource["name"] = filename
+            resource["name"] = clean_filename(filename)
             sample_id = ingest_utils.extract_ands_id(
                 self._logger, file_info["sample_id"]
             )

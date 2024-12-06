@@ -12,7 +12,7 @@ from .libs.excel_wrapper import (
 )
 from .libs.md5lines import MD5Parser
 from .resource_metadata import resource_metadata_from_file, resource_metadata_id
-from .util import make_logger, one
+from .util import make_logger, one, clean_filename
 import re
 
 
@@ -133,7 +133,7 @@ class BaseMetadata:
         for filename, md5, md5_file, file_info in self.md5_lines():
             resource = file_info.copy()
             resource["md5"] = resource["id"] = md5
-            resource["name"] = os.path.basename(filename)
+            resource["name"] = clean_filename(os.path.basename(filename))
             resource["resource_path"] = os.path.dirname(filename)
             resource["resource_type"] = self.ckan_data_type
             # these are set to False by default

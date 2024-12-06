@@ -6,7 +6,12 @@ from urllib.parse import urljoin, quote
 from ...libs.excel_wrapper import make_field_definition as fld
 from ...libs import ingest_utils
 from ...abstract import BaseMetadata
-from ...util import sample_id_to_ckan_name, apply_cc_by_license, clean_tag_name
+from ...util import (
+    sample_id_to_ckan_name,
+    apply_cc_by_license,
+    clean_tag_name,
+    clean_filename,
+)
 from . import files
 from .runs import parse_run_data, BLANK_RUN
 
@@ -118,7 +123,7 @@ class WheatCultivarsMetadata(BaseMetadata):
             ):
                 resource = file_info.copy()
                 resource["md5"] = resource["id"] = md5
-                resource["name"] = filename
+                resource["name"] = clean_filename(filename)
                 resource.update(self.runs.get(resource["run"], BLANK_RUN))
                 sample_id = ingest_utils.extract_ands_id(
                     self._logger, file_info["sample_id"]
