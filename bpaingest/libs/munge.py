@@ -75,7 +75,6 @@ def decode_path(p):
     return six.ensure_binary(p).decode(_FILESYSTEM_ENCODING)
 
 
-
 def substitute_ascii_equivalents(text_unicode):
     # Method taken from: http://code.activestate.com/recipes/251871/
     """
@@ -168,6 +167,45 @@ def munge_filename(filename):
     ext_len = len(ext)
     name = _munge_to_length(name, max(1, MIN_FILENAME_TOTAL_LENGTH - ext_len),
                             MAX_FILENAME_TOTAL_LENGTH - ext_len)
+
+
+def bpa_munge_filename(filename):
+    """Tidies a filename
+
+    This ensures the munged filename meets:
+       * CKAN restricitions for filenames
+       * AWS S3 restrictions for filenames
+         - https://docs.aws.amazon.com/AmazonS3/latest/userguide/object-keys.html
+       * POSIX portable filenames (for DRS extension)
+         - https://pubs.opengroup.org/onlinepubs/9699919799/basedefs/V1_chap03.html#tag_03_282%5Bportable
+
+    Keeps the filename extension (e.g. .csv).
+    Strips off any path on the front.
+
+    Returns a Unicode string.
+    """
+    if not isinstance(filename, text_type):
+        filename = decode_path(filename)
+
+    # Ignore path
+    filename = os.path.split(filename)[1]
+
+    # Clean up
+    filename = substitute_ascii_equivalents(filename)
+    # this meets both AWS and POSIX restrictions
+    filename = re.sub("[^a-zA-Z0-9_. -]", "", filename).replace(" ", "-")
+    # shrink multile dashes
+    filename = re.sub("-+", "-", filename)
+
+    # Enforce length constraints
+    name, ext = os.path.splitext(filename)
+    ext = ext[:MAX_FILENAME_EXTENSION_LENGTH]
+    ext_len = len(ext)
+    name = _munge_to_length(
+        name,
+        max(1, MIN_FILENAME_TOTAL_LENGTH - ext_len),
+        MAX_FILENAME_TOTAL_LENGTH - ext_len,
+    )
     filename = name + ext
 
     return filename

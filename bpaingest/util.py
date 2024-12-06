@@ -6,6 +6,7 @@ import re
 import string
 from collections import namedtuple
 from hashlib import md5
+from .libs.munge import bpa_munge_filename
 
 import ckanapi
 from dateutil.relativedelta import relativedelta
@@ -288,6 +289,13 @@ def get_md5_legacy_url(meta):
         if key.endswith(".md5")
     ][0]
     return first_md5_baseurl
+
+
+def clean_filename(filename):
+    cleaned = bpa_munge_filename(filename)
+    if filename != cleaned:
+        logger.warn(f"Cleaned filename from '{filename}' to '{cleaned}'")
+    return cleaned
 
 
 logger = make_logger(__name__)
