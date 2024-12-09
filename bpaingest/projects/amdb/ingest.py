@@ -1971,11 +1971,12 @@ class AustralianMicrobiomeMetagenomicsNovaseqMetadata(AMDFullIngestMetadata):
         self._current_md5 = md5_file
 
     def _build_resource_linkage(self, xlsx_info, resource, file_info):
-        sample_id = ingest_utils.extract_ands_id(
-            self._logger, file_info.get("id")
-        )
+        sample_id = ingest_utils.extract_ands_id(self._logger, file_info.get("id"))
         flowcell_id = file_info.get("flowcell")
-        return (sample_id, flowcell_id,)
+        return (
+            sample_id,
+            flowcell_id,
+        )
 
 
 class AustralianMicrobiomeMetagenomicsNovaseqControlMetadata(AMDFullIngestMetadata):
@@ -1997,6 +1998,7 @@ class AustralianMicrobiomeMetagenomicsNovaseqControlMetadata(AMDFullIngestMetada
     ]
     metadata_url_components = ("facility_code", "ticket")
     add_md5_as_resource = True
+
     def __init__(self, logger, metadata_path, **kwargs):
         super().__init__(logger, metadata_path, **kwargs)
         self.google_track_meta = AustralianMicrobiomeGoogleTrackMetadata(logger)
@@ -2062,7 +2064,6 @@ class AustralianMicrobiomeMetagenomicsNovaseqControlMetadata(AMDFullIngestMetada
             self.track_packages_for_md5(obj, info["ticket"])
             packages.append(obj)
         return packages
-
 
     def _get_resources(self):
         resources = self._get_common_resources()
@@ -2227,11 +2228,13 @@ class AustralianMicrobiomeAmpliconsMetadata(AMDFullIngestMetadata):
         self._current_md5 = md5_file
 
     def _build_resource_linkage(self, xlsx_info, resource, file_info):
-        sample_id = ingest_utils.extract_ands_id(
-            self._logger, file_info.get("id"))
-        return (            sample_id,
-                            resource["flow_id"],
-                            resource["index"],)
+        sample_id = ingest_utils.extract_ands_id(self._logger, file_info.get("id"))
+        return (
+            sample_id,
+            resource["flow_id"],
+            resource["index"],
+        )
+
 
 class AustralianMicrobiomeAmpliconsControlMetadata(AMDFullIngestMetadata):
     organization = "australian-microbiome"
@@ -2335,5 +2338,7 @@ class AustralianMicrobiomeAmpliconsControlMetadata(AMDFullIngestMetadata):
         self._current_md5 = md5_file
 
     def _build_resource_linkage(self, xlsx_info, resource, file_info):
-        return (            resource["amplicon"],
-                            resource["flow_id"],)
+        return (
+            resource["amplicon"],
+            resource["flow_id"],
+        )

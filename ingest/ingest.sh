@@ -195,7 +195,7 @@ ppa()
   apply ppa-phenoct-xray-analysed $*
   apply ppa-hyperspectral $*
   apply ppa-asd-spectro $*
-  apply ppa-nutritional-analysed $*
+  apply ppa-nutritional-analysis $*
   apply ppa-metabolomics $*
   apply ppa-metabolomics-analysed $*
   apply ppa-proteomics $*
