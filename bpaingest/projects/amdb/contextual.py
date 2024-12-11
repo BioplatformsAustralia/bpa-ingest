@@ -25,7 +25,7 @@ def ands_orSAMN(logger, s, silent=False):
 
 class AustralianMicrobiomeSampleContextual:
     metadata_urls = [
-        "https://downloads-qcif.bioplatforms.com/bpa/amd/metadata/contextual/2024-10-09/"
+        "https://downloads-qcif.bioplatforms.com/bpa/amd/metadata/contextual/2024-12-05/"
     ]
     metadata_patterns = [re.compile(r"^.*\.xlsx$")]
     name = "amd-samplecontextual"
