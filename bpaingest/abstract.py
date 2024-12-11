@@ -301,6 +301,8 @@ class BaseMetadata:
                 "RAW",
                 "WIFF2",
                 "DATA",
+                "SER",
+                "FID",
             ):
                 resource_obj["format"] = extension
 
