@@ -24,7 +24,7 @@ class AGDatasetControlContextual(BaseDatasetControlContextual):
 
 class AGLibraryContextual(BaseLibraryContextual):
     metadata_urls = [
-        "https://downloads-qcif.bioplatforms.com/bpa/grasslands/metadata/2024-10-31/"
+        "https://downloads-qcif.bioplatforms.com/bpa/grasslands/metadata/2024-12-16/"
     ]
     name = "ag-library-contextual"
     sheet_names = [
