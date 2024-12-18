@@ -62,8 +62,9 @@ METABOLOMICS_SAMPLE_RAW_PATTERN = r"""
     (PPA_
     (?P<facility_id>(MA_AWRI)))?
     (_LCMS_nonpolar_metabolite_profiling_negative|_LCMS_polar_metabolite_profiling_positive|
-    _LCMS_lipid_profiling_negative|_LCMS_lipid_profiling_positive|_NMR_profiling_1D|_NMR_profiling_2D|)
-    \.(raw|wiff2|ser|fid)
+    _LCMS_lipid_profiling_negative|_LCMS_lipid_profiling_positive|_NMR_profiling_1D|
+    _NMR_profiling_2D|_LCMS_antinutritive_quantitation|)
+    \.(raw|wiff2|ser|fid|wiff|scan)
 """
 metabolomics_sample_filename_re = re.compile(METABOLOMICS_SAMPLE_RAW_PATTERN, re.VERBOSE )
 
@@ -72,10 +73,11 @@ METABOLOMICS_POOLED_RAW_PATTERN = r"""
 _PPA_
 (?P<facility_id>(APPF|MA_AWRI)?)
 (_LCMS_nonpolar_metabolite_profiling_negative_|_LCMS_polar_metabolite_profiling_positive_|
-_LCMS_lipid_profiling_positive_|_LCMS_lipid_profiling_negative_|_NMR_profiling_1D_|_NMR_profiling_2D_|)
+_LCMS_lipid_profiling_positive_|_LCMS_lipid_profiling_negative_|_NMR_profiling_1D_|
+_NMR_profiling_2D_|_LCMS_antinutritive_quantitation|)
 (?P<run>[R|I][1|2])
 (_)
-(?P<variety>\w+)\.(raw|wiff2|ser|fid)$
+(?P<variety>\w+)\.(raw|wiff2|ser|fid|wiff|scan)$
 """
 metabolomics_pooled_filename_re = re.compile(METABOLOMICS_POOLED_RAW_PATTERN, re.VERBOSE)
 
@@ -86,7 +88,7 @@ METABOLOMICS_ANALYSED_PATTERN = r"""
     (?P<facility_id>(MA_AWRI)))?
     (_LCMS_nonpolar_metabolite_profiling_negative|_LCMS_polar_metabolite_profiling_positive|
     _LCMS_lipid_profiling_positive|_LCMS_lipid_profiling_negative|_phenolic_quantitation|_saponin_quantitation|
-    _total_lipid_content|_NMR_profiling_1D_2D|)
+    _total_lipid_content|_NMR_profiling_1D_2D|_LCMS_antinutritive_quantitation|)
     (_report|)
     \.(pdf|xlsx)
 """
