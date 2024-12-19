@@ -64,7 +64,8 @@ METABOLOMICS_SAMPLE_RAW_PATTERN = r"""
     (_LCMS_nonpolar_metabolite_profiling_negative|_LCMS_polar_metabolite_profiling_positive|
     _LCMS_lipid_profiling_negative|_LCMS_lipid_profiling_positive|_NMR_profiling_1D|
     _NMR_profiling_2D|_LCMS_antinutritive_quantitation|)
-    \.(raw|wiff2|ser|fid|wiff|scan)
+    (_Batch(?P<Batch>\d)|)
+    \.(raw|wiff2|ser|fid|wiff)
 """
 metabolomics_sample_filename_re = re.compile(METABOLOMICS_SAMPLE_RAW_PATTERN, re.VERBOSE )
 
@@ -77,9 +78,20 @@ _LCMS_lipid_profiling_positive_|_LCMS_lipid_profiling_negative_|_NMR_profiling_1
 _NMR_profiling_2D_|_LCMS_antinutritive_quantitation|)
 (?P<run>[R|I][1|2])
 (_)
-(?P<variety>\w+)\.(raw|wiff2|ser|fid|wiff|scan)$
+(?P<variety>\w+)\.(raw|wiff2|ser|fid|wiff)$
 """
 metabolomics_pooled_filename_re = re.compile(METABOLOMICS_POOLED_RAW_PATTERN, re.VERBOSE)
+
+METABOLOMICS_SCAN_RAW_PATTERN = r"""
+(?P<dataset_id>\d{4,6})
+_PPA_
+(?P<facility_id>(APPF|MA_AWRI)?)
+(_LCMS_nonpolar_metabolite_profiling_negative_|_LCMS_polar_metabolite_profiling_positive_|
+_LCMS_lipid_profiling_positive_|_LCMS_lipid_profiling_negative_|_LCMS_antinutritive_quantitation|)
+(_Batch)
+(?P<Batch>\d)\.wiff\.scan$
+"""
+metabolomics_scan_filename_re = re.compile(METABOLOMICS_SCAN_RAW_PATTERN, re.VERBOSE)
 
 METABOLOMICS_ANALYSED_PATTERN = r"""
     (Analysed_)

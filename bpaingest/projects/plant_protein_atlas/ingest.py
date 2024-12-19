@@ -823,6 +823,7 @@ class PlantProteinAtlasMetabolomicsMetadata(PlantProteinAtlasBaseMetadata):
         "match": [
             files.metabolomics_sample_filename_re,
             files.metabolomics_pooled_filename_re,
+            files.metabolomics_scan_filename_re,
             files.xlsx_filename_re,
         ],
         "skip": [
