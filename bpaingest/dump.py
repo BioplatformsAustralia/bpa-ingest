@@ -25,6 +25,21 @@ def unique_packages(logger, packages):
         yield by_id[k]
 
 
+def unique_resources(logger, resources):
+    resource_id_list = list()
+    for resource_linkage, legacy_url, resource_obj in resources:
+        resource_id_list.append(resource_obj["id"])
+    id_count = Counter(t for t in resource_id_list)
+    for k, cnt in list(id_count.items()):
+        if cnt > 1:
+            dupes = [t for t in resource_id_list if t == k]
+            logger.critical(
+                "resource id `%s' appears %d times: needs to be resolved before sync" % (k, len(dupes))
+            )
+            continue
+    return resources
+
+
 def linkage_qc(logger, state, data_type_meta, errors_callback=None):
     if not errors_callback:
         errors_callback = logger.error
@@ -35,7 +50,7 @@ def linkage_qc(logger, state, data_type_meta, errors_callback=None):
         resource_linkage_package_id = {}
 
         packages = list(unique_packages(logger, (state[data_type]["packages"])))
-        resources = state[data_type]["resources"]
+        resources = list(unique_resources(logger, (state[data_type]["resources"])))
         counts[data_type] = len(packages), len(resources)
 
         for package_obj in packages:
