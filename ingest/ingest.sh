@@ -231,6 +231,12 @@ workshop()
     apply workshop-pacbio-hifi $*
 }
 
+avian()
+{
+    apply avian-pacbio-hifi $*
+
+}
+
 run() {
   apply $*
 }
@@ -256,6 +262,7 @@ all()
   collabs $*
   bsd $*
   workshop $*
+  avian $*
 }
 
 action="$1"

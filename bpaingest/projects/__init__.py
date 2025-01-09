@@ -141,6 +141,10 @@ from .workshop.ingest import (
     WorkshopFungiIlluminaShortreadMetadata,
 )
 
+from .avian.ingest import (
+    AvianPacbioHifiMetadata,
+)
+
 class ProjectInfo:
     projects = {
         "amd": [
@@ -281,6 +285,9 @@ class ProjectInfo:
         "workshop": [
             WorkshopPlantPathogenPacbioHifiMetadata,
             WorkshopFungiIlluminaShortreadMetadata,
+        ],
+        "avian": [
+            AvianPacbioHifiMetadata,
         ],
     }
 

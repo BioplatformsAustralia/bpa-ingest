@@ -786,6 +786,7 @@ class BaseLibraryContextual:
         ),
         # material_conc_ng_ul
         fld("material_conc_ng_ul", re.compile(r"[Mm]aterial_conc_ng_ul")),
+        fld('indigenous_location', 'indigenous_location', optional=True),
     ]
 
     def __init__(self, logger, path):
