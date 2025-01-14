@@ -11,6 +11,7 @@ import os
 
 import boto3
 import boto3.session
+from boto3.s3.transfer import TransferConfig
 from botocore.exceptions import ClientError, WaiterError
 
 from urllib.parse import urlparse
@@ -479,40 +480,51 @@ def reupload_resource(ckan, ckan_obj, legacy_url, parent_destination, auth=None)
         logger.info(f"S3 destination is: {s3_destination}")
 
         if stream:
+            logger.info("Streaming - get the session...")
             stream_session = boto3.session.Session()
+            print("Stream_session is:", stream_session)
+            print("Stream_session client is:", stream_session.client("s3"))
+            print("Stream_session resource is:", stream_session.resource("s3"))
             s3_client = stream_session.client("s3")
             s3_resource = stream_session.resource("s3")
+
+            print("About to set the config")
 
             config = TransferConfig(multipart_threshold=1024*20,
                 multipart_chunksize=1024*20,
                 use_threads=False)
 
+            print("config is set!")
+            print("setting basic auth with ", auth[0], auth[1])
             basic_auth = requests.auth.HTTPBasicAuth(auth[0], auth[1])
-
+            print("basic Auth Set")
             response = requests.get(legacy_url, stream=True, auth=basic_auth)
-
+            print("Response shuold be set")
             file_size = response.headers.get("Content-length", None)
-
+            print("File size of leagcy file is : ", file_size)
             # Configure the progress bar
             bar = {"unit": "B", "unit_scale": True, "unit_divisor": 1024, "ascii": True}
             if file_size:
                 bar["total"] = int(file_size)
             else:
                 logger.warn("File size not able to be determined from legacy URL")
-
+            contentLength = 0
             # Chunk size of 1024 bytes
-            stream = ResponseStream(response.iter_content(1024))
+            dataStream = ResponseStream(response.iter_content(1024))
 
             with tqdm.tqdm(**bar) as progress:
-                with stream as data:
+                with dataStream as data:
                     key = s3_destination.split("/", 3)[3]
 
                     bucketName = parent_destination.split("/")[0]
 
                     # validate bucket
                     try:
+                        print("Bucket in stream is ", bucketName)
                         bucket = s3_resource.Bucket(bucketName)
+                        print("Bucket in stream is ", bucket)
                     except ClientError as e:
+                        print("Error setting Bucket in stream ", e)
                         bucket = None
 
                     # handle pre-existing file case
@@ -520,52 +532,77 @@ def reupload_resource(ckan, ckan_obj, legacy_url, parent_destination, auth=None)
                         # In case filename already exists, get current etag to check if the
                         # contents change after upload
                         head = s3_client.head_object(Bucket=bucketName, Key=key)
+                        print("Got the Head")
                     except ClientError:
+                        print("Failed getting the head, set etag blank")
                         etag = ""
                     else:
                         etag = head["ETag"].strip('"')
+                        print("Did get the head, etag is ", etag)
 
                     # create the Object to represent the file
                     try:
                         s3_obj = bucket.Object(key)
                     except ClientError as e:
+                        print("ClientError when setting key: ", e )
                         s3_obj = None
                     except AttributeError as e:
+                        print("Attribute Error when setting key: ", e )
                         s3_obj = None
 
                     # upload with progress bar
                     try:
+                        print("about to try the s3 upload")
                         s3_obj.upload_fileobj(data, Callback=progress.update, Config=config)
+                        print("back from the the s3 upload")
                     except ClientError as e:
                         pass
                     except AttributeError as e:
                         pass
                     else:
+                        print("waiting for the object to exist")
                         # wait for S3 Object to exist
                         try:
+                            print("TRY...waiting for the object to exist")
                             s3_obj.wait_until_exists(IfNoneMatch=etag)
+                            print("TAFTER...waiting for the object to exist")
                         except WaiterError as e:
+                            print("waiter Error", e)
                             pass
-                        else:
+                        finally:
+                            print("In the fianlly, waited or not")
                             head = s3_client.head_object(Bucket=bucketName, Key=key)
-                            if head["ContentLength"] > 0:
+                            print("Head is: ", head)
+                            contentLength = head["ContentLength"]
+                            if contentLength > 0:
+                                print("ContenttLength is {}, setting status to 0".format(contentLength))
                                 status = 0
+            print("Got to the end of the Stream logic, status is ", status)
 
         else:
             s3cmd_args = ["aws", "s3", "cp", path, s3_destination]
             status = subprocess.call(s3cmd_args)
+            contentLength = os.path.getsize(path)
+            print("status after non-stream = ",status)
+
+        print("status before check = ", status)
 
         if status == 0:
             # patch the object in CKAN to have full URL
+            print("build the resource url using ", ckan.address, filename, ckan_obj["package_id"], ckan_obj["id"] )
+            print(parent_destination)
             resource_url = "{}/dataset/{}/resource/{}/download/{}".format(
                 ckan.address, ckan_obj["package_id"], ckan_obj["id"], filename
             )
+            print("resoruce_url is:", resource_url)
+            print("updating the ckan resource with id ", ckan_obj["id"], " with the size" , contentLength, " and new URL ", resource_url)
             ckan.action.resource_patch(
                 id=ckan_obj["id"],
                 url=resource_url,
                 url_type="upload",
-                size=os.path.getsize(path),
+                size=contentLength,
             )
+            print("Update Complete")
         else:
             logger.error("upload failed: status {}".format(status))
             logger.error("Skipping applying audit tag to {}".format(s3_destination))
