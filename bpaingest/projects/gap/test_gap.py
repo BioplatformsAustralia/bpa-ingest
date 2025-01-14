@@ -3,10 +3,16 @@ from .files import (
     ont_minion_re,
     ont_promethion_re,
     ont_promethion_re_2,
+    ont_promethion_common_re,
     genomics_10x_re,
     illumina_shortread_rna_phylo_re,
     ddrad_fastq_filename_re,
     ddrad_metadata_sheet_re,
+    pacbio_hifi_filename_re,
+    pacbio_hifi_filename_revio_re,
+    pacbio_hifi_revio_pdf_re,
+    pacbio_hifi_metadata_sheet_re,
+    pacbio_hifi_revio_metadata_sheet_re,
 )
 
 
@@ -25,6 +31,7 @@ def test_illumina_rna_and_phylo_shortread():
         "79638_LibID81644_HLCH5DSXX_CAATTAAC-CGAGATAT_S7_L003_R1_001.fastq.gz",
         "376315_LibID380534_GAP_BRF_AH5TJYDRXY_AAGAACCG_CTAGAATT_S7_L002_R2_001.fastq.gz",
         "376316_LibID380531_GAP_BRF_AH5TJYDRXY_AAGAACCG_GCATTCGG_S4_L001_R1_001.fastq.gz",
+        "378099_LibID382905_GAP_UNSW_H2T7NDRX2_CTCGCTTCGG-TACTAGTCAA_S1_L001_R1_001.fastq.gz",
     ]
     for filename in filenames:
         assert illumina_shortread_rna_phylo_re.match(filename) is not None
@@ -46,6 +53,13 @@ def test_ont_promethion_re():
         "79638_PAD92744_GAP_AGRF_ONTPromethION_fast5_fail.tar",
         "79638_PAD92744_GAP_AGRF_ONTPromethION_sequencing_summary.tar",
         "79639_PAE47351_GAP_AGRF_ONTPromethION_fast5_pass.tar",
+        "376315_PAH92712_GAP_BRF_ONTPromethION_fast5_fail.tar",
+        "376315_PAH92712_GAP_BRF_ONTPromethION_sequencing_summary.tar",
+        "376315_PAH92712_GAP_BRF_ONTPromethION_fast5_pass.tar",
+        "376315_PAH92712_GAP_BRF_ONTPromethION_report.html",
+        "376315_PAH92712_GAP_BRF_ONTPromethION_sequencing_summary.txt",
+        "376315_PAH92172_GAP_BRF_Run3_ONTPromethION_fastq_fail.tar",
+        "376315_PAK19021_GAP_BRF_ONTPromethION_sequencing_summary.txt",
     ]
     for filename in filenames:
         assert ont_promethion_re.match(filename) is not None
@@ -57,9 +71,27 @@ def test_ont_promethion_re_2():
         "376315_GAP_BRF_PAG02700_ONTPromethION_sequencing_summary.tar",
         "376315_GAP_BRF_PAG03810_Run2_ONTPromethION_fast5_fail.tar",
         "376316_GAP_BRF_PAF32853_ONTPromethION_fast5_pass.tar",
+        "378099_GAP_UNSW_PAK15599_ONTPromethION_PVXP22262_fail.fastq.gz",
+        "378099_GAP_UNSW_PAK15599_ONTPromethION_PVXP22262_pass.fastq.gz",
+        "378099_GAP_UNSW_PAK15599_ONTPromethION_PVXP22262_reads.blow5",
+        "378099_GAP_UNSW_PAK15599_ONTPromethION_PVXP22262.html",
+        "376316_LibID383122_GAP_BRF_PAM80422_ONTPromethION_fast5_fail.tar",
+        "376316_LibID383122_GAP_BRF_PAM80422_ONTPromethION_fast5_pass.tar",
+        "376316_LibID383122_GAP_BRF_PAM80422_ONTPromethION_fastq_fail.tar",
+        "376316_LibID383122_GAP_BRF_PAM80422_ONTPromethION_fastq_pass.tar",
     ]
     for filename in filenames:
         assert ont_promethion_re_2.match(filename) is not None
+
+
+def test_ont_promethion_common_re():
+    filenames = [
+        "376316_GAP_BRF_PAM33046_barcode_alignment.tsv",
+        "376316_GAP_BRF_PAM33046_report.html",
+        "376316_GAP_BRF_PAM33046_sequencing_summary.txt",
+    ]
+    for filename in filenames:
+        assert ont_promethion_common_re.match(filename) is not None
 
 
 def test_genomics_10x_re():
@@ -94,3 +126,57 @@ def test_genomics_ddrad_metadata_sheet():
 
     for filename in filenames:
         assert ddrad_metadata_sheet_re.match(filename) is not None
+
+
+def test_pacbio_hifi():
+    filenames = [
+        "376315_GAP_GWA_DA110323.ccs.bam",
+        "376315_GAP_GWA_DA110323.pdf",
+        "376315_GAP_GWA_DA110323.subreads.bam",
+        "376315_GAP_GWA_DA110323.xlsx",
+        "376315_GAP_GWA_DA110323_ccs_statistics.csv",
+        "376315_GAP_GWA_DA110323_final.consensusreadset.xml",
+        "376317_GAP_GWA_DA110333_with_5mC.consensusreadset.xml",
+        "378148_GAP_AGRF_DA193244_final.consensusreadset.xml",
+    ]
+
+    for filename in filenames:
+        assert pacbio_hifi_filename_re.match(filename) is not None
+
+
+def test_pacbio_hifi_revio():
+    filenames = [
+        "378163_GAP_BRF_m84118_231115_072325_s4.hifi_reads.default.bam",
+        "378163_GAP_BRF_m84118_231115_072325_s4.hifi_reads.bc2345.bam",
+        # "GAP_BRF_m84118_231115_072325_s4.pdf"
+    ]
+
+    for filename in filenames:
+        assert pacbio_hifi_filename_revio_re.match(filename) is not None
+
+
+def test_pacbio_hifi_revio_pdf():
+    filenames = ["GAP_BRF_m84118_231115_072325_s4.pdf"]
+
+    for filename in filenames:
+        assert pacbio_hifi_revio_pdf_re.match(filename) is not None
+
+
+def test_pacbio_hifi_metadata_sheet():
+    filenames = [
+        "GAP_GWA_DA110323_metadata.xlsx",
+        "GAP_GWA_GWA-AJ-774_DA180954_metadata.xlsx",
+        "GAP_GWA_GWA-AJ-1000_DA242112_metadata.xlsx",
+    ]
+
+    for filename in filenames:
+        assert pacbio_hifi_metadata_sheet_re.match(filename) is not None
+
+
+def test_pacbio_hifi_revio_metadata_sheet():
+    filenames = [
+        "GAP_BRF_m84118_231208_055821_s1_metadata.xlsx",
+    ]
+
+    for filename in filenames:
+        assert pacbio_hifi_revio_metadata_sheet_re.match(filename) is not None

@@ -72,8 +72,28 @@ schema_template = {
             "form_placeholder": "used by ckanext-initiatives",
         },
         {
+            "field_name": "access_control_reason",
+            "label": "Access Control Reason",
+            "form_placeholder": "used by ckanext-bpatheme",
+        },
+        {
+            "field_name": "access_control_date",
+            "label": "Access Control Date",
+            "form_placeholder": "used by ckanext-bpatheme",
+        },
+        {
+            "field_name": "access_control_mode",
+            "label": "Access Control Mode",
+            "form_placeholder": "used by ckanext-bpatheme",
+        },
+        {
             "field_name": "sequence_data_type",
             "label": "Sequence Data Type",
+            "form_placeholder": "used by ckanext-bpatheme",
+        },
+        {
+            "field_name": "related_data",
+            "label": "Related Data",
             "form_placeholder": "used by ckanext-bpatheme",
         },
     ],
@@ -121,9 +141,17 @@ def _write_schemas(
         "type",
         "spatial",
         "resource_permissions",
+        "access_control_date",
+        "access_control_reason",
+        "access_control_mode",
+        "related_data",
         "sequence_data_type",
         "title",
         "license_id",
+        "notes",
+        "name",
+        "owner_org",
+        "tag_string",
     )
     skip_resource_fields = (
         "id",
@@ -132,6 +160,9 @@ def _write_schemas(
         "type",
         "spatial",
         "resource_permissions",
+        "access_control_date",
+        "access_control_reason",
+        "access_control_mode",
         "sequence_data_type",
         "title",
         "name",
@@ -152,7 +183,10 @@ def _write_schemas(
             if k in skip_resource_fields:
                 continue
             schema["resource_fields"].append(
-                {"field_name": k, "label": mapping.get(k, k),}
+                {
+                    "field_name": k,
+                    "label": mapping.get(k, k),
+                }
             )
         schema["dataset_type"] = data_type
         outf = "./tmp/{}.json".format(data_type.replace("-", "_"))
@@ -180,6 +214,8 @@ def generate_schemas(args):
         r = re.compile(args.dump_re, re.IGNORECASE)
         classes = list(filter(lambda x: r.match(x["slug"]), classes))
 
+    has_validate_schema = True if args.validate_schema == "True" else False
+
     for class_info in classes:
         project_cls = class_info["cls"]
         logger.info(
@@ -187,7 +223,10 @@ def generate_schemas(args):
         )
         dlpath = os.path.join(args.download_path, class_info["slug"])
         with DownloadMetadata(
-            make_logger(class_info["slug"]), project_cls, path=dlpath
+            make_logger(class_info["slug"]),
+            project_cls,
+            path=dlpath,
+            has_validate_schema=has_validate_schema,
         ) as dlmeta:
             meta = dlmeta.meta
             data_type = meta.ckan_data_type

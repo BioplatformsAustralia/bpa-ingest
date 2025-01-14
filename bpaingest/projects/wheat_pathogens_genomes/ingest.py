@@ -2,13 +2,13 @@ import os
 import re
 
 from unipath import Path
-from urllib.parse import urljoin
+from urllib.parse import urljoin, quote
 from collections import defaultdict
 from glob import glob
 from ...libs.excel_wrapper import make_field_definition as fld
 from ...libs import ingest_utils
 
-from ...util import sample_id_to_ckan_name, common_values
+from ...util import sample_id_to_ckan_name, apply_cc_by_license, common_values
 from ...abstract import BaseMetadata
 
 
@@ -20,6 +20,7 @@ class WheatPathogensGenomesMetadata(BaseMetadata):
     ckan_data_type = "wheat-pathogens"
     omics = "genomics"
     sequence_data_type = "illumina-shortread"
+    embargo_days = 365
     spreadsheet = {
         "fields": [
             fld("sample_id", "BPA ID", coerce=ingest_utils.extract_ands_id),
@@ -94,6 +95,7 @@ class WheatPathogensGenomesMetadata(BaseMetadata):
                     "notes": "%s" % (data["official_variety"]),
                     "type": self.ckan_data_type,
                     "sequence_data_type": self.sequence_data_type,
+                    "license_id": apply_cc_by_license(),
                     "sample_id": sample_id,
                     "kingdom": data["kingdom"],
                     "phylum": data["phylum"],
@@ -154,10 +156,11 @@ class WheatPathogensGenomesMetadata(BaseMetadata):
                     "name": get_file_name(row.sequence_filename),
                     "file_size": row.file_size,
                     "resource_type": self.ckan_data_type,
+                    "resource_path": "",
                 }
                 resource["md5"] = resource["id"] = row.md5_checksum
                 legacy_url = urljoin(
-                    xlsx_info["base_url"], "../../all/" + resource["name"]
+                    xlsx_info["base_url"], "../../all/" + quote(resource["name"])
                 )
                 resources.append(((sample_id,), legacy_url, resource))
         return resources

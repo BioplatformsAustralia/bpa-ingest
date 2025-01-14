@@ -5,6 +5,7 @@ from .files import (
     exon_filename_re,
     whole_genome_filename_re,
     novaseq_filename_re,
+    novaseq_filename_2_re,
     hiseq_filename_re,
     ddrad_fastq_filename_re,
     ddrad_metadata_sheet_re,
@@ -15,6 +16,9 @@ from .files import (
     pacbio_secondary_filename_re,
     pacbio_secondary_raw_filename_re,
     analysed_data_filename_re,
+    dart_filename_re,
+    dart_xlsx_filename_re,
+    dart_md5_filename_re,
 )
 
 
@@ -71,6 +75,15 @@ def test_novaseq():
 
     for filename in filenames:
         assert novaseq_filename_re.match(filename) is not None
+
+
+def test_novaseq_2():
+    filenames = [
+        "352334_OMG_UNSW_HM7TVDRXY_CGATGT_S1_L001_R1_001.fastq.gz",
+    ]
+
+    for filename in filenames:
+        assert novaseq_filename_2_re.match(filename) is not None
 
 
 def test_hiseq():
@@ -172,6 +185,7 @@ def test_pacbio_raw_secondary_re():
     for filename in filenames:
         assert pacbio_secondary_raw_filename_re.match(filename) is not None
 
+
 def test_analysed_data_re():
     filenames = [
         "352388_0007C7B720.bam",
@@ -188,3 +202,31 @@ def test_analysed_data_re():
     ]
     for filename in filenames:
         assert analysed_data_filename_re.match(filename) is not None
+
+
+def test_dart_filename_re():
+    filenames = [
+        "20210504_OMG_BRFDArT_HGKTCDRXY.tar",
+        "20210504_OMG_BRFDArT_HH5VLDRXY.tar",
+        "20210504_OMG_BRFDArT_CD58NANXX.tar",
+    ]
+    for filename in filenames:
+        assert dart_filename_re.match(filename) is not None
+
+
+def test_dart_xlsx_filename_re():
+    filenames = [
+        "OMG_BRFDArT_351829_samplemetadata_ingest.xlsx",
+        "OMG_BRFDArT_351829_librarymetadata.xlsx",
+    ]
+    for filename in filenames:
+        assert dart_xlsx_filename_re.match(filename) is not None
+
+
+def test_dart_md5_filename_re():
+    filenames = [
+        "OMG_BRFDArT_351829_checksums.md5",
+        "OMG_BRFDArT_52655_checksums.md5",
+    ]
+    for filename in filenames:
+        assert dart_md5_filename_re.match(filename) is not None

@@ -9,6 +9,7 @@ from ...libs.excel_wrapper import (
 )
 from ...ncbi import NCBISRAContextual
 from ...util import one
+from ...abstract import BaseDatasetControlContextual
 
 
 class NotInVocabulary(Exception):
@@ -24,7 +25,7 @@ def ands_orSAMN(logger, s, silent=False):
 
 class AustralianMicrobiomeSampleContextual:
     metadata_urls = [
-        "https://downloads-qcif.bioplatforms.com/bpa/amd/metadata/contextual/2021-05-28/"
+        "https://downloads-qcif.bioplatforms.com/bpa/amd/metadata/contextual/2024-12-05/"
     ]
     metadata_patterns = [re.compile(r"^.*\.xlsx$")]
     name = "amd-samplecontextual"
@@ -43,7 +44,7 @@ class AustralianMicrobiomeSampleContextual:
             fld(
                 "collection_date",
                 "collection_date",
-                coerce=ingest_utils.get_date_isoformat,
+                coerce=ingest_utils.get_date_isoformat_as_datetime,  # Note this can be removed when ckan handles Z tz
             ),
             fld(
                 "longitude",
@@ -92,7 +93,7 @@ class AustralianMicrobiomeSampleContextual:
             fld(
                 "dna_concentration_submitter",
                 "dna_concentration_submitter",
-                units="ng/" + "\u00B5" + "L",
+                units="ng/" + "\u03BC" + "L",
                 coerce=ingest_utils.get_clean_number,
             ),
             fld("dna_concentration_submitter_meth", "dna_concentration_submitter_meth"),
@@ -109,6 +110,7 @@ class AustralianMicrobiomeSampleContextual:
             fld(
                 "acid_volatile_sulphides",
                 "acid_volatile_sulphides",
+                units="\u03BC" + "mol/g",
                 coerce=ingest_utils.get_clean_number,
             ),
             fld("acid_volatile_sulphides_meth", "acid_volatile_sulphides_meth"),
@@ -116,7 +118,7 @@ class AustralianMicrobiomeSampleContextual:
             fld(
                 "alkalinity",
                 "alkalinity",
-                units="\u00B5" + "mol/kg",
+                units="\u03BC" + "mol/kg",
                 coerce=ingest_utils.get_clean_number,
             ),
             fld("alkalinity_meth", "alkalinity_meth"),
@@ -132,7 +134,7 @@ class AustralianMicrobiomeSampleContextual:
             fld(
                 "ammonium",
                 "ammonium",
-                units="\u00B5" + "mol/L",
+                units="\u03BC" + "mol/L",
                 coerce=ingest_utils.get_clean_number,
             ),
             fld("ammonium_meth", "ammonium_meth"),
@@ -143,7 +145,12 @@ class AustralianMicrobiomeSampleContextual:
                 coerce=ingest_utils.get_clean_number,
             ),
             fld("ammonium_nitrogen_wt_meth", "ammonium_nitrogen_wt_meth"),
-            fld("anth", "anth", units="mg/m3", coerce=ingest_utils.get_clean_number,),
+            fld(
+                "anth",
+                "anth",
+                units="mg/m3",
+                coerce=ingest_utils.get_clean_number,
+            ),
             fld("anth_meth", "anth_meth"),
             fld(
                 "antimony",
@@ -155,17 +162,22 @@ class AustralianMicrobiomeSampleContextual:
             fld(
                 "arsenic",
                 "arsenic",
-                units="\u00B5" + "g/kg",
+                units="\u03BC" + "g/kg",
                 coerce=ingest_utils.get_clean_number,
             ),
             fld("arsenic_meth", "arsenic_meth"),
-            fld("asta", "asta", units="mg/m3", coerce=ingest_utils.get_clean_number,),
+            fld(
+                "asta",
+                "asta",
+                units="mg/m3",
+                coerce=ingest_utils.get_clean_number,
+            ),
             fld("asta_meth", "asta_meth"),
             fld(
                 "average_host_abundance",
                 "average_host_abundance",
                 units="%",
-                coerce=ingest_utils.get_clean_number,
+                coerce=ingest_utils.get_percentage,
             ),
             fld("average_host_abundance_meth", "average_host_abundance_meth"),
             fld("barium", "barium", units="ppm", coerce=ingest_utils.get_clean_number),
@@ -177,9 +189,26 @@ class AustralianMicrobiomeSampleContextual:
                 coerce=ingest_utils.get_clean_number,
             ),
             fld("beta_beta_car_meth", "beta_beta_car_meth"),
-            fld("beta_epi_car", "beta_epi_car", coerce=ingest_utils.get_clean_number,),
+            fld(
+                "beta_epi_car",
+                "beta_epi_car",
+                coerce=ingest_utils.get_clean_number,
+            ),
             fld("beta_epi_car_meth", "beta_epi_car_meth"),
-            fld("bleaching", "bleaching", coerce=ingest_utils.get_clean_number,),
+            fld(
+                "bicarbonate",
+                "bicarbonate",
+                units="mg/L",
+                coerce=ingest_utils.get_clean_number,
+            ),
+            fld("bicarbonate_meth", "bicarbonate_meth"),
+            fld(
+                "bleaching",
+                "bleaching",
+                units="%",
+                coerce=ingest_utils.get_percentage,
+            ),
+            fld("bleaching_meth", "bleaching_meth"),
             fld(
                 "boron_hot_cacl2",
                 "boron_hot_cacl2",
@@ -197,21 +226,25 @@ class AustralianMicrobiomeSampleContextual:
             fld(
                 "cadmium",
                 "cadmium",
-                units="\u00B5" + "g/kg",
+                units="\u03BC" + "g/kg",
                 coerce=ingest_utils.get_clean_number,
             ),
             fld("cadmium_meth", "cadmium_meth"),
             fld(
-                "cantha", "cantha", units="mg/m3", coerce=ingest_utils.get_clean_number,
+                "cantha",
+                "cantha",
+                units="mg/m3",
+                coerce=ingest_utils.get_clean_number,
             ),
             fld("cantha_meth", "cantha_meth"),
             fld(
-                "carbonate_bicarbonate",
-                "carbonate_bicarbonate",
+                "carbonate",
+                "carbonate",
                 units="mg/L",
                 coerce=ingest_utils.get_clean_number,
             ),
-            fld("carbonate_bicarbonate_meth", "carbonate_bicarbonate_meth"),
+            fld("carbonate_meth", "carbonate_meth"),
+            fld("cast_id", "cast_id"),
             fld(
                 "cation_exchange_capacity",
                 "cation_exchange_capacity",
@@ -282,18 +315,18 @@ class AustralianMicrobiomeSampleContextual:
             fld(
                 "chromium",
                 "chromium",
-                units="\u00B5" + "g/kg",
+                units="\u03BC" + "g/kg",
                 coerce=ingest_utils.get_clean_number,
             ),
             fld("chromium_meth", "chromium_meth"),
             fld("citation", "citation"),
-            fld("clay", "clay", units="%", coerce=ingest_utils.get_clean_number),
+            fld("clay", "clay", units="%", coerce=ingest_utils.get_percentage),
             fld("clay_meth", "clay_meth"),
             fld("coastal_id", "coastal_id"),
             fld(
                 "cobalt",
                 "cobalt",
-                units="\u00B5" + "g/kg",
+                units="\u03BC" + "g/kg",
                 coerce=ingest_utils.get_clean_number,
             ),
             fld("cobalt_meth", "cobalt_meth"),
@@ -317,9 +350,10 @@ class AustralianMicrobiomeSampleContextual:
                 "coarse_sand",
                 "coarse_sand",
                 units="%",
-                coerce=ingest_utils.get_clean_number,
+                coerce=ingest_utils.get_percentage,
             ),
             fld("coarse_sand_meth", "coarse_sand_meth"),
+            fld("collection_permit", "collection_permit", optional=True),
             fld(
                 "cphlide_a",
                 "cphlide_a",
@@ -332,7 +366,10 @@ class AustralianMicrobiomeSampleContextual:
             fld("crop_rotation_3yrs_since_present", "crop_rotation_3yrs_since_present"),
             fld("crop_rotation_4yrs_since_present", "crop_rotation_4yrs_since_present"),
             fld("crop_rotation_5yrs_since_present", "crop_rotation_5yrs_since_present"),
-            fld("date_since_change_in_land_use", "date_since_change_in_land_use",),
+            fld(
+                "date_since_change_in_land_use",
+                "date_since_change_in_land_use",
+            ),
             fld(
                 "days_since_planting",
                 "days_since_planting",
@@ -360,9 +397,19 @@ class AustralianMicrobiomeSampleContextual:
                 coerce=ingest_utils.get_clean_number,
             ),
             fld("diadino_meth", "diadino_meth"),
-            fld("diato", "diato", units="mg/m3", coerce=ingest_utils.get_clean_number,),
+            fld(
+                "diato",
+                "diato",
+                units="mg/m3",
+                coerce=ingest_utils.get_clean_number,
+            ),
             fld("diato_meth", "diato_meth"),
-            fld("dino", "dino", units="mg/m3", coerce=ingest_utils.get_clean_number,),
+            fld(
+                "dino",
+                "dino",
+                units="mg/m3",
+                coerce=ingest_utils.get_clean_number,
+            ),
             fld("dino_meth", "dino_meth"),
             fld(
                 "dtpa_copper",
@@ -427,7 +474,12 @@ class AustralianMicrobiomeSampleContextual:
                 coerce=ingest_utils.get_clean_number,
             ),
             fld("dysprosium_meth", "dysprosium_meth"),
-            fld("echin", "echin", units="mg/m3", coerce=ingest_utils.get_clean_number,),
+            fld(
+                "echin",
+                "echin",
+                units="mg/m3",
+                coerce=ingest_utils.get_clean_number,
+            ),
             fld("echin_meth", "echin_meth"),
             fld("elev", "elev", units="m", coerce=ingest_utils.get_clean_number),
             fld("erbium", "erbium", units="ppm", coerce=ingest_utils.get_clean_number),
@@ -476,17 +528,14 @@ class AustralianMicrobiomeSampleContextual:
             fld("exc_sodium_meth", "exc_sodium_meth"),
             fld("extreme_event", "extreme_event"),
             fld(
-                "fine_sand",
-                "fine_sand",
-                units="%",
-                coerce=ingest_utils.get_clean_number,
+                "fine_sand", "fine_sand", units="%", coerce=ingest_utils.get_percentage
             ),
             fld("fine_sand_meth", "fine_sand_meth"),
             fld(
                 "fine_sediment",
                 "fine_sediment",
                 units="%",
-                coerce=ingest_utils.get_clean_number,
+                coerce=ingest_utils.get_percentage,
             ),
             fld("fine_sediment_meth", "fine_sediment_meth"),
             fld("fire", "fire"),
@@ -494,7 +543,8 @@ class AustralianMicrobiomeSampleContextual:
             fld("flooding", "flooding"),
             fld("fluor", "fluor", units="AU", coerce=ingest_utils.get_clean_number),
             fld("fluor_meth", "fluor_meth"),
-            fld("fouling", "fouling", coerce=ingest_utils.get_clean_number,),
+            fld("fouling", "fouling", units="%", coerce=ingest_utils.get_percentage),
+            fld("fouling_meth", "fouling_meth"),
             fld("fouling_organisms", "fouling_organisms"),
             fld(
                 "fresh_weight",
@@ -503,7 +553,12 @@ class AustralianMicrobiomeSampleContextual:
                 coerce=ingest_utils.get_clean_number,
             ),
             fld("fresh_weight_meth", "fresh_weight_meth"),
-            fld("fuco", "fuco", units="mg/m3", coerce=ingest_utils.get_clean_number,),
+            fld(
+                "fuco",
+                "fuco",
+                units="mg/m3",
+                coerce=ingest_utils.get_clean_number,
+            ),
             fld("fuco_meth", "fuco_meth"),
             fld(
                 "gadolinium",
@@ -525,11 +580,32 @@ class AustralianMicrobiomeSampleContextual:
             fld("germanium_meth", "germanium_meth"),
             fld("gold", "gold", units="ppm", coerce=ingest_utils.get_clean_number),
             fld("gold_meth", "gold_meth"),
-            fld("gravel", "gravel", units="%", coerce=ingest_utils.get_clean_number,),
-            fld("gravel_percent_meth", "gravel_percent_meth"),
-            fld("grazing_number", "grazing_number"),
-            fld("grazing", "grazing", units="%", coerce=ingest_utils.get_clean_number,),
-            fld("gyro", "gyro", units="mg/m3", coerce=ingest_utils.get_clean_number,),
+            fld(
+                "gravel",
+                "gravel",
+                units="%",
+            ),
+            fld("gravel_meth", "gravel_meth"),
+            fld(
+                "grazing_number",
+                "grazing_number",
+                units="individuals/m2",
+                coerce=ingest_utils.get_clean_number,
+            ),
+            fld(
+                "grazing",
+                "grazing",
+                units="%",
+                coerce=ingest_utils.get_percentage,
+            ),
+            fld("grazing_meth", "grazing_meth"),
+            fld("grazing_number_meth", "grazing_number_meth"),
+            fld(
+                "gyro",
+                "gyro",
+                units="mg/m3",
+                coerce=ingest_utils.get_clean_number,
+            ),
             fld("gyro_meth", "gyro_meth"),
             fld(
                 "hafnium", "hafnium", units="ppm", coerce=ingest_utils.get_clean_number
@@ -559,16 +635,26 @@ class AustralianMicrobiomeSampleContextual:
                 units="individuals/m2",
                 coerce=ingest_utils.get_clean_number,
             ),
+            fld("host_abundance_mean_meth", "host_abundance_mean_meth"),
+            fld("host_abundance_meth", "host_abundance_meth"),
             fld(
                 "host_abundance_seaweed_mean",
                 "host_abundance_seaweed_mean",
                 units="individuals/m2",
                 coerce=ingest_utils.get_clean_number,
             ),
+            fld("host_abundance_seaweed_mean_meth", "host_abundance_seaweed_mean_meth"),
             fld("host_associated_microbiome_zone", "host_associated_microbiome_zone"),
+            fld("host_length_meth", "host_length_meth"),
             fld("host_species_variety", "host_species_variety"),
             fld("host_state", "host_state"),
             fld("host_type", "host_type"),
+            fld("hyperspectral_analysis", "hyperspectral_analysis", optional=True),
+            fld(
+                "hyperspectral_analysis_meth",
+                "hyperspectral_analysis_meth",
+                optional=True,
+            ),
             fld(
                 "icp_te_boron",
                 "icp_te_boron",
@@ -656,11 +742,16 @@ class AustralianMicrobiomeSampleContextual:
             fld(
                 "lead",
                 "lead",
-                units="\u00B5" + "g/kg",
+                units="\u03BC" + "g/kg",
                 coerce=ingest_utils.get_clean_number,
             ),
             fld("lead_meth", "lead_meth"),
-            fld("length", "length", units="cm", coerce=ingest_utils.get_clean_number),
+            fld(
+                "host_length",
+                "host_length",
+                units="cm",
+                coerce=ingest_utils.get_clean_number,
+            ),
             fld(
                 "light_intensity",
                 "light_intensity",
@@ -671,20 +762,22 @@ class AustralianMicrobiomeSampleContextual:
             fld(
                 "light_intensity_meadow",
                 "light_intensity_meadow",
-                units="\u00B5" + "mol/m2/s",
+                units="\u03BC" + "mol/m2/s",
                 coerce=ingest_utils.get_clean_number,
             ),
             fld("light_intensity_meadow_meth", "light_intensity_meadow_meth"),
             fld(
                 "light_intensity_bottom",
                 "light_intensity_bottom",
-                units="\u00B5" + "mol/m2/s",
+                units="\u03BC" + "mol/m2/s",
+                coerce=ingest_utils.get_clean_number,
             ),
             fld("light_intensity_bottom_meth", "light_intensity_bottom_meth"),
             fld(
                 "light_intensity_surface",
                 "light_intensity_surface",
-                units="\u00B5" + "mol/m2/s",
+                units="\u03BC" + "mol/m2/s",
+                coerce=ingest_utils.get_clean_number,
             ),
             fld("light_intensity_surface_meth", "light_intensity_surface_meth"),
             fld("local_class", "local_class"),
@@ -696,9 +789,19 @@ class AustralianMicrobiomeSampleContextual:
                 coerce=ingest_utils.get_clean_number,
             ),
             fld("lutetium_meth", "lutetium_meth"),
-            fld("lut", "lut", units="mg/m3", coerce=ingest_utils.get_clean_number,),
+            fld(
+                "lut",
+                "lut",
+                units="mg/m3",
+                coerce=ingest_utils.get_clean_number,
+            ),
             fld("lut_meth", "lut_meth"),
-            fld("lyco", "lyco", units="mg/m3", coerce=ingest_utils.get_clean_number,),
+            fld(
+                "lyco",
+                "lyco",
+                units="mg/m3",
+                coerce=ingest_utils.get_clean_number,
+            ),
             fld("lyco_meth", "lyco_meth"),
             fld(
                 "magnesium",
@@ -708,7 +811,10 @@ class AustralianMicrobiomeSampleContextual:
             ),
             fld("magnesium_meth", "magnesium_meth"),
             fld(
-                "mg_dvp", "mg_dvp", units="mg/m3", coerce=ingest_utils.get_clean_number,
+                "mg_dvp",
+                "mg_dvp",
+                units="mg/m3",
+                coerce=ingest_utils.get_clean_number,
             ),
             fld("mg_dvp_meth", "mg_dvp_meth"),
             fld(
@@ -727,13 +833,18 @@ class AustralianMicrobiomeSampleContextual:
             fld(
                 "molybdenum",
                 "molybdenum",
-                units="\u00B5" + "g/kg",
+                units="\u03BC" + "g/kg",
                 coerce=ingest_utils.get_clean_number,
             ),
             fld("molybdenum_meth", "molybdenum_meth"),
             fld("mud", "mud", coerce=ingest_utils.get_clean_number),
             fld("mud_meth", "mud_meth"),
-            fld("myxo", "myxo", units="mg/m3", coerce=ingest_utils.get_clean_number,),
+            fld(
+                "myxo",
+                "myxo",
+                units="mg/m3",
+                coerce=ingest_utils.get_clean_number,
+            ),
             fld("myxo_meth", "myxo_meth"),
             fld(
                 "neodymium",
@@ -742,9 +853,19 @@ class AustralianMicrobiomeSampleContextual:
                 coerce=ingest_utils.get_clean_number,
             ),
             fld("neodymium_meth", "neodymium_meth"),
-            fld("neo", "neo", units="mg/m3", coerce=ingest_utils.get_clean_number,),
+            fld(
+                "neo",
+                "neo",
+                units="mg/m3",
+                coerce=ingest_utils.get_clean_number,
+            ),
             fld("neo_meth", "neo_meth"),
-            fld("nickel", "nickel", units="ppm", coerce=ingest_utils.get_clean_number,),
+            fld(
+                "nickel",
+                "nickel",
+                units="ppm",
+                coerce=ingest_utils.get_clean_number,
+            ),
             fld("nickel_meth", "nickel_meth"),
             fld(
                 "niobium_columbium",
@@ -756,14 +877,14 @@ class AustralianMicrobiomeSampleContextual:
             fld(
                 "nitrate",
                 "nitrate",
-                units="\u00B5" + "mol/L",
+                units="\u03BC" + "mol/L",
                 coerce=ingest_utils.get_clean_number,
             ),
             fld("nitrate_meth", "nitrate_meth"),
             fld(
                 "nitrate_nitrite",
                 "nitrate_nitrite",
-                units="\u00B5" + "mol/L",
+                units="\u03BC" + "mol/L",
                 coerce=ingest_utils.get_clean_number,
             ),
             fld("nitrate_nitrite_meth", "nitrate_nitrite_meth"),
@@ -777,13 +898,23 @@ class AustralianMicrobiomeSampleContextual:
             fld(
                 "nitrite",
                 "nitrite",
-                units="\u00B5" + "mol/L",
+                units="\u03BC" + "mol/L",
                 coerce=ingest_utils.get_clean_number,
             ),
             fld("nitrite_meth", "nitrite_meth"),
-            fld("npic", "npic", units="mg/L", coerce=ingest_utils.get_clean_number,),
+            fld(
+                "npic",
+                "npic",
+                units="mg/L",
+                coerce=ingest_utils.get_clean_number,
+            ),
             fld("npic_meth", "npic_meth"),
-            fld("npoc", "npoc", units="mg/L", coerce=ingest_utils.get_clean_number,),
+            fld(
+                "npoc",
+                "npoc",
+                units="mg/L",
+                coerce=ingest_utils.get_clean_number,
+            ),
             fld("npoc_meth", "npoc_meth"),
             fld("nrs_sample_code", "nrs_sample_code"),
             fld("nrs_trip_code", "nrs_trip_code"),
@@ -791,14 +922,14 @@ class AustralianMicrobiomeSampleContextual:
                 "org_matter",
                 "org_matter",
                 units="%",
-                coerce=ingest_utils.get_clean_number,
+                coerce=ingest_utils.get_percentage,
             ),
             fld("org_matter_meth", "org_matter_meth"),
             fld(
                 "organic_carbon",
                 "organic_carbon",
                 units="%",
-                coerce=ingest_utils.get_clean_number,
+                coerce=ingest_utils.get_percentage,
             ),
             fld("organic_carbon_meth", "organic_carbon_meth"),
             fld(
@@ -808,12 +939,17 @@ class AustralianMicrobiomeSampleContextual:
                 coerce=ingest_utils.get_clean_number,
             ),
             fld("organic_fraction_meth", "organic_fraction_meth"),
-            fld("osmium", "osmium", units="ppm", coerce=ingest_utils.get_clean_number,),
+            fld(
+                "osmium",
+                "osmium",
+                units="ppm",
+                coerce=ingest_utils.get_clean_number,
+            ),
             fld("osmium_meth", "osmium_meth"),
             fld(
                 "oxygen",
                 "oxygen",
-                units="\u00B5" + "mol/L",
+                units="\u03BC" + "mol/L",
                 coerce=ingest_utils.get_clean_number,
             ),
             fld("oxygen_meth", "oxygen_meth"),
@@ -827,7 +963,7 @@ class AustralianMicrobiomeSampleContextual:
             fld(
                 "oxygen_ctd_wt",
                 "oxygen_ctd_wt",
-                units="\u00B5" + "mol/kg",
+                units="\u03BC" + "mol/kg",
                 coerce=ingest_utils.get_clean_number,
             ),
             fld("oxygen_ctd_wt_meth", "oxygen_ctd_wt_meth"),
@@ -847,17 +983,35 @@ class AustralianMicrobiomeSampleContextual:
             fld(
                 "par",
                 "par",
-                units="\u00B5" + "mol/m2/s",
+                units="\u03BC" + "mol/m2/s",
                 coerce=ingest_utils.get_clean_number,
             ),
             fld("par_meth", "par_meth"),
-            fld("part_org_carb", "part_org_carb", units="\u00B5" + "mol/L"),
+            fld(
+                "part_org_carb",
+                "part_org_carb",
+                units="\u03BC" + "mol/L",
+                coerce=ingest_utils.get_clean_number,
+            ),
             fld("part_org_carb_meth", "part_org_carb_meth"),
-            fld("perid", "perid", units="mg/m3", coerce=ingest_utils.get_clean_number,),
+            fld(
+                "perid",
+                "perid",
+                units="mg/m3",
+                coerce=ingest_utils.get_clean_number,
+            ),
             fld("perid_meth", "perid_meth"),
-            fld("ph", "ph"),
+            fld(
+                "ph",
+                "ph",
+                coerce=ingest_utils.get_clean_number,
+            ),
             fld("ph_meth", "ph_meth"),
-            fld("ph_solid_h2o", "ph_solid_h2o"),
+            fld(
+                "ph_solid_h2o",
+                "ph_solid_h2o",
+                coerce=ingest_utils.get_clean_number,
+            ),
             fld("ph_solid_h2o_meth", "ph_solid_h2o_meth"),
             fld(
                 "phide_a",
@@ -869,7 +1023,7 @@ class AustralianMicrobiomeSampleContextual:
             fld(
                 "phosphate",
                 "phosphate",
-                units="\u00B5" + "mol/L",
+                units="\u03BC" + "mol/L",
                 coerce=ingest_utils.get_clean_number,
             ),
             fld("phosphate_meth", "phosphate_meth"),
@@ -914,7 +1068,7 @@ class AustralianMicrobiomeSampleContextual:
             fld(
                 "pn",
                 "pn",
-                units="\u00B5" + "mol/L",
+                units="\u03BC" + "mol/L",
                 coerce=ingest_utils.get_clean_number,
             ),
             fld("pn_meth", "pn_meth"),
@@ -932,7 +1086,12 @@ class AustralianMicrobiomeSampleContextual:
                 coerce=ingest_utils.get_clean_number,
             ),
             fld("potassium_colwell_meth", "potassium_colwell_meth"),
-            fld("pras", "pras", units="mg/m3", coerce=ingest_utils.get_clean_number,),
+            fld(
+                "pras",
+                "pras",
+                units="mg/m3",
+                coerce=ingest_utils.get_clean_number,
+            ),
             fld("pras_meth", "pras_meth"),
             fld(
                 "praseodymium",
@@ -981,6 +1140,7 @@ class AustralianMicrobiomeSampleContextual:
                 coerce=ingest_utils.get_clean_number,
             ),
             fld("root_length_meth", "root_length_meth"),
+            fld("rosette_position", "rosette_position"),
             fld(
                 "rubidium",
                 "rubidium",
@@ -1029,7 +1189,7 @@ class AustralianMicrobiomeSampleContextual:
                 coerce=ingest_utils.get_clean_number,
             ),
             fld("sample_volume_notes", "sample_volume_notes"),
-            fld("sand", "sand", units="%", coerce=ingest_utils.get_clean_number),
+            fld("sand", "sand", units="%", coerce=ingest_utils.get_percentage),
             fld("sand_meth", "sand_meth"),
             fld(
                 "scandium",
@@ -1049,14 +1209,14 @@ class AustralianMicrobiomeSampleContextual:
                 "sediment_grain_size",
                 "sediment_grain_size",
                 units="%",
-                coerce=ingest_utils.get_clean_number,
+                coerce=ingest_utils.get_percentage,
             ),
             fld("sediment_grain_size_meth", "sediment_grain_size_meth"),
             fld(
                 "sediment_grain_size_fract",
                 "sediment_grain_size_fract",
                 units="%",
-                coerce=ingest_utils.get_clean_number,
+                coerce=ingest_utils.get_percentage,
             ),
             fld("sediment_grain_size_fract_meth", "sediment_grain_size_fract_meth"),
             fld(
@@ -1069,42 +1229,42 @@ class AustralianMicrobiomeSampleContextual:
             fld(
                 "sediment_porewater_h4sio4",
                 "sediment_porewater_h4sio4",
-                units="\u00B5" + "mol/L",
+                units="\u03BC" + "mol/L",
                 coerce=ingest_utils.get_clean_number,
             ),
             fld("sediment_porewater_h4sio4_meth", "sediment_porewater_h4sio4_meth"),
             fld(
                 "sediment_porewater_nh4",
                 "sediment_porewater_nh4",
-                units="\u00B5" + "mol/L",
+                units="\u03BC" + "mol/L",
                 coerce=ingest_utils.get_clean_number,
             ),
             fld("sediment_porewater_nh4_meth", "sediment_porewater_nh4_meth"),
             fld(
                 "sediment_porewater_no2",
                 "sediment_porewater_no2",
-                units="\u00B5" + "mol/L",
+                units="\u03BC" + "mol/L",
                 coerce=ingest_utils.get_clean_number,
             ),
             fld("sediment_porewater_no2_meth", "sediment_porewater_no2_meth"),
             fld(
                 "sediment_porewater_no3",
                 "sediment_porewater_no3",
-                units="\u00B5" + "mol/L",
+                units="\u03BC" + "mol/L",
                 coerce=ingest_utils.get_clean_number,
             ),
             fld("sediment_porewater_no3_meth", "sediment_porewater_no3_meth"),
             fld(
                 "sediment_porewater_po43",
                 "sediment_porewater_po43",
-                units="\u00B5" + "mol/L",
+                units="\u03BC" + "mol/L",
                 coerce=ingest_utils.get_clean_number,
             ),
             fld("sediment_porewater_po43_meth", "sediment_porewater_po43_meth"),
             fld(
                 "selenium",
                 "selenium",
-                units="\u00B5" + "g/kg",
+                units="\u03BC" + "g/kg",
                 coerce=ingest_utils.get_clean_number,
             ),
             fld("selenium_meth", "selenium_meth"),
@@ -1118,37 +1278,40 @@ class AustralianMicrobiomeSampleContextual:
             fld(
                 "silicate",
                 "silicate",
-                units="\u00B5" + "mol/L",
+                units="\u03BC" + "mol/L",
                 coerce=ingest_utils.get_clean_number,
             ),
             fld("silicate_meth", "silicate_meth"),
-            fld("silt", "silt", units="%", coerce=ingest_utils.get_clean_number),
+            fld("silt", "silt", units="%", coerce=ingest_utils.get_percentage),
             fld("silt_meth", "silt_meth"),
-            fld("silver", "silver", units="ppm", coerce=ingest_utils.get_clean_number,),
+            fld(
+                "silver",
+                "silver",
+                units="ppm",
+                coerce=ingest_utils.get_clean_number,
+            ),
             fld("silver_meth", "silver_meth"),
             fld(
                 "sio2",
                 "sio2",
-                units="\u00B5" + "mol/L",
+                units="\u03BC" + "mol/L",
                 coerce=ingest_utils.get_clean_number,
             ),
             fld("sio2_meth", "sio2_meth"),
-            fld(
-                "slope_aspect",
-                "slope_aspect",
-                units="direction_or_degrees",
-                coerce=ingest_utils.get_clean_number,
-            ),
+            fld("slope_aspect", "slope_aspect", units="direction_or_degrees"),
             fld("slope_aspect_meth", "slope_aspect_meth"),
             fld(
                 "slope_gradient",
                 "slope_gradient",
                 units="%",
-                coerce=ingest_utils.get_clean_number,
+                coerce=ingest_utils.get_percentage,
             ),
             fld("slope_gradient_meth", "slope_gradient_meth"),
             fld(
-                "sodium", "sodium", units="mg/L", coerce=ingest_utils.get_clean_number,
+                "sodium",
+                "sodium",
+                units="mg/L",
+                coerce=ingest_utils.get_clean_number,
             ),
             fld("sodium_meth", "sodium_meth"),
             fld("specific_host", "specific_host"),
@@ -1167,12 +1330,13 @@ class AustralianMicrobiomeSampleContextual:
             ),
             fld("sulphur_meth", "sulphur_meth"),
             fld(
-                "synecochoccus",
-                "synecochoccus",
+                "synechococcus",
+                "synechococcus",
                 units="cells/mL",
                 coerce=ingest_utils.get_clean_number,
             ),
-            fld("synecochoccus_meth", "synecochoccus_meth"),
+            fld("synechococcus_meth", "synechococcus_meth"),
+            fld("synonyms", "synonyms"),
             fld(
                 "tantalum",
                 "tantalum",
@@ -1180,10 +1344,18 @@ class AustralianMicrobiomeSampleContextual:
                 coerce=ingest_utils.get_clean_number,
             ),
             fld("tantalum_meth", "tantalum_meth"),
-            fld("temp", "temp", units="degC", coerce=ingest_utils.get_clean_number,),
+            fld(
+                "temp",
+                "temp",
+                units="degC",
+                coerce=ingest_utils.get_clean_number,
+            ),
             fld("temp_meth", "temp_meth"),
             fld(
-                "terbium", "terbium", units="ppm", coerce=ingest_utils.get_clean_number,
+                "terbium",
+                "terbium",
+                units="ppm",
+                coerce=ingest_utils.get_clean_number,
             ),
             fld("terbium_meth", "terbium_meth"),
             fld("texture", "texture"),
@@ -1200,7 +1372,10 @@ class AustralianMicrobiomeSampleContextual:
             fld("tin", "tin", units="ppm", coerce=ingest_utils.get_clean_number),
             fld("tin_meth", "tin_meth"),
             fld(
-                "tot_carb", "tot_carb", units="%", coerce=ingest_utils.get_clean_number,
+                "tot_carb",
+                "tot_carb",
+                units="%",
+                coerce=ingest_utils.get_percentage,
             ),
             fld("tot_carb_meth", "tot_carb_meth"),
             fld(
@@ -1209,27 +1384,32 @@ class AustralianMicrobiomeSampleContextual:
                 units="m",
                 coerce=ingest_utils.get_clean_number,
             ),
-            fld("tot_depth_water_meth", "tot_depth_water_meth"),
+            fld("tot_depth_water_col_meth", "tot_depth_water_col_meth"),
             fld(
                 "tot_nitro",
                 "tot_nitro",
                 units="%",
-                coerce=ingest_utils.get_clean_number,
+                coerce=ingest_utils.get_percentage,
             ),
-            fld("tot_n_meth", "tot_n_meth"),
-            fld("tot_org_carb", "tot_org_carb"),
+            fld("tot_nitro_meth", "tot_nitro_meth"),
+            fld(
+                "tot_org_carb",
+                "tot_org_carb",
+                units="%",
+                coerce=ingest_utils.get_percentage,
+            ),
             fld("tot_org_c_meth", "tot_org_c_meth"),
             fld(
                 "tot_phosp",
                 "tot_phosp",
                 units="%",
-                coerce=ingest_utils.get_clean_number,
+                coerce=ingest_utils.get_percentage,
             ),
             fld("tot_phosp_meth", "tot_phosp_meth"),
             fld(
                 "total_co2",
                 "total_co2",
-                units="\u00B5" + "mol/kg",
+                units="\u03BC" + "mol/kg",
                 coerce=ingest_utils.get_clean_number,
             ),
             fld("total_co2_meth", "total_co2_meth"),
@@ -1237,7 +1417,7 @@ class AustralianMicrobiomeSampleContextual:
                 "total_inorganic_carbon",
                 "total_inorganic_carbon",
                 units="%",
-                coerce=ingest_utils.get_clean_number,
+                coerce=ingest_utils.get_percentage,
             ),
             fld("total_inorganic_carbon_meth", "total_inorganic_carbon_meth"),
             fld(
@@ -1259,10 +1439,15 @@ class AustralianMicrobiomeSampleContextual:
                 "transmittance",
                 "transmittance",
                 units="%",
-                coerce=ingest_utils.get_clean_number,
+                coerce=ingest_utils.get_percentage,
             ),
             fld("transmittance_meth", "transmittance_meth"),
-            fld("tss", "tss", units="mg/L", coerce=ingest_utils.get_clean_number,),
+            fld(
+                "tss",
+                "tss",
+                units="mg/L",
+                coerce=ingest_utils.get_clean_number,
+            ),
             fld("tss_meth", "tss_meth"),
             fld(
                 "tungsten",
@@ -1274,7 +1459,7 @@ class AustralianMicrobiomeSampleContextual:
             fld(
                 "turbidity",
                 "turbidity",
-                units="NTU_or_FTU",
+                units="NTU",
                 coerce=ingest_utils.get_clean_number,
             ),
             fld("turbidity_meth", "turbidity_meth"),
@@ -1294,27 +1479,33 @@ class AustralianMicrobiomeSampleContextual:
                 "vegetation_dom_grasses",
                 "vegetation_dom_grasses",
                 units="%",
-                coerce=ingest_utils.get_clean_number,
             ),
+            fld("vegetation_dom_grasses_meth", "vegetation_dom_grasses_meth"),
             fld(
                 "vegetation_dom_shrubs",
                 "vegetation_dom_shrubs",
                 units="%",
-                coerce=ingest_utils.get_clean_number,
             ),
+            fld("vegetation_dom_shrubs_meth", "vegetation_dom_shrubs_meth"),
             fld(
                 "vegetation_dom_trees",
                 "vegetation_dom_trees",
                 units="%",
-                coerce=ingest_utils.get_clean_number,
             ),
+            fld("vegetation_dom_trees_meth", "vegetation_dom_trees_meth"),
             fld(
                 "vegetation_total_cover",
                 "vegetation_total_cover",
                 units="%",
+                coerce=ingest_utils.get_percentage,
+            ),
+            fld("vegetation_total_cover_meth", "vegetation_total_cover_meth"),
+            fld(
+                "viola",
+                "viola",
+                units="mg/m3",
                 coerce=ingest_utils.get_clean_number,
             ),
-            fld("viola", "viola", units="mg/m3", coerce=ingest_utils.get_clean_number,),
             fld("viola_meth", "viola_meth"),
             fld("voyage_code", "voyage_code"),
             fld("voyage_survey_link", "voyage_survey_link"),
@@ -1322,7 +1513,7 @@ class AustralianMicrobiomeSampleContextual:
                 "water_content",
                 "water_content",
                 units="%",
-                coerce=ingest_utils.get_clean_number,
+                coerce=ingest_utils.get_percentage,
             ),
             fld("water_content_soil_meth", "water_content_soil_meth"),
             fld(
@@ -1343,7 +1534,12 @@ class AustralianMicrobiomeSampleContextual:
                 "yttrium", "yttrium", units="ppm", coerce=ingest_utils.get_clean_number
             ),
             fld("yttrium_meth", "yttrium_meth"),
-            fld("zea", "zea", units="mg/m3", coerce=ingest_utils.get_clean_number,),
+            fld(
+                "zea",
+                "zea",
+                units="mg/m3",
+                coerce=ingest_utils.get_clean_number,
+            ),
             fld("zea_meth", "zea_meth"),
             fld(
                 "zirconium",
@@ -1362,7 +1558,6 @@ class AustralianMicrobiomeSampleContextual:
             fld(
                 "sample_metadata_ingest_date",
                 "sample_metadata_ingest_date",
-                coerce=ingest_utils.get_date_isoformat_as_datetime,
             ),
             fld("sample_metadata_ingest_file", "sample_metadata_ingest_file"),
             fld("sample_metadata_update_history", "sample_metadata_update_history"),
@@ -1460,3 +1655,54 @@ class BASENCBIContextual(NCBISRAContextual):
     metadata_urls = ["https://downloads-qcif.bioplatforms.com/bpa/base/metadata/ncbi/"]
     name = "base-ncbi-contextual"
     bioproject_accession = "PRJNA317932"
+
+
+class AustralianMicrobiomeDatasetControlContextual(BaseDatasetControlContextual):
+    metadata_urls = [
+        "https://downloads-qcif.bioplatforms.com/bpa/amd/dataset_control/2022-12-05/"
+    ]
+    name = "amd-dataset-contextual"
+    contextual_linkage = ("sample_id",)
+    sheet_names = [
+        "Sheet1",
+    ]
+    related_data_identifier_type = "dataset_id"
+    additional_fields = [
+        fld("dataset_id", "bioplatforms_dataset_id"),
+        fld("bioplatforms_dataset_id", "bioplatforms_dataset_id"),
+        fld("bioplatforms_project_code", "bioplatforms_project_code"),
+        fld("bioplatforms_project", "bioplatforms_project"),
+        fld("ncbi_bioproject_accession_number", "ncbi_bioproject_accession_number"),
+        fld("ncbi_biosample_accession_number", "ncbi_biosample_accession_number"),
+        fld("related_data_doi", "related_data_doi", coerce=ingest_utils.get_clean_doi),
+        fld(
+            "related_data_identifier",
+            "related_data_identifier",
+            coerce=ingest_utils.extract_ands_id,
+        ),
+    ]
+
+    def _read_metadata(self, metadata_path):
+        metadata = super()._read_metadata(metadata_path)
+        for linkage in metadata:
+            doi = metadata[linkage].get("related_data_doi", "")
+            identifier = metadata[linkage].get("related_data_identifier", "")
+            if identifier:
+                identifier = "{}:{}".format(
+                    self.related_data_identifier_type, identifier
+                )
+            related = metadata[linkage].get("related_data", "")
+            metadata[linkage]["related_data"] = " ".join(
+                filter(None, (related, doi, identifier))
+            )
+            del metadata[linkage]["related_data_doi"]
+            del metadata[linkage]["related_data_identifier"]
+        return metadata
+
+    def sample_ids(self):
+        if len(self.contextual_linkage) != 1:
+            raise Exception("Linkage of unexpected length")
+
+        # return a list of the first item of the linkage
+        # This will be a BPA Sample ID
+        return list(k[0] for k in self.dataset_metadata.keys())

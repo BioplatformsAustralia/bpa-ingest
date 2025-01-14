@@ -3,8 +3,12 @@ import logging
 import sys
 import os
 
-from .util import make_registration_decorator, make_ckan_api, make_reuploads_cache_path, \
-    validate_write_reuploads_interval
+from .util import (
+    make_registration_decorator,
+    make_ckan_api,
+    make_reuploads_cache_path,
+    validate_write_reuploads_interval,
+)
 from .sync import sync_metadata
 from .schema import generate_schemas
 from .ops import print_accounts, make_organization
@@ -46,12 +50,15 @@ def str2bool(v):
         raise argparse.ArgumentTypeError("Boolean value expected.")
 
 
-def setup_ckan(subparser):
-    subparser.add_argument("-k", "--api-key", required=True, help="CKAN API Key")
-    subparser.add_argument("-u", "--ckan-url", required=True, help="CKAN base url")
+def setup_ckan(subparser, required=True):
+    # Possible future enhancement would be to grab these from environment variables
+    # See approach in
+    #   https://gist.github.com/bebosudo/8352d6ba4c8911528f085890becc01c4
+    subparser.add_argument("-k", "--api-key", required=required, help="CKAN API Key")
+    subparser.add_argument("-u", "--ckan-url", required=required, help="CKAN base url")
     subparser.add_argument(
         "--verify-ssl",
-        required=False,
+        required=required,
         type=str2bool,
         default=True,
         help="CKAN base url",
@@ -113,7 +120,28 @@ def setup_sync(subparser):
         help="read reuploads from disk",
     )
     subparser.add_argument(
+        "--audit",
+        action="store_const",
+        const=True,
+        default=False,
+        help="verify and update audit tags on known resources",
+    )
+    subparser.add_argument(
         "-p", "--download-path", required=False, default=None, help="CKAN base url"
+    )
+    subparser.add_argument(
+        "--update-orgs",
+        action="store_const",
+        const=True,
+        default=False,
+        help="add / update organizations from google sheet data",
+    )
+    subparser.add_argument(
+        "--single-ticket",
+        "-s",
+        type=str,
+        default=None,
+        help="Process a single ticket only",
     )
 
 
@@ -138,19 +166,13 @@ def setup_dump(subparser):
     subparser.add_argument(
         "--sql-context", help="generate excel file from sql db if available"
     )
-    subparser.add_argument("-k", "--api-key", required=False, help="CKAN API Key")
-    subparser.add_argument("-u", "--ckan-url", required=False, help="CKAN base url")
-    subparser.add_argument(
-        "--verify-ssl",
-        required=False,
-        type=str2bool,
-        default=True,
-        help="CKAN base url",
-    )
+    subparser.add_argument("--validate-schema", help="validate schema if applicable")
+    setup_ckan(subparser, required=False)
 
 
 def setup_makeschema(subparser):
     subparser.add_argument("--dump-re", help="restrict dump by slug", default="")
+    subparser.add_argument("--validate-schema", help="validate schema if applicable")
 
 
 @register_command
@@ -163,7 +185,7 @@ def sync(args):
         "write_reuploads": args.write_reuploads,
         "read_reuploads": args.read_reuploads,
         "reuploads_path": make_reuploads_cache_path(logger, args),
-        "write_reuploads_interval": validate_write_reuploads_interval(logger, args)
+        "write_reuploads_interval": validate_write_reuploads_interval(logger, args),
     }
     with DownloadMetadata(
         logger,
@@ -178,6 +200,9 @@ def sync(args):
             not args.metadata_only,
             not args.skip_resource_checks,
             args.delete,
+            args.update_orgs,
+            args.single_ticket,
+            args.audit,
             **kwargs,
         )
         print_accounts()

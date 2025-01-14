@@ -1,8 +1,11 @@
 from .files import (
+    amd_metagenomics_analysed_re,
     amd_metagenomics_novaseq_re,
     amd_metagenomics_novaseq_control_re,
     amd_amplicon_filename_re,
+    amd_amplicon_filename_v2_re,
     amd_amplicon_control_filename_re,
+    amd_amplicon_control_filename_v2_re,
     base_amplicon_control_tech_vendor_filename_re,
     base_amplicon_control_tech_vendor_flow_filename_re,
     base_amplicon_filename_flow_index_swapped_re,
@@ -156,6 +159,14 @@ def test_amd_amplicon_re():
         assert amd_amplicon_filename_re.match(filename) is not None
 
 
+def test_amd_amplicon_v2_re():
+    filenames = [
+        "138626_18S_LB4W9_GGAGCTAC-TATCCTCT_S2_L001_R2_001.fastq.gz",
+    ]
+    for filename in filenames:
+        assert amd_amplicon_filename_v2_re.match(filename) is not None
+
+
 def test_amd_amplicon_control_re():
     filenames = [
         "ATCC1002MOCK_16S_J6H7B_TCCGAATT-TCTACACT_S2_L001_R2.fastq.gz",
@@ -167,9 +178,18 @@ def test_amd_amplicon_control_re():
         "Fungal_mock_community_ITS_J9GNL_AATGTCCG-GACACTGA_S1_L001_R2.fastq.gz",
         "No_Template_Control_ITS_J9GNL_AATGTCCG-TAGTGTAG_S3_L001_R2.fastq.gz",
         "Soil_DNA_ITS_J9GNL_AATGTCCG-TGCGTACG_S2_L001_I1.fastq.gz",
+        "NEG_16S_K9276_ATTCCTGT-ACGACGTG_S56_L001_I1.fastq.gz",
     ]
     for filename in filenames:
         assert amd_amplicon_control_filename_re.match(filename) is not None
+
+
+def test_amd_amplicon_control_v2_re():
+    filenames = [
+        "Zymo_DNA_Control_18S_LB4W9_CGAGGCTG-CTATTAAG_S156_L001_I1_001.fastq.gz",
+    ]
+    for filename in filenames:
+        assert amd_amplicon_control_filename_v2_re.match(filename) is not None
 
 
 def test_mm_transcriptome():
@@ -219,8 +239,72 @@ def test_mm_metagenomics_v2():
         assert mm_metagenomics_filename_v2_re.match(filename) is not None
 
 
+def test_amd_metagenomics_analysed():
+    filenames = [
+        "21645_MGSD_CSIRO_bam.md5",
+        "21645_MGSD_CSIRO_bins.zip",
+        "21645_MGSD_CSIRO_combined_merged.fastq.gz",
+        "21645_MGSD_CSIRO_combined_R1p.fastq.gz",
+        "21645_MGSD_CSIRO_combined_R1R2u.fastq.gz",
+        "21645_MGSD_CSIRO_combined_R2p.fastq.gz",
+        "21645_MGSD_CSIRO_QCreads.md5",
+        "21645_MGSD_CSIRO.sorted.bam",
+        "21645_MGSD_CSIRO_SQM_01.fasta",
+        "21645_MGSD_CSIRO_SQM_01.lon",
+        "21645_MGSD_CSIRO_SQM_01.stats",
+        "21645_MGSD_CSIRO_SQM_02.16S.txt",
+        "21645_MGSD_CSIRO_SQM_02.maskedrna.fasta",
+        "21645_MGSD_CSIRO_SQM_02.rnas",
+        "21645_MGSD_CSIRO_SQM_02.trnas",
+        "21645_MGSD_CSIRO_SQM_02.trnas.fasta",
+        "21645_MGSD_CSIRO_SQM_03.faa",
+        "21645_MGSD_CSIRO_SQM_03.fna",
+        "21645_MGSD_CSIRO_SQM_03.gff",
+        "21645_MGSD_CSIRO_SQM_06.fun3.tax.noidfilter.wranks",
+        "21645_MGSD_CSIRO_SQM_06.fun3.tax.wranks",
+        "21645_MGSD_CSIRO_SQM_07.fun3.cog",
+        "21645_MGSD_CSIRO_SQM_07.fun3.kegg",
+        "21645_MGSD_CSIRO_SQM_07.fun3.pfam",
+        "21645_MGSD_CSIRO_SQM_10.contigcov",
+        "21645_MGSD_CSIRO_SQM_10.mapcount",
+        "21645_MGSD_CSIRO_SQM_10.mappingstat",
+        "21645_MGSD_CSIRO_SQM_11.mcount",
+        "21645_MGSD_CSIRO_SQM_12.cog.funcover",
+        "21645_MGSD_CSIRO_SQM_12.kegg.funcover",
+        "21645_MGSD_CSIRO_SQM_13.orftable",
+        "21645_MGSD_CSIRO_SQM_18.DASTool.checkM",
+        "21645_MGSD_CSIRO_SQM_19.bintable",
+        "21645_MGSD_CSIRO_SQM_20.contigtable",
+        "21645_MGSD_CSIRO_SQM_21.kegg.pathways",
+        "21645_MGSD_CSIRO_SQM_21.metacyc.pathways",
+        "21645_MGSD_CSIRO_SQM_22.stats",
+        "21645_MGSD_CSIRO_SQM.md5",
+        "21645_MGSD_CSIRO_SQMreads.md5",
+        "21645_MGSD_CSIRO_sqm_reads.out.allreads",
+        "21645_MGSD_CSIRO_sqm_reads.out.allreads.funcog",
+        "21645_MGSD_CSIRO_sqm_reads.out.allreads.funkegg",
+        "21645_MGSD_CSIRO_sqm_reads.out.allreads.mcount",
+        "21645_MGSD_CSIRO_sqm_reads.out.mappingstat",
+        "139747_MGSD_CSIRO.sqm.18.bincov",
+        "139747_MGSD_CSIRO.sqm.09.contiglog_allranks",
+        "139747_MGSD_CSIRO.sqm.04.nr.diamond",
+        "139747_MGSD_CSIRO.sqm.09.contiglog.noidfilter",
+        "139747_MGSD_CSIRO.sqm.09.contiglog_allranks.noidfilter",
+        "139747_MGSD_CSIRO.sqm.16.bintax",
+        "139747_MGSD_CSIRO.sqm.04.eggnog.diamond",
+        "139747_MGSD_CSIRO.sqm.09.contiglog",
+        "139741_MGSD_CSIRO.sqm.18.contigsinbins",
+        "21645_MGSD_CSIRO_report.txt",
+    ]
+    for filename in filenames:
+        assert amd_metagenomics_analysed_re.match(filename) is not None
+
+
 def test_amd_metagenomics_novaseq():
-    filenames = ["139811_MGE_HYTFVDSXX_AACGAGGCCG-ATACCTGGAT_S161_L001_R2_001.fastq.gz"]
+    filenames = [
+        "139811_MGE_HYTFVDSXX_AACGAGGCCG-ATACCTGGAT_S161_L001_R2_001.fastq.gz",
+        "138600_MGE_UNSW_HG7NLDSX2_GAAGACTAGA-ACTAGAACTT_S38_L004_R1_001.fastq.gz",
+    ]
     for filename in filenames:
         assert amd_metagenomics_novaseq_re.match(filename) is not None
 
@@ -230,6 +314,7 @@ def test_amd_metagenomics_novaseq_control():
         "SOIL_DNA_MGE_HYTFVDSXX-TATCACTCTG-AACGTTACAT_S134_L002_R1_001.fastq.gz",
         "SOIL_DNA_MGE_HYTFVDSXX-TATCACTCTG-AACGTTACAT_S134_L002_R1_001.fastq.gz",
         "Soil_DNA_MGE_HTW7LDRXX_TTAACGGTGT-ACGGTCAGGA_S37_L002_R2_001.fastq.gz",
+        "SOIL_MOCK_MGE_UNSW_HG7NLDSX2_TATCACTCTG-AACGTTACAT_S101_L004_R1_001.fastq.gz",
     ]
     for filename in filenames:
         assert amd_metagenomics_novaseq_control_re.match(filename) is not None

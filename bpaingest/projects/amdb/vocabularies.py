@@ -72,8 +72,14 @@ LandUseVocabulary = (
     ),
     (
         "Production from Relatively Natural Environments",
-        ("Grazing native vegetation", (),),
-        ("Production forestry", ("Wood production", "Other forest production"),),
+        (
+            "Grazing native vegetation",
+            (),
+        ),
+        (
+            "Production forestry",
+            ("Wood production", "Other forest production"),
+        ),
     ),
     (
         "Production from Dryland Agriculture and Plantations",

@@ -280,7 +280,7 @@ class SepsisTranscriptomicsHiseqContextual:
             fld(
                 "growth_condition_temperature",
                 "growth_condition_temperature (°c)",
-                units=u"\u00B0" + "C",
+                units="\u00B0" + "C",
                 coerce=ingest_utils.get_clean_number,
             ),
             fld("growth_condition_media", "growth_condition_media"),
@@ -370,7 +370,7 @@ class SepsisMetabolomicsLCMSContextual:
             fld(
                 "growth_condition_temperature",
                 "growth_condition_temperature (°c)",
-                units=u"\u00B0" + "C",
+                units="\u00B0" + "C",
                 coerce=ingest_utils.get_clean_number,
             ),
             fld("growth_condition_media", "growth_condition_media"),
@@ -453,13 +453,13 @@ class SepsisProteomicsBaseContextual:
             fld(
                 "protein_yield_total",
                 "protein yield - total (µg)",
-                units=u"\u00B5" + "g",
+                units="\u00B5" + "g",
                 coerce=ingest_utils.get_clean_number,
             ),
             fld(
                 "protein_yield_facility",
                 "protein yield / facility (µg)",
-                units=u"\u00B5" + "g",
+                units="\u00B5" + "g",
                 coerce=ingest_utils.get_clean_number,
             ),
             fld("treatment", "Treatment"),

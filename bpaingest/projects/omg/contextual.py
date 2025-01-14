@@ -3,11 +3,12 @@ from glob import glob
 from ...libs import ingest_utils
 from ...libs.excel_wrapper import ExcelWrapper, make_field_definition as fld
 from ...util import one
+from ...abstract import BaseDatasetControlContextual
 
 
 class OMGSampleContextual:
     metadata_urls = [
-        "https://downloads-qcif.bioplatforms.com/bpa/omg_staging/metadata/2021-08-10/"
+        "https://downloads-qcif.bioplatforms.com/bpa/omg_staging/metadata/2022-12-02/"
     ]
     metadata_patterns = [re.compile(r"^OMG_samples_metadata.*\.xlsx$")]
     name = "omg-sample-contextual"
@@ -31,7 +32,11 @@ class OMGSampleContextual:
         field_spec = [
             fld("bpa_sample_id", "bpa_sample_id", coerce=ingest_utils.extract_ands_id),
             fld("voucher_number", "voucher_number", coerce=ingest_utils.int_or_comment),
-            fld("voucher_or_tissue_number", "voucher_or_tissue_number", coerce=ingest_utils.int_or_comment),
+            fld(
+                "voucher_or_tissue_number",
+                "voucher_or_tissue_number",
+                coerce=ingest_utils.int_or_comment,
+            ),
             fld("tissue_number", "tissue_number"),
             fld("institution_name", "institution_name"),
             fld("tissue_collection", "collection"),
@@ -209,3 +214,14 @@ class OMGLibraryContextual:
                     continue
                 row_meta[field] = value
         return library_metadata
+
+
+class OMGDatasetControlContextual(BaseDatasetControlContextual):
+    metadata_urls = [
+        "https://downloads-qcif.bioplatforms.com/bpa/omg_staging/dataset_control/2021-11-24/"
+    ]
+    name = "omg-dataset-contextual"
+    contextual_linkage = ("bpa_sample_id", "bpa_library_id")
+    additional_fields = [
+        fld("bpa_dataset_id", "bpa_dataset_id"),
+    ]

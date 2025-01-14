@@ -22,19 +22,53 @@ class SensitiveSpeciesWrapper:
         return collected
 
     def subspecies_name(self, package):
+        warningWords = ""
         for keyname in ["subspecies_or_variant", "subspecies"]:
             if keyname in package:
                 return package.get(keyname)
-        self._logger.warn(
-            f"Unable to find subspecies in {package.get('sample_id') or package.get('bpa_sample_id')}"
-        )
+
+            warnValue = package.get("sample_id")
+            if warnValue is None:
+                warnValue = package.get("bpa_sample_id")
+            if warnValue is None:
+                warnValue = package.get("dataset_id")
+            if warnValue is None:
+                warnValue = package.get("bpa_dataset_id")
+            if warnValue is None:
+                warnValue = package.get("libary_id")
+            if warnValue is None:
+                warnValue = package.get("bpa_library_id")
+            if warnValue is None:
+                warnValue = package.get("ticket")
+            if warnValue is None:
+                warnValue = package
+
+            warningWords = f"Unable to find subspecies in {warnValue}"
+
+        self._logger.warn(warningWords)
 
     def species_name(self, package):
         if package.get("genus", "") and package.get("species", ""):
             return "{} {}".format(package.get("genus", ""), package.get("species", ""))
-        self._logger.warn(
-            f"Unable to find species in {package.get('sample_id') or package.get('bpa_sample_id')}"
-        )
+        warnValue = package.get("sample_id")
+        if warnValue is None:
+            warnValue = package.get("bpa_sample_id")
+        if warnValue is None:
+            warnValue = package.get("dataset_id")
+        if warnValue is None:
+            warnValue = package.get("bpa_dataset_id")
+        if warnValue is None:
+            warnValue = package.get("libary_id")
+        if warnValue is None:
+            warnValue = package.get("bpa_library_id")
+        if warnValue is None:
+            warnValue = package.get("ticket")
+        if warnValue is None:
+            warnValue = package
+
+        warningWords = f"Unable to find species in {warnValue}"
+
+        self._logger.warn(warningWords)
 
     def apply_location_generalisation(self, packages):
         "Apply location generalisation for sensitive species found from ALA"

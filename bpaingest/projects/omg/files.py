@@ -41,6 +41,19 @@ NOVASEQ_FILENAME_PATTERN = r"""
 """
 novaseq_filename_re = re.compile(NOVASEQ_FILENAME_PATTERN, re.VERBOSE)
 
+NOVASEQ_FILENAME_2_PATTERN = r"""
+    (?P<bpa_library_id>\d{4,6})_
+    OMG_
+    (?P<facility>UNSW)_
+    (?P<flow_cell_id>\w{9,10})_
+    (?P<index>[G|A|T|C|-]*)_
+    (?P<runsamplenum>S\d*)_
+    (?P<lane>L\d{3})_
+    (?P<read>[R|I][1|2])_
+    001\.fastq\.gz
+"""
+novaseq_filename_2_re = re.compile(NOVASEQ_FILENAME_2_PATTERN, re.VERBOSE)
+
 TENXFASTQ_FILENAME_PATTERN = r"""
     (?P<bpa_sample_id>\d{4,6})_
     (?P<runsamplenum>S\d*)_
@@ -174,3 +187,31 @@ ANALYSED_DATA_PATTERN = r"""
       |vc_metrics\.csv)
 """
 analysed_data_filename_re = re.compile(ANALYSED_DATA_PATTERN, re.VERBOSE)
+
+DART_PATTERN = r"""
+    (?P<file_archive_date>\d{8})_
+    OMG_
+    (?P<facility_id>(BRFDArT))_
+    (?P<flowcell_id>\w{9})
+    \.
+    tar
+"""
+dart_filename_re = re.compile(DART_PATTERN, re.VERBOSE)
+
+DART_XLSX_PATTERN = r"""
+    OMG_
+    (?P<facility_id>(BRFDArT))_
+    (?P<bpa_dataset_id>\d{4,6})_
+    (librarymetadata|samplemetadata_ingest)
+    \.xlsx
+"""
+dart_xlsx_filename_re = re.compile(DART_XLSX_PATTERN, re.VERBOSE)
+
+DART_MD5_PATTERN = r"""
+    OMG_
+    (?P<facility_id>(BRFDArT))_
+    (?P<bpa_dataset_id>\d{4,6})_
+    checksums
+    \.md5
+"""
+dart_md5_filename_re = re.compile(DART_MD5_PATTERN, re.VERBOSE)

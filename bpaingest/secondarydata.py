@@ -1,6 +1,6 @@
 import os
 import pathlib
-from urllib.parse import urljoin
+from urllib.parse import urljoin, quote
 
 from bpaingest.abstract import BaseMetadata
 from bpaingest.libs.ingest_utils import from_comma_or_space_separated_to_list
@@ -10,9 +10,34 @@ from bpaingest.resource_metadata import (
     resource_metadata_from_file,
 )
 
+from bpaingest.util import make_logger
+from bpaingest.util import logger_wrap as logwrap
 
+logger = make_logger(__name__)
+
+# This file is only used by the OMG Secondary Data datatype for PacBio
+#
+# This method of dealing with dealing with analysed data is specific to that
+# datatype and was not developed further
+
+
+# Only used by omg-pacbio-genome-assembly
 class SecondaryMetadata(BaseMetadata):
     _raw_resources_file_basename = "raw_resources.json"
+    title_mapping = [
+        {"key": "common_name", "separator": ", "},
+        {"key": "data_context", "separator": ", "},
+        {"key": "data_type", "separator": ", "},
+        {"key": "tissue_type"},
+    ]
+    notes_mapping = [
+        {"key": "family", "separator": ", "},
+        {"key": "genus", "separator": " "},
+        {"key": "species", "separator": ", "},
+        {"key": "specimen_id", "separator": ", "},
+        {"key": "taxonomic_group", "separator": ", Project Lead: "},
+        {"key": "data_custodian"},
+    ]
 
     def parse_raw_list(self, lname):
         p = RawParser(lname, self.raw["match"], self.raw["skip"])
@@ -27,9 +52,13 @@ class SecondaryMetadata(BaseMetadata):
     def _get_packages(self):
         raise NotImplementedError("implement _get_packages()")
 
+    # called first
     def _update_raw_resources(self):
         self._logger.info("Calculating raw resources...")
+        # iterates over package metadata
         for obj in self._packages:
+            # grabs the raw resources field from the secondary metadata xlsx
+            # list of bam files used to create secondary resource
             raw_resources = from_comma_or_space_separated_to_list(
                 self._logger, obj["raw_resources"]
             )
@@ -91,7 +120,7 @@ class SecondaryMetadata(BaseMetadata):
                     linkage, fname, self.ckan_data_type
                 )
                 legacy_url = urljoin(
-                    raw_resources_info["base_url"], os.path.basename(fname)
+                    raw_resources_info["base_url"], quote(os.path.basename(fname))
                 )
             else:
                 # otherwise if no download_info, then use local URL and gather all metadata except md5

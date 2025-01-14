@@ -154,6 +154,7 @@ smallrna_filename_re = re.compile(
 
 xlsx_filename_re = re.compile(r"^.*\.xlsx")
 pdf_filename_re = re.compile(r"^.*\.pdf")
+docx_filename_re = re.compile(r"^.*\.docx")
 
 
 def proteomics_raw_extract_pool_id(logger, v):

@@ -3,13 +3,13 @@ import os
 import re
 from collections import defaultdict, Counter
 
-from .metadata import DownloadMetadata
-from .projects import ProjectInfo
-from .resource_metadata import (
+from bpaingest.metadata import DownloadMetadata
+from bpaingest.projects import ProjectInfo
+from bpaingest.resource_metadata import (
     build_raw_resources_from_state_as_file,
     validate_raw_resources_from_state,
 )
-from .util import make_logger, make_ckan_api
+from bpaingest.util import make_logger, make_ckan_api
 
 
 def unique_packages(logger, packages):
@@ -25,6 +25,21 @@ def unique_packages(logger, packages):
         yield by_id[k]
 
 
+def unique_resources(logger, resources):
+    resource_id_list = list()
+    for resource_linkage, legacy_url, resource_obj in resources:
+        resource_id_list.append(resource_obj["id"])
+    id_count = Counter(t for t in resource_id_list)
+    for k, cnt in list(id_count.items()):
+        if cnt > 1:
+            dupes = [t for t in resource_id_list if t == k]
+            logger.critical(
+                "resource id `%s' appears %d times: needs to be resolved before sync" % (k, len(dupes))
+            )
+            continue
+    return resources
+
+
 def linkage_qc(logger, state, data_type_meta, errors_callback=None):
     if not errors_callback:
         errors_callback = logger.error
@@ -35,7 +50,7 @@ def linkage_qc(logger, state, data_type_meta, errors_callback=None):
         resource_linkage_package_id = {}
 
         packages = list(unique_packages(logger, (state[data_type]["packages"])))
-        resources = state[data_type]["resources"]
+        resources = list(unique_resources(logger, (state[data_type]["resources"])))
         counts[data_type] = len(packages), len(resources)
 
         for package_obj in packages:
@@ -113,6 +128,7 @@ def dump_state(args):
         classes = new_classes
     logger.info("dumping: {}".format(", ".join(t["slug"] for t in classes)))
     has_sql_context = True if args.sql_context == "True" else False
+    has_validate_schema = True if args.validate_schema == "True" else False
 
     data_type_meta = {}
     # download metadata for all project types and aggregate metadata keys
@@ -123,10 +139,11 @@ def dump_state(args):
         )
         dlpath = os.path.join(args.download_path, class_info["slug"])
         with DownloadMetadata(
-            make_logger(class_info["slug"]),
+            make_logger(class_info["slug"], args.log_level),
             class_info["cls"],
             path=dlpath,
             has_sql_context=has_sql_context,
+            has_validate_schema=has_validate_schema,
         ) as dlmeta:
             meta = dlmeta.meta
             data_type = meta.ckan_data_type

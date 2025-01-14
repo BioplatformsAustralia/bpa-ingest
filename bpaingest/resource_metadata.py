@@ -31,12 +31,16 @@ def resource_metadata_from_file_no_data(linkage, filename, resource_type):
 
 def resource_metadata_from(identifier, filename, resource_type):
     return {
-        "id": md5(
-            (str(identifier) + "||" + os.path.basename(filename)).encode("utf8")
-        ).hexdigest(),
+        "id": resource_metadata_id(identifier, filename),
         "name": os.path.basename(filename),
         "resource_type": resource_type,
     }
+
+
+def resource_metadata_id(identifier, filename):
+    return md5(
+        (str(identifier) + "||" + os.path.basename(filename)).encode("utf8")
+    ).hexdigest()
 
 
 def validate_raw_resources_from_state(logger, state):
@@ -51,10 +55,7 @@ def validate_raw_resources_file_metadata(logger, raw_resources_metadata, auth):
     for next in raw_resources_metadata:
         legacy_url = next["metadata"][1]
         if re.search(r"^file.*", legacy_url, re.VERBOSE):
-            logger.info(
-                f"Validation of generated raw resources aborted as remote URL is a local file. {base_validation_action_message}"
-            )
-            return
+            logger.info(f"Validation of generated raw resources against a local file.")
         logger.info(
             f"Checking MD5 on raw resources file, {next['path']}  against remote URL: {next['metadata'][1]}"
         )
@@ -103,9 +104,22 @@ def build_raw_resources_as_file(logger, ckan, meta, packages, resources):
                 raise Exception(
                     "A raw resource path has been created, but there are no raw resources to append."
                 )
-            for next_raw_id, next_raw_value in next_raw_resources_data.items():
-                fetched_descriptors = ckan_get_from_dict(logger, ckan, next_raw_value)
-                next_raw_value.update(fetched_descriptors)
+            # Just catch the error here
+            # Log warning to run with variables api / key against CKAN
+            # This is poor design as it cause dumpstate to interrogate CKAN
+            # This should have used a linkage to pull it from the metadata calculated by bpa-ingest
+            try:
+                for next_raw_id, next_raw_value in next_raw_resources_data.items():
+                    fetched_descriptors = ckan_get_from_dict(
+                        logger, ckan, next_raw_value
+                    )
+                    next_raw_value.update(fetched_descriptors)
+            except Exception as e:
+                logger.error(e)
+                logger.error(
+                    "Unable to fetch data from CKAN, run with CKAN URL and API key"
+                )
+                logger.error("This error is expected on dumpstate, but not on sync")
             with open(raw_resources_path, "w") as raw_resources_file:
                 json.dump(
                     next_raw_resources_data,
@@ -117,7 +131,7 @@ def build_raw_resources_as_file(logger, ckan, meta, packages, resources):
             raw_resources_files.append(
                 {"path": raw_resources_path, "metadata": raw_resources_metadata}
             )
-            logger.info(f"Generated raw resouces file: {raw_resources_path}.")
+            logger.info(f"Generated raw resources file: {raw_resources_path}.")
         md5_legacy_url = get_md5_legacy_url(meta)
         logger.warning(
             f"Any updates to generated raw resources files, need to be copied to remote download server at: {md5_legacy_url} "

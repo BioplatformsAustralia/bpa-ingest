@@ -18,6 +18,8 @@ import re
 import os
 import xlrd
 import string
+import logging
+from openpyxl.utils.cell import get_column_letter
 
 SkipColumn = namedtuple("SkipColumn", ["column_name", "skip_all"])
 skip_column_default = SkipColumn("column_name", False)
@@ -37,6 +39,22 @@ def make_field_definition(attribute, column_name, **kwargs):
 
 def make_skip_column(column_name, **kwargs):
     return skip_column_default._replace(column_name=column_name, **kwargs)
+
+
+class ExcelWrapperLogger(logging.LoggerAdapter):
+    def process(self, msg, kwargs):
+        return (
+            "Field %s, Cell %s:%s in %s, %s: %s"
+            % (
+                self.extra["field_name"],
+                self.extra["column"],
+                self.extra["row"],
+                self.extra["filename"],
+                self.extra["sheet"],
+                msg,
+            ),
+            kwargs,
+        )
 
 
 class ExcelWrapper:
@@ -74,10 +92,17 @@ class ExcelWrapper:
         self.suggest_template = suggest_template
 
         self.workbook = xlrd.open_workbook(file_name)
-        if sheet_name is None:
-            self.sheet = self.workbook.sheet_by_index(0)
-        else:
-            self.sheet = self.workbook.sheet_by_name(sheet_name)
+        self.modified = None
+        try:
+            self.modified = self.workbook.props["modified"]
+
+        except:
+            self._logger.warn(
+                "xlsx file named '%s' does not have a modified date, may be very old"
+                % file_name
+            )
+
+        self.sheet = self._find_sheet_in_workbook(file_name, self.workbook, sheet_name)
 
         self.missing_headers = []
         self.header, self.name_to_column_map = self.set_name_to_column_map()
@@ -101,6 +126,112 @@ class ExcelWrapper:
                 % [t for (t, c) in Counter(names).items() if c > 1]
             )
         return names
+
+    def _find_sheet_in_workbook(self, file_name, workbook, sheet_name):
+        # This method performs the following in order to find an appropriately named sheet in the given workbook:
+        # Try sheet_name supplied as parameter to this method (if it is not None).
+
+        # sheet_name can be either a single string or a list of strings
+
+        # If the provided sheet name is not found, log an error and continue.
+        # Try in turn the sheet names in the possible_sheet_names list below.
+        # Select the first sheet (ie - index 0), and log teh fact we are using the first sheet, (and its name)
+
+        # this lists a number of sheet names for the code to search for in the xlsx file if a sheet with the name
+        # provided in the data class is not found. If new variants of sheet names are required, add them here.
+
+        possible_sheet_names = [
+            "Metadata",
+            "Library_Metadata",
+            "Library_metadata",
+            "Sheet1",
+        ]
+
+        sheet = None
+        if sheet_name is not None:
+            if isinstance(sheet_name, str):
+                if sheet_name not in workbook.sheet_names():
+                    self._logger.warn(
+                        "Missing sheet named '%s' in %s" % (sheet_name, file_name)
+                    )
+                    self._logger.warn(
+                        "Available sheets are '%s"
+                        % (
+                            str(
+                                workbook.sheet_names(),
+                            )
+                        )
+                    )
+                else:
+                    sheet = workbook.sheet_by_name(sheet_name)
+            elif all(isinstance(candidate, str) for candidate in sheet_name):
+                notfound = []
+                for candidate in sheet_name:
+                    if candidate not in workbook.sheet_names():
+                        notfound.append(candidate)
+                    else:
+                        sheet = workbook.sheet_by_name(candidate)
+                        break
+                if sheet is None:
+                    for candidate in notfound:
+                        self._logger.warn(
+                            "Missing sheet named '%s' in %s" % (candidate, file_name)
+                        )
+                    self._logger.warn(
+                        "Available sheets are '%s"
+                        % (
+                            str(
+                                workbook.sheet_names(),
+                            )
+                        )
+                    )
+            else:
+                raise TypeError
+
+        # Didn't find it with the parameter sheet name, see if its in list of possibles
+        if sheet is None:
+            for possible_sheet in possible_sheet_names:
+                if possible_sheet in workbook.sheet_names():
+                    sheet = workbook.sheet_by_name(possible_sheet)
+                    if sheet_name is not None:
+                        # log that we are using a possibly  unexpected sheet
+                        self._logger.warn(
+                            "Using the sheet named '%s' in %s, instead of %s"
+                            % (sheet.name, file_name, sheet_name)
+                        )
+                        self._logger.warn(
+                            "Available sheets are '%s"
+                            % (
+                                str(
+                                    workbook.sheet_names(),
+                                )
+                            )
+                        )
+
+                    break
+
+        # Last resort, we haven't found a sheet by any of the possible names, so use the first sheet
+        if sheet is None:
+            sheet = workbook.sheet_by_index(0)
+            self._logger.warn(
+                "Using the FIRST sheet (named '%s') in %s" % (sheet.name, file_name)
+            )
+            self._logger.warn(
+                "Available sheets are '%s"
+                % (
+                    str(
+                        workbook.sheet_names(),
+                    )
+                )
+            )
+
+        if sheet.visibility > 0:
+            raise Exception(
+                "Sheet named '%s' in %s is not visible.  Correct and re-run"
+                % (sheet_name, file_name)
+            )
+
+        return sheet
 
     def set_name_to_column_map(self):
         """
@@ -246,7 +377,12 @@ class ExcelWrapper:
                 return "klass"
             return s
 
-        parens = OrderedDict([("]", "["), (")", "("),])
+        parens = OrderedDict(
+            [
+                ("]", "["),
+                (")", "("),
+            ]
+        )
         exclude_units = ("yyyy-mm-dd", "hh:mm")
 
         def guess_units(s):
@@ -310,7 +446,7 @@ class ExcelWrapper:
         )
 
     def set_name_to_func_map(self):
-        """ Map the spec fields to their corresponding functions """
+        """Map the spec fields to their corresponding functions"""
 
         return dict(
             (t.attribute, t.coerce)
@@ -331,7 +467,7 @@ class ExcelWrapper:
             return s
 
     def _get_rows(self):
-        """ Yields sequence of cells """
+        """Yields sequence of cells"""
 
         merge_redirect = {}
         for crange in self.sheet.merged_cells:
@@ -356,7 +492,7 @@ class ExcelWrapper:
             yield merged_row
 
     def get_date_time(self, i, cell):
-        """ the cell contains a float and pious hope, get a date, if you dare. """
+        """the cell contains a float and pious hope, get a date, if you dare."""
 
         val = cell.value
         try:
@@ -384,8 +520,9 @@ class ExcelWrapper:
         if self.additional_context is not None:
             typ_attrs += list(self.additional_context.keys())
         typ = namedtuple(typname, typ_attrs)
-
+        row_num = 0
         for row in self._get_rows():
+            row_num = row_num + 1
             tpl = []
             for name in self.field_names:
                 i = self.name_to_column_map[name]
@@ -405,7 +542,18 @@ class ExcelWrapper:
                     val = val.strip()
                 # apply func
                 if func is not None:
-                    val = func(self._logger, val)
+                    func_logger = ExcelWrapperLogger(
+                        self._logger,
+                        {
+                            "field_name": name,
+                            "row": row_num,
+                            "column": get_column_letter(i + 1),  # 0 vs 1 start
+                            "filename": os.path.basename(self.file_name),
+                            "sheet": self.sheet.name,
+                        },
+                    )
+
+                    val = func(func_logger, val)
                 tpl.append(val)
             if self.additional_context:
                 tpl += list(self.additional_context.values())

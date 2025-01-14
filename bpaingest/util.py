@@ -6,6 +6,7 @@ import re
 import string
 from collections import namedtuple
 from hashlib import md5
+from .libs.munge import bpa_munge_filename
 
 import ckanapi
 from dateutil.relativedelta import relativedelta
@@ -27,6 +28,7 @@ def sample_id_to_ckan_name(sample_id, suborg=None, postfix=None):
     # CKAN insists upon lowercase
     return r.lower()
 
+
 def validate_write_reuploads_interval(logger, args):
     if not args.write_reuploads_interval:
         return None
@@ -34,7 +36,9 @@ def validate_write_reuploads_interval(logger, args):
         raise Exception(
             f"To use cache reuploads write interval, the interval must be an integer and cache write reuploads must be enabled."
         )
-    logger.info(f"Activated write reuploads interval of {args.write_reuploads_interval}")
+    logger.info(
+        f"Activated write reuploads interval of {args.write_reuploads_interval}"
+    )
     return args.write_reuploads_interval
 
 
@@ -97,6 +101,24 @@ def make_logger(name, level=logging.INFO):
     return logger
 
 
+# Decorator to put around functions whilst debugging
+def logger_wrap(func):
+    def wrap(*args, **kwargs):
+        # Log the function name and arguments
+        logger.warn(f"Calling {func.__name__} with args: {args}, kwargs: {kwargs}")
+
+        # Call the original function
+        result = func(*args, **kwargs)
+
+        # Log the return value
+        logger.warn(f"{func.__name__} returned: {result}")
+
+        # Return the result
+        return result
+
+    return wrap
+
+
 def make_ckan_api(args):
     ckan = ckanapi.RemoteCKAN(
         args.ckan_url, apikey=args.api_key, verify_ssl=args.verify_ssl
@@ -129,6 +151,7 @@ def csv_to_named_tuple(
     cleanup=None,
     name_fn=None,
     dialect="excel",
+    skip=0,
 ):
     if fname is None:
         return [], []
@@ -142,13 +165,16 @@ def csv_to_named_tuple(
                 if t in string.ascii_letters or t in string.digits or t == "_"
             ]
         )
-        if s[0] in string.digits:
-            s = digit_words[s[0]] + s[1:]
-        s = s.strip("_")
-        s = re.sub(r"__+", "_", s).strip("_")
-        # reserved words aren't permitted
-        if s == "class":
-            s = "class_"
+        if len(s) > 0:
+            if s[0] in string.digits:
+                s = digit_words[s[0]] + s[1:]
+            s = s.strip("_")
+            s = re.sub(r"__+", "_", s).strip("_")
+            # reserved words aren't permitted
+            if s == "class":
+                s = "class_"
+        else:  # we have a blank column heading
+            s = "noHeading"
         return s
 
     def default_name_fn(s):
@@ -161,8 +187,16 @@ def csv_to_named_tuple(
         name_fn = default_name_fn
     with open(fname, mode) as fd:
         r = csv.reader(fd, dialect=dialect)
+
+        # skip non-header rows before header
+        for nhr in range(skip):
+            next(r)
+
+        # read header
         header = [name_fn(clean_name(t)) for t in next(r)] + additional_keys
         typ = namedtuple(typname, header)
+
+        # read data
         rows = []
         for row in r:
             if cleanup is not None:
@@ -193,6 +227,35 @@ def common_values(dicts):
     return r
 
 
+def merge_values(key, sep, dicts):
+    """
+    given a list of dicts, return a dict with the set of values
+    for a specific key joined by the seperator provided
+    """
+    # bullet-proof this against being handed an iterator
+    dicts = list(dicts)
+    all_keys = set()
+    for d in dicts:
+        all_keys = all_keys.union(set(d.keys()))
+    r = {}
+    if key in all_keys:
+        vals = set(filter(None, [d.get(key) for d in dicts]))
+        r[key] = sep.join(sorted(list(vals)))
+    return r
+
+
+def migrate_field(obj, from_field, to_field):
+    # todo - check for key existence
+    old_val = obj[from_field]
+    new_val = obj[to_field]
+    del obj[from_field]
+
+    if old_val is not None and new_val is not None:
+        raise Exception("field migration clash, {}->{}".format(from_field, to_field))
+    if old_val:
+        obj[to_field] = old_val
+
+
 def apply_license(archive_ingestion_date):
     if not archive_ingestion_date:
         return "notspecified"
@@ -204,7 +267,7 @@ def apply_license(archive_ingestion_date):
     if archive_ingestion_date + relativedelta(months=3) > datetime.date.today():
         return "other-closed"
     else:
-        return "CC-BY-4.0-AU"
+        return apply_cc_by_license()
 
 
 def apply_cc_by_license():
@@ -226,3 +289,13 @@ def get_md5_legacy_url(meta):
         if key.endswith(".md5")
     ][0]
     return first_md5_baseurl
+
+
+def clean_filename(filename):
+    cleaned = bpa_munge_filename(filename)
+    if filename != cleaned:
+        logger.warn(f"Cleaned filename from '{filename}' to '{cleaned}'")
+    return cleaned
+
+
+logger = make_logger(__name__)

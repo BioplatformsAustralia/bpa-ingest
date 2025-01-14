@@ -4,6 +4,7 @@ from ...util import csv_to_named_tuple
 
 class GAPTrackMetadata(GoogleDriveTrackMetadata):
     name = "GAP"
+    skip_tracking_rows = 4
 
     def read_track_csv(self, fname):
         prefix = "bioplatforms_"
@@ -14,6 +15,9 @@ class GAPTrackMetadata(GoogleDriveTrackMetadata):
             return s
 
         header, rows = csv_to_named_tuple(
-            "GoogleDriveTrack", fname, name_fn=remove_bioplatforms_prefix
+            "GoogleDriveTrack",
+            fname,
+            name_fn=remove_bioplatforms_prefix,
+            skip=self.skip_tracking_rows,
         )
         return dict((t.ccg_jira_ticket.strip().lower(), t) for t in rows)

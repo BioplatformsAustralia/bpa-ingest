@@ -1,7 +1,7 @@
 import os
 import re
 from glob import glob
-from urllib.parse import urljoin
+from urllib.parse import urljoin, quote
 
 from unipath import Path
 
@@ -19,8 +19,14 @@ from ...util import (
     sample_id_to_ckan_name,
     common_values,
     one,
+    clean_filename,
 )
-from .contextual import AustralianMicrobiomeSampleContextual, BASENCBIContextual, MarineMicrobesNCBIContextual
+from .contextual import (
+    AustralianMicrobiomeSampleContextual,
+    BASENCBIContextual,
+    MarineMicrobesNCBIContextual,
+    AustralianMicrobiomeDatasetControlContextual,
+)
 from .tracking import (
     AustralianMicrobiomeGoogleTrackMetadata,
     BASETrackMetadata,
@@ -28,7 +34,10 @@ from .tracking import (
     MarineMicrobesTrackMetadata,
 )
 
-common_context = [AustralianMicrobiomeSampleContextual]
+common_context = [
+    AustralianMicrobiomeSampleContextual,
+    AustralianMicrobiomeDatasetControlContextual,
+]
 ncbi_context = [
     BASENCBIContextual,
     MarineMicrobesNCBIContextual,
@@ -81,8 +90,8 @@ class AMDBaseMetadata(BaseMetadata):
     sql_to_excel_context_classes = [
         AustralianMicrobiomeSampleContextualSQLiteToExcelCopy
     ]
-    # to validate schema class, uncomment this attribute
-    # schema_classes = [AustralianMicrobiomeSchema]
+
+    schema_classes = [AustralianMicrobiomeSchema]
 
     notes_mapping = [
         {"key": "env_material_control_vocab_0", "separator": ", "},
@@ -97,24 +106,33 @@ class AMDBaseMetadata(BaseMetadata):
         self.path = Path(metadata_path)
         if kwargs.get("schema_definitions"):
             self.schema_definitions = kwargs["schema_definitions"]
-            self.validate_schema_units()
+            self.validate_schema()
         self.linkage_xlsx = {}
 
-    def validate_schema_units(self):
+    def validate_schema(self):
         self._logger.info(
-            "validating current schema units against current schema definitions file..."
+            "Validating current schema against current schema definitions file..."
         )
-        if len(self.contextual_classes) != 1:
-            raise Exception("Can only compare 1 contextual metadata file")
-        context_object = self.contextual_classes[0]
-        context_sheet_name = context_object.sheet_name
+        if len(self.contextual_classes) == 0:
+            self._logger.warn("No contextual data available.")
+            self._logger.info("Validation terminated.")
+            return
         if len(self.schema_definitions) != 1:
-            raise Exception("Can only compare 1 contextual metadata file")
-        schema_object = self.schema_definitions[0]
-        schema_object.validate_schema_units(
-            context_object.field_specs[context_sheet_name]
-        )
-        self._logger.info("Validation completed.")
+            raise Exception("Can only compare 1 schema definitions file")
+        for context_object in self.contextual_classes:
+            if not hasattr(context_object, "sheet_name"):
+                self._logger.warn("Skipping context object %s" % context_object)
+                continue
+            self._logger.info("Validating context object %s" % context_object)
+            context_sheet_name = context_object.sheet_name
+            schema_object = self.schema_definitions[0]
+            schema_object.validate_schema_datatypes(
+                context_object.field_specs[context_sheet_name]
+            )
+            schema_object.validate_schema_units(
+                context_object.field_specs[context_sheet_name]
+            )
+        self._logger.info("Schema Validation completed.")
 
 
 class AMDFullIngestMetadata(AMDBaseMetadata):
@@ -126,7 +144,7 @@ class AMDFullIngestMetadata(AMDBaseMetadata):
         super().__init__(logger, metadata_path, **kwargs)
         self.metadata_info = kwargs["metadata_info"]
         self.all_md5_filenames = [
-            f for f in self.metadata_info.keys() if re.match(".*\.md5", f)
+            f for f in self.metadata_info.keys() if re.match(r".*\.md5", f)
         ]
 
 
@@ -161,6 +179,7 @@ class BASEAmpliconsMetadata(AMDFullIngestMetadata):
     omics = "genomics"
     technology = "amplicons"
     sequence_data_type = "illumina-amplicons"
+    embargo_days = 90
     contextual_classes = common_context + ncbi_context
     metadata_patterns = [r"^.*\.md5$", r"^.*_metadata.*.*\.xlsx$"]
     metadata_urls = [
@@ -270,17 +289,21 @@ class BASEAmpliconsMetadata(AMDFullIngestMetadata):
             fld("comments2", re.compile(r"comments2"), optional=True),
             fld("comments3", re.compile(r"comments3"), optional=True),
         ],
-        "options": {"header_length": 2, "column_name_row_index": 1,},
+        "options": {
+            "header_length": 2,
+            "column_name_row_index": 1,
+        },
     }
     md5 = {
         "match": files.base_amplicon_regexps,
         "skip": common_skip + files.base_amplicon_control_regexps,
     }
+    add_md5_as_resource = True
 
     def __init__(self, logger, metadata_path, **kwargs):
         super().__init__(logger, metadata_path, **kwargs)
         self.contextual_metadata = kwargs["contextual_metadata"]
-        self.track_meta = BASETrackMetadata()
+        self.track_meta = BASETrackMetadata(logger)
 
     def _get_packages(self):
         xlsx_re = re.compile(r"^.*_(\w+)_metadata.*\.xlsx$")
@@ -342,7 +365,7 @@ class BASEAmpliconsMetadata(AMDFullIngestMetadata):
                     {
                         "name": name,
                         "id": name,
-                        "sample_type": "soil",
+                        "sample_type": "Soil",
                         "read_length": base_amplicon_read_length(
                             amplicon
                         ),  # hard-coded for now, on advice of AB at CSIRO
@@ -375,11 +398,16 @@ class BASEAmpliconsMetadata(AMDFullIngestMetadata):
                     }
                 )
                 ingest_utils.permissions_organization_member_after_embargo(
-                    self._logger, obj, "archive_ingestion_date", 90, CONSORTIUM_ORG_NAME
+                    self._logger,
+                    obj,
+                    "archive_ingestion_date",
+                    self.embargo_days,
+                    CONSORTIUM_ORG_NAME,
                 )
                 for contextual_source in self.contextual_metadata:
                     filter_out_metadata_fields(contextual_source.get(sample_id))
                     obj.update(contextual_source.get(sample_id))
+                ingest_utils.apply_access_control(self._logger, self, obj)
                 ingest_utils.add_spatial_extra(self._logger, obj)
                 self.build_notes_into_object(obj)
                 tag_names = ["amplicons", amplicon, obj["sample_type"]]
@@ -401,44 +429,29 @@ class BASEAmpliconsMetadata(AMDFullIngestMetadata):
         ) or package_link in self.bad_resource_linkages
 
     def _get_resources(self):
-        self._logger.info(
-            "Ingesting BASE Amplicon md5 file information from {0}".format(self.path)
-        )
-        resources = []
+        return self._get_common_resources()
 
-        for md5_file in glob(self.path + "/*.md5"):
-            index_linkage = os.path.basename(md5_file) in self.index_linkage_md5s
-            self._logger.info("Processing md5 file {}".format(md5_file))
-            for filename, md5, file_info in self.parse_md5file(md5_file):
-                sample_id = ingest_utils.extract_ands_id(
-                    self._logger, file_info.get("id")
-                )
-                resource = file_info.copy()
-                resource["md5"] = resource["id"] = md5
-                resource["name"] = filename
-                resource["resource_type"] = self.ckan_data_type
-                for contextual_source in self.contextual_metadata:
-                    resource.update(contextual_source.filename_metadata(filename))
-                sample_extraction_id = (
-                    sample_id.split("/")[-1] + "_" + file_info.get("extraction")
-                )
-                xlsx_info = self.metadata_info[os.path.basename(md5_file)]
-                legacy_url = urljoin(xlsx_info["base_url"], filename)
-                resources.append(
-                    (
-                        (
-                            sample_extraction_id,
-                            resource["amplicon"],
-                            build_base_amplicon_linkage(
-                                index_linkage, resource["flow_id"], resource["index"]
-                            ),
-                        ),
-                        legacy_url,
-                        resource,
-                    )
-                )
-            resources.extend(self.generate_md5_resources(md5_file))
-        return resources
+    def _add_datatype_specific_info_to_resource(self, resource, md5_file=None):
+        for contextual_source in self.contextual_metadata:
+            resource.update(contextual_source.filename_metadata(resource["name"]))
+        self._current_md5 = md5_file
+
+    def _build_resource_linkage(self, xlsx_info, resource, file_info):
+        use_index_linkage = (
+            os.path.basename(self._current_md5) in self.index_linkage_md5s
+        )
+        sample_id = ingest_utils.extract_ands_id(self._logger, file_info.get("id"))
+        sample_extraction_id = (
+            sample_id.split("/")[-1] + "_" + file_info.get("extraction")
+        )
+
+        return (
+            sample_extraction_id,
+            resource["amplicon"],
+            build_base_amplicon_linkage(
+                use_index_linkage, resource["flow_id"], resource["index"]
+            ),
+        )
 
 
 class BASEAmpliconsControlMetadata(AMDFullIngestMetadata):
@@ -447,6 +460,7 @@ class BASEAmpliconsControlMetadata(AMDFullIngestMetadata):
     omics = "genomics"
     technology = "amplicons-control"
     sequence_data_type = "illumina-amplicons"
+    embargo_days = 90
     ## TODO: control classes don't normally have context, but historically this has always been here. Probably harmless
     # as without the relevant ID, context will be skipped over, but at some point sequencing metadata IDs should be checked to see
     # if it is TRUE that none exist in context and then safely removed.
@@ -461,11 +475,12 @@ class BASEAmpliconsControlMetadata(AMDFullIngestMetadata):
         "match": files.base_amplicon_control_regexps,
         "skip": common_skip + files.base_amplicon_regexps,
     }
+    add_md5_as_resource = True
 
     def __init__(self, logger, metadata_path, **kwargs):
         super().__init__(logger, metadata_path, **kwargs)
         self.contextual_metadata = kwargs["contextual_metadata"]
-        self.track_meta = BASETrackMetadata()
+        self.track_meta = BASETrackMetadata(logger)
 
     def _get_packages(self):
         flow_id_ticket = dict(
@@ -480,10 +495,10 @@ class BASEAmpliconsControlMetadata(AMDFullIngestMetadata):
             ).lower()
             track_meta = self.track_meta.get(info["ticket"])
 
-            def track_get(k):
+            def track_get(k, default=None):
                 if track_meta is None:
                     return None
-                return getattr(track_meta, k)
+                return getattr(track_meta, k, default)
 
             archive_ingestion_date = ingest_utils.get_date_isoformat(
                 self._logger, track_get("date_of_transfer_to_archive")
@@ -501,7 +516,8 @@ class BASEAmpliconsControlMetadata(AMDFullIngestMetadata):
                     "omics": "Genomics",
                     "analytical_platform": "MiSeq",
                     "date_of_transfer": ingest_utils.get_date_isoformat(
-                        self._logger, track_get("date_of_transfer")
+                        self._logger,
+                        track_get("date_of_transfer", default=archive_ingestion_date),
                     ),
                     "data_type": track_get("data_type"),
                     "description": track_get("description"),
@@ -524,8 +540,13 @@ class BASEAmpliconsControlMetadata(AMDFullIngestMetadata):
                 }
             )
             ingest_utils.permissions_organization_member_after_embargo(
-                self._logger, obj, "archive_ingestion_date", 90, CONSORTIUM_ORG_NAME
+                self._logger,
+                obj,
+                "archive_ingestion_date",
+                self.embargo_days,
+                CONSORTIUM_ORG_NAME,
             )
+            ingest_utils.apply_access_control(self._logger, self, obj)
             ingest_utils.add_spatial_extra(self._logger, obj)
             self.build_notes_into_object(obj)
             tag_names = ["amplicons-control", amplicon, "raw"]
@@ -535,24 +556,16 @@ class BASEAmpliconsControlMetadata(AMDFullIngestMetadata):
         return packages
 
     def _get_resources(self):
-        resources = []
-        self._logger.info("Ingesting MD5 file information from {0}".format(self.path))
-        for md5_file in glob(self.path + "/*.md5"):
-            self._logger.info("Processing md5 file {}".format(md5_file))
-            for filename, md5, file_info in self.parse_md5file(md5_file):
-                resource = file_info.copy()
-                resource["md5"] = resource["id"] = md5
-                resource["name"] = filename
-                resource["resource_type"] = self.ckan_data_type
-                for contextual_source in self.contextual_metadata:
-                    resource.update(contextual_source.filename_metadata(filename))
-                xlsx_info = self.metadata_info[os.path.basename(md5_file)]
-                legacy_url = urljoin(xlsx_info["base_url"], filename)
-                resources.append(
-                    ((resource["amplicon"], resource["flow_id"]), legacy_url, resource)
-                )
-            resources.extend(self.generate_md5_resources(md5_file))
+        resources = self._get_common_resources()
         return resources
+
+    def _add_datatype_specific_info_to_resource(self, resource, md5_file=None):
+        for contextual_source in self.contextual_metadata:
+            resource.update(contextual_source.filename_metadata(resource["name"]))
+        return
+
+    def _build_resource_linkage(self, xlsx_info, resource, file_info):
+        return (resource["amplicon"], resource["flow_id"])
 
 
 class BASEMetagenomicsMetadata(AMDFullIngestMetadata):
@@ -560,6 +573,7 @@ class BASEMetagenomicsMetadata(AMDFullIngestMetadata):
     ckan_data_type = "base-metagenomics"
     omics = "metagenomics"
     sequence_data_type = "illumina-shortread"
+    embargo_days = 90
     contextual_classes = common_context + ncbi_context
     metadata_patterns = [r"^.*\.md5$", r"^.*_metadata.*.*\.xlsx$"]
     metadata_urls = [
@@ -603,12 +617,16 @@ class BASEMetagenomicsMetadata(AMDFullIngestMetadata):
             fld("run_flow_cell_id", "run #:flow cell id", optional=True),
             fld("lane_number", "lane number", optional=True),
         ],
-        "options": {"header_length": 2, "column_name_row_index": 1,},
+        "options": {
+            "header_length": 2,
+            "column_name_row_index": 1,
+        },
     }
     md5 = {
         "match": files.base_metagenomics_regexps,
         "skip": common_skip,
     }
+    add_md5_as_resource = True
     # these are packages from the pilot, which have missing metadata
     # we synthethise minimal packages for this data - see
     # https://github.com/BioplatformsAustralia/bpa-archive-ops/issues/140
@@ -629,16 +647,29 @@ class BASEMetagenomicsMetadata(AMDFullIngestMetadata):
 
     bad_flow_ids = ["H8AABADXX"]
 
+    missing_ingest_dates = [
+        "BRLOPS-638",
+        "BRLOPS-649",
+        "BRLOPS-650",
+        "BRLOPS-652",
+        "BPAOPS-117",
+        "BPAOPS-140",
+    ]
+
     def __init__(self, logger, metadata_path, **kwargs):
         super().__init__(logger, metadata_path, **kwargs)
         self.contextual_metadata = kwargs["contextual_metadata"]
-        self.track_meta = BASETrackMetadata()
+        self.track_meta = BASETrackMetadata(logger)
 
     def assemble_obj(self, sample_id, sample_extraction_id, flow_id, row, track_meta):
-        def track_get(k):
+        def track_get(k, default=None):
+            if row.ticket.strip() in self.missing_ingest_dates and k.startswith(
+                "date_of_transfer"
+            ):
+                return "2017-05-11"
             if track_meta is None:
                 return None
-            return getattr(track_meta, k)
+            return getattr(track_meta, k, default)
 
         def row_get(k, v_fn=None):
             if row is None:
@@ -657,7 +688,7 @@ class BASEMetagenomicsMetadata(AMDFullIngestMetadata):
 
         obj = {
             "name": name,
-            "sample_type": "soil",
+            "sample_type": "Soil",
             "id": name,
             "sample_id": sample_id,
             "flow_id": flow_id,
@@ -672,7 +703,8 @@ class BASEMetagenomicsMetadata(AMDFullIngestMetadata):
             "ticket": row_get("ticket"),
             "facility": row_get("facility_code", lambda v: v.upper()),
             "date_of_transfer": ingest_utils.get_date_isoformat(
-                self._logger, track_get("date_of_transfer")
+                self._logger,
+                track_get("date_of_transfer", default=archive_ingestion_date),
             ),
             "sample_submission_date": ingest_utils.get_date_isoformat(
                 self._logger, track_get("date_of_transfer")
@@ -690,10 +722,15 @@ class BASEMetagenomicsMetadata(AMDFullIngestMetadata):
             "sequence_data_type": self.sequence_data_type,
         }
         ingest_utils.permissions_organization_member_after_embargo(
-            self._logger, obj, "archive_ingestion_date", 90, CONSORTIUM_ORG_NAME
+            self._logger,
+            obj,
+            "archive_ingestion_date",
+            self.embargo_days,
+            CONSORTIUM_ORG_NAME,
         )
         for contextual_source in self.contextual_metadata:
             obj.update(contextual_source.get(sample_id))
+        ingest_utils.apply_access_control(self._logger, self, obj)
         ingest_utils.add_spatial_extra(self._logger, obj)
         self.build_notes_into_object(obj)
         tag_names = ["metagenomics", obj["sample_type"]]
@@ -775,9 +812,7 @@ class BASEMetagenomicsMetadata(AMDFullIngestMetadata):
             for row in uniq_rows:
                 track_meta = self.track_meta.get(row.ticket)
                 if not track_meta:
-                    self._logger.critical(
-                        "No tracking metadata for: {}".format(xlsx_info)
-                    )
+                    self._logger.error("No tracking metadata for: {}".format(xlsx_info))
                 # pilot data has the flow cell in the spreadsheet; in the main dataset
                 # there is one flow-cell per spreadsheet, so it's in the spreadsheet
                 # filename
@@ -811,34 +846,20 @@ class BASEMetagenomicsMetadata(AMDFullIngestMetadata):
         return packages
 
     def _get_resources(self):
-        self._logger.info(
-            "Ingesting BASE Metagenomics md5 file information from {0}".format(
-                self.path
-            )
-        )
-        resources = []
-        for md5_file in glob(self.path + "/*.md5"):
-            self._logger.info("Processing md5 file {}".format(md5_file))
-            for filename, md5, file_info in self.parse_md5file(md5_file):
-                sample_id = ingest_utils.extract_ands_id(
-                    self._logger, file_info.get("id")
-                )
-                resource = file_info.copy()
-                resource["md5"] = resource["id"] = md5
-                resource["name"] = filename
-                resource["resource_type"] = self.ckan_data_type
-                for contextual_source in self.contextual_metadata:
-                    resource.update(contextual_source.filename_metadata(filename))
-                sample_extraction_id = (
-                    sample_id.split("/")[-1] + "_" + file_info.get("extraction")
-                )
-                xlsx_info = self.metadata_info[os.path.basename(md5_file)]
-                legacy_url = urljoin(xlsx_info["base_url"], filename)
-                resources.append(
-                    ((sample_extraction_id, resource["flow_id"]), legacy_url, resource)
-                )
-            resources.extend(self.generate_md5_resources(md5_file))
+        resources = self._get_common_resources()
         return resources
+
+    def _add_datatype_specific_info_to_resource(self, resource, md5_file=None):
+        for contextual_source in self.contextual_metadata:
+            resource.update(contextual_source.filename_metadata(resource["name"]))
+        return
+
+    def _build_resource_linkage(self, xlsx_info, resource, file_info):
+        sample_id = ingest_utils.extract_ands_id(self._logger, file_info.get("id"))
+        sample_extraction_id = (
+            sample_id.split("/")[-1] + "_" + file_info.get("extraction")
+        )
+        return (sample_extraction_id, resource["flow_id"])
 
 
 class BASESiteImagesMetadata(AMDFullIngestMetadata):
@@ -849,6 +870,7 @@ class BASESiteImagesMetadata(AMDFullIngestMetadata):
     omics = None
     technology = "site-images"
     sequence_data_type = "image"
+    embargo_days = 90
     metadata_urls = [
         "https://downloads-qcif.bioplatforms.com/bpa/base/site-images/",
     ]
@@ -858,6 +880,7 @@ class BASESiteImagesMetadata(AMDFullIngestMetadata):
         "match": [files.base_site_image_filename_re],
         "skip": None,
     }
+    add_md5_as_resource = True
 
     def __init__(self, logger, metadata_path, **kwargs):
         super().__init__(logger, metadata_path, **kwargs)
@@ -916,8 +939,13 @@ class BASESiteImagesMetadata(AMDFullIngestMetadata):
                     "sequence_data_type": self.sequence_data_type,
                 }
             )
+
+            # date if none provided
+            obj.setdefault("date_of_transfer", "2017-04-28")
+
             ingest_utils.permissions_organization_member(self._logger, obj)
             self.build_notes_into_object(obj)
+            ingest_utils.apply_access_control(self._logger, self, obj)
             ingest_utils.add_spatial_extra(self._logger, obj)
             tag_names = ["site-images"]
             obj["tags"] = [{"name": t} for t in tag_names]
@@ -927,7 +955,7 @@ class BASESiteImagesMetadata(AMDFullIngestMetadata):
 
     def _get_resources(self):
         self._logger.info(
-            "Ingesting Sepsis md5 file information from {0}".format(self.path)
+            "Ingesting BASE Site Images md5 file information from {0}".format(self.path)
         )
         resources = []
         for id_tpl in sorted(self.id_to_resources):
@@ -936,8 +964,11 @@ class BASESiteImagesMetadata(AMDFullIngestMetadata):
             resource = {}
             resource["md5"] = resource["id"] = info["md5"]
             filename = info["filename"]
-            resource["name"] = filename
-            legacy_url = urljoin(info["base_url"], filename)
+            resource["name"] = clean_filename(filename)
+            resource["resource_path"] = os.path.dirname(filename)
+            resource["shared_file"] = False
+            resource["optional_file"] = False
+            legacy_url = urljoin(info["base_url"], quote(filename))
             resources.append(((site_ids,), legacy_url, resource))
 
         for md5_file in glob(self.path + "/*.md5"):
@@ -947,11 +978,11 @@ class BASESiteImagesMetadata(AMDFullIngestMetadata):
 
 
 marine_read_lengths = {
-    "16s": "300bp",
-    "a16s": "300bp",
-    "18s": "250bp",
-    "a16": "300bp",
-    "its": "300bp",
+    "16S": "300bp",
+    "A16S": "300bp",
+    "18S": "250bp",
+    "A16": "300bp",
+    "ITS": "300bp",
 }
 
 
@@ -1017,7 +1048,8 @@ class MarineMicrobesAmpliconsMetadata(AMDFullIngestMetadata):
     omics = "genomics"
     contextual_classes = common_context + ncbi_context
     sequence_data_type = "illumina-amplicons"
-    metadata_patterns = [r"^.*\.md5", r"^.*_metadata.*.*\.xlsx"]
+    embargo_days = 90
+    metadata_patterns = [r"^.*\.md5$", r"^.*_metadata.*.*\.xlsx"]
     resource_linkage = ("sample_id", "mm_amplicon_linkage")
     amplicon_tracker = {
         "16s": "Amplicon16STrack",
@@ -1051,7 +1083,10 @@ class MarineMicrobesAmpliconsMetadata(AMDFullIngestMetadata):
             fld("pass_fail_100", "neat PCR, P=pass, F=fail", optional=True),
             fld("index", "index", optional=True),
         ],
-        "options": {"header_length": 2, "column_name_row_index": 1,},
+        "options": {
+            "header_length": 2,
+            "column_name_row_index": 1,
+        },
     }
     technology = "amplicons"
     index_linkage_spreadsheets = (
@@ -1077,11 +1112,12 @@ class MarineMicrobesAmpliconsMetadata(AMDFullIngestMetadata):
         "match": [files.mm_amplicon_filename_re],
         "skip": common_skip + [files.mm_amplicon_control_filename_re],
     }
+    add_md5_as_resource = True
     missing_resources = [("102.100.100/34937", "AUWLK"), ("102.100.100/37712", "BHHYV")]
 
     def __init__(self, logger, metadata_path, **kwargs):
         super().__init__(logger, metadata_path, **kwargs)
-        self.google_track_meta = MarineMicrobesGoogleTrackMetadata()
+        self.google_track_meta = MarineMicrobesGoogleTrackMetadata(logger)
         self.contextual_metadata = kwargs["contextual_metadata"]
         self.track_meta = {
             amplicon: MarineMicrobesTrackMetadata(self._logger, fname)
@@ -1157,7 +1193,7 @@ class MarineMicrobesAmpliconsMetadata(AMDFullIngestMetadata):
                         "sample_extraction_id": ingest_utils.make_sample_extraction_id(
                             row.sample_extraction_id, sample_id
                         ),
-                        "read_length": mm_amplicon_read_length(row.amplicon),
+                        "read_length": mm_amplicon_read_length(amplicon),
                         "target": row.target,
                         "pass_fail": ingest_utils.merge_pass_fail(row),
                         "dilution_used": row.dilution_used,
@@ -1191,12 +1227,17 @@ class MarineMicrobesAmpliconsMetadata(AMDFullIngestMetadata):
                     }
                 )
                 ingest_utils.permissions_organization_member_after_embargo(
-                    self._logger, obj, "archive_ingestion_date", 90, CONSORTIUM_ORG_NAME
+                    self._logger,
+                    obj,
+                    "archive_ingestion_date",
+                    self.embargo_days,
+                    CONSORTIUM_ORG_NAME,
                 )
                 for contextual_source in self.contextual_metadata:
                     obj.update(contextual_source.get(sample_id))
                 ingest_utils.add_spatial_extra(self._logger, obj)
                 self.build_notes_into_object(obj)
+                ingest_utils.apply_access_control(self._logger, self, obj)
                 tag_names = ["amplicons", amplicon]
                 if obj.get("sample_type"):
                     tag_names.append(obj["sample_type"])
@@ -1208,43 +1249,22 @@ class MarineMicrobesAmpliconsMetadata(AMDFullIngestMetadata):
         return packages
 
     def _get_resources(self):
-        self._logger.info(
-            "Ingesting MM md5 file information from {0}".format(self.path)
+        return self._get_common_resources()
+
+    def _add_datatype_specific_info_to_resource(self, resource, md5_file=None):
+        for contextual_source in self.contextual_metadata:
+            resource.update(contextual_source.filename_metadata(resource["name"]))
+        self._current_md5 = md5_file
+
+    def _build_resource_linkage(self, xlsx_info, resource, file_info):
+        use_index_linkage = (
+            os.path.basename(self._current_md5) in self.index_linkage_md5s
         )
-        resources = []
-        for md5_file in glob(self.path + "/*.md5"):
-            use_index_linkage = os.path.basename(md5_file) in self.index_linkage_md5s
-            self._logger.info(
-                "Processing md5 file {} {}".format(md5_file, use_index_linkage)
-            )
-            for filename, md5, file_info in self.parse_md5file(md5_file):
-                resource = file_info.copy()
-                resource["md5"] = resource["id"] = md5
-                resource["name"] = filename
-                resource["resource_type"] = self.ckan_data_type
-                for contextual_source in self.contextual_metadata:
-                    resource.update(contextual_source.filename_metadata(filename))
-                sample_id = ingest_utils.extract_ands_id(
-                    self._logger, file_info.get("id")
-                )
-                xlsx_info = self.metadata_info[os.path.basename(md5_file)]
-                legacy_url = urljoin(xlsx_info["base_url"], filename)
-                resources.append(
-                    (
-                        (
-                            sample_id,
-                            build_mm_amplicon_linkage(
-                                use_index_linkage,
-                                resource["flow_id"],
-                                resource["index"],
-                            ),
-                        ),
-                        legacy_url,
-                        resource,
-                    )
-                )
-            resources.extend(self.generate_md5_resources(md5_file))
-        return resources
+        sample_id = ingest_utils.extract_ands_id(self._logger, file_info.get("id"))
+
+        return sample_id, build_mm_amplicon_linkage(
+            use_index_linkage, resource["flow_id"], resource["index"]
+        )
 
 
 class MarineMicrobesAmpliconsControlMetadata(AMDFullIngestMetadata):
@@ -1253,8 +1273,9 @@ class MarineMicrobesAmpliconsControlMetadata(AMDFullIngestMetadata):
     omics = "genomics"
     technology = "amplicons-control"
     sequence_data_type = "illumina-amplicons"
+    embargo_days = 90
     contextual_classes = []
-    metadata_patterns = [r"^.*\.md5"]
+    metadata_patterns = [r"^.*\.md5$"]
     resource_linkage = ("amplicon", "flow_id")
     md5 = {
         "match": [files.mm_amplicon_control_filename_re],
@@ -1264,10 +1285,11 @@ class MarineMicrobesAmpliconsControlMetadata(AMDFullIngestMetadata):
         "https://downloads-qcif.bioplatforms.com/bpa/marine_microbes/raw/amplicons/"
     ]
     metadata_url_components = ("amplicon", "facility_code", "ticket")
+    add_md5_as_resource = True
 
     def __init__(self, logger, metadata_path, **kwargs):
         super().__init__(logger, metadata_path, **kwargs)
-        self.google_track_meta = MarineMicrobesGoogleTrackMetadata()
+        self.google_track_meta = MarineMicrobesGoogleTrackMetadata(logger)
 
     def _get_packages(self):
         flow_id_info = {
@@ -1277,7 +1299,7 @@ class MarineMicrobesAmpliconsControlMetadata(AMDFullIngestMetadata):
         packages = []
         for flow_id, info in sorted(flow_id_info.items()):
             obj = {}
-            amplicon = info["amplicon"]
+            amplicon = info["amplicon"].upper()
             name = sample_id_to_ckan_name(
                 "control", self.ckan_data_type + "-" + amplicon, flow_id
             ).lower()
@@ -1320,10 +1342,15 @@ class MarineMicrobesAmpliconsControlMetadata(AMDFullIngestMetadata):
                 }
             )
             ingest_utils.permissions_organization_member_after_embargo(
-                self._logger, obj, "archive_ingestion_date", 90, CONSORTIUM_ORG_NAME
+                self._logger,
+                obj,
+                "archive_ingestion_date",
+                self.embargo_days,
+                CONSORTIUM_ORG_NAME,
             )
             ingest_utils.add_spatial_extra(self._logger, obj)
             self.build_notes_into_object(obj)
+            ingest_utils.apply_access_control(self._logger, self, obj)
             tag_names = ["amplicons-control", amplicon, "raw"]
             obj["tags"] = [{"name": t} for t in tag_names]
             self.track_packages_for_md5(obj, info["ticket"])
@@ -1331,30 +1358,21 @@ class MarineMicrobesAmpliconsControlMetadata(AMDFullIngestMetadata):
         return packages
 
     def _get_resources(self):
-        resources = []
-        self._logger.info("Ingesting MD5 file information from {0}".format(self.path))
-        for md5_file in glob(self.path + "/*.md5"):
-            self._logger.info("Processing md5 file {}".format(md5_file))
-            for filename, md5, file_info in self.parse_md5file(md5_file):
-                xlsx_info = self.metadata_info[os.path.basename(md5_file)]
-                amplicon = xlsx_info["amplicon"]
-                resource = file_info.copy()
-                resource["md5"] = resource["id"] = md5
-                resource["name"] = filename
-                resource["resource_type"] = self.ckan_data_type
-                resource["amplicon"] = amplicon
-                legacy_url = urljoin(xlsx_info["base_url"], filename)
-                resources.append(
-                    ((amplicon, resource["flow_id"]), legacy_url, resource)
-                )
-            resources.extend(self.generate_md5_resources(md5_file))
-        return resources
+        return self._get_common_resources()
+
+    def _add_datatype_specific_info_to_resource(self, resource, md5_file=None):
+        self._current_md5 = md5_file
+
+    def _build_resource_linkage(self, xlsx_info, resource, file_info):
+        amplicon = xlsx_info["amplicon"].upper()
+        resource["amplicon"] = amplicon
+        return resource["amplicon"], resource["flow_id"]
 
 
 class BaseMarineMicrobesMetadata(AMDFullIngestMetadata):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        self.google_track_meta = MarineMicrobesGoogleTrackMetadata()
+        self.google_track_meta = MarineMicrobesGoogleTrackMetadata(self._logger)
         self.track_meta = MarineMicrobesTrackMetadata(
             self._logger, self.tracker_filename
         )
@@ -1364,9 +1382,10 @@ class MarineMicrobesMetagenomicsMetadata(BaseMarineMicrobesMetadata):
     organization = "australian-microbiome"
     ckan_data_type = "mm-metagenomics"
     sequence_data_type = "illumina-shortread"
+    embargo_days = 90
     omics = "metagenomics"
     contextual_classes = common_context + ncbi_context
-    metadata_patterns = [r"^.*\.md5", r"^.*_metadata.*\.xlsx"]
+    metadata_patterns = [r"^.*\.md5$", r"^.*_metadata.*\.xlsx"]
     metadata_urls = [
         "https://downloads-qcif.bioplatforms.com/bpa/marine_microbes/raw/metagenomics/"
     ]
@@ -1389,7 +1408,10 @@ class MarineMicrobesMetagenomicsMetadata(BaseMarineMicrobesMetadata):
             ),
             fld("comments", "comments", optional=True),
         ],
-        "options": {"header_length": 2, "column_name_row_index": 1,},
+        "options": {
+            "header_length": 2,
+            "column_name_row_index": 1,
+        },
     }
     md5 = {
         "match": [
@@ -1398,6 +1420,7 @@ class MarineMicrobesMetagenomicsMetadata(BaseMarineMicrobesMetadata):
         ],
         "skip": common_skip,
     }
+    add_md5_as_resource = True
 
     def __init__(self, logger, metadata_path, **kwargs):
         super().__init__(logger, metadata_path, **kwargs)
@@ -1466,12 +1489,17 @@ class MarineMicrobesMetagenomicsMetadata(BaseMarineMicrobesMetadata):
                     }
                 )
                 ingest_utils.permissions_organization_member_after_embargo(
-                    self._logger, obj, "archive_ingestion_date", 90, CONSORTIUM_ORG_NAME
+                    self._logger,
+                    obj,
+                    "archive_ingestion_date",
+                    self.embargo_days,
+                    CONSORTIUM_ORG_NAME,
                 )
                 for contextual_source in self.contextual_metadata:
                     obj.update(contextual_source.get(sample_id))
                 ingest_utils.add_spatial_extra(self._logger, obj)
                 self.build_notes_into_object(obj)
+                ingest_utils.apply_access_control(self._logger, self, obj)
                 tag_names = ["metagenomics", "raw"]
                 if obj.get("sample_type"):
                     tag_names.append(obj["sample_type"])
@@ -1481,36 +1509,26 @@ class MarineMicrobesMetagenomicsMetadata(BaseMarineMicrobesMetadata):
         return packages
 
     def _get_resources(self):
-        self._logger.info(
-            "Ingesting MM md5 file information from {0}".format(self.path)
-        )
-        resources = []
-        for md5_file in glob(self.path + "/*.md5"):
-            self._logger.info("Processing md5 file {0}".format(md5_file))
-            for filename, md5, file_info in self.parse_md5file(md5_file):
-                resource = file_info.copy()
-                resource["md5"] = resource["id"] = md5
-                resource["name"] = filename
-                resource["resource_type"] = self.ckan_data_type
-                for contextual_source in self.contextual_metadata:
-                    resource.update(contextual_source.filename_metadata(filename))
-                sample_id = ingest_utils.extract_ands_id(
-                    self._logger, file_info.get("id")
-                )
-                xlsx_info = self.metadata_info[os.path.basename(md5_file)]
-                legacy_url = urljoin(xlsx_info["base_url"], filename)
-                resources.append(((sample_id,), legacy_url, resource))
-            resources.extend(self.generate_md5_resources(md5_file))
-        return resources
+        return self._get_common_resources()
+
+    def _add_datatype_specific_info_to_resource(self, resource, md5_file=None):
+        for contextual_source in self.contextual_metadata:
+            resource.update(contextual_source.filename_metadata(resource["name"]))
+        self._current_md5 = md5_file
+
+    def _build_resource_linkage(self, xlsx_info, resource, file_info):
+        sample_id = ingest_utils.extract_ands_id(self._logger, file_info.get("id"))
+        return (sample_id,)
 
 
 class MarineMicrobesMetatranscriptomeMetadata(BaseMarineMicrobesMetadata):
     organization = "australian-microbiome"
     ckan_data_type = "mm-metatranscriptome"
     sequence_data_type = "illumina-transcriptomics"
+    embargo_days = 90
     contextual_classes = common_context + ncbi_context
     omics = "metatranscriptomics"
-    metadata_patterns = [r"^.*\.md5", r"^.*_metadata.*\.xlsx"]
+    metadata_patterns = [r"^.*\.md5$", r"^.*_metadata.*\.xlsx"]
     metadata_urls = [
         "https://downloads-qcif.bioplatforms.com/bpa/marine_microbes/raw/metatranscriptome/"
     ]
@@ -1532,7 +1550,10 @@ class MarineMicrobesMetatranscriptomeMetadata(BaseMarineMicrobesMetadata):
                 ("casava version", "bcl2fastq2", re.compile(r"^software[ &]+version$")),
             ),
         ],
-        "options": {"header_length": 2, "column_name_row_index": 1,},
+        "options": {
+            "header_length": 2,
+            "column_name_row_index": 1,
+        },
     }
     md5 = {
         "match": [
@@ -1541,6 +1562,7 @@ class MarineMicrobesMetatranscriptomeMetadata(BaseMarineMicrobesMetadata):
         ],
         "skip": None,
     }
+    add_md5_as_resource = True
 
     def __init__(self, logger, metadata_path, **kwargs):
         super().__init__(logger, metadata_path, **kwargs)
@@ -1614,12 +1636,17 @@ class MarineMicrobesMetatranscriptomeMetadata(BaseMarineMicrobesMetadata):
                 }
             )
             ingest_utils.permissions_organization_member_after_embargo(
-                self._logger, obj, "archive_ingestion_date", 90, CONSORTIUM_ORG_NAME
+                self._logger,
+                obj,
+                "archive_ingestion_date",
+                self.embargo_days,
+                CONSORTIUM_ORG_NAME,
             )
             for contextual_source in self.contextual_metadata:
                 obj.update(contextual_source.get(sample_id))
             ingest_utils.add_spatial_extra(self._logger, obj)
             self.build_notes_into_object(obj)
+            ingest_utils.apply_access_control(self._logger, self, obj)
             tag_names = ["metatranscriptome", "raw"]
             if obj.get("sample_type"):
                 tag_names.append(obj["sample_type"])
@@ -1629,27 +1656,169 @@ class MarineMicrobesMetatranscriptomeMetadata(BaseMarineMicrobesMetadata):
         return packages
 
     def _get_resources(self):
+        return self._get_common_resources()
+
+    def _add_datatype_specific_info_to_resource(self, resource, md5_file=None):
+        for contextual_source in self.contextual_metadata:
+            resource.update(contextual_source.filename_metadata(resource["name"]))
+        self._current_md5 = md5_file
+
+    def _build_resource_linkage(self, xlsx_info, resource, file_info):
+        sample_id = ingest_utils.extract_ands_id(self._logger, file_info.get("id"))
+        return (sample_id,)
+
+
+class AustralianMicrobiomeMetagenomicsAnalysedMetadata(AMDFullIngestMetadata):
+    # organization = "australian-microbiome"
+    # NOTE: change this back to make proof of concept widely available
+    organization = "am-csiro-team"
+    ckan_data_type = "amdb-metagenomics-analysed"
+    omics = "metagenomics"
+    technology = "analysed"
+    sequence_data_type = "metagenomics-analysed"
+    embargo_days = 90
+    contextual_classes = common_context
+    metadata_patterns = [r"^AM.*\.md5$", r"^AM.*_metadata\.xlsx$"]
+    metadata_urls = [
+        "https://downloads-qcif.bioplatforms.com/bpa/amd/metagenomics-analysed/"
+    ]
+    metadata_url_components = ("ticket", "folder")
+    resource_linkage = ("sample_id",)
+    spreadsheet = {
+        "fields": [
+            fld(
+                "sample_id",
+                re.compile(r"sample_?[Ii][Dd]"),
+                coerce=ingest_utils.extract_ands_id,
+            ),
+            fld("sample_id_description", "sample_id_description"),
+            fld(
+                "dataset_id",
+                re.compile(r"dataset_?[Ii][Dd]"),
+                coerce=ingest_utils.extract_ands_id,
+            ),
+            fld("dataset_id_description", "dataset_id_description"),
+            fld("bioplatforms_project", "bioplatforms_project"),
+            fld("data_custodian", "data_custodian"),
+            fld("data_context", "data_context"),
+            fld("analysis_name", "analysis_name"),
+            fld(
+                "analysis_date", "analysis_date", coerce=ingest_utils.get_date_isoformat
+            ),
+            fld("sequencing_technology", "sequencing_technology"),
+            fld("analysis_method", "analysis_method"),
+            fld("analysis_method_version", "analysis_method_version"),
+            fld("version_method_version_link", "version_method_version_link"),
+            fld("analysis_qc", "analysis_qc"),
+            fld("computational_infrastructure", "computational_infrastructure"),
+            fld("system_used", "system_used"),
+            fld("analysis_description", "analysis_description"),
+        ],
+        "options": {
+            "header_length": 1,
+            "column_name_row_index": 0,
+        },
+    }
+    md5 = {
+        "match": [
+            files.amd_metagenomics_analysed_re,
+        ],
+        "skip": [
+            re.compile(r"^.*\.xlsx$"),
+        ],
+    }
+
+    def __init__(self, logger, metadata_path, **kwargs):
+        super().__init__(logger, metadata_path, **kwargs)
+        self.contextual_metadata = kwargs["contextual_metadata"]
+        self.google_track_meta = AustralianMicrobiomeGoogleTrackMetadata(logger)
+
+    def _get_packages(self):
         self._logger.info(
-            "Ingesting MM md5 file information from {0}".format(self.path)
+            "Ingesting AM Metagenome Analysed metadata from {0}".format(self.path)
         )
-        resources = []
-        for md5_file in glob(self.path + "/*.md5"):
-            self._logger.info("Processing md5 file {0}".format(md5_file))
-            for filename, md5, file_info in self.parse_md5file(md5_file):
-                resource = file_info.copy()
-                resource["md5"] = resource["id"] = md5
-                resource["name"] = filename
-                resource["resource_type"] = self.ckan_data_type
-                for contextual_source in self.contextual_metadata:
-                    resource.update(contextual_source.filename_metadata(filename))
-                sample_id = ingest_utils.extract_ands_id(
-                    self._logger, file_info.get("id")
+        packages = []
+
+        for fname in glob(self.path + "/*.xlsx"):
+            self._logger.info(
+                "Processing Australian Microbiome metadata file {0}".format(
+                    os.path.basename(fname)
                 )
-                xlsx_info = self.metadata_info[os.path.basename(md5_file)]
-                legacy_url = urljoin(xlsx_info["base_url"], filename)
-                resources.append(((sample_id,), legacy_url, resource))
-            resources.extend(self.generate_md5_resources(md5_file))
+            )
+            for row in self.parse_spreadsheet(fname, self.metadata_info):
+                sample_id = row.sample_id
+                if sample_id is None:
+                    continue
+                google_track_meta = self.google_track_meta.get(row.ticket)
+                name = sample_id_to_ckan_name(
+                    sample_id.split("/")[-1], self.ckan_data_type
+                )
+                archive_ingestion_date = ingest_utils.get_date_isoformat(
+                    self._logger, google_track_meta.date_of_transfer_to_archive
+                )
+
+                obj = row._asdict()
+
+                obj.update(
+                    {
+                        "name": name,
+                        "id": name,
+                        "title": "Australian Microbiome Metagenomics Analysed %s"
+                        % (sample_id),
+                        "omics": "metagenomics",
+                        "date_of_transfer": ingest_utils.get_date_isoformat(
+                            self._logger, google_track_meta.date_of_transfer
+                        ),
+                        "data_type": google_track_meta.data_type,
+                        "description": google_track_meta.description,
+                        "folder_name": google_track_meta.folder_name,
+                        "sample_submission_date": ingest_utils.get_date_isoformat(
+                            self._logger, google_track_meta.date_of_transfer
+                        ),
+                        "data_generated": ingest_utils.get_date_isoformat(
+                            self._logger, google_track_meta.date_of_transfer_to_archive
+                        ),
+                        "archive_ingestion_date": archive_ingestion_date,
+                        "license_id": apply_license(archive_ingestion_date),
+                        "dataset_url": google_track_meta.download,
+                        "type": self.ckan_data_type,
+                        "sequence_data_type": self.sequence_data_type,
+                    }
+                )
+                # NOTE: change this back to make proof of concept widely available
+                # ingest_utils.permissions_organization_member_after_embargo(
+                #    self._logger,
+                #    obj,
+                #    "archive_ingestion_date",
+                #    self.embargo_days,
+                #    CONSORTIUM_ORG_NAME,
+                # )
+                ingest_utils.permissions_organization_member(self._logger, obj)
+                for contextual_source in self.contextual_metadata:
+                    obj.update(contextual_source.get(sample_id))
+                ingest_utils.add_spatial_extra(self._logger, obj)
+                self.build_notes_into_object(obj)
+                ingest_utils.apply_access_control(self._logger, self, obj)
+                tag_names = ["metagenomics", "analysed"]
+                if obj.get("sample_type"):
+                    tag_names.append(obj["sample_type"])
+                obj["tags"] = [{"name": t} for t in tag_names]
+                self.track_packages_for_md5(obj, row.ticket)
+                packages.append(obj)
+        return packages
+
+    def _get_resources(self):
+        resources = self._get_common_resources()
         return resources
+
+    def _add_datatype_specific_info_to_resource(self, resource, md5_file=None):
+        resource["sample_id"] = ingest_utils.extract_ands_id(
+            self._logger, resource["sample_id"]
+        )
+        return
+
+    def _build_resource_linkage(self, xlsx_info, resource, file_info):
+        return (resource["sample_id"],)
 
 
 class AustralianMicrobiomeMetagenomicsNovaseqMetadata(AMDFullIngestMetadata):
@@ -1658,6 +1827,7 @@ class AustralianMicrobiomeMetagenomicsNovaseqMetadata(AMDFullIngestMetadata):
     omics = "metagenomics"
     technology = "novaseq"
     sequence_data_type = "illumina-shortread"
+    embargo_days = 90
     contextual_classes = common_context
     metadata_patterns = [r"^.*\.md5", r"^.*_metadata.*\.xlsx"]
     metadata_urls = [
@@ -1693,24 +1863,32 @@ class AustralianMicrobiomeMetagenomicsNovaseqMetadata(AMDFullIngestMetadata):
             fld("absorbance_260_280_ratio", "260_280_ratio", optional=True),
             fld("absorbance_260_230_ratio", "260_230_ratio", optional=True),
         ],
-        "options": {"header_length": 1, "column_name_row_index": 0,},
+        "options": {
+            "header_length": 1,
+            "column_name_row_index": 0,
+        },
     }
     md5 = {
-        "match": [files.amd_metagenomics_novaseq_re,],
-        "skip": [files.amd_metagenomics_novaseq_control_re,],
+        "match": [
+            files.amd_metagenomics_novaseq_re,
+        ],
+        "skip": [
+            files.amd_metagenomics_novaseq_control_re,
+        ],
     }
+    add_md5_as_resource = True
 
     def __init__(self, logger, metadata_path, **kwargs):
         super().__init__(logger, metadata_path, **kwargs)
         self.contextual_metadata = kwargs["contextual_metadata"]
-        self.google_track_meta = AustralianMicrobiomeGoogleTrackMetadata()
+        self.google_track_meta = AustralianMicrobiomeGoogleTrackMetadata(logger)
 
     def _get_packages(self):
         packages = []
-        xlsx_re = re.compile(r"^.*_(\w+)_metadata.*\.xlsx$")
+        xlsx_re = re.compile(r"MGE_UNSW_([A-Z0-9]*)_.*_?metadata\.xlsx$")
 
         def get_flow_id(fname):
-            m = xlsx_re.match(fname)
+            m = xlsx_re.search(fname)
             if not m:
                 raise Exception("unable to find flowcell for filename: `%s'" % (fname))
             return m.groups()[0]
@@ -1764,12 +1942,17 @@ class AustralianMicrobiomeMetagenomicsNovaseqMetadata(AMDFullIngestMetadata):
                     }
                 )
                 ingest_utils.permissions_organization_member_after_embargo(
-                    self._logger, obj, "archive_ingestion_date", 90, CONSORTIUM_ORG_NAME
+                    self._logger,
+                    obj,
+                    "archive_ingestion_date",
+                    self.embargo_days,
+                    CONSORTIUM_ORG_NAME,
                 )
                 for contextual_source in self.contextual_metadata:
                     obj.update(contextual_source.get(sample_id))
                 ingest_utils.add_spatial_extra(self._logger, obj)
                 self.build_notes_into_object(obj)
+                ingest_utils.apply_access_control(self._logger, self, obj)
                 tag_names = ["metagenomics", "raw"]
                 if obj.get("sample_type"):
                     tag_names.append(obj["sample_type"])
@@ -1779,28 +1962,21 @@ class AustralianMicrobiomeMetagenomicsNovaseqMetadata(AMDFullIngestMetadata):
         return packages
 
     def _get_resources(self):
-        self._logger.info(
-            "Ingesting AM MGE md5 file information from {0}".format(self.path)
-        )
-        resources = []
-        for md5_file in glob(self.path + "/*.md5"):
-            self._logger.info("Processing md5 file {0}".format(md5_file))
-            for filename, md5, file_info in self.parse_md5file(md5_file):
-                resource = file_info.copy()
-                resource["md5"] = resource["id"] = md5
-                resource["name"] = filename
-                resource["resource_type"] = self.ckan_data_type
-                for contextual_source in self.contextual_metadata:
-                    resource.update(contextual_source.filename_metadata(filename))
-                sample_id = ingest_utils.extract_ands_id(
-                    self._logger, file_info.get("id")
-                )
-                xlsx_info = self.metadata_info[os.path.basename(md5_file)]
-                legacy_url = urljoin(xlsx_info["base_url"], filename)
-                flowcell = file_info.get("flowcell")
-                resources.append(((sample_id, flowcell), legacy_url, resource))
-            resources.extend(self.generate_md5_resources(md5_file))
+        resources = self._get_common_resources()
         return resources
+
+    def _add_datatype_specific_info_to_resource(self, resource, md5_file=None):
+        for contextual_source in self.contextual_metadata:
+            resource.update(contextual_source.filename_metadata(resource["name"]))
+        self._current_md5 = md5_file
+
+    def _build_resource_linkage(self, xlsx_info, resource, file_info):
+        sample_id = ingest_utils.extract_ands_id(self._logger, file_info.get("id"))
+        flowcell_id = file_info.get("flowcell")
+        return (
+            sample_id,
+            flowcell_id,
+        )
 
 
 class AustralianMicrobiomeMetagenomicsNovaseqControlMetadata(AMDFullIngestMetadata):
@@ -1809,6 +1985,7 @@ class AustralianMicrobiomeMetagenomicsNovaseqControlMetadata(AMDFullIngestMetada
     omics = "metagenomics"
     technology = "novaseq-control"
     sequence_data_type = "illumina-shortread"
+    embargo_days = 90
     contextual_classes = []
     metadata_patterns = [r"^.*\.md5"]
     resource_linkage = ("flowcell",)
@@ -1820,10 +1997,11 @@ class AustralianMicrobiomeMetagenomicsNovaseqControlMetadata(AMDFullIngestMetada
         "https://downloads-qcif.bioplatforms.com/bpa/amd/metagenomics-novaseq/"
     ]
     metadata_url_components = ("facility_code", "ticket")
+    add_md5_as_resource = True
 
     def __init__(self, logger, metadata_path, **kwargs):
         super().__init__(logger, metadata_path, **kwargs)
-        self.google_track_meta = AustralianMicrobiomeGoogleTrackMetadata()
+        self.google_track_meta = AustralianMicrobiomeGoogleTrackMetadata(logger)
 
     def _get_packages(self):
         flowcell_info = {
@@ -1872,10 +2050,15 @@ class AustralianMicrobiomeMetagenomicsNovaseqControlMetadata(AMDFullIngestMetada
                 }
             )
             ingest_utils.permissions_organization_member_after_embargo(
-                self._logger, obj, "archive_ingestion_date", 90, CONSORTIUM_ORG_NAME
+                self._logger,
+                obj,
+                "archive_ingestion_date",
+                self.embargo_days,
+                CONSORTIUM_ORG_NAME,
             )
             ingest_utils.add_spatial_extra(self._logger, obj)
             self.build_notes_into_object(obj)
+            ingest_utils.apply_access_control(self._logger, self, obj)
             tag_names = ["novaseq-control", "raw"]
             obj["tags"] = [{"name": t} for t in tag_names]
             self.track_packages_for_md5(obj, info["ticket"])
@@ -1883,20 +2066,15 @@ class AustralianMicrobiomeMetagenomicsNovaseqControlMetadata(AMDFullIngestMetada
         return packages
 
     def _get_resources(self):
-        resources = []
-        self._logger.info("Ingesting MD5 file information from {0}".format(self.path))
-        for md5_file in glob(self.path + "/*.md5"):
-            self._logger.info("Processing md5 file {}".format(md5_file))
-            for filename, md5, file_info in self.parse_md5file(md5_file):
-                xlsx_info = self.metadata_info[os.path.basename(md5_file)]
-                resource = file_info.copy()
-                resource["md5"] = resource["id"] = md5
-                resource["name"] = filename
-                resource["resource_type"] = self.ckan_data_type
-                legacy_url = urljoin(xlsx_info["base_url"], filename)
-                resources.append(((resource["flowcell"],), legacy_url, resource))
-            resources.extend(self.generate_md5_resources(md5_file))
+        resources = self._get_common_resources()
         return resources
+
+    def _add_datatype_specific_info_to_resource(self, resource, md5_file=None):
+        #  nothing for controls
+        self._current_md5 = md5_file
+
+    def _build_resource_linkage(self, xlsx_info, resource, file_info):
+        return (resource["flowcell"],)
 
 
 class AustralianMicrobiomeAmpliconsMetadata(AMDFullIngestMetadata):
@@ -1904,14 +2082,16 @@ class AustralianMicrobiomeAmpliconsMetadata(AMDFullIngestMetadata):
     ckan_data_type = "amdb-genomics-amplicon"
     omics = "genomics"
     sequence_data_type = "illumina-amplicons"
+    embargo_days = 90
     contextual_classes = common_context
-    metadata_patterns = [r"^.*\.md5", r"^.*_metadata.*.*\.xlsx"]
+    metadata_patterns = [r"^.*\.md5$", r"^.*_metadata.*.*\.xlsx"]
     resource_linkage = ("sample_id", "flow_id", "index")
     spreadsheet = {
         "fields": [
             fld("sample_id", "sampleid", coerce=ingest_utils.extract_ands_id),
             fld("target", "target"),
-            fld("pass_fail", "p=pass / f=fail"),
+            fld("pass_fail", re.compile(r".*p=pass( / |/)f=fail")),
+            # fld("pass_fail", "p=pass / f=fail"),
             fld(
                 "dilution_used", "dilution used", coerce=ingest_utils.fix_date_interval
             ),
@@ -1920,20 +2100,28 @@ class AustralianMicrobiomeAmpliconsMetadata(AMDFullIngestMetadata):
             fld("analysis_software_version", "analysissoftwareversion"),
             fld("comments", "comments"),
             fld("index", "index"),
+            fld("pcr_plate_name", "pcr plate name", optional=True),
         ],
-        "options": {"header_length": 1, "column_name_row_index": 0,},
+        "options": {
+            "header_length": 1,
+            "column_name_row_index": 0,
+        },
     }
     technology = "amplicons"
     metadata_urls = ["https://downloads-qcif.bioplatforms.com/bpa/amd/amplicons-miseq/"]
     metadata_url_components = ("amplicon", "ticket")
     md5 = {
-        "match": [files.amd_amplicon_filename_re],
-        "skip": [files.amd_amplicon_control_filename_re],
+        "match": [files.amd_amplicon_filename_re, files.amd_amplicon_filename_v2_re],
+        "skip": [
+            files.amd_amplicon_control_filename_re,
+            files.amd_amplicon_control_filename_v2_re,
+        ],
     }
+    add_md5_as_resource = True
 
     def __init__(self, logger, metadata_path, **kwargs):
         super().__init__(logger, metadata_path, **kwargs)
-        self.google_track_meta = AustralianMicrobiomeGoogleTrackMetadata()
+        self.google_track_meta = AustralianMicrobiomeGoogleTrackMetadata(logger)
         self.contextual_metadata = kwargs["contextual_metadata"]
 
     def _get_packages(self):
@@ -1977,9 +2165,13 @@ class AustralianMicrobiomeAmpliconsMetadata(AMDFullIngestMetadata):
                     self._logger.warning(
                         "no google tracking metadata for ticket {}".format(row.ticket)
                     )
+                    archive_transfer_date = None
                     archive_ingestion_date = None
                 else:
                     obj.update(google_track_meta._asdict())
+                    archive_transfer_date = ingest_utils.get_date_isoformat(
+                        self._logger, google_track_meta.date_of_transfer
+                    )
                     archive_ingestion_date = ingest_utils.get_date_isoformat(
                         self._logger, google_track_meta.date_of_transfer_to_archive
                     )
@@ -2001,6 +2193,7 @@ class AustralianMicrobiomeAmpliconsMetadata(AMDFullIngestMetadata):
                         "license_id": apply_license(archive_ingestion_date),
                         "ticket": row.ticket,
                         "type": self.ckan_data_type,
+                        "date_of_transfer": archive_transfer_date,
                         "date_of_transfer_to_archive": archive_ingestion_date,
                         "sequence_data_type": self.sequence_data_type,
                     }
@@ -2009,13 +2202,14 @@ class AustralianMicrobiomeAmpliconsMetadata(AMDFullIngestMetadata):
                     self._logger,
                     obj,
                     "date_of_transfer_to_archive",
-                    90,
+                    self.embargo_days,
                     CONSORTIUM_ORG_NAME,
                 )
                 for contextual_source in self.contextual_metadata:
                     obj.update(contextual_source.get(sample_id))
                 ingest_utils.add_spatial_extra(self._logger, obj)
                 self.build_notes_into_object(obj)
+                ingest_utils.apply_access_control(self._logger, self, obj)
                 tag_names = ["amplicons", amplicon]
                 if obj.get("sample_type"):
                     tag_names.append(obj["sample_type"])
@@ -2025,33 +2219,21 @@ class AustralianMicrobiomeAmpliconsMetadata(AMDFullIngestMetadata):
         return packages
 
     def _get_resources(self):
-        self._logger.info(
-            "Ingesting MM md5 file information from {0}".format(self.path)
-        )
-        resources = []
-        for md5_file in glob(self.path + "/*.md5"):
-            self._logger.info("Processing md5 file {}".format(md5_file))
-            for filename, md5, file_info in self.parse_md5file(md5_file):
-                resource = file_info.copy()
-                resource["md5"] = resource["id"] = md5
-                resource["name"] = filename
-                resource["resource_type"] = self.ckan_data_type
-                for contextual_source in self.contextual_metadata:
-                    resource.update(contextual_source.filename_metadata(filename))
-                sample_id = ingest_utils.extract_ands_id(
-                    self._logger, file_info.get("id")
-                )
-                xlsx_info = self.metadata_info[os.path.basename(md5_file)]
-                legacy_url = urljoin(xlsx_info["base_url"], filename)
-                resources.append(
-                    (
-                        (sample_id, resource["flow_id"], resource["index"],),
-                        legacy_url,
-                        resource,
-                    )
-                )
-            resources.extend(self.generate_md5_resources(md5_file))
+        resources = self._get_common_resources()
         return resources
+
+    def _add_datatype_specific_info_to_resource(self, resource, md5_file=None):
+        for contextual_source in self.contextual_metadata:
+            resource.update(contextual_source.filename_metadata(resource["name"]))
+        self._current_md5 = md5_file
+
+    def _build_resource_linkage(self, xlsx_info, resource, file_info):
+        sample_id = ingest_utils.extract_ands_id(self._logger, file_info.get("id"))
+        return (
+            sample_id,
+            resource["flow_id"],
+            resource["index"],
+        )
 
 
 class AustralianMicrobiomeAmpliconsControlMetadata(AMDFullIngestMetadata):
@@ -2060,19 +2242,25 @@ class AustralianMicrobiomeAmpliconsControlMetadata(AMDFullIngestMetadata):
     omics = "genomics"
     technology = "amplicons-control"
     sequence_data_type = "illumina-amplicons"
+    embargo_days = 90
     contextual_classes = []
     metadata_patterns = [r"^.*\.md5"]
     resource_linkage = ("amplicon", "flow_id")
     md5 = {
-        "match": [files.amd_amplicon_control_filename_re],
-        "skip": [files.amd_amplicon_filename_re],
+        "match": [
+            files.amd_amplicon_control_filename_re,
+            files.amd_amplicon_control_filename_v2_re,
+        ],
+        "skip": [files.amd_amplicon_filename_re, files.amd_amplicon_filename_v2_re],
     }
+
     metadata_urls = ["https://downloads-qcif.bioplatforms.com/bpa/amd/amplicons-miseq/"]
     metadata_url_components = ("amplicon", "ticket")
+    add_md5_as_resource = True
 
     def __init__(self, logger, metadata_path, **kwargs):
         super().__init__(logger, metadata_path, **kwargs)
-        self.google_track_meta = AustralianMicrobiomeGoogleTrackMetadata()
+        self.google_track_meta = AustralianMicrobiomeGoogleTrackMetadata(logger)
 
     def _get_packages(self):
         flow_id_info = {
@@ -2082,7 +2270,7 @@ class AustralianMicrobiomeAmpliconsControlMetadata(AMDFullIngestMetadata):
         packages = []
         for flow_id, info in sorted(flow_id_info.items()):
             obj = {}
-            amplicon = info["amplicon"]
+            amplicon = info["amplicon"].upper()
             name = sample_id_to_ckan_name(
                 "control", self.ckan_data_type + "-" + amplicon, flow_id
             ).lower()
@@ -2124,10 +2312,15 @@ class AustralianMicrobiomeAmpliconsControlMetadata(AMDFullIngestMetadata):
                 }
             )
             ingest_utils.permissions_organization_member_after_embargo(
-                self._logger, obj, "archive_ingestion_date", 90, CONSORTIUM_ORG_NAME
+                self._logger,
+                obj,
+                "archive_ingestion_date",
+                self.embargo_days,
+                CONSORTIUM_ORG_NAME,
             )
             ingest_utils.add_spatial_extra(self._logger, obj)
             self.build_notes_into_object(obj)
+            ingest_utils.apply_access_control(self._logger, self, obj)
             tag_names = ["amplicons-control", amplicon, "raw"]
             obj["tags"] = [{"name": t} for t in tag_names]
             self.track_packages_for_md5(obj, info["ticket"])
@@ -2135,21 +2328,17 @@ class AustralianMicrobiomeAmpliconsControlMetadata(AMDFullIngestMetadata):
         return packages
 
     def _get_resources(self):
-        resources = []
-        self._logger.info("Ingesting MD5 file information from {0}".format(self.path))
-        for md5_file in glob(self.path + "/*.md5"):
-            self._logger.info("Processing md5 file {}".format(md5_file))
-            for filename, md5, file_info in self.parse_md5file(md5_file):
-                xlsx_info = self.metadata_info[os.path.basename(md5_file)]
-                amplicon = xlsx_info["amplicon"]
-                resource = file_info.copy()
-                resource["md5"] = resource["id"] = md5
-                resource["name"] = filename
-                resource["resource_type"] = self.ckan_data_type
-                resource["amplicon"] = amplicon
-                legacy_url = urljoin(xlsx_info["base_url"], filename)
-                resources.append(
-                    ((amplicon, resource["flow_id"]), legacy_url, resource)
-                )
-            resources.extend(self.generate_md5_resources(md5_file))
+        resources = self._get_common_resources()
         return resources
+
+    def _add_datatype_specific_info_to_resource(self, resource, md5_file=None):
+        xlsx_info = self.metadata_info[os.path.basename(md5_file)]
+        amplicon = xlsx_info["amplicon"].upper()
+        resource["amplicon"] = amplicon
+        self._current_md5 = md5_file
+
+    def _build_resource_linkage(self, xlsx_info, resource, file_info):
+        return (
+            resource["amplicon"],
+            resource["flow_id"],
+        )

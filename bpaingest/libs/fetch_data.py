@@ -7,7 +7,6 @@ import os
 import re
 import requests
 from bs4 import BeautifulSoup
-from distutils.dir_util import mkpath
 from urllib.parse import urljoin
 
 import requests.packages.urllib3
@@ -24,7 +23,7 @@ class DownloadException(Exception):
 
 
 def get_password(project_name=None):
-    """Get downloads password for legacy auth username from environment """
+    """Get downloads password for legacy auth username from environment"""
 
     def complain_and_quit():
         raise MissingCredentialsException(
@@ -52,7 +51,7 @@ def get_env_username(username_variable="BPAINGEST_DOWNLOADS_USERNAME"):
 
 
 class Fetcher:
-    """ facilitates fetching data from webserver """
+    """facilitates fetching data from webserver"""
 
     recurse_re = re.compile(r"^[A-Za-z0-9_-]+/")
 
@@ -65,7 +64,7 @@ class Fetcher:
 
     def _ensure_target_folder_exists(self):
         if not os.path.exists(self.target_folder):
-            mkpath(self.target_folder)
+            os.makedirs(self.target_folder, exist_ok=True)
 
     def _fetch(self, session, base_url, name):
         self._logger.info("Fetching {} from {}".format(name, base_url))

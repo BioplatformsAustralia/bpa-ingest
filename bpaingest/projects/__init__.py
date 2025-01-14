@@ -1,6 +1,7 @@
 import logging
 
 from .amdb.ingest import (
+    AustralianMicrobiomeMetagenomicsAnalysedMetadata,
     AustralianMicrobiomeMetagenomicsNovaseqMetadata,
     AustralianMicrobiomeMetagenomicsNovaseqControlMetadata,
     AustralianMicrobiomeAmpliconsMetadata,
@@ -21,6 +22,8 @@ from .ausarg.ingest import (
     AusargONTPromethionMetadata,
     AusargExonCaptureMetadata,
     AusargHiCMetadata,
+    AusargGenomicsDArTMetadata,
+    AusargGenomicsDDRADMetadata,
 )
 
 from .gbr.ingest import GbrAmpliconsMetadata, GbrPacbioMetadata
@@ -62,6 +65,7 @@ from .gap.ingest import (
     GAPGenomics10XMetadata,
     GAPHiCMetadata,
     GAPGenomicsDDRADMetadata,
+    GAPPacbioHifiMetadata,
 )
 from .omg.ingest import (
     OMG10XProcessedIlluminaMetadata,
@@ -77,21 +81,74 @@ from .omg.ingest import (
     OMGTranscriptomicsNextseq,
     OMGGenomicsPacBioGenomeAssemblyMetadata,
     OMGAnalysedDataMetadata,
+    OMGGenomicsDArTMetadata,
 )
 
 from .tsi.ingest import (
-    TSINovaseqMetadata,
     TSIPacbioHifiMetadata,
     TSIGenomicsDDRADMetadata,
     TSIIlluminaShortreadMetadata,
     TSIIlluminaFastqMetadata,
+    TSIGenomeAssemblyMetadata,
+    TSIHiCMetadata,
+    TSIGenomicsDArTMetadata,
 )
-from ..util import make_logger
 
+from .fungi.ingest import (
+    FungiIlluminaShortreadMetadata,
+    FungiONTPromethionMetadata,
+)
+
+from .plant_pathogen.ingest import (
+    PlantPathogenIlluminaShortreadMetadata,
+    PlantPathogenPacbioHifiMetadata,
+    PlantPathogenONTPromethionMetadata,
+)
+
+from .cipps.ingest import CIPPSIlluminaShortreadMetadata, CIPPSPacbioHifiMetadata
+
+from .plant_protein_atlas.ingest import (
+    PlantProteinAtlasPhenoCTXrayRawMetadata,
+    PlantProteinAtlasPhenoCTXrayAnalysedMetadata,
+    PlantProteinAtlasHyperspectralMetadata,
+    PlantProteinAtlasASDSpectroMetadata,
+    PlantProteinAtlasNutritionalMetadata,
+    PlantProteinAtlasMetabolomicsMetadata,
+    PlantProteinAtlasMetabolomicsAnalysedMetadata,
+    PlantProteinAtlasProteomicsMetadata,
+    PlantProteinAtlasProteomicsAnalysedMetadata,
+    PlantProteinAtlasProteomicsDatabaseMetadata,
+)
+
+from .grasslands.ingest import (
+    AGIlluminaShortreadMetadata,
+    AGHiCMetadata,
+    AGPacbioHifiMetadata,
+    AGGenomicsDDRADMetadata,
+)
+
+from .collaborations.ingest import (
+    CollaborationsMetagenomicsNovaseqMetadata,
+    CollaborationsONTPromethionMetadata,
+)
+
+from .bpa_sample_data.ingest import (
+    BSDSampleImagesMetadata,
+)
+
+from .workshop.ingest import (
+    WorkshopPlantPathogenPacbioHifiMetadata,
+    WorkshopFungiIlluminaShortreadMetadata,
+)
+
+from .avian.ingest import (
+    AvianPacbioHifiMetadata,
+)
 
 class ProjectInfo:
     projects = {
         "amd": [
+            AustralianMicrobiomeMetagenomicsAnalysedMetadata,
             AustralianMicrobiomeMetagenomicsNovaseqMetadata,
             AustralianMicrobiomeMetagenomicsNovaseqControlMetadata,
             AustralianMicrobiomeAmpliconsMetadata,
@@ -103,6 +160,8 @@ class ProjectInfo:
             AusargONTPromethionMetadata,
             AusargExonCaptureMetadata,
             AusargHiCMetadata,
+            AusargGenomicsDArTMetadata,
+            AusargGenomicsDDRADMetadata,
         ],
         "base": [
             BASEAmpliconsMetadata,
@@ -117,6 +176,7 @@ class ProjectInfo:
             GAPGenomics10XMetadata,
             GAPHiCMetadata,
             GAPGenomicsDDRADMetadata,
+            GAPPacbioHifiMetadata,
         ],
         "gbr": [GbrAmpliconsMetadata, GbrPacbioMetadata],
         "marine-microbes": [
@@ -138,14 +198,17 @@ class ProjectInfo:
             OMGONTPromethionMetadata,
             OMGTranscriptomicsNextseq,
             OMGGenomicsPacBioGenomeAssemblyMetadata,
-	    OMGAnalysedDataMetadata,
+            OMGAnalysedDataMetadata,
+            OMGGenomicsDArTMetadata,
         ],
         "tsi": [
-            TSINovaseqMetadata,
             TSIPacbioHifiMetadata,
             TSIGenomicsDDRADMetadata,
             TSIIlluminaShortreadMetadata,
             TSIIlluminaFastqMetadata,
+            TSIGenomeAssemblyMetadata,
+            TSIHiCMetadata,
+            TSIGenomicsDArTMetadata,
         ],
         "sepsis": [
             SepsisGenomicsMiseqMetadata,
@@ -175,9 +238,56 @@ class ProjectInfo:
             StemcellsMetabolomicsAnalysedMetadata,
             StemcellsTranscriptomeAnalysedMetadata,
         ],
-        "wheat-cultivars": [WheatCultivarsMetadata,],
+        "wheat-cultivars": [
+            WheatCultivarsMetadata,
+        ],
         "wheat-pathogens": [
             WheatPathogensGenomesMetadata,  # the first half of wheat pathogens
+        ],
+        "fungi": [
+            FungiIlluminaShortreadMetadata,
+            FungiONTPromethionMetadata,
+        ],
+        "pp": [
+            PlantPathogenIlluminaShortreadMetadata,
+            PlantPathogenPacbioHifiMetadata,
+            PlantPathogenONTPromethionMetadata,
+        ],
+        "cipps": [
+            CIPPSIlluminaShortreadMetadata,
+            CIPPSPacbioHifiMetadata,
+        ],
+        "ppa": [
+            PlantProteinAtlasPhenoCTXrayRawMetadata,
+            PlantProteinAtlasPhenoCTXrayAnalysedMetadata,
+            PlantProteinAtlasHyperspectralMetadata,
+            PlantProteinAtlasASDSpectroMetadata,
+            PlantProteinAtlasNutritionalMetadata,
+            PlantProteinAtlasMetabolomicsMetadata,
+            PlantProteinAtlasMetabolomicsAnalysedMetadata,
+            PlantProteinAtlasProteomicsMetadata,
+            PlantProteinAtlasProteomicsAnalysedMetadata,
+            PlantProteinAtlasProteomicsDatabaseMetadata,
+        ],
+        "grasslands": [
+            AGIlluminaShortreadMetadata,
+            AGHiCMetadata,
+            AGPacbioHifiMetadata,
+            AGGenomicsDDRADMetadata,
+        ],
+        "collaborations": [
+            CollaborationsMetagenomicsNovaseqMetadata,
+            CollaborationsONTPromethionMetadata,
+        ],
+        "bsd": [
+            BSDSampleImagesMetadata,
+        ],
+        "workshop": [
+            WorkshopPlantPathogenPacbioHifiMetadata,
+            WorkshopFungiIlluminaShortreadMetadata,
+        ],
+        "avian": [
+            AvianPacbioHifiMetadata,
         ],
     }
 
@@ -198,6 +308,7 @@ class ProjectInfo:
                 )
                 class_info["project"] = project_name
                 class_info["cls"] = cls
+
                 class_info["slug"] = slug = self._make_slug(class_info)
                 # ensure that 'slug' is unique
                 assert slug not in slugs

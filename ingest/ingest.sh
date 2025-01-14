@@ -74,6 +74,8 @@ ausarg() {
   apply ausarg-ont-promethion $*
   apply ausarg-exoncapture $*
   apply ausarg-hi-c $*
+  apply ausarg-genomics-dart $*
+  apply ausarg-genomics-ddrad $*
 }
 
 marine_microbes()
@@ -99,15 +101,18 @@ omg()
   apply omg-analysed-data $*
   apply omg-pacbio $*
   apply omg-pacbio-genome-assembly $*
+  apply omg-genomics-dart $*
 }
 
 tsi()
 {
-  apply tsi-novaseq $*
   apply tsi-pacbio-hifi $*
   apply tsi-genomics-ddrad $*
   apply tsi-illumina-shortread $*
   apply tsi-illumina-fastq $*
+  apply tsi-genome-assembly $*
+  apply tsi-hi-c $*
+  apply tsi-genomics-dart $*
 }
 
 sepsis()
@@ -154,6 +159,7 @@ gap() {
   apply gap-genomics-10x $*
   apply gap-hi-c $*
   apply gap-genomics-ddrad $*
+  apply gap-pacbio-hifi $*
 }
 
 amd() {
@@ -161,6 +167,74 @@ amd() {
   apply amd-genomics-amplicons-control $*
   apply amd-metagenomics-novaseq $*
   apply amd-metagenomics-novaseq-control $*
+  apply amd-metagenomics-analysed $*
+}
+
+fungi()
+{
+  apply fungi-illumina-shortread $*
+  apply fungi-ont-promethion $*
+}
+
+pp()
+{
+  apply pp-illumina-shortread $*
+  apply pp-pacbio-hifi $*
+  apply pp-ont-promethion $*
+}
+
+cipps()
+{
+  apply cipps-illumina-shortread $*
+  apply cipps-pacbio-hifi $*
+}
+
+ppa()
+{
+  apply ppa-phenoct-xray $*
+  apply ppa-phenoct-xray-analysed $*
+  apply ppa-hyperspectral $*
+  apply ppa-asd-spectro $*
+  apply ppa-nutritional-analysis $*
+  apply ppa-metabolomics $*
+  apply ppa-metabolomics-analysed $*
+  apply ppa-proteomics $*
+  apply ppa-proteomics-analysed $*
+  apply ppa-proteomics-database $*
+  apply ppa-nutritional-analysis $*
+}
+
+grasslands() {
+  apply grasslands-hi-c $*
+  apply grasslands-pacbio-hifi $*
+  apply grasslands-genomics-ddrad $*
+  apply grasslands-illumina-shortread $*
+}
+
+collaborations()
+{
+  apply collaborations-metagenomics-novaseq $*
+  apply collaborations-ont-promethion $*
+
+}
+
+bsd()
+{
+    apply bsd-site-images $*
+    # apply bsd-ont-promethion $*
+    # apply bsd-pacio-hifi $*
+}
+
+workshop()
+{
+    apply workshop-illumina-shortread $*
+    apply workshop-pacbio-hifi $*
+}
+
+avian()
+{
+    apply avian-pacbio-hifi $*
+
 }
 
 run() {
@@ -180,6 +254,15 @@ all()
   stemcell $*
   wheat $*
   ausarg $*
+  fungi $*
+  pp $*
+  cipps $*
+  ppa $*
+  grasslands $*
+  collabs $*
+  bsd $*
+  workshop $*
+  avian $*
 }
 
 action="$1"

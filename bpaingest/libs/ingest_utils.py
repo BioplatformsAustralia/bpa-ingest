@@ -2,6 +2,8 @@ import datetime
 import json
 import math
 import re
+import inspect
+import os
 
 from .bpa_constants import BPA_PREFIX
 
@@ -14,7 +16,7 @@ sample_extraction_id_re = re.compile(r"^\d{4,6}_\d")
 
 
 def fix_pcr(logger, pcr):
-    """ Check pcr value """
+    """Check pcr value"""
     val = pcr.strip()
     # header in the spreadsheet
     if val == "i.e. P or F":
@@ -163,6 +165,8 @@ def extract_ands_id(logger, s, silent=False):
         s = int(s)
     if isinstance(s, int):
         s = str(s)
+    if s is None:
+        return None
     # if someone has appended extraction number, remove it
     s = s.strip()
     if s == "":
@@ -193,7 +197,7 @@ def extract_ands_id(logger, s, silent=False):
     if m:
         return BPA_PREFIX + m.groups()[0]
     if not silent:
-        logger.warning("unable to parse BPA ID: `%s'" % s)
+        logger.warning("unable to parse BPA ID: {}".format(str(s)))
     return None
 
 
@@ -215,6 +219,19 @@ def get_int(logger, val, default=None):
 
     try:
         return int(get_clean_number(logger, val, default))
+    except TypeError:
+        return default
+
+
+def get_percentage(logger, val, default=None):
+    return_val = default
+    try:
+        return_val = get_clean_number(logger, val, default)
+        if return_val > 100 or return_val < 0:
+            logger.warning(
+                "Potential invalid number - Percentage Range error: {}".format(str(val))
+            )
+        return return_val
     except TypeError:
         return default
 
@@ -252,8 +269,19 @@ def get_clean_number(logger, val, default=None):
     try:
         return float(val)
     except TypeError:
-        pass
+        logger.error("Invalid number - Type error: {} ".format(str(val)))
+        return default
     except ValueError:
+        if val not in [
+            "unknown",
+            "N/A",
+            "NA",
+            "",
+            " ",
+        ]:
+            logger.warning(
+                "Potential invalid number - Value error: {}".format(str(val))
+            )
         pass
 
     matches = number_find_re.findall(str(val))
@@ -272,30 +300,127 @@ def get_date_isoformat(logger, s, silent=False):
 
 def get_date_isoformat_as_datetime(logger, s, silent=False):
     "try to parse the date, if we can, return the date as an ISO format string"
-    dt = _get_date(logger, s, silent)
+    dt = _get_date_time(logger, s, silent)
     if dt is None:
         return None
-    return dt.strftime("%Y-%m-%d_%H:%M:%S")
+    return dt.strftime("%Y-%m-%dT%H:%M:%S")
+    # return dt.strftime("%Y-%m-%dT%H:%M:%SZ")   -- remove the Z for now as CKAN has an issue with it.. ut it back when this is fixed
 
 
 def get_time(logger, s):
     return str(s)
 
 
+def _get_date_time(logger, dt, silent=False):
+    if dt is None:
+        return None
+
+    if (
+        dt == "unknown"
+        or dt == "Unknown"
+        or dt == "UnkNown"
+        or dt == "unkNown"
+        or dt == "event date not recorded"
+        or dt == "Not yet assigned"
+        or dt == "Not applicable"
+        or dt == "not applicable"
+        or dt == "no information"
+        or dt == "Not submitted"
+        or dt == "not determined"
+        or dt == "To be filled in"
+        or dt == "(null)"
+        or dt == "NA"
+        or dt == "n/a"
+        or dt == "TBA"
+        or dt == "No record"
+    ):
+        return None
+
+    if isinstance(dt, datetime.date):
+        return dt
+
+    if not isinstance(dt, str):
+        return None
+
+    if dt.strip() == "":
+        return None
+
+    try:
+        return datetime.datetime.strptime(dt, "%Y-%m-%dT%H:%M:%SZ")
+    except ValueError:
+        pass
+    try:
+        return datetime.datetime.strptime(dt, "%y-%m-%dT%H:%M:%SZ")
+    except ValueError:
+        pass
+    try:
+        return datetime.datetime.strptime(dt, "%Y-%m-%dT%H:%MZ")
+    except ValueError:
+        pass
+    try:
+        retval = datetime.datetime.strptime(dt, "%Y-%m-%d %H:%M:%S")
+        if not silent:
+            logger.warning(
+                "DateTime {} does not have a timezone - will force to Z time.".format(
+                    retval
+                )
+            )
+        return retval
+    except ValueError:
+        pass
+    try:
+        retval = datetime.datetime.strptime(dt, "%y-%m-%d %H:%M:%S")
+        if not silent:
+            logger.warning(
+                "DateTime {} does not have a timezone - will force to Z time.".format(
+                    retval
+                )
+            )
+        return retval
+    except ValueError:
+        pass
+    try:
+        retval = datetime.datetime.strptime(dt, "%Y-%m-%d %H:%M")
+        if not silent:
+            logger.warning(
+                "DateTime {} does not have a timezone - will force to Z time.".format(
+                    retval
+                )
+            )
+        return retval
+    except ValueError:
+        pass
+    try:
+        retval = datetime.datetime.strptime(dt, "%y-%m-%d %H:%M")
+        if not silent:
+            logger.warning(
+                "DateTime {} does not have a timezone - will force to Z time.".format(
+                    retval
+                )
+            )
+        return retval
+
+    except ValueError:
+        pass
+
+    return _get_date(logger, dt, silent)
+
+
 def _get_date(logger, dt, silent=False):
     """
     Convert `dt` into a datetime.date, returning `dt` if it is already an
-    instance of datetime.date. 
-    
+    instance of datetime.date.
+
     The following date formats are supported:
        YYYY-mm-dd
-       dd/mm/YYYY 
+       dd/mm/YYYY
        dd-mm-YYYY
        dd.mm.YYYY
+       dd.mm.YY
 
        YYYY-mm (convert to first date of month)
        mm/YYYY (convert to first date of month)
-    
+
     If conversion fails, returns None.
     """
 
@@ -307,14 +432,19 @@ def _get_date(logger, dt, silent=False):
         or dt == "Unknown"
         or dt == "UnkNown"
         or dt == "unkNown"
-	or dt == "event date not recorded"
+        or dt == "event date not recorded"
         or dt == "Not yet assigned"
         or dt == "Not applicable"
-	or dt == "not applicable"
-	or dt == "no information"
+        or dt == "not applicable"
+        or dt == "no information"
+        or dt == "Not submitted"
+        or dt == "not determined"
+        or dt == "To be filled in"
         or dt == "(null)"
         or dt == "NA"
         or dt == "n/a"
+        or dt == "TBA"
+        or dt == "No record"
     ):
         return None
 
@@ -358,6 +488,11 @@ def _get_date(logger, dt, silent=False):
         pass
 
     try:
+        return datetime.datetime.strptime(dt, "%d.%m.%y").date()
+    except ValueError:
+        pass
+
+    try:
         return datetime.datetime.strptime(dt, "%m/%Y").date()
     except ValueError:
         pass
@@ -397,6 +532,8 @@ def add_spatial_extra(logger, package):
     lat = get_clean_number(logger, package.get("latitude"))
     lng = get_clean_number(logger, package.get("longitude"))
     if not lat or not lng:
+        # Ensure spatial field is cleared
+        package["spatial"] = ""
         return
     geo = {"type": "Point", "coordinates": [lng, lat]}
     package["spatial"] = json.dumps(geo, sort_keys=True)
@@ -428,7 +565,7 @@ def permissions_public(logger, obj):
 
 
 def get_year(logger, s):
-    if re.search("\d{4}\.\d*", s):
+    if re.search(r"\d{4}\.\d*", s):
         # remove decimal and convert back to string
         return str(math.trunc(float(s)))
     else:
@@ -456,3 +593,160 @@ def from_comma_or_space_separated_to_list(logger, raw):
         if len(result) > 1:
             return result
     raise Exception("Raw input must be separated by one of {}".format(separators))
+
+
+def apply_access_control(logger, metadata, obj):
+    # access_control_mode is set here, but not by the user
+    # usually set closed when object is created, but may have been
+    # changed elsewhere
+
+    # (EMPTY,EMPTY,NO DEFAULT) = open
+    # (EMPTY,EMPTY,DEFAULT) = date
+    # (DATE, anything, anything) = date
+    # (EMPTY, REASON, anything) = closed
+
+    def _log_access_control_error(logger, obj):
+        # 0 represents this line
+        # 1 represents line at caller
+        callerframerecord = inspect.stack()[1]
+        frame = callerframerecord[0]
+        info = inspect.getframeinfo(frame)
+        logger.error(
+            "Missing access control field - {}:{}".format(
+                (info.filename.split(os.path.sep))[-1], info.lineno
+            )
+        )
+
+        obj["access_control_mode"] = "closed"
+        obj["access_control_date"] = ""
+        obj[
+            "access_control_reason"
+        ] = "Unable to determine correct embargo period. {}".format(
+            obj.get("access_control_reason", "")
+        ).rstrip()
+
+    # date of transfer is needed for calculations
+    if "date_of_transfer" not in obj:
+        _log_access_control_error(logger, obj)
+        return
+
+    if (
+        "access_control_mode" not in obj
+        or "access_control_date" not in obj
+        or "access_control_reason" not in obj
+    ):
+        obj.setdefault("access_control_mode", "closed")
+        obj.setdefault("access_control_date", "")
+        obj.setdefault("access_control_reason", "")
+
+    if obj["access_control_mode"] in (None, ""):
+        _log_access_control_error(logger, obj)
+        return
+
+    obj["access_control_mode"] = obj["access_control_mode"].lower()
+
+    # mode has been set to open elsewhere
+    if obj["access_control_mode"] in ("open"):
+        return
+
+    # Need transfer date for rest
+
+    transfer_date = _get_date(logger, obj.get("date_of_transfer", None))
+    if transfer_date is None:
+        # can't parse the date of transfer
+        _log_access_control_error(logger, obj)
+        return
+
+    # if date field is empty
+    access_date = obj.get("access_control_date", "")
+    if not access_date or not access_date.strip():
+        # if default defined and no reason given, use default
+        if (
+            getattr(metadata, "embargo_days", None)
+            and not obj["access_control_reason"].strip()
+        ):
+            # date becomes date of transfer plus default embargo period
+            embargo_days = int(getattr(metadata, "embargo_days"))
+            obj["access_control_mode"] = "date"
+            obj["access_control_date"] = get_date_isoformat(
+                logger, transfer_date + datetime.timedelta(days=embargo_days)
+            )
+            return
+        # but we have a reason, but no date - assume closed
+        elif obj["access_control_reason"].strip():
+            obj["access_control_mode"] = "closed"
+            return
+        # no date, no reason - assume open
+        else:
+            obj["access_control_mode"] = "open"
+            return
+
+    # date in normal formats
+    embargo_date = _get_date(logger, obj.get("access_control_date", None), silent=True)
+    if embargo_date:
+        #  check if earlier than date of transfer, if so note error
+        if embargo_date <= transfer_date:
+            _log_access_control_error(logger, obj)
+            logger.error("Embargo date is before Transfer date")
+            obj["access_control_date"] = ""
+            return
+        obj["access_control_mode"] = "date"
+        obj["access_control_date"] = get_date_isoformat(logger, embargo_date)
+        return
+
+    # if date is integer, greater than zero and less than five years (1827 days max)
+    #     date becomes date of transfer integer
+    embargo_days = None
+    try:
+        embargo_days = int(obj["access_control_date"])
+        if embargo_days > 1827:
+            # looks too much like a year, only support up to five years
+            _log_access_control_error(logger, obj)
+            logger.error(
+                "Integer Embargo - Access Control Date (days) is out of range (more than 5 years)"
+            )
+            obj["access_control_date"] = ""
+            return
+
+        obj["access_control_mode"] = "date"
+        obj["access_control_date"] = get_date_isoformat(
+            logger, transfer_date + datetime.timedelta(days=embargo_days)
+        )
+        return
+    except ValueError:
+        pass
+
+    # if date fails to parses
+    if obj["access_control_mode"] not in ("date",):
+        _log_access_control_error(logger, obj)
+        return
+
+    # We shouldn't get here
+    _log_access_control_error(logger, obj)
+
+
+def get_clean_doi(logger, val):
+    if not val:
+        return val
+
+    try:
+        val.index("doi")
+    except ValueError:
+        logger.error("DOI not found in: {}".format(val))
+        return None
+
+    # change any weblinks back to doi:
+    regex = r"^https?:\/\/(dx\.)?doi.org\/"
+    subst = "doi:"
+
+    val = re.sub(regex, subst, val, 0)
+
+    # check if DOI looks valid
+    # regex is not exhaustive
+    # See: https://www.crossref.org/blog/dois-and-matching-regular-expressions/
+
+    if not re.match(r"^doi:10.\d{4,9}\/[-._;()\/:A-Z0-9]+$", val, re.IGNORECASE):
+        logger.error("DOI does not look valid: {}".format(val))
+        return None
+
+    return val

@@ -5,9 +5,9 @@ from . import files
 from ...libs.excel_wrapper import make_field_definition as fld
 from unipath import Path
 from glob import glob
-from ...util import sample_id_to_ckan_name
+from ...util import apply_cc_by_license, sample_id_to_ckan_name, clean_filename
 from ...libs import ingest_utils
-from urllib.parse import urljoin
+from urllib.parse import urljoin, quote
 from ...abstract import BaseMetadata
 
 
@@ -40,6 +40,7 @@ class GbrPacbioMetadata(BaseMetadata):
     omics = "genomics"
     technology = "pacbio"
     sequence_data_type = "pacbio-rsii"
+    embargo_days = 365
     resource_linkage = ("ticket", "sample_id", "pacbio_linkage")
     spreadsheet = {
         "fields": [
@@ -61,7 +62,10 @@ class GbrPacbioMetadata(BaseMetadata):
             fld("casava_version", "CASAVA version", optional=True),
             fld("data_processing_version", "data processing version", optional=True),
         ],
-        "options": {"header_length": 3, "column_name_row_index": 1,},
+        "options": {
+            "header_length": 3,
+            "column_name_row_index": 1,
+        },
     }
     md5 = {
         "match": [files.pacbio_filename_re, files.pacbio_filename2_re],
@@ -98,6 +102,7 @@ class GbrPacbioMetadata(BaseMetadata):
                     "tags": [{"name": "Pacbio"}],
                     "type": self.ckan_data_type,
                     "sequence_data_type": self.sequence_data_type,
+                    "license_id": apply_cc_by_license(),
                     "sample_id": sample_id,
                     "sequencing_facility": row.sequencing_facility,
                     "ticket": xlsx_info["ticket"],
@@ -119,27 +124,25 @@ class GbrPacbioMetadata(BaseMetadata):
     def _get_resources(self):
         self._logger.info("Ingesting md5 file information from {0}".format(self.path))
         resources = []
-        for md5_file in glob(self.path + "/*.md5"):
-            self._logger.info("Processing md5 file {0}".format(md5_file))
-            for filename, md5, file_info in self.parse_md5file(md5_file):
-                resource = file_info.copy()
-                resource["md5"] = resource["id"] = md5
-                resource["name"] = filename
-                sample_id = ingest_utils.extract_ands_id(
-                    self._logger, file_info["sample_id"]
+        for filename, md5, md5_file, file_info in self.md5_lines():
+            resource = file_info.copy()
+            resource["md5"] = resource["id"] = md5
+            resource["name"] = clean_filename(filename)
+            sample_id = ingest_utils.extract_ands_id(
+                self._logger, file_info["sample_id"]
+            )
+            xlsx_info = self.metadata_info[os.path.basename(md5_file)]
+            legacy_url = urljoin(xlsx_info["base_url"], quote(filename))
+            pacbio_linkage = make_pacbio_linkage(
+                file_info["flow_cell_id"], file_info["run_number"]
+            )
+            resources.append(
+                (
+                    (xlsx_info["ticket"], sample_id, pacbio_linkage),
+                    legacy_url,
+                    resource,
                 )
-                xlsx_info = self.metadata_info[os.path.basename(md5_file)]
-                legacy_url = urljoin(xlsx_info["base_url"], filename)
-                pacbio_linkage = make_pacbio_linkage(
-                    file_info["flow_cell_id"], file_info["run_number"]
-                )
-                resources.append(
-                    (
-                        (xlsx_info["ticket"], sample_id, pacbio_linkage),
-                        legacy_url,
-                        resource,
-                    )
-                )
+            )
         return resources
 
 
@@ -151,6 +154,7 @@ class GbrAmpliconsMetadata(BaseMetadata):
     omics = "genomics"
     technology = "amplicons"
     sequence_data_type = "illumina-amplicons"
+    embargo_days = 365
     resource_linkage = ("sample_id", "amplicon", "index")
     extract_index_re = re.compile("^.*_([GATC]{8}_[GATC]{8})$")
     spreadsheet = {
@@ -179,10 +183,16 @@ class GbrAmpliconsMetadata(BaseMetadata):
             fld("reads", "# of reads", coerce=ingest_utils.get_int),
             fld("name", "Sample name on sample sheet"),
             fld("analysis_software_version", "AnalysisSoftwareVersion"),
-            fld("comments", "Comments",),
+            fld(
+                "comments",
+                "Comments",
+            ),
             fld("data_processing_version", "data processing version", optional=True),
         ],
-        "options": {"header_length": 3, "column_name_row_index": 1,},
+        "options": {
+            "header_length": 3,
+            "column_name_row_index": 1,
+        },
     }
     md5 = {
         "match": [files.amplicon_filename_re],
@@ -218,6 +228,7 @@ class GbrAmpliconsMetadata(BaseMetadata):
                     "tags": [{"name": "Amplicon"}],
                     "type": self.ckan_data_type,
                     "sequence_data_type": self.sequence_data_type,
+                    "license_id": apply_cc_by_license(),
                     "sample_extraction_id": row.sample_extraction_id,
                     "sequencing_facility": row.sequencing_facility,
                     "amplicon": amplicon,
@@ -244,22 +255,20 @@ class GbrAmpliconsMetadata(BaseMetadata):
     def _get_resources(self):
         self._logger.info("Ingesting md5 file information from {0}".format(self.path))
         resources = []
-        for md5_file in glob(self.path + "/*.md5"):
-            self._logger.info("Processing md5 file {0}".format(md5_file))
-            for filename, md5, file_info in self.parse_md5file(md5_file):
-                resource = file_info.copy()
-                resource["md5"] = resource["id"] = md5
-                resource["name"] = filename
-                sample_id = ingest_utils.extract_ands_id(
-                    self._logger, file_info["sample_id"]
+        for filename, md5, md5_file, file_info in self.md5_lines():
+            resource = file_info.copy()
+            resource["md5"] = resource["id"] = md5
+            resource["name"] = clean_filename(filename)
+            sample_id = ingest_utils.extract_ands_id(
+                self._logger, file_info["sample_id"]
+            )
+            xlsx_info = self.metadata_info[os.path.basename(md5_file)]
+            legacy_url = urljoin(xlsx_info["base_url"], quote(filename))
+            resources.append(
+                (
+                    (sample_id, file_info["amplicon"], file_info["index"]),
+                    legacy_url,
+                    resource,
                 )
-                xlsx_info = self.metadata_info[os.path.basename(md5_file)]
-                legacy_url = urljoin(xlsx_info["base_url"], filename)
-                resources.append(
-                    (
-                        (sample_id, file_info["amplicon"], file_info["index"]),
-                        legacy_url,
-                        resource,
-                    )
-                )
+            )
         return resources
