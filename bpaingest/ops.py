@@ -471,7 +471,7 @@ def reupload_resource(ckan, ckan_obj, legacy_url, parent_destination, auth=None)
     try:
         status = -1
         logger.info("re-uploading from: %s" % (path))
-         # Always store in S3 with a clean filename
+        # Always store in S3 with a clean filename
         filename = bpa_munge_filename(path.split("/")[-1])
         s3_destination = "s3://{}/resources/{}/{}".format(
             parent_destination, ckan_obj["id"], filename
@@ -482,132 +482,137 @@ def reupload_resource(ckan, ckan_obj, legacy_url, parent_destination, auth=None)
         if stream:
             logger.info("Streaming - get the session...")
             stream_session = boto3.session.Session()
-            print("Stream_session is:", stream_session)
-            print("Stream_session client is:", stream_session.client("s3"))
-            print("Stream_session resource is:", stream_session.resource("s3"))
             s3_client = stream_session.client("s3")
             s3_resource = stream_session.resource("s3")
 
-            print("About to set the config")
-
             config = TransferConfig(multipart_threshold=1024*20,
-                multipart_chunksize=1024*20,
-                use_threads=False)
+                                    multipart_chunksize=1024*20,
+                                    use_threads=False)
 
-            print("config is set!")
-            print("setting basic auth with ", auth[0], auth[1])
+            logger.debug("setting basic auth with {} {}".format(auth[0], auth[1]))
             basic_auth = requests.auth.HTTPBasicAuth(auth[0], auth[1])
-            print("basic Auth Set")
+            logger.debug("basic Auth Set")
             response = requests.get(legacy_url, stream=True, auth=basic_auth)
-            print("Response shuold be set")
+            logger.debug("Response should be set")
             file_size = response.headers.get("Content-length", None)
-            print("File size of leagcy file is : ", file_size)
+            logger.debug("File size of legacy file is : {}".format(file_size))
             # Configure the progress bar
             bar = {"unit": "B", "unit_scale": True, "unit_divisor": 1024, "ascii": True}
             if file_size:
                 bar["total"] = int(file_size)
             else:
                 logger.warn("File size not able to be determined from legacy URL")
-            contentLength = 0
+
+            content_length = 0
             # Chunk size of 1024 bytes
-            dataStream = ResponseStream(response.iter_content(1024))
+            data_stream = ResponseStream(response.iter_content(1024))
 
             with tqdm.tqdm(**bar) as progress:
-                with dataStream as data:
+                with data_stream as data:
                     key = s3_destination.split("/", 3)[3]
 
-                    bucketName = parent_destination.split("/")[0]
+                    bucket_name = parent_destination.split("/")[0]
 
                     # validate bucket
                     try:
-                        print("Bucket in stream is ", bucketName)
-                        bucket = s3_resource.Bucket(bucketName)
-                        print("Bucket in stream is ", bucket)
+                        logger.debug("Bucket in stream is {}".format(bucket_name))
+                        bucket = s3_resource.Bucket(bucket_name)
+                        logger.debug("Bucket in stream is {}".format(bucket))
                     except ClientError as e:
-                        print("Error setting Bucket in stream ", e)
+                        logger.error("Error setting Bucket in stream {}".format( e))
                         bucket = None
 
                     # handle pre-existing file case
                     try:
                         # In case filename already exists, get current etag to check if the
                         # contents change after upload
-                        head = s3_client.head_object(Bucket=bucketName, Key=key)
-                        print("Got the Head")
+                        head = s3_client.head_object(Bucket=bucket_name, Key=key)
+                        logger.debug("Got the Head in the pre-check")
                     except ClientError:
-                        print("Failed getting the head, set etag blank")
+                        logger.debug("Failed getting the head, set etag blank - file already in S3")
                         etag = ""
                     else:
                         etag = head["ETag"].strip('"')
-                        print("Did get the head, etag is ", etag)
+                        logger.debug("Did get the head, etag is {}".format(etag))
 
                     # create the Object to represent the file
                     try:
                         s3_obj = bucket.Object(key)
                     except ClientError as e:
-                        print("ClientError when setting key: ", e )
+                        logger.error("ClientError when setting key: {}".format(e))
                         s3_obj = None
                     except AttributeError as e:
-                        print("Attribute Error when setting key: ", e )
+                        logger.error("Attribute Error when setting key:: {}".format(e))
                         s3_obj = None
 
                     # upload with progress bar
                     try:
-                        print("about to try the s3 upload")
+                        logger.debug("about to try the s3 upload")
                         s3_obj.upload_fileobj(data, Callback=progress.update, Config=config)
-                        print("back from the the s3 upload")
+                        logger.debug("back from the the s3 upload")
                     except ClientError as e:
                         pass
                     except AttributeError as e:
                         pass
                     else:
-                        print("waiting for the object to exist")
+                        logger.debug("waiting for the object to exist")
                         # wait for S3 Object to exist
                         try:
-                            print("TRY...waiting for the object to exist")
+                            logger.debug("TRY...waiting for the object to exist")
                             s3_obj.wait_until_exists(IfNoneMatch=etag)
-                            print("TAFTER...waiting for the object to exist")
                         except WaiterError as e:
-                            print("waiter Error", e)
-                            pass
+                            logger.error("WaiterError while streaming to S3 {}".format(e))
+                        else:
+                            logger.debug("ELSE..waiting for the object to exist")
                         finally:
-                            print("In the fianlly, waited or not")
-                            head = s3_client.head_object(Bucket=bucketName, Key=key)
-                            print("Head is: ", head)
-                            contentLength = head["ContentLength"]
-                            if contentLength > 0:
-                                print("ContenttLength is {}, setting status to 0".format(contentLength))
+                            logger.debug("In the finally, waited or not, go and get the new head")
+                            head = s3_client.head_object(Bucket=bucket_name, Key=key)
+                            logger.debug("Head is: {}".format(head))
+                            content_length = head["ContentLength"]
+                            # logger.debug("Content Length:{} and type {}".format(content_length, content_length.type()))
+                            # logger.debug("File Size:{}  and type {}".format(file_size, file_size.type()))
+                            if content_length > 0:
+                                # if content_length == file_size:
+                                logger.debug("Content length of {} is good, setting status to 0"
+                                             .format(content_length))
                                 status = 0
-            print("Got to the end of the Stream logic, status is ", status)
+                                #else:
+                                #     logger.error("uploaded s3 file size {} is not = legacy file size {} "
+                                #                  .format(content_length, file_size))
+
+
+            logger.debug("Got to the end of the Stream logic, status is {}".format(status))
 
         else:
             s3cmd_args = ["aws", "s3", "cp", path, s3_destination]
             status = subprocess.call(s3cmd_args)
-            contentLength = os.path.getsize(path)
-            print("status after non-stream = ",status)
+            content_length = os.path.getsize(path)
+            logger.debug("status after non-stream: {}", status)
 
-        print("status before check = ", status)
+        logger.debug("status before check: {}".format(status))
 
         if status == 0:
             # patch the object in CKAN to have full URL
-            print("build the resource url using ", ckan.address, filename, ckan_obj["package_id"], ckan_obj["id"] )
-            print(parent_destination)
+            logger.debug("build the resource url using {} {} {} {}"
+                         .format(ckan.address, filename, ckan_obj["package_id"], ckan_obj["id"]))
+            logger.debug(parent_destination)
             resource_url = "{}/dataset/{}/resource/{}/download/{}".format(
                 ckan.address, ckan_obj["package_id"], ckan_obj["id"], filename
             )
-            print("resoruce_url is:", resource_url)
-            print("updating the ckan resource with id ", ckan_obj["id"], " with the size" , contentLength, " and new URL ", resource_url)
+            logger.debug("resoruce_url is:{}".format(resource_url))
+            logger.debug("updating the ckan resource with id {} with the size {}  and new URL {}"
+                         .format(ckan_obj["id"], content_length, resource_url))
             ckan.action.resource_patch(
                 id=ckan_obj["id"],
                 url=resource_url,
                 url_type="upload",
-                size=contentLength,
+                size=content_length,
             )
-            print("Update Complete")
+            logger.debug("Update Complete")
         else:
             logger.error("upload failed: status {}".format(status))
             logger.error("Skipping applying audit tag to {}".format(s3_destination))
             raise Exception("Upload failed to S3")
-
 
         # if resource_patch throws an exception, we shouldn't get to
         # tagging the s3 resource
