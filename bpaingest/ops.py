@@ -528,8 +528,8 @@ def reupload_resource(ckan, ckan_obj, legacy_url, parent_destination, auth=None)
                         # contents change after upload
                         head = s3_client.head_object(Bucket=bucket_name, Key=key)
                         logger.debug("Got the Head in the pre-check")
-                    except ClientError:
-                        logger.debug("Failed getting the head, set etag blank - file already in S3")
+                    except ClientError as e:
+                        logger.debug("Failed getting the head, set etag blank - file not in S3, or other problem {}".format(e))
                         etag = ""
                     else:
                         etag = head["ETag"].strip('"')
@@ -551,9 +551,11 @@ def reupload_resource(ckan, ckan_obj, legacy_url, parent_destination, auth=None)
                         s3_obj.upload_fileobj(data, Callback=progress.update, Config=config)
                         logger.debug("back from the the s3 upload")
                     except ClientError as e:
-                        pass
+                        logger.error("ClientError when upload file object: {}".format(e))
+                        # pass
                     except AttributeError as e:
-                        pass
+                        logger.error("AttributeError when upload file object: {}".format(e))
+                        # pass
                     else:
                         logger.debug("waiting for the object to exist")
                         # wait for S3 Object to exist
