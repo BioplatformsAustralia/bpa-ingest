@@ -488,7 +488,7 @@ def reupload_resource(ckan, ckan_obj, legacy_url, parent_destination, auth=None)
             config = TransferConfig(multipart_threshold=1024*20,
                                     multipart_chunksize=1024*20,
                                     use_threads=False)
-
+                                    # could set use_threads to True, and max concurrency=4
             logger.debug("setting basic auth with {} {}".format(auth[0], auth[1]))
             basic_auth = requests.auth.HTTPBasicAuth(auth[0], auth[1])
             logger.debug("basic Auth Set")
@@ -505,51 +505,51 @@ def reupload_resource(ckan, ckan_obj, legacy_url, parent_destination, auth=None)
 
             content_length = 0
             # Chunk size of 1024 bytes
-            data_stream = ResponseStream(response.iter_content(1024))
+            # data_stream = ResponseStream(response.iter_content(1024))
 
+            key = s3_destination.split("/", 3)[3]
+
+            bucket_name = parent_destination.split("/")[0]
+
+            # validate bucket
+            try:
+                logger.debug("Bucket in stream is {}".format(bucket_name))
+                bucket = s3_resource.Bucket(bucket_name)
+                logger.debug("Bucket in stream is {}".format(bucket))
+            except ClientError as e:
+                logger.error("Error setting Bucket in stream {}".format(e))
+                bucket = None
+
+            # handle pre-existing file case
+            try:
+                # In case filename already exists, get current etag to check if the
+                # contents change after upload
+                head = s3_client.head_object(Bucket=bucket_name, Key=key)
+                logger.debug("Got the Head in the pre-check")
+            except ClientError as e:
+                logger.debug("Failed getting the head, set etag blank - file not in S3, or other problem {}".format(e))
+                etag = ""
+            else:
+                etag = head["ETag"].strip('"')
+                logger.debug("Did get the head, etag is {}".format(etag))
+
+            # create the Object to represent the file
+            try:
+                s3_obj = bucket.Object(key)
+            except ClientError as e:
+                logger.error("ClientError when setting key: {}".format(e))
+                s3_obj = None
+            except AttributeError as e:
+                logger.error("Attribute Error when setting key:: {}".format(e))
+                s3_obj = None
             with tqdm.tqdm(**bar) as progress:
-                with data_stream as data:
-                    key = s3_destination.split("/", 3)[3]
-
-                    bucket_name = parent_destination.split("/")[0]
-
-                    # validate bucket
-                    try:
-                        logger.debug("Bucket in stream is {}".format(bucket_name))
-                        bucket = s3_resource.Bucket(bucket_name)
-                        logger.debug("Bucket in stream is {}".format(bucket))
-                    except ClientError as e:
-                        logger.error("Error setting Bucket in stream {}".format( e))
-                        bucket = None
-
-                    # handle pre-existing file case
-                    try:
-                        # In case filename already exists, get current etag to check if the
-                        # contents change after upload
-                        head = s3_client.head_object(Bucket=bucket_name, Key=key)
-                        logger.debug("Got the Head in the pre-check")
-                    except ClientError as e:
-                        logger.debug("Failed getting the head, set etag blank - file not in S3, or other problem {}".format(e))
-                        etag = ""
-                    else:
-                        etag = head["ETag"].strip('"')
-                        logger.debug("Did get the head, etag is {}".format(etag))
-
-                    # create the Object to represent the file
-                    try:
-                        s3_obj = bucket.Object(key)
-                    except ClientError as e:
-                        logger.error("ClientError when setting key: {}".format(e))
-                        s3_obj = None
-                    except AttributeError as e:
-                        logger.error("Attribute Error when setting key:: {}".format(e))
-                        s3_obj = None
-
-                    # upload with progress bar
+                # with data_stream as data:
+                with response as part:
+                    part.raw.decode_content = True
+                     # upload with progress bar
                     try:
                         logger.debug("about to try the s3 upload")
-                        s3_obj.upload_fileobj(data, Callback=progress.update, Config=config)
-                        logger.debug("back from the the s3 upload")
+                        s3_client.upload_fileobj(part.raw, bucket_name, key, Config=config)
                     except ClientError as e:
                         logger.error("ClientError when upload file object: {}".format(e))
                         # pass
@@ -581,7 +581,6 @@ def reupload_resource(ckan, ckan_obj, legacy_url, parent_destination, auth=None)
                                 #else:
                                 #     logger.error("uploaded s3 file size {} is not = legacy file size {} "
                                 #                  .format(content_length, file_size))
-
 
             logger.debug("Got to the end of the Stream logic, status is {}".format(status))
 
@@ -641,8 +640,6 @@ def reupload_resource(ckan, ckan_obj, legacy_url, parent_destination, auth=None)
         # if status != 0:
         #    logger.error("tagging failed: status {}".format(status))
 
-    except:
-        logger.error("upload failure")
     finally:
         if not stream:
             os.unlink(path)
