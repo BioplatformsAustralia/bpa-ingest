@@ -527,7 +527,7 @@ def reupload_resource(ckan, ckan_obj, legacy_url, parent_destination, auth=None)
                 head = s3_client.head_object(Bucket=bucket_name, Key=key)
                 logger.debug("Got the Head in the pre-check")
             except ClientError as e:
-                logger.debug("Failed getting the head, set etag blank - file not in S3, or other problem {}".format(e))
+                logger.debug("Failed getting the head, set etag blank - file not in S3, file will be created {}".format(e))
                 etag = ""
             else:
                 etag = head["ETag"].strip('"')
@@ -549,7 +549,7 @@ def reupload_resource(ckan, ckan_obj, legacy_url, parent_destination, auth=None)
                      # upload with progress bar
                     try:
                         logger.debug("about to try the s3 upload")
-                        s3_client.upload_fileobj(part.raw, bucket_name, key, Config=config)
+                        s3_client.upload_fileobj(part.raw, bucket_name, key, Callback=progress.update, Config=config)
                     except ClientError as e:
                         logger.error("ClientError when upload file object: {}".format(e))
                         # pass
