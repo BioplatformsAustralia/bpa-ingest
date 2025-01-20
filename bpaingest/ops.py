@@ -488,7 +488,7 @@ def reupload_resource(ckan, ckan_obj, legacy_url, parent_destination, auth=None)
             config = TransferConfig(multipart_threshold=1024*20,
                                     multipart_chunksize=1024*20,
                                     use_threads=True,
-                                    max_concurrency=4)
+                                    max_concurrency=10)
                                     # could set use_threads to True, and max concurrency=4
             logger.debug("setting basic auth with {} {}".format(auth[0], auth[1]))
             basic_auth = requests.auth.HTTPBasicAuth(auth[0], auth[1])
