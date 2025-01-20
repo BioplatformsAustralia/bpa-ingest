@@ -588,7 +588,7 @@ def reupload_resource(ckan, ckan_obj, legacy_url, parent_destination, auth=None)
             s3cmd_args = ["aws", "s3", "cp", path, s3_destination]
             status = subprocess.call(s3cmd_args)
             content_length = os.path.getsize(path)
-            logger.debug("status after non-stream: {}", status)
+            logger.debug("status after non-stream: {}".format(status))
 
         logger.debug("status before check: {}".format(status))
 
