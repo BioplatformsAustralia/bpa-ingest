@@ -10,7 +10,7 @@ from ...abstract import BaseLibraryContextual
 
 class AGDatasetControlContextual(BaseDatasetControlContextual):
     metadata_urls = [
-        "https://downloads-qcif.bioplatforms.com/bpa/grasslands/dataset_control/2024-02-06/"
+        "https://downloads-qcif.bioplatforms.com/bpa/grasslands/dataset_control/2025-02-05/"
     ]
     name = "ag-dataset-contextual"
     contextual_linkage = ("library_id", "dataset_id")
