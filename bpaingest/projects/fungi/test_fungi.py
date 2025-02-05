@@ -1,6 +1,7 @@
 # VERIFY
 from bpaingest.projects.fungi.files import (
     illumina_shortread_re,
+    metabolomics_metadata_sheet_re,
 )
 
 
@@ -16,3 +17,10 @@ def test_illumina_shortread():
     ]
     for filename in filenames:
         assert illumina_shortread_re.match(filename) is not None
+
+def test_metabolomics():
+    filenames = [
+        "FUN_QMAP_SUB01142_467794_metabolomics_metadata.xlsx",
+    ]
+    for filename in filenames:
+        assert metabolomics_metadata_sheet_re.match(filename) is not None

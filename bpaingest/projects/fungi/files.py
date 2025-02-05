@@ -130,3 +130,25 @@ ONT_PROMETHION_COMMON_PATTERN = r"""
     \.(html|tsv|txt|tar)
 """
 ont_promethion_common_re = re.compile(ONT_PROMETHION_COMMON_PATTERN, re.VERBOSE)
+
+METABOLOMICS_LCMS_FILENAME_PATTERN = r"""
+    (?P<dataset_id>\d{4,6})_
+    (FUN)_
+    (?P<facility_id>(QMAP))_
+    (?P<facility_project_code>\w+)_metabolomics_
+    (?P<platform>LCMS)
+    \.(tar)
+"""
+metabolomics_lcms_filename_re = re.compile(
+    METABOLOMICS_LCMS_FILENAME_PATTERN, re.VERBOSE
+)
+METABOLOMICS_METADATA_SHEET_PATTERN = r"""
+    FUN_
+    (?P<facility>(QMAP))_
+    (?P<facility_project_code>\w+)_
+    (?P<dataset_id>\d{4,6})_
+    metabolomics_metadata\.xlsx
+"""
+metabolomics_metadata_sheet_re = re.compile(
+    METABOLOMICS_METADATA_SHEET_PATTERN, re.VERBOSE
+)

@@ -174,6 +174,7 @@ fungi()
 {
   apply fungi-illumina-shortread $*
   apply fungi-ont-promethion $*
+  apply fungi-metabolomics $*
 }
 
 pp()

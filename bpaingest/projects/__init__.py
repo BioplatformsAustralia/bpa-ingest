@@ -97,6 +97,7 @@ from .tsi.ingest import (
 from .fungi.ingest import (
     FungiIlluminaShortreadMetadata,
     FungiONTPromethionMetadata,
+    FungiMetabolomicsMetadata,
 )
 
 from .plant_pathogen.ingest import (
@@ -247,6 +248,7 @@ class ProjectInfo:
         "fungi": [
             FungiIlluminaShortreadMetadata,
             FungiONTPromethionMetadata,
+            FungiMetabolomicsMetadata,
         ],
         "pp": [
             PlantPathogenIlluminaShortreadMetadata,
