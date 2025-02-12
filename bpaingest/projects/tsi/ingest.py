@@ -1014,24 +1014,25 @@ class TSIHiCMetadata(TSIBaseMetadata):
         "https://downloads-qcif.bioplatforms.com/bpa/tsi_staging/genomics-hi-c/",
     ]
     contextual_classes = common_context
-    metadata_patterns = [r"^.*\.md5$", r"^.*\.xlsx$"]
+    metadata_patterns = [r"^.*\.md5$", r"^.*_metadata\.xlsx$"]
     metadata_url_components = ("ticket",)
     resource_linkage = ("ticket", "library_id", "flowcell_id")
     spreadsheet = {
         "fields": [
+            fld('bioplatforms_project', 'bioplatforms_project', optional=True),
             fld(
                 "library_id",
-                re.compile(r"library_[Ii][Dd]"),
+                re.compile(r"(library_[Ii][Dd]|bioplatforms_library_id)"),
                 coerce=ingest_utils.extract_ands_id,
             ),
             fld(
                 "sample_id",
-                re.compile(r"sample_[Ii][Dd]"),
+                re.compile(r"(sample_[Ii][Dd]|bioplatforms_sample_id)"),
                 coerce=ingest_utils.extract_ands_id,
             ),
             fld(
                 "dataset_id",
-                re.compile(r"dataset_[Ii][Dd]"),
+                re.compile(r"(dataset_[Ii][Dd]|bioplatforms_dataset_id)"),
                 coerce=ingest_utils.extract_ands_id,
             ),
             fld("run_format", "run format", optional=True),
@@ -1050,6 +1051,8 @@ class TSIHiCMetadata(TSIBaseMetadata):
             fld("sequencing_model", "sequencing_model"),
             fld("library_construction_protocol", "library_construction_protocol"),
             fld("library_strategy", "library_strategy"),
+            fld('bait_set_name', 'bait_set_name', optional=True),
+            fld('bait_set_reference', 'bait_set_reference', optional=True),
             fld("library_selection", "library_selection"),
             fld("library_source", "library_source"),
             fld(
@@ -1094,7 +1097,7 @@ class TSIHiCMetadata(TSIBaseMetadata):
             fld("model_base_caller", "model_base_caller", optional=True),
         ],
         "options": {
-            "sheet_name": "Library_metadata",
+            "sheet_name": "Library metadata",
             "header_length": 1,
             "column_name_row_index": 0,
         },
