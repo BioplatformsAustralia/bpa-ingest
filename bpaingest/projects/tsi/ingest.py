@@ -367,6 +367,7 @@ class TSIIlluminaFastqMetadata(TSIBaseMetadata):
             ),
             fld("fast5_compression", "fast5_compression", optional=True),
             fld("model_base_caller", "model_base_caller", optional=True),
+            fld('library', 'library', optional=True),
         ],
         "options": {
             "sheet_name": "Library metadata",
