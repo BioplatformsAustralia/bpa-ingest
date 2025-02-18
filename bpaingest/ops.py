@@ -493,7 +493,7 @@ def reupload_resource(ckan, ckan_obj, legacy_url, parent_destination, auth=None)
             logger.info("File size of legacy file is : {}".format(file_size))
             if file_size:
                 # calculate a 1000 part split, make the chunksize 5MB greater
-                calculated_chunksize = int(file_size/1000) + (5*MB)
+                calculated_chunksize = int(int(file_size)/1000) + (5*MB)
 
                 multipart_chunksize = max(20*MB, calculated_chunksize)
                 logger.info("Using chunksize of: {}".format(multipart_chunksize))
