@@ -32,6 +32,8 @@ UPLOAD_RETRY = 3
 
 method_stats = defaultdict(int)
 
+KB = 1024
+MB = KB * KB
 
 def ckan_method(ckan, object_type, method):
     """
@@ -480,23 +482,36 @@ def reupload_resource(ckan, ckan_obj, legacy_url, parent_destination, auth=None)
         logger.info(f"S3 destination is: {s3_destination}")
 
         if stream:
+            logger.info("Streaming - get mirror file info...")
+            logger.debug("setting basic auth with {} {}".format(auth[0], auth[1]))
+            basic_auth = requests.auth.HTTPBasicAuth(auth[0], auth[1])
+            logger.debug("basic Auth Set")
+            response = requests.get(legacy_url, stream=True, auth=basic_auth)
+            logger.debug("Response should be set")
+
+            file_size = response.headers.get("Content-length", None)
+            logger.info("File size of legacy file is : {}".format(file_size))
+            if file_size:
+                # calculate a 1000 part split, make the chunksize 5MB greater
+                calculated_chunksize = int(file_size/1000) + (5*MB)
+
+                multipart_chunksize = max(20*MB, calculated_chunksize)
+                logger.info("Using chunksize of: {}".format(multipart_chunksize))
+            else:
+                logger.warn("File size not able to be determined from legacy URL")
+                # YOLO
+                multipart_chunksize=1024*20
+
             logger.info("Streaming - get the session...")
             stream_session = boto3.session.Session()
             s3_client = stream_session.client("s3")
             s3_resource = stream_session.resource("s3")
 
             config = TransferConfig(multipart_threshold=1024*20,
-                                    multipart_chunksize=1024*20,
+                                    multipart_chunksize=multipart_chunksize,
                                     use_threads=True,
                                     max_concurrency=10)
                                     # could set use_threads to True, and max concurrency=4
-            logger.debug("setting basic auth with {} {}".format(auth[0], auth[1]))
-            basic_auth = requests.auth.HTTPBasicAuth(auth[0], auth[1])
-            logger.debug("basic Auth Set")
-            response = requests.get(legacy_url, stream=True, auth=basic_auth)
-            logger.debug("Response should be set")
-            file_size = response.headers.get("Content-length", None)
-            logger.debug("File size of legacy file is : {}".format(file_size))
             # Configure the progress bar
             bar = {"unit": "B", "unit_scale": True, "unit_divisor": 1024, "ascii": True}
             if file_size:
