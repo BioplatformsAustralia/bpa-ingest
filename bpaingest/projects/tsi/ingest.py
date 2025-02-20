@@ -154,17 +154,17 @@ class TSIIlluminaShortreadMetadata(TSIBaseMetadata):
         "fields": [
             fld(
                 "sample_id",
-                re.compile(r"sample_[Ii][Dd]"),
+                re.compile(r"sample_[Ii][Dd]|bioplatforms_sample_id"),
                 coerce=ingest_utils.extract_ands_id,
             ),
             fld(
                 "library_id",
-                re.compile(r"library_[Ii][Dd]"),
+                re.compile(r"library_[Ii][Dd]|bioplatforms_library_id"),
                 coerce=ingest_utils.extract_ands_id,
             ),
             fld(
                 "dataset_id",
-                re.compile(r"dataset_[Ii][Dd]"),
+                re.compile(r"dataset_[Ii][Dd]|bioplatforms_dataset_id"),
                 coerce=ingest_utils.extract_ands_id,
             ),
             fld("library_construction_protocol", "library_construction_protocol"),
@@ -218,6 +218,18 @@ class TSIIlluminaShortreadMetadata(TSIBaseMetadata):
                 "sequencing_kit_chemistry_version",
                 optional=True,
             ),
+            fld("bioplatforms_project", "bioplatforms_project", optional=True),
+            fld("bait_set_name", "bait_set_name", optional=True),
+            fld("bait_set_reference", "bait_set_reference", optional=True),
+            fld("library_index_id_dual", "library_index_id_dual", optional=True),
+            fld("library_index_seq_dual", "library_index_seq_dual", optional=True),
+            fld(
+                "library_oligo_sequence_dual",
+                "library_oligo_sequence_dual",
+                optional=True,
+            ),
+            fld("fast5_compression", "fast5_compression", optional=True),
+            fld("model_base_caller", "model_base_caller", optional=True),
         ],
         "options": {
             "sheet_name": "Library metadata",
