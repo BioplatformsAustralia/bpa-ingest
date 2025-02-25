@@ -558,45 +558,49 @@ def reupload_resource(ckan, ckan_obj, legacy_url, parent_destination, auth=None)
             except AttributeError as e:
                 logger.error("Attribute Error when setting key:: {}".format(e))
                 s3_obj = None
-            with tqdm.tqdm(**bar) as progress:
-                # with data_stream as data:
-                with response as part:
-                    part.raw.decode_content = True
-                     # upload with progress bar
-                    try:
-                        logger.debug("about to try the s3 upload")
-                        s3_client.upload_fileobj(part.raw, bucket_name, key, Callback=progress.update, Config=config)
-                    except ClientError as e:
-                        logger.error("ClientError when upload file object: {}".format(e))
-                        # pass
-                    except AttributeError as e:
-                        logger.error("AttributeError when upload file object: {}".format(e))
-                        # pass
-                    else:
-                        logger.debug("waiting for the object to exist")
-                        # wait for S3 Object to exist
+            try:
+                with tqdm.tqdm(**bar) as progress:
+                    # with data_stream as data:
+                    with response as part:
+                        part.raw.decode_content = True
+                         # upload with progress bar
                         try:
-                            logger.debug("TRY...waiting for the object to exist")
-                            s3_obj.wait_until_exists(IfNoneMatch=etag)
-                        except WaiterError as e:
-                            logger.error("WaiterError while streaming to S3 {}".format(e))
+                            logger.debug("about to try the s3 upload")
+                            s3_client.upload_fileobj(part.raw, bucket_name, key, Callback=progress.update, Config=config)
+                        except ClientError as e:
+                            logger.error("ClientError when upload file object: {}".format(e))
+                            # pass
+                        except AttributeError as e:
+                            logger.error("AttributeError when upload file object: {}".format(e))
+                            # pass
                         else:
-                            logger.debug("ELSE..waiting for the object to exist")
-                        finally:
-                            logger.debug("In the finally, waited or not, go and get the new head")
-                            head = s3_client.head_object(Bucket=bucket_name, Key=key)
-                            logger.debug("Head is: {}".format(head))
-                            content_length = head["ContentLength"]
-                            # logger.debug("Content Length:{} and type {}".format(content_length, content_length.type()))
-                            # logger.debug("File Size:{}  and type {}".format(file_size, file_size.type()))
-                            if content_length > 0:
-                                # if content_length == file_size:
-                                logger.debug("Content length of {} is good, setting status to 0"
-                                             .format(content_length))
-                                status = 0
-                                #else:
-                                #     logger.error("uploaded s3 file size {} is not = legacy file size {} "
-                                #                  .format(content_length, file_size))
+                            logger.debug("waiting for the object to exist")
+                            # wait for S3 Object to exist
+                            try:
+                                logger.debug("TRY...waiting for the object to exist")
+                                s3_obj.wait_until_exists(IfNoneMatch=etag)
+                            except WaiterError as e:
+                                logger.error("WaiterError while streaming to S3 {}".format(e))
+                            else:
+                                logger.debug("ELSE..waiting for the object to exist")
+                            finally:
+                                logger.debug("In the finally, waited or not, go and get the new head")
+                                head = s3_client.head_object(Bucket=bucket_name, Key=key)
+                                logger.debug("Head is: {}".format(head))
+                                content_length = head["ContentLength"]
+                                # logger.debug("Content Length:{} and type {}".format(content_length, content_length.type()))
+                                # logger.debug("File Size:{}  and type {}".format(file_size, file_size.type()))
+                                if content_length > 0:
+                                    # if content_length == file_size:
+                                    logger.debug("Content length of {} is good, setting status to 0"
+                                                 .format(content_length))
+                                    status = 0
+                                    #else:
+                                    #     logger.error("uploaded s3 file size {} is not = legacy file size {} "
+                                    #                  .format(content_length, file_size))
+
+            except Exception as e:
+                logger.error("Exception in status bar: {}".format(e))
 
             logger.debug("Got to the end of the Stream logic, status is {}".format(status))
 
