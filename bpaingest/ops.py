@@ -507,8 +507,8 @@ def reupload_resource(ckan, ckan_obj, legacy_url, parent_destination, auth=None)
             stream_session = boto3.session.Session()
             s3_client = stream_session.client("s3")
             s3_resource = stream_session.resource("s3")
-            # set logging for boto3:
-            boto3.set_stream_logger('boto3.resources', logging.DEBUG)
+            # set logging for boto3: (commented out so as not to add too much to the ingest logs
+            # boto3.set_stream_logger('boto3.resources', logging.DEBUG)
 
             config = TransferConfig(multipart_threshold=1024*20,
                                     multipart_chunksize=multipart_chunksize,
