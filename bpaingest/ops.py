@@ -1,3 +1,4 @@
+import logging
 import subprocess
 import tempfile
 import urllib
