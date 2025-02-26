@@ -511,7 +511,7 @@ def reupload_resource(ckan, ckan_obj, legacy_url, parent_destination, auth=None)
                                     multipart_chunksize=multipart_chunksize,
                                     use_threads=True,
                                     max_concurrency=10)
-                                    # could set use_threads to True, and max concurrency=4
+
             # Configure the progress bar
             bar = {"unit": "B", "unit_scale": True, "unit_divisor": 1024, "ascii": True}
             if file_size:
@@ -562,11 +562,10 @@ def reupload_resource(ckan, ckan_obj, legacy_url, parent_destination, auth=None)
                 with tqdm.tqdm(**bar) as progress:
                     # with data_stream as data:
                     try:
-                        part_count = 1
                         with response as part:
-                            logger.debug("Part count is:{}".format(part_count))
+                            logger.debug(part.headers)
+                            logger.debug(part.status_code)
                             part.raw.decode_content = True
-                            part_count = part_count + 1
                          # upload with progress bar
                             try:
                                 logger.debug("about to try the s3 upload")
@@ -579,7 +578,7 @@ def reupload_resource(ckan, ckan_obj, legacy_url, parent_destination, auth=None)
                                 logger.error("AttributeError when upload file object: {}".format(e))
                                 # pass
                             except Exception as e:
-                                logger.error("Generic Excpetion when upload file object: {}".format(e))
+                                logger.error("Generic Exception when upload file object: {}".format(e))
                             else:
                                 logger.debug("waiting for the object to exist")
                                 # wait for S3 Object to exist
