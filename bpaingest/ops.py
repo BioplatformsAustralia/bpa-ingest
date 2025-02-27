@@ -513,7 +513,7 @@ def reupload_resource(ckan, ckan_obj, legacy_url, parent_destination, auth=None)
             config = TransferConfig(multipart_threshold=1024*20,
                                     multipart_chunksize=multipart_chunksize,
                                     use_threads=False,
-                                    max_concurrency=4)
+                                    max_concurrent_requests=4)
 
             # Configure the progress bar
             bar = {"unit": "B", "unit_scale": True, "unit_divisor": 1024, "ascii": True}
