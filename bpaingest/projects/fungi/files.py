@@ -112,7 +112,7 @@ ONT_PROMETHION_PATTERN = r"""
     (?P<library_id>\d{4,6})_
     FUN_
     (?P<facility_id>(BRF))_
-    (?P<flow_cell_id>PA[W]\d{5})_
+    (?P<flow_cell_id>P[AB][ABCDEFGKMOQW]\d{5})_
     ONTPromethION_
     (?P<archive_type>\w+)
     (\.tar
@@ -124,7 +124,7 @@ ont_promethion_re = re.compile(ONT_PROMETHION_PATTERN, re.VERBOSE)
 ONT_PROMETHION_COMMON_PATTERN = r"""
     FUN_
     (?P<facility_id>(AGRF|BRF|UNSW))_
-    (?P<flow_cell_id>PA[DEFGKMOQW]\d{5})_
+    (?P<flow_cell_id>P[AB][ABCDEFGKMOQW]\d{5})_
     (ONTPromethION_)
     (?P<archive_type>\w+)
     \.(html|tsv|txt|tar)

@@ -334,7 +334,7 @@ class FungiONTPromethionMetadata(FungiBaseMetadata):
 
         ],
         "options": {
-            "sheet_name": "Library_metadata",
+            "sheet_name": "library_genomics",
             "header_length": 1,
             "column_name_row_index": 0,
         },
