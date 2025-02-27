@@ -515,7 +515,7 @@ def reupload_resource(ckan, ckan_obj, legacy_url, parent_destination, auth=None)
 
             config = TransferConfig(multipart_threshold=20*MB,  # this is irrelevant when chunksize is larger
                                     multipart_chunksize=multipart_chunksize,
-                                    use_threads=False,
+                                    use_threads=True,
                                     max_concurrency=4)
 
             # Configure the progress bar
