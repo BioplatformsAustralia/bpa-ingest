@@ -35,6 +35,7 @@ method_stats = defaultdict(int)
 
 KB = 1024
 MB = KB * KB
+GB = MB * KB
 
 def ckan_method(ckan, object_type, method):
     """
@@ -494,7 +495,9 @@ def reupload_resource(ckan, ckan_obj, legacy_url, parent_destination, auth=None)
             logger.info("File size of legacy file is : {}".format(file_size))
             if file_size:
                 # calculate a 1000 part split, make the chunksize 5MB greater
-                calculated_chunksize = int(int(file_size)/1000) + (5*MB)
+                calculated_chunksize = int(int(file_size)/1000) + (5*MB)  # default to 1000 chunks
+                if file_size > 100*GB:
+                    calculated_chunksize = int(int(file_size) / 5000) + (5 * MB)  # go with more chunks?
 
                 multipart_chunksize = max(20*MB, calculated_chunksize)
                 logger.info("Using chunksize of: {}".format(multipart_chunksize))
@@ -510,10 +513,10 @@ def reupload_resource(ckan, ckan_obj, legacy_url, parent_destination, auth=None)
             # set logging for boto3: (commented out so as not to add too much to the ingest logs
             # boto3.set_stream_logger('boto3.resources', logging.DEBUG)
 
-            config = TransferConfig(multipart_threshold=1024*20,
+            config = TransferConfig(multipart_threshold=20*MB,  # this is irrelevant when chunksize is larger
                                     multipart_chunksize=multipart_chunksize,
                                     use_threads=False,
-                                    max_concurrent_requests=4)
+                                    max_concurreny=4)
 
             # Configure the progress bar
             bar = {"unit": "B", "unit_scale": True, "unit_divisor": 1024, "ascii": True}
