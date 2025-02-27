@@ -600,16 +600,13 @@ def reupload_resource(ckan, ckan_obj, legacy_url, parent_destination, auth=None)
                                     head = s3_client.head_object(Bucket=bucket_name, Key=key)
                                     logger.debug("Head is: {}".format(head))
                                     content_length = head["ContentLength"]
-                                    # logger.debug("Content Length:{} and type {}".format(content_length, content_length.type()))
-                                    # logger.debug("File Size:{}  and type {}".format(file_size, file_size.type()))
-                                    if content_length > 0:
-                                        # if content_length == file_size:
+                                    if content_length > 0 and content_length == int(file_size):
                                         logger.debug("Content length of {} is good, setting status to 0"
                                                      .format(content_length))
                                         status = 0
-                                        #else:
-                                        #     logger.error("uploaded s3 file size {} is not = legacy file size {} "
-                                        #                  .format(content_length, file_size))
+                                    else:
+                                        logger.error("uploaded s3 file size {} not legacy file size {} "
+                                                     .format(content_length, file_size))
                     except Exception as e:
                         logger.error("Exception in with response/part: {}".format(e))
 
@@ -634,7 +631,7 @@ def reupload_resource(ckan, ckan_obj, legacy_url, parent_destination, auth=None)
             resource_url = "{}/dataset/{}/resource/{}/download/{}".format(
                 ckan.address, ckan_obj["package_id"], ckan_obj["id"], filename
             )
-            logger.debug("resoruce_url is:{}".format(resource_url))
+            logger.debug("resource_url is:{}".format(resource_url))
             logger.debug("updating the ckan resource with id {} with the size {}  and new URL {}"
                          .format(ckan_obj["id"], content_length, resource_url))
             ckan.action.resource_patch(
