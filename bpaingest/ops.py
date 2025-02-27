@@ -496,7 +496,7 @@ def reupload_resource(ckan, ckan_obj, legacy_url, parent_destination, auth=None)
             if file_size:
                 # calculate a 1000 part split, make the chunksize 5MB greater
                 calculated_chunksize = int(int(file_size)/1000) + (5*MB)  # default to 1000 chunks
-                if file_size > 100*GB:
+                if int(file_size) > 100*GB:
                     calculated_chunksize = int(int(file_size) / 5000) + (5 * MB)  # go with more chunks?
 
                 multipart_chunksize = max(20*MB, calculated_chunksize)
