@@ -12,6 +12,7 @@ import os
 
 import boto3
 import boto3.session
+from botocore.config import Config
 from boto3.s3.transfer import TransferConfig
 from botocore.exceptions import ClientError, WaiterError
 
@@ -507,21 +508,23 @@ def reupload_resource(ckan, ckan_obj, legacy_url, parent_destination, auth=None)
                 multipart_chunksize=1024*20
 
             logger.info("Streaming - get the session...")
+            b3_config = Config(
+                retries = {
+                    'max_attempts': 10,
+                    'mode': 'standard'
+                }
+            )
             stream_session = boto3.session.Session()
-            s3_client = stream_session.client("s3")
+            s3_client = stream_session.client("s3", config=b3_config)
             s3_resource = stream_session.resource("s3")
             # set logging for boto3: (commented out so as not to add too much to the ingest logs
             boto3.set_stream_logger('boto3.resources', logging.DEBUG)
             boto3.set_stream_logger('boto3.retryhandler', logging.DEBUG)
 
-            config = TransferConfig(multipart_threshold=20*MB,  # this is irrelevant when chunksize is larger
+            tf_config = TransferConfig(multipart_threshold=20*MB,  # this is irrelevant when chunksize is larger
                                     multipart_chunksize=multipart_chunksize,
                                     use_threads=True,
-                                    max_concurrency=4,
-                                    retries={
-                                        'max_attempts': 10,
-                                        'mode': 'standard'
-                                    })
+                                    max_concurrency=4)
 
             # Configure the progress bar
             bar = {"unit": "B", "unit_scale": True, "unit_divisor": 1024, "ascii": True}
@@ -580,7 +583,8 @@ def reupload_resource(ckan, ckan_obj, legacy_url, parent_destination, auth=None)
                          # upload with progress bar
                             try:
                                 logger.debug("about to try the s3 upload")
-                                s3_client.upload_fileobj(part.raw, bucket_name, key, Callback=progress.update, Config=config)
+                                s3_client.upload_fileobj(part.raw, bucket_name, key,
+                                                         Callback=progress.update, Config=tf_config)
                                 logger.debug("Done with the upload_fileobj")
                             except ClientError as e:
                                 logger.error("ClientError when upload file object: {}".format(e))
