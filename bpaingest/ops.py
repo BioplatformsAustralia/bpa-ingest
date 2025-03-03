@@ -514,7 +514,7 @@ def reupload_resource(ckan, ckan_obj, legacy_url, parent_destination, auth=None)
             b3_config = Config(
                 retries={
                     'max_attempts': 10,
-                    'mode': 'standard'
+                    'mode': 'adaptive'
                 }
             )
             stream_session = boto3.session.Session()
@@ -526,7 +526,7 @@ def reupload_resource(ckan, ckan_obj, legacy_url, parent_destination, auth=None)
 
             tf_config = TransferConfig(multipart_threshold=20*MB,  # this is irrelevant when chunksize is larger
                                     multipart_chunksize=multipart_chunksize,
-                                    use_threads=True,
+                                    use_threads=False,
                                     max_concurrency=4)
 
             # Configure the progress bar
