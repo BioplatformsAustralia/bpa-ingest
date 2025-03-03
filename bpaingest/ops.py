@@ -515,7 +515,9 @@ def reupload_resource(ckan, ckan_obj, legacy_url, parent_destination, auth=None)
                 retries={
                     'max_attempts': 10,
                     'mode': 'adaptive'
-                }
+                },
+                max_pool_connections=96,
+                has_streaming_input=True
             )
             stream_session = boto3.session.Session()
             s3_client = stream_session.client("s3", config=b3_config)
