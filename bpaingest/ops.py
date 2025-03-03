@@ -514,7 +514,7 @@ def reupload_resource(ckan, ckan_obj, legacy_url, parent_destination, auth=None)
             b3_config = Config(
                 retries={
                     'max_attempts': 10,
-                    'mode': 'adaptive'
+                    'mode': 'standard'
                 },
                 max_pool_connections=96,
       #          duration_seconds=7200  # 2 hours
