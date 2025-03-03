@@ -497,8 +497,11 @@ def reupload_resource(ckan, ckan_obj, legacy_url, parent_destination, auth=None)
             if file_size:
                 # calculate a 1000 part split, make the chunksize 5MB greater
                 calculated_chunksize = int(int(file_size)/1000) + (5*MB)  # default to 1000 chunks
+                logger.info("Initial chunksize value = {}".format(calculated_chunksize))
                 if int(file_size) > 100*GB:
+
                     calculated_chunksize = int(int(file_size) / 5000) + (5 * MB)  # go with more chunks?
+                    logger.info("File size > 100Gb, using 5000 as the divisor, chunk size is {}".format(calculated_chunksize))
 
                 multipart_chunksize = max(20*MB, calculated_chunksize)
                 logger.info("Using chunksize of: {}".format(multipart_chunksize))
@@ -509,7 +512,7 @@ def reupload_resource(ckan, ckan_obj, legacy_url, parent_destination, auth=None)
 
             logger.info("Streaming - get the session...")
             b3_config = Config(
-                retries = {
+                retries={
                     'max_attempts': 10,
                     'mode': 'standard'
                 }
@@ -518,7 +521,7 @@ def reupload_resource(ckan, ckan_obj, legacy_url, parent_destination, auth=None)
             s3_client = stream_session.client("s3", config=b3_config)
             s3_resource = stream_session.resource("s3")
             # set logging for boto3 and botocore: (commented out so as not to add too much to the ingest logs
-            boto3.set_stream_logger('boto3', logging.DEBUG)
+            #boto3.set_stream_logger('boto3', logging.DEBUG)
             boto3.set_stream_logger('botocore', logging.DEBUG)
 
             tf_config = TransferConfig(multipart_threshold=20*MB,  # this is irrelevant when chunksize is larger
