@@ -517,7 +517,7 @@ def reupload_resource(ckan, ckan_obj, legacy_url, parent_destination, auth=None)
                     'mode': 'standard'
                 },
                 max_pool_connections=96,
-      #          duration_seconds=7200  # 2 hours
+                duration_seconds=7200  # 2 hours
             )
             stream_session = boto3.session.Session()
             s3_client = stream_session.client("s3", config=b3_config)
@@ -529,7 +529,7 @@ def reupload_resource(ckan, ckan_obj, legacy_url, parent_destination, auth=None)
 
             tf_config = TransferConfig(multipart_threshold=20*MB,  # this is irrelevant when chunksize is larger
                                     multipart_chunksize=multipart_chunksize,
-                                    use_threads=True,
+                                    use_threads=False,
                                     max_concurrency=4)
 
             # Configure the progress bar
