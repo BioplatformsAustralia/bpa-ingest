@@ -517,7 +517,7 @@ def reupload_resource(ckan, ckan_obj, legacy_url, parent_destination, auth=None)
                     'mode': 'standard'
                 },
                 max_pool_connections=96,
-                duration_seconds=7200  # 2 hours
+                # duration_seconds=7200  # 2 hours
             )
             stream_session = boto3.session.Session()
             s3_client = stream_session.client("s3", config=b3_config)
