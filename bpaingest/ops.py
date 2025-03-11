@@ -230,7 +230,7 @@ class ApacheArchiveInfo(BaseArchiveInfo):
 
         for i in range(4):
             logger.debug("about to get the  head with urllib3, headers are:".format(self.headers))
-            response = self.http.request("GET",
+            response = self.http.request("HEAD",
                                          new_url,
                                          headers=self.headers)
             logger.debug("response headers for {} are {}".format(new_url, response.headers))
