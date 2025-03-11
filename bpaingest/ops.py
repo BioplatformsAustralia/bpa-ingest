@@ -188,10 +188,11 @@ class CKANArchiveInfo(BaseArchiveInfo):
         if url not in self._size_cache:
 
             logger.debug("URl not is size/etag cache, {}, go and get it".format(self._size_cache))
-            # get the first 0 bytes, which will let us determine the size
+            # get the first 0 bytes, which will let us determine the size - HEAD does not work for S3
             try:
                 response = self.http.request("GET", url,
                                              headers={"Authorization": self.ckan.apikey,
+                                                      "User-Agent": "BPA-INGEST",
                                                       "Range": "bytes=0-0"})
             except urllib3.exceptions.MaxRetryError as mre:
                 logger.error("Error when getting the url {} is {}".format(url, mre))
@@ -227,7 +228,8 @@ class ApacheArchiveInfo(BaseArchiveInfo):
         archive that need to be walked
         """
         new_url = url
-
+        #todo: As we do all this now via http and not file system, and urrlib3 walks the http redirects for us,
+        # do we still need to do this?
         for i in range(4):
             logger.debug("about to get the  head with urllib3, headers are:".format(self.headers))
             response = self.http.request("HEAD",

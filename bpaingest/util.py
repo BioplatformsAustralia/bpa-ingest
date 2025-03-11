@@ -306,4 +306,6 @@ def build_apache_headers_for_urllib3(auth):
     logger.debug("using  basic auth with {}".format(auth))
     authorization = auth[0] + ':' + auth[1]
     headers = urllib3.make_headers(basic_auth=authorization, accept_encoding="None")
+    headers["User-Agent"] = "BPA-INGEST"
+
     return headers
