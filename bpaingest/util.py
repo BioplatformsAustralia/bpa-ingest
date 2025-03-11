@@ -91,7 +91,7 @@ def make_registration_decorator():
     return _register, registered
 
 
-def make_logger(name, level=logging.DEBUG):
+def make_logger(name, level=logging.INFO):
     logger = logging.getLogger(name)
     logger.propagate = False
     logger.setLevel(level)
