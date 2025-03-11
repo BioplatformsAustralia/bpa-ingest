@@ -2,10 +2,10 @@ import logging
 import subprocess
 import tempfile
 import urllib
+import urllib3
 import shutil
 import bitmath
 
-import requests
 import ckanapi
 import tqdm
 import os
@@ -22,12 +22,15 @@ from urllib.parse import urlparse, unquote
 from urllib.request import url2pathname
 from collections import defaultdict
 
+from urllib3 import request
+
 from .libs.ingest_utils import ApiFqBuilder
 from .libs.bpa_constants import AUDIT_VERIFIED
 from .libs.s3 import update_tags
 from .libs.munge import bpa_munge_filename
-from .libs.response_stream import ResponseStream
 from .util import make_logger
+from .util import build_apache_headers_for_urllib3
+
 
 logger = make_logger(__name__)
 UPLOAD_RETRY = 3
@@ -140,16 +143,17 @@ def make_organization(ckan, organization_obj):
 class BaseArchiveInfo:
     def __init__(self):
         self._size_cache = {}
+        self.http = urllib3.PoolManager()
 
     def check_status_code(self, response):
-        if response.status_code in (403, 401):
+        if response.status in (403, 401):
             # if we're getting 403s and we re-upload a bunch of data because of it, that is unhelpful
             logger.error("authentication error accessing archive")
             raise Exception("authentication failed")
 
     def size_from_response(self, response):
         self.check_status_code(response)
-        if response.status_code not in (200, 206):
+        if response.status not in (200, 206):
             return None
         if "content-range" in response.headers:
             return int(response.headers.get("content-range").rsplit("/", 1)[-1])
@@ -168,81 +172,73 @@ def same_netloc(u1, u2):
 class CKANArchiveInfo(BaseArchiveInfo):
     def __init__(self, ckan):
         self.ckan = ckan
-        self.session = requests.Session()
         self._etag_cache = {}
         super().__init__()
 
     def on_ckan(self, url):
         return same_netloc(self.ckan.address, url)
 
-    def resolve_url(self, url):
-        # the archive will issue an S3 link with auth token
-        response = self.session.head(url, headers={"Authorization": self.ckan.apikey})
-        self.check_status_code(response)
-        if response.status_code != 302:
-            logger.error(
-                "Unexpected status (%s) for URL %s" % (response.status_code, url)
-            )
-            return None
-        return response.headers["location"]
-
     def ckan_address(self):
         return self.ckan.address
-
-    def s3_simulated_head(self, url):
-        # we have to do a range request for the first byte, as S3 doesn't let us head
-        # with an authorization token. however, we can still get the full size from the
-        # content-range header
-        return requests.get(url, headers={"Range": "bytes=0-0"})
 
     def get_size_and_etag(self, url):
         if not url:
             return None
         logger.debug("start get_size_and_etag `%s' " % url)
         if url not in self._size_cache:
-            # a URL on S3 with auth token
-            resolved = self.resolve_url(url)
-            if resolved is None:
-                return None
-            response = self.s3_simulated_head(resolved)
-            self.check_status_code(response)
-            if response.status_code not in (200, 206):
-                return None
-            self._size_cache[url] = self._size_cache[
-                resolved
-            ] = self.size_from_response(response)
-            self._etag_cache[url] = self._etag_cache[resolved] = response.headers.get(
-                "etag"
-            )
 
-        logger.debug("end get_size_and_etag `%s' " % url)
+            logger.debug("URl not is size/etag cache, {}, go and get it".format(self._size_cache))
+            # get the first 0 bytes, which will let us determine the size
+            try:
+                response = self.http.request("GET", url,
+                                             headers={"Authorization": self.ckan.apikey,
+                                                      "Range": "bytes=0-0"})
+            except urllib3.exceptions.MaxRetryError as mre:
+                logger.error("Error when getting the url {} is {}".format(url, mre))
+                return None
+
+            logger.debug("got the headers for size and etag (empty content):{}".format(response.headers))
+            logger.debug("https status is:{}".format(response.status))
+            self.check_status_code(response)
+
+            if response.status not in (200, 206):
+                logger.error("Returning None for get size and etag - bad response code ({})".format(response.status))
+                return None
+            # Make sure it is AWSS3
+            if response.headers.get("Server") != 'AmazonS3':
+                logger.error("the URL {} does not reside on s3. Headers returned were {}".format(url, response.headers))
+                return None
+            self._size_cache[url] = self._size_cache[url] = self.size_from_response(response)
+            self._etag_cache[url] = self._etag_cache[url] = response.headers.get("etag")
+
         return self._size_cache[url], self._etag_cache[url]
 
 
 class ApacheArchiveInfo(BaseArchiveInfo):
     def __init__(self, auth):
         self.auth = auth
-        self.session = requests.Session()
-        super().__init__()
+        super().__init__()   # need this first to set up the http
+        self.headers = build_apache_headers_for_urllib3(self.auth)
 
-    def head(self, url):
-        # Force requested item to be sent as-is
-        headers = {"Accept-Encoding": None}
-        return self.session.head(url, auth=self.auth, headers=headers)
 
     def resolve_url(self, url):
         """
         follow redirects until we get the final URL; unfortunately there are symlinks in the flat-file
         archive that need to be walked
         """
-
         new_url = url
+
         for i in range(4):
-            response = self.session.head(new_url, auth=self.auth)
+            logger.debug("about to get the  head with urllib3, headers are:".format(self.headers))
+            response = self.http.request("GET",
+                                         new_url,
+                                         headers=self.headers)
+            logger.debug("response headers for {} are {}".format(new_url, response.headers))
             self.check_status_code(response)
-            if response.status_code == 301 or response.status_code == 302:
+            if response.status == 301 or response.status == 302:
+                logger.debug("Walking the redirect tree of {}".format(new_url))
                 new_url = response.headers.get("location")
-            elif response.status_code == 200:
+            elif response.status == 200:
                 return new_url
             else:
                 return None
@@ -256,7 +252,7 @@ class ApacheArchiveInfo(BaseArchiveInfo):
                 return None
             self._size_cache[url] = self._size_cache[
                 resolved
-            ] = self.size_from_response(self.head(resolved))
+            ] = self.size_from_response(self.http.request("GET", resolved, headers=self.headers))
         return self._size_cache[url]
 
 
@@ -486,110 +482,106 @@ def reupload_resource(ckan, ckan_obj, legacy_url, parent_destination, auth=None)
 
         if stream:
             logger.info("Streaming - get mirror file info...")
-            logger.debug("setting basic auth with {} {}".format(auth[0], auth[1]))
-            basic_auth = requests.auth.HTTPBasicAuth(auth[0], auth[1])
-            logger.debug("basic Auth Set")
-            response = requests.get(legacy_url, stream=True, auth=basic_auth)
-            logger.debug("Response should be set")
+            headers = build_apache_headers_for_urllib3(auth)
+            logger.debug("Headers for stream retrieval are {}".format(headers))
+            logger.debug("using  url {}".format(legacy_url))
+            http = urllib3.PoolManager()
 
-            file_size = response.headers.get("Content-length", None)
-            logger.info("File size of legacy file is : {}".format(file_size))
-            if file_size:
-                # calculate a 1000 part split, make the chunksize 5MB greater
-                calculated_chunksize = int(int(file_size)/1000) + (5*MB)  # default to 1000 chunks
-                logger.info("Initial chunksize value = {}".format(calculated_chunksize))
-                if int(file_size) > 100*GB:
+            with http.request("GET", legacy_url, preload_content=False, headers=headers) as response:
+                logger.debug("Response should be set (streaming)")
 
-                    calculated_chunksize = int(int(file_size) / 5000) + (5 * MB)  # go with more chunks?
-                    logger.info("File size > 100Gb, using 5000 as the divisor, chunk size is {}".format(calculated_chunksize))
+                file_size = response.headers.get("Content-length", None)
+                logger.info("File size of legacy file is : {}".format(file_size))
+                if file_size:
+                    # calculate a 1000 part split, make the chunksize 5MB greater
+                    calculated_chunksize = int(int(file_size)/1000) + (5*MB)  # default to 1000 chunks
+                    logger.info("Initial chunksize value = {}".format(calculated_chunksize))
+                    if int(file_size) > 100*GB:
 
-                multipart_chunksize = max(20*MB, calculated_chunksize)
-                logger.info("Using chunksize of: {}".format(multipart_chunksize))
-            else:
-                logger.warn("File size not able to be determined from legacy URL")
-                # YOLO
-                multipart_chunksize=1024*20
+                        calculated_chunksize = int(int(file_size) / 5000) + (5 * MB)  # go with more chunks?
+                        logger.info("File size > 100Gb, using 5000 as the divisor, chunk size is {}".format(calculated_chunksize))
 
-            logger.info("Streaming - get the session...")
-            b3_config = Config(
-                retries={
-                    'max_attempts': 10,
-                    'mode': 'standard'
-                },
-                max_pool_connections=96,
-                # duration_seconds=7200  # 2 hours
-            )
-            stream_session = boto3.session.Session()
-            s3_client = stream_session.client("s3", config=b3_config)
-            s3_resource = stream_session.resource("s3")
-            # set logging for boto3 and botocore: (commented out so as not to add too much to the ingest logs
-            #boto3.set_stream_logger('boto3', logging.DEBUG)
-            #boto3.set_stream_logger('botocore', logging.DEBUG)
-            boto3.set_stream_logger('')
+                    multipart_chunksize = max(20*MB, calculated_chunksize)
+                    logger.info("Using chunksize of: {}".format(multipart_chunksize))
+                else:
+                    logger.warn("File size not able to be determined from legacy URL")
+                    # YOLO
+                    multipart_chunksize=1024*20
 
-            tf_config = TransferConfig(multipart_threshold=20*MB,  # this is irrelevant when chunksize is larger
-                                    multipart_chunksize=multipart_chunksize,
-                                    use_threads=False,
-                                    max_concurrency=4)
+                logger.info("Streaming - set S3 session...")
+                b3_config = Config(
+                    retries={
+                        'max_attempts': 10,
+                        'mode': 'standard'
+                    },
+                    max_pool_connections=96,
+                    # duration_seconds=7200  # 2 hours
+                )
+                stream_session = boto3.session.Session()
+                s3_client = stream_session.client("s3", config=b3_config)
+                s3_resource = stream_session.resource("s3")
+                # set logging for boto3 and botocore: (commented out so as not to add too much to the ingest logs
+                #boto3.set_stream_logger('boto3', logging.DEBUG)
+                #boto3.set_stream_logger('botocore', logging.DEBUG)
+                #boto3.set_stream_logger('')
+
+                tf_config = TransferConfig(multipart_threshold=20*MB,  # this is irrelevant when chunksize is larger
+                                        multipart_chunksize=multipart_chunksize,
+                                        use_threads=False,
+                                        max_concurrency=4)
 
             # Configure the progress bar
-            bar = {"unit": "B", "unit_scale": True, "unit_divisor": 1024, "ascii": True}
-            if file_size:
-                bar["total"] = int(file_size)
-            else:
-                logger.warn("File size not able to be determined from legacy URL")
+                bar = {"unit": "B", "unit_scale": True, "unit_divisor": 1024, "ascii": True}
+                if file_size:
+                    bar["total"] = int(file_size)
+                else:
+                    logger.warn("File size not able to be determined from legacy URL")
 
-            content_length = 0
-            # Chunk size of 1024 bytes
-            # data_stream = ResponseStream(response.iter_content(1024))
+                content_length = 0
+                # Chunk size of 1024 bytes
 
-            key = s3_destination.split("/", 3)[3]
+                key = s3_destination.split("/", 3)[3]
 
-            bucket_name = parent_destination.split("/")[0]
+                bucket_name = parent_destination.split("/")[0]
 
-            # validate bucket
-            try:
-                logger.debug("Bucket in stream is {}".format(bucket_name))
-                bucket = s3_resource.Bucket(bucket_name)
-                logger.debug("Bucket in stream is {}".format(bucket))
-            except ClientError as e:
-                logger.error("Error setting Bucket in stream {}".format(e))
-                bucket = None
+                # validate bucket
+                try:
+                    logger.debug("Bucket in stream is {}".format(bucket_name))
+                    bucket = s3_resource.Bucket(bucket_name)
+                    logger.debug("Bucket in stream is {}".format(bucket))
+                except ClientError as e:
+                    logger.error("Error setting Bucket in stream {}".format(e))
+                    bucket = None
 
-            # handle pre-existing file case
-            try:
-                # In case filename already exists, get current etag to check if the
-                # contents change after upload
-                head = s3_client.head_object(Bucket=bucket_name, Key=key)
-                logger.debug("Got the Head in the pre-check")
-            except ClientError as e:
-                logger.debug("Failed getting the head, set etag blank - file not in S3, file will be created {}".format(e))
-                etag = ""
-            else:
-                etag = head["ETag"].strip('"')
-                logger.debug("Did get the head, etag is {}".format(etag))
+                # handle pre-existing file case
+                try:
+                    # In case filename already exists, get current etag to check if the
+                    # contents change after upload
+                    head = s3_client.head_object(Bucket=bucket_name, Key=key)
+                    logger.debug("Got the Head in the pre-check")
+                except ClientError as e:
+                    logger.debug("Failed getting the head, set etag blank - file not in S3, file will be created {}".format(e))
+                    etag = ""
+                else:
+                    etag = head["ETag"].strip('"')
+                    logger.debug("Did get the head, etag is {}".format(etag))
 
-            # create the Object to represent the file
-            try:
-                s3_obj = bucket.Object(key)
-            except ClientError as e:
-                logger.error("ClientError when setting key: {}".format(e))
-                s3_obj = None
-            except AttributeError as e:
-                logger.error("Attribute Error when setting key:: {}".format(e))
-                s3_obj = None
-            try:
-                with tqdm.tqdm(**bar) as progress:
-                    # with data_stream as data:
-                    try:
-                        with response as part:
-                            logger.debug(part.headers)
-                            logger.debug(part.status_code)
-                            part.raw.decode_content = True
+                # create the Object to represent the file
+                try:
+                    s3_obj = bucket.Object(key)
+                except ClientError as e:
+                    logger.error("ClientError when setting key: {}".format(e))
+                    s3_obj = None
+                except AttributeError as e:
+                    logger.error("Attribute Error when setting key:: {}".format(e))
+                    s3_obj = None
+                try:
+                    with tqdm.tqdm(**bar) as progress:
+                        try:
                          # upload with progress bar
                             try:
                                 logger.debug("about to try the s3 upload")
-                                s3_client.upload_fileobj(part.raw, bucket_name, key,
+                                s3_client.upload_fileobj(response, bucket_name, key,
                                                          Callback=progress.update, Config=tf_config)
                                 logger.debug("Done with the upload_fileobj")
                             except ClientError as e:
@@ -615,6 +607,7 @@ def reupload_resource(ckan, ckan_obj, legacy_url, parent_destination, auth=None)
                                     head = s3_client.head_object(Bucket=bucket_name, Key=key)
                                     logger.debug("Head is: {}".format(head))
                                     content_length = head["ContentLength"]
+
                                     if content_length > 0 and content_length == int(file_size):
                                         logger.debug("Content length of {} is good, setting status to 0"
                                                      .format(content_length))
@@ -622,13 +615,15 @@ def reupload_resource(ckan, ckan_obj, legacy_url, parent_destination, auth=None)
                                     else:
                                         logger.error("uploaded s3 file size {} not legacy file size {} "
                                                      .format(content_length, file_size))
-                    except Exception as e:
-                        logger.error("Exception in with response/part: {}".format(e))
+                        except Exception as e:
+                            logger.error("Exception in with response/part: {}".format(e))
 
-            except Exception as e:
-                logger.error("Exception in status bar: {}".format(e))
+                except Exception as e:
+                    logger.error("Exception in status bar: {}".format(e))
 
-            logger.debug("Got to the end of the Stream logic, status is {}".format(status))
+                response.release_conn()  # regardless of the outcome, we should free up the connection.
+
+                logger.debug("Got to the end of the Stream logic, status is {}".format(status))
 
         else:
             s3cmd_args = ["aws", "s3", "cp", path, s3_destination]

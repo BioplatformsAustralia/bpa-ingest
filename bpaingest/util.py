@@ -7,6 +7,7 @@ import string
 from collections import namedtuple
 from hashlib import md5
 from .libs.munge import bpa_munge_filename
+import urllib3
 
 import ckanapi
 from dateutil.relativedelta import relativedelta
@@ -299,3 +300,10 @@ def clean_filename(filename):
 
 
 logger = make_logger(__name__)
+
+
+def build_apache_headers_for_urllib3(auth):
+    logger.debug("using  basic auth with {}".format(auth))
+    authorization = auth[0] + ':' + auth[1]
+    headers = urllib3.make_headers(basic_auth=authorization, accept_encoding="None")
+    return headers
