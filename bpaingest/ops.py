@@ -252,7 +252,7 @@ class ApacheArchiveInfo(BaseArchiveInfo):
                 return None
             self._size_cache[url] = self._size_cache[
                 resolved
-            ] = self.size_from_response(self.http.request("GET", resolved, headers=self.headers))
+            ] = self.size_from_response(self.http.request("HEAD", resolved, headers=self.headers))
         return self._size_cache[url]
 
 
