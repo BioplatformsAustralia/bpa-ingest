@@ -141,7 +141,7 @@ class AvianPacbioHifiMetadata(AvianBaseMetadata):
     contextual_classes = common_context
     metadata_patterns = [r"^.*\.md5$", r"^.*[\._]metadata.*.*\.xlsx$"]
     metadata_urls = [
-        "https://downloads-qcif.bioplatforms.com/ /avian_staging/pacbio-hifi/",
+        "https://downloads-qcif.bioplatforms.com/avian_staging/pacbio-hifi/",
     ]
     metadata_url_components = ("ticket",)
     resource_linkage = ("bioplatforms_library_id", "flowcell_id")
