@@ -20,6 +20,8 @@ from ...util import (
 
 common_context = [AvianLibraryContextual, AvianDatasetControlContextual]
 
+CONSORTIUM_ORG_NAME = "aus-avian-consortium-members"
+
 
 class AvianBaseMetadata(BaseMetadata):
     initiative = "Avian"
@@ -117,7 +119,13 @@ class AvianBaseMetadata(BaseMetadata):
                 self._add_datatype_specific_info_to_package(obj, row, fname)
                 self.build_title_into_object(obj)
                 self.build_notes_into_object(obj)
-                ingest_utils.permissions_organization_member(self._logger, obj)
+                ingest_utils.permissions_organization_member_after_embargo(
+                    self._logger,
+                    obj,
+                    "date_of_transfer_to_archive",
+                    self.embargo_days,
+                    CONSORTIUM_ORG_NAME,
+                )
                 ingest_utils.apply_access_control(self._logger, self, obj)
                 obj["tags"] = [{"name": "{:.100}".format(t)} for t in self.tag_names]
                 packages.append(obj)
