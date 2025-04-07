@@ -147,6 +147,10 @@ from .avian.ingest import (
     AvianHiCMetadata,
 )
 
+from .forest.ingest import (
+    ForestPacbioHifiMetadata,
+)
+
 class ProjectInfo:
     projects = {
         "amd": [
@@ -292,6 +296,9 @@ class ProjectInfo:
         "avian": [
             AvianPacbioHifiMetadata,
             AvianHiCMetadata,
+        ],
+        "forest": [
+            ForestPacbioHifiMetadata,
         ],
     }
 

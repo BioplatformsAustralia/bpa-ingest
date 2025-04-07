@@ -238,6 +238,12 @@ avian()
 
 }
 
+forest()
+{
+    apply forest-pacbio-hifi $*
+
+}
+
 run() {
   apply $*
 }
@@ -264,6 +270,7 @@ all()
   bsd $*
   workshop $*
   avian $*
+  forest $*
 }
 
 action="$1"
