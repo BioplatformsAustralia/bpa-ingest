@@ -220,6 +220,7 @@ class FungiIlluminaShortreadMetadata(FungiBaseMetadata):
             "sheet_name": [
                 "libmetadata",
                 "library_genomics",
+                "library_metadata",
             ],
             "header_length": 1,
             "column_name_row_index": 0,
