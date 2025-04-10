@@ -9,7 +9,7 @@ from ...abstract import BaseLibraryContextual
 
 class FungiDatasetControlContextual(BaseDatasetControlContextual):
     metadata_urls = [
-        "https://downloads-qcif.bioplatforms.com/bpa/fungi_staging/dataset_control/2022-12-08/"
+        "https://downloads-qcif.bioplatforms.com/bpa/fungi_staging/dataset_control/2025-04-10/"
     ]
     name = "fungi-dataset-contextual"
     contextual_linkage = ("sample_id",)
