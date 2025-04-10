@@ -1295,7 +1295,7 @@ class AusargGenomicsDDRADMetadata(AusargBaseMetadata):
     omics = "genomics"
     technology = "ddrad"
     sequence_data_type = "illumina-ddrad"
-    embargo_days = 365
+    embargo_days = 10
     contextual_classes = common_context
     metadata_patterns = [r"^.*\.md5$", r"^.*_metadata.*.*\.xlsx$"]
     metadata_urls = [
