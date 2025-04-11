@@ -98,6 +98,8 @@ class AvianBaseMetadata(BaseMetadata):
 
                 obj.update(
                     {
+                        "bioplatforms_library_id" : row.bioplatforms_library_id,
+                        "bioplatforms_dataset_id" : row.bioplatforms_dataset_id,
                         "name": name,
                         "id": name,
                         "type": self.ckan_data_type,
@@ -115,7 +117,6 @@ class AvianBaseMetadata(BaseMetadata):
                         ),
                     }
                 )
-
                 self._add_datatype_specific_info_to_package(obj, row, fname)
                 self.build_title_into_object(obj)
                 self.build_notes_into_object(obj)
@@ -274,7 +275,6 @@ class AvianPacbioHifiMetadata(AvianBaseMetadata):
         # below fields are in the metadata, but not required in the packages schema
         del obj["ccg_jira_ticket"]
         del obj["download"]
-
         ingest_utils.add_spatial_extra(self._logger, obj)
 
 
@@ -288,7 +288,9 @@ class AvianPacbioHifiMetadata(AvianBaseMetadata):
 
     def _build_resource_linkage(self, xlsx_info, resource, file_info):
         return (
-            ingest_utils.extract_ands_id(self._logger, resource["library_id"]),
+            ingest_utils.extract_ands_id(
+                self._logger,
+                file_info.get("library_id")),
             resource["flowcell_id"],
         )
 
@@ -436,7 +438,6 @@ class AvianHiCMetadata(AvianBaseMetadata):
             self._logger, resource["library_id"]
         )
         return
-
     def _build_resource_linkage(self, xlsx_info, resource, file_info):
         return (
             xlsx_info["ticket"],
