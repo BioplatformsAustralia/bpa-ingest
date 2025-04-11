@@ -21,7 +21,7 @@ class FungiDatasetControlContextual(BaseDatasetControlContextual):
 
 class FungiLibraryContextual(BaseLibraryContextual):
     metadata_urls = [
-        "https://downloads-qcif.bioplatforms.com/bpa/fungi_staging/metadata/2024-11-12/"
+        "https://downloads-qcif.bioplatforms.com/bpa/fungi_staging/metadata/2025-04-11/"
     ]
     name = "fungi-library-contextual"
 
