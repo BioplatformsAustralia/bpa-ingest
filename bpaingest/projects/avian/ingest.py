@@ -167,6 +167,7 @@ class AvianPacbioHifiMetadata(AvianBaseMetadata):
             fld("specimen_id", re.compile(r"specimen_[Ii][Dd]")),
             fld("tissue_number", "tissue_number", optional=True),
             fld("data_context", "data_context"),
+            fld("sample_id", "sample_id"),
             fld("library_layout", "library_layout"),
             fld("sequencing_model", "sequencing_model"),
             fld("insert_size_range", "insert_size_range"),
