@@ -113,6 +113,15 @@ DDRAD_METADATA_SHEET_PATTERN = r"""
 """
 ddrad_metadata_sheet_re = re.compile(DDRAD_METADATA_SHEET_PATTERN, re.VERBOSE)
 
+DDRAD_XLSX_PATTERN = r"""
+    TSI_
+    (?P<flowcell_id>\w{9})_
+    (?P<bpa_dataset_id>\d{4,6})_
+    (samplemetadata_ingest)
+    \.xlsx
+"""
+ddrad_xlsx_filename_re = re.compile(DDRAD_XLSX_PATTERN, re.VERBOSE)
+
 METADATA_SHEET_PATTERN = r"""
     TSI_
     (?P<facility_id>(UNSW))_

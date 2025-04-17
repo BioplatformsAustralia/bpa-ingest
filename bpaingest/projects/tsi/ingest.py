@@ -740,6 +740,7 @@ class TSIGenomicsDDRADMetadata(TSIBaseMetadata):
             files.ddrad_fastq_filename_re,
             files.ddrad_metadata_sheet_re,
             files.ddrad_analysed_tar_re,
+            files.ddrad_xlsx_filename_re,
         ],
         "skip": [
             re.compile(r"^.*_[Mm]etadata.*\.xlsx$"),
@@ -846,10 +847,26 @@ class TSIGenomicsDDRADMetadata(TSIBaseMetadata):
                     self.embargo_days,
                     CONSORTIUM_ORG_NAME,
                 )
+                attach_message = (
+                    "Attached metadata spreadsheets were produced when data was generated."
+                )
+                if "related_data" not in obj:
+                    obj["related_data"] = attach_message
+                else:
+                    obj["related_data"] = "{0} {1}".format(
+                        attach_message, obj["related_data"]
+                    )
                 ingest_utils.apply_access_control(self._logger, self, obj)
                 ingest_utils.add_spatial_extra(self._logger, obj)
                 obj["tags"] = [{"name": t} for t in self.tag_names]
                 self.track_xlsx_resource(obj, fname)
+                for sample_metadata_file in glob(
+                        self.path
+                        + "/*_"
+                        + ingest_utils.short_ands_id(self._logger, obj["dataset_id"])
+                        + "_samplemetadata_ingest.xlsx"
+                ):
+                    self.track_xlsx_resource(obj, sample_metadata_file)
                 packages.append(obj)
         return self.apply_location_generalisation(packages)
 
@@ -869,6 +886,9 @@ class TSIGenomicsDDRADMetadata(TSIBaseMetadata):
             ingest_utils.extract_ands_id(self._logger, resource["bpa_dataset_id"]),
             resource["flowcell_id"],
         )
+
+    def _build_common_files_linkage(self, xlsx_info, resource, file_info):
+        return ingest_utils.extract_ands_id(self._logger, resource["bpa_dataset_id"])
 
 
 class TSIGenomeAssemblyMetadata(TSIBaseMetadata):
