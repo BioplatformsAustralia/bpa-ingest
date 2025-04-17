@@ -1,0 +1,6 @@
+IPM Omics ,,,,,,,,,,,,,
+Contact atouffu@bioplatforms.com and mlum@bioplatforms.com if you need assistance filling this sheet.,,,,,,,,,,,,,
+Facility to fill,Facility to fill,Facility to fill (Leave empty if data is for >1 sample ID),Facility to fill (Leave empty if data is for >1 library ID),Facility to fill,Project Manager to fill,Facility to fill,Facility to fill,Facility to fill,Data team to fill,Project Manager to fill,Data team to fill,Project Manager to fill,
+,,,,,,,,,,,,,
+Facility,Date of transfer,bioplatforms_sample_id,bioplatforms_library_id,bioplatforms_dataset_id,scientific_name,Data type,Description,Folder name,Date of transfer to archive,Date data published,CCG JIRA Ticket,Download,Note
+AGRF,9/4/25,,,607771,Diachasmimorpha kraussii,Illmina short read,Illumina short read,20250409_ IPM_AGRF_CAGRF25020431_22YMTVLT3,10/04/2025,,BPAOPS-1772,,
