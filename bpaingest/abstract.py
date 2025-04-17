@@ -670,7 +670,7 @@ class BaseLibraryContextual:
             "sample_id",
             "sample_id",
         ),
-        fld("specimen_custodian", "specimen_custodian"),
+        fld("specimen_custodian", "specimen_custodian", optional=True),
         # specimen_ID
         fld("specimen_id", re.compile(r"specimen_?[Ii][Dd]")),
         # specimen_ID_description
@@ -696,11 +696,11 @@ class BaseLibraryContextual:
         fld("temperature", "temperature"),
         fld("location_info_restricted", "location_info_restricted"),
         fld("genotypic_sex", "genotypic_sex"),
-        fld("phenotypic_sex", "phenotypic_sex"),
-        fld("method_sex_determination", "method_sex_determination"),
-        fld("sex_certainty", "sex_certainty"),
+        fld("phenotypic_sex", "phenotypic_sex", optional=True),
+        fld("method_sex_determination", "method_sex_determination", optional=True),
+        fld("sex_certainty", "sex_certainty", optional=True),
         # taxon_id
-        fld("taxon_id", re.compile(r"taxon_[Ii][Dd]")),
+        fld("taxon_id", re.compile(r"taxon_[Ii][Dd]"), coerce=ingest_utils.get_int),
         # phylum
         fld("phylum", "phylum"),
         # class
@@ -757,9 +757,9 @@ class BaseLibraryContextual:
         # life-stage
         fld("lifestage", re.compile("life[_-]stage")),
         # birth_date
-        fld("birth_date", "birth_date", coerce=ingest_utils.get_date_isoformat),
+        fld("birth_date", "birth_date", coerce=ingest_utils.get_date_isoformat, optional=True),
         # death_date
-        fld("death_date", "death_date", coerce=ingest_utils.get_date_isoformat),
+        fld("death_date", "death_date", coerce=ingest_utils.get_date_isoformat, optional=True),
         fld("health_state", "health_state"),
         # associated_media
         fld("associated_media", "associated_media"),
@@ -787,6 +787,14 @@ class BaseLibraryContextual:
         # material_conc_ng_ul
         fld("material_conc_ng_ul", re.compile(r"[Mm]aterial_conc_ng_ul")),
         fld('indigenous_location', 'indigenous_location', optional=True),
+        fld('isolate', 'isolate', optional=True),
+        fld('host_common_name', 'host_common_name', optional=True),
+        fld('host_family', 'host_family', optional=True),
+        fld('host_scientific_name', 'host_scientific_name', optional=True),
+        fld('host_organ', 'host_organ', optional=True),
+        fld('host_symptom', 'host_symptom', optional=True),
+        fld('host_status', 'host_status', optional=True),
+        fld('project_lead', 'project_lead', optional=True),
     ]
 
     def __init__(self, logger, path):

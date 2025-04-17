@@ -151,6 +151,11 @@ from .forest.ingest import (
     ForestPacbioHifiMetadata,
 )
 
+from .ipm.ingest import (
+    IPMIlluminaShortreadMetadata,
+)
+
+
 class ProjectInfo:
     projects = {
         "amd": [
@@ -299,6 +304,9 @@ class ProjectInfo:
         ],
         "forest": [
             ForestPacbioHifiMetadata,
+        ],
+        "ipm": [
+            IPMIlluminaShortreadMetadata,
         ],
     }
 
