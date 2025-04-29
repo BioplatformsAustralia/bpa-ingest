@@ -42,7 +42,8 @@ class IPMBaseMetadata(BaseMetadata):
     notes_mapping = [
         {"key": "family", "separator": ", "},
         {"key": "genus", "separator": " "},
-        {"key": "species", "separator": ", "},
+        {"key": "species", "separator": ", Library ID: "},
+        {"key": "library_id", "separator": ", "},
         {"key": "sample_id", "separator": ", "},
         {"key": "taxonomic_group", "separator": ", Project Lead: "},
         {"key": "project_lead"},
@@ -89,7 +90,12 @@ class IPMBaseMetadata(BaseMetadata):
                 track_meta = self.get_tracking_info(row.ticket)
                 if track_meta is not None:
                     obj.update(track_meta._asdict())
-
+                # put back the sample and library ids that may be wiped out by the tracking sheet
+                obj.update(
+                    {
+                        "bioplatforms_sample_id": bioplatforms_sample_id,
+                        "bioplatforms_library_id": bioplatforms_library_id,
+                    })
                 context = {}
                 for contextual_source in self.contextual_metadata:
                     context.update(contextual_source.get(row.bioplatforms_sample_id))
@@ -123,10 +129,9 @@ class IPMBaseMetadata(BaseMetadata):
                         ),
                     }
                 )
-
+                self._add_datatype_specific_info_to_package(obj, row, fname)
                 self.build_title_into_object(obj)
                 self.build_notes_into_object(obj)
-                self._add_datatype_specific_info_to_package(obj, row, fname)
                 ingest_utils.permissions_organization_member_after_embargo(
                     self._logger,
                     obj,
@@ -264,7 +269,7 @@ class IPMIlluminaShortreadMetadata(IPMBaseMetadata):
         obj.update(
             {
                 "flow_cell_id": flowcell_id,
-                "library_id": row.bioplatforms_library_id.split("/")[-1],
+                "library_id": obj["bioplatforms_library_id"].split("/")[-1],
             }
         )
 
