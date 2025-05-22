@@ -149,6 +149,7 @@ from .avian.ingest import (
 
 from .forest.ingest import (
     ForestPacbioHifiMetadata,
+    ForestIlluminaShortreadMetadata,
 )
 
 from .ipm.ingest import (
@@ -304,6 +305,7 @@ class ProjectInfo:
         ],
         "forest": [
             ForestPacbioHifiMetadata,
+            ForestIlluminaShortreadMetadata,
         ],
         "ipm": [
             IPMIlluminaShortreadMetadata,

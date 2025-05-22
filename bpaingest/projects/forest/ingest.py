@@ -53,7 +53,6 @@ class ForestBaseMetadata(BaseMetadata):
         self.google_track_meta = ForestTrackMetadata(logger)
 
     def _build_title_into_object(self, obj):
-        print(obj)
         self.build_title_into_object(
             obj,
             {
@@ -82,7 +81,7 @@ class ForestBaseMetadata(BaseMetadata):
             ticket = xlsx_info["ticket"]
             track_meta = self.google_track_meta.get(ticket)
             for row in rows:
-                if not row.bioplatforms_library_id and not row.flowcell_id:
+                if not row.bioplatforms_dataset_id and not row.flowcell_id:
                     # skip empty rows
                     continue
                 sample_id = row.bioplatforms_sample_id
@@ -92,12 +91,12 @@ class ForestBaseMetadata(BaseMetadata):
                 raw_dataset_id = dataset_id.split("/")[-1]
                 obj = row._asdict()
                 if track_meta is not None:
-                    if track_meta.library_id == raw_library_id:
+                    if track_meta.dataset_id == raw_dataset_id:
                         obj.update(track_meta._asdict())
                     else:
                         self._logger.error(
                             "Mismatch between Tracking sheet dataset ID: {0} and  Metadata dataset ID: {1} in Ticket {2}".format(
-                                track_meta.library_id, raw_library_id, ticket
+                                track_meta.dataset_id, raw_dataset_id, ticket
                             )
                         )
                 name = sample_id_to_ckan_name(
@@ -307,3 +306,159 @@ class ForestPacbioHifiMetadata(ForestBaseMetadata):
 
     def _build_common_files_linkage(self, xlsx_info, resource, file_info):
         return (resource["flowcell_id"],)
+
+class ForestIlluminaShortreadMetadata(ForestBaseMetadata):
+    ckan_data_type = "forest-illumina-shortread"
+    technology = "illumina-shortread"
+    sequence_data_type = "illumina-shortread"
+    embargo_days = 365
+    contextual_classes = common_context
+    metadata_patterns = [r"^.*\.md5$", r"^.*_metadata.*.*\.xlsx$"]
+    metadata_urls = [
+        "https://downloads-qcif.bioplatforms.com/bpa/forest_staging/illumina-shortread/",
+    ]
+    metadata_url_components = ("ticket",)
+    resource_linkage = ("bioplatforms_library_id", "flowcell_id")
+    spreadsheet = {
+        "fields": [
+            fld(
+                "bioplatforms_sample_id",
+                "bioplatforms_sample_id",
+                coerce=ingest_utils.extract_ands_id,
+            ),
+            fld("sample_id", "sample_id", optional=True),
+            fld(
+                "bioplatforms_library_id",
+                re.compile(r"bioplatforms_library_[Ii][Dd]"),
+                coerce=ingest_utils.extract_ands_id,
+            ),
+            fld(
+                "bioplatforms_dataset_id",
+                "bioplatforms_dataset_id",
+                coerce=ingest_utils.extract_ands_id,
+            ),
+            fld("library_construction_protocol", "library_construction_protocol"),
+            fld("run_format", "run format", optional=True),
+            fld("work_order", "work_order", coerce=ingest_utils.int_or_comment),
+            fld(
+                "specimen_id",
+                re.compile(r"specimen_[Ii][Dd]"),
+                coerce=ingest_utils.int_or_comment,
+                optional=True,
+            ),
+            fld('tissue_number', 'tissue_number'),
+            fld('genus', 'genus'),
+            fld('species', 'species'),
+            fld('data_custodian', 'data_custodian'),
+            fld("data_context", "data_context", optional=True),
+            fld("library_type", "library_type"),
+            fld("library_layout", "library_layout"),
+            fld("facility_sample_id", "facility_sample_id"),
+            fld("sequencing_facility", "sequencing_facility"),
+            fld("sequencing_model", "sequencing_model"),
+            fld("library_strategy", "library_strategy"),
+            fld("library_selection", "library_selection"),
+            fld("library_source", "library_source"),
+            fld(
+                "library_prep_date",
+                "library_prep_date",
+                coerce=ingest_utils.get_date_isoformat,
+            ),
+            fld("library_prepared_by", "library_prepared_by"),
+            fld("library_location", "library_location"),
+            fld("library_status", "library_status", optional=True),
+            fld("library_comments", "library_comments"),
+            fld("dna_treatment", "dna_treatment"),
+            fld("library_index_id", "library_index_id"),
+            fld("library_index_sequence", "library_index_seq"),
+            fld("library_oligo_sequence", "library_oligo_sequence"),
+            fld("insert_size_range", "insert_size_range"),
+            fld("library_ng_ul", "library_ng_ul"),
+            fld("library_pcr_reps", "library_pcr_reps", coerce=ingest_utils.get_int),
+            fld(
+                "library_pcr_cycles", "library_pcr_cycles", coerce=ingest_utils.get_int
+            ),
+            fld("n_libraries_pooled", "n_libraries_pooled"),
+            fld("flowcell_type", "flowcell_type"),
+            fld("flowcell_id", "flowcell_id"),
+            fld("cell_postion", "cell_postion"),
+            fld("movie_length", "movie_length"),
+            fld("analysis_software", "analysis_software"),
+            fld("file_name", "file_name", optional=True),
+            fld("experimental_design", "experimental_design"),
+            fld("sequencing_platform", "sequencing_platform"),
+            fld("facility_project_code", "facility_project_code", optional=True),
+            fld(
+                "sequencing_kit_chemistry_version",
+                "sequencing_kit_chemistry_version",
+                optional=True,
+            ),
+            fld("bioplatforms_project", "bioplatforms_project"),
+            fld("scientific_name", "scientific_name", optional=True),
+            fld("project_lead", "project_lead", optional=True),
+            fld("project_collaborators", "project_collaborators", optional=True),
+            fld("bait_set_name", "bait_set_name"),
+            fld("bait_set_reference", "bait_set_reference"),
+            fld("library_index_id_dual", "library_index_id_dual"),
+            fld("library_index_seq_dual", "library_index_seq_dual"),
+            fld("library_oligo_sequence_dual", "library_oligo_sequence_dual"),
+            fld("fast5_compression", "fast5_compression"),
+            fld("model_base_caller", "model_base_caller"),
+        ],
+        "options": {
+            "sheet_name": "Sequencing metadata",
+            "header_length": 1,
+            "column_name_row_index": 0,
+        },
+    }
+
+    md5 = {
+        "match": [
+            files.illumina_shortread_re,
+        ],
+        "skip": [
+            re.compile(r"^.*_metadata.*\.xlsx$"),
+            re.compile(r"^.*SampleSheet.*"),
+            re.compile(r"^.*TestFiles\.exe.*"),
+            re.compile(r"^.*DataValidation\.pdf.*"),
+            re.compile(r"^.*checksums\.(exf|md5)$"),
+        ],
+    }
+    description = "Illumina Shortread"
+    tag_names = ["genomics", "illumina-short-read"]
+
+    def __init__(
+        self, logger, metadata_path, contextual_metadata=None, metadata_info=None
+    ):
+        super().__init__(logger, metadata_path)
+        self.path = Path(metadata_path)
+        self.contextual_metadata = contextual_metadata
+        self.metadata_info = metadata_info
+
+    def _get_packages(self):
+        packages = self._get_common_packages()
+        return packages
+
+    def _add_datatype_specific_info_to_package(self, obj, row, filename):
+        obj.update(
+            {
+                "bioplatforms_library_id": row.bioplatforms_library_id,
+                "library_id": row.bioplatforms_library_id.split("/")[-1],
+            }
+        )
+
+    def _get_resources(self):
+        return self._get_common_resources()
+
+    def _add_datatype_specific_info_to_resource(self, resource, md5_file=None):
+        resource["library_id"] = ingest_utils.extract_ands_id(
+            self._logger, resource["library_id"]
+        )
+        return
+
+    def _build_resource_linkage(self, xlsx_info, resource, file_info):
+        return (
+            resource["library_id"],
+            resource["flowcell_id"],
+        )
+

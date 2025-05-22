@@ -22,12 +22,13 @@ class ForestDatasetControlContextual(BaseDatasetControlContextual):
 
 class ForestLibraryContextual(BaseLibraryContextual):
     metadata_urls = [
-        "https://downloads-qcif.bioplatforms.com/bpa/forest_staging/metadata/2025-04-04/"
+        "https://downloads-qcif.bioplatforms.com/bpa/forest_staging/metadata/2025-05-20/"
     ]
     name = "forest-library-contextual"
     metadata_unique_identifier = "bioplatforms_library_id"
     sheet_names = [
         "PacBio",
+        "Re-sequencing",
     ]
     field_spec = [
         fld('bioplatforms_sample_id', 'bioplatforms_sample_id', coerce=ingest_utils.extract_ands_id,),
