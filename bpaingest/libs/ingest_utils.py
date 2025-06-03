@@ -227,7 +227,7 @@ def get_percentage(logger, val, default=None):
     return_val = default
     try:
         return_val = get_clean_number(logger, val, default)
-        if return_val > 100 or return_val < 0:
+        if (return_val > 100 or return_val < 0) and return_val != -9999.0:
             logger.warning(
                 "Potential invalid number - Percentage Range error: {}".format(str(val))
             )
