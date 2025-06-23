@@ -372,7 +372,7 @@ class PlantPathogenPacbioHifiMetadata(PlantPathogenBaseMetadata):
             fld("library_type", "library_type"),
             fld("library_layout", "library_layout"),
             fld(
-                "facility_sample_id", "facility_sample_id", coerce=ingest_utils.get_int
+                "facility_sample_id", "facility_sample_id", coerce=ingest_utils.int_or_comment
             ),
             fld("sequencing_facility", "sequencing_facility"),
             fld("sequencing_model", "sequencing_model"),
