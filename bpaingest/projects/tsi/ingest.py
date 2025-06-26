@@ -617,7 +617,7 @@ class TSIGenomicsDDRADMetadata(TSIBaseMetadata):
     sequence_data_type = "illumina-ddrad"
     embargo_days = 365
     contextual_classes = common_context
-    metadata_patterns = [r"^.*\.md5$", r"^.*_[Mm]etadata.*.*\.xlsx$"]
+    metadata_patterns = [r"^.*\.md5$", r"^.*_metadata.*.*\.xlsx$"]
     metadata_urls = [
         "https://downloads-qcif.bioplatforms.com/bpa/tsi_staging/ddrad/",
     ]
@@ -743,7 +743,7 @@ class TSIGenomicsDDRADMetadata(TSIBaseMetadata):
             files.ddrad_xlsx_filename_re,
         ],
         "skip": [
-            re.compile(r"^.*_[Mm]etadata.*\.xlsx$"),
+            re.compile(r"^.*_metadata.*\.xlsx$"),
             re.compile(r"^.*TestFiles\.exe.*"),
             re.compile(r"^.*DataValidation\.pdf.*"),
         ],
@@ -763,7 +763,7 @@ class TSIGenomicsDDRADMetadata(TSIBaseMetadata):
         self.flow_lookup = {}
 
     def _get_packages(self):
-        xlsx_re = re.compile(r"^.*_(\w+)_[Mm]etadata.*\.xlsx$")
+        xlsx_re = re.compile(r"^.*_(\w+)_metadata.*\.xlsx$")
 
         def get_flow_id(fname):
             m = xlsx_re.match(fname)
