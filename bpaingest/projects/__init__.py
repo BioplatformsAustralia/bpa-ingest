@@ -154,6 +154,7 @@ from .forest.ingest import (
 
 from .ipm.ingest import (
     IPMIlluminaShortreadMetadata,
+    IPMONTPromethionMetadata,
 )
 
 
@@ -309,6 +310,7 @@ class ProjectInfo:
         ],
         "ipm": [
             IPMIlluminaShortreadMetadata,
+            IPMONTPromethionMetadata,
         ],
     }
 
