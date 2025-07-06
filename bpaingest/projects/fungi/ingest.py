@@ -554,12 +554,10 @@ class FungiMetabolomicsMetadata(FungiBaseMetadata):
         return resources + self.generate_xlsx_resources()
 
     def _add_datatype_specific_info_to_resource(self, resource, md5_file):
-        print("Resrouce before is:", resource)
         if "dataset_id" in resource and resource["dataset_id"] is not None:
             resource["bioplatforms_dataset_id"] = ingest_utils.extract_ands_id(
                 self._logger, resource["dataset_id"]
             )
-        print("Resrouce after is:",resource )
         return
 
     def _build_resource_linkage(self, xlsx_info, resource, file_info):
