@@ -92,6 +92,7 @@ from .tsi.ingest import (
     TSIGenomeAssemblyMetadata,
     TSIHiCMetadata,
     TSIGenomicsDArTMetadata,
+    TSIONTPromethionMetadata,
 )
 
 from .fungi.ingest import (
@@ -222,6 +223,7 @@ class ProjectInfo:
             TSIGenomeAssemblyMetadata,
             TSIHiCMetadata,
             TSIGenomicsDArTMetadata,
+            TSIONTPromethionMetadata,
         ],
         "sepsis": [
             SepsisGenomicsMiseqMetadata,

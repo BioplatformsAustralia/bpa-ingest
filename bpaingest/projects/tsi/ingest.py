@@ -1465,3 +1465,140 @@ class TSIGenomicsDArTMetadata(TSIBaseMetadata):
 
     def _build_resource_linkage(self, xlsx_info, resource, file_info):
         return (ingest_utils.extract_ands_id(self._logger, resource["dataset_id"]),)
+
+class TSIONTPromethionMetadata(TSIBaseMetadata):
+
+        ckan_data_type = "tsi-ont-promethion"
+        technology = "ont-promethion"
+        sequence_data_type = "ont-promethion"
+        embargo_days = 365
+        contextual_classes = common_context
+        metadata_patterns = [r"^.*\.md5$", r"^.*_metadata.*.*\.xlsx$"]
+        metadata_urls = [
+            "https://downloads-qcif.bioplatforms.com/bpa/tsi_staging/ont-promethion/",
+        ]
+        metadata_url_components = ("ticket",)
+        resource_linkage = ("library_id", "flowcell_id")
+
+        spreadsheet = {
+            "fields": [
+                fld('bioplatforms_project', 'bioplatforms_project'),
+                fld('library_id', 'bioplatforms_library_id', coerce=ingest_utils.extract_ands_id),
+                fld('sample_id', 'bioplatforms_sample_id', coerce=ingest_utils.extract_ands_id),
+                fld('dataset_id', 'bioplatforms_dataset_id', coerce=ingest_utils.extract_ands_id),
+                fld('work_order', 'work_order'),
+                fld('facility_project_code', 'facility_project_code'),
+                fld('specimen_id', 'specimen_id', optional=True),
+                fld('scientific_name', 'scientific_name', optional=True),
+                fld('tissue_number', 'tissue_number'),
+                fld('genus', 'genus'),
+                fld('species', 'species'),
+                fld('data_custodian', 'data_custodian'),
+                fld('project_lead', 'project_lead', optional=True),
+                fld('project_collaborators', 'project_collaborators', optional=True),
+                fld('data_context', 'data_context', optional=True),
+                fld('library_type', 'library_type'),
+                fld('library_layout', 'library_layout'),
+                fld('facility_sample_id', 'facility_sample_id'),
+                fld('sequencing_facility', 'sequencing_facility'),
+                fld('sequencing_platform', 'sequencing_platform'),
+                fld('sequencing_model', 'sequencing_model'),
+                fld('library_construction_protocol', 'library_construction_protocol'),
+                fld('library_strategy', 'library_strategy'),
+                fld('bait_set_name', 'bait_set_name'),
+                fld('bait_set_reference', 'bait_set_reference'),
+                fld('library_selection', 'library_selection'),
+                fld('library_source', 'library_source'),
+                fld('library_prep_date', 'library_prep_date', coerce=ingest_utils.get_date_isoformat),
+                fld('library_prepared_by', 'library_prepared_by'),
+                fld('library_location', 'library_location'),
+                fld('library_comments', 'library_comments'),
+                fld('dna_treatment', 'dna_treatment'),
+                fld('library_index_id', 'library_index_id'),
+                fld('library_index_seq', 'library_index_seq'),
+                fld('library_oligo_sequence', 'library_oligo_sequence'),
+                fld('library_index_id_dual', 'library_index_id_dual'),
+                fld('library_index_seq_dual', 'library_index_seq_dual'),
+                fld('library_oligo_sequence_dual', 'library_oligo_sequence_dual'),
+                fld('insert_size_range', 'insert_size_range'),
+                fld('library_ng_ul', 'library_ng_ul'),
+                fld('library_pcr_cycles', 'library_pcr_cycles'),
+                fld('library_pcr_reps', 'library_pcr_reps'),
+                fld('n_libraries_pooled', 'n_libraries_pooled'),
+                fld('flowcell_type', 'flowcell_type'),
+                fld('flowcell_id', 'flowcell_id'),
+                fld('cell_postion', 'cell_postion'),
+                fld('movie_length', 'movie_length'),
+                fld('sequencing_kit_chemistry_version', 'sequencing_kit_chemistry_version'),
+                fld('analysis_software', 'analysis_software'),
+                fld('analysis_software_version', 'analysis_software_version'),
+                fld('file_type', 'file_type'),
+                fld('experimental_design', 'experimental_design'),
+                fld('fast5_compression', 'fast5_compression'),
+                fld('model_base_caller', 'model_base_caller'),
+
+        ],
+            "options": {
+                "sheet_name": "Library metadata",
+                "header_length": 1,
+                "column_name_row_index": 0,
+            },
+        }
+        md5 = {
+            "match": [files.ont_promethion_re,
+                      files.ont_promethion_common_re,
+                      ],
+            "skip": [
+                re.compile(r"^.*_metadata.*\.xlsx$"),
+                re.compile(r"^.*SampleSheet.*"),
+                re.compile(r"^.*TestFiles\.exe.*"),
+            ],
+        }
+        common_files_match = [
+            files.ont_promethion_common_re,
+        ]
+        common_files_linkage = ("flowcell_id",)
+
+        description = "ONT PromethION"
+        tag_names = ["ont-promethion"]
+
+        def __init__(
+                self, logger, metadata_path, contextual_metadata=None, metadata_info=None
+        ):
+            super().__init__(logger, metadata_path)
+            self.path = Path(metadata_path)
+            self.contextual_metadata = contextual_metadata
+            self.metadata_info = metadata_info
+            self.google_track_meta = TSIGoogleTrackMetadata(logger)
+
+
+        def _get_packages(self):
+            packages = self._get_common_packages()
+            return self.apply_location_generalisation(packages)
+
+        def _add_datatype_specific_info_to_package(self, obj, row, filename):
+            pass
+
+        def _get_resources(self):
+            resources = self._get_common_resources()
+            common_resources = self.generate_common_files_resources(resources)
+            return resources + common_resources
+
+        def _add_datatype_specific_info_to_resource(self, resource, md5_file):
+            if "library_id" in resource and resource["library_id"] is not None:
+                resource["bioplatforms_library_id"] = ingest_utils.extract_ands_id(
+                    self._logger, resource["library_id"]
+                )
+            return
+
+        def _build_resource_linkage(self, xlsx_info, resource, file_info):
+            return (
+                ingest_utils.extract_ands_id(self._logger, resource["library_id"]),
+                resource["flow_cell_id"],
+            )
+
+        def _build_common_files_linkage(self, xlsx_info, resource, file_info):
+            return (
+                resource["flow_cell_id"],
+            )
+
