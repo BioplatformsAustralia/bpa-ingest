@@ -146,6 +146,7 @@ from .workshop.ingest import (
 from .avian.ingest import (
     AvianPacbioHifiMetadata,
     AvianHiCMetadata,
+    AvianIlluminaShortreadMetadata,
 )
 
 from .forest.ingest import (
@@ -305,6 +306,7 @@ class ProjectInfo:
         "avian": [
             AvianPacbioHifiMetadata,
             AvianHiCMetadata,
+            AvianIlluminaShortreadMetadata,
         ],
         "forest": [
             ForestPacbioHifiMetadata,
