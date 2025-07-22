@@ -83,6 +83,8 @@ class AvianBaseMetadata(BaseMetadata):
                     obj.update(track_meta._asdict())
 
                 context = {}
+                # grab the project lead, as the sample metadata one is likely blank
+                library_project_lead = obj["project_lead"]
                 for contextual_source in self.contextual_metadata:
                     context.update(contextual_source.get(row.bioplatforms_sample_id))
                 obj.update(context)
@@ -115,6 +117,7 @@ class AvianBaseMetadata(BaseMetadata):
                                 row.ticket, "date_of_transfer_to_archive"
                             ),
                         ),
+                        "project_lead": library_project_lead,
                     }
                 )
                 self._add_datatype_specific_info_to_package(obj, row, fname)
@@ -226,9 +229,9 @@ class AvianPacbioHifiMetadata(AvianBaseMetadata):
             ),
             fld("fast5_compression", "fast5_compression", optional=True),
             fld("model_base_caller", "model_base_caller", optional=True),
-            fld('scientific_name', 'scientific_name', optional=True),
-            fld('project_lead', 'project_lead', optional=True),
-            fld('project_collaborators', 'project_collaborators', optional=True),
+            fld("scientific_name", "scientific_name", optional=True),
+            fld("project_lead", "project_lead", optional=True),
+            fld("project_collaborators", "project_collaborators", optional=True),
 
         ],
         "options": {
@@ -315,7 +318,7 @@ class AvianHiCMetadata(AvianBaseMetadata):
 
     spreadsheet = {
         "fields": [
-            fld('bioplatforms_project', 'bioplatforms_project', optional=True),
+            fld("bioplatforms_project", "bioplatforms_project", optional=True),
             fld(
                 "bioplatforms_library_id",
                 re.compile(r"(bioplatforms_library_id)"),
@@ -339,8 +342,8 @@ class AvianHiCMetadata(AvianBaseMetadata):
             fld("genus", "genus", optional=True),
             fld("species", "species", optional=True),
             fld("data_custodian", "data_custodian", optional=True),
-            fld('project_lead', 'project_lead'),
-            fld('project_collaborators', 'project_collaborators'),
+            fld("project_lead", "project_lead"),
+            fld("project_collaborators", "project_collaborators"),
             fld("data_context", "data_context"),
             fld("library_type", "library_type"),
             fld("library_layout", "library_layout"),
@@ -350,8 +353,8 @@ class AvianHiCMetadata(AvianBaseMetadata):
             fld("sequencing_model", "sequencing_model"),
             fld("library_construction_protocol", "library_construction_protocol"),
             fld("library_strategy", "library_strategy"),
-            fld('bait_set_name', 'bait_set_name', optional=True),
-            fld('bait_set_reference', 'bait_set_reference', optional=True),
+            fld("bait_set_name", "bait_set_name", optional=True),
+            fld("bait_set_reference", "bait_set_reference", optional=True),
             fld("library_selection", "library_selection"),
             fld("library_source", "library_source"),
             fld(
@@ -385,7 +388,7 @@ class AvianHiCMetadata(AvianBaseMetadata):
             fld("file_type", "file_type", optional=True),
             fld("experimental_design", "experimental_design"),
             fld("work_order", "work_order", coerce=ingest_utils.get_int),
-            fld('scientific_name', 'scientific_name'),
+            fld("scientific_name", "scientific_name"),
             fld("library_index_id_dual", "library_index_id_dual", optional=True),
             fld("library_index_seq_dual", "library_index_seq_dual", optional=True),
             fld(
