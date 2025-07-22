@@ -542,7 +542,8 @@ class AvianIlluminaShortreadMetadata(AvianBaseMetadata):
                 "libmetadata",
                 "library_genomics",
                 "library_metadata",
-                "Sequencing metadata"
+                "Sequencing metadata",
+                "Library metadata"
             ],
             "header_length": 1,
             "column_name_row_index": 0,
