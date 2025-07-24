@@ -2,5 +2,5 @@ from ...tracking import GoogleDriveTrackMetadata
 
 
 class FishGoogleTrackMetadata(GoogleDriveTrackMetadata):
-    name = "Fish Initiative"
+    name = "Fish"
     skip_tracking_rows = 4
