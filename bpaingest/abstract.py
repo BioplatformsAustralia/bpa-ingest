@@ -692,7 +692,7 @@ class BaseLibraryContextual:
         fld("env_local_scale", "env_local_scale"),
         fld("env_medium", "env_medium"),
         fld("altitude", "altitude"),
-        fld("depth", "depth", coerce=ingest_utils.get_clean_number),
+        fld("depth", "depth", coerce=ingest_utils.int_or_comment),
         fld("temperature", "temperature"),
         fld("location_info_restricted", "location_info_restricted"),
         fld("genotypic_sex", "genotypic_sex"),
