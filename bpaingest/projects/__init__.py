@@ -159,6 +159,10 @@ from .ipm.ingest import (
     IPMONTPromethionMetadata,
 )
 
+from .fish.ingest import (
+    FishIlluminaShortreadMetadata,
+    FishPacbioHifiMetadata,
+)
 
 class ProjectInfo:
     projects = {
@@ -315,6 +319,10 @@ class ProjectInfo:
         "ipm": [
             IPMIlluminaShortreadMetadata,
             IPMONTPromethionMetadata,
+        ],
+        "fish": [
+            FishIlluminaShortreadMetadata,
+            FishPacbioHifiMetadata,
         ],
     }
 
