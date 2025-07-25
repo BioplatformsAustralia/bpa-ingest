@@ -116,13 +116,23 @@ PROTEOMICS_SAMPLE_RAW_PATTERN = r"""
 """
 proteomics_sample_filename_re = re.compile(PROTEOMICS_SAMPLE_RAW_PATTERN, re.VERBOSE )
 
+PROTEOMICS_SAMPLE_RAW_PATTERN_2 = r"""
+    (?P<dataset_id>\d{4,6})_
+    (PPA_
+    (?P<facility_id>(UNISA)))?
+    (_LCMS_DIA|_LCMS_DDA)
+    (_Albumin_Fraction_\d_Replicate_\d|_Globulin_Fraction_\d_Replicate_\d|_Glutelin_Fraction_\d_Replicate_\d|_Prolamin_Fraction_\d_Replicate_\d|_Residual_Fraction_\d_Replicate_\d)
+    \.(timeseries\.data|wiff|wiff2|wiff\.scan|raw)$
+"""
+proteomics_sample_filename_2_re = re.compile(PROTEOMICS_SAMPLE_RAW_PATTERN_2, re.VERBOSE )
+
 PROTEOMICS_ANALYSED_PATTERN = r"""
     (Analysed_)
     (?P<dataset_id>\d{4,6})_
     (PPA_
     (?P<facility_id>(UNISA)))?
     (_LCMS_|_)?
-    (DIA_report|DIA|DDA_report|DDA|amino_acid_tryptophan_report|amino_acid_standard_report|amino_acid_cysteine_methionine_report|trypsin_inhibitors_quantitation_report)
+    (DIA_report|DIA|DDA_report|DDA|amino_acid_tryptophan_report|amino_acid_standard_report|amino_acid_cysteine_methionine_report|trypsin_inhibitors_quantitation_report|DIA_protein_fractionation|Protein_fractionation_report|Fractionation_protein_analysis_report)
     \.(pdf|xlsx)
 """
 proteomics_analysed_filename_re = re.compile(PROTEOMICS_ANALYSED_PATTERN, re.VERBOSE)
