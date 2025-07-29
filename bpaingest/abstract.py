@@ -794,7 +794,7 @@ class BaseLibraryContextual:
         fld('host_organ', 'host_organ', optional=True),
         fld('host_symptom', 'host_symptom', optional=True),
         fld('host_status', 'host_status', optional=True),
-        fld('project_lead', 'project_lead', optional=True),
+
     ]
 
     def __init__(self, logger, path):
