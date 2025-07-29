@@ -483,13 +483,15 @@ class BASEAmpliconsControlMetadata(AMDFullIngestMetadata):
         self.track_meta = BASETrackMetadata(logger)
 
     def _get_packages(self):
-        flow_id_ticket = dict(
-            ((t["amplicon"], t["flow_id"]), self.metadata_info[os.path.basename(fname)])
+        flow_id_info = {
+            (t["flow_id"],t["amplicon"]): self.metadata_info[os.path.basename(fname)]
             for _, _, fname, t in self.md5_lines()
-        )
+        }
         packages = []
-        for (amplicon, flow_id), info in sorted(flow_id_ticket.items()):
+        for flow_id_and_amplicon, info in sorted(flow_id_info.items()):
             obj = {}
+            amplicon = info["amplicon"].upper()
+            flow_id = flow_id_and_amplicon[0].upper()
             name = sample_id_to_ckan_name(
                 "control", self.ckan_data_type + "-" + amplicon, flow_id
             ).lower()
@@ -1293,13 +1295,14 @@ class MarineMicrobesAmpliconsControlMetadata(AMDFullIngestMetadata):
 
     def _get_packages(self):
         flow_id_info = {
-            t["flow_id"]: self.metadata_info[os.path.basename(fname)]
+            (t["flow_id"],t["amplicon"]): self.metadata_info[os.path.basename(fname)]
             for _, _, fname, t in self.md5_lines()
         }
         packages = []
-        for flow_id, info in sorted(flow_id_info.items()):
+        for flow_id_and_amplicon, info in sorted(flow_id_info.items()):
             obj = {}
             amplicon = info["amplicon"].upper()
+            flow_id = flow_id_and_amplicon[0].upper()
             name = sample_id_to_ckan_name(
                 "control", self.ckan_data_type + "-" + amplicon, flow_id
             ).lower()
@@ -2264,13 +2267,14 @@ class AustralianMicrobiomeAmpliconsControlMetadata(AMDFullIngestMetadata):
 
     def _get_packages(self):
         flow_id_info = {
-            t["flow_id"]: self.metadata_info[os.path.basename(fname)]
+            (t["flow_id"],t["amplicon"]): self.metadata_info[os.path.basename(fname)]
             for _, _, fname, t in self.md5_lines()
         }
         packages = []
-        for flow_id, info in sorted(flow_id_info.items()):
+        for flow_id_and_amplicon, info in sorted(flow_id_info.items()):
             obj = {}
             amplicon = info["amplicon"].upper()
+            flow_id = flow_id_and_amplicon[0].upper()
             name = sample_id_to_ckan_name(
                 "control", self.ckan_data_type + "-" + amplicon, flow_id
             ).lower()

@@ -169,7 +169,7 @@ def test_amd_amplicon_v2_re():
 
 def test_amd_amplicon_control_re():
     filenames = [
-        "ATCC1002MOCK_16S_J6H7B_TCCGAATT-TCTACACT_S2_L001_R2.fastq.gz",
+
         "Arc_mock_community_A16_J8H8P_TCGACGTC-CTAAGCCT_S1_L001_I1.fastq.gz",
         "No_Template_Control_16S_J6H5P_ACGCCACG-TCTACACT_S3_L001_R2.fastq.gz",
         "No_Template_Control_A16_J8H8P_TCGACGTC-TCTCTCCG_S3_L001_I1.fastq.gz",
@@ -179,6 +179,13 @@ def test_amd_amplicon_control_re():
         "No_Template_Control_ITS_J9GNL_AATGTCCG-TAGTGTAG_S3_L001_R2.fastq.gz",
         "Soil_DNA_ITS_J9GNL_AATGTCCG-TGCGTACG_S2_L001_I1.fastq.gz",
         "NEG_16S_K9276_ATTCCTGT-ACGACGTG_S56_L001_I1.fastq.gz",
+        "ATCC1002MOCK_16S_J6H7B_TCCGAATT-TCTACACT_S2_L001_R2.fastq.gz",
+        # "ATCC1002MOCK_16S_M57TK_CTAACTCCGA-CCGCAGTATC_S97_L001_I1_001.fastq.gz",
+        "ATCC1002MOCK_16S_M57TK_CTAACTCCGA-CCGCAGTATC_S97_L001_I2_001.fastq.gz",
+        "ATCC1002MOCK_neat_16S_M57TK_CTAGCTCCTG-GACATGTAGA_S95_L001_I1_001.fastq.gz",
+        "No_Template_Control_neat_16S_M57TK_AGATCGCTCG-ATAACGCTCA_S108_L001_I1_001.fastq.gz",
+        "Soil_DNA_1_10_16S_M57TK_CGATGATAGC-ATCACGGCTA_S93_L001_I1_001.fastq.gz",
+
     ]
     for filename in filenames:
         assert amd_amplicon_control_filename_re.match(filename) is not None

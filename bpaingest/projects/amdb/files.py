@@ -394,7 +394,7 @@ amd_amplicon_filename_v2_re = re.compile(
 amd_amplicon_control_filename_re = re.compile(
     r"""
     ^(?P<control_type>Arc_mock_community|Bac_mock_community|Fungal_mock_community|Soil_DNA|STAN|.*MOCK|No_Template_Control|Zymo_DNA_Control|blank|NEG)_
-    (?P<extra_descriptor>).*
+    (?P<extra_descriptor>.*_?)
     (?P<amplicon>16S|18S|ITS|A16S?)_
     (?P<flow_id>\w{5})_
     (?P<index>[G|A|T|C|-]*)_
@@ -407,7 +407,7 @@ amd_amplicon_control_filename_re = re.compile(
 amd_amplicon_control_filename_v2_re = re.compile(
     r"""
     ^(?P<control_type>Arc_mock_community|Bac_mock_community|Fungal_mock_community|Soil_DNA|STAN|.*Mock|.*MOCK|No_Template_Control|Zymo_DNA_Control|blank|NEG)_
-    (?P<extra_descriptor>).*
+    (?P<extra_descriptor>.*_?)
     (?P<amplicon>16S|18S|ITS|A16?)_
     (?P<flow_id>\w{5})_
     (?P<index>[G|A|T|C|-]*)_
