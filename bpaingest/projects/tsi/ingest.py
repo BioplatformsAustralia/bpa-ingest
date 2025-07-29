@@ -88,10 +88,6 @@ class TSIBaseMetadata(BaseMetadata):
                     obj.update(track_meta._asdict())
 
                 context = {}
-                # grab the project lead, as the sample metadata one is likely blank
-                library_project_lead = ''
-                if "project_lead" in obj:
-                    library_project_lead = obj["project_lead"]
                 for contextual_source in self.contextual_metadata:
                     context.update(contextual_source.get(row.sample_id))
                 obj.update(context)
@@ -122,7 +118,6 @@ class TSIBaseMetadata(BaseMetadata):
                                 row.ticket, "date_of_transfer_to_archive"
                             ),
                         ),
-                        "project_lead": library_project_lead,
                     }
                 )
 
