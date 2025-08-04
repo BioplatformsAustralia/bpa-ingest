@@ -13,14 +13,14 @@ readme = "README.md"
 bpa-ingest = 'bpaingest.cli:main'
 
 [tool.poetry.dependencies]
-python = ">=3.8.1,<4"
+python = ">=3.9,<4"
 pandas = ">=1.1.1"
 unipath = "^1.1"
 xlrd = "^1.2.0"
 xlwt = "^1.3.0"
 beautifulsoup4 = ">=4.9.0"
-requests = ">=2.23.0"
-boto3 = ">=1.21.24"
+
+
 python-dateutil = "^2.8.1"
 google-api-python-client = "^1.8.2"
 ckanapi = { git = "https://github.com/BioplatformsAustralia/ckanapi.git", branch = "streaming-uploads" }
@@ -30,8 +30,11 @@ openpyxl = "^3.0.10"
 setuptools = "^67.6.1"
 numpy = "<2"
 deepdiff = "^8.0.1"
-tqdm = ">=4.67.1"
-urllib3 = ">=2.3.0"
+requests = "^2.32.4"
+tqdm = "^4.67.1"
+boto3 = "^1.40.1"
+# urllib3 comes in with boto3, used in the streaming code
+
 
 [tool.poetry.group.dev.dependencies]
 black = "^19.10b0"
