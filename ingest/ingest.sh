@@ -25,7 +25,7 @@
 # INGEST_ARGS="--skip-resource-checks" ./ingest.sh sync <x> run stemcells-singlecellrnaseq
 #
 
-export GDAL_DATA=${VIRTUAL_ENV}/lib/python3.7/site-packages/fiona/gdal_data/
+export GDAL_DATA=${VIRTUAL_ENV}/lib/python3.9/site-packages/fiona/gdal_data/
 
 apply()
 {
