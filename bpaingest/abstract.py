@@ -145,7 +145,7 @@ class BaseMetadata:
             optional_re = re.compile(self.OPTIONAL_PATTERN, re.VERBOSE)
             if optional_re.match(os.path.basename(filename)):
                 resource["optional_file"] = True
-                self._logger.warn("Optional files match {}".format(filename))
+                self._logger.info("Optional files match {}".format(filename))
 
             xlsx_info = self.metadata_info[os.path.basename(md5_file)]
             legacy_url = urljoin(xlsx_info["base_url"], quote(filename))
