@@ -70,3 +70,29 @@ PACBIO_HIFI_COMMON_PATTERN = r"""
     (\.pdf)
 """
 pacbio_hifi_common_re = re.compile(PACBIO_HIFI_COMMON_PATTERN, re.VERBOSE)
+
+
+ONT_PROMETHION_PATTERN = r"""
+    (?P<library_id>\d{4,6})_
+    FISH_
+    (?P<facility_id>(BRF))_
+    (?P<flow_cell_id>P[AB][ABCDEFGKMOQW]\d{5})_
+    (Run(?P<run_number>\d+)_)?
+    ONTPromethION_
+    (?P<archive_type>\w+)
+    (\.tar
+      |\.html
+      |\.txt)
+"""
+ont_promethion_re = re.compile(ONT_PROMETHION_PATTERN, re.VERBOSE)
+
+ONT_PROMETHION_COMMON_PATTERN = r"""
+    FISH_
+    (?P<facility_id>(BRF))_
+    (?P<flow_cell_id>P[AB][ABCDEFGKMOQW]\d{5})_
+    (Run(?P<run_number>\d+)_)?
+    (ONTPromethION_)
+    (?P<archive_type>\w+)
+    \.(html|tsv|txt|tar)
+"""
+ont_promethion_common_re = re.compile(ONT_PROMETHION_COMMON_PATTERN, re.VERBOSE)

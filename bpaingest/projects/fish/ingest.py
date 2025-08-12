@@ -132,6 +132,11 @@ class FishBaseMetadata(BaseMetadata):
                 self._build_title_into_object(obj, bioplatforms_library_id)
                 self.build_notes_into_object(obj)
                 self._add_datatype_specific_info_to_package(obj, row, fname)
+                # If there are run_numbers in the package info, we need to add the
+                # run number to the id and name to make it unique.
+                if "run_number" in obj and obj["run_number"] is not None:
+                    obj["name"] = "{}-{}".format(obj["name"], obj["run_number"])
+                    obj["id"] = obj["name"]
                 ingest_utils.permissions_organization_member(self._logger, obj)
                 ingest_utils.apply_access_control(self._logger, self, obj)
                 obj["tags"] = [{"name": "{:.100}".format(t)} for t in self.tag_names]
@@ -424,4 +429,149 @@ class FishPacbioHifiMetadata(FishBaseMetadata):
 
     def _build_common_files_linkage(self, xlsx_info, resource, file_info):
         return (resource["flowcell_id"],)
+
+
+class FishONTPromethionMetadata(FishBaseMetadata):
+    ckan_data_type = "fish-ont-promethion"
+    technology = "ont-promethion"
+    sequence_data_type = "ont-promethion"
+    embargo_days = 365
+    contextual_classes = common_context
+    metadata_patterns = [r"^.*\.md5$", r"^.*_metadata.*.*\.xlsx$"]
+    metadata_urls = [
+        "https://downloads-qcif.bioplatforms.com/bpa/fish_staging/ont-promethion/",
+    ]
+    metadata_url_components = ("ticket",)
+    resource_linkage = ("bioplatforms_library_id", "flowcell_id", "run_number",)
+    spreadsheet = {
+        "fields": [
+            fld('bioplatforms_project', 'bioplatforms_project'),
+            fld('bioplatforms_project_ncbi_umbrellabioproject_id', 'bioplatforms_project_ncbi_umbrellabioproject_id'),
+            fld('bioplatforms_library_id', 'bioplatforms_library_id', coerce=ingest_utils.extract_ands_id),
+            fld('bioplatforms_sample_id', 'bioplatforms_sample_id', coerce=ingest_utils.extract_ands_id),
+            fld('bioplatforms_dataset_id', 'bioplatforms_dataset_id', coerce=ingest_utils.extract_ands_id),
+            fld('work_order', 'work_order'),
+            fld('facility_project_code', 'facility_project_code'),
+            fld('specimen_id', 'specimen_id'),
+            fld('sample_id', 'sample_id'),
+            fld('scientific_name', 'scientific_name'),
+            fld('project_lead', 'project_lead'),
+            fld('project_collaborators', 'project_collaborators'),
+            fld('data_context', 'data_context'),
+            fld('library_type', 'library_type'),
+            fld('library_layout', 'library_layout'),
+            fld('facility_sample_id', 'facility_sample_id'),
+            fld('sequencing_facility', 'sequencing_facility'),
+            fld('sequencing_platform', 'sequencing_platform'),
+            fld('sequencing_model', 'sequencing_model'),
+            fld('library_construction_protocol', 'library_construction_protocol'),
+            fld('library_strategy', 'library_strategy'),
+            fld('bait_set_name', 'bait_set_name'),
+            fld('bait_set_reference', 'bait_set_reference'),
+            fld('library_selection', 'library_selection'),
+            fld('library_source', 'library_source'),
+            fld('library_prep_date', 'library_prep_date', coerce=ingest_utils.get_date_isoformat),
+            fld('library_prepared_by', 'library_prepared_by'),
+            fld('library_location', 'library_location'),
+            fld('library_comments', 'library_comments'),
+            fld('dna_treatment', 'dna_treatment'),
+            fld('library_index_id', 'library_index_id'),
+            fld('library_index_seq', 'library_index_seq'),
+            fld('library_oligo_sequence', 'library_oligo_sequence'),
+            fld('library_index_id_dual', 'library_index_id_dual'),
+            fld('library_index_seq_dual', 'library_index_seq_dual'),
+            fld('library_oligo_sequence_dual', 'library_oligo_sequence_dual'),
+            fld('insert_size_range', 'insert_size_range'),
+            fld('library_ng_ul', 'library_ng_ul'),
+            fld('library_pcr_cycles', 'library_pcr_cycles'),
+            fld('library_pcr_reps', 'library_pcr_reps'),
+            fld('n_libraries_pooled', 'n_libraries_pooled'),
+            fld('flowcell_type', 'flowcell_type'),
+            fld('flowcell_id', 'flowcell_id'),
+            fld('cell_postion', 'cell_postion'),
+            fld('movie_length', 'movie_length'),
+            fld('sequencing_kit_chemistry_version', 'sequencing_kit_chemistry_version'),
+            fld('analysis_software', 'analysis_software'),
+            fld('experimental_design', 'experimental_design'),
+            fld('fast5_compression', 'fast5_compression'),
+            fld('model_base_caller', 'model_base_caller'),
+
+        ],
+        "options": {
+            "sheet_name": [
+                "libmetadata",
+                "library_genomics",
+                "library_metadata",
+                "Sequencing metadata",
+                "Library metadata"
+            ],
+            "header_length": 1,
+            "column_name_row_index": 0,
+        },
+    }
+    md5 = {
+        "match": [files.ont_promethion_re,
+                  files.ont_promethion_common_re,
+                  ],
+        "skip": [
+            re.compile(r"^.*_metadata.*\.xlsx$"),
+            re.compile(r"^.*SampleSheet.*"),
+            re.compile(r"^.*TestFiles\.exe.*"),
+        ],
+    }
+    common_files_match = [
+        files.ont_promethion_common_re,
+    ]
+    common_files_linkage = ("flowcell_id", "run_number")
+
+    description = "ONT PromethION"
+    tag_names = ["ont-promethion"]
+
+    def _get_packages(self):
+        packages = self._get_common_packages()
+        for package in packages:
+            self.track_xlsx_resource(package, package["filename"])
+            del package["filename"]
+        return packages
+
+    def _add_datatype_specific_info_to_package(self, obj, row, filename):
+        run_number = re.match(r"^.*_([^_]+)_metadata.*\.xlsx", filename).groups()[0]
+        if run_number is None or row.flowcell_id == run_number:
+            run_number = "1"
+        else:
+            run_number = run_number.split("Run")[-1]
+        obj.update(
+            {
+                "run_number": run_number,
+                "library_id": row.bioplatforms_library_id.split("/")[-1],
+                "filename": filename,  # this is removed, it is only added for resource linkage tracking.
+            }
+        )
+
+    def _get_resources(self):
+        resources = self._get_common_resources()
+        common_resources = self.generate_common_files_resources(resources)
+        return resources + common_resources + self.generate_xlsx_resources()
+
+    def _add_datatype_specific_info_to_resource(self, resource, md5_file):
+        if "library_id" in resource and resource["library_id"] is not None:
+            resource["bioplatforms_library_id"] = ingest_utils.extract_ands_id(
+                self._logger, resource["library_id"]
+            )
+        if "run_number" not in resource or resource["run_number"] is None:
+            resource["run_number"] = "1"
+        return
+
+    def _build_resource_linkage(self, xlsx_info, resource, file_info):
+        return (
+            resource["bioplatforms_library_id"],
+            resource["flow_cell_id"],
+            resource["run_number"],
+        )
+
+    def _build_common_files_linkage(self, xlsx_info, resource, file_info):
+        return (
+            resource["flow_cell_id"],
+            resource["run_number"],
+        )
 

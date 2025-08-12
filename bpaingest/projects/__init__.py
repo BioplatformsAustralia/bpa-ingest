@@ -147,6 +147,7 @@ from .avian.ingest import (
     AvianPacbioHifiMetadata,
     AvianHiCMetadata,
     AvianIlluminaShortreadMetadata,
+    AvianONTPromethionMetadata,
 )
 
 from .forest.ingest import (
@@ -162,6 +163,7 @@ from .ipm.ingest import (
 from .fish.ingest import (
     FishIlluminaShortreadMetadata,
     FishPacbioHifiMetadata,
+    FishONTPromethionMetadata,
 )
 
 class ProjectInfo:
@@ -311,6 +313,7 @@ class ProjectInfo:
             AvianPacbioHifiMetadata,
             AvianHiCMetadata,
             AvianIlluminaShortreadMetadata,
+            AvianONTPromethionMetadata,
         ],
         "forest": [
             ForestPacbioHifiMetadata,
@@ -323,6 +326,7 @@ class ProjectInfo:
         "fish": [
             FishIlluminaShortreadMetadata,
             FishPacbioHifiMetadata,
+            FishONTPromethionMetadata,
         ],
     }
 
