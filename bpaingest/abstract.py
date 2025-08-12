@@ -174,7 +174,7 @@ class BaseMetadata:
                             ),
                         )
                     )
-                    self._logger.warn("Common files match {}".format(filename))
+                    self._logger.info("Common files match {}".format(filename))
                     continue
             resources.append(
                 (
