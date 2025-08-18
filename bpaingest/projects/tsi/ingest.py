@@ -90,6 +90,8 @@ class TSIBaseMetadata(BaseMetadata):
                 context = {}
                 for contextual_source in self.contextual_metadata:
                     context.update(contextual_source.get(row.sample_id))
+                if not context:
+                    self._logger.warn("Library metadata with no context(sample) metadata is {} ".format(row))
                 obj.update(context)
                 if not hasattr(row, "flowcell_id"):
                     # name is populated by the subclass after the fact
