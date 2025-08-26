@@ -129,8 +129,9 @@ def test_mm_amplicon_control():
         "Fungal_mock_community_18S_UNSW_CGAGGCTG-AAGGCTAT_APK6N_S105_L001_I2.fastq.gz",
         "Soil_DNA_16S_UNSW_CAGCTAGA-GATAGCGT_AYBVB_S110_L001_I1.fastq.gz",
         "STAN_16S_UNSW_TATCAGGTGTGC_AL1HY_S97_L001_R1.fastq.gz",
-        "Bac_mock_community6S_UNSW_GACTCTTG-ACGACGTG_BJT3V_S60_L001_I1.fastq.gz",
-        "Soil_DNA6S_UNSW_GACTCTTG-GTCTAGTG_BJT3V_S75_L001_I1.fastq.gz",
+        "Bac_mock_community_16S_UNSW_GACTCTTG-ACGACGTG_BJT3V_S60_L001_I1.fastq.gz",
+        "Soil_DNA_16S_UNSW_GACTCTTG-GTCTAGTG_BJT3V_S75_L001_I1.fastq.gz",
+        "STAN_1_16S_UNSW_UNKNOWN_AHGA0_UNKNOWN_U001_R2.fastq.gz",
     ]
     for filename in filenames:
         assert mm_amplicon_control_filename_re.match(filename) is not None
@@ -185,7 +186,6 @@ def test_amd_amplicon_control_re():
         "ATCC1002MOCK_neat_16S_M57TK_CTAGCTCCTG-GACATGTAGA_S95_L001_I1_001.fastq.gz",
         "No_Template_Control_neat_16S_M57TK_AGATCGCTCG-ATAACGCTCA_S108_L001_I1_001.fastq.gz",
         "Soil_DNA_1_10_16S_M57TK_CGATGATAGC-ATCACGGCTA_S93_L001_I1_001.fastq.gz",
-
     ]
     for filename in filenames:
         assert amd_amplicon_control_filename_re.match(filename) is not None

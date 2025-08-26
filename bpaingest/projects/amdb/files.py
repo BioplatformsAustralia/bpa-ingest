@@ -162,12 +162,14 @@ base_site_image_filename_re = re.compile(
 mm_amplicon_control_filename_re = re.compile(
     r"""
     ^(?P<control_type>Arc_mock_community|Bac_mock_community.*|Fungal_mock_community|Soil_DNA.*|STAN)_
-    (?P<extra_descriptor>).*
+    (?P<extra_descriptor>.*_?)
+    (?P<amplicon>ITS|16S|18S|A16S)_
     (?P<vendor>AGRF|UNSW)_
-    (?P<index>[G|A|T|C|-]*)_
+    (?P<index>[G|A|T|C|-]*|UNKNOWN)_
     (?P<flow_id>\w{5})_
-    (?P<runsamplenum>\S\d*)_
-    (?P<lane>L\d{3})_
+    (?P<runsamplenum>\S\d*|UNKNOWN)_
+    ((?P<unique_dual_index>U\d{3})_)?
+    ((?P<lane>L\d{3})_)?
     (?P<read>[R|I][1|2])\.fastq\.gz
 """,
     re.VERBOSE,
