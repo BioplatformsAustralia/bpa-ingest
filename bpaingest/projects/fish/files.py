@@ -96,3 +96,17 @@ ONT_PROMETHION_COMMON_PATTERN = r"""
     \.(html|tsv|txt|tar)
 """
 ont_promethion_common_re = re.compile(ONT_PROMETHION_COMMON_PATTERN, re.VERBOSE)
+
+ILLUMINA_HIC_PATTERN = r"""
+    (?P<library_id>\d{4,6})_
+    FISH_
+    (?P<facility_id>(BRF))_
+    (?P<flowcell_id>\w{5,10})_
+    ((?P<index>[G|A|T|C|-]*)_)?
+    (?P<runsamplenum>S\d*)_
+    ((?P<lane>L\d{3})_)?
+    (?P<read>[R|I][1|2])
+    _001
+    \.fastq\.gz$
+"""
+illumina_hic_re = re.compile(ILLUMINA_HIC_PATTERN, re.VERBOSE)

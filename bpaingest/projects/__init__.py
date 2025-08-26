@@ -164,6 +164,7 @@ from .fish.ingest import (
     FishIlluminaShortreadMetadata,
     FishPacbioHifiMetadata,
     FishONTPromethionMetadata,
+    FishHiCMetadata,
 )
 
 class ProjectInfo:
@@ -327,6 +328,7 @@ class ProjectInfo:
             FishIlluminaShortreadMetadata,
             FishPacbioHifiMetadata,
             FishONTPromethionMetadata,
+            FishHiCMetadata,
         ],
     }
 
