@@ -8,6 +8,8 @@ from . import files
 from .contextual import (
     CollaborationsLibraryContextual,
     CollaborationsDatasetControlContextual,
+    CollaborationsCaneToadLibraryContextual,
+    CollaborationsCaneToadDatasetControlContextual,
 )
 from .tracking import CollaborationsGoogleTrackMetadata
 from .tracking import CollaborationsProjectsGoogleMetadata
@@ -23,6 +25,11 @@ from ...util import (
 common_context = [
     CollaborationsLibraryContextual,
     CollaborationsDatasetControlContextual,
+]
+
+canetoad_common_context = [
+    CollaborationsCaneToadLibraryContextual,
+    CollaborationsCaneToadDatasetControlContextual,
 ]
 
 
@@ -499,3 +506,212 @@ class CollaborationsONTPromethionMetadata(CollaborationsBaseMetadata):
                 "sample_id": row.bioplatforms_sample_id.split("/")[-1],
             }
         )
+
+class CaneToadPacbioHifiMetadata(CollaborationsBaseMetadata):
+    ckan_data_type = "collaborations-pacbio-hifi"
+    technology = "pacbio-hifi"
+    sequence_data_type = "pacbio-hifi"
+    embargo_days = 1826  # 5 years
+    contextual_classes = canetoad_common_context
+    metadata_patterns = [r"^.*\.md5$", r"^.*_metadata.*.*\.xlsx$"]
+    metadata_urls = [
+        "https://downloads-qcif.bioplatforms.com/bpa/collaborations/pacbio-hifi/",
+    ]
+    notes_mapping = [
+        {"key": "family", "separator": ", "},
+        {"key": "genus", "separator": " "},
+        {"key": "species", "separator": ", "},
+        {"key": "specimen_id", "separator": ", "},
+        {"key": "taxonomic_group"},
+        # no project lead for Cane Toads
+        #{"key": "taxonomic_group", "separator": ", Project Lead: "},
+        #{"key": "project_lead"},
+    ]
+    title_mapping = [
+        {"key": "common_name", "separator": ", "},
+        {"key": "data_context", "separator": ", "},
+        {"key": "data_type", "separator": ", "},
+        {"key": "tissue"},
+    ]
+    metadata_url_components = ("ticket",)
+    resource_linkage = ("ticket", "bioplatforms_library_id", "flowcell_id")
+    spreadsheet = {
+        "fields": [
+            fld("bioplatforms_project", "bioplatforms_project"),
+            fld("genus", "genus"),
+            fld("species", "species"),
+            fld("voucher_id", "voucher_id", optional=True),
+            fld(
+                "bioplatforms_library_id",
+                re.compile(r"bioplatforms_library_[Ii][Dd]"),
+                coerce=ingest_utils.extract_ands_id,
+            ),
+            fld(
+                "bioplatforms_sample_id",
+                re.compile(r"bioplatforms_sample_[Ii][Dd]"),
+                coerce=ingest_utils.extract_ands_id,
+            ),
+            fld(
+                "bioplatforms_dataset_id",
+                re.compile(r"bioplatforms_dataset_[Ii][Dd]"),
+                coerce=ingest_utils.extract_ands_id,
+            ),
+            fld("facility_sample_id", re.compile(r"facility_sample_[Ii][Dd]")),
+            fld("facility_project_code", "facility_project_code", optional=True),
+            fld("specimen_id", "specimen_id"),
+            fld("library_construction_protocol", "library_construction_protocol"),
+            fld("library_type", "library_type"),
+            fld(
+                "library_prep_date",
+                "library_prep_date",
+                coerce=ingest_utils.get_date_isoformat,
+            ),
+            fld("library_prepared_by", "library_prepared_by"),
+            # fld("library_prep_method", "library_prep_method"),
+            fld("experimental_design", re.compile("experimental[ _]design")),
+            fld("data_custodian", "data_custodian"),
+            fld("data_context", "data_context", optional=True),
+            fld("dna_treatment", "dna_treatment"),
+            fld("library_index_id", "library_index_id", optional=True),
+            fld("library_index_sequence", "library_index_seq", optional=True),
+            fld("library_oligo_sequence", "library_oligo_sequence", optional=True),
+            fld("library_index_id_dual", "library_index_id_dual", optional=True),
+            fld("library_index_seq_dual", "library_index_seq_dual", optional=True),
+            fld(
+                "library_oligo_sequence_dual",
+                "library_oligo_sequence_dual",
+                optional=True,
+            ),
+            fld(
+                "library_pcr_reps",
+                "library_pcr_reps",
+                coerce=ingest_utils.get_int,
+                optional=True,
+            ),
+            fld(
+                "library_pcr_cycles",
+                "library_pcr_cycles",
+                coerce=ingest_utils.get_int,
+                optional=True,
+            ),
+            fld("library_ng_ul", "library_ng_ul", optional=True),
+            fld("library_comments", "library_comments"),
+            fld("library_location", "library_location"),
+            fld("library_status", "library_status", optional=True),
+            fld("sequencing_facility", "sequencing_facility"),
+            fld(
+                "n_libraries_pooled",
+                "n_libraries_pooled",
+                optional=True,
+                coerce=ingest_utils.get_int,
+            ),
+            fld("work_order", "work_order", coerce=ingest_utils.int_or_comment),
+            fld("sequencing_platform", "sequencing_platform"),
+            fld("sequence_length", "sequence_length", optional=True),
+            fld("flowcell_id", "flowcell_id"),
+            # fld("software_version", "software_version"),
+            fld("file", "file", optional=True),
+            fld("insert_size_range", "insert_size_range", optional=True),
+            fld("flowcell_type", "flowcell_type", optional=True),
+            fld("cell_position", "cell_position", optional=True),
+            fld("voucher_number", "voucher_number", optional=True),
+            fld("tissue_number", "tissue_number", optional=True),
+            fld("voucher_or_tissue_number", "voucher_or_tissue_number", optional=True),
+            fld("cell_postion", "cell_postion"),
+            fld("movie_length", "movie_length"),
+            fld("analysis_software", "analysis_software"),
+            fld("analysis_software_version", "analysis_software_version"),
+            fld("library_layout", "library_layout", optional=True),
+            fld("sequencing_model", "sequencing_model", optional=True),
+            fld("library_strategy", "library_strategy", optional=True),
+            fld("library_selection", "library_selection", optional=True),
+            fld("library_source", "library_source", optional=True),
+            fld(
+                "sequencing_kit_chemistry_version",
+                "sequencing_kit_chemistry_version",
+                optional=True,
+            ),
+            fld("file_type", "file_type", optional=True),
+            fld("fast5_compression", "fast5_compression", optional=True),
+            fld("model_base_caller", "model_base_caller", optional=True),
+            fld("bait_set_name", "bait_set_name", optional=True),
+            fld("bait_set_reference", "bait_set_reference", optional=True),
+            fld(
+                "number_of_raw_reads",
+                "number_of_raw_reads",
+                coerce=ingest_utils.get_int,
+                optional=True,
+            ),
+        ],
+        "options": {
+            "sheet_name": "Library metadata",
+            "header_length": 1,
+            "column_name_row_index": 0,
+        },
+    }
+    md5 = {
+        "match": [
+            files.pacbio_hifi_filename_re,
+            files.pacbio_hifi_metadata_sheet_re,
+            files.pacbio_hifi_common_re,
+        ],
+        "skip": [
+            re.compile(r"^.*_metadata.*\.xlsx$"),
+            re.compile(r"^.*SampleSheet.*"),
+            re.compile(r"^.*TestFiles\.exe.*"),
+        ],
+    }
+
+    tag_names = ["pacbio-hifi"]
+
+    common_files_match = [
+        files.pacbio_hifi_common_re,
+    ]
+    common_files_linkage = ("ticket", "flowcell_id",)
+
+    def __init__(
+        self, logger, metadata_path, contextual_metadata=None, metadata_info=None
+    ):
+        super().__init__(logger, metadata_path)
+        self.path = Path(metadata_path)
+        self.contextual_metadata = contextual_metadata
+        self.metadata_info = metadata_info
+        self.google_track_meta = CollaborationsGoogleTrackMetadata(logger)
+        self.google_project_codes_meta = CollaborationsProjectsGoogleMetadata(logger)
+
+    def _get_resources(self):
+        resources = self._get_common_resources()
+        return resources + self.generate_common_files_resources(resources)
+
+    def _add_datatype_specific_info_to_resource(self, resource, md5_file=None):
+       """ if "library_id" in resource and resource["library_id"] is not None:
+            resource["library_id"] = ingest_utils.extract_ands_id(
+                self._logger, resource["library_id"]
+            )
+            """
+
+    def _build_resource_linkage(self, xlsx_info, resource, file_info):
+        ticket = xlsx_info["ticket"]
+        return (
+            ticket,
+            ingest_utils.extract_ands_id(
+                self._logger, resource["library_id"]
+            ),
+            resource["flowcell_id"],
+        )
+
+    def _get_packages(self):
+        return self._get_common_packages()
+
+    def _add_datatype_specific_info_to_package(self, obj, row, filename):
+        obj.update(
+            {
+                "bioplatforms_library_id": row.bioplatforms_library_id,
+                "library_id": row.bioplatforms_library_id.split("/")[-1],
+                "sample_id": row.bioplatforms_sample_id.split("/")[-1],
+            }
+        )
+
+    def _build_common_files_linkage(self, xlsx_info, resource, file_info):
+        return (xlsx_info["ticket"], resource["flowcell_id"],)
+

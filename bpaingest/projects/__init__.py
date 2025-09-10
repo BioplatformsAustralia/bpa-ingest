@@ -132,6 +132,7 @@ from .grasslands.ingest import (
 from .collaborations.ingest import (
     CollaborationsMetagenomicsNovaseqMetadata,
     CollaborationsONTPromethionMetadata,
+    CaneToadPacbioHifiMetadata,
 )
 
 from .bpa_sample_data.ingest import (
@@ -302,6 +303,7 @@ class ProjectInfo:
         "collaborations": [
             CollaborationsMetagenomicsNovaseqMetadata,
             CollaborationsONTPromethionMetadata,
+            CaneToadPacbioHifiMetadata
         ],
         "bsd": [
             BSDSampleImagesMetadata,
