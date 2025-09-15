@@ -413,3 +413,156 @@ class IPMONTPromethionMetadata(IPMBaseMetadata):
             return (
                 resource["flow_cell_id"],
             )
+
+class IPMPacbioHifiMetadata(IPMBaseMetadata):
+    ckan_data_type = "ipm-pacbio-hifi"
+    technology = "pacbio-hifi"
+    sequence_data_type = "pacbio-hifi"
+    embargo_days = 365
+    contextual_classes = common_context
+    metadata_patterns = [r"^.*\.md5$", r"^.*[\._]metadata.*.*\.xlsx$"]
+    metadata_urls = [
+        "https://downloads-qcif.bioplatforms.com/bpa/ipm_staging/pacbio-hifi/",
+    ]
+    metadata_url_components = ("ticket",)
+    resource_linkage = ("bioplatforms_library_id", "flowcell_id")
+    spreadsheet = {
+        "fields": [
+            fld(
+                "bioplatforms_library_id",
+                re.compile(r"library_[Ii][Dd]|bioplatforms_library_id"),
+                coerce=ingest_utils.extract_ands_id,
+            ),
+            fld(
+                "bioplatforms_sample_id",
+                re.compile(r"sample_[Ii][Dd]|bioplatforms_sample_id"),
+                coerce=ingest_utils.extract_ands_id,
+            ),
+            fld(
+                "bioplatforms_dataset_id",
+                re.compile(r"dataset_[Ii][Dd]|bioplatforms_dataset_id"),
+                coerce=ingest_utils.extract_ands_id,
+            ),
+            fld("work_order", "work_order", coerce=ingest_utils.int_or_comment),
+            fld("tissue_number", "tissue_number", optional=True),
+            fld("library_layout", "library_layout"),
+            fld("sequencing_model", "sequencing_model"),
+            fld("insert_size_range", "insert_size_range"),
+            fld("flowcell_type", "flowcell_type"),
+            fld("cell_postion", "cell_postion"),
+            fld("movie_length", "movie_length"),
+            fld('data_context', 'data_context', optional=True),
+            fld("analysis_software", "analysis_software"),
+            fld("analysis_software_version", "analysis_software_version", optional=True),
+            fld("file_name", "file_name", optional=True),
+            fld("file_type", "file_type", optional=True),
+            fld("library_construction_protocol", "library_construction_protocol"),
+            fld("library_strategy", "library_strategy"),
+            fld("library_selection", "library_selection"),
+            fld("library_source", "library_source"),
+            fld("genus", "genus", optional=True),
+            fld("species", "species", optional=True),
+            fld("facility_sample_id", "facility_sample_id"),
+            fld("library_type", "library_type"),
+            fld(
+                "library_prep_date",
+                "library_prep_date",
+                coerce=ingest_utils.get_date_isoformat,
+            ),
+            fld("library_prepared_by", "library_prepared_by"),
+            fld("experimental_design", "experimental_design"),
+            fld("data_custodian", "data_custodian", optional=True),
+            fld("dna_treatment", "dna_treatment"),
+            fld("library_index_id", "library_index_id"),
+            fld("library_index_sequence", "library_index_seq"),
+            fld("library_oligo_sequence", "library_oligo_sequence"),
+            fld("library_pcr_reps", "library_pcr_reps"),
+            fld("library_pcr_cycles", "library_pcr_cycles"),
+            fld("library_ng_ul", "library_ng_ul"),
+            fld("library_comments", "library_comments"),
+            fld("library_location", "library_location"),
+            fld("library_status", "library_status", optional=True),
+            fld("sequencing_facility", "sequencing_facility"),
+            fld("n_libraries_pooled", "n_libraries_pooled"),
+            fld("sequencing_platform", "sequencing_platform"),
+            fld("flowcell_id", "flowcell_id"),
+            fld(
+                "sequencing_kit_chemistry_version",
+                "sequencing_kit_chemistry_version",
+                optional=True,
+            ),
+            fld("facility_project_code", "facility_project_code", optional=True),
+            fld("bioplatforms_project", "bioplatforms_project", optional=True),
+            fld("bioplatforms_project_ncbi_umbrellabioproject_id",
+                "bioplatforms_project_ncbi_umbrellabioproject_id", optional=True),
+            fld("bait_set_name", "bait_set_name", optional=True),
+            fld("bait_set_reference", "bait_set_reference", optional=True),
+            fld("library_index_id_dual", "library_index_id_dual", optional=True),
+            fld("library_index_seq_dual", "library_index_seq_dual", optional=True),
+            fld(
+                "library_oligo_sequence_dual",
+                "library_oligo_sequence_dual",
+                optional=True,
+            ),
+            fld("fast5_compression", "fast5_compression", optional=True),
+            fld("model_base_caller", "model_base_caller", optional=True),
+            fld('scientific_name', 'scientific_name', optional=True),
+            fld('project_lead', 'project_lead', optional=True),
+            fld('project_collaborators', 'project_collaborators', optional=True),
+
+        ],
+        "options": {
+            "sheet_name": "Sequencing metadata",
+            "header_length": 1,
+            "column_name_row_index": 0,
+        },
+    }
+    md5 = {
+        "match": [
+            files.pacbio_hifi_filename_re,
+            files.pacbio_hifi_metadata_sheet_re,
+            files.pacbio_hifi_common_re,
+        ],
+        "skip": [
+            re.compile(r"^.*[\._]metadata\.xlsx$"),
+            re.compile(r"^.*SampleSheet.*"),
+            re.compile(r"^.*TestFiles\.exe.*"),
+        ],
+    }
+    common_files_match = [
+        files.pacbio_hifi_common_re,
+    ]
+    common_files_linkage = ("flowcell_id",)
+
+    description = "Pacbio HiFi"
+
+    tag_names = ["pacbio-hifi"]
+
+    def _get_packages(self):
+        return self._get_common_packages()
+
+    def _add_datatype_specific_info_to_package(self, obj, row, filename):
+        obj.update({"dataset_url": self.get_tracking_info(row.ticket, "download")})
+        # below fields are in the metadata, but not required in the packages schema
+        del obj["download"]
+        ingest_utils.add_spatial_extra(self._logger, obj)
+
+
+    def _get_resources(self):
+        resources = self._get_common_resources()
+        return resources + self.generate_common_files_resources(resources)
+
+    def _add_datatype_specific_info_to_resource(self, resource, md5_file=None):
+        # none for PACbio-hifi
+        return
+
+    def _build_resource_linkage(self, xlsx_info, resource, file_info):
+        return (
+            ingest_utils.extract_ands_id(
+                self._logger,
+                file_info.get("library_id")),
+            resource["flowcell_id"],
+        )
+
+    def _build_common_files_linkage(self, xlsx_info, resource, file_info):
+        return (resource["flowcell_id"],)

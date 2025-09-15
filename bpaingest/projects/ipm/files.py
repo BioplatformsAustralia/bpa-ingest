@@ -38,3 +38,40 @@ ONT_PROMETHION_COMMON_PATTERN = r"""
     \.(html|tsv|txt|tar)
 """
 ont_promethion_common_re = re.compile(ONT_PROMETHION_COMMON_PATTERN, re.VERBOSE)
+
+PACBIO_HIFI_PATTERN = r"""
+    (?P<library_id>\d{4,6})_
+    IPM_
+    (?P<facility>AGRF|BRF)_
+    (PacBio_)?
+    (?P<flowcell_id>\w{23})
+    (_ccs_statistics\.csv
+      |_final\.consensusreadset\.xml
+      |\.ccs\.bam
+      |\.pdf
+      |\.hifi_reads\.default\.bam
+      |\.hifi_reads\.bc\d{4}\.bam
+      |\.hifi_reads\.bam
+      |\.subreads\.bam)
+
+"""
+pacbio_hifi_filename_re = re.compile(PACBIO_HIFI_PATTERN, re.VERBOSE)
+
+PACBIO_HIFI_METADATA_SHEET_PATTERN = r"""
+    (?P<library_id>\d{4,6})_
+    IPM_
+    (?P<facility>(AGRF)|C?(AGRF)\d+|BRF)_
+    (PacBio_)?
+    (?P<flowcell_id>\w{8})
+    ([\._]metadata\.xlsx)
+"""
+pacbio_hifi_metadata_sheet_re = re.compile(
+    PACBIO_HIFI_METADATA_SHEET_PATTERN, re.VERBOSE
+)
+PACBIO_HIFI_COMMON_PATTERN = r"""
+    IPM_
+    (?P<facility>AGRF|BRF)_
+    (?P<flowcell_id>\w{23})
+    (\.pdf)
+"""
+pacbio_hifi_common_re = re.compile(PACBIO_HIFI_COMMON_PATTERN, re.VERBOSE)
