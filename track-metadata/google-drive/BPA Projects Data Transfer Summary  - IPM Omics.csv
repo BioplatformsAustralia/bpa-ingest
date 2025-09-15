@@ -13,5 +13,6 @@ AGRF,11/07/2025,,,607793,,Illumina short read,Illumina short read,20250711_IPM_A
 AGRF,11/07/2025,,,607793,,Illumina short read,Illumina short read,20250711_IPM_AGRF_CAGRF25040240_2_233NNGLT3,11/07/2025,,BPAOPS-1824,,
 BRF,08/09/2025,603949,606200,607795,Exoneura robusta,Illumina short read HiC,Illumina short read HiC,20250908_IPM_BRF_WO24016_22F3JKLT1,09/09/2025,,BPAOPS-1897,,
 BRF,08/09/2025,,,607780,Amegilla pulchra,Illumina short read HiC,Illumina short read HiC,20250908_IPM_BRF_WO24007_22FCMGLT1,09/09/2025,,BPAOPS-1896,,
-BRF,08/09/2025,,,607803,Exoneura angophorae,Illumina short read HiC,Illumina short read HiC,20250908_IPM_BRF_WO24007_22FCMGLT1,,,,,
-BRF,08/09/2025,,,607785,Exoneura angophorae,Illumina short read HiC,Illumina short read HiC,20250908_IPM_BRF_WO24007_22FCMGLT1,,,,,
+BRF,08/09/2025,,,607803,Exoneura angophorae,Illumina short read HiC,Illumina short read HiC,20250908_IPM_BRF_WO24007_22FCMGLT1,,,,,These included in BPAOPS-1896
+BRF,08/09/2025,,,607785,Exoneura angophorae,Illumina short read HiC,Illumina short read HiC,20250908_IPM_BRF_WO24007_22FCMGLT1,,,,,These included in BPAOPS-1896
+AGRF,12/09/2025,,,607801,,PacBio-HiFi,PacBio-HiFi,20250911_IPM_AGRF_CAGRF25060078_m84073_250902_043737_s4,15/09/2025,,BPAOPS-1900,,
