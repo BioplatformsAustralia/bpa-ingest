@@ -542,7 +542,9 @@ class IPMPacbioHifiMetadata(IPMBaseMetadata):
         return self._get_common_packages()
 
     def _add_datatype_specific_info_to_package(self, obj, row, filename):
-        obj.update({"dataset_url": self.get_tracking_info(row.ticket, "download")})
+        obj.update({"dataset_url": self.get_tracking_info(row.ticket, "download"),
+        "library_id": obj["bioplatforms_library_id"].split("/")[-1]})
+
         # below fields are in the metadata, but not required in the packages schema
         del obj["download"]
         ingest_utils.add_spatial_extra(self._logger, obj)
