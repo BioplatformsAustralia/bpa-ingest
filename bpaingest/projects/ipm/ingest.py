@@ -11,8 +11,7 @@ from .tracking import IPMGoogleTrackMetadata
 from ...sensitive_species_wrapper import SensitiveSpeciesWrapper
 from ...abstract import BaseMetadata
 from ...libs import ingest_utils
-from ...libs.excel_wrapper import make_field_definition as fld
-
+from ...libs.excel_wrapper import make_field_definition as fld, make_skip_column as skp
 
 from ...util import (
     sample_id_to_ckan_name,
@@ -509,7 +508,10 @@ class IPMPacbioHifiMetadata(IPMBaseMetadata):
             fld('scientific_name', 'scientific_name', optional=True),
             fld('project_lead', 'project_lead', optional=True),
             fld('project_collaborators', 'project_collaborators', optional=True),
-
+            # the following fields are skipped as they are present in the sample metadata,
+            # which SHOULD be the authoritative source.
+            skp("sample_id"),
+            skp("specimen_id"),
         ],
         "options": {
             "sheet_name": "Sequencing metadata",
