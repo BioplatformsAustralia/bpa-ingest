@@ -44,6 +44,7 @@ def test_illumina_shortread():
     filenames = [
         "355598_TSI_AGRF_H3GYVDSX2_AACTGAGC-CAATCAGG_L004_R2.fastq.gz",
         "626239_TSI_AGRF_22W5WFLT3_GTAACTCCGC-AATAGAACGG_L002_R1.fastq.gz",
+        "704860_TSI_GWA_A22F32YLT1_CTGTGCCT-AAGAACCT_S77_L002_R2_001.fastq.gz",
     ]
     for filename in filenames:
         assert illumina_shortread_re.match(filename) is not None

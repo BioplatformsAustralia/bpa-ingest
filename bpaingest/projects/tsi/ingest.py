@@ -249,6 +249,8 @@ class TSIIlluminaShortreadMetadata(TSIBaseMetadata):
             re.compile(r"^.*TestFiles\.exe.*"),
             re.compile(r"^.*DataValidation\.pdf.*"),
             re.compile(r"^.*checksums\.(exf|md5)$"),
+            # skip Genomics WA QA report
+            re.compile(r"^TSI_GWA_.*\.pdf"),
         ],
     }
     description = "Illumina Shortread"

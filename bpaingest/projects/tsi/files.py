@@ -7,7 +7,7 @@ logger = make_logger(__name__)
 ILLUMINA_SHORTREAD_PATTERN = r"""
     (?P<library_id>\d{4,6})_
     TSI_
-    (?P<facility_id>(AGRF|BRF))_
+    (?P<facility_id>(AGRF|BRF|GWA))_
     (?P<flow_cell_id>\w{9,10})_
     (?P<index>[G|A|T|C|-]*)_
     ((?P<runsamplenum>S\d*)_)?
