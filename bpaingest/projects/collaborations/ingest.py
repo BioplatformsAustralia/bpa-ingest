@@ -704,10 +704,21 @@ class CaneToadPacbioHifiMetadata(CollaborationsBaseMetadata):
         return self._get_common_packages()
 
     def _add_datatype_specific_info_to_package(self, obj, row, filename):
+        library_id = row.bioplatforms_library_id.split("/")[-1]
+        if not hasattr(row, "flowcell_id"):
+            # name is populated by the subclass after the fact
+            name = "No flowcell- override in sublass"
+        else:
+            name = sample_id_to_ckan_name(
+                "{}".format(library_id),
+                self.ckan_data_type,
+                "{}".format(row.flowcell_id),
+            )
         obj.update(
-            {
+            {   "name" : name,
+                "id" : name,
                 "bioplatforms_library_id": row.bioplatforms_library_id,
-                "library_id": row.bioplatforms_library_id.split("/")[-1],
+                "library_id": library_id,
                 "sample_id": row.bioplatforms_sample_id.split("/")[-1],
             }
         )
