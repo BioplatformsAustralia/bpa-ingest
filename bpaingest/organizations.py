@@ -155,11 +155,11 @@ ORGANIZATIONS = [
         "groups": [{"capacity": "public", "name": "grasslands"}],
     },
     {
-        "name": "grassland-consortium-members",
-        "title": "Grasslands Project Members",
-        "display_name": "Australian Grasslands  Project Members",
-        "image_url": "https://data.bioplatforms.com/Australian-Grasslands.png",
-        "groups": [{"capacity": "public", "name": "grasslands"}],
+        "name": "gap-consortium-members",
+        "title": "GAP Project Members",
+        "display_name": "GAP Project Members",
+        "image_url": "https://data.bioplatforms.com/plants-logo.png",
+        "groups": [{"capacity": "public", "name": "bpa-plants"}],
     },
     {
         "name": "tsi-consortium-members",
