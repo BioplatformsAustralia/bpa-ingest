@@ -22,11 +22,13 @@ from .contextual import GAPLibraryContextual, GAPDatasetControlContextual
 from .tracking import GAPTrackMetadata
 
 common_context = [GAPLibraryContextual, GAPDatasetControlContextual]
-
+CONSORTIUM_ORG_NAME = "gap-consortium-members"
 
 class GAPBaseMetadata(BaseMetadata):
     organization = "bpa-plants"
     initiative = "GAP"
+
+    embargo_days = 365
 
     title_mapping = [
         {"key": "initiative", "separator": " "},
@@ -128,7 +130,13 @@ class GAPBaseMetadata(BaseMetadata):
                 self._add_datatype_specific_info_to_package(obj, row, fname)
                 self._build_title_into_object(obj)
                 self.build_notes_into_object(obj)
-                ingest_utils.permissions_organization_member(self._logger, obj)
+                ingest_utils.permissions_organization_member_after_embargo(
+                    self._logger,
+                    obj,
+                    "date_of_transfer_to_archive",
+                    self.embargo_days,
+                    CONSORTIUM_ORG_NAME,
+                )
                 ingest_utils.apply_access_control(self._logger, self, obj)
                 obj["tags"] = [{"name": t} for t in self.tag_names]
                 packages.append(obj)
@@ -727,7 +735,13 @@ class GAPGenomicsDDRADMetadata(GAPBaseMetadata):
                 obj.update(merge_values("scientific_name", " , ", context_objs))
                 self._build_title_into_object(obj)
                 self.build_notes_into_object(obj)
-                ingest_utils.permissions_organization_member(self._logger, obj)
+                ingest_utils.permissions_organization_member_after_embargo(
+                    self._logger,
+                    obj,
+                    "date_of_transfer_to_archive",
+                    self.embargo_days,
+                    CONSORTIUM_ORG_NAME,
+                )
                 ingest_utils.apply_access_control(self._logger, self, obj)
                 ingest_utils.add_spatial_extra(self._logger, obj)
                 obj["tags"] = [{"name": t} for t in self.tag_names]
