@@ -275,6 +275,7 @@ class PlantPathogenIlluminaShortreadMetadata(PlantPathogenBaseMetadata):
     md5 = {
         "match": [
             files.illumina_shortread_re,
+            files.illumina_shortread_common_re,
         ],
         "skip": [
             re.compile(r"^.*_metadata.*\.xlsx$"),
@@ -284,6 +285,11 @@ class PlantPathogenIlluminaShortreadMetadata(PlantPathogenBaseMetadata):
             re.compile(r"^.*checksums\.(exf|md5)$"),
         ],
     }
+    common_files_match = [
+        files.illumina_shortread_common_re,
+    ]
+
+    common_files_linkage = ("flowcell_id",)
     description = "Illumina Shortread"
     tag_names = ["genomics", "illumina-short-read"]
 
@@ -310,12 +316,14 @@ class PlantPathogenIlluminaShortreadMetadata(PlantPathogenBaseMetadata):
         )
 
     def _get_resources(self):
-        return self._get_common_resources()
+        resources =  self._get_common_resources()
+        return resources + self.generate_common_files_resources(resources)
 
     def _add_datatype_specific_info_to_resource(self, resource, md5_file=None):
-        resource["library_id"] = ingest_utils.extract_ands_id(
-            self._logger, resource["library_id"]
-        )
+        if "library_id" in resource.keys():
+            resource["library_id"] = ingest_utils.extract_ands_id(
+                self._logger, resource["library_id"]
+            )
         return
 
     def _build_resource_linkage(self, xlsx_info, resource, file_info):
@@ -323,7 +331,8 @@ class PlantPathogenIlluminaShortreadMetadata(PlantPathogenBaseMetadata):
             resource["library_id"],
             resource["flowcell_id"],
         )
-
+    def _build_common_files_linkage(self, xlsx_info, resource, file_info):
+        return (resource["flowcell_id"],)
 
 class PlantPathogenPacbioHifiMetadata(PlantPathogenBaseMetadata):
     ckan_data_type = "pp-pacbio-hifi"
