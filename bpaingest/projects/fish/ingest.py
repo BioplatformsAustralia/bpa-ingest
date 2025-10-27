@@ -53,8 +53,7 @@ class FishBaseMetadata(BaseMetadata):
 
     notes_mapping = [
         {"key": "family", "separator": ", "},
-        {"key": "genus", "separator": " "},
-        {"key": "species", "separator": ", "},
+        {"key": "scientific_name", "separator": ", "},
         {"key": "specimen_id", "separator": ", "},
         {"key": "taxonomic_group", "separator": ", Project Lead: "},
         {"key": "project_lead"},
