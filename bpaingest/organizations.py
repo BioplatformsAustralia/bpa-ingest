@@ -294,4 +294,18 @@ ORGANIZATIONS = [
         "image_url": "https://data.bioplatforms.com/forest_resilience.png",
         "groups": [{"capacity": "public", "name": "forest-resilience"}],
     },
+    {
+        "name": "animal-disease",
+        "title": "Australian Animal Disease Genomics Initiative",
+        "display_name": "Australian Animal Disease Genomics Initiative",
+        "image_url": "https://data.bioplatforms.com/Animal-Disease-Genomics-initiative-RFP.webp",
+        "groups": [{"capacity": "public", "name": BPA_ORGANIZATION_ID}],
+    },
+    {
+        "name": "ad-consortium-members",
+        "title": "Animal Disease Genomics Members",
+        "display_name": "Animal Disease Genomics Members",
+        "image_url": "https://data.bioplatforms.com/Animal-Disease-Genomics-initiative-RFP.webp",
+        "groups": [{"capacity": "public", "name": "animal-disease"}],
+    },
 ]
