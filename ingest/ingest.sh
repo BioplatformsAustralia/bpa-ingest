@@ -244,6 +244,10 @@ forest()
 
 }
 
+ad()
+{
+  apply ad-ont-promethion $*
+}
 run() {
   apply $*
 }
@@ -271,6 +275,7 @@ all()
   workshop $*
   avian $*
   forest $*
+  ad $*
 }
 
 action="$1"
