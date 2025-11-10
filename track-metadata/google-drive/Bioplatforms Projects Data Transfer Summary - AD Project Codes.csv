@@ -1,0 +1,19 @@
+Project: Animal Disease (AD),,Slug is used in the URLs on the portal,
+Codes for Project Tracking,,,
+,,,
+Slug,Short Description,Long Description,
+ad-prj001,AD001_Qfever,Coxiella burnetii,Q fever
+ad-prj006,AD006_Moraxella,Moraxella spp.,
+ad-prj007,AD007_Vibro,"Vibrio tasmaniensis, Vibrio pomeroyi, Vibrio atlanticus",
+ad-prj012,AD012_Trypanosoma ,Trypanosoma spp.,Trypanosomes
+ad-prj013,AD013_Worm ,Teladorsagia circumcincta,Brown stomach worm
+ad-prj022,AD022_QX,Marteilia sydneyi (taxid 98371),QX disease
+ad-prj024,AD024_Apis,"Apis mellifera (Western Honey bee), Varroa destructor (honey bee mite)",Emily Remnant
+ad-prj025,AD025_Sugarbag,Tetragonula carbonaria (Australian Sugarbag bee),Emily Remnant
+ad-prj026,AD026_Tick,"Australian tick species from the understudied subgenus Sternalixodes: Ixodes cornuatus, I. myrmecobii (the numbat tick), I. confusus, I. hirsti, and I. trichosuri (the brushtail possum tick).",Rhys Parry
+ad-prj032,AD032_Lizard,Dragon lizard,Julien Melade
+ad-prj034,AD034_Koala,Phascolarctos cinereus/Koala,Kosuke Takada
+ad-prj035,AD035_Marsupial,marsupial (multiple),Alistair Legione
+ad-prj036,AD036_Ayda,Northern Hairy-nosed Wombat (Lasiorhinus krefftii); Shark Bay bandicoot (Perameles bougainville),Ayda Susana Ortiz Baez
+ad-prj037,AD037_Subir_1,"Macropus giganteus (Eastern grey kangaroo), Anas platyrhynchos (Wild ducks), Canis lupus familiaris (Domestic dogs)",Subir Sarker
+ad-prj038,AD038_Subir_2,"Phascolarctos cinereus (Koala), Macropus giganteus (Eastern Grey Kangaroo), Trichosurus vulpecula (Common Brushtail Possum), Trichoglossus moluccanus (Rainbow Lorikeet), Spilopelia chinensis (Eastern Spotted Dove), Podargus strigoides (Tawny Frogmouth), Corvus orru (Torresian Crow)",Subir Sarker
