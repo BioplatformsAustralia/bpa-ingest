@@ -264,7 +264,8 @@ class FungiIlluminaShortreadMetadata(FungiBaseMetadata):
         )
 
     def _get_resources(self):
-        return self._get_common_resources()
+        resources = self._get_common_resources()
+        return resources + self.generate_common_files_resources(resources)
 
     def _add_datatype_specific_info_to_resource(self, resource, md5_file=None):
         if "library_id" in resource.keys():
