@@ -232,6 +232,7 @@ class FungiIlluminaShortreadMetadata(FungiBaseMetadata):
     md5 = {
         "match": [
             files.illumina_shortread_re,
+            files.illumina_shortread_common_re,
         ],
         "skip": [
             re.compile(r"^.*_metadata.*\.xlsx$"),
@@ -241,6 +242,11 @@ class FungiIlluminaShortreadMetadata(FungiBaseMetadata):
             re.compile(r"^.*checksums\.(exf|md5)$"),
         ],
     }
+    common_files_match = [
+        files.illumina_shortread_common_re,
+    ]
+
+    common_files_linkage = ("flowcell_id",)
     description = "Illumina Shortread"
     tag_names = ["genomics", "illumina-short-read"]
 
@@ -261,9 +267,10 @@ class FungiIlluminaShortreadMetadata(FungiBaseMetadata):
         return self._get_common_resources()
 
     def _add_datatype_specific_info_to_resource(self, resource, md5_file=None):
-        resource["bioplatforms_library_id"] = ingest_utils.extract_ands_id(
-            self._logger, resource["library_id"]
-        )
+        if "library_id" in resource.keys():
+            resource["bioplatforms_library_id"] = ingest_utils.extract_ands_id(
+                self._logger, resource["library_id"]
+            )
         return
 
     def _build_resource_linkage(self, xlsx_info, resource, file_info):
@@ -271,6 +278,9 @@ class FungiIlluminaShortreadMetadata(FungiBaseMetadata):
             resource["bioplatforms_library_id"],
             resource["flow_cell_id"],
         )
+    def _build_common_files_linkage(self, xlsx_info, resource, file_info):
+        return (resource["flowcell_id"],)
+
 class FungiONTPromethionMetadata(FungiBaseMetadata):
     ckan_data_type = "fungi-ont-promethion"
     technology = "ont-promethion"

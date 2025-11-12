@@ -32,6 +32,19 @@ ILLUMINA_FASTQ_PATTERN = r"""
 """
 illumina_fastq_re = re.compile(ILLUMINA_FASTQ_PATTERN, re.VERBOSE)
 
+ILLUMINA_SHORTREAD_COMMON_PATTERN = r"""
+    DNA2210-PrepM-NTC_
+    (?P<flowcell_id>\w{5,10})_
+    (?P<index>[G|A|T|C|-]{8,12}([_-][G|A|T|C|-]{8,12})?)_
+    (?P<lane>L\d{3})_
+    (?P<read>[R|I][1|2])
+    (_001|)
+    (\.fastq)?
+    \.gz$
+
+"""
+illumina_shortread_common_re = re.compile(ILLUMINA_SHORTREAD_COMMON_PATTERN, re.VERBOSE)
+
 PACBIO_HIFI_PATTERN = r"""
     (?P<library_id>\d{4,6})_
     FUN_
