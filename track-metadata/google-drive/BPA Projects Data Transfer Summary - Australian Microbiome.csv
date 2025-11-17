@@ -244,7 +244,7 @@ Ramaciotti,13/03/2024,MiSeq data package,18S,240219_AM_18S_UNSW_LHPV7,14/03/2024
 Ramaciotti,22/03/2024,MiSeq data package,16S,240216_AM_16S_UNSW_LHMB9,22/03/2024,,BPAOPS-1569,"Incorrect Indexing, withdrawn, replaced with BPAOPS-1589"
 Ramaciotti,28/03/2024,NovaSeq data package,MGE,20240321_MGE_UNSW_HVYGVDSX7,03/04/2024,,BPAOPS-1571,
 Ramaciotti,02/04/2024,MiSeq data package ,18S,240219_AM_18S_UNSW_LHPV7,02/04/2024,,BPAOPS-1572,"Incorrect Indexing, withdrawn, replacedwith BPAOPS-1587"
-AGRF,29/04/2024,NovaSeq data package,MGE,240429_AM_MGE_AGRF_22KM7FLT3,,,,"This data is for Platypus Bio, copied to the Collaborations tab"
+AGRF,29/04/2024,NovaSeq data package,MGE,240429_AM_MGE_AGRF_22KM7FLT3,29/04/2024,,,"This data is for Platypus Bio, copied to the Collaborations tab"
 Ramaciotti,15/05/2024,MiSeq data package,18S,240219_AM_18S_UNSW_LHPV7,16/05/2024,,BPAOPS-1587,Replaces BPAOPS-1572
 Ramaciotti,15/05/2024,MiSeq data package,A16S,240223_AM_A16_UNSW_LFR5G,16/05/2024,,BPAOPS-1588,Replaces BPAOPS-1562
 Ramaciotti,15/05/2024,MiSeq data package,16S,240216_AM_16S_UNSW_LHMB9,16/05/2024,,BPAOPS-1589,Replaces BPAOPS-1569
@@ -256,7 +256,7 @@ Ramaciotti,08/11/2024,MiSeq data package,16S,20241101_AM_16S_UNSW_LRNKY,8/11/202
 Ramaciotti,08/11/2024,MiSeq data package,16S,20241101_AM_16S_UNSW_LT2JJ,11/11/2024,,BPAOPS-1715,
 Ramaciotti,08/11/2024,MiSeq data package,18S,20241030_AM_18S_UNSW_LNVF6,11/11/2024,,BPAOPS-1716,
 Ramaciotti,14/11/2024,MiSeq data package,A16S,20241108_AM_A16_UNSW_LT43K,15/11/2024,,BPAOPS-1717,
-Ramaciotti,19/11/2024,NovaSeq data package,MGE,20241113_AM_MGE_UNSW_A22TC7MLT3,,,,Replace with correct flowcell below
+Ramaciotti,19/11/2024,NovaSeq data package,MGE,20241113_AM_MGE_UNSW_A22TC7MLT3,22/11/2024,,,Replace with correct flowcell below
 Ramaciotti,21/11/2024,NovaSeq data package,MGE,20241113_AM_MGE_UNSW_22TC7MLT3,22/11/2024,,BPAOPS-1718,
 Ramaciotti,25/02/2025,MiSeq data package,18S,20250217_AM_18S_UNSW_LWL77,25/02/2025,,BPAOPS-1758,
 Ramaciotti,26/02/2025,MiSeq data package,16S,20250221_AM_16S_UNSW_LW7D6,26/02/2025,,BPAOPS-1759,
@@ -284,4 +284,4 @@ Ramaciotti,02/09/2025,MiSeq data package,A16S,250815_AM_A16_UNSW_M6HG4,03/09/202
 Ramaciotti,02/09/2025,MiSeq data package,18S,250818_AM_18S_UNSW_M64HL,03/09/2025,,BPAOPS-1893,
 Ramaciotti,26/09/2025,MiSeq data package,16S,20250822_AM_16S_UNSW_M76WY,26/09/2025,,BPAOPS-1910,
 Ramaciotti,07/10/2025,MiSeq data package,16S,20250822_AM_16S_UNSW_M76WY,07/10/2025,,BPAOPS-1913,
-Ramaciotti,12/11/2025,NovaSeq data package,MGE,20251105_AM_MGE_UNSW_23722NLT3,14/11/2025,,BAOPS-1949,
+Ramaciotti,12/11/2025,NovaSeq data package,MGE,20251105_AM_MGE_UNSW_23722NLT3,14/11/2025,,BPAOPS-1949,
