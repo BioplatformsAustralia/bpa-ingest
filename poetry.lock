@@ -126,8 +126,8 @@ files = [
 jmespath = ">=0.7.1,<2.0.0"
 python-dateutil = ">=2.1,<3.0.0"
 urllib3 = [
-    {version = ">=1.25.4,<1.27", markers = "python_version < \"3.10\""},
     {version = ">=1.25.4,<2.2.0 || >2.2.0,<3", markers = "python_version >= \"3.10\""},
+    {version = ">=1.25.4,<1.27", markers = "python_version < \"3.10\""},
 ]
 
 [package.extras]
@@ -135,7 +135,7 @@ crt = ["awscrt (==0.23.8)"]
 
 [[package]]
 name = "bpasslh"
-version = "2.1.7"
+version = "2.1.8"
 description = "Location generalisation for sensitive species"
 optional = false
 python-versions = ">=3.8.1,<4"
@@ -144,15 +144,15 @@ files = []
 develop = false
 
 [package.dependencies]
-Fiona = "^1.8.21"
-requests = "^2.27.1"
-Shapely = "^1.8.2"
+Fiona = ">=1.8.21"
+requests = ">=2.27.1"
+Shapely = ">=1.8.2"
 
 [package.source]
 type = "git"
 url = "https://github.com/BioplatformsAustralia/bpasslh.git"
-reference = "2.1.7"
-resolved_reference = "35ace35005bd986ea5f6163d71c72dffa8b45258"
+reference = "2.1.8"
+resolved_reference = "ac603c1163bb4a786d9bc8102c82b66fb9336e5b"
 
 [[package]]
 name = "cachetools"
@@ -566,8 +566,8 @@ files = [
 google-auth = ">=2.14.1,<3.0.0"
 googleapis-common-protos = ">=1.56.2,<2.0.0"
 proto-plus = [
-    {version = ">=1.22.3,<2.0.0"},
     {version = ">=1.25.0,<2.0.0", markers = "python_version >= \"3.13\""},
+    {version = ">=1.22.3,<2.0.0", markers = "python_version < \"3.13\""},
 ]
 protobuf = ">=3.19.5,<3.20.0 || >3.20.0,<3.20.1 || >3.20.1,<4.21.0 || >4.21.0,<4.21.1 || >4.21.1,<4.21.2 || >4.21.2,<4.21.3 || >4.21.3,<4.21.4 || >4.21.4,<4.21.5 || >4.21.5,<7.0.0"
 requests = ">=2.18.0,<3.0.0"
@@ -896,8 +896,8 @@ files = [
 
 [package.dependencies]
 numpy = [
-    {version = ">=1.22.4", markers = "python_version < \"3.11\""},
     {version = ">=1.26.0", markers = "python_version >= \"3.12\""},
+    {version = ">=1.22.4", markers = "python_version < \"3.11\""},
     {version = ">=1.23.2", markers = "python_version == \"3.11\""},
 ]
 python-dateutil = ">=2.8.2"
@@ -1863,4 +1863,4 @@ type = ["pytest-mypy"]
 [metadata]
 lock-version = "2.1"
 python-versions = ">=3.9,<4"
-content-hash = "0e62cf4ad03edc812587d5ff7e96ae45622d3394aad83a1ed343d384a69c8144"
+content-hash = "fb290906d048962a120d9bc2fce15d09ccb3dc904d207a4a22bf14fbffe2ee5c"
