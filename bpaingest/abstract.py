@@ -48,7 +48,7 @@ class BaseMetadata:
             return True
         print("did not run the method")
         return False
-
+# REfactor build methods into seprate py file
     def build_notes_into_object(self, obj, additional={}):
         obj.update(
             {
@@ -76,7 +76,7 @@ class BaseMetadata:
         )
         if built_title:
             obj.update({"title": built_title})
-
+# will be moving into refactored validation code
     def parse_spreadsheet(self, fname, metadata_info):
         kwargs = self.spreadsheet["options"]
         wrapper = ExcelWrapper(
@@ -91,7 +91,7 @@ class BaseMetadata:
             self._logger.error(error)
         rows = list(wrapper.get_all())
         return rows
-
+# md5 file parsing etc could go into new py file
     def parse_md5file_unwrapped(self, fname):
         match = self.md5["match"]
         skip = self.md5["skip"]
@@ -103,7 +103,7 @@ class BaseMetadata:
             yield tpl
         for tpl in p.no_match:
             self._logger.error("No match for filename: `%s'" % tpl)
-
+# not affected by storage changes
     def get_tracking_info(self, ticket, field_name=None):
         if self.google_track_meta is None:
             return None
@@ -124,7 +124,7 @@ class BaseMetadata:
     def _get_resource_info(self, resource_info):
         # subclasses may choose to implement this, not required tho. TSI pacbio-hifi as an example
         return
-
+# needs access to the MD5 files, and file_info - may need attention - where is self.path set?
     def _get_common_resources(self):
         self._logger.info("Ingesting md5 file information from {0}".format(self.path))
         resources = []
@@ -133,6 +133,7 @@ class BaseMetadata:
         for filename, md5, md5_file, file_info in self.md5_lines():
             resource = file_info.copy()
             resource["md5"] = resource["id"] = md5
+            ## look here....
             resource["name"] = clean_filename(os.path.basename(filename))
             resource["resource_path"] = os.path.dirname(filename)
             resource["resource_type"] = self.ckan_data_type
@@ -240,6 +241,8 @@ class BaseMetadata:
         """
         raise NotImplementedError("implement _get_resources()")
 
+# rename this with a "build" - could possibly go off into the build_whatever.py,
+    # maybe break into 2 parts - or have it available to be done on a SINGLE resource, rather than over resource LIST
     @classmethod
     def resources_add_format(cls, resources):
         """
@@ -306,6 +309,8 @@ class BaseMetadata:
             ):
                 resource_obj["format"] = extension
 
+                # utiltiy method - break it out and import it
+
     @classmethod
     def obj_round_floats_and_stringify(cls, objs):
         """
@@ -325,6 +330,7 @@ class BaseMetadata:
         self._linkage_xlsx_file = {}
         self._linkage_md5 = {}
 
+# build utility? name as build_? - tbis addds to the list we want to track/add to packages
     def track_xlsx_resource(self, obj, fname):
         """
         track a spreadsheet that needs to be uploaded into the packages generated from it
@@ -335,6 +341,7 @@ class BaseMetadata:
         self._linkage_xlsx_linkage[linkage_key] = linkage
         self._linkage_xlsx_file[linkage_key] = fname
 
+    # build utility? name as build_?
     def track_packages_for_md5(self, obj, ticket):
         """
         track packages for md5s that needs to be uploaded into the packages, if metadata_info shows the ticket matches
@@ -348,6 +355,8 @@ class BaseMetadata:
                 and linkage not in self._linkage_md5[f]
             ):
                 self._linkage_md5[f].append(linkage)
+
+# this one actually builds the RESOURCES and LINKAGES for ALL the xlsx file
 
     def generate_xlsx_resources(self):
         if len(self._linkage_xlsx_linkage) == 0:
@@ -364,6 +373,9 @@ class BaseMetadata:
             legacy_url = urljoin(xlsx_info["base_url"], quote(os.path.basename(fname)))
             resources.append((linkage, legacy_url, resource))
         return resources
+
+    # This builds the common files as resoources, complicated by needing to be added to any/all packages with
+    # the common files linkage
 
     def generate_common_files_resources(self, linked_resources):
         resources = []
@@ -433,6 +445,7 @@ class BaseMetadata:
 
         return resources
 
+## This generates the inventory of resources based on all the MD5 files it can locate
     def md5_lines(self):
         files_in_md5 = set({})
         md5_files = set({})
@@ -461,6 +474,9 @@ class BaseMetadata:
                     )
 
                 yield filename, md5, md5_file, file_info
+
+# This needs a rename - this is where individual md5 resources get generated
+#    NB  this MAY BE DIFFERENT in AM specific code
 
     def generate_md5_resources(self, md5_file):
         self._logger.info("Processing md5 file {}".format(md5_file))
@@ -514,6 +530,7 @@ class BaseDatasetControlContextual:
 
     def __init__(self, logger, path):
         self._logger = logger
+        # child classes state the location of the spreadsheet folder
         self._logger.info("dataset control path is: {}".format(path))
         self.dataset_metadata = self._read_metadata(one(glob(path + "/*.xlsx")))
 
@@ -529,6 +546,7 @@ class BaseDatasetControlContextual:
             return self.dataset_metadata[context]
         return {}
 
+# this will be refactored into spreadsheet handling code / validation
     def _coerce_ands(self, name, value):
         if name in (
             "sample_id",
@@ -646,7 +664,7 @@ class BaseDatasetControlContextual:
     def filename_metadata(self, *args, **kwargs):
         return {}
 
-
+# Refectoring into validation/spreadsheet handler
 class BaseLibraryContextual:
     metadata_patterns = [re.compile(r"^.*\.xlsx$")]
 

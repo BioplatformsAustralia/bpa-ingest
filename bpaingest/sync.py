@@ -31,9 +31,11 @@ from collections import Counter
 
 logger = make_logger(__name__)
 
+# is it possible to queue these rather thannavigating the tree each time
 
 def get_or_create_package(ckan, obj):
     try:
+        # should be able to recover gracefully from a failre on the ckan call, and try again a few times
         ckan_obj = ckan_method(ckan, "package", "show")(id=obj["name"])
         if ckan_obj["state"] == "deleted":
             logger.info(
@@ -61,7 +63,7 @@ def get_or_create_package(ckan, obj):
         logger.info("created package object: %s" % (obj["id"]))
     return ckan_obj
 
-
+# better error recovery again
 def get_or_create_resource(ckan, obj):
     try:
         ckan_obj = ckan_method(ckan, "resource", "show")(id=obj["id"])
@@ -85,7 +87,9 @@ def get_uploaded_resource_from_ckan(ckan, obj):
         # it doesn't have an uploaded file we want to track, return None
         return None
     return resource_from_ckan
-
+# Possiblky issues around multiple passes/ double handling of packages and resoruces,
+# especially when doing check-resources
+# potentially improve by looking at what the associated methods DO and name them appropiately
 
 def sync_package(ckan, obj, cached_obj):
     if cached_obj is None:
@@ -236,6 +240,8 @@ def sync_packages(
                 )
     return ckan_packages
 
+
+# this section addresses both MIRROR and S3, as it checks  one against the other
 
 def check_resources(ckan, current_resources, resource_id_legacy_url, auth, num_threads):
     ckan_archive_info = CKANArchiveInfo(ckan)
