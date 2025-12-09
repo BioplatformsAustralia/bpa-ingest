@@ -917,14 +917,14 @@ class TSIGenomeAssemblyMetadata(TSIBaseMetadata):
             fld(
                 "sample_id",
                 "bioplatforms_sample_id",
-                coerce=ingest_utils.int_or_comment,
+                coerce=ingest_utils.extract_ands_id,
             ),
             fld(
                 "library_id",
                 "bioplatforms_library_id",
-                coerce=ingest_utils.int_or_comment,
+                coerce=ingest_utils.extract_ands_id,
             ),
-            fld("dataset_id", "bioplatforms_dataset_id", coerce=ingest_utils.get_int),
+            fld("dataset_id", "bioplatforms_dataset_id", coerce=ingest_utils.extract_ands_id),
             fld("bioplatforms_project", "bioplatforms_project"),
             fld("contact_person", "contact_person"),
             fld("scientific_name", "scientific_name"),
