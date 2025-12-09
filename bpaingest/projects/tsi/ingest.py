@@ -1172,8 +1172,7 @@ class TSIHiCMetadata(TSIBaseMetadata):
         return self._get_common_packages()
 
     def _add_datatype_specific_info_to_package(self, obj, row, filename):
-        # note the complete library id is used to generate the notes field.
-        obj.update({"library_id": row.library_id.split("/")[-1]})
+        pass
 
     def _get_resources(self):
         return self._get_common_resources()
@@ -1187,7 +1186,7 @@ class TSIHiCMetadata(TSIBaseMetadata):
     def _build_resource_linkage(self, xlsx_info, resource, file_info):
         return (
             xlsx_info["ticket"],
-            file_info.get("library_id"),
+            resource["library_id"],
             resource["flowcell_id"],
         )
 
