@@ -209,9 +209,6 @@ class GAPIlluminaShortreadMetadata(GAPBaseMetadata):
         obj.update(
             {
                 "flow_cell_id": flow_cell_id,
-                "library_id": row.library_id.split("/")[
-                    -1
-                ],  # because the linkages uses the raw lib id, from the file_name
             }
         )
 
@@ -220,14 +217,16 @@ class GAPIlluminaShortreadMetadata(GAPBaseMetadata):
 
     def _add_datatype_specific_info_to_resource(self, resource, md5_file=None):
         resource["sample_id"] = ingest_utils.extract_ands_id(
-            self._logger, resource["sample_id"]
-        )
+            self._logger, resource["sample_id"])
+        resource["library_id"] = ingest_utils.extract_ands_id(
+            self._logger, resource["library_id"])
+
 
     def _build_resource_linkage(self, xlsx_info, resource, file_info):
         return (
             xlsx_info["ticket"],
             resource["sample_id"],
-            file_info.get("library_id"),
+            resource["library_id"],
             resource["flow_cell_id"],
         )
 
@@ -421,13 +420,8 @@ class GAPONTPromethionMetadata(GAPBaseMetadata):
         return self._get_common_packages()
 
     def _add_datatype_specific_info_to_package(self, obj, row, filename):
-        obj.update(
-            {
-                "dataset_id": row.dataset_id.split("/")[
-                    -1
-                ]  # for backward consistency in refactor
-            }
-        )
+         # none here
+         pass
 
     def _build_common_files_linkage(self, xlsx_info, resource, file_info):
         return (
@@ -490,8 +484,6 @@ class GAPGenomics10XMetadata(GAPBaseMetadata):
         obj.update(
             {
                 "flow_cell_id": flow_cell_id,
-                "library_id": row.library_id.split("/")[-1]
-                # because the linkages uses the raw lib id, from the file_name
             }
         )
 
