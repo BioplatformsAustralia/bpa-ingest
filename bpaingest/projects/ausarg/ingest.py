@@ -1001,7 +1001,6 @@ class AusargHiCMetadata(AusargBaseMetadata):
                 "id": name,
                 "sequence_data_type": self.sequence_data_type,
                 "flowcell_id": row.flowcell_id,
-                "library_id": raw_library_id,
             }
         )
         self._build_notes_into_object(obj, row.library_id)
