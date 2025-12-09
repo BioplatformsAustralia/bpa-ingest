@@ -109,6 +109,7 @@ class GAPBaseMetadata(BaseMetadata):
                     {
                         "sample_id": sample_id,
                         "library_id": library_id,
+                        "dataset_id": dataset_id,
                         "name": name,
                         "id": name,
                         "type": self.ckan_data_type,
