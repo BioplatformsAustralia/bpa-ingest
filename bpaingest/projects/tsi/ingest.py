@@ -273,7 +273,7 @@ class TSIIlluminaShortreadMetadata(TSIBaseMetadata):
         flow_cell_id = re.match(r"^.*_([^_]+)_metadata.*\.xlsx", filename).groups()[0]
 
         obj.update(
-            {"flow_cell_id": flow_cell_id, "library_id": row.library_id.split("/")[-1]}
+            {"flow_cell_id": flow_cell_id,}
         )
 
     def _get_resources(self):
@@ -287,7 +287,7 @@ class TSIIlluminaShortreadMetadata(TSIBaseMetadata):
 
     def _build_resource_linkage(self, xlsx_info, resource, file_info):
         return (
-            file_info.get("library_id"),
+            resource["library_id"],
             resource["flow_cell_id"],
         )
 
