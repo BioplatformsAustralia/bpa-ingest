@@ -264,9 +264,6 @@ class AGIlluminaShortreadMetadata(AGBaseMetadata):
         obj.update(
             {
                 "flowcell_id": flowcell_id,
-                "library_id": row.library_id.split("/")[
-                    -1
-                ],  # because the linkages uses the raw lib id, from the file_name
             }
         )
 
@@ -277,12 +274,15 @@ class AGIlluminaShortreadMetadata(AGBaseMetadata):
         resource["sample_id"] = ingest_utils.extract_ands_id(
             self._logger, resource["sample_id"]
         )
+        resource["library_id"] = ingest_utils.extract_ands_id(
+            self._logger, resource["library_id"]
+        )
 
     def _build_resource_linkage(self, xlsx_info, resource, file_info):
         return (
             xlsx_info["ticket"],
             resource["sample_id"],
-            file_info.get("library_id"),
+            resource["library_id"],
             resource["flowcell_id"],
         )
 
