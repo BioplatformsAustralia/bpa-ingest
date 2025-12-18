@@ -30,6 +30,10 @@ field_definition_default = FieldDefinition(
     "<replace>", "<replace>", None, False, None, False
 )
 
+# prevent xlrd from using defusedxml
+# https://stackoverflow.com/a/65131301
+xlrd.xlsx.ensure_elementtree_imported(False, None)
+xlrd.xlsx.Element_has_iter = True
 
 def make_field_definition(attribute, column_name, **kwargs):
     return field_definition_default._replace(
