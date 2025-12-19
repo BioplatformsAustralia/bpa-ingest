@@ -163,6 +163,7 @@ def test_amd_amplicon_re():
 def test_amd_amplicon_v2_re():
     filenames = [
         "138626_18S_LB4W9_GGAGCTAC-TATCCTCT_S2_L001_R2_001.fastq.gz",
+        "404300_A16_AAHGG57M5_GACATAACCT-CTGTTAGGAT_S141_L001_I1_001.fastq.gz",
     ]
     for filename in filenames:
         assert amd_amplicon_filename_v2_re.match(filename) is not None
@@ -181,11 +182,6 @@ def test_amd_amplicon_control_re():
         "Soil_DNA_ITS_J9GNL_AATGTCCG-TGCGTACG_S2_L001_I1.fastq.gz",
         "NEG_16S_K9276_ATTCCTGT-ACGACGTG_S56_L001_I1.fastq.gz",
         "ATCC1002MOCK_16S_J6H7B_TCCGAATT-TCTACACT_S2_L001_R2.fastq.gz",
-        # "ATCC1002MOCK_16S_M57TK_CTAACTCCGA-CCGCAGTATC_S97_L001_I1_001.fastq.gz",
-        "ATCC1002MOCK_16S_M57TK_CTAACTCCGA-CCGCAGTATC_S97_L001_I2_001.fastq.gz",
-        "ATCC1002MOCK_neat_16S_M57TK_CTAGCTCCTG-GACATGTAGA_S95_L001_I1_001.fastq.gz",
-        "No_Template_Control_neat_16S_M57TK_AGATCGCTCG-ATAACGCTCA_S108_L001_I1_001.fastq.gz",
-        "Soil_DNA_1_10_16S_M57TK_CGATGATAGC-ATCACGGCTA_S93_L001_I1_001.fastq.gz",
     ]
     for filename in filenames:
         assert amd_amplicon_control_filename_re.match(filename) is not None
@@ -194,6 +190,15 @@ def test_amd_amplicon_control_re():
 def test_amd_amplicon_control_v2_re():
     filenames = [
         "Zymo_DNA_Control_18S_LB4W9_CGAGGCTG-CTATTAAG_S156_L001_I1_001.fastq.gz",
+        "ATCC1002_16S_M76WY_AATGCCTC-CGATCTAC_S9_L001_I1_001.fastq.gz",
+        "NTC-16S_M76WY_AATGCCTC-GTCTAGTG_S1_L001_I1_001.fastq.gz",
+        "ATCC1002MOCK_16S_M57TK_CTAACTCCGA-CCGCAGTATC_S97_L001_I1_001.fastq.gz",
+        "ATCC1002MOCK_16S_M57TK_CTAACTCCGA-CCGCAGTATC_S97_L001_I2_001.fastq.gz",
+        "ATCC1002MOCK_neat_16S_M57TK_CTAGCTCCTG-GACATGTAGA_S95_L001_I1_001.fastq.gz",
+        "No_Template_Control_neat_16S_M57TK_AGATCGCTCG-ATAACGCTCA_S108_L001_I1_001.fastq.gz",
+        "ATCC3001MOCK_A16_AAHGG57M5_ACGAGGTACT-CTACGACAAT_S16_L001_I1_001.fastq.gz",
+        "Soil_DNA_1_10_16S_M57TK_CGATGATAGC-ATCACGGCTA_S93_L001_I1_001.fastq.gz",
+        "Soil_16S_M76WY_AATGCCTC-ACGACGTG_S5_L001_I1_001.fastq.gz",
     ]
     for filename in filenames:
         assert amd_amplicon_control_filename_v2_re.match(filename) is not None
