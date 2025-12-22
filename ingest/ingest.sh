@@ -246,8 +246,17 @@ forest()
 
 ad()
 {
-  apply ad-ont-promethion $*
+    apply ad-ont-promethion $*
 }
+
+fish()
+{
+    apply fish-illumina-shortread $*
+    apply fish-pacbio-hifi $*
+    apply fish-ont-promethion $*
+    apply fish-hi-c $*
+}
+
 run() {
   apply $*
 }
@@ -266,6 +275,7 @@ all()
   wheat $*
   ausarg $*
   fungi $*
+  fish $*
   pp $*
   cipps $*
   ppa $*
