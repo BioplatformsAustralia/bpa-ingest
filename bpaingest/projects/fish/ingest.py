@@ -370,7 +370,7 @@ class FishPacbioHifiMetadata(FishBaseMetadata):
             fld('scientific_name', 'scientific_name', optional=True),
             fld('project_lead', 'project_lead', optional=True),
             fld('project_collaborators', 'project_collaborators', optional=True),
-
+            fld("common_name", "common_name", optional=True),
         ],
         "options": {
             "sheet_name": "library_metadata",
