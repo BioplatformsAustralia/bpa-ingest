@@ -3,6 +3,8 @@ from .files import (
     pacbio_hifi_filename_revio_re,
     pacbio_hifi_revio_pdf_re,
     pacbio_hifi_revio_metadata_sheet_re,
+    ont_promethion_re,
+    ont_promethion_common_re,
 )
 
 
@@ -41,3 +43,21 @@ def test_pacbio_hifi_revio_metadata_sheet():
 
     for filename in filenames:
         assert pacbio_hifi_revio_metadata_sheet_re.match(filename) is not None
+
+def test_ont_promethion():
+    filenames = [
+        "370196_AG_BRF_PBE83773_ONTPromethION_fastq_fail.tar",
+        "370196_AG_BRF_PBE83773_ONTPromethION_fastq_pass.tar",
+        "370196_AG_BRF_PBE83773_ONTPromethION_pod5.tar",
+        "370196_AG_BRF_PBE83773_ONTPromethION_report.html",
+        "370196_AG_BRF_PBE83773_ONTPromethION_sequencing_summary.txt",
+    ]
+    for filename in filenames:
+        assert ont_promethion_re.match(filename) is not None
+
+
+def test_ont_promethion_common():
+    filenames = [
+    ]
+    for filename in filenames:
+        assert ont_promethion_common_re.match(filename) is not None

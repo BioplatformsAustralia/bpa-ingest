@@ -210,6 +210,7 @@ grasslands() {
   apply grasslands-pacbio-hifi $*
   apply grasslands-genomics-ddrad $*
   apply grasslands-illumina-shortread $*
+  apply grasslands-ont-promethion $*
 }
 
 collaborations()
