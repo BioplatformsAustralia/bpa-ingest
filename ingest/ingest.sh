@@ -188,6 +188,7 @@ cipps()
 {
   apply cipps-illumina-shortread $*
   apply cipps-pacbio-hifi $*
+  apply cipps-hi-c $*
 }
 
 ppa()

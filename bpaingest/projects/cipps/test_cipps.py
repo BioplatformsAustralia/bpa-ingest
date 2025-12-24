@@ -8,7 +8,8 @@ from bpaingest.projects.cipps.files import (
 def test_illumina_shortread():
     filenames = [
         # "355598_CIPPS_AGRF_H3GYVDSX2_AACTGAGC-CAATCAGG_L004_R2.fastq.gz",
-        "415490_CIPPS_UNSW_H3MCVDSX7_CTATGAAGGA-CTTATACCTG_S5_L001_R1_001.fastq.gz"
+        "415490_CIPPS_UNSW_H3MCVDSX7_CTATGAAGGA-CTTATACCTG_S5_L001_R1_001.fastq.gz",
+        "417597_CIPPS_BRF_22FGYHLT1_S5_L002_R2_001.fastq.gz"
     ]
     for filename in filenames:
         assert illumina_shortread_re.match(filename) is not None

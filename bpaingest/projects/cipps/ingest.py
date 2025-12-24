@@ -157,17 +157,17 @@ class CIPPSIlluminaShortreadMetadata(CIPPSBaseMetadata):
         "fields": [
             fld(
                 "bioplatforms_sample_id",
-                "bioplatforms_sample_id",
+                re.compile(r"(sample_id|bioplatforms_sample_id)"),
                 coerce=ingest_utils.extract_ands_id,
             ),
             fld(
                 "bioplatforms_library_id",
-                re.compile(r"bioplatforms_library_[Ii][Dd]"),
+                re.compile(r"(library_id|bioplatforms_library_[Ii][Dd])"),
                 coerce=ingest_utils.extract_ands_id,
             ),
             fld(
                 "bioplatforms_dataset_id",
-                "bioplatforms_dataset_id",
+                re.compile(r"(dataset_id|bioplatforms_dataset_id)"),
                 coerce=ingest_utils.extract_ands_id,
             ),
             fld("library_construction_protocol", "library_construction_protocol"),
@@ -228,17 +228,17 @@ class CIPPSIlluminaShortreadMetadata(CIPPSBaseMetadata):
                 "sequencing_kit_chemistry_version",
                 optional=True,
             ),
-            fld("bioplatforms_project", "bioplatforms_project"),
+            fld("bioplatforms_project", "bioplatforms_project", optional=True),
             fld("scientific_name", "scientific_name", optional=True),
             fld("project_lead", "project_lead", optional=True),
             fld("project_collaborators", "project_collaborators", optional=True),
-            fld("bait_set_name", "bait_set_name"),
-            fld("bait_set_reference", "bait_set_reference"),
-            fld("library_index_id_dual", "library_index_id_dual"),
-            fld("library_index_seq_dual", "library_index_seq_dual"),
-            fld("library_oligo_sequence_dual", "library_oligo_sequence_dual"),
-            fld("fast5_compression", "fast5_compression"),
-            fld("model_base_caller", "model_base_caller"),
+            fld("bait_set_name", "bait_set_name", optional=True),
+            fld("bait_set_reference", "bait_set_reference", optional=True),
+            fld("library_index_id_dual", "library_index_id_dual", optional=True),
+            fld("library_index_seq_dual", "library_index_seq_dual", optional=True),
+            fld("library_oligo_sequence_dual", "library_oligo_sequence_dual", optional=True),
+            fld("fast5_compression", "fast5_compression", optional=True),
+            fld("model_base_caller", "model_base_caller", optional=True),
         ],
         "options": {
             "sheet_name": "Library metadata",
@@ -291,6 +291,17 @@ class CIPPSIlluminaShortreadMetadata(CIPPSBaseMetadata):
 
     def _build_resource_linkage(self, xlsx_info, resource, file_info):
         return (resource["library_id"],)
+
+
+class CIPPSHiCMetadata(CIPPSIlluminaShortreadMetadata):
+    ckan_data_type = "cipps-hi-c"
+    description = "Hi-C"
+    technology = "hi-c"
+    sequence_data_type = "illumina-hic"
+    metadata_urls = [
+        "https://downloads-qcif.bioplatforms.com/bpa/cipps_staging/genomics-hi-c/",
+    ]
+    tag_names = ["genomics", description.replace(" ", "-").lower()]
 
 
 class CIPPSPacbioHifiMetadata(CIPPSBaseMetadata):
