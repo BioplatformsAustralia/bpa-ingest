@@ -61,7 +61,7 @@ class FishBaseMetadata(BaseMetadata):
     title_mapping = [
         {"key": "common_name", "separator": ", "},
         {"key": "data_context", "separator": ", "},
-        {"key": "data_type", "separator": ", "},
+        {"key": "library_type", "separator": ", "},
         {"key": "tissue"},
     ]
     def _set_metadata_vars(self, filename):
@@ -139,6 +139,8 @@ class FishBaseMetadata(BaseMetadata):
                 ingest_utils.permissions_organization_member(self._logger, obj)
                 ingest_utils.apply_access_control(self._logger, self, obj)
                 obj["tags"] = [{"name": "{:.100}".format(t)} for t in self.tag_names]
+                # add the library_type from the metadata as a tag
+                obj["tags"] = obj["tags"].append(obj["library_type"])
                 packages.append(obj)
         return packages
 
