@@ -103,7 +103,7 @@ ILLUMINA_HIC_PATTERN = r"""
     (?P<facility_id>(BRF|AGRF))_
     (?P<flowcell_id>\w{5,10})_
     ((?P<index>[G|A|T|C|-]*)_)?
-    (?P<runsamplenum>S\d*)_
+    ((?P<runsamplenum>S\d*)_)?
     ((?P<lane>L\d{3})_)?
     (?P<read>[R|I][1|2])
     _001
