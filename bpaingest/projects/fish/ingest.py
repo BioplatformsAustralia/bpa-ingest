@@ -138,9 +138,9 @@ class FishBaseMetadata(BaseMetadata):
                     obj["id"] = obj["name"]
                 ingest_utils.permissions_organization_member(self._logger, obj)
                 ingest_utils.apply_access_control(self._logger, self, obj)
-                obj["tags"] = [{"name": "{:.100}".format(t)} for t in self.tag_names]
                 # add the library_type from the metadata as a tag
-                obj["tags"] = obj["tags"].append(obj["library_type"])
+                tag_list = self.tag_names + [obj["library_type"],]
+                obj["tags"] = [{"name": "{:.100}".format(t)} for t in tag_list]
                 packages.append(obj)
         return packages
 
