@@ -1,13 +1,15 @@
 Project: CIPPS,,
 Contact smazard@bioplatforms.com if you need assistance filling this sheet.,,
 Slug,Short Description,Long Description
-cipps001,CIPPS_koala,Transcriptomics on koala specimen
-cipps002,CIPPS_devil,Transcriptomics on devil specimen
-cipps003,CIPPS_dugong,Transcriptomics on dugong specimen
-cipps004,CIPPS_bilby,Transcriptomics on bilby specimen
-cipps005,CIPPS_oyster,Oyster specimen
-cipps006,CIPPS_kowari,Transcriptomics on Kowari
-cipps007,CIPPS_corroboree,Transcriptomics on Corroboree Frog
-cipps008,CIPPS_platypus,Transcriptomics on platypus specimen
-cipps009,CIPPS_wsturtle,Transcriptomics on western swamp turtle specimen
-cipps010,CIPPS_vgedragon,Transcriptomics on Victorian grassland earless dragon specimen
+cipps001,CIPPS_koala,Sequencing on Koala specimen
+cipps002,CIPPS_devil,Sequencing on Devil specimen
+cipps003,CIPPS_dugong,Sequencing on Dugong specimen
+cipps004,CIPPS_bilby,Sequencing on Bilby specimen
+cipps005,CIPPS_oyster,Sequencing on Oyster specimen
+cipps006,CIPPS_kowari,Sequencing on Kowari
+cipps007,CIPPS_corroboree,Sequencing on Corroboree Frog
+cipps008,CIPPS_platypus,Sequencing on Platypus specimen
+cipps009,CIPPS_wsturtle,Sequencing on Western swamp turtle specimen
+cipps010,CIPPS_vgedragon,Sequencing on Victorian grassland earless dragon specimen
+cipps011,CIPPS_numbat ,Sequencing on Numbat specimen
+cipps012,CIPPS_mpygpossum,Sequencing on Mountain pygmy-possum
