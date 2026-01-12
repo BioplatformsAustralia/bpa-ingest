@@ -106,7 +106,7 @@ ILLUMINA_HIC_PATTERN = r"""
     ((?P<runsamplenum>S\d*)_)?
     ((?P<lane>L\d{3})_)?
     (?P<read>[R|I][1|2])
-    _001
+    (_001)?
     \.fastq\.gz$
 """
 illumina_hic_re = re.compile(ILLUMINA_HIC_PATTERN, re.VERBOSE)
