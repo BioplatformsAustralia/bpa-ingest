@@ -100,7 +100,7 @@ ont_promethion_common_re = re.compile(ONT_PROMETHION_COMMON_PATTERN, re.VERBOSE)
 ILLUMINA_HIC_PATTERN = r"""
     (?P<library_id>\d{4,6})_
     FISH_
-    (?P<facility_id>(BRF))_
+    (?P<facility_id>(BRF|AGRF))_
     (?P<flowcell_id>\w{5,10})_
     ((?P<index>[G|A|T|C|-]*)_)?
     (?P<runsamplenum>S\d*)_
