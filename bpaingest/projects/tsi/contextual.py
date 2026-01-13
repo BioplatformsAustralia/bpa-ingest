@@ -23,7 +23,7 @@ class TSIDatasetControlContextual(BaseDatasetControlContextual):
 
 class TSILibraryContextual(BaseLibraryContextual):
     metadata_urls = [
-        "https://downloads-qcif.bioplatforms.com/bpa/tsi_staging/metadata/2025-09-05/"
+        "https://downloads-qcif.bioplatforms.com/bpa/tsi_staging/metadata/2026-01-12/"
     ]
     name = "tsi-library-contextual"
     metadata_unique_identifier = "sample_id"
