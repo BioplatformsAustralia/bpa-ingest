@@ -10,6 +10,10 @@ RAMAC,02/02/2024,,,373569,Themeda triandra,Transcriptomics-RNASeq (ILMN total RN
 AGRF,28/10/2024,,,373572,Themeda triandra,Genotyping,Main dataset,Illumina ddRAD-seq,20241023_AG_AGRF_22NTCKLT3,29/10/2024,31/10/2024,BPAOPS-1711,https://data.bioplatforms.com/dataset?ext_search_by=&q=ticket%3ABPAOPS-1711
 AGRF,13/12/2024,,,373574,Themeda triandra,Themeda resequencing - flow cell 1,Main dataset,Illumina short read,20241213_AG_AGRF_CAGRF24050423_2_22VGHWLT3,16/12/2024,16/12/2024,BPAOPS-1731,https://data.bioplatforms.com/dataset?ext_search_by=&q=ticket%3ABPAOPS-1731
 AGRF,13/12/2024,,,373575,Themeda triandra,Themeda resequencing - flow cell 2,Main dataset,Illumina short read,20241213_AG_AGRF_CAGRF24050423_2_22VGHFLT3,16/12/2024,16/12/2024,BPAOPS-1732,https://data.bioplatforms.com/dataset?ext_search_by=&q=ticket%3ABPAOPS-1732
-BRF,19/12/2025,370196,372343,373587,,,,PromethION,20251209_AG_BRF_PBE83773,19/12/2025,,BPAOPS-1975,
-BRF,19/12/2025,370196,372377,373590,,,,PromethION,20251210_AG_BRF_PBE83773,19/12/2025,,BPAOPS-1976,
-BRF,19/12/2025,370196,372378,373591,,,,PromethION,20251210_AG_BRF_PBE70026,19/12/2025,,BPAOPS-1977,
+BRF,19/12/2025,370196,372343,373587,Astrebla pectinata,Reference genome,Main dataset,PromethION,20251209_AG_BRF_PBE83773,19/12/2025,24/12/2025,BPAOPS-1975,https://data.bioplatforms.com/dataset?ext_search_by=&q=ticket%3ABPAOPS-1975
+BRF,19/12/2025,370196,372377,373590,Astrebla pectinata,Reference genome,Main dataset,PromethION,20251210_AG_BRF_PBE83773,19/12/2025,24/12/2025,BPAOPS-1976,https://data.bioplatforms.com/dataset?ext_search_by=&q=ticket%3ABPAOPS-1976
+BRF,19/12/2025,370196,372378,373591,Astrebla pectinata,Reference genome,Main dataset,PromethION,20251210_AG_BRF_PBE70026,19/12/2025,24/12/2025,BPAOPS-1977,https://data.bioplatforms.com/dataset?ext_search_by=&q=ticket%3ABPAOPS-1977
+ML note: Everything up to this point has been added to the Aus_Genome_status - Bioplatforms Google sheet,,,,,,,,,,,,,
+BRF,13/01/2025,,,373592,,,,PromethION,20251216_AG_BRF_PBE55061,14/01/2026,,BPAOPS-1980,
+BRF,13/01/2025,,,373593,,,,PromethION,20251217_AG_BRF_PBE54928,14/01/2026,,BPAOPS-1981,
+BRF,13/01/2025,,,373588,,,,PromethION,20251217_AG_BRF_PBG21712,,,BPAOPS-1982,
