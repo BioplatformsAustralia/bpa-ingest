@@ -20,7 +20,7 @@ class IPMDatasetControlContextual(BaseDatasetControlContextual):
 
 class IPMLibraryContextual(BaseLibraryContextual):
     metadata_urls = [
-        "https://downloads-qcif.bioplatforms.com/bpa/ipm_staging/metadata/2026-01-05/"
+        "https://downloads-qcif.bioplatforms.com/bpa/ipm_staging/metadata/2026-01-19/"
     ]
     name = "ipm-library-contextual"
 
