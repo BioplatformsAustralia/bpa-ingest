@@ -4,7 +4,7 @@ build-backend = "poetry.masonry.api"
 
 [tool.poetry]
 name = "bpaingest"
-version = "6.11.6"
+version = "6.11.7"
 authors = ["Grahame Bowland <grahame.bowland@qcif.edu.au>", "Matthew Mulholland <matt@redboxresearchdata.com.au>", "Mark Tearle <mark.tearle@qcif.edu.au>", "Brigette Gonch <b.gonch@qcif.edu.au>"]
 description = "Data management for Bioplatforms Australia projects"
 readme = "README.md"
