@@ -312,14 +312,14 @@ ORGANIZATIONS = [
         "name": "aus-venom",
         "title": "Australian Venom Innovation and Discovery Initiative",
         "display_name": "Australian Venom Innovation and Discovery Initiative",
-        "image_url": "https://data.bioplatforms.com/AVID-Logo-WEB-144dpi-Transparent.webp",
+        "image_url": "https://data.bioplatforms.com/AVID-Logo.webp",
         "groups": [{"capacity": "public", "name": BPA_ORGANIZATION_ID}],
     },
     {
         "name": "aus-venom-consortium-members",
         "title": "Australian Venom Innovation and Discovery Members",
         "display_name": "Australian Venom Innovation and Discovery Members",
-        "image_url": "https://data.bioplatforms.com/AVID-Logo-WEB-144dpi-Transparent.webp",
+        "image_url": "https://data.bioplatforms.com/AVID-Logo.webp",
         "groups": [{"capacity": "public", "name": "aus-venom"}],
     },
 ]
