@@ -12,7 +12,7 @@ ILLUMINA_SHORTREAD_PATTERN = r"""(?P<sample_id>\d{4,6})_
     (?P<flowcell_id>\w{5,10})_
     (?P<index>[G|A|T|C|-]{8,12}([_-][G|A|T|C|-]{8,12})?)_
     (?P<runsamplenum>S?\d*)_?
-    (?P<lane>L\d{3})_
+    ((?P<lane>L\d{3})_)?
     (?P<read>[R|I][1|2])
     (_001|)
     (\.fastq)?
