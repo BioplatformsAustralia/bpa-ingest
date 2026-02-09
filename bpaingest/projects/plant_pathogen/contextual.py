@@ -10,7 +10,7 @@ from ...abstract import BaseLibraryContextual
 
 class PlantPathogenDatasetControlContextual(BaseDatasetControlContextual):
     metadata_urls = [
-        "https://downloads-qcif.bioplatforms.com/bpa/pp_staging/dataset_control/2026-01-05/"
+        "https://downloads-qcif.bioplatforms.com/bpa/pp_staging/dataset_control/2026-02-09/"
     ]
     name = "pp-dataset-contextual"
     sheet_names = [
@@ -35,7 +35,7 @@ class PlantPathogenDatasetControlContextual(BaseDatasetControlContextual):
 
 class PlantPathogenLibraryContextual(BaseLibraryContextual):
     metadata_urls = [
-        "https://downloads-qcif.bioplatforms.com/bpa/pp_staging/metadata/2026-01-05/"
+        "https://downloads-qcif.bioplatforms.com/bpa/pp_staging/metadata/2026-02-09/"
     ]
     name = "pp-library-contextual"
     sheet_names = ["Virus", "Bacteria", "Fungi", "Nematode"]
