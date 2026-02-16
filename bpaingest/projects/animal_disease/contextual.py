@@ -10,7 +10,7 @@ from ...abstract import BaseLibraryContextual
 
 class AnimalDiseaseDatasetControlContextual(BaseDatasetControlContextual):
     metadata_urls = [
-        "https://downloads-qcif.bioplatforms.com/bpa/animal_disease_staging/dataset_control/2025-11-10/"
+        "https://downloads-qcif.bioplatforms.com/bpa/animal_disease_staging/dataset_control/2026-02-10/"
     ]
     name = "ad-dataset-contextual"
     sheet_names = [
@@ -35,10 +35,11 @@ class AnimalDiseaseDatasetControlContextual(BaseDatasetControlContextual):
 
 class AnimalDiseaseLibraryContextual(BaseLibraryContextual):
     metadata_urls = [
-        "https://downloads-qcif.bioplatforms.com/bpa/animal_disease_staging/metadata/2025-10-27/"
+        "https://downloads-qcif.bioplatforms.com/bpa/animal_disease_staging/metadata/2026-02-10/"
     ]
     name = "ad-library-contextual"
-    sheet_names = ["Virus", "Bacteria", "Fungi", "Nematode"]
+    sheet_names = ['Theme 1',
+                   ]
     metadata_unique_identifier = "bioplatforms_library_id"
     field_spec = [
         # sample_ID
@@ -87,20 +88,20 @@ class AnimalDiseaseLibraryContextual(BaseLibraryContextual):
         fld("host_family", "host_family"),
         fld("host_scientific_name", "host_scientific_name"),
         fld("host_organ", "host_organ"),
-        fld("host_symptom", "host_symptom"),
+        fld('host_symptom', 'host_symptom'),
         fld("host_status", "host_status"),
         fld("tissue", "tissue"),
         fld("tissue_preservation", "tissue_preservation"),
         fld("tissue_preservation_temperature", "tissue_preservation_temperature"),
         fld("sample_quality", "sample_quality"),
         fld("wild_captive", "wild_captive"),
-        fld(
-            "collection_date", "collection_date", coerce=ingest_utils.get_date_isoformat
-        ),
-        fld("collector", "collector"),
-        fld("collection_method", "collection_method"),
-        fld("collection_permit", "collection_permit"),
-        fld("collector_sample_id", "collector_sample_id"),
+        fld('individual_or_pooled_samples', 'individual_or_pooled samples'),
+        fld('collection_date', 'collection_date', coerce=ingest_utils.get_date_isoformat),
+        fld('collector', 'collector'),
+        fld('collection_method', 'collection_method'),
+        fld('collection_permit', 'collection_permit'),
+        fld('collector_sample_id', 'collector_sample_id'),
+        fld('identified_by', 'identified_by'),
         fld("source_population", "source_population"),
         fld("country", "country"),
         fld("state_or_region", "state_or_region"),
@@ -109,8 +110,12 @@ class AnimalDiseaseLibraryContextual(BaseLibraryContextual):
         fld("coord_uncertainty_metres", "coord_uncertainty_metres"),
         fld("decimal_latitude_public", "decimal_latitude_public"),
         fld("decimal_longitude_public", "decimal_longitude_public"),
-        fld("life_stage", "life_stage"),
-        fld("health_state", "health_state"),
+        fld('genotypic_sex', 'genotypic_sex'),
+        fld('phenotypic_sex', 'phenotypic_sex'),
+        fld('life_stage', 'life_stage'),
+        fld('birth_date', 'birth_date', coerce=ingest_utils.get_date_isoformat),
+        fld('death_date', 'death_date', coerce=ingest_utils.get_date_isoformat),
+        fld('health_state', 'health_state'),
         fld("associated_media", "associated_media"),
         fld("ancillary_notes", "ancillary_notes"),
         fld("type_status", "type_status"),

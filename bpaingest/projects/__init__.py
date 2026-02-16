@@ -15,7 +15,10 @@ from .amdb.ingest import (
     MarineMicrobesMetagenomicsMetadata,
     MarineMicrobesMetatranscriptomeMetadata,
 )
-from .animal_disease.ingest import AnimalDiseaseONTPromethionMetadata
+from .animal_disease.ingest import (
+    AnimalDiseaseIlluminaShortreadMetadata,
+    AnimalDiseaseIlluminaHiCMetadata, AnimalDiseaseONTPromethionMetadata,
+)
 
 from .ausarg.ingest import (
     AusargIlluminaFastqMetadata,
@@ -343,8 +346,9 @@ class ProjectInfo:
             FishHiCMetadata,
         ],
         "ad": [
+            AnimalDiseaseIlluminaShortreadMetadata,
+            AnimalDiseaseIlluminaHiCMetadata,
             AnimalDiseaseONTPromethionMetadata,
-            FishHiCMetadata,
         ],
     }
 

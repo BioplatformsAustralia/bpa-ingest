@@ -34,20 +34,21 @@ class AnimalDiseaseBaseMetadata(BaseMetadata):
             obj,
             {
                 "initiative": self.initiative,
-                "title_description": self.description,
-                "split_sample_id": obj.get("bioplatforms_sample_id", "").split("/")[-1],
+                "title_description": self.sequence_data_type,
+                "split_library_id": obj.get("bioplatforms_library_id", "").split("/")[-1],
             },
         )
 
     notes_mapping = [
         {"key": "scientific_name", "separator": ", "},
+        {"key": "common_name", "separator": ", "},
         {"key": "project_lead"},
     ]
     title_mapping = [
         {"key": "initiative", "separator": ", "},
         {"key": "data_context", "separator": ", "},
-        {"key": "title_description", "separator": ", Sample ID "},
-        {"key": "split_sample_id", "separator": " "},
+        {"key": "title_description", "separator": ", Library ID "},
+        {"key": "split_library_id", "separator": " "},
     ]
 
     def _set_metadata_vars(self, filename):
@@ -181,12 +182,8 @@ class AnimalDiseaseONTPromethionMetadata(AnimalDiseaseBaseMetadata):
         "https://downloads-qcif.bioplatforms.com/bpa/animal_disease_staging/ont-promethion/",
     ]
     metadata_url_components = ("ticket",)
-    resource_linkage = (
-        "ticket",
-        "bioplatforms_sample_id",
-        "bioplatforms_library_id",
-        "flowcell_id",
-    )
+    resource_linkage = ("bioplatforms_library_id", "flowcell_id", "run_number",)
+
     spreadsheet = {
         "fields": [
             fld("bioplatforms_project", "bioplatforms_project"),
@@ -272,8 +269,8 @@ class AnimalDiseaseONTPromethionMetadata(AnimalDiseaseBaseMetadata):
     common_files_match = [
         files.ont_promethion_common_re,
     ]
+    common_files_linkage = ("flowcell_id", "run_number")
 
-    common_files_linkage = ("ticket", "flowcell_id")
 
     def __init__(
         self, logger, metadata_path, contextual_metadata=None, metadata_info=None
@@ -287,56 +284,50 @@ class AnimalDiseaseONTPromethionMetadata(AnimalDiseaseBaseMetadata):
 
     def _get_resources(self):
         resources = self._get_common_resources()
-        return resources + self.generate_common_files_resources(resources)
+        common_resources = self.generate_common_files_resources(resources)
+        return resources + common_resources
 
     def _add_datatype_specific_info_to_resource(self, resource, md5_file=None):
-        if "sample_id" in resource and resource["sample_id"] is not None:
-            resource["sample_id"] = ingest_utils.extract_ands_id(
-                self._logger, resource["sample_id"]
-            )
         if "library_id" in resource and resource["library_id"] is not None:
-            resource["library_id"] = ingest_utils.extract_ands_id(
+            resource["bioplatforms_library_id"] = ingest_utils.extract_ands_id(
                 self._logger, resource["library_id"]
             )
+        if "run_number" not in resource or resource["run_number"] is None:
+            resource["run_number"] = "1"
+        return
+
+
 
     def _build_resource_linkage(self, xlsx_info, resource, file_info):
-        # if library_id is in file name use that,
-        # otherwise grab from tracking sheet
-        ticket = xlsx_info["ticket"]
-        track_meta = self.google_track_meta.get(ticket)
-        track_library_id = getattr(track_meta, "bioplatforms_library_id")
-        resource_library_id = resource.get("library_id", None)
-        if resource_library_id is not None:
-            library_id = resource_library_id
-        else:
-            library_id = track_library_id
-        library_id = ingest_utils.extract_ands_id(self._logger, library_id)
-
         return (
-            ticket,
-            resource["sample_id"],
-            library_id,
+            resource["bioplatforms_library_id"],
             resource["flowcell_id"],
+            resource["run_number"],
         )
+
+    def _build_common_files_linkage(self, xlsx_info, resource, file_info):
+        return (
+            resource["flowcell_id"],
+            resource["run_number"],
+        )
+
 
     def _get_packages(self):
         return self._get_common_packages()
 
     def _add_datatype_specific_info_to_package(self, obj, row, filename):
+
+        run_number = re.match(r"^.*_([^_]+)_metadata.*\.xlsx", filename).groups()[0]
+        if run_number is None or row.flowcell_id == run_number:
+            run_number = "1"
+        else:
+            run_number = run_number.split("Run")[-1]
         obj.update(
-            {
-                "bioplatforms_library_id": row.bioplatforms_library_id,
-                "library_id": row.bioplatforms_library_id.split("/")[-1],
-                "sample_id": row.bioplatforms_sample_id.split("/")[-1],
+            { "bioplatforms_library_id": row.bioplatforms_library_id,
+                "run_number": run_number,
             }
         )
 
-    def _build_common_files_linkage(self, xlsx_info, resource, file_info):
-        return (
-            xlsx_info["ticket"],
-            resource["flowcell_id"],
-        )
-"""
 
 class AnimalDiseaseIlluminaShortreadMetadata(AnimalDiseaseBaseMetadata):
     ckan_data_type = "ad-illumina-shortread"
@@ -442,7 +433,6 @@ class AnimalDiseaseIlluminaShortreadMetadata(AnimalDiseaseBaseMetadata):
     md5 = {
         "match": [
             files.illumina_shortread_re,
-            files.illumina_shortread_common_re,
         ],
         "skip": [
             re.compile(r"^.*_metadata.*\.xlsx$"),
@@ -452,11 +442,7 @@ class AnimalDiseaseIlluminaShortreadMetadata(AnimalDiseaseBaseMetadata):
             re.compile(r"^.*checksums\.(exf|md5)$"),
         ],
     }
-    common_files_match = [
-        files.illumina_shortread_common_re,
-    ]
 
-    common_files_linkage = ("flowcell_id",)
     description = "Illumina Shortread"
     tag_names = ["genomics", "illumina-short-read"]
 
@@ -483,8 +469,7 @@ class AnimalDiseaseIlluminaShortreadMetadata(AnimalDiseaseBaseMetadata):
         )
 
     def _get_resources(self):
-        resources =  self._get_common_resources()
-        return resources + self.generate_common_files_resources(resources)
+        return  self._get_common_resources()
 
     def _add_datatype_specific_info_to_resource(self, resource, md5_file=None):
         if "library_id" in resource.keys():
@@ -498,9 +483,19 @@ class AnimalDiseaseIlluminaShortreadMetadata(AnimalDiseaseBaseMetadata):
             resource["library_id"],
             resource["flowcell_id"],
         )
-    def _build_common_files_linkage(self, xlsx_info, resource, file_info):
-        return (resource["flowcell_id"],)
 
+class AnimalDiseaseIlluminaHiCMetadata(AnimalDiseaseIlluminaShortreadMetadata):
+    ckan_data_type = "ad-illumina-hic"
+    technology = "hi-c"
+    sequence_data_type = "illumina-hic"
+
+    metadata_urls = [
+        "https://downloads-qcif.bioplatforms.com/bpa/animal_disease_staging/genomics-hi-c/",
+    ]
+    metadata_url_components = ("ticket",)
+    resource_linkage = ("bioplatforms_library_id", "flowcell_id")
+
+"""
 class AnimalDiseasePacbioHifiMetadata(AnimalDiseaseBaseMetadata):
     ckan_data_type = "pp-pacbio-hifi"
     technology = "pacbio-hifi"

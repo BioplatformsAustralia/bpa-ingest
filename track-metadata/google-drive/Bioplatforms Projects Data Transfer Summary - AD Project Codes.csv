@@ -5,8 +5,8 @@ Slug,Short Description,Long Description,
 ad-prj001,AD001_Qfever,Coxiella burnetii,Q fever
 ad-prj006,AD006_Moraxella,Moraxella spp.,
 ad-prj007,AD007_Vibro,"Vibrio tasmaniensis, Vibrio pomeroyi, Vibrio atlanticus",
-ad-prj012,AD012_Trypanosoma ,Trypanosoma spp.,Trypanosomes
-ad-prj013,AD013_Worm ,Teladorsagia circumcincta,Brown stomach worm
+ad-prj012,AD012_Trypanosoma,Trypanosoma spp.,Trypanosomes
+ad-prj013,AD013_Worm,Teladorsagia circumcincta,Brown stomach worm
 ad-prj022,AD022_QX,Marteilia sydneyi (taxid 98371),QX disease
 ad-prj024,AD024_Apis,"Apis mellifera (Western Honey bee), Varroa destructor (honey bee mite)",Emily Remnant
 ad-prj025,AD025_Sugarbag,Tetragonula carbonaria (Australian Sugarbag bee),Emily Remnant

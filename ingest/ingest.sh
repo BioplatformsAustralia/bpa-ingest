@@ -203,7 +203,6 @@ ppa()
   apply ppa-proteomics $*
   apply ppa-proteomics-analysed $*
   apply ppa-proteomics-database $*
-  apply ppa-nutritional-analysis $*
 }
 
 grasslands() {
@@ -218,6 +217,7 @@ collaborations()
 {
   apply collaborations-metagenomics-novaseq $*
   apply collaborations-ont-promethion $*
+  apply collaborations-pacbio-hifi $*
 
 }
 
@@ -237,11 +237,15 @@ workshop()
 avian()
 {
     apply avian-pacbio-hifi $*
+    apply avian-hi-c $*
+    apply avian-illumina-shortread $*
+    apply avian-ont-promethion
 
 }
 
 forest()
 {
+    apply forest-illumina-shortread $*
     apply forest-pacbio-hifi $*
 
 }
@@ -249,6 +253,9 @@ forest()
 ad()
 {
     apply ad-ont-promethion $*
+    # not yet apply ad-illumina-shortread $*
+    apply ad-hi-c $*
+
 }
 
 fish()
@@ -258,6 +265,7 @@ fish()
     apply fish-ont-promethion $*
     apply fish-hi-c $*
 }
+
 
 run() {
   apply $*
