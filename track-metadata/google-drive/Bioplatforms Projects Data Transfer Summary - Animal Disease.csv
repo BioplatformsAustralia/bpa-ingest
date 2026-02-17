@@ -4,4 +4,4 @@ Facility to fill,Facility to fill,Facility to fill (Leave empty if data is for >
 ,,,,,,,,,,,,
 Facility,Date of transfer,bioplatforms_sample_id,bioplatforms_library_id,bioplatforms_dataset_id,scientific_name,Description,Folder name,Date of transfer to archive,Date data published,CCG JIRA Ticket,Download,Note
 BRF,6/2/2026,648239,650489,652598,Teladorsagia circumcincta,Illumina-HiC,20260206_AD_BRF_WO30007_22GKC3LT1,06/02/2026,,BPAOPS-1993,,
-Ramaciotti,16/2/2026,,,652593,,ONT,20260123_AD_UNSW_PBI18708,,,BPAOPS-2003,,
+Ramaciotti,16/2/2026,,,652593,,ONT,20260123_AD_UNSW_PBI18708,16/02/2026,,BPAOPS-2003,,
