@@ -21,7 +21,7 @@ class GAPDatasetControlContextual(BaseDatasetControlContextual):
 
 class GAPLibraryContextual(BaseLibraryContextual):
     metadata_urls = [
-        "https://downloads-qcif.bioplatforms.com/bpa/plants_staging/metadata/2025-10-15/"
+        "https://downloads-qcif.bioplatforms.com/bpa/plants_staging/metadata/2026-02-18/"
     ]
     name = "gap-library-contextual"
     sheet_names = [
@@ -34,6 +34,7 @@ class GAPLibraryContextual(BaseLibraryContextual):
         "Mini library",
         "Conservation ",
         "Conservation_bait capture",
+        "Ukraine fund",
     ]
 
     field_spec = [
