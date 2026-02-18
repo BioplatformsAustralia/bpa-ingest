@@ -21,6 +21,6 @@ class FishDatasetControlContextual(BaseDatasetControlContextual):
 class FishLibraryContextual(BaseLibraryContextual):
     sheet_names = ["sample_metadata"]
     metadata_urls = [
-        "https://downloads-qcif.bioplatforms.com/bpa/fish_staging/metadata/2026-01-12/"
+        "https://downloads-qcif.bioplatforms.com/bpa/fish_staging/metadata/2026-02-18/"
     ]
     name = "fish-library-contextual"
