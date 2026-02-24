@@ -3,5 +3,6 @@ Contact mlum@bioplatforms.com if you need assistance filling this sheet.,,,,,,,,
 Facility to fill,Facility to fill,Facility to fill (Leave empty if data is for >1 sample ID),Facility to fill (Leave empty if data is for >1 library ID),Facility to fill,Project Manager to fill,Facility to fill,Facility to fill,Data team to fill,Project Manager to fill,Data team to fill,Project Manager to fill,
 ,,,,,,,,,,,,
 Facility,Date of transfer,bioplatforms_sample_id,bioplatforms_library_id,bioplatforms_dataset_id,scientific_name,Description,Folder name,Date of transfer to archive,Date data published,CCG JIRA Ticket,Download,Note
-BRF,6/2/2026,648239,650489,652598,Teladorsagia circumcincta,Illumina-HiC,20260206_AD_BRF_WO30007_22GKC3LT1,06/02/2026,,BPAOPS-1993,,
-Ramaciotti,16/2/2026,,,652593,,ONT,20260123_AD_UNSW_PBI18708,16/02/2026,,BPAOPS-2003,,
+BRF,6/2/2026,648239,650489,652598,Teladorsagia circumcincta,Illumina-HiC,20260206_AD_BRF_WO30007_22GKC3LT1,06/02/2026,17/02/2026,BPAOPS-1993,https://data.bioplatforms.com/dataset/?ext_search_by=&q=ticket%3ABPAOPS-1993,
+Ramaciotti,16/2/2026,,,652593,Vibrio species,ONT,20260123_AD_UNSW_PBI18708,16/02/2026,18/02/2026,BPAOPS-2003,https://data.bioplatforms.com/dataset/?ext_search_by=&q=ticket%3ABPAOPS-2003,
+BRF,23/02/2026,648237,650487,652597,,PacBio-HiFi,20260220_AD_BRF_m84118_260220_011234_s3,24/02/2026,,BPAOPS-2015,,
