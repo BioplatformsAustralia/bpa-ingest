@@ -255,6 +255,7 @@ ad()
     apply ad-ont-promethion $*
     # not yet apply ad-illumina-shortread $*
     apply ad-hi-c $*
+    apply ad-pacbio-hifi $*
 
 }
 

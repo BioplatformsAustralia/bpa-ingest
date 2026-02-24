@@ -17,7 +17,9 @@ from .amdb.ingest import (
 )
 from .animal_disease.ingest import (
     AnimalDiseaseIlluminaShortreadMetadata,
-    AnimalDiseaseIlluminaHiCMetadata, AnimalDiseaseONTPromethionMetadata,
+    AnimalDiseaseIlluminaHiCMetadata,
+    AnimalDiseaseONTPromethionMetadata,
+    AnimalDiseasePacbioHifiMetadata,
 )
 
 from .ausarg.ingest import (
@@ -349,6 +351,7 @@ class ProjectInfo:
             AnimalDiseaseIlluminaShortreadMetadata,
             AnimalDiseaseIlluminaHiCMetadata,
             AnimalDiseaseONTPromethionMetadata,
+            AnimalDiseasePacbioHifiMetadata,
         ],
     }
 
