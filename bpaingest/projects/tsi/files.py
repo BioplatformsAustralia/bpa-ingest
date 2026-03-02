@@ -60,7 +60,8 @@ PACBIO_HIFI_2_PATTERN = r"""
       |\.subreads\.bam
       |\.hifi_reads\.default\.bam
       |\.hifi_reads\.bc\d{4}\.bam
-      |\.hifi_reads\.bam)
+      |\.hifi_reads\.bam
+      |\.hifi_reads\.fastq\.gz)
 """
 pacbio_hifi_filename_2_re = re.compile(PACBIO_HIFI_2_PATTERN, re.VERBOSE)
 
@@ -80,7 +81,7 @@ PACBIO_HIFI_COMMON_PATTERN = r"""
     (?P<facility>AGRF|BRF)_
     (PacBio_)?
     (?P<flowcell_id>\w{23})
-    (\.pdf)
+    (\.pdf|\.hifi_reads\.bc\d{4}\.amplifi_multiplexed\.bam)
 """
 pacbio_hifi_common_re = re.compile(PACBIO_HIFI_COMMON_PATTERN, re.VERBOSE)
 
