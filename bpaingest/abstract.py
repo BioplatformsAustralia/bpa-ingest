@@ -30,10 +30,12 @@ class BaseMetadata:
        PP_BRF_PAW59370_ONTPromethION_pod5.tar
        357464_TSI_AGRF_DA061164.subreads.bam
        57368_TSI_CAGRF20114490_DA060254_subreads.bam
+    Addiional for Pacbio-hifi Amplifi
+       TSI_BRF_m84118_260220_051901_s1.hifi_reads.bc2091.amplifi_multiplexed.bam
     """
 
     OPTIONAL_PATTERN = r"""
-    (.*pod5\.tar$|.*subreads\.bam$)
+    (.*pod5\.tar$|.*subreads\.bam$|.*amplifi_multiplexed\.bam$)
             """
 
     def method_exists(self, method_name):
