@@ -13,7 +13,8 @@ AGRF,13/12/2024,,,373575,Themeda triandra,Themeda resequencing - flow cell 2,Mai
 BRF,19/12/2025,370196,372343,373587,Astrebla pectinata,Reference genome,Main dataset,PromethION,20251209_AG_BRF_PBE83773,19/12/2025,24/12/2025,BPAOPS-1975,https://data.bioplatforms.com/dataset?ext_search_by=&q=ticket%3ABPAOPS-1975
 BRF,19/12/2025,370196,372377,373590,Astrebla pectinata,Reference genome,Main dataset,PromethION,20251210_AG_BRF_PBE83773,19/12/2025,24/12/2025,BPAOPS-1976,https://data.bioplatforms.com/dataset?ext_search_by=&q=ticket%3ABPAOPS-1976
 BRF,19/12/2025,370196,372378,373591,Astrebla pectinata,Reference genome,Main dataset,PromethION,20251210_AG_BRF_PBE70026,19/12/2025,24/12/2025,BPAOPS-1977,https://data.bioplatforms.com/dataset?ext_search_by=&q=ticket%3ABPAOPS-1977
+BRF,13/01/2026,,,373592,Astrebla pectinata,Transcriptomics (long read ONT),Main dataset,PromethION,20251216_AG_BRF_PBE55061,14/01/2026,15/01/2026,BPAOPS-1980,https://data.bioplatforms.com/dataset/?ext_search_by=&q=ticket%3ABPAOPS-1980
+BRF,13/01/2026,,,373593,Astrebla pectinata,Transcriptomics (long read ONT),Main dataset,PromethION,20251217_AG_BRF_PBE54928,14/01/2026,15/01/2026,BPAOPS-1981,https://data.bioplatforms.com/dataset/?ext_search_by=&q=ticket%3ABPAOPS-1981
+BRF,13/01/2026,,,373588,Astrebla pectinata,Transcriptomics (long read ONT),Main dataset,PromethION,20251217_AG_BRF_PBG21712,15/01/2026,15/01/2026,BPAOPS-1982,https://data.bioplatforms.com/dataset/?ext_search_by=&q=ticket%3ABPAOPS-1982
 ML note: Everything up to this point has been added to the Aus_Genome_status - Bioplatforms Google sheet,,,,,,,,,,,,,
-BRF,13/01/2025,,,373592,,,,PromethION,20251216_AG_BRF_PBE55061,14/01/2026,,BPAOPS-1980,
-BRF,13/01/2025,,,373593,,,,PromethION,20251217_AG_BRF_PBE54928,14/01/2026,,BPAOPS-1981,
-BRF,13/01/2025,,,373588,,,,PromethION,20251217_AG_BRF_PBG21712,15/01/2026,,BPAOPS-1982,
+AGRF,5/3/26,,,373580,,,,Illumina short read,20260305_AG_AGRF_CAGRF25090409_23LGMHLT4,04/03/2026,,BPAOPS-2033,
