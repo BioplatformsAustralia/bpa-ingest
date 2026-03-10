@@ -33,7 +33,9 @@ PACBIO_HIFI_2_PATTERN = r"""
       |\.hifi_reads\.default\.bam
       |\.hifi_reads\.bc\d{4}\.bam
       |\.hifi_reads\.bam
-      |\.subreads\.bam)
+      |\.subreads\.bam
+      |\.hifi_reads\.bc\d{4}\.amplifi_multiplexed\.bam
+      |\.hifi_reads\.fastq\.gz)
 
 """
 pacbio_hifi_filename_2_re = re.compile(PACBIO_HIFI_2_PATTERN, re.VERBOSE)
@@ -53,8 +55,9 @@ PACBIO_HIFI_COMMON_PATTERN = r"""
     AVIAN_
     (?P<facility>AGRF|BRF)_
     (?P<flowcell_id>\w{23})
-    (\.pdf)
+    (\.pdf|\.hifi_reads\.bc\d{4}\.amplifi_multiplexed\.bam)
 """
+
 pacbio_hifi_common_re = re.compile(PACBIO_HIFI_COMMON_PATTERN, re.VERBOSE)
 
 ILLUMINA_HIC_PATTERN = r"""
