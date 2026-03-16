@@ -616,6 +616,7 @@ def apply_access_control(logger, metadata, obj):
                 (info.filename.split(os.path.sep))[-1], info.lineno
             )
         )
+        logger.error(str(obj))
 
         obj["access_control_mode"] = "closed"
         obj["access_control_date"] = ""
@@ -626,6 +627,7 @@ def apply_access_control(logger, metadata, obj):
         ).rstrip()
 
     # date of transfer is needed for calculations
+    print(str(obj))
     if "date_of_transfer" not in obj:
         _log_access_control_error(logger, obj)
         return
