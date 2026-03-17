@@ -627,7 +627,6 @@ def apply_access_control(logger, metadata, obj):
         ).rstrip()
 
     # date of transfer is needed for calculations
-    print(str(obj))
     if "date_of_transfer" not in obj:
         _log_access_control_error(logger, obj)
         return
