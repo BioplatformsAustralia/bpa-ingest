@@ -99,11 +99,11 @@ AGRF,27/02/2026,,,399103,Cotton viruses,Illumina Short read ,20260227_PP_AGRF_CA
 AGRF,27/02/2026,,,399104,Tobacco streak virus,Illumina Short read ,20260227_PP_AGRF_CAGRF26010128_23LGJMLT4,02/03/2026,3/3/26,BPAOPS-2030,https://data.bioplatforms.com/dataset/?ext_search_by=&q=ticket%3ABPAOPS-2030,
 AGRF,27/02/2026,,,399096,Strawberry viruses,Illumina Short read ,20260227_PP_AGRF_CAGRF25110057_23HLGGLT3,02/03/2026,3/3/26,BPAOPS-2031,https://data.bioplatforms.com/dataset/?ext_search_by=&q=ticket%3ABPAOPS-2031,
 ML note: Everything up to this point has been added to the Aus_Genome_status - Bioplatforms Google sheet,,,,,,,,,,,,
-AGRF,18/3/26,,,399083,,Illumina Short read ,20260318_PP_AGRF_CAGRF25070354_23HL7WLT3,17/03/2026,,BPAOPS-2038,,
-AGRF,18/3/26,,,399091,,Illumina Short read ,20260318_PP_AGRF_CAGRF25100152_1_23HF2VLT3,17/03/2026,,BPAOPS-2039,,
-AGRF,18/3/26,,,399091,,Illumina Short read ,20260318_PP_AGRF_CAGRF25100152_2_23HL7WLT3,17/03/2026,,BPAOPS-2040,,
-,,,,,,,,,,,,
-,,,,,,,,,,,,
+AGRF,18/3/26,,,399083,,Illumina Short read ,20260318_PP_AGRF_CAGRF25070354_23HL7WLT3,17/03/2026,17/03/2026,BPAOPS-2038,https://data.bioplatforms.com/dataset/?ext_search_by=&q=ticket%3ABPAOPS-2038,
+AGRF,18/3/26,,,399091,,Illumina Short read ,20260318_PP_AGRF_CAGRF25100152_1_23HF2VLT3,17/03/2026,17/03/2026,BPAOPS-2039,https://data.bioplatforms.com/dataset/?ext_search_by=&q=ticket%3ABPAOPS-2039,1 sample
+AGRF,18/3/26,,,399091,,Illumina Short read ,20260318_PP_AGRF_CAGRF25100152_2_23HL7WLT3,17/03/2026,17/03/2026,BPAOPS-2040,https://data.bioplatforms.com/dataset/?ext_search_by=&q=ticket%3ABPAOPS-2040,136 samples
+AGRF,18/3/26,,,399098,,Illumina Short read ,20260318_PP_AGRF_CAGRF25120210_23HG3CLT3,18/03/2026,,BPAOPS-2041,,
+AGRF,19/3/26,,,399105,,Illumina Short read ,20260319_PP_AGRF_CAGRF26010218_23HKCTLT3,,,BPAOPS-2043,,
 ,,,,,,,,,,,,
 ,,,,,,,,,,,,
 ,,,,,,,,,,,,
