@@ -169,6 +169,13 @@ ORGANIZATIONS = [
         "groups": [{"capacity": "public", "name": "threatened-species"}],
     },
     {
+        "name": "biocommons-access-bundle-threatened-species-initiative",
+        "title": "BioCommons Access Threatened Species Bundle Members",
+        "display_name": "BioCommons Access Threatened Species Bundle Members",
+        "image_url": "https://data.bioplatforms.com/Threatened-Species-Initiative-Logo-150dpi-RGB.png",
+        "groups": [{"capacity": "public", "name": "threatened-species"}],
+    },
+    {
         "name": "ausarg-consortium-members",
         "title": "Australian Amphibian and Reptile Genomics Project Members",
         "display_name": "Australian Amphibian and Reptile Genomics Project Members",
