@@ -173,7 +173,7 @@ ORGANIZATIONS = [
         "title": "BioCommons Access Threatened Species Bundle Members",
         "display_name": "BioCommons Access Threatened Species Bundle Members",
         "image_url": "https://data.bioplatforms.com/Threatened-Species-Initiative-Logo-150dpi-RGB.png",
-        "groups": [{"capacity": "public", "name": "threatened-species"}],
+        "groups": [{"capacity": "public", "name": "tsi-consortium-members"}],
     },
     {
         "name": "ausarg-consortium-members",
