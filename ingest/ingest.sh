@@ -256,6 +256,7 @@ ad()
     # not yet apply ad-illumina-shortread $*
     apply ad-hi-c $*
     apply ad-pacbio-hifi $*
+    apply ad-illumina-shortread $*
 
 }
 

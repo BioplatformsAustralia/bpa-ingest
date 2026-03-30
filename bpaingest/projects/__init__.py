@@ -20,6 +20,7 @@ from .animal_disease.ingest import (
     AnimalDiseaseIlluminaHiCMetadata,
     AnimalDiseaseONTPromethionMetadata,
     AnimalDiseasePacbioHifiMetadata,
+    AnimalDiseaseIlluminaShortreadMetadata,
 )
 
 from .ausarg.ingest import (

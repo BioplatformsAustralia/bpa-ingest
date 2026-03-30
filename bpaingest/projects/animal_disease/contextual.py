@@ -10,7 +10,7 @@ from ...abstract import BaseLibraryContextual
 
 class AnimalDiseaseDatasetControlContextual(BaseDatasetControlContextual):
     metadata_urls = [
-        "https://downloads-qcif.bioplatforms.com/bpa/animal_disease_staging/dataset_control/2026-02-10/"
+        "https://downloads-qcif.bioplatforms.com/bpa/animal_disease_staging/dataset_control/2026-03-30/"
     ]
     name = "ad-dataset-contextual"
     sheet_names = [
@@ -35,10 +35,11 @@ class AnimalDiseaseDatasetControlContextual(BaseDatasetControlContextual):
 
 class AnimalDiseaseLibraryContextual(BaseLibraryContextual):
     metadata_urls = [
-        "https://downloads-qcif.bioplatforms.com/bpa/animal_disease_staging/metadata/2026-02-10/"
+        "https://downloads-qcif.bioplatforms.com/bpa/animal_disease_staging/metadata/2026-03-30/"
     ]
     name = "ad-library-contextual"
     sheet_names = ['Theme 1',
+                   'Theme 2',
                    ]
     metadata_unique_identifier = "bioplatforms_library_id"
     field_spec = [

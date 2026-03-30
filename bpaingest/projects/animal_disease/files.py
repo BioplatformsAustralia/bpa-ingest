@@ -96,3 +96,17 @@ PACBIO_HIFI_COMMON_PATTERN = r"""
 """
 pacbio_hifi_common_re = re.compile(PACBIO_HIFI_COMMON_PATTERN, re.VERBOSE)
 
+
+ILLUMINA_SHORTREAD_PATTERN = r"""(?P<library_id>\d{4,6})_
+    (AD_
+    (?P<facility_id>(BRF|UNSW|AGRF))_)?
+    (?P<flowcell_id>\w{5,10})_
+    (?P<index>[G|A|T|C|-]{8,12}([-][G|A|T|C|-]{8,12})?)_
+    (?P<runsamplenum>S?\d*)_?
+    ((?P<lane>L\d{3})_)?
+    (?P<read>[R|I][1|2])
+    (_001|)
+    (\.fastq)?
+    \.gz$
+"""
+illumina_shortread_re = re.compile(ILLUMINA_SHORTREAD_PATTERN, re.VERBOSE)

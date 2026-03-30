@@ -666,4 +666,3 @@ class AnimalDiseasePacbioHifiMetadata(AnimalDiseaseBaseMetadata):
     def _build_common_files_linkage(self, xlsx_info, resource, file_info):
         return (resource["flowcell_id"],)
 
-
