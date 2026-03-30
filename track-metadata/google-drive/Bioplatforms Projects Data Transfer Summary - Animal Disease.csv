@@ -5,4 +5,6 @@ Facility to fill,Facility to fill,Facility to fill (Leave empty if data is for >
 Facility,Date of transfer,bioplatforms_sample_id,bioplatforms_library_id,bioplatforms_dataset_id,scientific_name,Description,Folder name,Date of transfer to archive,Date data published,CCG JIRA Ticket,Download,Note
 BRF,6/2/2026,648239,650489,652598,Teladorsagia circumcincta,Illumina-HiC,20260206_AD_BRF_WO30007_22GKC3LT1,06/02/2026,17/02/2026,BPAOPS-1993,https://data.bioplatforms.com/dataset/?ext_search_by=&q=ticket%3ABPAOPS-1993,
 Ramaciotti,16/2/2026,,,652593,Vibrio species,ONT,20260123_AD_UNSW_PBI18708,16/02/2026,18/02/2026,BPAOPS-2003,https://data.bioplatforms.com/dataset/?ext_search_by=&q=ticket%3ABPAOPS-2003,
-BRF,23/02/2026,648237,650487,652597,,PacBio-HiFi,20260220_AD_BRF_m84118_260220_011234_s3,24/02/2026,,BPAOPS-2015,,
+BRF,23/02/2026,648237,650487,652597,Teladorsagia circumcincta,PacBio-HiFi,20260220_AD_BRF_m84118_260220_011234_s3,24/02/2026,24/02/2026,BPAOPS-2015,https://data.bioplatforms.com/dataset/?ext_search_by=&q=ticket%3ABPAOPS-2015,
+ML note: Everything up to this point has been added to the Aus_Genome_status - Bioplatforms Google sheet,,,,,,,,,,,,
+AGRF,25/3/26,,,652599,,Illumina-shortread,20260325_AD_AGRF_CAGRF26020087_23LYVNLT4,30/03/2026,,BPAOPS-2045,,
