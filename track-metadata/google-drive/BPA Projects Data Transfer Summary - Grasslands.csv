@@ -17,5 +17,6 @@ BRF,13/01/2026,,,373592,Astrebla pectinata,Transcriptomics (long read ONT),Main 
 BRF,13/01/2026,,,373593,Astrebla pectinata,Transcriptomics (long read ONT),Main dataset,ont,PromethION,20251217_AG_BRF_PBE54928,14/01/2026,15/01/2026,BPAOPS-1981,https://data.bioplatforms.com/dataset/?ext_search_by=&q=ticket%3ABPAOPS-1981
 BRF,13/01/2026,,,373588,Astrebla pectinata,Transcriptomics (long read ONT),Main dataset,ont,PromethION,20251217_AG_BRF_PBG21712,15/01/2026,15/01/2026,BPAOPS-1982,https://data.bioplatforms.com/dataset/?ext_search_by=&q=ticket%3ABPAOPS-1982
 ML note: Everything up to this point has been added to the Aus_Genome_status - Bioplatforms Google sheet,,,,,,,,,,,,,,
-AGRF,5/3/26,,,373580,Bothriochloa macra,RNAseq,Main dataset,illumina-transcriptomics,Illumina short read,20260305_AG_AGRF_CAGRF25090409_23LGMHLT4,04/03/2026,04/03/2026,BPAOPS-2033,https://data.bioplatforms.com/dataset/?ext_search_by=&q=ticket%3ABPAOPS-2033
-AGRF,18/03/2026,369710,371856,373579,,,,,PacBio-HiFi,20260317_AG_AGRF_CAGRF25090408_m84073_260309_034806_s3,18/03/2026,,BPAOPS-2042,
+AGRF,05/03/2026,,,373580,Bothriochloa macra,RNAseq,Main dataset,illumina-transcriptomics,Illumina short read,20260305_AG_AGRF_CAGRF25090409_23LGMHLT4,04/03/2026,04/03/2026,BPAOPS-2033,https://data.bioplatforms.com/dataset/?ext_search_by=&q=ticket%3ABPAOPS-2033
+AGRF,18/03/2026,369710,371856,373579,Bothriochloa macra,Reference genome,Main dataset,pacbio,PacBio-HiFi,20260317_AG_AGRF_CAGRF25090408_m84073_260309_034806_s3,18/03/2026,19/03/2026,BPAOPS-2042,https://data.bioplatforms.com/dataset/?ext_search_by=&q=ticket%3ABPAOPS-2042
+RAMAC,26/03/2026,,,373595,,,Main dataset,,Illumina Short Read,20260320_AG_UNSW_23LKKLLT4,30/03/2026,,BPAOPS-2047,
