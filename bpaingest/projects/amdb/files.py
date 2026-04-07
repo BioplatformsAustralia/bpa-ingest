@@ -8,11 +8,11 @@ logger = make_logger(__name__)
 
 base_amplicon_control_tech_vendor_filename_re = re.compile(
     r"""
-    ^(?P<control_type>Arc_mock_community|Arch_mock_community|Bac_mock_community|Fungal_mock_community|Fungal-mock-community|Fungal__mock_Community|Soil_DNA|Soil-DNA||STAN|NEG1|NEG2|Neg|Neg1|Neg2|NEG_1|NEG_2|Undetermined)_
+    ^(?P<control_type>Arc_mock_community|Arch_mock_community|Bac_mock_community|Fungal_mock_community|Fungal-mock-community|Fungal__mock_Community|Soil_DNA|Soil-DNA|STAN|NEG|NEG1|NEG2|Neg|Neg1|Neg2|NEG_1|NEG_2|Undetermined)_
     (?P<amplicon>ITS|16S|18S|A16S)_
     (?P<vendor>AGRF|UNSW)_
-    (?P<index>[G|A|T|C|-]{8,12}(_[G|A|T|C|-]{8})?)_
-    (?P<flow_id>[A-Z0-9]{5})
+    (?P<index>[G|A|T|C|-]{8,17}(_[G|A|T|C|-]{8})?)_
+    (?P<flow_id>[A-Z0-9]{5})_
     .*\.fastq\.gz$
 """,
     re.VERBOSE,
@@ -21,10 +21,10 @@ base_amplicon_control_tech_vendor_filename_re = re.compile(
 
 base_amplicon_control_tech_vendor_flow_filename_re = re.compile(
     r"""
-    ^(?P<control_type>Arc_mock_community|Arch_mock_community|Bac_mock_community|Fungal_mock_community|Fungal-mock-community|Fungal__mock_Community|Soil_DNA|Soil-DNA||STAN|NEG|NEG1|NEG2|Neg|Neg1|Neg2|NEG_1|NEG_2|Undetermined)_
+    ^(?P<control_type>Arc_mock_community|Arch_mock_community|Bac_mock_community|Fungal_mock_community|Fungal-mock-community|Fungal__mock_Community|Soil_DNA|Soil-DNA|STAN|NEG|NEG1|NEG2|Neg|Neg1|Neg2|NEG_1|NEG_2|Undetermined)_
     (?P<amplicon>ITS|16S|18S|A16S)_
     (?P<vendor>AGRF|UNSW)_
-    (?P<flow_id>[A-Z0-9]{5})
+    (?P<flow_id>[A-Z0-9]{5})_
     .*\.fastq\.gz$
 """,
     re.VERBOSE,
