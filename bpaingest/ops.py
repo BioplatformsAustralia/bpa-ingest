@@ -697,7 +697,7 @@ def create_resource(ckan, ckan_obj):
         return ckan_method(ckan, "resource", "create")(**ckan_obj)
 
     except Exception as e:
-        logger.error("Did not create resource" + ckan_obj.str())
+        logger.error("Did not create resource" + str(ckan_obj))
         logger.error("Skipping creation due to the following error:")
         logger.error(e)
         return None
