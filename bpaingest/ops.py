@@ -691,8 +691,17 @@ def reupload_resource(ckan, ckan_obj, legacy_url, parent_destination, auth=None)
 
 def create_resource(ckan, ckan_obj):
     "create resource, uploading data from legacy_url"
-    logger.debug("start create_resource - ckan resource create call")
-    return ckan_method(ckan, "resource", "create")(**ckan_obj)
+
+    try:
+        logger.debug("start create_resource - ckan resource create call")
+        return ckan_method(ckan, "resource", "create")(**ckan_obj)
+
+    except Exception as e:
+        logger.error("Did not create resource" + ckan_obj.str())
+        logger.error("Skipping creation due to the following error:")
+        logger.error(e)
+        return None
+
 
 
 def get_organization(ckan, id):
