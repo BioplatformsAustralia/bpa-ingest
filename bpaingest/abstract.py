@@ -840,7 +840,7 @@ class BaseLibraryContextual:
             return library_metadata
         if key_value in library_metadata:
             raise Exception(
-                "duplicate {}: {}".format(self.metadata_unique_identifier, key_value)
+                "duplicate {}: {} in {}".format(self.metadata_unique_identifier, key_value, metadata_filename)
             )
         library_metadata[key_value] = row_meta = {}
         library_metadata[key_value][
