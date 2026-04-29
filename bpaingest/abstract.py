@@ -796,6 +796,8 @@ class BaseLibraryContextual:
         fld('host_organ', 'host_organ', optional=True),
         fld('host_symptom', 'host_symptom', optional=True),
         fld('host_status', 'host_status', optional=True),
+        fld('nucleic_acid_ng', 'nucleic_acid_ng', optional=True),
+        fld('extraction_protocol_doi', 'extraction_protocol_doi', optional=True),
 
     ]
 
