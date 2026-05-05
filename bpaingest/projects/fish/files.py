@@ -8,7 +8,7 @@ ILLUMINA_SHORTREAD_PATTERN = r"""
     (?P<library_id>\d{4,6})_
     FISH_
     (?P<facility_id>(AGRF|UNSW|BRF))_
-    (?P<flow_cell_id>\w{9,10})_
+    (?P<flow_cell_id>\w{9,10}(-\w{3})?)_
     (?P<index>[G|A|T|C|-]*)_
     ((?P<runsamplenum>S\d*)_)?
     ((?P<lane>L\d{3})_)?
