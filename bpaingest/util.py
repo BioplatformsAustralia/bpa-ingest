@@ -222,9 +222,12 @@ def common_values(dicts):
         all_keys = all_keys.union(set(d.keys()))
     r = {}
     for k in all_keys:
+        # vals is the set of all the (unique) values of the key k
         vals = set([d.get(k) for d in dicts])
+        # if there is only 1 value, it is common, and we can pop it into our returning dict.
         if len(vals) == 1:
-            r[k] = dicts[0][k]
+            r[k] = vals.pop()
+
     return r
 
 
