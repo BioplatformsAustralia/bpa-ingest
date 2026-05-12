@@ -1,5 +1,5 @@
 # VERIFY
-from bpaingest.projects.plant_pathogen.files import (
+from bpaingest.projects.animal_disease.files import (
     ont_promethion_re,
     ont_promethion_common_re,
 )
