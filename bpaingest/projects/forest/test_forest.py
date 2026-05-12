@@ -1,4 +1,4 @@
-from .files import (
+from bpaingest.projects.forest.files import (
     pacbio_hifi_filename_revio_re,
     pacbio_hifi_revio_pdf_re,
     pacbio_hifi_revio_metadata_sheet_re,
