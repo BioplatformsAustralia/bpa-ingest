@@ -224,8 +224,12 @@ def common_values(dicts):
     for k in all_keys:
         # vals is the set of all the (unique) values of the key k
         vals = set([d.get(k) for d in dicts])
-        # if there is only 1 value, it is common, and we can pop it into our returning dict.
         if len(vals) == 1:
+            # The following does not work if the first dict does not have a k value
+            # r[k] = dicts[0][k]
+            # Instead, use the single value from the vals
+            # - most likely it is None if the item is missing from the first dict.
+            # if there is only 1 value, it is common, and we can pop it into our returning dict.
             r[k] = vals.pop()
 
     return r
