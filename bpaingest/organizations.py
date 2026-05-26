@@ -329,4 +329,18 @@ ORGANIZATIONS = [
         "image_url": "https://data.bioplatforms.com/AVID-Logo.webp",
         "groups": [{"capacity": "public", "name": "aus-venom"}],
     },
+    {
+        "name": "environmental-dna",
+        "title": "Environmental DNA",
+        "display_name": "Environmental DNA",
+        "image_url": "https://data.bioplatforms.com/edna.webp",
+        "groups": [{"capacity": "public", "name": BPA_ORGANIZATION_ID}],
+    },
+    {
+        "name": "environmental-dna-consortium-members",
+        "title": "Environmental DNA Members",
+        "display_name": "Environmental DNA Members",
+        "image_url": "https://data.bioplatforms.com/edna.webp",
+        "groups": [{"capacity": "public", "name": "environmental-dna"}],
+    },
 ]
