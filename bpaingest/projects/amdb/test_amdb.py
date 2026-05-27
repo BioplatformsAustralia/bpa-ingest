@@ -22,6 +22,9 @@ from .files import (
     mm_metatranscriptome_filename2_re,
     mm_metatranscriptome_filename_re,
     mm_transcriptome_filename_re,
+    edna_amplicon_filename_re,
+    edna_amplicon_control_filename_re,
+
 )
 
 
@@ -330,3 +333,20 @@ def test_amd_metagenomics_novaseq_control():
     ]
     for filename in filenames:
         assert amd_metagenomics_novaseq_control_re.match(filename) is not None
+
+
+def test_edna_amplicon_re():
+    filenames = [
+        "684983_MFUE2_AAJ7FG2M5_AGTTACGAGC-AACGGATAAG_S563_L001_R1_001.fastq.gz",
+    ]
+    for filename in filenames:
+        assert edna_amplicon_filename_re.match(filename) is not None
+
+
+def test_edna_amplicon_control_re():
+
+    filenames = [
+        "No_Template_Control_MFUE2_AAJ7FG2M5_CGCTCTTATA-ATTGCAACGG_S576_L001_R1_001.fastq.gz",
+      ]
+    for filename in filenames:
+        assert edna_amplicon_control_filename_re.match(filename) is not None

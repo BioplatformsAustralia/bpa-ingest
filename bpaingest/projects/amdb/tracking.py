@@ -65,3 +65,6 @@ class MarineMicrobesGoogleTrackMetadata(GoogleDriveTrackMetadata):
 
 class AustralianMicrobiomeGoogleTrackMetadata(GoogleDriveTrackMetadata):
     name = "Australian Microbiome"
+
+class EDNAGoogleTrackMetadata(GoogleDriveTrackMetadata):
+    name = "Environmental DNA"

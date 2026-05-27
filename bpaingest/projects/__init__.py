@@ -14,6 +14,8 @@ from .amdb.ingest import (
     MarineMicrobesAmpliconsControlMetadata,
     MarineMicrobesMetagenomicsMetadata,
     MarineMicrobesMetatranscriptomeMetadata,
+    EDNAAmpliconsMetadata,
+    EDNAAmpliconsControlMetadata,
 )
 from .animal_disease.ingest import (
     AnimalDiseaseIlluminaShortreadMetadata,
@@ -353,6 +355,10 @@ class ProjectInfo:
             AnimalDiseaseIlluminaHiCMetadata,
             AnimalDiseaseONTPromethionMetadata,
             AnimalDiseasePacbioHifiMetadata,
+        ],
+        "edna": [
+            EDNAAmpliconsMetadata,
+            EDNAAmpliconsControlMetadata,
         ],
     }
 

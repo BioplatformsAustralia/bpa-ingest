@@ -259,7 +259,11 @@ ad()
     apply ad-illumina-shortread $*
 
 }
-
+edna()
+{
+    apply edna-genomics-amplicons $*
+    apply edna-genomics-amplicons-control $*
+}
 fish()
 {
     apply fish-illumina-shortread $*
@@ -298,6 +302,7 @@ all()
   avian $*
   forest $*
   ad $*
+  edna $*
 }
 
 action="$1"

@@ -32,6 +32,7 @@ from .tracking import (
     BASETrackMetadata,
     MarineMicrobesGoogleTrackMetadata,
     MarineMicrobesTrackMetadata,
+    EDNAGoogleTrackMetadata,
 )
 
 common_context = [
@@ -977,7 +978,6 @@ class BASESiteImagesMetadata(AMDFullIngestMetadata):
             self._logger.info("Processing MD5 file %s for resources" % (md5_file))
             resources.extend(self.generate_md5_resources(md5_file))
         return resources
-
 
 marine_read_lengths = {
     "16S": "300bp",
@@ -2294,6 +2294,316 @@ class AustralianMicrobiomeAmpliconsControlMetadata(AMDFullIngestMetadata):
                     "omics": "Genomics",
                     "analytical_platform": "MiSeq",
                     "read_length": mm_amplicon_read_length(amplicon),
+                    "date_of_transfer": ingest_utils.get_date_isoformat(
+                        self._logger, google_track_meta.date_of_transfer
+                    ),
+                    "data_type": google_track_meta.data_type,
+                    "description": google_track_meta.description,
+                    "folder_name": google_track_meta.folder_name,
+                    "sample_submission_date": ingest_utils.get_date_isoformat(
+                        self._logger, google_track_meta.date_of_transfer
+                    ),
+                    "data_generated": ingest_utils.get_date_isoformat(
+                        self._logger, google_track_meta.date_of_transfer_to_archive
+                    ),
+                    "archive_ingestion_date": archive_ingestion_date,
+                    "license_id": apply_license(archive_ingestion_date),
+                    "dataset_url": google_track_meta.download,
+                    "ticket": info["ticket"],
+                    "amplicon": amplicon,
+                    "type": self.ckan_data_type,
+                    "sequence_data_type": self.sequence_data_type,
+                }
+            )
+            ingest_utils.permissions_organization_member_after_embargo(
+                self._logger,
+                obj,
+                "archive_ingestion_date",
+                self.embargo_days,
+                CONSORTIUM_ORG_NAME,
+            )
+            ingest_utils.add_spatial_extra(self._logger, obj)
+            self.build_notes_into_object(obj)
+            ingest_utils.apply_access_control(self._logger, self, obj)
+            tag_names = ["amplicons-control", amplicon, "raw"]
+            obj["tags"] = [{"name": t} for t in tag_names]
+            self.track_packages_for_md5(obj, info["ticket"])
+            packages.append(obj)
+        return packages
+
+    def _get_resources(self):
+        resources = self._get_common_resources()
+        return resources
+
+    def _add_datatype_specific_info_to_resource(self, resource, md5_file=None):
+        xlsx_info = self.metadata_info[os.path.basename(md5_file)]
+        amplicon = xlsx_info["amplicon"].upper()
+        resource["amplicon"] = amplicon
+        self._current_md5 = md5_file
+
+    def _build_resource_linkage(self, xlsx_info, resource, file_info):
+        return (
+            resource["amplicon"],
+            resource["flow_id"],
+        )
+class EDNAAmpliconsMetadata(AMDFullIngestMetadata):
+    organization = "environmental-dna"
+    ckan_data_type = "edna-genomics-amplicon"
+    omics = "genomics"
+    sequence_data_type = "illumina-amplicons"
+    embargo_days = 365
+    contextual_classes = common_context
+    metadata_patterns = [r"^.*\.md5$", r"^.*_metadata.*.*\.xlsx"]
+    resource_linkage = ("bioplatforms_sample_id", "flow_id", "amplicon")
+    spreadsheet = {
+        "fields": [
+            fld('bioplatforms_project', 'bioplatforms_project'),
+            fld('bioplatforms_project_ncbi_umbrellabioproject_id', 'bioplatforms_project_ncbi_umbrellabioproject_id'),
+            fld('bioplatforms_sample_id', 'bioplatforms_sample_id', coerce=ingest_utils.extract_ands_id),
+            fld('bioplatforms_dataset_id', 'bioplatforms_dataset_id', coerce=ingest_utils.extract_ands_id),
+            fld('work_order', 'work_order'),
+            fld('facility_project_code', 'facility_project_code'),
+            fld('synonym', 'synonym'),
+            fld('project_lead', 'project_lead'),
+            fld('project_collaborators', 'project_collaborators'),
+            fld('data_context', 'data_context'),
+            fld('library_type', 'library_type'),
+            fld('library_layout', 'library_layout'),
+            fld('facility_sample_id', 'facility_sample_id'),
+            fld('sequencing_facility', 'sequencing_facility'),
+            fld('sequencing_platform', 'sequencing_platform'),
+            fld('sequencing_model', 'sequencing_model'),
+            fld('library_construction_protocol', 'library_construction_protocol'),
+            fld('library_strategy', 'library_strategy'),
+            fld('bait_set_name', 'bait_set_name'),
+            fld('bait_set_reference', 'bait_set_reference'),
+            fld('library_selection', 'library_selection'),
+            fld('library_source', 'library_source'),
+            fld('library_prep_date', 'library_prep_date', coerce=ingest_utils.get_date_isoformat),
+            fld('library_prepared_by', 'library_prepared_by'),
+            fld('library_location', 'library_location'),
+            fld('library_comments', 'library_comments'),
+            fld('dna_treatment', 'dna_treatment'),
+            fld('library_index_id', 'library_index_id'),
+            fld('library_index_seq', 'library_index_seq'),
+            fld('library_oligo_sequence', 'library_oligo_sequence'),
+            fld('library_index_id_dual', 'library_index_id_dual'),
+            fld('library_index_seq_dual', 'library_index_seq_dual'),
+            fld('library_oligo_sequence_dual', 'library_oligo_sequence_dual'),
+            fld('insert_size_range', 'insert_size_range'),
+            fld('template_conc', 'template conc.'),
+            fld('pcr_pass_fail', 'pcr_pass_fail'),
+            fld('library_ng_ul', 'library_ng_ul'),
+            fld('library_pcr_cycles', 'library_pcr_cycles'),
+            fld('library_pcr_reps', 'library_pcr_reps'),
+            fld('n_libraries_pooled', 'n_libraries_pooled'),
+            fld('flowcell_type', 'flowcell_type'),
+            fld('flowcell_id', 'flowcell_id'),
+            fld('cell_postion', 'cell_postion'),
+            fld('movie_length', 'movie_length'),
+            fld('sequencing_kit_chemistry_version', 'sequencing_kit_chemistry_version'),
+            fld('of_reads', '# of reads'),
+            fld('analysis_software', 'analysis_software'),
+            fld('experimental_design', 'experimental_design'),
+            fld('fast5_compression', 'fast5_compression'),
+            fld('model_base_caller', 'model_base_caller'),
+            fld('initial_pcr_plate_name', 'initial pcr plate name'),
+            fld('index_pcr_plate_name', 'index pcr plate name'),
+            fld('pool_name', 'pool name'),
+            fld('well', 'well'),
+            ],
+        "options": {
+            "header_length": 1,
+            "column_name_row_index": 0,
+            "sheet_name": [
+                "library_metadata", ]
+        },
+    }
+
+
+
+
+    technology = "amplicons"
+    metadata_urls = ["https://downloads-qcif.bioplatforms.com/bpa/edna_staging/genomics-amplicons/"]
+    metadata_url_components = ("ticket",)
+    md5 = {
+        "match": [files.edna_amplicon_filename_re, ],
+        "skip": [
+            files.edna_amplicon_control_filename_re,
+        ],
+    }
+    add_md5_as_resource = True
+
+    def __init__(self, logger, metadata_path, **kwargs):
+        super().__init__(logger, metadata_path, **kwargs)
+        self.google_track_meta = EDNAGoogleTrackMetadata(logger)
+        self.contextual_metadata = kwargs["contextual_metadata"]
+
+    def _get_packages(self):
+        xlsx_re = re.compile(r"^.*_(\w+)_metadata.*\.xlsx$")
+        self._logger.info(
+            "Ingesting Environmental DNA metadata from {0}".format(self.path)
+        )
+        packages = []
+        for fname in unique_spreadsheets(glob(self.path + "/*.xlsx")):
+            base_fname = os.path.basename(fname)
+            self._logger.info(
+                "Processing Environmental DNA metadata file {0}".format(
+                    os.path.basename(fname)
+                )
+            )
+            for row in self.parse_spreadsheet(fname, self.metadata_info):
+                sample_id = row.bioplatforms_sample_id
+                if sample_id is None:
+                    continue
+                flow_id = row.flowcell_id
+                obj = row._asdict()
+                obj["flow_id"] = flow_id
+                google_track_meta = self.google_track_meta.get(row.ticket)
+                if google_track_meta is None:
+                    self._logger.warning(
+                        "no google tracking metadata for ticket {}".format(row.ticket)
+                    )
+                    archive_transfer_date = None
+                    archive_ingestion_date = None
+                else:
+                    obj.update(google_track_meta._asdict())
+                    archive_transfer_date = ingest_utils.get_date_isoformat(
+                        self._logger, google_track_meta.date_of_transfer
+                    )
+                    archive_ingestion_date = ingest_utils.get_date_isoformat(
+                        self._logger, google_track_meta.date_of_transfer_to_archive
+                    )
+                name = sample_id_to_ckan_name(
+                    sample_id.split("/")[-1],
+                    obj["amplicon"].lower(),
+                    "{}".format(obj["flow_id"]),
+                )
+                title = "Environmental DNA Amplicons {} {} {}".format(obj["amplicon"], sample_id, flow_id),
+                obj.update(
+                    {
+                        "name": name,
+                        "id": name,
+                        "title": title,
+                        "omics": "Genomics",
+                        "analytical_platform": "MiSeq",
+                        "license_id": apply_license(archive_ingestion_date),
+                        "ticket": row.ticket,
+                        "type": self.ckan_data_type,
+                        "date_of_transfer": archive_transfer_date,
+                        "date_of_transfer_to_archive": archive_ingestion_date,
+                        "sequence_data_type": self.sequence_data_type,
+                    }
+                )
+                ingest_utils.permissions_organization_member_after_embargo(
+                    self._logger,
+                    obj,
+                    "date_of_transfer_to_archive",
+                    self.embargo_days,
+                    CONSORTIUM_ORG_NAME,
+                )
+                for contextual_source in self.contextual_metadata:
+                    obj.update(contextual_source.get(sample_id))
+                ingest_utils.add_spatial_extra(self._logger, obj)
+                self.build_notes_into_object(obj)
+                ingest_utils.apply_access_control(self._logger, self, obj)
+                tag_names = ["amplicons", obj["amplicon"]]
+                if obj.get("sample_type"):
+                    tag_names.append(obj["sample_type"])
+                obj["tags"] = [{"name": t} for t in tag_names]
+                self.track_packages_for_md5(obj, row.ticket)
+                packages.append(obj)
+        return packages
+
+    def _get_resources(self):
+        resources = self._get_common_resources()
+        return resources
+
+    def _add_datatype_specific_info_to_resource(self, resource, md5_file=None):
+        for contextual_source in self.contextual_metadata:
+            resource.update(contextual_source.filename_metadata(resource["name"]))
+        self._current_md5 = md5_file
+
+    def _build_resource_linkage(self, xlsx_info, resource, file_info):
+        sample_id = ingest_utils.extract_ands_id(self._logger, file_info.get("id"))
+        return (
+            sample_id,
+            resource["flow_id"],
+            resource["amplicon"],
+        )
+
+
+class EDNAAmpliconsControlMetadata(AMDFullIngestMetadata):
+    organization = "environmental-dna"
+    ckan_data_type = "edna-genomics-amplicon-control"
+    omics = "genomics"
+    technology = "amplicons-control"
+    sequence_data_type = "illumina-amplicons"
+    embargo_days = 365
+    contextual_classes = []
+    metadata_patterns = [r"^.*\.md5"]
+    resource_linkage = ("amplicon", "flow_id")
+    md5 = {
+        "match": [
+            files.edna_amplicon_control_filename_re,
+        ],
+        "skip": [files.edna_amplicon_filename_re, ],
+    }
+
+    metadata_urls = ["https://downloads-qcif.bioplatforms.com/bpa/edna_staging/genomics-amplicons/"]
+    metadata_url_components = ("ticket",)
+    add_md5_as_resource = True
+
+    def __init__(self, logger, metadata_path, **kwargs):
+        super().__init__(logger, metadata_path, **kwargs)
+        self.google_track_meta = EDNAGoogleTrackMetadata(logger)
+
+    amplicon_read_lengths = {
+        "D16S": "154-184",
+        "LCOI": "313",
+        "F16S": "178-228",
+        "MV1": "192-212",
+        "MFE2": "163-185",
+        "MFU": "163-185",
+        "MFUE2": "163-185",
+    }
+    def get_amplicon_read_length(amplicon):
+        # placeholder until we determine what they are
+        return 300
+        # should be:
+        # return amplicon_read_lengths[amplicon]
+
+
+    def _get_packages(self):
+        #?? 1 row per tracking sheet row - ticket, amplicon, flowcell
+        flow_id_info = {
+            (t["flow_id"],t["amplicon"]): self.metadata_info[os.path.basename(fname)]
+            for _, _, fname, t in self.md5_lines()
+        }
+        packages = []
+        for flow_id_and_amplicon, info in sorted(flow_id_info.items()):
+            obj = {}
+            amplicon = info["amplicon"].upper()
+            flow_id = flow_id_and_amplicon[0].upper()
+            name = sample_id_to_ckan_name(
+                "control", self.ckan_data_type + "-" + amplicon, flow_id
+            ).lower()
+            google_track_meta = self.google_track_meta.get(info["ticket"])
+
+            archive_ingestion_date = ingest_utils.get_date_isoformat(
+                self._logger, google_track_meta.date_of_transfer_to_archive
+            )
+
+            obj.update(
+                {
+                    "name": name,
+                    "id": name,
+                    "flow_id": flow_id,
+                    "title": "Australian Microbiome Amplicons Control %s %s"
+                    % (amplicon, flow_id),
+                    "omics": "Genomics",
+                    "analytical_platform": "MiSeq",
+                    "read_length": get_amplicon_read_length(amplicon),
                     "date_of_transfer": ingest_utils.get_date_isoformat(
                         self._logger, google_track_meta.date_of_transfer
                     ),
