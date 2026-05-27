@@ -34,7 +34,7 @@ class CIPPSDatasetControlContextual(BaseDatasetControlContextual):
 
 class CIPPSLibraryContextual(BaseLibraryContextual):
     metadata_urls = [
-        "https://downloads-qcif.bioplatforms.com/bpa/cipps_staging/metadata/2026-01-12/"
+        "https://downloads-qcif.bioplatforms.com/bpa/cipps_staging/metadata/2026-05-27/"
     ]
     name = "cipps-library-contextual"
     sheet_names = ["Sample metadata"]
