@@ -104,9 +104,9 @@ AGRF,18/3/26,,,399091,Various Rhizobiaceae,Illumina Short read ,20260318_PP_AGRF
 AGRF,18/3/26,,,399091,Various Rhizobiaceae,Illumina Short read ,20260318_PP_AGRF_CAGRF25100152_2_23HL7WLT3,17/03/2026,17/03/2026,BPAOPS-2040,https://data.bioplatforms.com/dataset/?ext_search_by=&q=ticket%3ABPAOPS-2040,136 samples
 AGRF,18/3/26,,,399098,"Pyrenophora teres f. teres (Ptt), Pyrenophora teres f. maculata (Ptm)",Illumina Short read ,20260318_PP_AGRF_CAGRF25120210_23HG3CLT3,18/03/2026,23/03/2026,BPAOPS-2041,https://data.bioplatforms.com/dataset/?ext_search_by=&q=ticket%3ABPAOPS-2041,
 AGRF,19/3/26,,,399105,"Pyrenophora teres f. teres (Ptt), Pyrenophora teres f. maculata (Ptm)",Illumina Short read ,20260319_PP_AGRF_CAGRF26010218_23HKCTLT3,23/03/2026,23/03/2026,BPAOPS-2043,https://data.bioplatforms.com/dataset/?ext_search_by=&q=ticket%3ABPAOPS-2043,
-AGRF,08/05/2026,,,399089,Streptomyces scabiei,PacBio-HiFi,20260508_PP_AGRF_CAGRF25100022_m84073_260501_064001_s3,11/05/2026,No metadata,BPAOPS-2078,https://data.bioplatforms.com/dataset/?ext_search_by=&q=ticket%3ABPAOPS-2078,
-AGRF,28/05/2026,,,399087,Fusarium spp,PacBio-HiFi,20260527_PP_AGRF_CAGRF25080289_m84073_260522_065419_s1,28/05/2026,,BPAOPS-2095,,
-,,,,,,,,,,,,
+AGRF,08/05/2026,,,399089,Streptomyces scabiei,PacBio-HiFi,20260508_PP_AGRF_CAGRF25100022_m84073_260501_064001_s3,11/05/2026,01/06/2026,BPAOPS-2078,https://data.bioplatforms.com/dataset/?ext_search_by=&q=ticket%3ABPAOPS-2078,Extended 12 months embargo to accomodate receiving late sample metadata.
+AGRF,28/05/2026,,,399087,Fusarium spp,PacBio-HiFi,20260527_PP_AGRF_CAGRF25080289_m84073_260522_065419_s1,28/05/2026,01/06/2026,BPAOPS-2095,https://data.bioplatforms.com/dataset?ext_search_by=&q=ticket%3ABPAOPS-2095,
+BRF,09/06/2026,,,399107,Puccinia melanocephala,Illumina Short read ,20260609_PP_BRF_399107_22J3GKLT1,10/06/2026,,BPAOPS-2115,,
 ,,,,,,,,,,,,
 ,,,,,,,,,,,,
 ,,,,,,,,,,,,
