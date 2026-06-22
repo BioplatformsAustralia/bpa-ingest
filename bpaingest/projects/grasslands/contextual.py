@@ -24,7 +24,7 @@ class AGDatasetControlContextual(BaseDatasetControlContextual):
 
 class AGLibraryContextual(BaseLibraryContextual):
     metadata_urls = [
-        "https://downloads-qcif.bioplatforms.com/bpa/grasslands/metadata/2026-05-05/"
+        "https://downloads-qcif.bioplatforms.com/bpa/grasslands/metadata/2026-06-22/"
     ]
     name = "ag-library-contextual"
     sheet_names = [
@@ -34,6 +34,7 @@ class AGLibraryContextual(BaseLibraryContextual):
         "ddRAD",
         "Metabolomics",
         "Spatial RNA, ATAC, methyl",
+        "Microbiome",
     ]
 
     field_spec = [
