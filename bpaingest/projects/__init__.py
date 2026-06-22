@@ -183,6 +183,10 @@ from .fish.ingest import (
     FishHiCMetadata,
 )
 
+from .avid.ingest import (
+    AVIDIlluminaShortreadMetadata,
+)
+
 class ProjectInfo:
     projects = {
         "amd": [
@@ -359,6 +363,9 @@ class ProjectInfo:
         "edna": [
             EDNAAmpliconsMetadata,
             EDNAAmpliconsControlMetadata,
+        ],
+        "avid": [
+            AVIDIlluminaShortreadMetadata,
         ],
     }
 
