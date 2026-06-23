@@ -61,6 +61,7 @@ CONSORTIUM_ORG_NAME = "AM Consortium Members"
 # This is the URL slug of the organization whose members are
 # permitted access during the embargo period
 CONSORTIUM_ORG_NAME = "am-consortium-members"
+EDNA_CONSORTIUM_ORG_NAME = "environmental-dna-consortium-members"
 
 
 def base_amplicon_read_length(amplicon):
@@ -2361,7 +2362,7 @@ class EDNAAmpliconsMetadata(AMDFullIngestMetadata):
             fld('bioplatforms_project_ncbi_umbrellabioproject_id', 'bioplatforms_project_ncbi_umbrellabioproject_id'),
             fld('bioplatforms_sample_id', 'bioplatforms_sample_id', coerce=ingest_utils.extract_ands_id),
             fld('bioplatforms_dataset_id', 'bioplatforms_dataset_id', coerce=ingest_utils.extract_ands_id),
-            fld('work_order', 'work_order'),
+            fld('work_order', 'work_order', coerce=ingest_utils.int_or_comment),
             fld('facility_project_code', 'facility_project_code'),
             fld('synonym', 'synonym'),
             fld('project_lead', 'project_lead'),
@@ -2479,7 +2480,7 @@ class EDNAAmpliconsMetadata(AMDFullIngestMetadata):
                     obj["amplicon"].lower(),
                     "{}".format(obj["flow_id"]),
                 )
-                title = "Environmental DNA Amplicons {} {} {}".format(obj["amplicon"], sample_id, flow_id),
+                title = "Environmental DNA Amplicons {} {} {}".format(obj["amplicon"], sample_id, flow_id)
                 obj.update(
                     {
                         "name": name,
@@ -2490,6 +2491,7 @@ class EDNAAmpliconsMetadata(AMDFullIngestMetadata):
                         "license_id": apply_license(archive_ingestion_date),
                         "ticket": row.ticket,
                         "type": self.ckan_data_type,
+                        "description": google_track_meta.description,
                         "date_of_transfer": archive_transfer_date,
                         "date_of_transfer_to_archive": archive_ingestion_date,
                         "sequence_data_type": self.sequence_data_type,
@@ -2500,7 +2502,7 @@ class EDNAAmpliconsMetadata(AMDFullIngestMetadata):
                     obj,
                     "date_of_transfer_to_archive",
                     self.embargo_days,
-                    CONSORTIUM_ORG_NAME,
+                    EDNA_CONSORTIUM_ORG_NAME,
                 )
                 for contextual_source in self.contextual_metadata:
                     obj.update(contextual_source.get(sample_id))
@@ -2567,11 +2569,8 @@ class EDNAAmpliconsControlMetadata(AMDFullIngestMetadata):
         "MFU": "163-185",
         "MFUE2": "163-185",
     }
-    def get_amplicon_read_length(amplicon):
-        # placeholder until we determine what they are
-        return 300
-        # should be:
-        # return amplicon_read_lengths[amplicon]
+    def get_amplicon_read_length(self, amplicon):
+        return self.amplicon_read_lengths[amplicon]
 
 
     def _get_packages(self):
@@ -2583,7 +2582,8 @@ class EDNAAmpliconsControlMetadata(AMDFullIngestMetadata):
         packages = []
         for flow_id_and_amplicon, info in sorted(flow_id_info.items()):
             obj = {}
-            amplicon = info["amplicon"].upper()
+            #amplicon = info["amplicon"].upper()
+            amplicon = flow_id_and_amplicon[1].upper()
             flow_id = flow_id_and_amplicon[0].upper()
             name = sample_id_to_ckan_name(
                 "control", self.ckan_data_type + "-" + amplicon, flow_id
@@ -2593,21 +2593,21 @@ class EDNAAmpliconsControlMetadata(AMDFullIngestMetadata):
             archive_ingestion_date = ingest_utils.get_date_isoformat(
                 self._logger, google_track_meta.date_of_transfer_to_archive
             )
+            title = "Australian Microbiome Amplicons Control %s %s" %(amplicon, flow_id),
 
             obj.update(
                 {
                     "name": name,
                     "id": name,
                     "flow_id": flow_id,
-                    "title": "Australian Microbiome Amplicons Control %s %s"
-                    % (amplicon, flow_id),
+                    "title": title,
                     "omics": "Genomics",
                     "analytical_platform": "MiSeq",
-                    "read_length": get_amplicon_read_length(amplicon),
+                    "read_length": self.get_amplicon_read_length(amplicon),
                     "date_of_transfer": ingest_utils.get_date_isoformat(
                         self._logger, google_track_meta.date_of_transfer
                     ),
-                    "data_type": google_track_meta.data_type,
+                    #"data_type": google_track_meta.data_type,
                     "description": google_track_meta.description,
                     "folder_name": google_track_meta.folder_name,
                     "sample_submission_date": ingest_utils.get_date_isoformat(
@@ -2630,7 +2630,7 @@ class EDNAAmpliconsControlMetadata(AMDFullIngestMetadata):
                 obj,
                 "archive_ingestion_date",
                 self.embargo_days,
-                CONSORTIUM_ORG_NAME,
+                EDNA_CONSORTIUM_ORG_NAME,
             )
             ingest_utils.add_spatial_extra(self._logger, obj)
             self.build_notes_into_object(obj)
@@ -2646,9 +2646,6 @@ class EDNAAmpliconsControlMetadata(AMDFullIngestMetadata):
         return resources
 
     def _add_datatype_specific_info_to_resource(self, resource, md5_file=None):
-        xlsx_info = self.metadata_info[os.path.basename(md5_file)]
-        amplicon = xlsx_info["amplicon"].upper()
-        resource["amplicon"] = amplicon
         self._current_md5 = md5_file
 
     def _build_resource_linkage(self, xlsx_info, resource, file_info):
