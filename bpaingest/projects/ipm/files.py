@@ -52,8 +52,9 @@ PACBIO_HIFI_PATTERN = r"""
       |\.hifi_reads\.default\.bam
       |\.hifi_reads\.bc\d{4}\.bam
       |\.hifi_reads\.bam
-      |\.subreads\.bam)
-
+      |\.subreads\.bam
+      |\.hifi_reads\.bc\d{4}\.amplifi_multiplexed\.bam
+      |\.hifi_reads\.fastq\.gz)
 """
 pacbio_hifi_filename_re = re.compile(PACBIO_HIFI_PATTERN, re.VERBOSE)
 
