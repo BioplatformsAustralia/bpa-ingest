@@ -185,6 +185,7 @@ from .fish.ingest import (
 
 from .avid.ingest import (
     AVIDIlluminaShortreadMetadata,
+    AVIDPacbioHifiMetadata,
 )
 
 class ProjectInfo:
@@ -366,6 +367,7 @@ class ProjectInfo:
         ],
         "avid": [
             AVIDIlluminaShortreadMetadata,
+            AVIDPacbioHifiMetadata,
         ],
     }
 
