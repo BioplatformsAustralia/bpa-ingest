@@ -5,3 +5,5 @@ Facility to fill,Facility to fill,Facility to fill (Leave empty if data is for >
 Facility,Date of transfer,bioplatforms_sample_id,bioplatforms_library_id,bioplatforms_dataset_id,scientific_name,Data type,Description,Folder name,Date of transfer to archive,Date data published,CCG JIRA Ticket,Download,Note
 BRF,6/6/26,676738,668783,665238,Pareledone turqueti,Illumina short read HiC,Illumina short read HiC,20260605_AVID_BRF_WO31004_23JG5LLT3,08/06/2026,,BPAOPS-2107,,
 AGRF,2/7/26,677056,702636,665347,,PacBio-HiFi,PacBio-HiFi,20260702_AVID_AGRF_CAGRF26050436_m84073_260626_035957_s1,02/07/2026,,BPAOPS-2129,,
+AGRF,06/07/2026,,,665244,,illumina short-read,illumina short-read,20260706_AVID_AGRF_CAGRF26040175_1_23MVYYLT3,06/07/2026,,BPAOPS-2131,,
+AGRF,06/07/2026,,,665240,,illumina short-read,illumina short-read,20260706_AVID_AGRF_CAGRF26040069_1_23MVYYLT3,06/07/2026,,BPAOPS-2132,,
