@@ -14,5 +14,6 @@ BRF,09/02/2026,,,647509,Nothofagus moorei,Illumina Shortread,20260209-WO28011-23
 AGRF,11/2/26,,,647511,Planchonella australis,Illumina Shortread,20260211_FOR_AGRF_CAGRF25100311_23LGHGLT4,12/02/2026,13/02/2026,BPAOPS-1999,https://data.bioplatforms.com/dataset/?ext_search_by=&q=ticket%3ABPAOPS-1999,
 AGRF,27/02/2026,,,647512,Neolitsea dealbata,Illumina Shortread,20260227_FOR_AGRF_CAGRF25100312_23LGKYLT4,04/03/2026,10/03/2026,BPAOPS-2028,https://data.bioplatforms.com/dataset/?ext_search_by=&q=ticket%3ABPAOPS-2028,
 ML note: Everything up to this point has been added to the Aus_Genome_status - Bioplatforms Google sheet,,,,,,,,,,,,
-BRF,15/04/2026,643347,645597,647505,,PacBio-HiFi,20260413_FOR_BRF_m84118_260413_053724_s3,20/04/2026,,BPAOPS-2058,,
-BRF,15/04/2026,,,647504,Endiandra pubens/insignis,Illumina Shortread,20260415-WO28006-23JFWHLT3,20/04/2026,,BPAOPS-2059,,
+BRF,15/04/2026,643347,645597,647505,Endiandra pubens ,PacBio-HiFi,20260413_FOR_BRF_m84118_260413_053724_s3,20/04/2026,20/04/2026,BPAOPS-2058,https://data.bioplatforms.com/dataset/?ext_search_by=&q=ticket%3ABPAOPS-2058,
+BRF,15/04/2026,,,647504,Endiandra pubens/insignis,Illumina Shortread,20260415-WO28006-23JFWHLT3,20/04/2026,21/04/2026,BPAOPS-2059,https://data.bioplatforms.com/dataset/?ext_search_by=&q=ticket%3ABPAOPS-2059,
+BRF,06/07/2026,,,647510,Eucalyptus tereticornis,Illumina Shortread,20260706_FOR_BRF_647510_23KF3GLT3,07/07/2026,,BPAOPS-2130,,
