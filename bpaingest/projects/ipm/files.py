@@ -73,6 +73,6 @@ PACBIO_HIFI_COMMON_PATTERN = r"""
     IPM_
     (?P<facility>AGRF|BRF)_
     (?P<flowcell_id>\w{23})
-    (\.pdf)
+    (\.pdf|\.hifi_reads\.bc\d{4}\.amplifi_multiplexed\.bam)
 """
 pacbio_hifi_common_re = re.compile(PACBIO_HIFI_COMMON_PATTERN, re.VERBOSE)
