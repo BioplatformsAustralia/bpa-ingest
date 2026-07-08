@@ -16,4 +16,5 @@ AGRF,27/02/2026,,,647512,Neolitsea dealbata,Illumina Shortread,20260227_FOR_AGRF
 ML note: Everything up to this point has been added to the Aus_Genome_status - Bioplatforms Google sheet,,,,,,,,,,,,
 BRF,15/04/2026,643347,645597,647505,Endiandra pubens ,PacBio-HiFi,20260413_FOR_BRF_m84118_260413_053724_s3,20/04/2026,20/04/2026,BPAOPS-2058,https://data.bioplatforms.com/dataset/?ext_search_by=&q=ticket%3ABPAOPS-2058,
 BRF,15/04/2026,,,647504,Endiandra pubens/insignis,Illumina Shortread,20260415-WO28006-23JFWHLT3,20/04/2026,21/04/2026,BPAOPS-2059,https://data.bioplatforms.com/dataset/?ext_search_by=&q=ticket%3ABPAOPS-2059,
-BRF,06/07/2026,,,647510,Eucalyptus tereticornis,Illumina Shortread,20260706_FOR_BRF_647510_23KF3GLT3,07/07/2026,,BPAOPS-2130,,
+BRF,06/07/2026,,,647510,Eucalyptus tereticornis,Illumina Shortread,20260706_FOR_BRF_647510_23KF3GLT3,07/07/2026,Waiting for metadata,BPAOPS-2130,https://data.bioplatforms.com/dataset/?ext_search_by=&q=ticket%3ABPAOPS-2130,
+BRF,07/07/2026,643350,645600,647508,Eucalyptus tereticornis,PacBio-HiFi,20260703_FOR_BRF_m84118_260703_021115_s1,08/07/2026,Waiting for ingest,BPAOPS-2134,,
