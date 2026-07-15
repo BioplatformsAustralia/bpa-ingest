@@ -11,7 +11,7 @@ ILLUMINA_SHORTREAD_PATTERN = r"""
     (?P<flow_cell_id>\w{9,10})_
     (?P<index>[G|A|T|C|-]*)_
     ((?P<runsamplenum>S\d*)_)?
-    (?P<lane>L\d{3})_
+    ((?P<lane>L\d{3})_)?
     (?P<read>[R|I][1|2])
     (_001)?
     \.fastq\.gz$
@@ -150,7 +150,7 @@ ILLUMINA_HIC_PATTERN = r"""
     (?P<flowcell_id>\w{5,10})_
     ((?P<index>[G|A|T|C|-]*)_)?
     (?P<runsamplenum>S\d*)_
-    (?P<lane>L\d{3})_
+    ((?P<lane>L\d{3})_)?
     (?P<read>[R|I][1|2])_
     001
     \.fastq\.gz$
