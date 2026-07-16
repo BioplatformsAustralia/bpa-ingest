@@ -35,7 +35,7 @@ class AnimalDiseaseDatasetControlContextual(BaseDatasetControlContextual):
 
 class AnimalDiseaseLibraryContextual(BaseLibraryContextual):
     metadata_urls = [
-        "https://downloads-qcif.bioplatforms.com/bpa/animal_disease_staging/metadata/2026-06-17/"
+        "https://downloads-qcif.bioplatforms.com/bpa/animal_disease_staging/metadata/2026-07-17/"
     ]
     name = "ad-library-contextual"
     sheet_names = ['Theme 1',
