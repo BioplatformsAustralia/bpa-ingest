@@ -24,4 +24,5 @@ RAMAC,26/03/2026,,,373595,Cymbopogon  ,Phylogenomics,Main dataset,illumina-short
 AGRF,22/04/2026,,,373585,Themeda triandra,Transcriptomics,Main dataset,illumina-transcriptomics,Illumina short read,20260422_AG_AGRF_CAGRF25110276_23JGHTLT3,21/04/2026,21/04/2026,BPAOPS-2064,https://data.bioplatforms.com/dataset/?ext_search_by=&q=ticket%3ABPAOPS-2064
 AGRF,05/05/2026,,,373586,Themeda triandra,Transcriptomics,Main dataset,pacbio,PacBio-HiFi (RNA),20260429_AG_AGRF_CAGRF25110279_m84073_260424_052327_s1,11/05/2026,12/05/2026,BPAOPS-2076,https://data.bioplatforms.com/dataset/?ext_search_by=&q=ticket%3ABPAOPS-2076
 AGRF,22/6/26,,,373600,Neurachne,Methyl-seq ,Main dataset,illumina-shortread,Illumina short read,20260622_AG_AGRF_CAGRF26040091_23LWVYLT3,22/06/2026,29/06/2026,BPAOPS-2120,https://data.bioplatforms.com/dataset/?ext_search_by=&q=ticket%3ABPAOPS-2120
-RAMAC,10/07/2026,,,373598,,Metagenomics,Main dataset,metagenomics,Illumina Short Read,20260708_AG_UNSW_23HHFVLT3,12/7/2026,,BPAOPS-2141,
+RAMAC,10/07/2026,,,373598,,Metagenomics,Main dataset,metagenomics,Illumina Short Read,20260708_AG_UNSW_23HHFVLT3,12/7/2026,13/07/2026,BPAOPS-2141,https://data.bioplatforms.com/dataset/?ext_search_by=&q=ticket%3ABPAOPS-2141
+AGRF,17/7/26,,,373601,,,,,Illumina Short Read,20260717_AG_AGRF_ CAGRF26040092_23NJKGLT3,20/07/2026,,BPAOPS-2157,
