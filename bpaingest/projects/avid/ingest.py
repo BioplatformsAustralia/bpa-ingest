@@ -423,7 +423,13 @@ class AVIDPacbioHifiMetadata(AVIDBaseMetadata):
         return self._get_common_packages()
 
     def _add_datatype_specific_info_to_package(self, obj, row, filename):
-        obj.update({"dataset_url": self.get_tracking_info(row.ticket, "download")})
+        obj.update(
+            {
+
+                "library_id": obj["bioplatforms_library_id"].split("/")[-1],
+                "dataset_url": self.get_tracking_info(row.ticket, "download")
+            }
+        )
         # below fields are in the metadata, but not required in the packages schema
         del obj["ccg_jira_ticket"]
         del obj["download"]
