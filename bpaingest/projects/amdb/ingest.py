@@ -61,7 +61,7 @@ CONSORTIUM_ORG_NAME = "AM Consortium Members"
 # This is the URL slug of the organization whose members are
 # permitted access during the embargo period
 CONSORTIUM_ORG_NAME = "am-consortium-members"
-EDNA_CONSORTIUM_ORG_NAME = "environmental-dna-consortium-members"
+EDNA_CONSORTIUM_ORG_NAME = "edna-csiro-consortium-members"
 
 
 def base_amplicon_read_length(amplicon):
@@ -2348,7 +2348,7 @@ class AustralianMicrobiomeAmpliconsControlMetadata(AMDFullIngestMetadata):
             resource["flow_id"],
         )
 class EDNAAmpliconsMetadata(AMDFullIngestMetadata):
-    organization = "environmental-dna"
+    organization = "edna-csiro"
     ckan_data_type = "edna-genomics-amplicon"
     omics = "genomics"
     sequence_data_type = "illumina-amplicons"
@@ -2443,13 +2443,13 @@ class EDNAAmpliconsMetadata(AMDFullIngestMetadata):
     def _get_packages(self):
         xlsx_re = re.compile(r"^.*_(\w+)_metadata.*\.xlsx$")
         self._logger.info(
-            "Ingesting Environmental DNA metadata from {0}".format(self.path)
+            "Ingesting EDNA - CSIRO metadata from {0}".format(self.path)
         )
         packages = []
         for fname in unique_spreadsheets(glob(self.path + "/*.xlsx")):
             base_fname = os.path.basename(fname)
             self._logger.info(
-                "Processing Environmental DNA metadata file {0}".format(
+                "Processing EDNA - CSIRO metadata file {0}".format(
                     os.path.basename(fname)
                 )
             )
@@ -2480,7 +2480,7 @@ class EDNAAmpliconsMetadata(AMDFullIngestMetadata):
                     obj["amplicon"].lower(),
                     "{}".format(obj["flow_id"]),
                 )
-                title = "Environmental DNA Amplicons {} {} {}".format(obj["amplicon"], sample_id, flow_id)
+                title = "Environmental DNA - CSIRO - Amplicons {} {} {}".format(obj["amplicon"], sample_id, flow_id)
                 obj.update(
                     {
                         "name": name,
