@@ -277,6 +277,12 @@ fish()
     apply fish-ont-promethion $*
     apply fish-hi-c $*
 }
+ipm()
+{
+    apply ipm-illumina-shortread $*
+    apply ipm-pacbio-hifi $*
+    apply ipm-ont-promethion $*
+}
 
 
 run() {
