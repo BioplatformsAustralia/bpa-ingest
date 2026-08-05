@@ -283,6 +283,11 @@ ipm()
     apply ipm-pacbio-hifi $*
     apply ipm-ont-promethion $*
 }
+dinoflagellates()
+{
+    apply dinoflagellates-illumina-shortread $*
+    #apply dinoflagellates-ont-promethion $*
+}
 
 
 run() {
