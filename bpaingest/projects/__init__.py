@@ -133,6 +133,8 @@ from .plant_protein_atlas.ingest import (
     PlantProteinAtlasProteomicsMetadata,
     PlantProteinAtlasProteomicsAnalysedMetadata,
     PlantProteinAtlasProteomicsDatabaseMetadata,
+    PlantProteinAtlasMassImagingMetadata,
+    PlantProteinAtlasMassImagingAnalysedMetadata,
 )
 
 from .grasslands.ingest import (
@@ -186,6 +188,10 @@ from .fish.ingest import (
 from .avid.ingest import (
     AVIDIlluminaShortreadMetadata,
     AVIDPacbioHifiMetadata,
+)
+from .dinoflagellates.ingest import (
+    DinoflagellatesIlluminaShortreadMetadata, DinoflagellatesONTPromethionMetadata,
+    # DinoflagellatesONTPromethionMetadata,
 )
 
 class ProjectInfo:
@@ -314,6 +320,8 @@ class ProjectInfo:
             PlantProteinAtlasProteomicsMetadata,
             PlantProteinAtlasProteomicsAnalysedMetadata,
             PlantProteinAtlasProteomicsDatabaseMetadata,
+            PlantProteinAtlasMassImagingMetadata,
+            PlantProteinAtlasMassImagingAnalysedMetadata,
         ],
         "grasslands": [
             AGIlluminaShortreadMetadata,
@@ -368,6 +376,10 @@ class ProjectInfo:
         "avid": [
             AVIDIlluminaShortreadMetadata,
             AVIDPacbioHifiMetadata,
+        ],
+        "dinoflagellates": [
+            DinoflagellatesIlluminaShortreadMetadata,
+            #DinoflagellatesONTPromethionMetadata,
         ],
     }
 

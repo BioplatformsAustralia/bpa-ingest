@@ -139,7 +139,7 @@ proteomics_analysed_filename_re = re.compile(PROTEOMICS_ANALYSED_PATTERN, re.VER
 
 ANALYSED_XLSX_PATTERN = r"""
     Analysed_PPA_
-    (?P<facility_id>(APPF|LTU|MA_AWRI|UNISA|CSIRO))_
+    (?P<facility_id>(APPF|LTU|MA_AWRI|UNISA|CSIRO|ADL_UNI))_
     (?P<dataset_id>\d{4,6})_
     (metadata)
     \.xlsx
@@ -168,3 +168,35 @@ PROTEOME_XLSX_PATTERN = r"""
 """
 
 proteome_xlsx_filename_re = re.compile(PROTEOME_XLSX_PATTERN, re.VERBOSE)
+
+MASS_IMAGING_PATTERN = r"""
+    (?P<dataset_id>\d{4,6})_
+    (PPA_
+    (?P<facility_id>(UNISA|ADL_UNI)))?
+    (_MS)
+    (_imaging_glycan|_imaging_lipid|_imaging_peptide)
+    \.(tar)$
+"""
+mass_imaging_re = re.compile(MASS_IMAGING_PATTERN, re.VERBOSE )
+
+MASS_IMAGING_ANALYSED_PATTERN = r"""
+    (Analysed_)
+    (?P<dataset_id>\d{4,6})_
+    (PPA_
+    (?P<facility_id>(UNISA|ADL_UNI)))?
+    (_MS_)?
+    (imaging_lipid(_report)?|imaging_peptide(_report)?|imaging_glycan(_report)?)
+    \.(pdf|xlsx|tar)
+"""
+mass_imaging_analysed_filename_re = re.compile(MASS_IMAGING_ANALYSED_PATTERN, re.VERBOSE)
+
+
+MASS_IMAGING_METADATA_XLSX_PATTERN = r"""
+    (Analysed_)?
+    PPA_
+    (?P<facility_id>(APPF|LTU|MA_AWRI|UNISA|CSIRO|ADL_UNI))_
+    (?P<dataset_id>\d{4,6})_
+    metadata
+    \.xlsx
+"""
+mass_imaging_metadata_filename_re = re.compile(MASS_IMAGING_METADATA_XLSX_PATTERN, re.VERBOSE)

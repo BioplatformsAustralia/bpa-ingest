@@ -203,6 +203,8 @@ ppa()
   apply ppa-proteomics $*
   apply ppa-proteomics-analysed $*
   apply ppa-proteomics-database $*
+  apply ppa-mass-imaging $*
+  apply ppa-mass-imaging-analysed $*
 }
 
 grasslands() {

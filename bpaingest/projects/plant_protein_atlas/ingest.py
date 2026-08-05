@@ -1194,3 +1194,174 @@ class PlantProteinAtlasProteomicsDatabaseMetadata(PlantProteinAtlasBaseMetadata)
 
         tag_names = ["proteome-database",
                      ]
+class PlantProteinAtlasMassImagingMetadata(PlantProteinAtlasBaseMetadata):
+    ckan_data_type = "ppa-mass-imaging"
+    technology = "mass-imaging"
+    sequence_data_type = "mass-imaging"
+    embargo_days = 365
+    contextual_classes = common_context
+    metadata_patterns = [r"^.*\.md5$", r"^.*metadata\.xlsx$"]
+    metadata_urls = [
+        "https://downloads-qcif.bioplatforms.com/bpa/ppa_staging/mass-imaging/",
+    ]
+    metadata_url_components = ("ticket",)
+    resource_linkage = ("ticket", "bioplatforms_dataset_id")
+    spreadsheet = {
+        "fields": [
+            fld("bioplatforms_project", "bioplatforms_project"),
+            fld(
+                "bioplatforms_sample_id",
+                "bioplatforms_sample_id",
+                coerce=ingest_utils.extract_ands_id,
+            ),
+            fld(
+                "bioplatforms_library_id",
+                "bioplatforms_library_id",
+                coerce=ingest_utils.extract_ands_id,
+            ),
+            fld(
+                "bioplatforms_dataset_id",
+                "bioplatforms_dataset_id",
+                coerce=ingest_utils.extract_ands_id,
+            ),
+            fld('specimen_custodian', 'specimen_custodian'),
+            fld('sample_collection_type', 'sample_collection_type'),
+            fld('sample_type', 'sample_type'),
+            fld('taxon_id', 'taxon_id'),
+            fld('phylum', 'phylum'),
+            fld('klass', 'class'),
+            fld('order', 'order'),
+            fld('family', 'family'),
+            fld('genus', 'genus'),
+            fld('species', 'species'),
+            fld('sub_species', 'sub_species'),
+            fld('scientific_name', 'scientific_name'),
+            fld('scientific_name_authorship', 'scientific_name_authorship'),
+            fld('scientific_name_note', 'scientific_name_note'),
+            fld('common_name', 'common_name'),
+            fld('taxonomic_group', 'taxonomic_group'),
+            fld('tissue', 'tissue'),
+            fld('tissue_preservation', 'tissue_preservation'),
+            fld('tissue_preservation_temperature', 'tissue_preservation_temperature'),
+            fld('sample_quality', 'sample_quality'),
+            fld('data_type', 'data_type'),
+            fld('omics', 'omics'),
+            fld('data_context', 'data_context'),
+            fld('facility_project_code', 'facility_project_code'),
+            fld('facility_sample_id', 'facility_sample_id'),
+            fld('proteomics_facility', 'proteomics_facility'),
+            fld('analytical_platform', 'analytical_platform'),
+            fld('mass_spectrometer', 'mass_spectrometer'),
+            fld('spatial_resolution', 'spatial_resolution'),
+            fld('acquisition_mode_fragmentation', 'acquisition_mode/fragmentation'),
+            fld('sample_preparation', 'sample_preparation'),
+            fld('matrix_solution', 'matrix_solution'),
+            fld('file_description', 'file_description'),
+            ],
+        "options": {
+            "sheet_name": "Library metadata",
+            "header_length": 1,
+            "column_name_row_index": 0,
+        },
+    }
+
+    md5 = {
+        "match": [
+            files.mass_imaging_re,
+        ],
+        "skip": [
+            re.compile(r"^.*SampleSheet.*"),
+            re.compile(r"^.*TestFiles\.exe.*"),
+            re.compile(r"^.*DataValidation\.pdf.*"),
+            re.compile(r"^.*checksums\.(exf|md5)$"),
+            files.mass_imaging_metadata_filename_re,
+        ],
+    }
+
+    tag_names = ["mass-imaging", ]
+
+
+class PlantProteinAtlasMassImagingAnalysedMetadata(PlantProteinAtlasBaseMetadata):
+        ckan_data_type = "ppa-mass-imaging-analysed"
+        technology = "mass-imaging-analysed"
+        sequence_data_type = "mass-imaging-analysed"
+        embargo_days = 365
+        contextual_classes = common_context
+        metadata_patterns = [r"^.*\.md5$", r"^.*metadata\.xlsx$"]
+        metadata_urls = [
+            "https://downloads-qcif.bioplatforms.com/bpa/ppa_staging/mass-imaging-analysed/",
+        ]
+        metadata_url_components = ("ticket",)
+        resource_linkage = ("ticket", "bioplatforms_dataset_id")
+        spreadsheet = {
+            "fields": [
+                fld("bioplatforms_project", "bioplatforms_project"),
+                fld(
+                    "bioplatforms_sample_id",
+                    "bioplatforms_sample_id",
+                    coerce=ingest_utils.extract_ands_id,
+                ),
+                fld(
+                    "bioplatforms_library_id",
+                    "bioplatforms_library_id",
+                    coerce=ingest_utils.extract_ands_id,
+                ),
+                fld(
+                    "bioplatforms_dataset_id",
+                    "bioplatforms_dataset_id",
+                    coerce=ingest_utils.extract_ands_id,
+                ),
+                fld('specimen_custodian', 'specimen_custodian'),
+                fld('sample_collection_type', 'sample_collection_type'),
+                fld('sample_type', 'sample_type'),
+                fld('taxon_id', 'taxon_id'),
+                fld('phylum', 'phylum'),
+                fld('klass', 'class'),
+                fld('order', 'order'),
+                fld('family', 'family'),
+                fld('genus', 'genus'),
+                fld('species', 'species'),
+                fld('sub_species', 'sub_species'),
+                fld('scientific_name', 'scientific_name'),
+                fld('scientific_name_authorship', 'scientific_name_authorship'),
+                fld('scientific_name_note', 'scientific_name_note'),
+                fld('common_name', 'common_name'),
+                fld('taxonomic_group', 'taxonomic_group'),
+                fld('tissue', 'tissue'),
+                fld('tissue_preservation', 'tissue_preservation'),
+                fld('tissue_preservation_temperature', 'tissue_preservation_temperature'),
+                fld('sample_quality', 'sample_quality'),
+                fld('data_type', 'data_type'),
+                fld('omics', 'omics'),
+                fld('data_context', 'data_context'),
+                fld('facility_project_code', 'facility_project_code'),
+                fld('facility_sample_id', 'facility_sample_id'),
+                fld('proteomics_facility', 'proteomics_facility'),
+                fld('contact_person', 'contact_person'),
+                fld('data_analysis_date', 'data_analysis_date', coerce=ingest_utils.get_date_isoformat),
+                fld('file_description', 'file_description'),
+            ],
+            "options": {
+                "sheet_name": "Library metadata",
+                "header_length": 1,
+                "column_name_row_index": 0,
+            },
+        }
+
+        md5 = {
+            "match": [
+                files.mass_imaging_analysed_filename_re,
+            ],
+            "skip": [
+                re.compile(r"^.*SampleSheet.*"),
+                re.compile(r"^.*TestFiles\.exe.*"),
+                re.compile(r"^.*DataValidation\.pdf.*"),
+                re.compile(r"^.*checksums\.(exf|md5)$"),
+                files.mass_imaging_metadata_filename_re,
+            ],
+        }
+
+        tag_names = ["mass-imaging",
+                     "mass-imaging-analysed",
+                     ]
+
