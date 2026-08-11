@@ -263,6 +263,7 @@ ad()
 avid()
 {
     apply avid-illumina-shortread $*
+    apply avid-genome-assembly $*
 
 }
 edna()
@@ -326,6 +327,7 @@ all()
   forest $*
   ad $*
   edna $*
+  avid $*
   dinoflagellates $*
   sentinel_species $*
 }

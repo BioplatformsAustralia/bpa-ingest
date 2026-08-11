@@ -454,4 +454,136 @@ class AVIDPacbioHifiMetadata(AVIDBaseMetadata):
     def _build_common_files_linkage(self, xlsx_info, resource, file_info):
         return (resource["flowcell_id"],)
 
+class AVIDGenomeAssemblyMetadata(AVIDBaseMetadata):
+    ckan_data_type = "avid-genome-assembly"
+    technology = "genome-assembly"
+    sequence_data_type = "genome-assembly"
+    embargo_days = 365
+    contextual_classes = common_context
+    metadata_patterns = [r"^.*\.md5$", r"^.*\.xlsx$"]
+    metadata_urls = [
+        "https://downloads-qcif.bioplatforms.com/bpa/avid_staging/assembly/",
+    ]
+    metadata_url_components = ("ticket",)
+    resource_linkage = ("bioplatforms_assembly_id",)
+    spreadsheet = {
+        "fields": [
+
+            fld('bioplatforms_assembly_id', 'bioplatforms_assembly_id',
+                coerce=ingest_utils.extract_ands_id),
+            fld('bpa_package_id', 'bpa_package_id'),
+            fld('bioplatforms_library_id', 'bioplatforms_library_id',
+                coerce=ingest_utils.extract_ands_id),
+            fld('bioplatforms_sample_id', 'bioplatforms_sample_id',
+                coerce=ingest_utils.extract_ands_id),
+            fld('bioplatforms_dataset_id', 'bioplatforms_dataset_id',
+                coerce=ingest_utils.extract_ands_id),
+            fld('bioplatforms_project_id', 'bioplatforms_project_id'),
+            fld('project_title', 'project_title'),
+            fld('project_description', 'project_description'),
+            fld('assembly_tolid', 'assembly_tolid'),
+            fld('insdc_root_bioproject', 'insdc_root_bioproject'),
+            fld('insdc_assembly_accession_primary', 'insdc_assembly_accession_primary'),
+            fld('insdc_assembly_accession_secondary', 'insdc_assembly_accession_secondary'),
+            fld('code_repository', 'code_repository'),
+            fld('code_repository_hash', 'code_repository_hash'),
+            fld('insdc_status', 'insdc_status'),
+            fld('insdc_hold_date', 'insdc_hold_date', coerce=ingest_utils.get_date_isoformat),
+            fld('timestamp', 'timestamp', coerce=ingest_utils.get_time),
+
+        ],
+        "options": {
+            "sheet_name": "Metadata",
+            "header_length": 1,
+            "column_name_row_index": 0,
+        },
+    }
+    md5 = {
+        "match": [files.genome_assembly_filename_re],
+        "skip": [
+            re.compile(r"^.*\.xlsx$"),
+            re.compile(r"^.*\.json$"),
+        ],
+    }
+    notes_mapping = [
+        {"key": "family", "separator": ", "},
+        {"key": "genus", "separator": " "},
+        {"key": "species", "separator": ", Assembly ID: "},
+        {"key": "bioplatforms_assembly_id", "separator": ", "},
+        {"key": "sample_id", "separator": ", "},
+        {"key": "taxonomic_group"},
+
+    ]
+    description = "Genome Assembly"
+
+    tag_names = ["avid-genome-assembly"]
+
+    def __init__(
+        self, logger, metadata_path, contextual_metadata=None, metadata_info=None
+    ):
+        super().__init__(logger, metadata_path)
+        self.path = Path(metadata_path)
+        self.contextual_metadata = contextual_metadata
+        self.metadata_info = metadata_info
+        self.google_track_meta = AVIDGoogleTrackMetadata(logger)
+
+    def _get_packages(self):
+        return self._get_common_packages()
+
+    def _add_datatype_specific_info_to_package(self, obj, row, filename):
+        bioplatforms_assembly_id = row.bioplatforms_assembly_id
+        obj["name"] = sample_id_to_ckan_name(
+            bioplatforms_assembly_id.split("/")[-1], self.ckan_data_type
+        )
+        obj["id"] = obj["name"]
+        # explode sample_id, library_id
+        sample_ids = re.split(",\s*", str(row.bioplatforms_sample_id))
+        library_ids = re.split(",\s*", str(row.bioplatforms_library_id))
+
+        # check same length
+        if len(sample_ids) != len(library_ids):
+            raise Exception("mismatch count of sample and library IDs")
+
+        # if single item, add bpa_sample_id and bpa_library_id to metadata
+        if len(sample_ids) == 1:
+            obj["bioplatforms_sample_id"] = ingest_utils.extract_ands_id(
+                self._logger, row.bioplatforms_sample_id
+            )
+            obj["bioplatforms_library_id"] = ingest_utils.extract_ands_id(
+                self._logger, row.bioplatforms_library_id
+            )
+        else:
+            obj["bioplatforms_sample_id"] = None
+            obj["bioplatforms_library_id"] = None
+
+        for contextual_source in self.contextual_metadata:
+            context = []
+            for i in range(0, len(sample_ids)):
+                context.append(
+                    contextual_source.get(
+                        ingest_utils.extract_ands_id(self._logger, sample_ids[i]),
+                    )
+                )
+            #obj.update(common_values(context))
+
+        obj.update(
+            {
+                "folder_name": self.get_tracking_info(row.ticket, "folder_name"),
+                "dataset_url": self.get_tracking_info(row.ticket, "download"),
+            }
+        )
+
+    def _get_resources(self):
+        return self._get_common_resources()
+
+    def _add_datatype_specific_info_to_resource(self, resource, md5_file=None):
+        resource["bioplatforms_assembly_id"] = ingest_utils.extract_ands_id(
+            self._logger, resource["bioplatforms_assembly_id"]
+        )
+        return
+
+    def _build_resource_linkage(self, xlsx_info, resource, file_info):
+        return (resource["bioplatforms_assembly_id"],)
+
+
 

@@ -73,3 +73,13 @@ PACBIO_HIFI_COMMON_PATTERN = r"""
 """
 
 pacbio_hifi_common_re = re.compile(PACBIO_HIFI_COMMON_PATTERN, re.VERBOSE)
+
+GENOME_ASSEMBLY_PATTERN = r"""
+    (?P<bioplatforms_assembly_id>\d{4,6})_
+    AVID_
+    (?P<facility>AToL)_
+    (busco\.batch_summary|assembly_stats|curation|PRIMARY_autofiltered|SECONDARY_autofiltered|btk|qc_stats|annotation|_hap1\.p_ctg)
+    (\.tar|\.fasta|\.gtf|\.gfa)?
+    (\.gz|\.txt)
+"""
+genome_assembly_filename_re = re.compile(GENOME_ASSEMBLY_PATTERN, re.VERBOSE)
