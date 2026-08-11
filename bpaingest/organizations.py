@@ -357,5 +357,19 @@ ORGANIZATIONS = [
         "image_url": "https://data.bioplatforms.com/dinoflagellates.webp",
         "groups": [{"capacity": "public", "name": "dinoflagellates"}],
     },
+    {
+        "name": "sentinel-species",
+        "title": "Sentinel Species Genomics Initiative",
+        "display_name": "Sentinel Species Genomics Initiative",
+        "image_url": "https://data.bioplatforms.com/Sentinel-Species.webp",
+        "groups": [{"capacity": "public", "name": BPA_ORGANIZATION_ID}],
+    },
+    {
+        "name": "sentinel-species-consortium-members",
+        "title": "Sentinel Species Genomics Initiative Members",
+        "display_name": "Sentinel Species Genomics Initiative Members",
+        "image_url": "https://data.bioplatforms.com/Sentinel-Species.webp",
+        "groups": [{"capacity": "public", "name": "sentinel-species"}],
+    },
 
 ]
