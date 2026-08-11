@@ -289,6 +289,12 @@ dinoflagellates()
     #apply dinoflagellates-ont-promethion $*
 }
 
+sentinel_species()
+{
+    apply sentinel-species-illumina-shortread $*
+    #apply sentinel-species-ont-promethion $*
+    #apply sentinel-species-pacbio-hifi $*
+}
 
 run() {
   apply $*
@@ -320,6 +326,8 @@ all()
   forest $*
   ad $*
   edna $*
+  dinoflagellates $*
+  sentinel_species $*
 }
 
 action="$1"

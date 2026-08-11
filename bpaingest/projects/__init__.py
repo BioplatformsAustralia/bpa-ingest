@@ -190,8 +190,13 @@ from .avid.ingest import (
     AVIDPacbioHifiMetadata,
 )
 from .dinoflagellates.ingest import (
-    DinoflagellatesIlluminaShortreadMetadata, DinoflagellatesONTPromethionMetadata,
+    DinoflagellatesIlluminaShortreadMetadata,
     # DinoflagellatesONTPromethionMetadata,
+)
+from .sentinel_species.ingest import (
+    SentinelSpeciesIlluminaShortreadMetadata,
+    #SentinelSpeciesONTPromethionMetadata,
+    #SentinelSpeciesPacbioHifiMetadata,
 )
 
 class ProjectInfo:
@@ -380,6 +385,11 @@ class ProjectInfo:
         "dinoflagellates": [
             DinoflagellatesIlluminaShortreadMetadata,
             #DinoflagellatesONTPromethionMetadata,
+        ],
+        "sentinel_species": [
+            SentinelSpeciesIlluminaShortreadMetadata,
+            # SentinelSpeciesONTPromethionMetadata,
+            # SentinelSpeciesPacbioHifiMetadata,
         ],
     }
 
