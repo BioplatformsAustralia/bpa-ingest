@@ -20,7 +20,7 @@ class AVIDDatasetControlContextual(BaseDatasetControlContextual):
 
 class AVIDLibraryContextual(BaseLibraryContextual):
     metadata_urls = [
-        "https://downloads-qcif.bioplatforms.com/bpa/avid_staging/metadata/2026-08-03/"
+        "https://downloads-qcif.bioplatforms.com/bpa/avid_staging/metadata/2026-08-17/"
     ]
     name = "avid-library-contextual"
 
