@@ -679,6 +679,7 @@ class BaseLibraryContextual:
         fld("specimen_id_description", re.compile(r"specimen_?[Ii][Dd]_description")),
         fld("sample_custodian", "sample_custodian"),
         fld("sample_type", "sample_type"),
+        fld('reuse_preferences', 'reuse_preferences', optional=True),
         # sample_ID_description
         fld("sample_id_description", re.compile(r"sample_?[Ii][Dd]_description")),
         fld("sample_collection_type", "sample_collection_type"),
