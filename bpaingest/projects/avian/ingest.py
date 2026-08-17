@@ -471,7 +471,7 @@ class AvianIlluminaShortreadMetadata(AvianBaseMetadata):
         "https://downloads-qcif.bioplatforms.com/bpa/avian_staging/illumina-shortread/",
     ]
     metadata_url_components = ("ticket",)
-    resource_linkage = ("library_id", "flowcell_id")
+    resource_linkage = ("library_id", "flow_cell_id")
     spreadsheet = {
         "fields": [
             fld(
@@ -563,6 +563,7 @@ class AvianIlluminaShortreadMetadata(AvianBaseMetadata):
     md5 = {
         "match": [
             files.illumina_shortread_re,
+            files.illumina_shortread_common_re,
         ],
         "skip": [
             re.compile(r"^.*_metadata.*\.xlsx$"),
@@ -572,6 +573,10 @@ class AvianIlluminaShortreadMetadata(AvianBaseMetadata):
             re.compile(r"^.*checksums\.(exf|md5)$"),
         ],
     }
+    common_files_match = [
+        files.illumina_shortread_common_re,
+    ]
+    common_files_linkage = ("flow_cell_id",)
     description = "Illumina Shortread"
     tag_names = ["genomics", "illumina-short-read"]
 
@@ -591,14 +596,14 @@ class AvianIlluminaShortreadMetadata(AvianBaseMetadata):
     def _add_datatype_specific_info_to_package(self, obj, row, filename):
         flowcell_id = re.match(r"^.*_([^_]+)_metadata.*\.xlsx", filename).groups()[0]
         obj.update(
-            {
-                "flow_cell_id": flowcell_id,
+            {   "flow_cell_id": flowcell_id,
                 "library_id": obj["bioplatforms_library_id"].split("/")[-1],
             }
         )
 
     def _get_resources(self):
-        return self._get_common_resources()
+        resources = self._get_common_resources()
+        return resources + self.generate_common_files_resources(resources)
 
     def _add_datatype_specific_info_to_resource(self, resource, md5_file=None):
         pass
@@ -608,6 +613,10 @@ class AvianIlluminaShortreadMetadata(AvianBaseMetadata):
             resource["library_id"],
             resource["flow_cell_id"],
         )
+
+    def _build_common_files_linkage(self, xlsx_info, resource, file_info):
+        return (resource["flow_cell_id"],
+                )
 
 class AvianONTPromethionMetadata(AvianBaseMetadata):
         ckan_data_type = "avian-ont-promethion"

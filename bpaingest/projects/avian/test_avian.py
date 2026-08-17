@@ -1,6 +1,7 @@
 # VERIFY
 from bpaingest.projects.avian.files import (
     pacbio_hifi_filename_2_re,
+    illumina_shortread_re,
 )
 
 
@@ -13,3 +14,10 @@ def test_pacbio_hifi_filename():
     ]
     for filename in filenames:
         assert pacbio_hifi_filename_2_re.match(filename) is not None
+
+def test_illumina_shortread_filename():
+    filenames = [
+        "614100_AVIAN_BRF_23MWLYLT4_N502_C21_L001_L002_R1_001.fastq.gz",
+    ]
+    for filename in filenames:
+        assert illumina_shortread_re.match(filename) is not None

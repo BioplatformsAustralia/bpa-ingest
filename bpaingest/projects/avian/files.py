@@ -79,7 +79,7 @@ ILLUMINA_SHORTREAD_PATTERN = r"""
     AVIAN_
     (?P<facility_id>(AGRF|UNSW|BRF))_
     (?P<flow_cell_id>\w{9,10})_
-    (?P<index>[G|A|T|C|-]*)_
+    (?P<index>([G|A|T|C|-]*)|N50\d_C\d{2}_L001_L002)_
     ((?P<runsamplenum>S\d*)_)?
     ((?P<lane>L\d{3})_)?
     (?P<read>[R|I][1|2])
@@ -87,6 +87,15 @@ ILLUMINA_SHORTREAD_PATTERN = r"""
     \.fastq\.gz$
 """
 illumina_shortread_re = re.compile(ILLUMINA_SHORTREAD_PATTERN, re.VERBOSE)
+
+ILLUMINA_SHORTREAD_COMMON_PATTERN = r"""
+    AVIAN_
+    (?P<facility>AGRF|BRF)_
+    (?P<dataset_id>\d{4,6})_
+    (?P<flow_cell_id>\w{9,10})_
+    additional_info\.pdf
+"""
+illumina_shortread_common_re = re.compile(ILLUMINA_SHORTREAD_COMMON_PATTERN, re.VERBOSE)
 
 ONT_PROMETHION_PATTERN = r"""
     (?P<library_id>\d{4,6})_
