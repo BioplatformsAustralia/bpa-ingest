@@ -29,7 +29,7 @@ class PlantProteinAtlasDatasetControlContextual(BaseDatasetControlContextual):
 
 class PlantProteinAtlasLibraryContextual(BaseLibraryContextual):
     metadata_urls = [
-        "https://downloads-qcif.bioplatforms.com/bpa/ppa_staging/metadata/2023-08-09/"
+        "https://downloads-qcif.bioplatforms.com/bpa/ppa_staging/metadata/2026-08-10/"
     ]
     name = "ppa-library-contextual"
     metadata_unique_identifier = "bioplatforms_sample_id"
