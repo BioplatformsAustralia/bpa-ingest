@@ -2536,7 +2536,7 @@ class EDNAAmpliconsMetadata(AMDFullIngestMetadata):
 
 
 class EDNAAmpliconsControlMetadata(AMDFullIngestMetadata):
-    organization = "environmental-dna"
+    organization = "edna-csiro"
     ckan_data_type = "edna-genomics-amplicon-control"
     omics = "genomics"
     technology = "amplicons-control"
@@ -2593,7 +2593,7 @@ class EDNAAmpliconsControlMetadata(AMDFullIngestMetadata):
             archive_ingestion_date = ingest_utils.get_date_isoformat(
                 self._logger, google_track_meta.date_of_transfer_to_archive
             )
-            title = "Australian Microbiome Amplicons Control %s %s" %(amplicon, flow_id),
+            title = "Australian Microbiome Amplicons Control %s %s" %(amplicon, flow_id)
 
             obj.update(
                 {
