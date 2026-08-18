@@ -23,6 +23,7 @@ ONT_PROMETHION_COMMON_PATTERN = r"""
     AD_
     (?P<facility_id>(AGRF|BRF|UNSW))_
     (?P<flowcell_id>P[A|B][ADEFGIKMOQSW]\d{5})_
+    (Run(?P<run_number>\d+)_)?
     (ONTPromethION_)
     (?P<archive_type>\w+)
     \.(html|tsv|txt|tar)
