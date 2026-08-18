@@ -16,7 +16,9 @@ from ...libs.excel_wrapper import make_field_definition as fld, make_skip_column
 from ...util import (
     sample_id_to_ckan_name,
     apply_cc_by_license,
+    common_values,
 )
+
 
 common_context = [AVIDLibraryContextual, AVIDDatasetControlContextual]
 
@@ -479,8 +481,8 @@ class AVIDGenomeAssemblyMetadata(AVIDBaseMetadata):
             fld('bioplatforms_dataset_id', 'bioplatforms_dataset_id',
                 coerce=ingest_utils.extract_ands_id),
             fld('bioplatforms_project_id', 'bioplatforms_project_id'),
-            fld('project_title', 'project_title'),
-            fld('project_description', 'project_description'),
+            fld('bioproject_title', 'bioproject_title'),
+            fld('bioproject_description', 'bioproject_description'),
             fld('assembly_tolid', 'assembly_tolid'),
             fld('insdc_root_bioproject', 'insdc_root_bioproject'),
             fld('insdc_assembly_accession_primary', 'insdc_assembly_accession_primary'),
@@ -489,7 +491,8 @@ class AVIDGenomeAssemblyMetadata(AVIDBaseMetadata):
             fld('code_repository_hash', 'code_repository_hash'),
             fld('insdc_status', 'insdc_status'),
             fld('insdc_hold_date', 'insdc_hold_date', coerce=ingest_utils.get_date_isoformat),
-            fld('timestamp', 'timestamp', coerce=ingest_utils.get_time),
+            fld('assembly_timestamp', 'assembly_timestamp', coerce=ingest_utils.get_time),
+            fld('assembly_version', 'assembly_version', coerce=ingest_utils.get_int),
 
         ],
         "options": {
@@ -510,9 +513,12 @@ class AVIDGenomeAssemblyMetadata(AVIDBaseMetadata):
         {"key": "genus", "separator": " "},
         {"key": "species", "separator": ", Assembly ID: "},
         {"key": "bioplatforms_assembly_id", "separator": ", "},
-        {"key": "sample_id", "separator": ", "},
         {"key": "taxonomic_group"},
 
+    ]
+    title_mapping = [
+        {"key": "common_name", "separator": ", "},
+        {"key": "data_type"},
     ]
     description = "Genome Assembly"
 
@@ -564,7 +570,7 @@ class AVIDGenomeAssemblyMetadata(AVIDBaseMetadata):
                         ingest_utils.extract_ands_id(self._logger, sample_ids[i]),
                     )
                 )
-            #obj.update(common_values(context))
+            obj.update(common_values(context))
 
         obj.update(
             {
