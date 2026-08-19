@@ -2425,7 +2425,7 @@ class EDNAAmpliconsMetadata(AMDFullIngestMetadata):
 
 
     technology = "amplicons"
-    metadata_urls = ["https://downloads-qcif.bioplatforms.com/bpa/edna_staging/genomics-amplicons/"]
+    metadata_urls = ["https://downloads-qcif.bioplatforms.com/bpa/csiro_edna_staging/genomics-amplicons/"]
     metadata_url_components = ("ticket",)
     md5 = {
         "match": [files.edna_amplicon_filename_re, ],
@@ -2552,7 +2552,7 @@ class EDNAAmpliconsControlMetadata(AMDFullIngestMetadata):
         "skip": [files.edna_amplicon_filename_re, ],
     }
 
-    metadata_urls = ["https://downloads-qcif.bioplatforms.com/bpa/edna_staging/genomics-amplicons/"]
+    metadata_urls = ["https://downloads-qcif.bioplatforms.com/bpa/csiro_edna_staging/genomics-amplicons/"]
     metadata_url_components = ("ticket",)
     add_md5_as_resource = True
 
@@ -2593,7 +2593,7 @@ class EDNAAmpliconsControlMetadata(AMDFullIngestMetadata):
             archive_ingestion_date = ingest_utils.get_date_isoformat(
                 self._logger, google_track_meta.date_of_transfer_to_archive
             )
-            title = "Australian Microbiome Amplicons Control %s %s" %(amplicon, flow_id)
+            title = "Environmental DNA - CSIRO - Amplicons Control %s %s" %(amplicon, flow_id)
 
             obj.update(
                 {
