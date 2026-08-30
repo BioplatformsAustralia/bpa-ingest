@@ -9,4 +9,5 @@ BRF,23/02/2026,648237,650487,652597,Teladorsagia circumcincta,PacBio-HiFi,202602
 ML note: Everything up to this point has been added to the Aus_Genome_status - Bioplatforms Google sheet,,,,,,,,,,,,
 AGRF,25/3/26,,,652599,AD032_Lizard,Illumina-shortread,20260325_AD_AGRF_CAGRF26020087_23LYVNLT4,30/03/2026,31/03/2026,BPAOPS-2045,https://data.bioplatforms.com/dataset/?ext_search_by=&q=ticket:BPAOPS-2045,
 AGRF,16/6/26,,,652601,AD036_Ayda,Illumina-shortread,20260616_AD_AGRF_CAGRF26040226_23MMYNLT3,17/06/2026,17/06/2026,BPAOPS-2116,https://data.bioplatforms.com/dataset/?ext_search_by=&q=ticket%3ABPAOPS-2116,
-Ramaciotti,15/07/2026,,,652602,Theme 2_koala,Illumina-shortread,20260710_AD_UNSW_23JHN7LT4,20/07/2026,,BPAOPS-2152,,
+Ramaciotti,15/07/2026,,,652602,Theme 2_koala,Illumina-shortread,20260710_AD_UNSW_23JHN7LT4,20/07/2026,21/07/2026,BPAOPS-2152,https://data.bioplatforms.com/dataset/?ext_search_by=&q=ticket%3ABPAOPS-2152,
+Ramaciotti,24/08/2026,,,652600,Moraxella spp,ONT,20260818_AD_UNSW_PBM51157,31/08/2026,,BPAOPS-2181,,
