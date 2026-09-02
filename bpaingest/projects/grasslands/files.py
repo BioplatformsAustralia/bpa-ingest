@@ -128,3 +128,32 @@ ONT_PROMETHION_COMMON_PATTERN = r"""
     \.(html|tsv|txt|tar)
 """
 ont_promethion_common_re = re.compile(ONT_PROMETHION_COMMON_PATTERN, re.VERBOSE)
+
+METABOLOMICS_ANALYSED_FILENAME_PATTERN = r"""
+    (Analysed_)
+    (?P<bpa_dataset_id>\d{4,6})_
+    (AG_
+    (?P<facility_id>(BRF|UNSW|AGRF|MA_AWRI))_)?
+    (GC-MS-MS_metabolite_profiling_report|GC-MS-MS_metabolite_profiling)
+    (\.xlsx|\.pdf)
+"""
+metabolomics_analysed_filename_re = re.compile(METABOLOMICS_ANALYSED_FILENAME_PATTERN, re.VERBOSE)
+
+METABOLOMICS_RAW_TAR_PATTERN = r"""
+    (?P<bpa_dataset_id>\d{4,6})_
+    AG_
+    MA_AWRI_
+    raw-metabolomics
+    \.tar
+"""
+metabolomics_raw_tar_re = re.compile(METABOLOMICS_RAW_TAR_PATTERN, re.VERBOSE)
+
+METABOLOMICS_METADATA_SHEET_PATTERN = r"""
+    Analysed_
+    AG_
+    MA_AWRI_
+    (?P<bpa_dataset_id>\d{4,6})_
+    metadata
+    \.xlsx
+"""
+metabolomics_metadata_sheet_re = re.compile(METABOLOMICS_METADATA_SHEET_PATTERN, re.VERBOSE)

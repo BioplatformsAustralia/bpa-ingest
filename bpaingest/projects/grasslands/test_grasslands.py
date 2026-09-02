@@ -5,6 +5,9 @@ from .files import (
     pacbio_hifi_revio_metadata_sheet_re,
     ont_promethion_re,
     ont_promethion_common_re,
+    metabolomics_analysed_filename_re,
+    metabolomics_raw_tar_re,
+    metabolomics_metadata_sheet_re,
 )
 
 
@@ -61,3 +64,26 @@ def test_ont_promethion_common():
     ]
     for filename in filenames:
         assert ont_promethion_common_re.match(filename) is not None
+
+def test_metabolomics_analysed_filename():
+    filenames = [
+        "Analysed_373583_AG_MA_AWRI_GC-MS-MS_metabolite_profiling_report.pdf",
+        "Analysed_373583_AG_MA_AWRI_GC-MS-MS_metabolite_profiling.xlsx",
+    ]
+    for filename in filenames:
+        assert metabolomics_analysed_filename_re.match(filename) is not None
+
+
+def test_metabolomics_raw_tar():
+    filenames = [
+        "373583_AG_MA_AWRI_raw-metabolomics.tar",
+    ]
+    for filename in filenames:
+        assert metabolomics_raw_tar_re.match(filename) is not None
+
+def test_metabolomics_metadata_sheet():
+    filenames = [
+        "Analysed_AG_MA_AWRI_373583_metadata.xlsx",
+    ]
+    for filename in filenames:
+        assert metabolomics_metadata_sheet_re.match(filename) is not None

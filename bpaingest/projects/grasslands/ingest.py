@@ -867,3 +867,179 @@ class AGONTPromethionMetadata(AGBaseMetadata):
             xlsx_info["ticket"],
             resource["flowcell_id"],
         )
+class AGMetabolomicsMetadata(AGBaseMetadata):
+
+    ckan_data_type = "grasslands-metabolomics"
+    technology = "metabolomics"
+    sequence_data_type = "metabolomics"
+    embargo_days = 365
+    contextual_classes = common_context
+    metadata_patterns = [r"^.*\.md5$", r"^.*_[Mm]etadata.*.*\.xlsx$"]
+    metadata_urls = [
+        "https://downloads-qcif.bioplatforms.com/bpa/grasslands/metabolomics/",
+    ]
+    metadata_url_components = ("ticket",)
+    resource_linkage = ("bpa_dataset_id", )
+
+    spreadsheet = {
+        "fields": [
+            #    coerce=ingest_utils.int_or_comment,
+                fld('bioplatforms_project', 'bioplatforms_project'),
+                fld('bioplatforms_dataset_id', 'bioplatforms_dataset_id', coerce=ingest_utils.extract_ands_id),
+                fld('bioplatforms_sample_id', 'bioplatforms_sample_id', coerce=ingest_utils.extract_ands_id),
+                fld('bioplatforms_library_id', 'bioplatforms_library_id', coerce=ingest_utils.extract_ands_id),
+                fld('facility_project_code', 'facility_project_code'),
+                fld('facility_sample_id', 'facility_sample_id'),
+                fld('metabolomics_facility', 'metabolomics_facility'),
+                fld('analytical_platform', 'analytical_platform'),
+                fld('sample_fractionation_extraction_solvent', 'sample_fractionation_/_extraction_solvent'),
+                fld('carrier_gas', 'carrier_gas'),
+                fld('gc_column_type', 'gc_column_type'),
+                fld('temperature_gradient', 'temperature_gradient_(min)_/_temp'),
+                fld('mass_spectrometer', 'mass_spectrometer'),
+                fld('acquisition_mode', 'acquisition_mode'),
+                fld('ionisation_type', 'ionisation_type'),
+                fld('analysis_type', 'analysis_type'),
+                fld('file_description', 'file_description'),
+
+        ],
+            "options": {
+            "sheet_name": "Library metadata",
+            "header_length": 1,
+            "column_name_row_index": 0,
+        },
+    }
+    md5 = {
+        "match": [
+            files.metabolomics_analysed_filename_re,
+            files.metabolomics_metadata_sheet_re,
+            files.metabolomics_raw_tar_re,
+        ],
+        "skip": [
+            re.compile(r"^.*TestFiles\.exe.*"),
+            re.compile(r"^.*DataValidation\.pdf.*"),
+        ],
+    }
+
+    description = "Metabolomics"
+    tag_names = ["metabolomics"]
+
+    title_mapping = [
+        {"key": "initiative_prefix", "separator": " "},
+        {"key": "description", "separator": ", "},
+        {"key": "project_aim", "separator": ", Dataset ID "},
+        {"key": "split_dataset_id", "separator": ""},
+    ]
+
+    def _build_title_into_object(self, obj):
+        self.build_title_into_object(
+            obj,
+            {
+                "initiative_prefix": self.initiative_prefix,
+                "description": self.description,
+                "project_aim": obj.get("project_aim,", "").split("/")[-1],
+                "split_dataset_id": obj.get("bpa_dataset_id", "").split("/")[-1],
+            },
+        )
+
+    def __init__(
+        self, logger, metadata_path, contextual_metadata=None, metadata_info=None
+    ):
+        super().__init__(logger, metadata_path)
+        self.path = Path(metadata_path)
+        self.contextual_metadata = contextual_metadata
+        self.metadata_info = metadata_info
+        self.google_track_meta = AGTrackMetadata(logger)
+        self.flow_lookup = {}
+
+    def _get_packages(self):
+        xlsx_re = re.compile(r"^.*_(\w+)_[Mm]etadata.*\.xlsx$")
+
+
+        packages = []
+        for fname in glob(self.path + "/*.xlsx"):
+            objs = defaultdict(list)
+            for row in self.parse_spreadsheet(fname, self.metadata_info):
+                obj = row._asdict()
+                if not obj["bioplatforms_dataset_id"]:
+                    continue
+                objs[(obj["bioplatforms_dataset_id"])].append(obj)
+
+            for (bpa_dataset_id), row_objs in list(objs.items()):
+                if bpa_dataset_id is None:
+                    continue
+
+                context_objs = []
+                for row in row_objs:
+                    context = {}
+                    for contextual_source in self.contextual_metadata:
+                        library_metadata_library_id = row.get("bioplatforms_library_id")
+                        library_metadata_dataset_id = row.get("bioplatforms_dataset_id")
+                        contextual_metadata = contextual_source.get(
+                            library_metadata_library_id, library_metadata_dataset_id)
+                        if contextual_metadata != {}:
+                            context.update(contextual_metadata)
+                context_objs.append(context)
+
+                obj = common_values(row_objs)
+                ticket = obj["ticket"]
+
+                name = sample_id_to_ckan_name(
+                    bpa_dataset_id, self.ckan_data_type
+                )
+                obj.update(
+                    {
+                        "name": name,
+                        "id": name,
+                        "bpa_dataset_id": bpa_dataset_id,
+                        "date_of_transfer": ingest_utils.get_date_isoformat(
+                            self._logger,
+                            self.get_tracking_info(ticket, "date_of_transfer"),
+                        ),
+                        "date_of_transfer_to_archive": ingest_utils.get_date_isoformat(
+                            self._logger,
+                            self.get_tracking_info(
+                                ticket, "date_of_transfer_to_archive"
+                            ),
+                        ),
+                        "data_type": self.get_tracking_info(ticket, "data_type"),
+                        "description": self.get_tracking_info(ticket, "description"),
+                        "folder_name": self.get_tracking_info(ticket, "folder_name"),
+                        "dataset_url": self.get_tracking_info(ticket, "download"),
+                        "type": self.ckan_data_type,
+                        "sequence_data_type": self.sequence_data_type,
+                        "license_id": apply_cc_by_license(),
+                    }
+                )
+                obj.update(common_values(context_objs))
+                #obj.update(merge_values("scientific_name", " , ", context_objs))
+                self._build_title_into_object(obj)
+                self.build_notes_into_object(obj)
+                ingest_utils.permissions_organization_member_after_embargo(
+                    self._logger,
+                    obj,
+                    "date_of_transfer_to_archive",
+                    self.embargo_days,
+                    CONSORTIUM_ORG_NAME,
+                )
+                ingest_utils.apply_access_control(self._logger, self, obj)
+                ingest_utils.add_spatial_extra(self._logger, obj)
+                obj["tags"] = [{"name": t} for t in self.tag_names]
+                self.track_xlsx_resource(obj, fname)
+                packages.append(obj)
+        return packages
+
+    def _add_datatype_specific_info_to_package(self, obj, row, filename):
+        obj.update({"dataset_url": self.get_tracking_info(row.ticket, "download")})
+
+    def _get_resources(self):
+        return self._get_common_resources()
+
+    def _add_datatype_specific_info_to_resource(self, resource, md5_file=None):
+        # none for Metaolomics
+        return
+
+    def _build_resource_linkage(self, xlsx_info, resource, file_info):
+        return (
+            ingest_utils.extract_ands_id(self._logger, resource["bpa_dataset_id"]),
+        )

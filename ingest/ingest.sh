@@ -213,6 +213,7 @@ grasslands() {
   apply grasslands-genomics-ddrad $*
   apply grasslands-illumina-shortread $*
   apply grasslands-ont-promethion $*
+  apply grasslands-metabolomics $*
 }
 
 collaborations()
