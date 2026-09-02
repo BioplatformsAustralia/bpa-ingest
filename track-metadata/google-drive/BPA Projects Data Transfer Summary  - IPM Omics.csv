@@ -1,5 +1,5 @@
 IPM Omics ,,,,,,,,,,,,,
-Contact atouffu@bioplatforms.com and mlum@bioplatforms.com if you need assistance filling this sheet.,,,,,,,,,,,,,
+Contact atouffu@bioplatforms.com if you need assistance filling this sheet.,,,,,,,,,,,,,
 Facility to fill,Facility to fill,Facility to fill (Leave empty if data is for >1 sample ID),Facility to fill (Leave empty if data is for >1 library ID),Facility to fill,Project Manager to fill,Facility to fill,Facility to fill,Facility to fill,Data team to fill,Project Manager to fill,Data team to fill,Project Manager to fill,
 ,,,,,,,,,,,,,
 Facility,Date of transfer,bioplatforms_sample_id,bioplatforms_library_id,bioplatforms_dataset_id,scientific_name,Data type,Description,Folder name,Date of transfer to archive,Date data published,CCG JIRA Ticket,Download,Note
@@ -73,3 +73,4 @@ BRF,31/07/2026,,,607868,,PacBio-HiFi,PacBio-HiFi,20260729_IPM_BRF_m84118_260729_
 BRF,31/07/2026,,,607869,,PacBio-HiFi,PacBio-HiFi,20260729_IPM_BRF_m84118_260729_022400_s4,31/7/2026,,BPAOPS-2173,,
 AGRF,5/8/2026,,,607831,,Illumina short read,Illumina short read,20260805_IPM_AGRF_CAGRF26060211_23NYF3LT3,05/08/2026,,BPAOPS-2177,,
 AGRF,19/8/2026,604072,606323,607820,,PacBio-HiFi,PacBio-HiFi,20260818_IPM_AGRF_CAGRF26030155_m84073_260807_062841_s3,25/8/2026,,BPAOPS-2190,,
+AGRF,2/9/26,,,607793,,Illumina short read,Illumina short read,20260902_IPM_AGRF_CAGRF26080179_257KV2LT4,02/09/2026,,BPAOPS-2202,,
