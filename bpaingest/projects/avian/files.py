@@ -93,7 +93,8 @@ ILLUMINA_SHORTREAD_COMMON_PATTERN = r"""
     (?P<facility>AGRF|BRF)_
     (?P<dataset_id>\d{4,6})_
     (?P<flow_cell_id>\w{9,10})_
-    additional_info\.pdf
+    (additional_info|Sequencing\-and\-demultiplexing\-information)
+    \.pdf
 """
 illumina_shortread_common_re = re.compile(ILLUMINA_SHORTREAD_COMMON_PATTERN, re.VERBOSE)
 
