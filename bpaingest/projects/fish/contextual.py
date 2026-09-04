@@ -8,7 +8,7 @@ from ...abstract import BaseLibraryContextual
 
 class FishDatasetControlContextual(BaseDatasetControlContextual):
     metadata_urls = [
-        "https://downloads-qcif.bioplatforms.com/bpa/fish_staging/dataset_control/2023-08-09/"
+        "https://downloads-qcif.bioplatforms.com/bpa/fish_staging/dataset_control/2026-09-04/"
     ]
     name = "fish-dataset-contextual"
     contextual_linkage = ("sample_id",)
