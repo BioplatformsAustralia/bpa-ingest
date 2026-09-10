@@ -291,14 +291,14 @@ ORGANIZATIONS = [
         "name": "forest-resilience",
         "title": "Genomics for Forest Resilience",
         "display_name": "Genomics for Forest Resilience",
-        "image_url": "https://data.bioplatforms.com/forest_resilience.png",
+        "image_url": "https://data.bioplatforms.com/Forest-Resilience-Initiative-Logo.webp",
         "groups": [{"capacity": "public", "name": BPA_ORGANIZATION_ID}],
     },
     {
         "name": "forest-resilience-consortium-members",
         "title": "Genomics for Forest Resilience Consortium Members",
         "display_name": "Genomics for Forest Resilience Consortium Members",
-        "image_url": "https://data.bioplatforms.com/forest_resilience.png",
+        "image_url": "https://data.bioplatforms.com/Forest-Resilience-Initiative-Logo.webp",
         "groups": [{"capacity": "public", "name": "forest-resilience"}],
     },
     {
