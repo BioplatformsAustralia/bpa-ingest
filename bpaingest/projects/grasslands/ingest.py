@@ -883,25 +883,20 @@ class AGMetabolomicsMetadata(AGBaseMetadata):
 
     spreadsheet = {
         "fields": [
+            fld('bioplatforms_project', 'bioplatforms_project'),
+            fld('bioplatforms_sample_id', 'bioplatforms_sample_id',
+                coerce=ingest_utils.extract_ands_id,),
+            fld('bioplatforms_library_id', 'bioplatforms_library_id',
+                coerce=ingest_utils.extract_ands_id,),
+            fld('bioplatforms_dataset_id', 'bioplatforms_dataset_id',
+                coerce=ingest_utils.extract_ands_id,),
+            fld('facility_project_code', 'facility_project_code'),
+            fld('facility_sample_id', 'facility_sample_id'),
+            fld('metabolomics_facility', 'metabolomics_facility'),
+            fld('contact_person', 'contact_person'),
+            fld('data_analysis_date', 'data_analysis_date', coerce=ingest_utils.get_date_isoformat),
+            fld('file_description', 'file_description'),
             #    coerce=ingest_utils.int_or_comment,
-                fld('bioplatforms_project', 'bioplatforms_project'),
-                fld('bioplatforms_dataset_id', 'bioplatforms_dataset_id', coerce=ingest_utils.extract_ands_id),
-                fld('bioplatforms_sample_id', 'bioplatforms_sample_id', coerce=ingest_utils.extract_ands_id),
-                fld('bioplatforms_library_id', 'bioplatforms_library_id', coerce=ingest_utils.extract_ands_id),
-                fld('facility_project_code', 'facility_project_code'),
-                fld('facility_sample_id', 'facility_sample_id'),
-                fld('metabolomics_facility', 'metabolomics_facility'),
-                fld('analytical_platform', 'analytical_platform'),
-                fld('sample_fractionation_extraction_solvent', 'sample_fractionation_/_extraction_solvent'),
-                fld('carrier_gas', 'carrier_gas'),
-                fld('gc_column_type', 'gc_column_type'),
-                fld('temperature_gradient', 'temperature_gradient_(min)_/_temp'),
-                fld('mass_spectrometer', 'mass_spectrometer'),
-                fld('acquisition_mode', 'acquisition_mode'),
-                fld('ionisation_type', 'ionisation_type'),
-                fld('analysis_type', 'analysis_type'),
-                fld('file_description', 'file_description'),
-
         ],
             "options": {
             "sheet_name": "Library metadata",
@@ -979,7 +974,7 @@ class AGMetabolomicsMetadata(AGBaseMetadata):
                             library_metadata_library_id, library_metadata_dataset_id)
                         if contextual_metadata != {}:
                             context.update(contextual_metadata)
-                context_objs.append(context)
+                    context_objs.append(context)
 
                 obj = common_values(row_objs)
                 ticket = obj["ticket"]

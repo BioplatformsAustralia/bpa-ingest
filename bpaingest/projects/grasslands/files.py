@@ -149,11 +149,11 @@ METABOLOMICS_RAW_TAR_PATTERN = r"""
 metabolomics_raw_tar_re = re.compile(METABOLOMICS_RAW_TAR_PATTERN, re.VERBOSE)
 
 METABOLOMICS_METADATA_SHEET_PATTERN = r"""
-    Analysed_
+    (Analysed_)?
     AG_
     MA_AWRI_
     (?P<bpa_dataset_id>\d{4,6})_
-    metadata
+    (samplemetadata_ingest|metadata)
     \.xlsx
 """
 metabolomics_metadata_sheet_re = re.compile(METABOLOMICS_METADATA_SHEET_PATTERN, re.VERBOSE)
