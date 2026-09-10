@@ -474,12 +474,10 @@ class AVIDGenomeAssemblyMetadata(AVIDBaseMetadata):
             fld('bioplatforms_assembly_id', 'bioplatforms_assembly_id',
                 coerce=ingest_utils.extract_ands_id),
             fld('bpa_package_id', 'bpa_package_id'),
-            fld('bioplatforms_library_id', 'bioplatforms_library_id',
-                coerce=ingest_utils.extract_ands_id),
-            fld('bioplatforms_sample_id', 'bioplatforms_sample_id',
-                coerce=ingest_utils.extract_ands_id),
-            fld('bioplatforms_dataset_id', 'bioplatforms_dataset_id',
-                coerce=ingest_utils.extract_ands_id),
+            # note the following ids are not coerced to ands ids as they may contain lists
+            fld('bioplatforms_library_id', 'bioplatforms_library_id'),
+            fld('bioplatforms_sample_id', 'bioplatforms_sample_id'),
+            fld('bioplatforms_dataset_id', 'bioplatforms_dataset_id'),
             fld('bioplatforms_project_id', 'bioplatforms_project_id'),
             fld('bioproject_title', 'bioproject_title'),
             fld('bioproject_description', 'bioproject_description'),
@@ -493,6 +491,20 @@ class AVIDGenomeAssemblyMetadata(AVIDBaseMetadata):
             fld('insdc_hold_date', 'insdc_hold_date', coerce=ingest_utils.get_date_isoformat),
             fld('assembly_timestamp', 'assembly_timestamp', coerce=ingest_utils.get_time),
             fld('assembly_version', 'assembly_version', coerce=ingest_utils.get_int),
+            fld('assembly_size_primary', 'assembly_size_primary'),
+            fld('n50_length_primary', 'n50_length_primary'),
+            fld('assembly_size_secondary', 'assembly_size_secondary'),
+            fld('n50_length_secondary', 'n50_length_secondary'),
+            fld('busco_string_primary', 'busco_string_primary'),
+            fld('busco_string_secondary', 'busco_string_secondary', optional=True),
+            fld('sequencing_depth', 'sequencing_depth'),
+            fld('sequence_data_types', 'sequence_data_types'),
+            fld('taxon_id', 'taxon_id'),
+            fld('scientific_name', 'scientific_name'),
+            fld('ncbi_common_name', 'ncbi_common_name'),
+            fld('ncbi_family', 'ncbi_family'),
+            fld('ncbi_genus', 'ncbi_genus'),
+            fld('ncbi_species', 'ncbi_species'),
 
         ],
         "options": {
@@ -509,15 +521,13 @@ class AVIDGenomeAssemblyMetadata(AVIDBaseMetadata):
         ],
     }
     notes_mapping = [
-        {"key": "family", "separator": ", "},
-        {"key": "genus", "separator": " "},
-        {"key": "species", "separator": ", Assembly ID: "},
-        {"key": "bioplatforms_assembly_id", "separator": ", "},
-        {"key": "taxonomic_group"},
+        {"key": "ncbi_family", "separator": ", "},
+        {"key": "ncbi_species", "separator": ", Assembly ID: "},
+        {"key": "bioplatforms_assembly_id"},
 
     ]
     title_mapping = [
-        {"key": "common_name", "separator": ", "},
+        {"key": "ncbi_common_name", "separator": ", "},
         {"key": "data_type"},
     ]
     description = "Genome Assembly"
@@ -542,35 +552,8 @@ class AVIDGenomeAssemblyMetadata(AVIDBaseMetadata):
             bioplatforms_assembly_id.split("/")[-1], self.ckan_data_type
         )
         obj["id"] = obj["name"]
-        # explode sample_id, library_id
-        sample_ids = re.split(",\s*", str(row.bioplatforms_sample_id))
-        library_ids = re.split(",\s*", str(row.bioplatforms_library_id))
-
-        # check same length
-        if len(sample_ids) != len(library_ids):
-            raise Exception("mismatch count of sample and library IDs")
-
-        # if single item, add bpa_sample_id and bpa_library_id to metadata
-        if len(sample_ids) == 1:
-            obj["bioplatforms_sample_id"] = ingest_utils.extract_ands_id(
-                self._logger, row.bioplatforms_sample_id
-            )
-            obj["bioplatforms_library_id"] = ingest_utils.extract_ands_id(
-                self._logger, row.bioplatforms_library_id
-            )
-        else:
-            obj["bioplatforms_sample_id"] = None
-            obj["bioplatforms_library_id"] = None
-
-        for contextual_source in self.contextual_metadata:
-            context = []
-            for i in range(0, len(sample_ids)):
-                context.append(
-                    contextual_source.get(
-                        ingest_utils.extract_ands_id(self._logger, sample_ids[i]),
-                    )
-                )
-            obj.update(common_values(context))
+        # We do not process any contextual data - it all comes from the metadata supplied
+        # by ATOL in the _metadata.xlsx file.
 
         obj.update(
             {
