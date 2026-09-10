@@ -12,4 +12,6 @@ AGRF,16/06/2026,,,652601,AD036_Ayda,Illumina-shortread,20260616_AD_AGRF_CAGRF260
 Ramaciotti,15/07/2026,,,652602,Theme 2_koala,Illumina-shortread,20260710_AD_UNSW_23JHN7LT4,20/07/2026,21/07/2026,BPAOPS-2152,https://data.bioplatforms.com/dataset/?ext_search_by=&q=ticket%3ABPAOPS-2152,
 Ramaciotti,24/08/2026,,,652600,Moraxella spp,ONT,20260818_AD_UNSW_PBM51157,31/08/2026,31/08/2026,BPAOPS-2181,https://data.bioplatforms.com/dataset/?ext_search_by=&q=ticket%3ABPAOPS-2181,
 AGRF,02/09/2026,,,652604,Theme 2_Tetragonula,Illumina-shortread,20260902_AD_AGRF_CAGRF26050340_257KV2LT4,07/09/2026,07/09/2026,BPAOPS-2203,https://data.bioplatforms.com/dataset/?ext_search_by=&q=ticket%3ABPAOPS-2203,
-AGRF,07/09/2026,,,652595,Theme 2_Project_38,Illumina-shortread,20260907_AD_AGRF_CAGRF25110193_23TCWMLT3,08/09/2026,,BPAOPS-2207,,
+AGRF,07/09/2026,,,652595,Theme 2_Project_38,Illumina-shortread,20260907_AD_AGRF_CAGRF25110193_23TCWMLT3,08/09/2026,08/09/2026,BPAOPS-2207,https://data.bioplatforms.com/dataset/?ext_search_by=&q=ticket%3ABPAOPS-2207,
+BRF,10/09/2026,,,652607,49_Nannizziopsis sp.,Illumina-HiC,20260910_AD_BRF_WO30018_SC2251837-SC3,,,BPAOPS-2210,,
+AGRF,9/9/2026,,,652594,Theme 2_Project_37,Illumina-shortread,20260909_AD_AGRF_CAGRF25110192_23TF5MLT3,10/09/2026,,BPAOPS-2209,,
