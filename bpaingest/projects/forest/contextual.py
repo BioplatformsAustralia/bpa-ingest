@@ -22,7 +22,7 @@ class ForestDatasetControlContextual(BaseDatasetControlContextual):
 
 class ForestLibraryContextual(BaseLibraryContextual):
     metadata_urls = [
-        "https://downloads-qcif.bioplatforms.com/bpa/forest_staging/metadata/2026-09-01/"
+        "https://downloads-qcif.bioplatforms.com/bpa/forest_staging/metadata/2026-09-14/"
     ]
     name = "forest-library-contextual"
     metadata_unique_identifier = "bioplatforms_library_id"
@@ -96,6 +96,9 @@ class ForestLibraryContextual(BaseLibraryContextual):
         fld('sample_submitter_name', 'sample_submitter_name'),
         fld('sample_submitter_email', 'sample_submitter_email'),
         fld('sample_submission_date', 'sample_submission_date', coerce=ingest_utils.get_date_isoformat),
+        fld('extraction_protocol_doi', 'extraction_protocol_doi'),
+        fld('nucleic_acid_ng', 'nucleic_acid_ng'),
+        fld('reuse_preferences', 'reuse_preferences'),
 
     ]
 
