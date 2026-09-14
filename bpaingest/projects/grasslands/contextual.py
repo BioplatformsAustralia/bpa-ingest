@@ -24,7 +24,7 @@ class AGDatasetControlContextual(BaseDatasetControlContextual):
 
 class AGLibraryContextual(BaseLibraryContextual):
     metadata_urls = [
-        "https://downloads-qcif.bioplatforms.com/bpa/grasslands/metadata/2026-09-01/"
+        "https://downloads-qcif.bioplatforms.com/bpa/grasslands/metadata/2026-09-14/"
     ]
     name = "ag-library-contextual"
     sheet_names = [
@@ -147,6 +147,10 @@ class AGLibraryContextual(BaseLibraryContextual):
             coerce=ingest_utils.get_date_isoformat,
         ),
         fld("notes", "notes", optional=True),
+        fld('extraction_protocol_doi', 'extraction_protocol_doi'),
+        fld('nucleic_acid_ng', 'nucleic_acid_ng'),
+        fld('reuse_preferences', 'reuse_preferences'),
+
         #
         skp("decimal_latitude (will not be made public)"),
         skp("decimal_longitude (will not be made public)"),
