@@ -35,7 +35,7 @@ class AnimalDiseaseDatasetControlContextual(BaseDatasetControlContextual):
 
 class AnimalDiseaseLibraryContextual(BaseLibraryContextual):
     metadata_urls = [
-        "https://downloads-qcif.bioplatforms.com/bpa/animal_disease_staging/metadata/2026-09-02/"
+        "https://downloads-qcif.bioplatforms.com/bpa/animal_disease_staging/metadata/2026-09-14/"
     ]
     name = "ad-library-contextual"
     sheet_names = ['Theme 1',
@@ -129,4 +129,7 @@ class AnimalDiseaseLibraryContextual(BaseLibraryContextual):
         fld("material_extracted_by", "material_extracted_by"),
         fld("material_extraction_method", "material_extraction_method"),
         fld("material_conc_ng_ul", "material_conc_ng_ul"),
+        fld('extraction_protocol_doi', 'extraction_protocol_doi'),
+        fld('nucleic_acid_ng', 'nucleic_acid_ng'),
+        fld('reuse_preferences', 'reuse_preferences'),
     ]
