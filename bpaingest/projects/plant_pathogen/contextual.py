@@ -35,7 +35,7 @@ class PlantPathogenDatasetControlContextual(BaseDatasetControlContextual):
 
 class PlantPathogenLibraryContextual(BaseLibraryContextual):
     metadata_urls = [
-        "https://downloads-qcif.bioplatforms.com/bpa/pp_staging/metadata/2026-08-31/"
+        "https://downloads-qcif.bioplatforms.com/bpa/pp_staging/metadata/2026-09-14/"
     ]
     name = "pp-library-contextual"
     sheet_names = ["Virus", "Bacteria", "Fungi", "Nematode"]
@@ -123,4 +123,7 @@ class PlantPathogenLibraryContextual(BaseLibraryContextual):
         fld("material_extracted_by", "material_extracted_by"),
         fld("material_extraction_method", "material_extraction_method"),
         fld("material_conc_ng_ul", "material_conc_ng_ul"),
+        fld('extraction_protocol_doi', 'extraction_protocol_doi'),
+        fld('nucleic_acid_ng', 'nucleic_acid_ng'),
+        fld('reuse_preferences', 'reuse_preferences'),
     ]
