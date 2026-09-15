@@ -56,6 +56,10 @@ def ckan_method(ckan, object_type, method):
 
 
 def print_accounts():
+    logger.info("OPS complete")
+    logger.warn("OPS complete")
+    logger.error("OPS complete")
+    logger.critical("OPS complete")
     print("API call accounting:")
     for object_type, method in sorted(method_stats, key=lambda x: method_stats[x]):
         print(

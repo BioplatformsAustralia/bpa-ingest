@@ -12,6 +12,7 @@ import urllib3
 import ckanapi
 from dateutil.relativedelta import relativedelta
 
+thelogcounts = {'OTHER': 0, 'DEBUG': 0, 'INFO': 0, 'WARNING': 0, 'ERROR': 0, 'CRITICAL': 0}
 
 def one(l):
     if len(l) != 1:
@@ -92,13 +93,34 @@ def make_registration_decorator():
 
 
 def make_logger(name, level=logging.INFO):
+
+    class ContextFilter(logging.Filter):
+        # filter for counting log records at different log levels
+        def filter(self, record):
+            global thelogcounts
+            if record.levelname in thelogcounts:
+                record.count = thelogcounts[record.levelname]
+                thelogcounts[record.levelname] += 1
+            else:
+                thelogcounts['OTHER'] += 1
+            return True
+
+    class OptionalFieldFormatter(logging.Formatter):
+        def format(self, record: logging.LogRecord) -> str:
+            # Python 3.9 safely allows adding arbitrary missing attributes to the record
+            if not hasattr(record, 'count'):
+                record.count = 0
+            return super().format(record)
+
     logger = logging.getLogger(name)
     logger.propagate = False
     logger.setLevel(level)
     handler = logging.StreamHandler()
-    fmt = logging.Formatter("%(asctime)s [%(levelname)-7s] [%(name)s]  %(message)s")
-    handler.setFormatter(fmt)
+    fmt = '%(asctime)s [%(levelname)-8s : %(count)-4s] [%(name)s]  %(message)s'
+    handler.setFormatter(OptionalFieldFormatter(fmt))
     logger.addHandler(handler)
+    logger.addFilter(ContextFilter())
+
     return logger
 
 

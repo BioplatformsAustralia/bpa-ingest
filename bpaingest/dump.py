@@ -166,3 +166,8 @@ def dump_state(args):
     # for datetime objects, use 'default as str' for now so that parsing doesn't break
     with open(args.filename, "w") as fd:
         json.dump(state, fd, sort_keys=True, indent=2, separators=(",", ": "))
+
+    logger.info("At the end of the Dumpstate")
+    logger.warn("At the end of the Dumpstate")
+    logger.error("At the end of the Dumpstate")
+    logger.critical("At the end of the Dumpstate")
