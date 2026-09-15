@@ -27,4 +27,5 @@ AGRF,22/6/26,,,373600,Neurachne,Methyl-seq ,Main dataset,illumina-shortread,Illu
 RAMAC,10/07/2026,,,373598,--,Metagenomics,Main dataset,metagenomics,Illumina Short Read,20260708_AG_UNSW_23HHFVLT3,12/7/2026,13/07/2026,BPAOPS-2141,https://data.bioplatforms.com/dataset/?ext_search_by=&q=ticket%3ABPAOPS-2141
 AGRF,17/07/2026,,,373601,Neurachne,ATAC-seq,Main dataset,illumina-shortread,Illumina Short Read,20260717_AG_AGRF_ CAGRF26040092_23NJKGLT3,20/07/2026,20/07/2026,BPAOPS-2157,https://data.bioplatforms.com/dataset/?ext_search_by=&q=ticket%3ABPAOPS-2157
 AWRI,31/8/26,,,373583,Various grasses,Metabolomics ,Main dataset ,metabolomics,GC-MS/MS  ,20260831_AG_MA_AWRI_373583 (raw data),,,BPAOPS-2200,Withdrawn - combined into BPAOPS-2201
-AWRI,31/8/26,,,373583,Various grasses,Metabolomics ,Main dataset ,metabolomics,GC-MS/MS,20260831_Analysed_AG_MA_AWRI_373583 (analysed data),02/09/2026,,BPAOPS-2201,
+AWRI,31/8/26,,,373583,Various grasses,Metabolomics ,Main dataset ,metabolomics,GC-MS/MS,20260831_Analysed_AG_MA_AWRI_373583 (raw & analysed data),02/09/2026,14/09/2026,BPAOPS-2201,https://data.bioplatforms.com/dataset/?ext_search_by=&q=ticket%3ABPAOPS-2201
+AGRF,15/9/26,,,373602,Triodia,WGS,Main dataset ,illumina-shortread,Illumina short read,20260915_AG_AGRF_CAGRF26060342_25C75CLT4,15/09/2026,,BPAOPS-2216,
