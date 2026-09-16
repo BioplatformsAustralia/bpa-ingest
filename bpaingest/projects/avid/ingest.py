@@ -467,7 +467,7 @@ class AVIDGenomeAssemblyMetadata(AVIDBaseMetadata):
         "https://downloads-qcif.bioplatforms.com/bpa/avid_staging/assembly/",
     ]
     metadata_url_components = ("ticket",)
-    resource_linkage = ("bioplatforms_assembly_id",)
+    resource_linkage = ("bioplatforms_assembly_id","ticket")
     spreadsheet = {
         "fields": [
 
@@ -548,8 +548,9 @@ class AVIDGenomeAssemblyMetadata(AVIDBaseMetadata):
 
     def _add_datatype_specific_info_to_package(self, obj, row, filename):
         bioplatforms_assembly_id = row.bioplatforms_assembly_id
+        bioplatforms_assembly_version = "v" + str(row.assembly_version)
         obj["name"] = sample_id_to_ckan_name(
-            bioplatforms_assembly_id.split("/")[-1], self.ckan_data_type
+            bioplatforms_assembly_id.split("/")[-1], self.ckan_data_type, bioplatforms_assembly_version
         )
         obj["id"] = obj["name"]
         # We do not process any contextual data - it all comes from the metadata supplied
@@ -572,7 +573,8 @@ class AVIDGenomeAssemblyMetadata(AVIDBaseMetadata):
         return
 
     def _build_resource_linkage(self, xlsx_info, resource, file_info):
-        return (resource["bioplatforms_assembly_id"],)
+        return (resource["bioplatforms_assembly_id"],
+                xlsx_info["ticket"])
 
 
 
