@@ -908,7 +908,7 @@ class TSIGenomeAssemblyMetadata(TSIBaseMetadata):
         "https://downloads-qcif.bioplatforms.com/bpa/tsi_staging/assembly/",
     ]
     metadata_url_components = ("ticket",)
-    resource_linkage = ("bioplatforms_assembly_id",)
+    resource_linkage = ("bioplatforms_assembly_id","ticket")
     spreadsheet = {
         "fields": [
             fld('bioplatforms_assembly_id', 'bioplatforms_assembly_id',
@@ -1027,8 +1027,8 @@ class TSIGenomeAssemblyMetadata(TSIBaseMetadata):
         return
 
     def _build_resource_linkage(self, xlsx_info, resource, file_info):
-        return (resource["bioplatforms_assembly_id"],)
-
+        return (resource["bioplatforms_assembly_id"],
+                xlsx_info["ticket"])
 
 class TSIHiCMetadata(TSIBaseMetadata):
     ckan_data_type = "tsi-hi-c"
