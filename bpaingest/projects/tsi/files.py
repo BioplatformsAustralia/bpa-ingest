@@ -136,12 +136,23 @@ METADATA_SHEET_PATTERN = r"""
 metadata_sheet_re = re.compile(METADATA_SHEET_PATTERN, re.VERBOSE)
 
 GENOME_ASSEMBLY_PATTERN = r"""
-    (?P<bioplatforms_secondarydata_id>\d{4,6})_
+    (?P<bioplatforms_assembly_id>\d{4,6})_
     .*
     \.
     fasta
+    
 """
 genome_assembly_filename_re = re.compile(GENOME_ASSEMBLY_PATTERN, re.VERBOSE)
+
+GENOME_ASSEMBLY_PATTERN_ATOL = r"""
+    (?P<bioplatforms_assembly_id>\d{4,6})_
+    TSI_
+    (?P<facility>AToL)_
+    (busco\.batch_summary|assembly_stats|assembly_report|curation|PRIMARY_autofiltered|SECONDARY_autofiltered|btk|qc_stats|annotation|_hap1\.p_ctg)
+    (\.tar|\.fasta|\.gtf|\.gfa)?
+    (\.gz|\.txt|\.docx)
+"""
+genome_assembly_atol_filename_re = re.compile(GENOME_ASSEMBLY_PATTERN_ATOL, re.VERBOSE)
 
 ILLUMINA_HIC_PATTERN = r"""
     (?P<library_id>\d{4,6})_

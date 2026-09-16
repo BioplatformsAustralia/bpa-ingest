@@ -77,8 +77,9 @@ class TSIBaseMetadata(BaseMetadata):
             if self.method_exists("_set_metadata_vars"):
                 self._set_metadata_vars(fname)
             for row in rows:
-                if not row.library_id and not row.flowcell_id:
-                    continue
+                if hasattr(row, "flowcell_id"):   # this does not exist for genome assemblies
+                    if not row.library_id and not row.flowcell_id:
+                        continue
                 sample_id = row.sample_id
                 library_id = row.library_id
                 dataset_id = row.dataset_id
@@ -91,7 +92,8 @@ class TSIBaseMetadata(BaseMetadata):
                 for contextual_source in self.contextual_metadata:
                     context.update(contextual_source.get(row.sample_id))
                 if not context:
-                    self._logger.warn("Library metadata with no context(sample) metadata is {} ".format(row))
+                    pass # this is noisy, but can be added back if more detail is required
+                    # self._logger.warn("Library metadata with no context(sample) metadata is {} ".format(row))
                 obj.update(context)
                 if not hasattr(row, "flowcell_id"):
                     # name is populated by the subclass after the fact
@@ -906,50 +908,52 @@ class TSIGenomeAssemblyMetadata(TSIBaseMetadata):
         "https://downloads-qcif.bioplatforms.com/bpa/tsi_staging/assembly/",
     ]
     metadata_url_components = ("ticket",)
-    resource_linkage = ("bioplatforms_secondarydata_id",)
+    resource_linkage = ("bioplatforms_assembly_id",)
     spreadsheet = {
         "fields": [
-            fld(
-                "bioplatforms_secondarydata_id",
-                "bioplatforms_secondarydata_id",
+            fld('bioplatforms_assembly_id', 'bioplatforms_assembly_id',
                 coerce=ingest_utils.extract_ands_id,
-            ),
+                ),
+            fld('bioplatforms_package_id', 'bioplatforms_package_id'),
             fld(
                 "sample_id",
-                "bioplatforms_sample_id",
-                coerce=ingest_utils.extract_ands_id,
-            ),
+                re.compile(r"(sample_id|bioplatforms_sample_id)"),
+                coerce=ingest_utils.int_or_comment),
             fld(
                 "library_id",
-                "bioplatforms_library_id",
-                coerce=ingest_utils.extract_ands_id,
-            ),
-            fld("dataset_id", "bioplatforms_dataset_id", coerce=ingest_utils.extract_ands_id),
-            fld("bioplatforms_project", "bioplatforms_project"),
-            fld("contact_person", "contact_person"),
-            fld("scientific_name", "scientific_name"),
-            fld("common_name", "common_name"),
-            fld("sequencing_technology", "sequencing_technology"),
-            fld("genome_coverage", "genome_coverage"),
-            fld("computational_infrastructure", "computational_infrastructure"),
-            fld("system_used", "system_used"),
-            fld("analysis_description", "analysis_description"),
+                re.compile(r"(library_id|bioplatforms_library_id)"),
+                coerce = ingest_utils.int_or_comment),
             fld(
-                "assembly_date", "assembly_date", coerce=ingest_utils.get_date_isoformat
-            ),
-            fld("reference_genome", "reference_genome"),
-            fld("assembly_method", "assembly_method"),
-            fld("assembly_method_version", "assembly_method_version"),
-            fld("hybrid", "hybrid"),
-            fld("hybrid_details", "hybrid_details"),
-            fld("polishing_scaffolding_method", "polishing_scaffolding_method"),
-            fld("polishing_scaffolding_data", "polishing_scaffolding_data"),
-            fld("n_scaffolds", "n_scaffolds"),
-            fld("n50", "n50"),
-            fld("min_gap_length_bp", "min_gap_length_bp"),
-            fld("genome_size", "genome_size"),
-            fld("completion_score", "completion_score"),
-            fld("completion_score_method", "completion_score_method"),
+                "dataset_id",
+                re.compile(r"(dataset_id|bioplatforms_dataset_id)"),
+                coerce=ingest_utils.int_or_comment),
+            fld('bioplatforms_project', 'bioplatforms_project'),
+            fld('bioproject_title', 'bioproject_title'),
+            fld('bioproject_description', 'bioproject_description'),
+            fld('assembly_tolid', 'assembly_tolid'),
+            fld('insdc_root_bioproject', 'insdc_root_bioproject'),
+            fld('insdc_assembly_accession_primary', 'insdc_assembly_accession_primary'),
+            fld('insdc_assembly_accession_secondary', 'insdc_assembly_accession_secondary'),
+            fld('code_repository', 'code_repository'),
+            fld('code_repository_hash', 'code_repository_hash'),
+            fld('insdc_status', 'insdc_status'),
+            fld('insdc_hold_date', 'insdc_hold_date', coerce=ingest_utils.get_date_isoformat),
+            fld('assembly_timestamp', 'assembly_timestamp', coerce=ingest_utils.get_time),
+            fld('assembly_version', 'assembly_version', coerce=ingest_utils.get_int),
+            fld('assembly_size_primary', 'assembly_size_primary', coerce=ingest_utils.get_int),
+            fld('n50_length_primary', 'n50_length_primary', coerce=ingest_utils.get_int),
+            fld('assembly_size_secondary', 'assembly_size_secondary', coerce=ingest_utils.get_int),
+            fld('n50_length_secondary', 'n50_length_secondary', coerce=ingest_utils.get_int),
+            fld('busco_string_primary', 'busco_string_primary'),
+            fld('busco_string_secondary', 'busco_string_secondary'),
+            fld('sequencing_depth', 'sequencing_depth', coerce=ingest_utils.get_int),
+            fld('sequence_data_types', 'sequence_data_types'),
+            fld('taxon_id', 'taxon_id', coerce=ingest_utils.get_int),
+            fld('scientific_name', 'scientific_name'),
+            fld('ncbi_common_name', 'ncbi_common_name'),
+            fld('ncbi_family', 'ncbi_family'),
+            fld('ncbi_genus', 'ncbi_genus'),
+            fld('ncbi_species', 'ncbi_species'),
         ],
         "options": {
             "sheet_name": "Metadata",
@@ -958,11 +962,22 @@ class TSIGenomeAssemblyMetadata(TSIBaseMetadata):
         },
     }
     md5 = {
-        "match": [files.genome_assembly_filename_re],
+        "match": [files.genome_assembly_filename_re,
+                  files.genome_assembly_atol_filename_re],
         "skip": [
             re.compile(r"^.*\.xlsx$"),
         ],
     }
+    notes_mapping = [
+        {"key": "ncbi_family", "separator": ", "},
+        {"key": "ncbi_species", "separator": ", Assembly ID: "},
+        {"key": "bioplatforms_assembly_id"},
+
+    ]
+    title_mapping = [
+        {"key": "ncbi_common_name", "separator": ", "},
+        {"key": "data_type"},
+    ]
 
     description = "Genome Assembly"
 
@@ -979,43 +994,17 @@ class TSIGenomeAssemblyMetadata(TSIBaseMetadata):
 
     def _get_packages(self):
         packages = self._get_common_packages()
+
         return self.apply_location_generalisation(packages)
 
     def _add_datatype_specific_info_to_package(self, obj, row, filename):
-        bioplatforms_secondarydata_id = row.bioplatforms_secondarydata_id
+        bioplatforms_assembly_id = row.bioplatforms_assembly_id
+        bioplatforms_assembly_version = "v" + str(row.assembly_version)
         obj["name"] = sample_id_to_ckan_name(
-            bioplatforms_secondarydata_id.split("/")[-1], self.ckan_data_type
+            bioplatforms_assembly_id.split("/")[-1], self.ckan_data_type, bioplatforms_assembly_version
         )
         obj["id"] = obj["name"]
-        # explode sample_id, library_id
-        sample_ids = re.split(",\s*", str(row.sample_id))
-        library_ids = re.split(",\s*", str(row.library_id))
 
-        # check same length
-        if len(sample_ids) != len(library_ids):
-            raise Exception("mismatch count of sample and library IDs")
-
-        # if single item, add bpa_sample_id and bpa_library_id to metadata
-        if len(sample_ids) == 1:
-            obj["bpa_sample_id"] = ingest_utils.extract_ands_id(
-                self._logger, row.sample_id
-            )
-            obj["bpa_library_id"] = ingest_utils.extract_ands_id(
-                self._logger, row.library_id
-            )
-        else:
-            obj["bpa_sample_id"] = None
-            obj["bpa_library_id"] = None
-
-        for contextual_source in self.contextual_metadata:
-            context = []
-            for i in range(0, len(sample_ids)):
-                context.append(
-                    contextual_source.get(
-                        ingest_utils.extract_ands_id(self._logger, sample_ids[i]),
-                    )
-                )
-            obj.update(common_values(context))
 
         obj.update(
             {
@@ -1032,13 +1021,13 @@ class TSIGenomeAssemblyMetadata(TSIBaseMetadata):
         return self._get_common_resources()
 
     def _add_datatype_specific_info_to_resource(self, resource, md5_file=None):
-        resource["bioplatforms_secondarydata_id"] = ingest_utils.extract_ands_id(
-            self._logger, resource["bioplatforms_secondarydata_id"]
+        resource["bioplatforms_assembly_id"] = ingest_utils.extract_ands_id(
+            self._logger, resource["bioplatforms_assembly_id"]
         )
         return
 
     def _build_resource_linkage(self, xlsx_info, resource, file_info):
-        return (resource["bioplatforms_secondarydata_id"],)
+        return (resource["bioplatforms_assembly_id"],)
 
 
 class TSIHiCMetadata(TSIBaseMetadata):
