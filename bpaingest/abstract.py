@@ -128,7 +128,6 @@ class BaseMetadata:
         return
 
     def _get_common_resources(self):
-        self._logger.info("Ingesting md5 file information from {0}".format(self.path))
         resources = []
         md5_files_added_as_resources = set({})
         self._get_resource_info(self.resource_info)
