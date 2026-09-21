@@ -492,7 +492,7 @@ class AvianIlluminaShortreadMetadata(AvianBaseMetadata):
             ),
             fld("library_construction_protocol", "library_construction_protocol"),
             fld("run_format", "run format", optional=True),
-            fld("work_order", "work_order", coerce=ingest_utils.get_int),
+            fld('work_order', 'work_order', coerce=ingest_utils.int_or_comment),
             fld("specimen_id", re.compile(r"specimen_[Ii][Dd]"), optional=True),
             fld("data_context", "data_context", optional=True),
             fld("library_type", "library_type"),
