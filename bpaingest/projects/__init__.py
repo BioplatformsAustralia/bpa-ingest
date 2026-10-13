@@ -190,6 +190,7 @@ from .avid.ingest import (
     AVIDIlluminaShortreadMetadata,
     AVIDPacbioHifiMetadata,
     AVIDGenomeAssemblyMetadata,
+    AVIDONTPromethionMetadata,
 )
 from .dinoflagellates.ingest import (
     DinoflagellatesIlluminaShortreadMetadata,
@@ -385,6 +386,7 @@ class ProjectInfo:
             AVIDIlluminaShortreadMetadata,
             AVIDPacbioHifiMetadata,
             AVIDGenomeAssemblyMetadata,
+            AVIDONTPromethionMetadata,
         ],
         "dinoflagellates": [
             DinoflagellatesIlluminaShortreadMetadata,

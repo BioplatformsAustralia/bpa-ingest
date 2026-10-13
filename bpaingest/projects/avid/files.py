@@ -83,3 +83,28 @@ GENOME_ASSEMBLY_PATTERN = r"""
     (\.gz|\.txt)
 """
 genome_assembly_filename_re = re.compile(GENOME_ASSEMBLY_PATTERN, re.VERBOSE)
+
+ONT_PROMETHION_PATTERN = r"""
+    (?P<library_id>\d{4,6})_
+    (AVID|BTI)_
+    (?P<facility_id>(BRF))_
+    (?P<flow_cell_id>P[AB][ABCDEFGKMOQW]\d{5})_
+    (Run(?P<run_number>\d+)_)?
+    ONTPromethION_
+    (?P<archive_type>\w+)
+    (\.tar
+      |\.html
+      |\.txt)
+"""
+ont_promethion_re = re.compile(ONT_PROMETHION_PATTERN, re.VERBOSE)
+
+ONT_PROMETHION_COMMON_PATTERN = r"""
+    (AVID|BTI)_
+    (?P<facility_id>(BRF))_
+    (?P<flow_cell_id>P[AB][ABCDEFGKMOQW]\d{5})_
+    (Run(?P<run_number>\d+)_)?
+    (ONTPromethION_)
+    (?P<archive_type>\w+)
+    \.(html|tsv|txt|tar)
+"""
+ont_promethion_common_re = re.compile(ONT_PROMETHION_COMMON_PATTERN, re.VERBOSE)

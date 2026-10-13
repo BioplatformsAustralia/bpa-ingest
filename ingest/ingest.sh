@@ -264,7 +264,9 @@ ad()
 avid()
 {
     apply avid-illumina-shortread $*
+    apply avid-pacbio-hifi $*
     apply avid-genome-assembly $*
+    apply avid-ont-promethion $*
 
 }
 edna()
