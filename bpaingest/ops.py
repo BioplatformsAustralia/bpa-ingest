@@ -325,6 +325,10 @@ def check_resource(
         return "wrong-size"
 
     # if we have a pre-calculated s3etag in metadata, check it matches
+    # we dont care about these as genhash has not been run in quite a numbver of years
+    #Don't clutter the logs with this.
+    """
+                
     logger.info(f"current etag is {current_etag}")
     if current_etag and current_etag.strip('"') not in metadata_etags:
         if None in metadata_etags:
@@ -338,6 +342,7 @@ def check_resource(
                 % (current_url, current_etag, metadata_etags)
             )
             return "wrong-etag"
+    """
     logger.debug("end check_resource `%s' " % current_url)
     return None
 
