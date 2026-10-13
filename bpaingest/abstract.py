@@ -35,7 +35,7 @@ class BaseMetadata:
     """
 
     OPTIONAL_PATTERN = r"""
-    (.*pod5\.tar$|.*subreads\.bam$|.*amplifi_multiplexed\.bam$)
+    (.*pod5\.tar$|.*subreads\.bam$|.*amplifi_multiplexed\.bam$|.*pod5_fail\.tar$|.*pod5_pass\.tar$)
             """
 
     def method_exists(self, method_name):
