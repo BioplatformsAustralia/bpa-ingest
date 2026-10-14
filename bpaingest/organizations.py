@@ -371,5 +371,18 @@ ORGANIZATIONS = [
         "image_url": "https://data.bioplatforms.com/Sentinel-Species.webp",
         "groups": [{"capacity": "public", "name": "sentinel-species"}],
     },
-
+    {
+        "name": "invasive-species",
+        "title": "Invasive Species Genomics Initiative",
+        "display_name": "Invasive Species Genomics Initiative",
+        "image_url": "https://data.bioplatforms.com/Invasive-Species.webp",
+        "groups": [{"capacity": "public", "name": BPA_ORGANIZATION_ID}],
+    },
+    {
+        "name": "invasive-species-consortium-members",
+        "title": "Invasive Species Genomics Initiative Members",
+        "display_name": "Invasive Species Genomics Initiative Members",
+        "image_url": "https://data.bioplatforms.com/Invasive-Species.webp",
+        "groups": [{"capacity": "public", "name": "invasive-species"}],
+    },
 ]
