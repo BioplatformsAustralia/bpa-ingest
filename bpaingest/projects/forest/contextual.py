@@ -14,10 +14,7 @@ class ForestDatasetControlContextual(BaseDatasetControlContextual):
     ]
     name = "forest-dataset-contextual"
     contextual_linkage = ("dataset_id",)
-    additional_fields = [
-        fld("sample_id", "sample_id"),
-        fld("library_id", "library_id"),
-    ]
+    additional_fields = []
 
 
 class ForestLibraryContextual(BaseLibraryContextual):
