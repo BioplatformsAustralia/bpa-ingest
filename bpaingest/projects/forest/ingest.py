@@ -104,8 +104,10 @@ class ForestBaseMetadata(BaseMetadata):
                     raw_library_id, self.ckan_data_type,
                 )
                 for contextual_source in self.contextual_metadata:
+                    # the control data is by dataset id, and the sample id is missing, so do it first,
+                    obj.update(contextual_source.get(dataset_id,))
+                    # then do the sample metadata via library id.
                     obj.update(contextual_source.get(library_id,))
-                    obj.update(contextual_source.get(dataset_id,)) # the control data is by dataset id
                 obj.update(
                     {
                         "library_id": library_id,
