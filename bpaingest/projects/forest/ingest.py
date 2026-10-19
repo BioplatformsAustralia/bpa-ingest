@@ -1,4 +1,5 @@
 import json
+import json
 import os
 import re
 from collections import defaultdict
@@ -104,7 +105,7 @@ class ForestBaseMetadata(BaseMetadata):
                 )
                 for contextual_source in self.contextual_metadata:
                     obj.update(contextual_source.get(library_id,))
-
+                    obj.update(contextual_source.get(dataset_id,)) # the control data is by dataset id
                 obj.update(
                     {
                         "library_id": library_id,
