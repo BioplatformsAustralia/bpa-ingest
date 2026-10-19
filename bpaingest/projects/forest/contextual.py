@@ -10,13 +10,13 @@ from ...abstract import BaseLibraryContextual
 
 class ForestDatasetControlContextual(BaseDatasetControlContextual):
     metadata_urls = [
-        "https://downloads-qcif.bioplatforms.com/bpa/forest_staging/dataset_control/2025-04-02/"
+        "https://downloads-qcif.bioplatforms.com/bpa/forest_staging/dataset_control/2026-10-19/"
     ]
     name = "forest-dataset-contextual"
-    contextual_linkage = ("library_id",)
+    contextual_linkage = ("dataset_id",)
     additional_fields = [
         fld("sample_id", "sample_id"),
-        fld("dataset_id", "dataset_id"),
+        fld("library_id", "library_id"),
     ]
 
 
