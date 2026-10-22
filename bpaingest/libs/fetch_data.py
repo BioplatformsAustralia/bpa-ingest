@@ -49,6 +49,9 @@ def get_password(project_name=None):
 def get_env_username(username_variable="BPAINGEST_DOWNLOADS_USERNAME"):
     return os.getenv(username_variable)
 
+def get_env_github_token(github_token="GITHUB_TOKEN"):
+    return os.getenv(github_token)
+
 
 class Fetcher:
     """facilitates fetching data from webserver"""
@@ -80,6 +83,101 @@ class Fetcher:
                     if chunk:
                         f.write(chunk)
                         f.flush()
+
+    def fetch_metadata_from_github(self,
+                                   metadata_patterns,
+                                   metadata_info,
+                                   url_components):
+
+        # 1. Define your repository target details
+        owner = "BioplatformsAustralia"
+        repo = "bpa-ingest-metadata"
+        branch = "main"  # Can also be "master" depending on the repo
+
+        # 2. Call the GitHub Trees API with recursion enabled
+        # Documentation: https://api.github.com/repos/{owner}/{repo}/git/trees/{branch}?recursive=1
+        api_url = f"https://api.github.com/repos/{owner}/{repo}/git/trees/{branch}?recursive=1"
+        base_url = f"https://raw.githubusercontent.com/{owner}/{repo}/{branch}"
+        github_token = get_env_github_token()
+        #todo: use session for http requests
+        headers = {"Authorization": f"Bearer {github_token} "}
+        response = requests.get(api_url, headers=headers)
+
+        if response.status_code == 200:
+            tree_data = response.json()
+
+            # Iterate through every file found in the entire repository structure
+            # need to ignore old control and sample metadata directories, for now I just deleted them from github.
+            for item in tree_data.get("tree", []):
+                # 'blob' means it's a file, 'tree' means it's a folder
+                if item["type"] == "blob": #and item["path"].endswith(".txt"):
+                    print(str(item))
+                    file_path = item["path"]
+                    print("Found a file: ", file_path )
+                    file_parts = file_path.split('/')
+                    print(file_parts)
+                    name = file_parts[len(file_parts)-1]
+                    print(name)
+                    # Construct the raw content download URL for this file
+                    raw_url = f"{base_url}/{file_path}"
+                    subdir = file_parts
+                    # first 2 elements are the initiative and the datatype, we only care about the next n elements
+                    # for the ticket or whatever
+                    if subdir[1] == 'metadata' or subdir[1] == 'dataset_control':
+                        # handle contextuals - put them in the contextuals folder
+                        # hard coded for now, just prefix it to the name
+                        contextual_folder = "bsd-library-contextual"
+                        if not os.path.exists(self.target_folder + '/' + contextual_folder):
+                            os.makedirs(self.target_folder + '/' + contextual_folder, exist_ok=True)
+                        name = contextual_folder + '/' + name
+                    else: # we are in the data type directory structure
+
+                        del subdir[0:2]
+                        # the last element is the filename
+                        del subdir[len(url_components): len(subdir)]
+
+                        print("subdir = ", subdir)
+
+                        assert len(subdir) == len(url_components)
+                        if file_path in metadata_info:
+                            raise DownloadException(
+                                "Legacy archive contains non-unique filename: %s (%s)"
+                                % (file_path, metadata_info[file_path])
+                            )
+                        metadata_info[file_path] = dict(
+                            list(zip(url_components, subdir))
+                        )
+                        metadata_info[file_path]["base_url"] = raw_url
+                        print(str(metadata_info))
+                    print("getting file:{}", name)
+                    self._fetch_from_git(raw_url, headers, name)
+                    print("got File")
+        else:
+            print(f"Failed to fetch directory tree. Status code: {response.status_code}")
+            print(response.text)
+
+    def _fetch_from_git(self, base_url, headers, name):
+        print("try to fetch: ", base_url)
+
+        # Fetch the actual content of the text file
+        self._logger.info("Fetching {} from {}".format(name, base_url))
+        file_response = requests.get(base_url, headers=headers)
+        if file_response.status_code == 200:
+            output_file = self.target_folder + "/" + name
+            with open(output_file, "wb") as f:
+                for chunk in file_response.iter_content(chunk_size=1024):
+                    if chunk:
+                        f.write(chunk)
+                        f.flush()
+
+        else:
+            print(f"   -> Failed to download content. Status: {file_response.status_code}")
+            raise DownloadException(
+                "status code {} for: {}".format(file_response.status_code, base_url)
+            )
+
+
+
 
     def fetch_metadata_from_folder(
         self,

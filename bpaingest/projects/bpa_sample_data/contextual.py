@@ -41,7 +41,7 @@ class BSDLibraryContextual(BaseLibraryContextual):
         fld("sample_id_description", "sample_id_description"),
         fld("sample_collection_type", "sample_collection_type"),
         fld("sample_type", "sample_type"),
-        fld("taxon_id", "taxon_id"),
+        fld("taxon_id", "taxon_id", coerce=ingest_utils.get_int),
         fld("phylum", "phylum"),
         fld("klass", "class"),
         fld("order", "order"),
