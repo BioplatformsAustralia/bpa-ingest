@@ -131,12 +131,11 @@ class BSDBaseMetadata(BaseMetadata):
 class BSDSampleImagesMetadata(BSDBaseMetadata):
     ckan_data_type = "bsd-sample-image"
     contextual_classes = common_context
-    metadata_patterns = [r"^.*\.md5$"]
     omics = None
     technology = "site-images"
     sequence_data_type = "image"
     embargo_days = 365
-    metadata_patterns = [r"^.*\.md5$", r"^.*[\._]metadata.*.*\.xlsx$"]
+    metadata_patterns = [r"^.*\.(md5|json)$", r"^.*[\._]metadata.*.*\.xlsx$"]
     metadata_urls = [
         #"https://downloads-qcif.bioplatforms.com/bpa/bpa_sample_data/sample-images/",
         "https://api.github.com/repos/BioplatformsAustralia/bpa-ingest-metadata/contents/bpa-sample-data/sample-images"
