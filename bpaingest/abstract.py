@@ -11,6 +11,7 @@ from .libs.excel_wrapper import (
     make_skip_column as skp,
 )
 from .libs.md5lines import MD5Parser
+from .libs.manifestlines import ManifestParser
 from .resource_metadata import resource_metadata_from_file, resource_metadata_id
 from .util import make_logger, one, clean_filename
 import re
@@ -106,6 +107,24 @@ class BaseMetadata:
         for tpl in p.no_match:
             self._logger.error("No match for filename: `%s'" % tpl)
 
+    def parse_manifest_unwrapped(self, fname):
+        match = self.md5["match"]
+        skip = self.md5["skip"]
+        # If we are not adding the md5 file as a resource, we skip md5 filename validation
+        if not hasattr(self, 'add_md5_as_resource') or not (self.add_md5_as_resource):
+            skip.append(
+                re.compile(r"^.*\.md5$"))
+
+        return ManifestParser(fname, match, skip)
+
+    def parse_manifest_file(self, fname):
+        if 'bpa-ingest.json' not in fname:  # this file is created by the ingest and can be ignored.
+            p = self.parse_manifest_unwrapped(fname)
+            for tpl in p.matches:
+               yield tpl
+            for tpl in p.no_match:
+                self._logger.error("No match for filename: `%s'" % tpl)
+
     def get_tracking_info(self, ticket, field_name=None):
         if self.google_track_meta is None:
             return None
@@ -130,8 +149,18 @@ class BaseMetadata:
     def _get_common_resources(self):
         resources = []
         md5_files_added_as_resources = set({})
+        # pulls the md5s, xls and potentially json from mirror or github.
         self._get_resource_info(self.resource_info)
-        for filename, md5, md5_file, file_info in self.md5_lines():
+
+        # If there are json manifest files, use those, and not the md5s.
+        # May need to check md5s from the manifest need to be added as a resource.
+        # if we have one or more json manifests, use these, not md5.
+
+        files_from_manifest_or_md5  = self.manifest_lines()
+        if not files_from_manifest_or_md5:
+            files_from_manifest_or_md5 = self.md5_lines()
+
+        for filename, md5, md5_file, file_info in files_from_manifest_or_md5:
             resource = file_info.copy()
             resource["md5"] = resource["id"] = md5
             resource["name"] = clean_filename(os.path.basename(filename))
@@ -433,6 +462,35 @@ class BaseMetadata:
                         )
 
         return resources
+
+    def manifest_lines(self):
+        files_in_manifest = set({})
+        manifest_files = set({})
+        self._logger.info("Ingesting Manifest file information from {0}".format(self.path))
+        for manifest_file in glob(self.path + "/*.json"):
+            if manifest_file not in manifest_files:
+                manifest_files.add(manifest_file)
+            else:
+                ticket = self.metadata_info[os.path.basename(manifest_file)]["ticket"]
+                self._logger.error(
+                    "Duplicate Manifest file {0} in ticket {1} may lead to duplicate resources or other issues".format(
+                        manifest_file, ticket
+                    )
+                )
+
+            self._logger.info("Processing manifest file {}".format(manifest_file))
+            for filename, md5, file_info in self.parse_manifest_file(manifest_file):
+                if filename not in files_in_manifest:
+                    files_in_manifest.add(filename)
+                else:
+                    ticket = self.metadata_info[os.path.basename(manifest_file)]["ticket"]
+                    self._logger.error(
+                        "Duplicate filename {0} in manifest file {1} in ticket {2} may lead to duplicate resources".format(
+                            filename, manifest_file, ticket
+                        )
+                    )
+
+                yield filename, md5, manifest_file, file_info
 
     def md5_lines(self):
         files_in_md5 = set({})
