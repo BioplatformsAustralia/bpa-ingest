@@ -50,7 +50,6 @@ class BSDBaseMetadata(BaseMetadata):
 
     def _set_metadata_vars(self, filename):
         self.xlsx_info = self.metadata_info[os.path.basename(filename)]
-        print(self.xlsx_info)
         self.ticket = self.xlsx_info["ticket"]
 
     def _get_common_packages(self):
