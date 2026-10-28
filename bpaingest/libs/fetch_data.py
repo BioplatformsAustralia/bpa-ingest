@@ -102,7 +102,7 @@ class Fetcher:
         """
 
         if metadata_patterns is None:
-            metadata_patterns = [r"^.*\.(md5|xlsx)$"]
+            metadata_patterns = [r"^.*\.(md5|xlsx|json)$"]
         if _url is None:
             _url = self.metadata_source_url
         if _target_depth == -1:
