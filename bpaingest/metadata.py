@@ -71,50 +71,41 @@ class DownloadMetadata:
         return self.project_class(logger, self.path, **meta_kwargs)
 
     def _fetch_metadata(self, project_class, contextual, metadata_info):
-        if getattr(project_class, "metadata_from_git", None):
-            fetcher = Fetcher(self._logger, self.path, None, self.auth)
-            fetcher.fetch_metadata_from_github(
+        for metadata_url in project_class.metadata_urls:
+            self._logger.info(
+                "fetching submission metadata: %s" % (project_class.metadata_urls)
+            )
+            fetcher = Fetcher(self._logger, self.path, metadata_url, self.auth)
+            fetcher.fetch_metadata_from_folder(
                 getattr(project_class, "metadata_patterns", None),
                 metadata_info,
-                getattr(project_class, "metadata_url_components", []), )
-        else:
-            for metadata_url in project_class.metadata_urls:
+                getattr(project_class, "metadata_url_components", []),
+            )
+
+        with suppress(FileExistsError):
+            os.mkdir(self.path)
+
+        for contextual_path, contextual_cls in contextual:
+            if not os.path.isdir(contextual_path):
+                os.mkdir(contextual_path)
+            else:
                 self._logger.info(
-                    "fetching submission metadata: %s" % (project_class.metadata_urls)
+                    "Context path: {} already exists. Moving on.".format(
+                        contextual_path
+                    )
                 )
-                fetcher = Fetcher(self._logger, self.path, metadata_url, self.auth)
+            self._logger.info(
+                "fetching contextual metadata: %s" % (contextual_cls.metadata_urls)
+            )
+            for metadata_url in contextual_cls.metadata_urls:
+                fetcher = Fetcher(
+                    self._logger, contextual_path, metadata_url, self.auth
+                )
                 fetcher.fetch_metadata_from_folder(
-                    getattr(project_class, "metadata_patterns", None),
+                    getattr(contextual_cls, "metadata_patterns", None),
                     metadata_info,
-                    getattr(project_class, "metadata_url_components", []),
-               )
-
-
-            with suppress(FileExistsError):
-                os.mkdir(self.path)
-
-            for contextual_path, contextual_cls in contextual:
-               if not os.path.isdir(contextual_path):
-                    os.mkdir(contextual_path)
-               else:
-                    self._logger.info(
-                       "Context path: {} already exists. Moving on.".format(
-                            contextual_path
-                        )
-                    )
-               self._logger.info(
-                    "fetching contextual metadata: %s" % (contextual_cls.metadata_urls)
-               )
-               for metadata_url in contextual_cls.metadata_urls:
-                    fetcher = Fetcher(
-                        self._logger, contextual_path, metadata_url, self.auth
-                    )
-                    fetcher.fetch_metadata_from_folder(
-                        getattr(contextual_cls, "metadata_patterns", None),
-                        metadata_info,
-                        getattr(contextual_cls, "metadata_url_components", []),
-                    )
-
+                    getattr(contextual_cls, "metadata_url_components", []),
+                )
         self.init_schema_classes(project_class, metadata_info)
         tmpf = self.info_json + ".new"
         with open(tmpf, "w") as fd:
