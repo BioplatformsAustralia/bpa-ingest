@@ -84,100 +84,6 @@ class Fetcher:
                         f.write(chunk)
                         f.flush()
 
-    def fetch_metadata_from_github(self,
-                                   metadata_patterns,
-                                   metadata_info,
-                                   url_components):
-
-        # 1. Define your repository target details
-        owner = "BioplatformsAustralia"
-        repo = "bpa-ingest-metadata"
-        branch = "main"  # Can also be "master" depending on the repo
-
-        # 2. Call the GitHub Trees API with recursion enabled
-        # Documentation: https://api.github.com/repos/{owner}/{repo}/git/trees/{branch}?recursive=1
-        api_url = f"https://api.github.com/repos/{owner}/{repo}/git/trees/{branch}?recursive=1"
-        base_url = f"https://raw.githubusercontent.com/{owner}/{repo}/{branch}"
-        github_token = get_env_github_token()
-        #todo: use session for http requests
-        headers = {"Authorization": f"Bearer {github_token} "}
-        response = requests.get(api_url, headers=headers)
-
-        if response.status_code == 200:
-            tree_data = response.json()
-
-            # Iterate through every file found in the entire repository structure
-            # need to ignore old control and sample metadata directories, for now I just deleted them from github.
-            for item in tree_data.get("tree", []):
-                # 'blob' means it's a file, 'tree' means it's a folder
-                if item["type"] == "blob": #and item["path"].endswith(".txt"):
-                    print(str(item))
-                    file_path = item["path"]
-                    print("Found a file: ", file_path )
-                    file_parts = file_path.split('/')
-                    print(file_parts)
-                    name = file_parts[len(file_parts)-1]
-                    print(name)
-                    # Construct the raw content download URL for this file
-                    raw_url = f"{base_url}/{file_path}"
-                    subdir = file_parts
-                    # first 2 elements are the initiative and the datatype, we only care about the next n elements
-                    # for the ticket or whatever
-                    if subdir[1] == 'metadata' or subdir[1] == 'dataset_control':
-                        # handle contextuals - put them in the contextuals folder
-                        # hard coded for now, just prefix it to the name
-                        contextual_folder = "bsd-library-contextual"
-                        if not os.path.exists(self.target_folder + '/' + contextual_folder):
-                            os.makedirs(self.target_folder + '/' + contextual_folder, exist_ok=True)
-                        name = contextual_folder + '/' + name
-                    else: # we are in the data type directory structure
-
-                        del subdir[0:2]
-                        # the last element is the filename
-                        del subdir[len(url_components): len(subdir)]
-
-                        print("subdir = ", subdir)
-
-                        assert len(subdir) == len(url_components)
-                        if file_path in metadata_info:
-                            raise DownloadException(
-                                "Legacy archive contains non-unique filename: %s (%s)"
-                                % (file_path, metadata_info[file_path])
-                            )
-                        metadata_info[file_path] = dict(
-                            list(zip(url_components, subdir))
-                        )
-                        metadata_info[file_path]["base_url"] = raw_url
-                        print(str(metadata_info))
-                    print("getting file:{}", name)
-                    self._fetch_from_git(raw_url, headers, name)
-                    print("got File")
-        else:
-            print(f"Failed to fetch directory tree. Status code: {response.status_code}")
-            print(response.text)
-
-    def _fetch_from_git(self, base_url, headers, name):
-        print("try to fetch: ", base_url)
-
-        # Fetch the actual content of the text file
-        self._logger.info("Fetching {} from {}".format(name, base_url))
-        file_response = requests.get(base_url, headers=headers)
-        if file_response.status_code == 200:
-            output_file = self.target_folder + "/" + name
-            with open(output_file, "wb") as f:
-                for chunk in file_response.iter_content(chunk_size=1024):
-                    if chunk:
-                        f.write(chunk)
-                        f.flush()
-
-        else:
-            print(f"   -> Failed to download content. Status: {file_response.status_code}")
-            raise DownloadException(
-                "status code {} for: {}".format(file_response.status_code, base_url)
-            )
-
-
-
 
     def fetch_metadata_from_folder(
         self,
@@ -204,59 +110,176 @@ class Fetcher:
         if _session is None:
             _session = requests.Session()
         self._logger.info("Fetching folder from {}".format(_url))
-        response = _session.get(_url, stream=True, auth=self.auth, verify=False)
-        if response.status_code != 200:
-            self._logger.error(
-                "warning: status code %d for url %s" % (response.status_code, _url)
-            )
-        fetched = set()
-        for link in BeautifulSoup(response.content, "html.parser").find_all("a"):
-            link_target = link.get("href")
-            if link_target in fetched:
-                continue
-            fetched.add(link_target)
-            # we need to descend directory tree further in order to find all `url_components`
-            if _target_depth > 0:
-                if Fetcher.recurse_re.match(link_target):
-                    self.fetch_metadata_from_folder(
-                        metadata_patterns,
-                        metadata_info,
-                        url_components,
-                        download=download,
-                        _session=_session,
-                        _target_depth=_target_depth - 1,
-                        _url=urljoin(_url, link_target),
-                    )
-            else:
-                # descend anyway, to find whatever is there, but we've already hit target_depth
-                if Fetcher.recurse_re.match(link_target):
-                    self.fetch_metadata_from_folder(
-                        metadata_patterns,
-                        metadata_info,
-                        url_components,
-                        download=download,
-                        _session=_session,
-                        _target_depth=_target_depth,
-                        _url=urljoin(_url, link_target),
-                    )
-                elif not any(
-                    re.compile(pattern).match(link_target)
-                    for pattern in metadata_patterns
-                ):
+
+        if not "api.github.com" in _url:
+            response = _session.get(_url, stream=True, auth=self.auth, verify=False)
+            if response.status_code != 200:
+                self._logger.error(
+                    "warning: status code %d for url %s" % (response.status_code, _url)
+                )
+            fetched = set()
+            for link in BeautifulSoup(response.content, "html.parser").find_all("a"):
+                link_target = link.get("href")
+                if link_target in fetched:
                     continue
-                else:
-                    subdir = _url[len(self.metadata_source_url) :].strip("/")
-                    meta_parts = subdir.split("/")[: len(url_components)]
-                    assert len(meta_parts) == len(url_components)
-                    if link_target in metadata_info:
-                        raise DownloadException(
-                            "Legacy archive contains non-unique filename: %s (%s)"
-                            % (link_target, metadata_info[link_target])
+                fetched.add(link_target)
+                # we need to descend directory tree further in order to find all `url_components`
+                if _target_depth > 0:
+                    if Fetcher.recurse_re.match(link_target):
+                        self.fetch_metadata_from_folder(
+                            metadata_patterns,
+                            metadata_info,
+                            url_components,
+                            download=download,
+                            _session=_session,
+                            _target_depth=_target_depth - 1,
+                            _url=urljoin(_url, link_target),
                         )
-                    metadata_info[link_target] = dict(
-                        list(zip(url_components, meta_parts))
-                    )
-                    metadata_info[link_target]["base_url"] = _url
-                    # download the actual file
-                    if download:
-                        self._fetch(_session, _url, link_target)
+                else:
+                    # descend anyway, to find whatever is there, but we've already hit target_depth
+                    if Fetcher.recurse_re.match(link_target):
+                        self.fetch_metadata_from_folder(
+                            metadata_patterns,
+                            metadata_info,
+                            url_components,
+                            download=download,
+                            _session=_session,
+                            _target_depth=_target_depth,
+                            _url=urljoin(_url, link_target),
+                        )
+                    elif not any(
+                        re.compile(pattern).match(link_target)
+                        for pattern in metadata_patterns
+                    ):
+                        continue
+                    else:
+                        subdir = _url[len(self.metadata_source_url) :].strip("/")
+                        meta_parts = subdir.split("/")[: len(url_components)]
+                        assert len(meta_parts) == len(url_components)
+                        if link_target in metadata_info:
+                            raise DownloadException(
+                                "Legacy archive contains non-unique filename: %s (%s)"
+                                % (link_target, metadata_info[link_target])
+                            )
+                        metadata_info[link_target] = dict(
+                            list(zip(url_components, meta_parts))
+                        )
+                        metadata_info[link_target]["base_url"] = _url
+                        # download the actual file
+                        if download:
+                            self._fetch(_session, _url, link_target)
+        else:
+            self._fetch_metadata_from_github(_session,  _url, metadata_patterns, metadata_info, url_components)
+
+
+    def _fetch_metadata_from_github(self,
+                                    session,
+                                    url,
+                                    metadata_patterns,
+                                    metadata_info,
+                                    url_components):
+
+        github_token = get_env_github_token()
+
+        # todo: use session for http requests
+        files = self.get_github_files_recursive(url, github_token)
+        headers = {"Accept": "application/vnd.github+json"}
+        headers["Authorization"] = f"Bearer {github_token}"
+
+        for file in files:
+            file_path = file["path"]
+            file_parts = file_path.split('/')
+            name = file_parts[len(file_parts) - 1]
+            # Construct the raw content download URL for this file
+            subdir = file_parts
+            # first 2 elements are the initiative and the datatype, we only care about the next n elements
+            # for the ticket or whatever
+            del subdir[0:2]
+            # the last element is the filename, kill that too
+            del subdir[len(url_components): len(subdir)]
+
+            assert len(subdir) == len(url_components)
+            if name in metadata_info:
+                raise DownloadException(
+                    "Legacy archive contains non-unique filename: %s (%s)"
+                    % (name, metadata_info[file_path])
+                )
+            metadata_info[name] = dict(
+                list(zip(url_components, subdir))
+            )
+            # the file['url'] has a param ?ref=<branch> - we may want to strip this?
+            metadata_info[name]["base_url"] = file['url']
+            self._fetch_from_git(file['download_url'], headers, name)
+
+
+    def _fetch_from_git(self, base_url, headers, name):
+        # Fetch the actual content of the text file
+        self._logger.info("Fetching {} from {}".format(name, base_url))
+        file_response = requests.get(base_url, headers=headers)
+        if file_response.status_code == 200:
+            output_file = self.target_folder + "/" + name
+            with open(output_file, "wb") as f:
+                for chunk in file_response.iter_content(chunk_size=1024):
+                    if chunk:
+                        f.write(chunk)
+                        f.flush()
+
+        else:
+             raise DownloadException(
+                "status code {} for: {}".format(file_response.status_code, base_url)
+            )
+
+
+    def get_github_files_recursive(self, target_directory, token=None):
+        """
+        Recursively finds all files inside a specific repository directory.
+        """
+        # The initial API endpoint targeting your specific directory
+        #base_url = f"https://api.github.com/repos/{owner}/{repo}/contents/{target_directory}"
+        base_url = target_directory
+        headers = {"Accept": "application/vnd.github+json"}
+
+        # Authenticating increases your rate limit (highly recommended)
+        if token:
+            headers["Authorization"] = f"Bearer {token}"
+
+        file_list = []
+        # Queue stores directories to process
+        directories_to_visit = [base_url]
+
+        while directories_to_visit:
+            current_url = directories_to_visit.pop(0)
+            response = requests.get(current_url, headers=headers)
+
+            if response.status_code != 200:
+                raise DownloadException(
+                    "status code {} for: {}".format(response.status_code, current_url)
+                )
+
+            items = response.json()
+
+            # If the target directory only has one file, GitHub returns a dict instead of a list
+            if isinstance(items, dict):
+                items = [items]
+
+            for item in items:
+                if item["type"] == "file":
+                    # Store whatever properties you need (e.g., path, download_url)
+                    file_list.append({
+                        "name": item["name"],
+                        "path": item["path"],
+                        "url": item["url"],
+                        "download_url": item["download_url"]
+                    })
+                elif item["type"] == "dir":
+                    # Add the sub-directory URL to the queue to process later
+                    directories_to_visit.append(item["url"])
+
+        return file_list
+
+
+
+
+
+
+
