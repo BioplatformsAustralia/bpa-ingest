@@ -181,10 +181,12 @@ class Fetcher:
 
         github_token = get_env_github_token()
 
-        # todo: use session for http requests
-        files = self.get_github_files_recursive(url, github_token)
         headers = {"Accept": "application/vnd.github+json"}
-        headers["Authorization"] = f"Bearer {github_token}"
+        # Authenticating increases your rate limit (highly recommended), and is needed for private repos
+        if github_token:
+            headers["Authorization"] = f"Bearer {github_token}"
+        session.headers = headers
+        files = self.get_github_files_recursive(session, url)
 
         for file in files:
             file_path = file["path"]
@@ -209,13 +211,13 @@ class Fetcher:
             )
             # the file['url'] has a param ?ref=<branch> - we may want to strip this?
             metadata_info[name]["base_url"] = file['url']
-            self._fetch_from_git(file['download_url'], headers, name)
+            self._fetch_from_git(session, file['download_url'], name)
 
 
-    def _fetch_from_git(self, base_url, headers, name):
+    def _fetch_from_git(self, session, base_url, name):
         # Fetch the actual content of the text file
         self._logger.info("Fetching {} from {}".format(name, base_url))
-        file_response = requests.get(base_url, headers=headers)
+        file_response = session.get(base_url)
         if file_response.status_code == 200:
             output_file = self.target_folder + "/" + name
             with open(output_file, "wb") as f:
@@ -230,18 +232,13 @@ class Fetcher:
             )
 
 
-    def get_github_files_recursive(self, target_directory, token=None):
+    def get_github_files_recursive(self, session, target_directory):
         """
         Recursively finds all files inside a specific repository directory.
         """
         # The initial API endpoint targeting your specific directory
-        #base_url = f"https://api.github.com/repos/{owner}/{repo}/contents/{target_directory}"
         base_url = target_directory
         headers = {"Accept": "application/vnd.github+json"}
-
-        # Authenticating increases your rate limit (highly recommended)
-        if token:
-            headers["Authorization"] = f"Bearer {token}"
 
         file_list = []
         # Queue stores directories to process
@@ -249,7 +246,7 @@ class Fetcher:
 
         while directories_to_visit:
             current_url = directories_to_visit.pop(0)
-            response = requests.get(current_url, headers=headers)
+            response = session.get(current_url)
 
             if response.status_code != 200:
                 raise DownloadException(
