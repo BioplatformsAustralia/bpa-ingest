@@ -10,7 +10,8 @@ from ...abstract import BaseLibraryContextual
 
 class BSDDatasetControlContextual(BaseDatasetControlContextual):
     metadata_urls = [
-        "https://downloads-qcif.bioplatforms.com/bpa/bpa_sample_data/dataset_control/2024-08-05/"
+        #"https://downloads-qcif.bioplatforms.com/bpa/bpa_sample_data/metadata/2024-11-20/"
+        "https://api.github.com/repos/BioplatformsAustralia/bpa-ingest-metadata/contents/bpa-sample-data/dataset_control/2024-08-05"
     ]
     name = "bsd-dataset-contextual"
     contextual_linkage = ("sample_id",)
@@ -23,7 +24,8 @@ class BSDDatasetControlContextual(BaseDatasetControlContextual):
 
 class BSDLibraryContextual(BaseLibraryContextual):
     metadata_urls = [
-        "https://downloads-qcif.bioplatforms.com/bpa/bpa_sample_data/metadata/2024-11-20/"
+        #"https://downloads-qcif.bioplatforms.com/bpa/bpa_sample_data/metadata/2024-11-20/",
+        "https://api.github.com/repos/BioplatformsAustralia/bpa-ingest-metadata/contents/bpa-sample-data/metadata/2024-11-20"
     ]
     name = "bsd-library-contextual"
     metadata_unique_identifier = "bioplatforms_sample_id"
