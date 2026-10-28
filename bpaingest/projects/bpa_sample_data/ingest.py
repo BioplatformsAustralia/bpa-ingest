@@ -58,15 +58,12 @@ class BSDBaseMetadata(BaseMetadata):
             "Ingesting {} metadata from {}".format(self.initiative, self.path)
         )
         packages = []
-        print("self.poath is", self.path)
         for fname in glob(self.path + "/*.xlsx"):
             self._logger.info(
                 "Processing {} metadata file {}".format(
                     self.initiative, os.path.basename(fname)
                 )
             )
-            print("Fname is:" , fname)
-            print("self.meatdata us:" , str(self.metadata_info))
             rows = self.parse_spreadsheet(fname, self.metadata_info)
             if self.method_exists("_set_metadata_vars"):
                 self._set_metadata_vars(fname)
@@ -142,9 +139,9 @@ class BSDSampleImagesMetadata(BSDBaseMetadata):
     embargo_days = 365
     metadata_patterns = [r"^.*\.md5$", r"^.*[\._]metadata.*.*\.xlsx$"]
     metadata_urls = [
-        "https://downloads-qcif.bioplatforms.com/bpa/bpa_sample_data/sample-images/",
+        #"https://downloads-qcif.bioplatforms.com/bpa/bpa_sample_data/sample-images/",
+        "https://api.github.com/repos/BioplatformsAustralia/bpa-ingest-metadata/contents/bpa-sample-data/sample-images"
     ]
-    metadata_from_git = True
     metadata_url_components = ("ticket",)
     resource_linkage = ("library_id", "flowcell_id")
 
