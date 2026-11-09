@@ -114,7 +114,11 @@ def patch_if_required(
             # wait 2 sec, then try again (give up if it fails a second time)
             logger.warning("ckan patch failed, waiting 2 sec, then trying again")
             time.sleep(2)
-            ckan_object = ckan_method(ckan, object_type, "patch")(**patch_object)
+            try:
+                ckan_object = ckan_method(ckan, object_type, "patch")(**patch_object)
+            except  ckanapi.errors.CKANAPIError as err:
+                logger.error("Failed for a second time, error is {}".format(err))
+                logger.error("Problem object is:{}".format(str(patch_object)))
 
     logger.debug("end patch_if_required")
     return patch_needed, ckan_object
