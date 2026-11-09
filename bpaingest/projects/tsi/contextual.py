@@ -23,7 +23,7 @@ class TSIDatasetControlContextual(BaseDatasetControlContextual):
 
 class TSILibraryContextual(BaseLibraryContextual):
     metadata_urls = [
-        "https://downloads-qcif.bioplatforms.com/bpa/tsi_staging/metadata/2026-01-12/"
+        "https://downloads-qcif.bioplatforms.com/bpa/tsi_staging/metadata/2026-11-09/"
     ]
     name = "tsi-library-contextual"
     metadata_unique_identifier = "sample_id"
@@ -34,6 +34,7 @@ class TSILibraryContextual(BaseLibraryContextual):
             re.compile(r"(bioplatforms_)?sample_[Ii][Dd]"),
             coerce=ingest_utils.extract_ands_id,
         ),
+        fld('specimen_custodian', 'specimen_custodian'),
         # specimen_ID
         fld("specimen_id", re.compile(r"specimen_?[Ii][Dd]")),
         # specimen_ID_description
@@ -52,6 +53,7 @@ class TSILibraryContextual(BaseLibraryContextual):
         fld("sample_type", "sample_type"),
         # access_rights
         fld("access_rights", "access_rights"),
+        fld('reuse_preferences', 'reuse_preferences'),
         # tissue_type
         fld("tissue_type", "tissue_type"),
         # tissue_preservation
@@ -90,19 +92,21 @@ class TSILibraryContextual(BaseLibraryContextual):
         fld("collector", "collector"),
         # collection_method
         fld("collection_method", "collection_method"),
+        fld('collection_permit', 'collection_permit'),
         # collector_sample_ID
         fld("collector_sample_id", re.compile(r"collector_sample_[Ii][Dd]")),
         # wild_captive
         fld("wild_captive", "wild_captive"),
         # source_population
         fld("source_population", "source_population"),
+        fld('identified_by', 'identified_by'),
         # country
         fld("country", "country"),
         # state_or_region
         fld("state_or_region", "state_or_region"),
         # location_text
         fld("location_text", "location_text"),
-        # habitat
+        fld('indigenous_location', 'indigenous_location'),# habitat
         fld("habitat", "habitat"),
         # skip the private lat/long as this will contain data not to be shared
         skp("decimal_latitude_private"),
@@ -120,9 +124,8 @@ class TSILibraryContextual(BaseLibraryContextual):
         # phenotypic sex
         fld("phenotypic_sex", "phenotypic sex"),
         # method of determination
-        fld("method_of_determination", "method of determination"),
-        # certainty
-        fld("certainty", "certainty"),
+        fld('method_sex_determination', 'method_sex_determination'),
+        fld('sex_certainty', 'sex_certainty'),
         # life-stage
         fld("lifestage", re.compile("life[_-]stage")),
         # birth_date
@@ -161,4 +164,7 @@ class TSILibraryContextual(BaseLibraryContextual):
         ),
         # material_conc_ng_ul
         fld("material_conc_ng_ul", re.compile(r"[Mm]aterial_conc_ng_ul")),
+        fld('extraction_protocol_doi', 'extraction_protocol_doi'),
+        fld('nucleic_acid_ng', 'nucleic_acid_ng'),
     ]
+
