@@ -117,7 +117,7 @@ def patch_if_required(
             try:
                 ckan_object = ckan_method(ckan, object_type, "patch")(**patch_object)
             except  ckanapi.errors.CKANAPIError as err:
-                logger.error("Failed for a second time, error is {}".format(err))
+                logger.error("Failed for a second time, error is {}".format(repr(err)))
                 logger.error("Problem object is:{}".format(str(patch_object)))
 
     logger.debug("end patch_if_required")
