@@ -21,7 +21,7 @@ class FungiDatasetControlContextual(BaseDatasetControlContextual):
 
 class FungiLibraryContextual(BaseLibraryContextual):
     metadata_urls = [
-        "https://downloads-qcif.bioplatforms.com/bpa/fungi_staging/metadata/2026-04-21/"
+        "https://downloads-qcif.bioplatforms.com/bpa/fungi_staging/metadata/2026-11-09/"
     ]
     name = "fungi-library-contextual"
 
@@ -37,6 +37,7 @@ class FungiLibraryContextual(BaseLibraryContextual):
         fld('sample_id_description', 'sample_id_description'),
         fld('sample_collection_type', 'sample_collection_type'),
         fld('sample_type', 'sample_type'),
+        fld('reuse_preferences', 'reuse_preferences'),
         fld('taxon_id', 'taxon_id'),
         fld('phylum', 'phylum'),
         fld('klass', 'class'),
@@ -93,5 +94,7 @@ class FungiLibraryContextual(BaseLibraryContextual):
         fld('material_extracted_by', 'material_extracted_by'),
         fld('material_extraction_method', 'material_extraction_method'),
         fld('material_conc_ng_ul', 'material_conc_ng_ul'),
+        fld('extraction_protocol_doi', 'extraction_protocol_doi'),
+        fld('nucleic_acid_ng', 'nucleic_acid_ng'),
 
     ]
