@@ -119,6 +119,8 @@ def patch_if_required(
             except  ckanapi.errors.CKANAPIError as err:
                 logger.error("Failed for a second time, error is {}".format(repr(err)))
                 logger.error("Problem object is:{}".format(str(patch_object)))
+                logger.error("If the problem persists, try to delete the object, then re-ingest it")
+
 
     logger.debug("end patch_if_required")
     return patch_needed, ckan_object
