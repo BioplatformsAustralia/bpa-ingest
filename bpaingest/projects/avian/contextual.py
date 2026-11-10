@@ -20,7 +20,7 @@ class AvianDatasetControlContextual(BaseDatasetControlContextual):
 
 class AvianLibraryContextual(BaseLibraryContextual):
     metadata_urls = [
-        "https://downloads-qcif.bioplatforms.com/bpa/avian_staging/metadata/2026-08-19/"
+        "https://downloads-qcif.bioplatforms.com/bpa/avian_staging/metadata/2026-11-09/"
     ]
     sheet_names = [
         "sample_metadata",
