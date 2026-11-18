@@ -290,7 +290,7 @@ ipm()
 dinoflagellates()
 {
     apply dinoflagellates-illumina-shortread $*
-    #apply dinoflagellates-ont-promethion $*
+    apply dinoflagellates-ont-promethion $*
 }
 
 sentinel_species()

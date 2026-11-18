@@ -20,7 +20,7 @@ class DinoflagellatesDatasetControlContextual(BaseDatasetControlContextual):
 
 class DinoflagellatesLibraryContextual(BaseLibraryContextual):
     metadata_urls = [
-        "https://downloads-qcif.bioplatforms.com/bpa/dinoflagellates/metadata/2026-08-04/"
+        "https://downloads-qcif.bioplatforms.com/bpa/dinoflagellates/metadata/2026-11-10/"
     ]
     name = "dinoflagellates-library-contextual"
 

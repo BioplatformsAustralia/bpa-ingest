@@ -146,7 +146,7 @@ class DinoflagellatesBaseMetadata(BaseMetadata):
 
 
 class DinoflagellatesIlluminaShortreadMetadata(DinoflagellatesBaseMetadata):
-    ckan_data_type = "alg-illumina-shortread"
+    ckan_data_type = "dino-illumina-shortread"
     technology = "illumina-shortread"
     sequence_data_type = "illumina-shortread"
     embargo_days = 365
@@ -285,7 +285,7 @@ class DinoflagellatesIlluminaShortreadMetadata(DinoflagellatesBaseMetadata):
         )
 
 class DinoflagellatesONTPromethionMetadata(DinoflagellatesBaseMetadata):
-        ckan_data_type = "alg-ont-promethion"
+        ckan_data_type = "dino-ont-promethion"
         technology = "ont-promethion"
         sequence_data_type = "ont-promethion"
         embargo_days = 365
