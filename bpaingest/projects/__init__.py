@@ -193,7 +193,7 @@ from .avid.ingest import (
     AVIDONTPromethionMetadata,
 )
 from .dinoflagellates.ingest import (
-    DinoflagellatesIlluminaShortreadMetadata,
+    DinoflagellatesMGIShortreadMetadata,
     DinoflagellatesONTPromethionMetadata,
 )
 from .sentinel_species.ingest import (
@@ -389,7 +389,7 @@ class ProjectInfo:
             AVIDONTPromethionMetadata,
         ],
         "dinoflagellates": [
-            DinoflagellatesIlluminaShortreadMetadata,
+            DinoflagellatesMGIShortreadMetadata,
             DinoflagellatesONTPromethionMetadata,
         ],
         "sentinel_species": [

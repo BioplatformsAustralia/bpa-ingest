@@ -43,13 +43,14 @@ class DinoflagellatesBaseMetadata(BaseMetadata):
         {"key": "genus", "separator": " "},
         {"key": "species", "separator": ", Library ID: "},
         {"key": "library_id", "separator": ", "},
-        {"key": "sample_id", "separator": ", "},
+        {"key": "specimen_id", "separator": ", "},
         {"key": "taxonomic_group", "separator": ", Project Lead: "},
         {"key": "project_lead"},
     ]
     title_mapping = [
-        {"key": "common_name", "separator": ", "},
-        {"key": "data_type", "separator": ", "},
+        {"key": "genus", "separator": " "},
+        {"key": "species", "separator": ", "},
+        {"key": "specimen_id", "separator": ", "},
         {"key": "library_type", "separator": ", "},
         {"key": "tissue"},
     ]
@@ -145,15 +146,15 @@ class DinoflagellatesBaseMetadata(BaseMetadata):
 
 
 
-class DinoflagellatesIlluminaShortreadMetadata(DinoflagellatesBaseMetadata):
-    ckan_data_type = "dino-illumina-shortread"
-    technology = "illumina-shortread"
-    sequence_data_type = "illumina-shortread"
+class DinoflagellatesMGIShortreadMetadata(DinoflagellatesBaseMetadata):
+    ckan_data_type = "dino-mgi-shortread"
+    technology = "mgi-shortread"
+    sequence_data_type = "mgi-shortread"
     embargo_days = 365
     contextual_classes = common_context
     metadata_patterns = [r"^.*\.md5$", r"^.*_metadata.*.*\.xlsx$"]
     metadata_urls = [
-        "https://downloads-qcif.bioplatforms.com/bpa/dinoflagellates/illumina-shortread/",
+        "https://downloads-qcif.bioplatforms.com/bpa/dinoflagellates/mgi-shortread/",
     ]
     metadata_url_components = ("ticket",)
     resource_linkage = ("library_id", "flowcell_id")
@@ -246,7 +247,7 @@ class DinoflagellatesIlluminaShortreadMetadata(DinoflagellatesBaseMetadata):
 
     md5 = {
         "match": [
-            files.illumina_shortread_re,
+            files.mgi_shortread_re,
         ],
         "skip": [
             re.compile(r"^.*_metadata.*\.xlsx$"),
@@ -256,8 +257,8 @@ class DinoflagellatesIlluminaShortreadMetadata(DinoflagellatesBaseMetadata):
             re.compile(r"^.*checksums\.(exf|md5)$"),
         ],
     }
-    description = "Illumina Shortread"
-    tag_names = ["genomics", "illumina-short-read"]
+    description = "MGI Shortread"
+    tag_names = ["genomics", "mgi-short-read"]
 
     def _get_packages(self):
         packages = self._get_common_packages()

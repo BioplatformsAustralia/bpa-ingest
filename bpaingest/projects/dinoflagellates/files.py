@@ -4,7 +4,7 @@ import re
 
 logger = make_logger(__name__)
 
-ILLUMINA_SHORTREAD_PATTERN = r"""
+MGI_SHORTREAD_PATTERN = r"""
     (?P<library_id>\d{4,6})_
     DINO_
     (?P<facility_id>(AGRF|UNSW|BRF|SAGC))_
@@ -17,7 +17,7 @@ ILLUMINA_SHORTREAD_PATTERN = r"""
     \.fastq\.gz$
 """
 
-illumina_shortread_re = re.compile(ILLUMINA_SHORTREAD_PATTERN, re.VERBOSE)
+mgi_shortread_re = re.compile(MGI_SHORTREAD_PATTERN, re.VERBOSE)
 
 ONT_PROMETHION_PATTERN = r"""
     (?P<library_id>\d{4,6})_

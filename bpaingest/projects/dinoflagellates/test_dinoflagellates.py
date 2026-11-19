@@ -1,6 +1,6 @@
 # VERIFY
 from bpaingest.projects.dinoflagellates.files import (
-    illumina_shortread_re,
+    mgi_shortread_re,
     ont_promethion_re,
 )
 
@@ -8,7 +8,7 @@ from bpaingest.projects.dinoflagellates.files import (
 # VERIFY
 
 
-def test_illumina_shortread_filename():
+def test_mgi_shortread_filename():
     filenames = [
         "606830_DINO_SAGC_E250147280_TGCCAGATGT-TACGGTTAGA_S1_L01_R2_001.fastq.gz",
     ]
