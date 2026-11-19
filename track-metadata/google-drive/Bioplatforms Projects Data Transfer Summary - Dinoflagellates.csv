@@ -1,0 +1,12 @@
+Dinoflagellates,,,,,,,,,,,,,
+Contact atouffu@bioplatforms.com if you need assistance filling this sheet.,,,,,,,,,,,,,
+Facility to fill,Facility to fill,Facility to fill (Leave empty if data is for >1 sample ID),Facility to fill (Leave empty if data is for >1 library ID),Facility to fill,Project Manager to fill,Facility to fill,Facility to fill,Facility to fill,Data team to fill,Project Manager to fill,Data team to fill,Project Manager to fill,
+,,,,,,,,,,,,,
+Facility,Date of transfer,bioplatforms_sample_id,bioplatforms_library_id,bioplatforms_dataset_id,scientific_name,Data type,Description,Folder name,Date of transfer to archive,Date data published,CCG JIRA Ticket,Download,Note
+SAGC,27/10/26,604579,606831,607865,,ont,ONT-promethion,20261022_DINO_SAGC_PBM44547,09/11/2026,,BPAOPS-2252,,
+SAGC,2/11/26,604579,606830,607864,,Illumina short-read,Illumina short-read,20261022_DINO_SAGC_E250147280,09/11/2026,,BPAOPS-2253,,
+SAGC,06/11/2026,677549,669552,665399,,Illumina short-read,Illumina short-read,20261022_DINO_SAGC_E250192560,10/11/2026,,BPAOPS-2254,,
+SAGC,10/11/2026,677560,702650,665426,,Illumina short-read,Illumina short-read,20261022_DINO_SAGC_E250192574,11/11/2026,,BPAOPS-2255,,
+SAGC,11/11/2026,677564,669596,665435,,Illumina short-read,Illumina short-read,20261022_DINO_SAGC_E250192547,12/11/2026,,BPAOPS-2256,,
+SAGC,11/11/2026,677553,669563,665408,,Illumina short-read,Illumina short-read,20261022_DINO_SAGC_E250192591,16/11/2026,,BPAOPS-2257,,
+SAGC,12/11/2026,702857,669574,665417,,Illumina short-read,Illumina short-read,20261022_DINO_SAGC_E250192575,16/11/2026,,BPAOPS-2258,,
