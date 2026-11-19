@@ -51,8 +51,8 @@ class DinoflagellatesBaseMetadata(BaseMetadata):
         {"key": "genus", "separator": " "},
         {"key": "species", "separator": ", "},
         {"key": "specimen_id", "separator": ", "},
-        {"key": "library_type", "separator": ", "},
-        {"key": "tissue"},
+        {"key": "library_type"},
+
     ]
 
     def _set_metadata_vars(self, filename):
