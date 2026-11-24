@@ -927,7 +927,8 @@ class TSIGenomeAssemblyMetadata(TSIBaseMetadata):
                 "dataset_id",
                 re.compile(r"(dataset_id|bioplatforms_dataset_id)"),
                 coerce=ingest_utils.int_or_comment),
-            fld('bioplatforms_project', 'bioplatforms_project'),
+            fld('bioplatforms_project',
+                re.compile(r"(bioplatforms_project|bioplatforms_project_id)")),
             fld('bioproject_title', 'bioproject_title'),
             fld('bioproject_description', 'bioproject_description'),
             fld('assembly_tolid', 'assembly_tolid'),
@@ -966,6 +967,7 @@ class TSIGenomeAssemblyMetadata(TSIBaseMetadata):
                   files.genome_assembly_atol_filename_re],
         "skip": [
             re.compile(r"^.*\.xlsx$"),
+            re.compile(r"^.*\.json$"),
         ],
     }
     notes_mapping = [
