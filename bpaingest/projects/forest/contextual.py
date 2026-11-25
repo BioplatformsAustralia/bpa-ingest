@@ -98,4 +98,13 @@ class ForestLibraryContextual(BaseLibraryContextual):
         fld('reuse_preferences', 'reuse_preferences'),
 
     ]
+    def get(self, identifier):
+        the_metadata = super().get(identifier)
+        if (the_metadata):
+            return the_metadata
+        else:
+            self._logger.info(
+                "sample metadata for possible dataset ID not available for: %s - check this is a dataset ID." % (repr(identifier)))
+            return {}
+
 
