@@ -19,7 +19,7 @@ class ForestDatasetControlContextual(BaseDatasetControlContextual):
 
 class ForestLibraryContextual(BaseLibraryContextual):
     metadata_urls = [
-        "https://downloads-qcif.bioplatforms.com/bpa/forest_staging/metadata/2026-09-14/"
+        "https://downloads-qcif.bioplatforms.com/bpa/forest_staging/metadata/2026-11-24/"
     ]
     name = "forest-library-contextual"
     metadata_unique_identifier = "bioplatforms_library_id"

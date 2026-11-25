@@ -1,4 +1,4 @@
-ls,,,,,,,,,,,,
+,,,,,,,,,,,,
 Contact mlum@bioplatforms.com if you need assistance filling this sheet.,,,,,,,,,,,,
 Facility to fill,Facility to fill,Facility to fill (Leave empty if data is for >1 sample ID),Facility to fill (Leave empty if data is for >1 library ID),Facility to fill,Project Manager to fill,Facility to fill,Facility to fill,Data team to fill,Project Manager to fill,Data team to fill,Project Manager to fill,
 ,,,,,,,,,,,,
@@ -20,4 +20,5 @@ BRF,06/07/2026,,,647510,Eucalyptus tereticornis,Illumina Shortread - run 1,20260
 BRF,14/09/2026,,,647536,Eucalyptus tereticornis,Illumina Shortread - run 2,20260914_FOR_BRF_WO7213_23KHYKLT3,15/09/2026,16/09/2026,BPAOPS-2212,https://data.bioplatforms.com/dataset/?ext_search_by=&q=ticket%3ABPAOPS-2212,
 BRF,07/07/2026,643350,645600,647508,Eucalyptus tereticornis,PacBio-HiFi,20260703_FOR_BRF_m84118_260703_021115_s1,08/07/2026,08/07/2026,BPAOPS-2134,https://data.bioplatforms.com/dataset/?ext_search_by=&q=ticket%3ABPAOPS-2134,
 BRF,28/08/2026,643761,646011,647513,Bursaria spinosa,PacBio-HiFi,20260824_FOR_BRF_m84118_260824_093325_s3,30/08/2026,01/09/2026,BPAOPS-2197,https://data.bioplatforms.com/dataset/?ext_search_by=&q=ticket%3ABPAOPS-2197,
-AGRF,23/9/26,,,647514,,Illumina-Shortread,20260923_FOR_AGRF_CAGRF26040458_23TK3KLT3,24/09/2026,,BPAOPS-2223,,
+AGRF,23/9/26,,,647514,Leptospermum scoparium,Illumina-Shortread,20260923_FOR_AGRF_CAGRF26040458_23TK3KLT3,24/09/2026,24/09/2026,BPAOPS-2223,https://data.bioplatforms.com/dataset/?ext_search_by=&q=ticket%3ABPAOPS-2223,
+AGRF,24/11/2026,,,647538,Bursaria spinosa,illumina-shortread,20261124_FOR_AGRF_CAGRF26100070_25KWCCLT4,25/11/2026,,BPAOPS-2278,,
